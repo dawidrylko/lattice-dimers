@@ -11,8 +11,8 @@ authors:
   - family-names: Ryłko
     given-names: Dawid
     website: https://dawidrylko.com
-repository-code: https://github.com/dawidrylko/domino-tiling
-url: https://dawidrylko.github.io/domino-tiling/
+repository-code: https://github.com/dawidrylko/lattice-dimers
+url: https://dawidrylko.github.io/lattice-dimers/
 license: MIT
 keywords:
   - domino tiling

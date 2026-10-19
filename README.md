@@ -1,13 +1,13 @@
 # <img src=".github/assets/domino.svg" alt="" width="36" height="36"> Domino and Domicule Tilings
 
-[![Continuous Integration](https://github.com/dawidrylko/domino-tiling/actions/workflows/ci.yml/badge.svg)](https://github.com/dawidrylko/domino-tiling/actions/workflows/ci.yml)
-[![Pages](https://github.com/dawidrylko/domino-tiling/actions/workflows/pages.yml/badge.svg)](https://github.com/dawidrylko/domino-tiling/actions/workflows/pages.yml)
-[![Site](https://img.shields.io/badge/Site_%26_notebooks-dawidrylko.github.io-044cb6?style=flat)](https://dawidrylko.github.io/domino-tiling/)
+[![Continuous Integration](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml)
+[![Pages](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml)
+[![Site](https://img.shields.io/badge/Site_%26_notebooks-dawidrylko.github.io-044cb6?style=flat)](https://dawidrylko.github.io/lattice-dimers/)
 [![Blog post](https://img.shields.io/badge/Blog_post_%28PL%29-dawidrylko.com-f09c17?style=flat)](https://dawidrylko.com/domino-tiling/)
 
 ## Abstract
 
-How many ways are there to cover a $2n \times 2n$ board with pieces that each cover two neighbouring cells, and what does any one of those coverings look like? For dominoes, which join cells that share a side, the count is [OEIS A004003](https://oeis.org/A004003) and has a closed form found by Kasteleyn [1] and Fisher [2] in 1961. For domicules, which may also join cells that share only a corner, the count is [OEIS A239273](https://oeis.org/A239273) on squares and [A239264](https://oeis.org/A239264) on rectangles [6], and no closed form is used here. This repository counts both exactly, numbers every tiling so that any single one can be drawn from its number, and samples tilings of boards too large to number. It evaluates the domino product formula exactly as a resultant of two integer polynomials, counts domicule tilings with a cell-by-cell transfer that runs modulo primes in parallel and is rebuilt with the Chinese remainder theorem, and checks the solvers against each other, against the OEIS and against two PARI/GP programs run in CI. The results, the method and the computations are on the [project site](https://dawidrylko.github.io/domino-tiling/).
+How many ways are there to cover a $2n \times 2n$ board with pieces that each cover two neighbouring cells, and what does any one of those coverings look like? For dominoes, which join cells that share a side, the count is [OEIS A004003](https://oeis.org/A004003) and has a closed form found by Kasteleyn [1] and Fisher [2] in 1961. For domicules, which may also join cells that share only a corner, the count is [OEIS A239273](https://oeis.org/A239273) on squares and [A239264](https://oeis.org/A239264) on rectangles [6], and no closed form is used here. This repository counts both exactly, numbers every tiling so that any single one can be drawn from its number, and samples tilings of boards too large to number. It evaluates the domino product formula exactly as a resultant of two integer polynomials, counts domicule tilings with a cell-by-cell transfer that runs modulo primes in parallel and is rebuilt with the Chinese remainder theorem, and checks the solvers against each other, against the OEIS and against two PARI/GP programs run in CI. The results, the method and the computations are on the [project site](https://dawidrylko.github.io/lattice-dimers/).
 
 ## Results
 
@@ -31,9 +31,9 @@ Both sequences up to $20 \times 20$. The term marked **new** is not in the OEIS 
 
 The notes are Markdown files with code cells. The site build runs every cell and publishes the output under it, so the rendered pages are notebooks whose results are recomputed from this repository on every deploy.
 
-- [Method](notes/01-method.md) ([rendered](https://dawidrylko.github.io/domino-tiling/notes/method.html)): the closed form and the resultant, transfer by rows and by cells, numbering, coupling from the past, counting modulo primes, the Markov chain for domicules, and how every number is verified.
-- [A004003 notebook](notes/02-a004003.md) ([rendered](https://dawidrylko.github.io/domino-tiling/notes/a004003.html)): three methods side by side, the floating-point error of the product, the polynomial behind the resultant, running times.
-- [A239273 notebook](notes/03-a239273.md) ([rendered](https://dawidrylko.github.io/domino-tiling/notes/a239273.html)): the sequence up to $20 \times 20$, the A239264 table, the Kahn-Lovász bound, the Chinese remainder theorem at work, a uniformity test of the Markov chain.
+- [Method](notes/01-method.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/method.html)): the closed form and the resultant, transfer by rows and by cells, numbering, coupling from the past, counting modulo primes, the Markov chain for domicules, and how every number is verified.
+- [A004003 notebook](notes/02-a004003.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/a004003.html)): three methods side by side, the floating-point error of the product, the polynomial behind the resultant, running times.
+- [A239273 notebook](notes/03-a239273.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/a239273.html)): the sequence up to $20 \times 20$, the A239264 table, the Kahn-Lovász bound, the Chinese remainder theorem at work, a uniformity test of the Markov chain.
 
 ## Method in brief
 
@@ -100,8 +100,8 @@ site/             the site: gallery, benchmark tables, notes
 Requirements: [Node.js](https://nodejs.org/) 26 or newer (`.nvmrc`), [pnpm](https://pnpm.io/) (version pinned in `package.json`), and for the PARI tests [PARI/GP](https://pari.math.u-bordeaux.fr/) (`apt install pari-gp`, `brew install pari`; set `GP_PATH` when `gp` is not on the `PATH`).
 
 ```sh
-git clone https://github.com/dawidrylko/domino-tiling.git
-cd domino-tiling
+git clone https://github.com/dawidrylko/lattice-dimers.git
+cd lattice-dimers
 pnpm install
 ```
 
@@ -157,7 +157,7 @@ The gallery draws a tiling in three styles. Below are the same four 8×8 domicul
 
 ![The same four tilings drawn as an engraving](.github/assets/gallery-engraving.svg)
 
-`-l` limits the number of tilings (default 1000), `-o` skips tilings, `-i` draws one tiling by its 1-based number, `--random` samples, `--all` lifts the limit on boards with at most 100,000 tilings, `--ascii` prints instead of writing SVG. The command line numbers boards whose table has at most 4 million entries: dominoes up to 14×14, domicules up to 12×12. The [gallery](https://dawidrylko.github.io/domino-tiling/) does the same in the browser, up to 18×18 for dominoes and 16×16 for domicules, with sampling above that.
+`-l` limits the number of tilings (default 1000), `-o` skips tilings, `-i` draws one tiling by its 1-based number, `--random` samples, `--all` lifts the limit on boards with at most 100,000 tilings, `--ascii` prints instead of writing SVG. The command line numbers boards whose table has at most 4 million entries: dominoes up to 14×14, domicules up to 12×12. The [gallery](https://dawidrylko.github.io/lattice-dimers/) does the same in the browser, up to 18×18 for dominoes and 16×16 for domicules, with sampling above that.
 
 ## References
 

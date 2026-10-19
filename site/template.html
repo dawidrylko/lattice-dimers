@@ -159,7 +159,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     20&nbsp;×&nbsp;20, including a domicule term that is not in the OEIS yet.
   </p>
   <noscript><p class="intro">The gallery needs JavaScript. The benchmark results are also available in the
-    <a href="https://github.com/dawidrylko/domino-tiling/tree/master/benchmarks/results">repository</a>.</p></noscript>
+    <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/benchmarks/results">repository</a>.</p></noscript>
   <nav class="tabs">
     <a href="#gallery" data-tab="gallery">Gallery</a>
     <a href="#benchmark" data-tab="benchmark">Benchmark: dominoes</a>
@@ -232,7 +232,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       Node.js start-up. Number keeps the count in a JavaScript number and stops at 10×10, beyond which the count exceeds
       2<sup>53</sup>. BigInt counts exactly. Formula evaluates the product formula of Kasteleyn and Fisher as an exact resultant.
       <span class="environment"></span>
-      Results: <a href="https://github.com/dawidrylko/domino-tiling/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
+      Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
       __OLDER_BENCHMARKS__
       Re-run with <code>pnpm benchmark</code>.
     </p>
@@ -250,7 +250,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       Node.js start-up. BigInt counts exactly. Modular counts modulo primes below 2<sup>31</sup> in parallel worker
       threads, rebuilds the count with the Chinese remainder theorem and checks it against one more prime.
       <span class="environment"></span>
-      Results: <a href="https://github.com/dawidrylko/domino-tiling/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
+      Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
       Re-run with <code>pnpm benchmark:domicule</code>.
     </p>
   </section>
@@ -299,7 +299,7 @@ let sheetStyle = readStyle();
 
 function readStyle() {
   try {
-    const saved = localStorage.getItem('domino-tiling-style');
+    const saved = localStorage.getItem('lattice-dimers-style');
     return renderSheet.STYLES.includes(saved) ? saved : renderSheet.STYLES[0];
   } catch {
     return renderSheet.STYLES[0];
@@ -309,7 +309,7 @@ function readStyle() {
 function setStyle(style) {
   sheetStyle = style;
   try {
-    localStorage.setItem('domino-tiling-style', style);
+    localStorage.setItem('lattice-dimers-style', style);
   } catch {}
   showStyle();
   if (!shownSheet || !$('sheet').firstChild) return;

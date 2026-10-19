@@ -137,7 +137,7 @@ function launchChrome() {
     return Promise.reject(new Error('No Chrome found. Set CHROME_PATH to a Chrome or Chromium executable.'));
   }
 
-  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-tiling-chrome-'));
+  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'lattice-dimers-chrome-'));
   const chrome = spawn(
     executable,
     [
@@ -430,7 +430,7 @@ async function checkStyles(page, baseUrl, width) {
 
   try {
     await loadSite(page, baseUrl, width, hash);
-    await page.evaluate("localStorage.setItem('domino-tiling-style', 'bogus')");
+    await page.evaluate("localStorage.setItem('lattice-dimers-style', 'bogus')");
     const initial = await reload('the 4x4 domicule sheet');
 
     if (initial.svg !== 'blocks' || initial.gallery !== 'blocks' || initial.pressed.join() !== 'blocks' || !initial.highlighted || !initial.themed) {
@@ -464,7 +464,7 @@ async function checkStyles(page, baseUrl, width) {
     }
   } finally {
     await page.send('Emulation.setEmulatedMedia', { features: [] });
-    await page.evaluate("localStorage.removeItem('domino-tiling-style')");
+    await page.evaluate("localStorage.removeItem('lattice-dimers-style')");
   }
 
   return problems;
