@@ -58,7 +58,7 @@ circumference up to $25$, split by a conserved parity, give
   s = 0.5655119110413253 \pm 6\cdot 10^{-16},
 \]
 with an error bar supported by several extrapolation models, backtests and an
-extended-precision check of the rounding. We prove $0.545343749727 \le s \le 0.586216605404$
+extended-precision check of the rounding; this error bar is not rigorous. We prove $0.545343749727 \le s \le 0.586216605404$
 with computer-assisted Collatz--Wielandt certificates;
 the upper bound uses a Fibonacci bound for the matchings across a cut. We also give the surface
 free energy of a free edge, $\sigma = 0.242017935766251 \pm 9\cdot 10^{-15}$, and the
@@ -67,8 +67,8 @@ $\xi \approx 1.23$. Finally we conjecture that the logarithm of the growth rate 
 of width $2q$ is convex in $q$ for $2q \ge 22$; this would raise the rigorous lower bound to
 $s \ge 0.565511911035$, and it holds numerically up to $2q = 24$. The stronger log-convexity of
 $q \mapsto Z(2q, m)$ holds in all $1451$ cases we checked, but it is not a structural property:
-it fails on the triangular lattice, under arbitrarily small asymmetric changes of the diagonal
-weights, and for equal diagonal weights $x = 3/2, 2, 3$.
+it fails on the triangular lattice, under small asymmetric changes of the diagonal
+weights (we tested $(1, 9/10)$ and $(1, 19/20)$), and for equal diagonal weights $x = 3/2, 2, 3$.
 \end{abstract}
 
 \maketitle
@@ -110,16 +110,16 @@ numerical value of $s$ has been published.
 
 \medskip\noindent\textbf{Results.}
 \begin{enumerate}
-\item $s = 0.5655119110413253 \pm 6\cdot10^{-16}$ (\S\ref{sec:value}), i.e.\ $2s = 1.131023822082651$
-  per dimer and $e^{s} = 1.760348694041978$. The error bar is not rigorous.
+\item $s = 0.5655119110413253 \pm 6\cdot10^{-16}$ (\S\ref{sec:value}), i.e.\ $2s = 1.13102382208265$
+  per dimer and $e^{s} = 1.76034869404198$. The error bar is not rigorous.
 \item Rigorously, $0.545343749727 \le s \le 0.586216605404$ (Theorem~\ref{thm:bounds}).
 \item The surface free energy of a free edge is $\sigma = 0.242017935766251 \pm 9\cdot10^{-15}$
   (\S\ref{sec:surface}).
 \item On even cylinders the two parity sectors split by $\Delta_w \approx e^{-w/\xi}$,
-  $\xi \approx 1.23$; all finite-size corrections are exponentially small (\S\ref{sec:z2}),
+  $\xi \approx 1.23$; we observe that all finite-size corrections are exponentially small (\S\ref{sec:z2}),
   in contrast with the critical square lattice.
 \item The conjecture (L$_\infty$) that $q \mapsto \log\lambda_{2q}$ is convex for $2q \ge 22$
-  would give the rigorous bound $s \ge 0.565511911035$ (eleven correct digits). The stronger
+  would give the rigorous bound $s \ge 0.565511911035$ (ten correct digits). The stronger
   log-convexity (L) of $q \mapsto Z(2q, m)$ holds in every case we tested at unit weights, but
   we show that it is not structural: it fails for diagonal weights $(1, \tfrac{9}{10})$ and for
   equal diagonal weights $x = \tfrac32, 2, 3$, and a Krein-signature argument for the left--right
@@ -295,6 +295,14 @@ For comparison, the Kahn--Lov\'asz bound (the number of perfect matchings of a g
 $\prod_v (d_v!)^{1/(2 d_v)}$; unpublished by its authors, proved in \cite{alonfriedland2008}),
 with all degrees $d_v \le 8$, gives
 $\bar s \le \log(8!)/16 = 0.662787681422$.
+
+\emph{Trust base.} The proof of Theorem~\ref{thm:bounds} is computer-assisted, and its correctness
+rests on two things beyond the mathematics below. First, the certificates are evaluated in
+IEEE-754 binary64 arithmetic with round-to-nearest (no fused multiply-add contraction, no flush to
+zero), and their validity follows from the rounding analysis of \S\ref{sec:float}. Second, the
+transfer matrix must be the right matrix: the code is argued correct and validated against
+brute-force enumeration on small boards (\S\ref{sec:float}, \S\ref{sec:checks}), but it has not been
+formally verified. The validity of a certificate does not depend on how its vector was found.
 
 Both bounds of Theorem~\ref{thm:bounds} come from strips of width $w = 24$ and a numerical
 certificate whose validity does not depend on how it was found. Table~\ref{tab:bounds} shows how
@@ -605,8 +613,9 @@ for every $m$, by a ratio tending to $0.16$--$0.20$; there is no dip at intermed
 nothing that shrinks with $m$.
 
 We do \emph{not} conjecture (L). It is a numerical observation at unit weights, not a structural
-property of the model: the next subsection shows that it fails under arbitrarily small
-perturbations of the diagonal weights that break the left--right symmetry, and for equal
+property of the model: the next subsection shows that it fails under small
+perturbations of the diagonal weights that break the left--right symmetry (we tested
+$(1, \tfrac{9}{10})$ and $(1, \tfrac{19}{20})$), and for equal
 diagonal weights $x = \tfrac32, 2, 3$, which keep it.
 
 \begin{table}[ht]
@@ -651,13 +660,18 @@ $-K\varepsilon^2$ ($K = 0.70, 1.31, 1.63$ at $m = 4, 5, 8$, constant for
 $\varepsilon = 10^{-3}, \dots, 3\cdot10^{-2}$). Wherever that level lies above the leading visible
 $J$-even level ($m = 4$ and $m = 8$ among $m \le 11$), (L) must fail for large $q$, and it does
 (exact): the weights $(1, \tfrac{9}{10})$ violate (L) at $m = 4$ from $2q = 56$, at $m = 8$ from
-$2q = 86$ and at $m = 12$ from $2q = 112$, and $(1, \tfrac{19}{20})$ at $m = 8$ from $2q = 118$; the
-onsets agree exactly with those predicted from the spectrum. Earlier tests of these weights
-($m \le 16$, $2q \le 78$) had stopped just short of them. Clearly unequal weights fail much
-earlier: $(1, \tfrac12)$ from $m = 5$ on ($14$ of $19$ values of $q$ at $m = 5$, $2q \le 38$),
-$(1, \tfrac34)$ at $m = 9$ ($5$ of $19$, first at $2q = 30$). Restoring the symmetry restores (L)
-in every tested case: the symmetrised transfer $H(M + M^{\mathsf T})/2$ has no violation, including
-all cases above where $HM$ fails.
+$2q = 86$ and at $m = 12$ from $2q = 112$, and $(1, \tfrac{19}{20})$ at $m = 8$ from $2q = 118$. At
+$m = 4$ and $m = 8$ the onsets agree exactly with those predicted from the spectrum; the onset
+prediction was computed only for $m \le 10$, so the failure at $m = 12$ was found but not predicted. Earlier
+tests of these weights ($m \le 16$, $2q \le 78$) had stopped just short of them. Clearly unequal
+weights fail much earlier: $(1, \tfrac12)$ at $m = 5, 8, 9$ and at no other $m \le 9$, in
+particular not at $m = 6, 7$ ($14$ of $19$ values of $q$ at $m = 5$, $2q \le 38$);
+$(1, \tfrac34)$ at $m = 9$ ($5$ of $19$, first at $2q = 30$). The symmetrised transfer
+$H(M + M^{\mathsf T})/2$ has no violation wherever we tested it: for $m \le 9$, $2q \le 38$ and
+the weights $(1, \tfrac12)$, $(1, \tfrac34)$, $(1, 0)$ and $(1, \tfrac{9}{10})$, and for
+$(1, \tfrac{9}{10})$ at $m = 8$ up to $2q = 198$; this includes every case in those ranges where
+$HM$ fails. It was not tested on the counterexamples at $m = 4$ and $m = 12$ or on
+$(1, \tfrac{19}{20})$.
 
 \emph{Equal weights are not enough.} With equal weights $x$ on both diagonals (L) holds for
 $x \in \{0, \tfrac14, \tfrac12, 1, 2, 4, 10, 100\}$ on narrow strips ($m \le 9$, $2q \le 38$), but
@@ -755,11 +769,11 @@ command & output \\
 \bottomrule
 \end{tabular}
 \end{center}
-The outputs were produced in a container with four cores and $15.7$\,GiB of memory. The widest
+The outputs were produced on a machine with four cores and $15.7$\,GiB of memory. The widest
 runs dominate the cost: the cylinder $w = 25$ ($8.4$\,GiB, $22.5$ min), the certified bounds at
 $w = 24$ ($22$ min), and the certified (L) tests at $m = 26$ ($8.0$\,GiB, $43$ min). The script
 \file{repro.py} re-runs the first-round scripts from a clean export of the repository and
-compares their outputs byte for byte.
+checks that their outputs are identical up to timings and commit tags.
 
 \section*{Data availability statement}
 % TODO(submission): tag the release, archive it on Zenodo, then replace both placeholders.
