@@ -123,7 +123,7 @@ numerical value of $s$ has been published.
   log-convexity (L) of $q \mapsto Z(2q, m)$ holds in every case we tested at unit weights, but
   we show that it is not structural: it fails for diagonal weights $(1, \tfrac{9}{10})$ and for
   equal diagonal weights $x = \tfrac32, 2, 3$, and a Krein-signature argument for the left--right
-  symmetry explains why (\S\ref{sec:L}).
+  symmetry explains the failures under unequal weights (\S\ref{sec:L}).
 \end{enumerate}
 The same code reproduces the exactly known entropies of the square and triangular lattices
 (\S\ref{sec:checks}). All scripts, outputs and the map from every number in this paper to the
@@ -682,8 +682,9 @@ failure of (L$_\infty$) itself: the second difference of $a_{2q}$ at $2q = 8$ is
 at $x = \tfrac32$ and $-2.8\cdot10^{-3}$ at $x = 2$, and the differences alternate in sign. In the
 language of the Prony fit above, the alternating mode, which at $x = 1$ is $0.007$ of the positive
 one at $2q = 24$, is already comparable to it at $x = \tfrac54$ (ratios of consecutive second
-differences $2.0$, $376$, $0.16$, $48$) and dominates at $x = \tfrac32, 2, 3$. So the symmetry $J$ is
-necessary for (L) but not sufficient, and at $x = 1$ both (L) and (L$_\infty$) are quantitative
+differences $2.0$, $376$, $0.16$, $48$) and dominates at $x = \tfrac32, 2, 3$. So every asymmetric weight pair we
+tested violates (L) at some $m$, and symmetry alone does not suffice, since equal weights
+$x = \tfrac32, 2, 3$ violate it too. At $x = 1$ both (L) and (L$_\infty$) are quantitative
 facts: $x = 1$ lies below a transition $x^* \le \tfrac32$. Any proof has to see this, which rules
 out arguments that are uniform in the weights.
 
@@ -743,7 +744,7 @@ All code and outputs are in the repository
 \begin{center}
 \url{https://github.com/dawidrylko/lattice-dimers},
 \end{center}
-tag \texttt{v1.0-king-entropy} \TODO{tag not yet created}, directory \texttt{research/king-entropy/}. The scripts need
+tag \texttt{v1.0-king-entropy}, directory \texttt{research/king-entropy/}. The scripts need
 Python~3.13 with numpy~2.5.3, mpmath~1.4.1 and scipy~1.18.1, as pinned in
 \file{requirements.txt}. Every number in this paper is listed in \file{paper/NUMBERS.md},
 with the committed output file it is read from and the command that wrote that file. The main commands, run from that directory:
@@ -772,14 +773,15 @@ command & output \\
 The outputs were produced on a machine with four cores and $15.7$\,GiB of memory. The widest
 runs dominate the cost: the cylinder $w = 25$ ($8.4$\,GiB, $22.5$ min), the certified bounds at
 $w = 24$ ($22$ min), and the certified (L) tests at $m = 26$ ($8.0$\,GiB, $43$ min). The script
-\file{repro.py} re-runs the first-round scripts from a clean export of the repository and
+\file{repro.py} re-runs \texttt{estimate.py}, \texttt{cw.py}, \texttt{bounds.py 16} and
+\texttt{cylw.py king cyl 20 0} from a clean export of the repository and
 checks that their outputs are identical up to timings and commit tags.
 
 \section*{Data availability statement}
 % TODO(submission): tag the release, archive it on Zenodo, then replace both placeholders.
 The code and data that support the findings of this paper are openly available in the
 repository \url{https://github.com/dawidrylko/lattice-dimers} at the tag
-\texttt{v1.0-king-entropy} \TODO{tag not yet created}, and are archived on Zenodo,
+\texttt{v1.0-king-entropy}, and are archived on Zenodo,
 DOI: TO-BE-ASSIGNED (Zenodo) \TODO{replace with the DOI minted for the tag}.
 
 \section*{Disclosure statement}

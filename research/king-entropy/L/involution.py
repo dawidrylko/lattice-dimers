@@ -19,7 +19,7 @@ only for xl = xr (J swaps the two diagonals below the cut). Hence, for equal dia
   Z(2q-2) Z(2q+2) - Z(2q)^2 = N_2 - N_1,   N_i = number of type-i pairs with NO cut,
 
 and (L) <=> N_1 <= N_2. Plain cuts alone are the classical argument: a plain cut forces t = 0 TB
-paths in the superposition (session-2 reformulation R1), so it only reproduces the cancellation of
+paths in the superposition (the reformulation R1 of L-NOTE §3), so it only reproduces the cancellation of
 t = 0 superpositions; twisted cuts are compatible with TB paths and are new.
 
 Part 1: explicit enumeration of all pairs for small (m, q): Phi maps type 1 <-> type 2, Phi^2 = id,
@@ -153,7 +153,7 @@ def tb_paths(pair, q):
     return t
 
 
-print('\n  t = number of TB paths (session-2 reformulation R1); twisted swaps vs t, and the combined')
+print('\n  t = number of TB paths (the reformulation R1 of L-NOTE §3); twisted swaps vs t, and the combined')
 print('  partial involution {t = 0: flip the BB paths (R1)} u {t >= 1: twisted swap if the image has t >= 1}')
 for m, q in [(3, 2), (3, 3), (4, 2), (5, 2)]:
     A = tilings(m, 2 * q)

@@ -3,9 +3,10 @@
 Perfect matchings of the king's graph (square lattice plus both diagonals),
 i.e. domicule tilings. Goal: the entropy per site
 `s = lim log Z / N` to many digits, with rigorous bounds.
-Results are written up in the paper draft [`paper/main.pdf`](paper/main.pdf) (source
-`paper/main.tex`); every number in it is mapped to its output file and the script that wrote it
-in [`paper/NUMBERS.md`](paper/NUMBERS.md). Full proofs of the rigorous bounds are in
+Results are written up in a paper draft. The PDF is [`paper/main.pdf`](paper/main.pdf), the
+source `paper/main.tex`. Every number in it is mapped to its output file and the script that wrote
+it in [`paper/NUMBERS.md`](paper/NUMBERS.md). The commit SHAs recorded in the outputs refer to the
+history under the tag `v1.0-king-entropy`. Full proofs of the rigorous bounds are in
 [`PROOF-upper.md`](PROOF-upper.md) and [`PROOF-lower.md`](PROOF-lower.md); the Calkin-Wilf
 question in [`CW-NOTE.md`](CW-NOTE.md); hypothesis (L) and the experiments on it in
 [`L-NOTE.md`](L-NOTE.md) and the directory [`L/`](L/).
@@ -42,7 +43,7 @@ python3 -m pip install -r requirements.txt
 | `L/` | why (L) is not structural: J-symmetry and Krein signature (`symmetry.py`), partial sign-reversing involution (`involution.py`), (L_inf) tests at other weights (`linf.py`), with their outputs |
 | `ltest.py` | exact (L) tests and Hankel (moment) tests on all `zex_*.json` |
 | `lparity.py`, `lspec.py`, `lweight.py` | path-parity form of (L), spectral obstructions, (L) under diagonal weights |
-| `repro.py` | re-runs session-1 scripts from a clean export of HEAD and compares outputs |
+| `repro.py` | re-runs `estimate.py`, `cw.py`, `bounds.py 16` and `cylw.py king cyl 20 0` from a clean export of HEAD and compares outputs |
 | `paper/derived.py` | numbers of the paper that are simple functions of committed outputs; writes `paper/out_derived.txt` |
 
 ## Reproduce

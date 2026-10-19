@@ -6,7 +6,8 @@ the script (and arguments) that wrote that file. Paths are relative to `research
 ## Scripts and the files they write
 
 All commands run from `research/king-entropy/`. Code commit = last change of the script before the
-output was committed (see `git log -- <script>`).
+output was committed (see `git log -- <script>`). The commit SHAs recorded in the outputs refer to
+the history under the tag `v1.0-king-entropy`.
 
 | file | command |
 | --- | --- |
@@ -150,14 +151,14 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | symmetrised H(M + M^T)/2: no violation for m ≤ 9, 2q ≤ 38 and (1, 9/10) at m = 8 to 2q = 198 | `L/out_symmetry.txt` (D2; (2, 2, 1), (4, 4, 3), (1, 1, 0), (10, 10, 9)) | `L/symmetry.py` |
 | negative index of M on the J-even sector 1, 1, 3, 8, 20, 34, 93, 186 (m = 3...10) | `L/out_symmetry.txt` (E) | `L/symmetry.py` |
 | cut-and-swap remainder does not shrink with q | `L/out_involution.txt` | `L/involution.py` |
-| relative accuracy about 0.6 for a certified tail | `L-NOTE.md` §5 (item 6, ((1-r)/(1+r))² ≈ 0.63) | - |
+| relative accuracy about 0.6 for a certified tail | `L-NOTE.md` §5 (paragraph (L-infinity), ((1-r)/(1+r))² ≈ 0.63) | - |
 
 ### Section 9 (reproducibility)
 
 | number | file | script |
 | --- | --- | --- |
 | Python 3.13, numpy 2.5.3, mpmath 1.4.1, scipy 1.18.1 | `README.md`, `requirements.txt` | - |
-| four cores, 15.7 GiB | `out_estimate.txt` (cost header); machine limit, see the note below | - |
+| four cores, 15.7 GiB | 4 cores: `out_estimate.txt` (cost header); 15.7 GiB: machine specification, stated in the note below | - |
 | 8.4 GiB, 22.5 min | `eig_king_cyl_w25_p1.json` | `cylw.py king cyl 25 1` |
 | 22 min | `time_bounds.txt` (wall 1326.3 s) | `timed.py python3 -u bounds.py 24` |
 | 8.0 GiB, 43 min | `time_lcert_m26.txt` (maxrss 8223 MiB, wall 2557.3 s) | `timed.py python3 lcert.py 26 30` |

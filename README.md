@@ -37,7 +37,7 @@ The notes are Markdown files with code cells. The site build runs every cell and
 
 ## Research
 
-[`research/king-entropy`](research/king-entropy) computes the entropy per site of domicule tilings, the perfect matchings of the king's graph, to sixteen digits with rigorous two-sided bounds; the paper draft is [`research/king-entropy/paper/main.pdf`](research/king-entropy/paper/main.pdf).
+[`research/king-entropy`](research/king-entropy) computes an estimate of the entropy per site s of domicule tilings, the perfect matchings of the king's graph, 0.5655119110413253 ± 6e-16 (not rigorous), with the rigorous bounds 0.545343749727 ≤ s ≤ 0.586216605404; the paper draft is [`research/king-entropy/paper/main.pdf`](research/king-entropy/paper/main.pdf).
 
 ## Method in brief
 
@@ -97,6 +97,7 @@ data/             known values the solvers, the PARI programs and the site are c
 tests/            test runners for the solvers, the renderer, the PARI programs and the site
 benchmarks/       the benchmark runner and its results, one directory per month and machine
 site/             the site: gallery, benchmark tables, notes
+research/         research write-ups: king-entropy, the entropy of the king's graph and its paper
 ```
 
 ## Reproducing the results

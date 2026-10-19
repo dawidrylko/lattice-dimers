@@ -1,4 +1,4 @@
-"""Row transfer of the king strip with explicit states, for the session-3b attack on (L).
+"""Row transfer of the king strip with explicit states, for the attack on (L).
 
 State s (bitmask over the m columns) = cells of the current row already covered by a domino
 from the row above. A row step covers the remaining cells of the current row by horizontal

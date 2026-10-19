@@ -154,7 +154,7 @@ def main():
     s1res = table('even widths, sector 1 (from below)', sec1, [18, 20, 22, 24])
 
     best = oddres[25]['G']
-    print(f'\n== spreads relative to the session-1 estimate s_G(25) = {mp.nstr(best, 17)}')
+    print(f'\n== spreads relative to the original estimate s_G(25) = {mp.nstr(best, 17)}')
     for name, res, W in (('odd', oddres, 25), ('mid', midres, 24), ('sec0', s0res, 24), ('sec1', s1res, 24)):
         vals = {k: res[W][k] for k in KEYS if k in res[W]}
         print(f'  {name:4s} W={W}: ' + ', '.join(f'{k} {mp.nstr(v - best, 3)}' for k, v in vals.items()))

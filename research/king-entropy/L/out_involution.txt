@@ -8,7 +8,7 @@ Part 1. explicit enumeration of all pairs; Phi = swap at the first (plain or twi
   m=5 q=2: pairs 2442969 (type 1) / 3410589 (type 2); matched plain 1213673, twisted 102200; unmatched N_1 = 1127096, N_2 = 2094716; D = 967620; involution + type swap + diagonals + N_2 - N_1 = D: True
   all explicit checks passed: True
 
-  t = number of TB paths (session-2 reformulation R1); twisted swaps vs t, and the combined
+  t = number of TB paths (the reformulation R1 of L-NOTE §3); twisted swaps vs t, and the combined
   partial involution {t = 0: flip the BB paths (R1)} u {t >= 1: twisted swap if the image has t >= 1}
   m=3 q=2: t>=1 pairs: type 1 194, type 2 600; twisted-matched with t' >= 1: 90 / 90; twisted image with t' = 0: 0 / 0; residual N_1 = 104, N_2 = 510 (N_2 - N_1 = 406); change of t under the swap: +0: 180
   m=3 q=3: t>=1 pairs: type 1 17210, type 2 26444; twisted-matched with t' >= 1: 10570 / 10570; twisted image with t' = 0: 0 / 0; residual N_1 = 6640, N_2 = 15874 (N_2 - N_1 = 9234); change of t under the swap: +0: 21140
