@@ -1,12 +1,14 @@
-"""Re-run the first-round scripts from a clean export of HEAD and compare with the committed outputs.
+"""Re-run estimate.py, cw.py, bounds.py 16 and cylw.py king cyl 20 0 from a clean export of HEAD and
+compare with the committed outputs.
 
 usage: python3 repro.py > out_repro.txt        (about 10 minutes)
 
-First checks that the code commits recorded with the first-round outputs (`commit` fields of
-eig_*.json, out_estimate.txt, and the provenance in CW-NOTE.md and PROOF-upper.md) exist in this
-repository. Then checks that the current code reproduces the committed numbers. It works in a
-temporary copy (the scripts rewrite their JSON outputs), strips wall-clock timings and commit
-tags, compares.
+First checks that the code commits recorded with these outputs (`commit` fields of eig_*.json,
+out_estimate.txt, and the provenance in CW-NOTE.md and PROOF-upper.md) exist in this repository;
+they live in the history under the tag v1.0-king-entropy, and a clone without it (shallow or
+--no-tags) only gets a warning. Then checks that the current code reproduces the committed
+numbers. It works in a temporary copy (the scripts rewrite their JSON outputs), strips wall-clock
+timings and commit tags, compares.
 """
 import hashlib, json, re, subprocess, sys, tempfile, pathlib
 
@@ -14,6 +16,8 @@ CITED = '102b7e5 76fc5e1 73a0628 ee63b57 0357d17 0cf6903 106661e b08b04a 8dc1359
 missing = [c for c in CITED if subprocess.run(['git', 'cat-file', '-e', c + '^{commit}'], capture_output=True).returncode]
 head = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
 print(f'HEAD {head}; recorded code commits missing from the repository: {len(missing)} of {len(CITED)}: {" ".join(missing) or "none"}')
+if missing:
+    print('warning: fetch the tag v1.0-king-entropy to resolve the recorded commits; the numbers are checked anyway')
 
 
 def clean(text):
@@ -30,7 +34,7 @@ def run(cmd, cwd=tmp):
     return subprocess.run(cmd, cwd=cwd, shell=True, capture_output=True, text=True, check=True).stdout
 
 
-ok_all = not missing
+ok_all = True
 
 
 def compare(name, new, old):
