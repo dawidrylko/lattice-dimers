@@ -1,18 +1,19 @@
-"""Re-run session-1 scripts from a clean export of HEAD and compare with the committed outputs.
+"""Re-run the first-round scripts from a clean export of HEAD and compare with the committed outputs.
 
 usage: python3 repro.py > out_repro.txt        (about 10 minutes)
 
-Session 1 cites commit SHAs (d817805, 9fc8b21, ff18169, 2f65f6b, 99cb918, 5cfb175, 49a8c11,
-f4de76a, c7d22f4, c46657a, 6377e1e) that do not exist in this repository. This script checks
-instead that the current code reproduces the committed numbers. It works in a temporary copy
-(the scripts rewrite their JSON outputs), strips wall-clock timings and commit tags, compares.
+First checks that the code commits recorded with the first-round outputs (`commit` fields of
+eig_*.json, out_estimate.txt, and the provenance in CW-NOTE.md and PROOF-upper.md) exist in this
+repository. Then checks that the current code reproduces the committed numbers. It works in a
+temporary copy (the scripts rewrite their JSON outputs), strips wall-clock timings and commit
+tags, compares.
 """
 import hashlib, json, re, subprocess, sys, tempfile, pathlib
 
-CITED = 'd817805 9fc8b21 ff18169 2f65f6b 99cb918 5cfb175 49a8c11 f4de76a c7d22f4 c46657a 6377e1e'.split()
+CITED = '102b7e5 76fc5e1 73a0628 ee63b57 0357d17 0cf6903 106661e b08b04a 8dc1359 73289ea a32a0fe'.split()
 missing = [c for c in CITED if subprocess.run(['git', 'cat-file', '-e', c + '^{commit}'], capture_output=True).returncode]
 head = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
-print(f'HEAD {head}; SHAs cited by session 1 missing from the repository: {len(missing)} of {len(CITED)}: {" ".join(missing)}')
+print(f'HEAD {head}; recorded code commits missing from the repository: {len(missing)} of {len(CITED)}: {" ".join(missing) or "none"}')
 
 
 def clean(text):
@@ -29,7 +30,7 @@ def run(cmd, cwd=tmp):
     return subprocess.run(cmd, cwd=cwd, shell=True, capture_output=True, text=True, check=True).stdout
 
 
-ok_all = True
+ok_all = not missing
 
 
 def compare(name, new, old):

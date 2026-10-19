@@ -1,6 +1,6 @@
-# Upper bound s ≤ 0.586216605404: full proof and audit (session 2)
+# Upper bound s ≤ 0.586216605404: full proof and audit
 
-Claim under audit (`REPORT-session1.md`, `bounds.py 24` → `out_bounds.txt`):
+Claim under audit (`bounds.py 24` → `out_bounds.txt`):
 
 > **s ≤ log(μ₂₄)/24 ≤ 0.586216605404**, where μ_w is the growth rate of a free strip of
 > width w whose side cells may be "covered from outside" with weight z = √φ.
@@ -23,7 +23,7 @@ commit `0c53f27`, 0 failures). Caveats at the end (§8).
 
 ## 1. The cut identity (exact)
 
-Cut B(K, kw) into k strips S⁽¹⁾…S⁽ᵏ⁾ of width w (columns jw … jw+w−1). King edges change
+Cut B(K, kw) into k strips S⁽¹⁾...S⁽ᵏ⁾ of width w (columns jw ... jw+w−1). King edges change
 the column by at most 1, so every edge of a perfect matching X is either inside one strip
 or joins column jw−1 to column jw for some j (a *crossing edge* at cut j). Let
 
@@ -41,12 +41,12 @@ perfect matching of B(K, kw). Hence, with
 - M(A, B) = number of perfect matchings of the bipartite graph A ⊔ B, a ~ b iff |a − b| ≤ 1,
 
 **Z(K, kw) = Σ ∏_{j=1}^{k} N(B_j, A_j) ∏_{j=1}^{k−1} M(A_j, B_{j+1})**, the sum over all
-A₁, B₂, A₂, …, B_k with B₁ = A_k = ∅. (Checked as an exact integer identity on 58 boards,
+A₁, B₂, A₂, ..., B_k with B₁ = A_k = ∅. (Checked as an exact integer identity on 58 boards,
 K ≤ 8, kw ≤ 12: `U2`.)
 
 ## 2. Lemma (crossing matchings). M(A, B) ≤ F_{n+1} ≤ φⁿ for |A| = |B| = n; M = 0 otherwise.
 
-Let a₁ < … < a_n, b₁ < … < b_n and M(n) = max over such A, B.
+Let a₁ < ... < a_n, b₁ < ... < b_n and M(n) = max over such A, B.
 *a₁ can only be matched to b₁ or b₂.* If a₁ ~ b_j with j ≥ 3 then b₃ ≤ a₁ + 1, so
 b₁ ≤ a₁ − 1. Every a ≠ a₁ satisfies a ≥ a₁ + 1 ≥ b₁ + 2, so b₁ has no partner: contradiction.
 *If a₁ ~ b₂*, b₁ ≤ b₂ − 1 ≤ a₁ needs a partner a_i ≥ a₁ + 1 with a_i ≤ b₁ + 1 ≤ a₁ + 1, so
@@ -85,10 +85,10 @@ if it lies in column 0 or w−1, it is covered from outside with weight z (shift
 configuration counted by W(K, w) corresponds to exactly one path of states from the empty
 state e₀ back to e₀ after K rows, so **W(K, w) = e₀ᵀ T_zᴷ e₀** and Z(K, w) = e₀ᵀ T₀ᴷ e₀.
 Checked: transfer = brute-force W(K, w; z) as a polynomial in z (agreement at 2K+2 integer
-points, K ≤ 6, w ≤ 6: 162 evaluations, `U4`); transfer = brute force for Z on 90 boards in
-session 1 (`validate.py`).
+points, K ≤ 6, w ≤ 6: 162 evaluations, `U4`); transfer = brute force for Z on 90 boards
+(`validate.py`).
 
-## 5. Lemma (Collatz–Wielandt certificate, upper). If A = T_z² ≥ 0, v ≥ 0, v₀ > 0 and Av ≤ Cv
+## 5. Lemma (Collatz-Wielandt certificate, upper). If A = T_z² ≥ 0, v ≥ 0, v₀ > 0 and Av ≤ Cv
 componentwise (including Av = 0 where v = 0), then W(2j, w) ≤ Cʲ for all j.
 
 e₀ ≤ v / v₀ componentwise, A ≥ 0, so Aʲ e₀ ≤ Aʲ v / v₀ ≤ Cʲ v / v₀, and the e₀ entry gives
@@ -105,17 +105,17 @@ C = max_{i ∈ supp v} fl(y_i / v_i) · (1 + 10⁻¹²).
   and one multiplication: per step a factor in [(1−u)⁶, (1+u)⁶], u = 2⁻⁵³. Over the 2w
   steps of A: fl(Av)_i ∈ (Av)_i · [(1−u)^{12w}, (1+u)^{12w}], i.e. relative error
   ≤ 12wu (1 + o(1)) = 3.2·10⁻¹⁴ at w = 24. The division adds one more u.
-- No underflow: all weights are ≥ 1 (z = 1.272… rounded *up*, `Z_OPEN ≥ √φ` asserted),
+- No underflow: all weights are ≥ 1 (z = 1.272... rounded *up*, `Z_OPEN ≥ √φ` asserted),
   inputs on the support are > 10⁻²⁸⁰ ≫ 2.2·10⁻³⁰⁸, so a float entry is 0 iff the exact one is.
   Hence "y = 0 off supp v" is the exact statement Av = 0 there. No overflow (v sums to 1).
 - z rounded up: T_{z_float} ≥ T_{√φ} entrywise, so the certificate for z_float bounds W(√φ).
 - Margin 10⁻¹² ≫ 3.2·10⁻¹⁴ + u, so (Av)_i ≤ C v_i holds exactly. The mpmath log (30 digits)
   and the final rounding *up* to 12 decimals are conservative.
 
-Checked: for w = 2…12 the float ratio max was recomputed in exact rationals for the same
+Checked: for w = 2...12 the float ratio max was recomputed in exact rationals for the same
 float v (Fractions): |float/exact − 1| ≤ 1.3·10⁻¹⁶ (budget 12wu ≈ 10⁻¹⁴, margin used
 10⁻¹²), support closed in every case (`U5`). For w ≤ 9 the certified bound lies above the
-true growth rate from dense eigenvalues by 5–25·10⁻¹⁴ (`L3`). Not re-run at w = 24 (the
+true growth rate from dense eigenvalues by 5-25·10⁻¹⁴ (`L3`). Not re-run at w = 24 (the
 same code path; the argument above is width-independent).
 
 ## 7. Passage to the limit
@@ -142,8 +142,7 @@ s ≤ 0.586216605404. ∎
 4. *Room for improvement, not an error.* The bound converges like 0.497/w
    (log μ_w − s·w → 0.497); even z = 1 would give 0.315/w and stays above s, so a sharper
    crossing bound than Fibonacci/√φ per cell could be valid, but the O(1/w) rate is
-   structural (two open sides). Better upper bounds need another idea (question for session 3).
-5. *Provenance.* `REPORT-session1.md` cites `bounds.py 24 @d817805`; that commit does not exist
-   in the repository (none of the 11 SHAs cited by session 1 do; history was rewritten before
-   push). The code is unchanged since `102b7e5`, and its output for w ≤ 16 was re-run from the
-   current tree (see `REPORT-session2.md`).
+   structural (two open sides). Better upper bounds need another idea (open question).
+5. *Provenance.* `out_bounds.txt` was written by `bounds.py 24` at `102b7e5`; the code is
+   unchanged since, and its output for w ≤ 16 was re-run from the current tree (`repro.py` →
+   `out_repro.txt`).

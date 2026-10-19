@@ -17,4 +17,4 @@ king cyl w=24 p=1 it=15 est=13.5722858643848632 t=30.12s
 king cyl w=24 p=1 it=16 est=13.5722858643848614 t=30.61s
 king cyl w=24 p=1 it=17 est=13.5722858643848614 t=32.48s
 king cyl w=24 p=1 it=18 est=13.5722858643848614 t=30.77s
-{"lattice": "king", "bc": "cyl", "w": 24, "parity": 1, "log_lambda": 13.572285864384861, "per_site": 0.5655119110160359, "converged": true, "iterations": 19, "tol": 4e-15, "cw_log_lambda": [13.572285864384861, 13.572285864384861], "support": 8388608, "residual_l1": 2.528424284108996e-17, "sec_per_iteration": 30.769212007522583, "wall": 621.5485010147095, "maxrss_mib": 4353.328125, "commit": "6377e1e", "cmd": "python3 cylw.py king cyl 24 1"}
+{"lattice": "king", "bc": "cyl", "w": 24, "parity": 1, "log_lambda": 13.572285864384861, "per_site": 0.5655119110160359, "converged": true, "iterations": 19, "tol": 4e-15, "cw_log_lambda": [13.572285864384861, 13.572285864384861], "support": 8388608, "residual_l1": 2.528424284108996e-17, "sec_per_iteration": 30.769212007522583, "wall": 621.5485010147095, "maxrss_mib": 4353.328125, "commit": "a32a0fe", "cmd": "python3 cylw.py king cyl 24 1"}

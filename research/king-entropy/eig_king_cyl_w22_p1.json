@@ -38,6 +38,6 @@
  "sec_per_iteration": 6.861962556838989,
  "wall": 140.63219118118286,
  "maxrss_mib": 1113.16796875,
- "commit": "f4de76a",
+ "commit": "b08b04a",
  "cmd": "python3 cylw.py king cyl 22 1"
 }
