@@ -11,7 +11,7 @@ How many ways are there to cover a $2n \times 2n$ board with pieces that each co
 
 ## Results
 
-Both sequences up to $20 \times 20$. The term marked **new** is not in the OEIS yet; the site recounts it on every build and the modular solver checks it against an extra prime.
+Both sequences up to $20 \times 20$. The site recounts the $20 \times 20$ domicule term on every build and the modular solver checks it against an extra prime.
 
 | n | board | A004003 (dominoes) | A239273 (domicules) |
 | --: | --- | --: | --: |
@@ -25,7 +25,7 @@ Both sequences up to $20 \times 20$. The term marked **new** is not in the OEIS 
 | 7 | 14×14 | 112202208776036178000000 | 2565014347691062208319404612723752103028288 |
 | 8 | 16×16 | 2444888770250892795802079170816 | 201442620359313683494245316355883565275531844406384955392 |
 | 9 | 18×18 | 548943583215388338077567813208427340288 | 1458834332808489549111708247664894524221330758005874053074138540424018259 |
-| 10 | 20×20 | 1269984011256235834242602753102293934298576249856 | 974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427 **new** |
+| 10 | 20×20 | 1269984011256235834242602753102293934298576249856 | 974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427 |
 
 ## Notes
 
@@ -34,6 +34,10 @@ The notes are Markdown files with code cells. The site build runs every cell and
 - [Method](notes/01-method.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/method.html)): the closed form and the resultant, transfer by rows and by cells, numbering, coupling from the past, counting modulo primes, the Markov chain for domicules, and how every number is verified.
 - [A004003 notebook](notes/02-a004003.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/a004003.html)): three methods side by side, the floating-point error of the product, the polynomial behind the resultant, running times.
 - [A239273 notebook](notes/03-a239273.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/a239273.html)): the sequence up to $20 \times 20$, the A239264 table, the Kahn-Lovász bound, the Chinese remainder theorem at work, a uniformity test of the Markov chain.
+
+## Research
+
+[`research/king-entropy`](research/king-entropy) computes the entropy per site of domicule tilings, the perfect matchings of the king's graph, to sixteen digits with rigorous two-sided bounds; the paper draft is [`research/king-entropy/paper/main.pdf`](research/king-entropy/paper/main.pdf).
 
 ## Method in brief
 

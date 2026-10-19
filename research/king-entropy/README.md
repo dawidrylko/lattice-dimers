@@ -38,6 +38,8 @@ python3 -m pip install -r requirements.txt
 | `audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`PROOF-*.md`) |
 | `errbar.py` | alternative extrapolation models, backtests and rounding check for s |
 | `surface.py` | surface free energy sigma from free strips |
+| `lcert.py` | certified log-convexity tests of (L) at m = 25, 26 in extended precision with a rigorous error bound |
+| `L/` | why (L) is not structural: J-symmetry and Krein signature (`symmetry.py`), partial sign-reversing involution (`involution.py`), (L_inf) tests at other weights (`linf.py`), with their outputs |
 | `ltest.py` | exact (L) tests and Hankel (moment) tests on all `zex_*.json` |
 | `lparity.py`, `lspec.py`, `lweight.py` | path-parity form of (L), spectral obstructions, (L) under diagonal weights |
 | `repro.py` | re-runs session-1 scripts from a clean export of HEAD and compares outputs |
