@@ -1,4 +1,4 @@
-"""Task 2 (session 3b): a reflection-twisted cut-and-swap involution for (L).
+"""A reflection-twisted cut-and-swap involution for (L).
 
 usage: python3 involution.py > out_involution.txt
 

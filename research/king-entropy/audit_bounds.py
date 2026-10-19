@@ -1,4 +1,4 @@
-"""Adversarial audit of the rigorous bounds in bounds.py (session 2).
+"""Adversarial audit of the rigorous bounds in bounds.py.
 
 usage: python3 audit_bounds.py > out_audit_bounds.txt     (exit status 1 if any check fails)
 

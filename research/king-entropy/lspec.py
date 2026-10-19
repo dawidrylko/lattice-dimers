@@ -1,4 +1,4 @@
-"""Spectral obstructions to two proof routes for (L) (session 2).
+"""Spectral obstructions to two proof routes for (L).
 
 usage: python3 lspec.py > out_lspec.txt
 

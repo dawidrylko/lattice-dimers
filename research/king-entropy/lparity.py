@@ -1,4 +1,4 @@
-"""(L) as a parity statement about superpositions of two matchings (session 2). Brute force.
+"""(L) as a parity statement about superpositions of two matchings. Brute force.
 
 usage: python3 lparity.py > out_lparity.txt
 

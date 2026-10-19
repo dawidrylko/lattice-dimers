@@ -1,4 +1,4 @@
-"""Is (L) robust? Log-convexity of q -> Z_x(2q, m) when every diagonal edge has weight x (session 2).
+"""Is (L) robust? Log-convexity of q -> Z_x(2q, m) when every diagonal edge has weight x.
 
 usage: python3 lweight.py > out_lweight.txt
 

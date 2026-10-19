@@ -1,4 +1,4 @@
-"""Surface free energy of the free king strip: f(k) = log(lambda_k) - s k -> -2 sigma (session 2).
+"""Surface free energy of the free king strip: f(k) = log(lambda_k) - s k -> -2 sigma.
 
 usage: python3 surface.py > out_surface.txt      (writes surface.json)
 
@@ -6,7 +6,7 @@ lambda_k = growth rate of the free strip of width k (bounds.json, float64, k <= 
 by lean.py reruns lean_king_free_w<k>_p-_<dtype>.json where present: longdouble k <= 24,
 float64 k = 25, 26). s and its error bar from the cylinder analysis (errbar.py).
 
-Even and odd k approach the limit from opposite sides (session 1: even f decreases, odd f
+Even and odd k approach the limit from opposite sides (`estimate.py`: even f decreases, odd f
 increases). Each subsequence is extrapolated with the models of errbar.models (geometric,
 exponential x power, 1/w drift of the ratio, two exponentials, Wynn); the error bar combines
 the model spread, the even/odd discrepancy and the propagated error of s (df/ds = -k).

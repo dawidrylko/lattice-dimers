@@ -3,12 +3,12 @@
 Perfect matchings of the king's graph (square lattice plus both diagonals),
 i.e. domicule tilings. Goal: the entropy per site
 `s = lim log Z / N` to many digits, with rigorous bounds.
-Results and their provenance: [`REPORT-session1.md`](REPORT-session1.md); adversarial audit of
-those results: [`REPORT-session2.md`](REPORT-session2.md) (proofs in `PROOF-upper.md`,
-`PROOF-lower.md`, hypothesis (L) in `L-NOTE.md`).
-Paper draft: [`paper/main.pdf`](paper/main.pdf) (source `paper/main.tex`, every number mapped to
-its output file in [`paper/NUMBERS.md`](paper/NUMBERS.md)); session report:
-[`REPORT-session3.md`](REPORT-session3.md).
+Results are written up in the paper draft [`paper/main.pdf`](paper/main.pdf) (source
+`paper/main.tex`); every number in it is mapped to its output file and the script that wrote it
+in [`paper/NUMBERS.md`](paper/NUMBERS.md). Full proofs of the rigorous bounds are in
+[`PROOF-upper.md`](PROOF-upper.md) and [`PROOF-lower.md`](PROOF-lower.md); the Calkin-Wilf
+question in [`CW-NOTE.md`](CW-NOTE.md); hypothesis (L) and the experiments on it in
+[`L-NOTE.md`](L-NOTE.md) and the directory [`L/`](L/).
 
 All commands below are run from this directory (`research/king-entropy/`)
 with Python 3.13.
@@ -33,7 +33,7 @@ python3 -m pip install -r requirements.txt
 | `cw.py` | Calkin-Wilf hypothesis: RP obstruction, spectral measure, exact log-convexity tests, limit form, conditional bounds (see `CW-NOTE.md`) |
 | `estimate.py` | final estimate of s from all cylinders, Z2 splitting table and correlation length; writes `z2.json` |
 | `timed.py` | runs a command and appends wall time and peak RSS to stderr |
-| `zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes (session 2); writes `zex_*.json` |
+| `zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `zex_*.json` |
 | `lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `lean_*.json` |
 | `audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`PROOF-*.md`) |
 | `errbar.py` | alternative extrapolation models, backtests and rounding check for s |
@@ -79,7 +79,7 @@ python3 timed.py python3 cw.py > out_cw.txt 2> time_cw.txt   # needs bounds.json
 Peak memory: about 1.1 GiB at w = 22, 2.2 GiB at w = 23, 4.3 GiB at w = 24
 and 8.4 GiB at w = 25 per `cylw.py` process (`out_estimate.txt`, cost table).
 
-Session 2 (each writes `out_<name>.txt`; `zexact.py`/`lean.py` runs as listed in `REPORT-session2.md`):
+Audit, error bar and (L) (each writes `out_<name>.txt`; `zexact.py`/`lean.py` runs as listed in `paper/NUMBERS.md`):
 
 ```sh
 python3 audit_bounds.py > out_audit_bounds.txt
@@ -92,7 +92,7 @@ python3 lweight.py > out_lweight.txt; python3 lweight.py big > out_lweight_big.t
 python3 repro.py > out_repro.txt
 ```
 
-Paper (session 3; needs a TeX distribution with `latexmk`, e.g. TeX Live with
+Paper (needs a TeX distribution with `latexmk`, e.g. TeX Live with
 `texlive-latex-extra`):
 
 ```sh

@@ -1,6 +1,6 @@
-# Calkin–Wilf lower bound for king dimers: status
+# Calkin-Wilf lower bound for king dimers: status
 
-Question: does the Calkin–Wilf (CW) lower bound
+Question: does the Calkin-Wilf (CW) lower bound
 
     s >= (a_{2q+p} - a_{2q}) / p,        a_k = log lambda_k (free strip, k rows),
 
@@ -88,7 +88,7 @@ raise the rigorous lower bound from 2 to 11 correct digits.
 ## 5. Open
 
 - Prove (L). Equivalent to log-convexity of `||g_q||_M^2` for the
-  M-self-adjoint `N = V M`; Cauchy–Schwarz needs `M >= 0`, which fails.
+  M-self-adjoint `N = V M`; Cauchy-Schwarz needs `M >= 0`, which fails.
   A proof needs structure beyond RP (e.g. a sign-reversing involution on
   pairs of configurations, or a positive representation of `Z(2q, m)`).
 - (O) has no proof route yet; numerically its margin decays like the

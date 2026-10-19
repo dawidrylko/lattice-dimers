@@ -1,8 +1,8 @@
-"""Task 1 (session 3b): the left-right reflection J and hypothesis (L).
+"""The left-right reflection J and hypothesis (L).
 
 usage: python3 symmetry.py > out_symmetry.txt
 
-(L): q -> Z(2q, m) log-convex for the free king strip of width m. Known (session 2): it fails
+(L): q -> Z(2q, m) log-convex for the free king strip of width m. Known (`lweight.py`): it fails
 for diagonal weights (1, 1/2), (1, 3/4); it holds for equal weights. This script pins down why.
 
 A  (exact) Factorisation T = H M of the row transfer: H(s, a) = horizontal tilings of the row

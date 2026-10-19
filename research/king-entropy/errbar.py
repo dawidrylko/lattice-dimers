@@ -1,5 +1,5 @@
 """Error bar of the cylinder estimate of s: alternative extrapolation models, backtests,
-rounding sensitivity (session 2).
+rounding sensitivity.
 
 usage: python3 errbar.py > out_errbar.txt      (writes errbar.json)
 
@@ -10,7 +10,7 @@ measure the float64 rounding error of the same quantities.
 
 Odd widths: f_w = log(lambda_w)/w increases to s; d_w = f_w - f_(w-2), r_w = d_(w-2)/d_w.
 Models for the tail s - f_W = sum_{j>=1} d_(W+2j), each fitted on the last few widths:
-  G    geometric, r constant = r_W (session 1)
+  G    geometric, r constant = r_W (the original estimate)
   PE   d_w = A exp(-w/xi) w^b, exact through d_(W-4), d_(W-2), d_W
   PE6  the same, least squares over the last 6 differences
   R1   r_w = r_inf + c/w through r_(W-2), r_W
@@ -206,7 +206,7 @@ def main():
     rec = 3 * (half + rmax * sum(abs(v) for v in sens.values()))
     print(f'\n== RECOMMENDATION: s = {mp.nstr(centre, 16)} +- {mp.nstr(rec, 1)}  (3 x (model half-width + rounding'
           f' {mp.nstr(rmax, 2)} per site x sum|ds/df| {mp.nstr(sum(abs(v) for v in sens.values()), 3)}));'
-          f' session 1: +- 3.9e-15')
+          f' original estimate: +- 3.9e-15')
     json.dump(dict(recommended=dict(s=str(centre), err=str(rec), half_width=str(half), rounding=str(rmax)), odd={W: {k: str(v) for k, v in m.items()} for W, m in oddres.items()},
                    mid={W: {k: str(v) for k, v in m.items()} for W, m in midres.items()},
                    sec0={W: {k: str(v) for k, v in m.items()} for W, m in s0res.items()},

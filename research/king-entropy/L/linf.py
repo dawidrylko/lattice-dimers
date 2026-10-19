@@ -1,9 +1,9 @@
-"""Task 3 (session 3b): is (L-infinity) as fragile as (L)?
+"""Is (L-infinity) as fragile as (L)?
 
 usage: python3 linf.py > out_linf.txt
 
 (L-inf): q -> a_{2q} = log lambda_{2q} convex (lambda_k = growth rate of the free strip with k rows
-and length -> infinity). Session 2 checked it for the king lattice up to 2q = 24. symmetry.py shows
+and length -> infinity). `surface.py` checks it for the king lattice up to 2q = 24. symmetry.py shows
 that (L) at fixed width m breaks under ANY diagonal-weight asymmetry (1, 1 - eps) once q is large
 (m = 4, 8, 12). Question: does (L-inf) break too? If not, (L-inf) is a different, robust statement.
 
@@ -102,7 +102,7 @@ B = json.load(open(bj))['log_lambda_free']
 err = max(abs(res['king (1, 1)'][k] - B[str(k)]) for k in res['king (1, 1)'] if str(k) in B)
 print(f'\nking (1, 1): max |a_k - bounds.json log_lambda_free[k]| over even k <= {KMAX}: {err:.1e}')
 
-# king (1, 1) up to 2q = 24 from surface.json (longdouble / float64 strip eigenvalues, session 2):
+# king (1, 1) up to 2q = 24 from surface.json (longdouble / float64 strip eigenvalues):
 # d_q = Delta^2 f(2q) since a_k = s k + f(k). The ratios d_q / d_(q+1) alternate: two corrections,
 # a positive one ~ rho^q and a sign-alternating one ~ (-sigma)^q with sigma < rho.
 from fractions import Fraction

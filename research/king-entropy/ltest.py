@@ -1,4 +1,4 @@
-"""Hypothesis (L): q -> Z(2q, m) is log-convex for every width m. Exact tests (session 2).
+"""Hypothesis (L): q -> Z(2q, m) is log-convex for every width m. Exact tests.
 
 usage: python3 ltest.py > out_ltest.txt       (reads zex_*.json from zexact.py, writes ltest.json)
 
