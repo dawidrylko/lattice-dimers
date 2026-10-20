@@ -751,26 +751,27 @@ Python~3.13 with numpy~2.5.3, mpmath~1.4.1 and scipy~1.18.1, as pinned in
 with the committed output file it is read from and the command that wrote that file. The paths below
 follow the later layout in subdirectories (\file{src/}, \file{data/}, \file{out/}, \file{logs/},
 \file{notes/}); at the tag \texttt{v1.0-king-entropy} their files sit directly in
-\texttt{research/king-entropy/}. The main commands, run from \texttt{research/king-entropy/}:
-\begin{center}
+\texttt{research/king-entropy/}. The main commands, each run as \texttt{python3} followed by the script
+and its arguments from \texttt{research/king-entropy/}:
+\begin{center}\small
 \begin{tabular}{ll}
 \toprule
-command & output \\
+script & output \\
 \midrule
-\texttt{python3 src/tm2.py king cyl 3 13}, \texttt{\dots\ 14 19} & \file{data/sec/sec\_king\_cyl\_*.json} \\
-\texttt{python3 src/cylw.py king cyl \textit{w} \textit{p}}, $w = 20, \dots, 25$ & \file{data/eig/eig\_king\_cyl\_w*\_p*.json} \\
-\texttt{python3 src/estimate.py} & \file{out/out\_estimate.txt}, \file{data/z2.json} \\
-\texttt{python3 src/errbar.py} & \file{out/out\_errbar.txt} \\
-\texttt{python3 src/bounds.py 24} & \file{out/out\_bounds.txt}, \file{data/bounds.json} \\
-\texttt{python3 src/audit\_bounds.py} & \file{out/out\_audit\_bounds.txt} \\
-\texttt{python3 src/surface.py} & \file{out/out\_surface.txt} \\
-\texttt{python3 src/cw.py} & \file{out/out\_cw.txt} \\
-\texttt{python3 src/zexact.py \dots}; \texttt{python3 src/ltest.py} & \file{data/zex/zex\_*.json}, \file{out/out\_ltest.txt} \\
-\texttt{python3 src/lcert.py 25 30}, \texttt{\dots\ 26 30} & \file{out/out\_lcert\_m25.txt}, \dots \\
-\texttt{python3 src/lweight.py} [\texttt{big}] & \file{out/out\_lweight*.txt} \\
-\texttt{python3 L/symmetry.py}, \texttt{L/linf.py 16}, \texttt{L/involution.py} & \file{L/out\_*.txt} \\
-\texttt{python3 src/validate.py}; \texttt{python3 src/crosscheck.py} & \file{out/out\_validate.txt}, \dots \\
-\texttt{python3 paper/derived.py} & \file{paper/out\_derived.txt} \\
+\texttt{src/tm2.py king cyl 3 13}, \texttt{\dots\ 14 19} & \file{data/sec/sec\_king\_cyl\_*.json} \\
+\texttt{src/cylw.py king cyl \textit{w} \textit{p}}, $w = 20, \dots, 25$ & \file{data/eig/eig\_king\_cyl\_w*\_p*.json} \\
+\texttt{src/estimate.py} & \file{out/out\_estimate.txt}, \file{data/z2.json} \\
+\texttt{src/errbar.py} & \file{out/out\_errbar.txt} \\
+\texttt{src/bounds.py 24} & \file{out/out\_bounds.txt}, \file{data/bounds.json} \\
+\texttt{src/audit\_bounds.py} & \file{out/out\_audit\_bounds.txt} \\
+\texttt{src/surface.py} & \file{out/out\_surface.txt} \\
+\texttt{src/cw.py} & \file{out/out\_cw.txt} \\
+\texttt{src/zexact.py \dots}; \texttt{src/ltest.py} & \file{data/zex/zex\_*.json}, \file{out/out\_ltest.txt} \\
+\texttt{src/lcert.py 25 30}, \texttt{\dots\ 26 30} & \file{out/out\_lcert\_m25.txt}, \dots \\
+\texttt{src/lweight.py} [\texttt{big}] & \file{out/out\_lweight*.txt} \\
+\texttt{L/symmetry.py}, \texttt{L/linf.py 16}, \texttt{L/involution.py} & \file{L/out\_*.txt} \\
+\texttt{src/validate.py}; \texttt{src/crosscheck.py} & \file{out/out\_validate.txt}, \dots \\
+\texttt{paper/derived.py} & \file{paper/out\_derived.txt} \\
 \bottomrule
 \end{tabular}
 \end{center}
