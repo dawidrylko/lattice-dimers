@@ -17,7 +17,7 @@ Z(2q) = sum_i c_i mu_i^q over the e0-visible eigenvalues mu_i of A (eigenvalues 
      real positive with c_2 > 0 (or a tie resolved the same way); listed per m.
 """
 import numpy as np
-from tmfast import nbits, row
+from tmfast import nbits, row, e0_spectrum
 
 
 def dense_T(m):
@@ -33,8 +33,7 @@ def dense_T(m):
 print('  m  visible mu  non-real  real mu<0  c<0 (real mu)  max |mu|/mu1 non-real or <0   mu2/mu1   c2/c1   large-q (L)')
 for m in range(2, 11):
     T = dense_T(m)
-    lam, R = np.linalg.eig(T)
-    c = R[0, :] * np.linalg.inv(R)[:, 0]
+    lam, c = e0_spectrum(T)
     mu = lam ** 2
     # merge eigenvalues of A = T^2 that coincide (lambda, -lambda) by summing their weights
     groups = []

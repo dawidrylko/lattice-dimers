@@ -25,7 +25,7 @@ from paths import P
 from fractions import Fraction
 import numpy as np
 from mpmath import mp, mpf, iv, log, sqrt
-from tmfast import nbits, row
+from tmfast import nbits, row, e0_spectrum
 
 
 
@@ -294,8 +294,7 @@ for w in range(2, 10):
             e[S] = 1
             T[:, S] = row(e, 'king', 'free', w, z=z)
         # e0-visible growth: largest |eigenvalue| with nonzero weight on e0
-        lam, R = np.linalg.eig(T)
-        c = R[0, :] * np.linalg.inv(R)[:, 0]
+        lam, c = e0_spectrum(T)
         vis = [abs(l) for l, ci in zip(lam, c) if abs(ci) > 1e-10]
         g = mpf(max(vis))
         b, _, _, _ = bounds.certify(w, z, upper=upper)
