@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Domino Tiling: every tiling of a 2n × 2n board | Dawid Ryłko</title>
+<title>Lattice Dimers: every tiling of a 2n × 2n board | Dawid Ryłko</title>
 <meta name="description" content="Domino (OEIS A004003) and domicule (A239273) tilings of 2n×2n boards counted up to 20×20, with notebooks on the method, a gallery of every tiling up to 18×18 and solver benchmarks.">
 <meta name="author" content="Dawid Ryłko">
 <meta name="keywords" content="domino tiling, dimer coverings, OEIS A004003, domicule tiling, king's graph, perfect matchings, OEIS A239273, PARI/GP, chessboard, combinatorics, dynamic programming, bitmask, BigInt, JavaScript">
@@ -15,17 +15,17 @@
 <link rel="icon" href="domino.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Domino Tiling">
+<meta property="og:site_name" content="Lattice Dimers">
 <meta property="og:locale" content="en_US">
 <meta property="og:url" content="__SITE_URL__">
-<meta property="og:title" content="Domino Tiling: every tiling of a 2n × 2n board and a solver benchmark">
+<meta property="og:title" content="Lattice Dimers: every tiling of a 2n × 2n board and a solver benchmark">
 <meta property="og:description" content="12,988,816 domino and 3,263,262,629,905 domicule tilings of a chessboard. Both sequences up to 20×20, notebooks on the method and a gallery of the tilings.">
 <meta property="og:image" content="__SITE_URL__og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Six of the 12,988,816 domino tilings of an 8×8 board">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Domino Tiling: every tiling of a 2n × 2n board and a solver benchmark">
+<meta name="twitter:title" content="Lattice Dimers: every tiling of a 2n × 2n board and a solver benchmark">
 <meta name="twitter:description" content="12,988,816 domino and 3,263,262,629,905 domicule tilings of a chessboard. Both sequences up to 20×20, notebooks on the method and a gallery of the tilings.">
 <meta name="twitter:image" content="__SITE_URL__og-image.png">
 <meta name="twitter:image:alt" content="Six of the 12,988,816 domino tilings of an 8×8 board">
@@ -159,7 +159,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     20&nbsp;×&nbsp;20, including a domicule term that is not in the OEIS yet.
   </p>
   <noscript><p class="intro">The gallery needs JavaScript. The benchmark results are also available in the
-    <a href="https://github.com/dawidrylko/domino-tiling/tree/master/benchmarks/results">repository</a>.</p></noscript>
+    <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/benchmarks/results">repository</a>.</p></noscript>
   <nav class="tabs">
     <a href="#gallery" data-tab="gallery">Gallery</a>
     <a href="#benchmark" data-tab="benchmark">Benchmark: dominoes</a>
@@ -232,7 +232,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       Node.js start-up. Number keeps the count in a JavaScript number and stops at 10×10, beyond which the count exceeds
       2<sup>53</sup>. BigInt counts exactly. Formula evaluates the product formula of Kasteleyn and Fisher as an exact resultant.
       <span class="environment"></span>
-      Results: <a href="https://github.com/dawidrylko/domino-tiling/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
+      Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
       __OLDER_BENCHMARKS__
       Re-run with <code>pnpm benchmark</code>.
     </p>
@@ -250,7 +250,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       Node.js start-up. BigInt counts exactly. Modular counts modulo primes below 2<sup>31</sup> in parallel worker
       threads, rebuilds the count with the Chinese remainder theorem and checks it against one more prime.
       <span class="environment"></span>
-      Results: <a href="https://github.com/dawidrylko/domino-tiling/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
+      Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
       Re-run with <code>pnpm benchmark:domicule</code>.
     </p>
   </section>
@@ -299,7 +299,7 @@ let sheetStyle = readStyle();
 
 function readStyle() {
   try {
-    const saved = localStorage.getItem('domino-tiling-style');
+    const saved = localStorage.getItem('lattice-dimers-style');
     return renderSheet.STYLES.includes(saved) ? saved : renderSheet.STYLES[0];
   } catch {
     return renderSheet.STYLES[0];
@@ -309,7 +309,7 @@ function readStyle() {
 function setStyle(style) {
   sheetStyle = style;
   try {
-    localStorage.setItem('domino-tiling-style', style);
+    localStorage.setItem('lattice-dimers-style', style);
   } catch {}
   showStyle();
   if (!shownSheet || !$('sheet').firstChild) return;

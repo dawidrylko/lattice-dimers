@@ -1,0 +1,2 @@
+# cmd: bash <scratchpad>/runL_free.sh
+# exit=0 wall=6135.4s user=5223.3s maxrss=1562MiB

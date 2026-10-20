@@ -1,5 +1,5 @@
 {
-  "name": "domino-tiling",
+  "name": "lattice-dimers",
   "version": "1.1.0",
   "private": true,
   "description": "Exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, A239273): a resultant form of the product formula, transfer-matrix solvers, a modular CRT solver, PARI/GP programs, notebooks and an online gallery.",
@@ -38,12 +38,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dawidrylko/domino-tiling.git"
+    "url": "git+https://github.com/dawidrylko/lattice-dimers.git"
   },
   "bugs": {
-    "url": "https://github.com/dawidrylko/domino-tiling/issues"
+    "url": "https://github.com/dawidrylko/lattice-dimers/issues"
   },
-  "homepage": "https://dawidrylko.github.io/domino-tiling/",
+  "homepage": "https://dawidrylko.github.io/lattice-dimers/",
   "packageManager": "pnpm@12.10.1",
   "engines": {
     "node": ">=26"

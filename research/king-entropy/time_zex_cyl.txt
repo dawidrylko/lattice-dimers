@@ -1,0 +1,2 @@
+# cmd: bash <scratchpad>/runL_cyl.sh
+# exit=0 wall=3479.4s user=2649.2s maxrss=794MiB

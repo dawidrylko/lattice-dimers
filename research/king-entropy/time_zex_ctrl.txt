@@ -1,0 +1,2 @@
+# cmd: bash <scratchpad>/run_ctrl.sh
+# exit=0 wall=21.4s user=16.4s maxrss=27MiB

@@ -1,0 +1,2 @@
+# cmd: bash <scratchpad>/run_q2.sh
+# exit=0 wall=8709.9s user=7902.3s maxrss=8733MiB

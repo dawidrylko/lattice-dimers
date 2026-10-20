@@ -7,8 +7,8 @@ const domiculeModular = require('../src/solvers/domiculeTilingSolver-Modular.js'
 const { renderNote, listNotes, NOTES_DIRECTORY } = require('./notes');
 const { CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
 
-const SITE_URL = 'https://dawidrylko.github.io/domino-tiling/';
-const REPOSITORY_TREE_URL = 'https://github.com/dawidrylko/domino-tiling/tree/master';
+const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
+const REPOSITORY_TREE_URL = 'https://github.com/dawidrylko/lattice-dimers/tree/master';
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OUTPUT_DIRECTORY = path.join(ROOT_DIRECTORY, 'dist', 'site');
 const BENCHMARK_ROOT = 'benchmarks/results';
@@ -53,7 +53,7 @@ const DOMICULE_BOARDS = [
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
 const DEFAULT_BOARD = '4x4';
-const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/domino-tiling/blob/master';
+const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const NOTE_SUMMARIES = {
   method: 'How the tilings are counted, numbered and sampled, and how every number is checked.',
   a004003: 'Notebook: domino tilings by three methods, the resultant and the running time.',
@@ -266,16 +266,16 @@ function buildJsonLd() {
         '@type': 'WebSite',
         '@id': `${SITE_URL}#website`,
         url: SITE_URL,
-        name: 'Domino Tiling',
+        name: 'Lattice Dimers',
         inLanguage: 'en',
         author: AUTHOR,
       },
       {
         '@type': 'SoftwareSourceCode',
-        name: 'Domino Tiling',
+        name: 'Lattice Dimers',
         description:
           'Exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, A239273) of 2n×2n boards: a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.',
-        codeRepository: 'https://github.com/dawidrylko/domino-tiling',
+        codeRepository: 'https://github.com/dawidrylko/lattice-dimers',
         programmingLanguage: 'JavaScript',
         runtimePlatform: 'Node.js',
         license: 'https://opensource.org/licenses/MIT',

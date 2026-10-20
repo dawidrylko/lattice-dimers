@@ -1,0 +1,2 @@
+# cmd: bash <scratchpad>/run_ld.sh
+# exit=0 wall=1160.4s user=1100.4s maxrss=2098MiB

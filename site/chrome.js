@@ -1,6 +1,6 @@
 const { escapeHtml } = require('./notes');
 
-const REPOSITORY_URL = 'https://github.com/dawidrylko/domino-tiling';
+const REPOSITORY_URL = 'https://github.com/dawidrylko/lattice-dimers';
 const NOTE_LABELS = { method: 'Method', a004003: 'A004003', a239273: 'A239273' };
 
 const CHROME_CSS = `
@@ -26,7 +26,7 @@ const CHROME_CSS = `
  */
 function renderHeader({ root, current, notes }) {
   const home = root || './';
-  const logo = `<img src="${root}domino.svg" alt="" width="32" height="32">Domino Tiling`;
+  const logo = `<img src="${root}domino.svg" alt="" width="32" height="32">Lattice Dimers`;
   const brand = current === 'home' ? `<h1 class="brand">${logo}</h1>` : `<a class="brand" href="${home}">${logo}</a>`;
   const links = [
     { slug: 'home', href: home, label: 'Home' },
