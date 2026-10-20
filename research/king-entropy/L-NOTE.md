@@ -10,15 +10,16 @@ control experiments showing that (L) is *not* a generic property: it fails on th
 lattice and when the two diagonals of the king lattice get clearly unequal weights ((1, ½),
 (1, ¾)), while equal weights x ∈ [0, 100] and near-equal (1, 0.9), (1, 0.95) survive. A proof
 cannot be uniform in the diagonal weights; the left-right symmetry is the natural ingredient.
-Every asymmetric weight pair we tested violates (L) at some m, and symmetry alone does not
-suffice; neither observation shows that the symmetry is necessary.
+Every pair of unequal diagonal weights on which (L) was tested ((1, 9/10), (1, 19/20), (1, 3/4),
+(1, 1/2), (1, 1/4), (1, 1/10), (1, 0), (2, 1/2)) violates (L) at some m, and symmetry alone does
+not suffice; neither observation shows that the symmetry is necessary.
 
 > **Erratum (2026-10-17).** The claims above that equal diagonal weights x ∈ [0, 100] and the
 > near-equal weights (1, 0.9), (1, 0.95) "survive", and that the oscillating eigenvalue "never shows up
 > with equal diagonal weights", are false beyond the tested range. (1, 9/10) violates (L) at m = 4, 8, 12
 > from 2q = 56, 86, 112 and (1, 19/20) at m = 8 from 2q = 118; equal weights x = 3/2, 2, 3 violate (L)
 > at 2q = 8 for every m ≥ 35, 21, 19 respectively (checked to m = 60), and (L∞) itself fails there.
-> Every asymmetric weight pair we tested violates (L) at some m (the mechanism is the Krein
+> Every pair of unequal diagonal weights on which (L) was tested violates it at some m (the mechanism is the Krein
 > signature of the J-odd sector), and the left-right symmetry alone does not suffice, since equal
 > weights x = 3/2, 2, 3 violate it too.
 > See §5.
@@ -178,7 +179,8 @@ weights the twisted swap breaks the identity, as the breaking-J paragraph requir
 (1, 0), triangular included. It fails for equal weights x >= 3/2: d_4 = -6.2e-4 (x = 1.5),
 -2.8e-3 (x = 2). Exactly, Z(8, m)^2 > Z(6, m)Z(10, m) for every m >= 35 (x = 3/2), m >= 21
 (x = 2), m >= 19 (x = 3), checked up to m = 60. So symmetry alone does not suffice, while every
-asymmetric weight pair we tested violates (L) at some m (breaking-J paragraph). King d_q up to
+pair of unequal diagonal weights on which (L) was tested violates it at some m (breaking-J
+paragraph). King d_q up to
 2q = 24, Prony fit (`linf.py`): a positive mode 0.1147^q (= e^{-2*1.083}, the transfer gap) and
 an alternating mode (-0.072)^q; their ratio is 0.007 at 2q = 24 and shrinks by a factor 0.63
 per step. At x = 1.25 the two modes are comparable (ratios d_q/d_{q+1} = 2.0, 376, 0.16, 48).
@@ -187,8 +189,8 @@ negative directions; gap monotonicity gives the decay rate, not the sign. A cert
 need the leading finite-size correction to relative accuracy ((1-r)/(1+r))^2 ≈ 0.63, i.e. about
 0.6, for every 2q >= 22, and no such theory exists for this non-integrable model.
 
-Conclusion. (L) is not a structural property: every asymmetric weight pair tested breaks it at
-some m, which points to the exact symmetry J, but J is not enough (equal weights x >= 3/2). At
+Conclusion. (L) is not a structural property: every pair of unequal diagonal weights on which it
+was tested breaks it at some m, which points to the exact symmetry J, but J is not enough (equal weights x >= 3/2). At
 x = 1 the truth is quantitative: x = 1 sits below a transition x* <= 3/2 where an alternating
 finite-size mode takes over. The proof routes tried here (RP, moments, TN, LGV, Cauchy-Schwarz,
 symmetric sectors, cut-and-swap involutions) are all qualitative or uniform in the weights and

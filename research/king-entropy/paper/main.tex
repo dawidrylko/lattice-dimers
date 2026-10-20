@@ -671,7 +671,9 @@ $H(M + M^{\mathsf T})/2$ has no violation wherever we tested it: for $m \le 9$, 
 the weights $(1, \tfrac12)$, $(1, \tfrac34)$, $(1, 0)$ and $(1, \tfrac{9}{10})$, and for
 $(1, \tfrac{9}{10})$ at $m = 8$ up to $2q = 198$; this includes every case in those ranges where
 $HM$ fails. It was not tested on the counterexamples at $m = 4$ and $m = 12$ or on
-$(1, \tfrac{19}{20})$.
+$(1, \tfrac{19}{20})$. Every pair of unequal diagonal weights on which (L) was tested, namely
+$(1, \tfrac{9}{10})$, $(1, \tfrac{19}{20})$, $(1, \tfrac34)$, $(1, \tfrac12)$, $(1, \tfrac14)$,
+$(1, \tfrac{1}{10})$, $(1, 0)$ and $(2, \tfrac12)$, violates it at some $m$.
 
 \emph{Equal weights are not enough.} With equal weights $x$ on both diagonals (L) holds for
 $x \in \{0, \tfrac14, \tfrac12, 1, 2, 4, 10, 100\}$ on narrow strips ($m \le 9$, $2q \le 38$), but
@@ -682,9 +684,8 @@ failure of (L$_\infty$) itself: the second difference of $a_{2q}$ at $2q = 8$ is
 at $x = \tfrac32$ and $-2.8\cdot10^{-3}$ at $x = 2$, and the differences alternate in sign. In the
 language of the Prony fit above, the alternating mode, which at $x = 1$ is $0.007$ of the positive
 one at $2q = 24$, is already comparable to it at $x = \tfrac54$ (ratios of consecutive second
-differences $2.0$, $376$, $0.16$, $48$) and dominates at $x = \tfrac32, 2, 3$. So every asymmetric weight pair we
-tested violates (L) at some $m$, and symmetry alone does not suffice, since equal weights
-$x = \tfrac32, 2, 3$ violate it too. At $x = 1$ both (L) and (L$_\infty$) are quantitative
+differences $2.0$, $376$, $0.16$, $48$) and dominates at $x = \tfrac32, 2, 3$. So symmetry alone does not suffice, since equal weights
+$x = \tfrac32, 2, 3$ violate (L) too. At $x = 1$ both (L) and (L$_\infty$) are quantitative
 facts: $x = 1$ lies below a transition $x^* \le \tfrac32$. Any proof has to see this, which rules
 out arguments that are uniform in the weights.
 
@@ -778,7 +779,7 @@ $w = 24$ ($22$ min), and the certified (L) tests at $m = 26$ ($8.0$\,GiB, $43$ m
 checks that their outputs are identical up to timings and commit tags.
 
 \section*{Data availability statement}
-% TODO(submission): tag the release, archive it on Zenodo, then replace both placeholders.
+% TODO(submission): tag the release, archive it on Zenodo, then replace the placeholder.
 The code and data that support the findings of this paper are openly available in the
 repository \url{https://github.com/dawidrylko/lattice-dimers} at the tag
 \texttt{v1.0-king-entropy}, and are archived on Zenodo,
