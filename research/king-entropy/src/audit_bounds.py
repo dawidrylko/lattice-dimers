@@ -1,6 +1,6 @@
 """Adversarial audit of the rigorous bounds in bounds.py.
 
-usage: python3 audit_bounds.py > out_audit_bounds.txt     (exit status 1 if any check fails)
+usage: python3 src/audit_bounds.py > out/out_audit_bounds.txt     (exit status 1 if any check fails)
 
 Everything here is exact (Python integers / Fractions, mpmath interval arithmetic);
 the boards are built from the lattice definition only (no code shared with tm.py).
@@ -21,6 +21,7 @@ LOWER (PROOF-lower.md)
  L3 certified bounds against the true growth rates (dense eigenvalues, w <= 9).
 """
 import functools, itertools, math, sys
+from paths import P
 from fractions import Fraction
 import numpy as np
 from mpmath import mp, mpf, iv, log, sqrt
@@ -32,7 +33,7 @@ def load_bounds():
     """bounds.py is a script (it recomputes everything and rewrites bounds.json when imported).
     Execute only its imports, constants and function definitions: the code under audit, unchanged."""
     import ast, types
-    tree = ast.parse(open('bounds.py').read())
+    tree = ast.parse(open(P('bounds.py')).read())
     body = []
     for node in tree.body[1:]:                       # skip the module docstring
         if isinstance(node, ast.Expr):               # first top-level statement with output: stop

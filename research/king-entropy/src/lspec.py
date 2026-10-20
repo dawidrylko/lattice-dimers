@@ -1,6 +1,6 @@
 """Spectral obstructions to two proof routes for (L).
 
-usage: python3 lspec.py > out_lspec.txt
+usage: python3 src/lspec.py > out/out_lspec.txt
 
 Z(2q, m) = e0^T A^q e0 with A = T^2 (free king strip, width m). Writing
 Z(2q) = sum_i c_i mu_i^q over the e0-visible eigenvalues mu_i of A (eigenvalues lambda and

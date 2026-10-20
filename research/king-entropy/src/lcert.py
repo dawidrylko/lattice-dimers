@@ -1,6 +1,6 @@
 """(L) beyond the exact range: Z(2q, m) in x87 extended precision with a rigorous rounding bound.
 
-usage: python3 lcert.py <m> <K> > out_lcert_m<m>.txt      (free king strip; two buffers of 2^(m+2) longdoubles)
+usage: python3 src/lcert.py <m> <K> > out/out_lcert_m<m>.txt      (free king strip; two buffers of 2^(m+2) longdoubles)
 
 Z(k, m) is computed with tmfast.step in np.longdouble (64-bit mantissa, u = 2^-64), ping-pong
 between two buffers, no normalisation (Z(K, m) < 1e4900 here). All terms are nonnegative and
@@ -12,6 +12,7 @@ with R~ the computed ratio (the last factor covers the three float operations of
 lower bound exceeds 1, (L) holds at q exactly. Small values are checked against zexact.py.
 """
 import json, subprocess, sys, time
+from paths import P
 import numpy as np
 from mpmath import mp, mpf
 from tmfast import nbits, step
@@ -55,7 +56,7 @@ def main():
     commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
     print(f'  m={m}: (L) certified for all 2 <= 2q <= {K - 2}: {ok}   ({time.time() - t:.0f}s, commit {commit})')
     json.dump(dict(m=m, K=K, rows=rows, all_certified=ok, commit=commit, Z=[str(z) for z in Z]),
-              open(f'lcert_m{m}_K{K}.json', 'w'), indent=1)
+              open(P(f'lcert_m{m}_K{K}.json'), 'w'), indent=1)
 
 
 if __name__ == '__main__':

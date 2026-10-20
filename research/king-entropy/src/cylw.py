@@ -1,6 +1,6 @@
 """Leading eigenvalue of the row transfer T in one parity sector, one width per run.
 
-usage: python3 cylw.py <lat> <bc> <w> <parity> [tol]
+usage: python3 src/cylw.py <lat> <bc> <w> <parity> [tol]
 
 float64 power iteration on T^2 (tmfast.row), same start vector as tm2.py.
 Stops when |est_k - est_{k-1}| < tol (default 4e-15, about two ulps of log(lambda)
@@ -11,6 +11,7 @@ contains the sector eigenvalue squared, and the residual |T^2 v / s - v|_1.
 Writes eig_<lat>_<bc>_w<w>_p<parity>.json.
 """
 import json, resource, subprocess, sys, time
+from paths import P
 import numpy as np
 from tmfast import nbits, row
 
@@ -66,9 +67,9 @@ def main():
     lat, bc, w, p = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])
     tol = float(sys.argv[5]) if len(sys.argv) > 5 else 4e-15
     out = sector_eig(lat, bc, w, p, tol, log=sys.stdout)
-    out['cmd'] = 'python3 cylw.py ' + ' '.join(sys.argv[1:])
+    out['cmd'] = 'python3 src/cylw.py ' + ' '.join(sys.argv[1:])
     print(json.dumps({k: out[k] for k in out if k != 'history'}), flush=True)
-    json.dump(out, open(f'eig_{lat}_{bc}_w{w}_p{p}.json', 'w'), indent=1)
+    json.dump(out, open(P(f'eig_{lat}_{bc}_w{w}_p{p}.json'), 'w'), indent=1)
 
 
 if __name__ == '__main__':

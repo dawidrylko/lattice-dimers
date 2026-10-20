@@ -1,6 +1,6 @@
 """Run a command, then append wall time and peak RSS of the child to stderr.
 
-usage: python3 timed.py <cmd> [args...]
+usage: python3 src/timed.py <cmd> [args...]
 """
 import resource, subprocess, sys, time
 

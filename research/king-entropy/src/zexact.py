@@ -1,6 +1,6 @@
 """Exact Z(k, m) for k = 0..K rows on a strip of width m, by CRT over 60-bit primes.
 
-usage: python3 zexact.py <lat> <bc> <m> <K>     -> zex_<lat>_<bc>_m<m>_K<K>.json
+usage: python3 src/zexact.py <lat> <bc> <m> <K>     -> data/zex/zex_<lat>_<bc>_m<m>_K<K>.json
 
 Same cell transfer as tmfast.row (reduced mod p after every cell). Each cell step
 adds at most 6 nonnegative terms below p < 2^60 into one int64 entry, so nothing
@@ -10,6 +10,7 @@ any graph with N vertices and degree <= 8, N = K * m (needs m >= 3 for 'cyl').
 The CRT result is therefore the exact integer, not a residue.
 """
 import json, math, subprocess, sys, time
+from paths import P
 import numpy as np
 from tmfast import nbits, row
 
@@ -84,8 +85,8 @@ def main():
     commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
     Z, P = zexact(lat, bc, m, K, log=sys.stdout)
     json.dump(dict(lattice=lat, bc=bc, m=m, K=K, Z=[str(x) for x in Z], primes=P, commit=commit,
-                   cmd='python3 zexact.py ' + ' '.join(sys.argv[1:]), wall=time.time() - t),
-              open(f'zex_{lat}_{bc}_m{m}_K{K}.json', 'w'))
+                   cmd='python3 src/zexact.py ' + ' '.join(sys.argv[1:]), wall=time.time() - t),
+              open(P(f'zex_{lat}_{bc}_m{m}_K{K}.json'), 'w'))
     print(f'done {time.time() - t:.0f}s', flush=True)
 
 

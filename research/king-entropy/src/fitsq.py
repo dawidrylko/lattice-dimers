@@ -1,7 +1,7 @@
 import json, pathlib, numpy as np
 from mpmath import mp, mpf, log
 mp.dps = 40
-d = json.load(open(pathlib.Path(__file__).resolve().parents[2] / 'data' / 'domiculeTilingTests.json'))['testCases']
+d = json.load(open(pathlib.Path(__file__).resolve().parents[3] / 'data' / 'domiculeTilingTests.json'))['testCases']
 Z = {t['rowCount']: int(t['expectedResult']) for t in d if t['rowCount'] > 0}
 Z[20] = int('974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427')  # README, repo-claimed
 Ls = sorted(Z)

@@ -1,6 +1,6 @@
 """Independent cross-checks of the float64 power-iteration eigenvalues.
 
-usage: python3 crosscheck.py > out_crosscheck.txt
+usage: python3 src/crosscheck.py > out/out_crosscheck.txt
 
 A. exact integers: Z_cyl(K, w) for K = 0..Kmax by the transfer with Python ints
    (tmfast.row on object arrays, no rounding anywhere), then
@@ -12,6 +12,7 @@ B. scipy.sparse.linalg.eigs (implicitly restarted Arnoldi, ARPACK) on the full
    eig_king_cyl_w20_p{0,1}.json; the third gives the gap inside a sector.
 """
 import json, resource, time
+from paths import P
 import numpy as np
 from mpmath import mp, mpf, log
 from scipy.sparse.linalg import LinearOperator, eigs
@@ -20,7 +21,7 @@ from tmfast import nbits, row
 mp.dps = 40
 
 print('== A. exact integer ratios vs float64 power iteration (king cyl)')
-kc = json.load(open('sec_king_cyl_3_13.json'))
+kc = json.load(open(P('sec_king_cyl_3_13.json')))
 for w, Kmax in ((9, 90), (11, 90), (12, 90), (13, 80)):
     t = time.time()
     v = np.zeros(1 << nbits(w, 'cyl'), dtype=object)
@@ -56,7 +57,7 @@ t = time.time()
 op = LinearOperator((n, n), matvec=mv, dtype=np.float64)
 vals = eigs(op, k=6, which='LM', tol=1e-15, ncv=40, return_eigenvectors=False, v0=np.ones(n))
 vals = sorted(vals, key=lambda z: -abs(z))
-pw = [json.load(open(f'eig_king_cyl_w20_p{p}.json'))['log_lambda'] for p in (0, 1)]
+pw = [json.load(open(P(f'eig_king_cyl_w20_p{p}.json')))['log_lambda'] for p in (0, 1)]
 print(f'  {calls[0]} matvecs, {time.time() - t:.0f}s, maxrss {resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024:.0f} MiB')
 for z in vals:
     print(f'  eigenvalue {z.real:.15e} {z.imag:+.2e}j   log|.| = {np.log(abs(z)):.15f}')

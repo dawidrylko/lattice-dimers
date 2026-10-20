@@ -1,6 +1,6 @@
 """Validation of the transfer code (tm.py / tmfast.py) against independent methods.
 
-usage: python3 validate.py > out_validate.txt     (exit status 1 if any check fails)
+usage: python3 src/validate.py > out/out_validate.txt     (exit status 1 if any check fails)
 
 1. brute-force perfect-matching counts on explicit graphs vs the transfer,
    king/tri/sq x free/cyl, w = 3..5, h = 1..4 (plus w = 6, h = 1..3)
@@ -12,6 +12,7 @@ usage: python3 validate.py > out_validate.txt     (exit status 1 if any check fa
    a(n) = Z(3 x 2n) (A239265 in OEIS) and a(n) = Z(4 x n) (A239266)
 """
 import functools, itertools, json, pathlib, sys
+from paths import P
 import numpy as np
 from mpmath import mp, mpf, catalan, pi, asinh, fabs, cos as mcos
 import tm, tmfast
@@ -103,7 +104,7 @@ def count_crt(h, w, lat='king', bc='free'):
     return x
 
 
-root = pathlib.Path(__file__).resolve().parents[2] / 'data'
+root = pathlib.Path(__file__).resolve().parents[3] / 'data'
 for fn in ('domiculeTilingTests.json', 'domiculeTilingTests-Rectangles.json'):
     for t in json.load(open(root / fn))['testCases']:
         h, w = t['rowCount'], t.get('colCount', t['rowCount'])
@@ -220,7 +221,7 @@ for G in (16, 32, 64):
     avg = np.mean([bloch_logdet(orient, a, b) for a in ks for b in ks])
     s_kast = avg / 8                    # (1/2) log|Pf| per site, 4 sites per cell
     print(f'  Kasteleyn Bloch average, {G}x{G} grid: s_tri = {s_kast:.15f}')
-tc = json.load(open('sec_tri_cyl_3_18.json'))
+tc = json.load(open(P('sec_tri_cyl_3_18.json')))
 s_tm = tc['17']['0'] / 17
 check('tri cylinder (w=17) = Kasteleyn bulk value', abs(s_tm - s_kast) < 1e-13,
       f'TM {s_tm:.15f} Kasteleyn {s_kast:.15f} diff {s_tm - s_kast:.1e}')
@@ -228,7 +229,7 @@ check('tri value starts 0.4286', f'{s_tm:.4f}' == '0.4286', f'{s_tm:.13f}')
 
 # ---------------------------------------------------------------- 5. free strips w = 3, 4
 print('== 5. free king strips vs ratios of exact counts')
-kf = json.load(open('sec_king_free_1_18.json'))
+kf = json.load(open(P('sec_king_free_1_18.json')))
 for w, step, name in ((3, 2, 'A239265: a(n) = Z(3 x 2n)'), (4, 1, 'A239266: a(n) = Z(4 x n)')):
     a = [tm.count(step * n, w) for n in range(1, 41)]
     print(f'  {name}, n = 1..10: {a[:10]}')
