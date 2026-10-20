@@ -1,6 +1,6 @@
 """(L) as a parity statement about superpositions of two matchings. Brute force.
 
-usage: python3 lparity.py > out_lparity.txt
+usage: python3 src/lparity.py > out/out_lparity.txt
 
 Rows 0..2q+1 of a width-m king strip. Type 1: X perfect matching of rows [0, 2q),
 Y of rows [2, 2q+2) (Z(2q)^2 pairs). Type 2: X' of rows [0, 2q+2), Y' of rows [2, 2q)

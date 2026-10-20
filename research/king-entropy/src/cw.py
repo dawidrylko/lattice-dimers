@@ -1,6 +1,6 @@
 """Calkin-Wilf (CW) lower bound for the king dimer entropy: hypothesis, tests, evidence.
 
-usage: python3 cw.py > out_cw.txt
+usage: python3 src/cw.py > out/out_cw.txt
 
 CW: s >= (a_{2q+p} - a_{2q}) / p,  a_k = log lambda_k (free strip with k rows).
 Standard proof: Z(2q+p, m) <= rho(R_m)^p Z(2q, m) for all m (R_m = row transfer of
@@ -21,6 +21,7 @@ reflection positivity (RP). Sections:
     (bounds.json) and every CW candidate against the cylinder estimate of s.
 """
 import itertools, json
+from paths import P
 import numpy as np
 from mpmath import mp, mpf, log
 from tmfast import nbits, row
@@ -148,9 +149,9 @@ print(f'  (I3) Z(2j+1,m)^2 <= Z(2j-1,m) Z(2j+3,m), even m: {len(viol3)} violatio
 
 # ------------------------------------------------------------------ D
 print('\n== D. the limit statement: f(k) = a_k - s k, a_k = log lambda_k (free strip, k rows)')
-b = json.load(open('bounds.json'))
+b = json.load(open(P('bounds.json')))
 a = {int(k): mpf(x) for k, x in b['log_lambda_free'].items()}
-z2 = json.load(open('z2.json'))
+z2 = json.load(open(P('z2.json')))
 s, ds = mpf(z2['s_estimate']), mpf(z2['s_error'])
 print(f'  s = {mp.nstr(s, 16)} +- {mp.nstr(ds, 2)} (estimate.py); f(k) error from s: <= k * {mp.nstr(ds, 2)}')
 for k in sorted(a):
@@ -181,7 +182,7 @@ json.dump(dict(spectral=spec, I1=dict(cases=n1, violations=viol1, undecided=near
                I2=dict(cases=n2, violations=viol2), I3=dict(cases=n3, violations=viol3),
                limit=dict(even_convex=conv, even_decreasing=dec, odd_increasing=inc, separated=sep,
                           max_candidate=str(worst[0]), at=worst[1:], s=str(s), s_err=str(ds))),
-          open('cw.json', 'w'), indent=1, default=str)
+          open(P('cw.json'), 'w'), indent=1, default=str)
 
 
 # ------------------------------------------------------------------ E

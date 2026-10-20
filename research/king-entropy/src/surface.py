@@ -1,6 +1,6 @@
 """Surface free energy of the free king strip: f(k) = log(lambda_k) - s k -> -2 sigma.
 
-usage: python3 surface.py > out_surface.txt      (writes surface.json)
+usage: python3 src/surface.py > out/out_surface.txt      (writes surface.json)
 
 lambda_k = growth rate of the free strip of width k (bounds.json, float64, k <= 24; replaced
 by lean.py reruns lean_king_free_w<k>_p-_<dtype>.json where present: longdouble k <= 24,
@@ -11,7 +11,8 @@ increases). Each subsequence is extrapolated with the models of errbar.models (g
 exponential x power, 1/w drift of the ratio, two exponentials, Wynn); the error bar combines
 the model spread, the even/odd discrepancy and the propagated error of s (df/ds = -k).
 """
-import glob, json
+import json
+from paths import P, G
 from mpmath import mp, mpf
 from errbar import models, KEYS
 
@@ -19,10 +20,10 @@ mp.dps = 40
 S = mpf('0.5655119110413253')         # errbar.py RECOMMENDATION (out_errbar.txt)
 DS = mpf('6e-16')                       # its error bar
 
-b = json.load(open('bounds.json'))
+b = json.load(open(P('bounds.json')))
 lam = {int(k): (mpf(x), 'bounds.json float64', 0) for k, x in b['log_lambda_free'].items()}
-for fn in sorted(glob.glob('lean_king_free_w*_p-_*.json')):          # priority: longdouble > lean float64 > bounds.json
-    d = json.load(open(fn))
+for fn in sorted(G('lean_king_free_w*_p-_*.json')):          # priority: longdouble > lean float64 > bounds.json
+    d = json.load(open(P(fn)))
     rank = 2 if d['dtype'] == 'longdouble' else 1
     if d['converged'] and rank > lam.get(d['w'], (0, '', -1))[2]:
         lam[d['w']] = (mpf(d['log_lambda']), f'{fn} @{d["commit"]}', rank)
@@ -74,4 +75,4 @@ print(f'  RESULT: -2 sigma = {mp.nstr(mid, 15)} +- {mp.nstr(err, 2)};  sigma = {
 json.dump(dict(s=str(S), ds=str(DS), f={k: str(v) for k, v in f.items()}, sources={k: v[1] for k, v in lam.items()},
                minus_2sigma=str(mid), minus_2sigma_err=str(err), sigma=str(sigma), sigma_err=str(err / 2),
                models={n: {W: {k: str(v) for k, v in m.items()} for W, m in r.items()} for n, r in res.items()}),
-          open('surface.json', 'w'), indent=1)
+          open(P('surface.json'), 'w'), indent=1)

@@ -1,6 +1,6 @@
 """Is (L-infinity) as fragile as (L)?
 
-usage: python3 linf.py > out_linf.txt
+usage: python3 linf.py [kmax] > out_linf.txt      (kmax default 18; the committed out_linf.txt has kmax = 16)
 
 (L-inf): q -> a_{2q} = log lambda_{2q} convex (lambda_k = growth rate of the free strip with k rows
 and length -> infinity). `surface.py` checks it for the king lattice up to 2q = 24. symmetry.py shows
@@ -82,7 +82,7 @@ for w in [(1, 1, 1), (2, 2, 1)]:
             assert abs(v[0] - ref[k] / w[0] ** (k * m / 2)) <= 1e-9 * abs(v[0]), (w, m, k)
 print('float cell transfer = exact row transfer (m = 3..5, k <= 8)')
 
-bj = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'bounds.json')
+bj = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'bounds.json')
 KMAX = int(sys.argv[1]) if len(sys.argv) > 1 else 18
 CASES = [('king (1, 1)', 1.0, 1.0), ('(1, 0.95)', 1.0, 0.95), ('(1, 0.9)', 1.0, 0.9), ('(1, 0.75)', 1.0, 0.75),
          ('(1, 0.5)', 1.0, 0.5), ('triangular (1, 0)', 1.0, 0.0), ('equal x = 0.5', 0.5, 0.5),
@@ -106,7 +106,7 @@ print(f'\nking (1, 1): max |a_k - bounds.json log_lambda_free[k]| over even k <=
 # d_q = Delta^2 f(2q) since a_k = s k + f(k). The ratios d_q / d_(q+1) alternate: two corrections,
 # a positive one ~ rho^q and a sign-alternating one ~ (-sigma)^q with sigma < rho.
 from fractions import Fraction
-S = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'surface.json')))['f']
+S = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'surface.json')))['f']
 f = {int(k): Fraction(v) for k, v in S.items()}
 d = {q: f[2 * q - 2] + f[2 * q + 2] - 2 * f[2 * q] for q in range(2, 13)}
 print('\nking (1, 1) from surface.json: d_q for 2q = 4..24 and ratios d_q/d_(q+1)')

@@ -5,9 +5,9 @@ Question: does the Calkin-Wilf (CW) lower bound
     s >= (a_{2q+p} - a_{2q}) / p,        a_k = log lambda_k (free strip, k rows),
 
 hold for perfect matchings of the king graph, and can it be proven?
-Everything below is produced by `python3 cw.py > out_cw.txt` (code at
+Everything below is produced by `python3 src/cw.py > out/out_cw.txt` (code at
 `0357d17`, run at `73a0628`, 214 s); free-strip `a_k` and certified lambdas
-come from `bounds.py 24` (`bounds.json`), `s` from `estimate.py` (`z2.json`).
+come from `src/bounds.py 24` (`data/bounds.json`), `s` from `src/estimate.py` (`data/z2.json`).
 
 **Verdict: neither proven nor refuted.** The standard proof is impossible
 here (no reflection positivity), but every testable consequence holds, and
@@ -76,7 +76,7 @@ even value lies above every odd one; the limit `-2 sigma ~ -0.4840358715` (from 
 ## 4. What the bound would give
 
 Conditional, rigorous given the hypothesis (certified `lambda` bounds from
-`bounds.py`, `cw.py` section E):
+`src/bounds.py`, `src/cw.py` section E):
 
 - given (L): **s >= 0.565511911035** (2q = 22, p = 2)
 - given (L) and (O): s >= 0.565511911022 (2q = 22, p = 1; weaker than the p = 2 one)

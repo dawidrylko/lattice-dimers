@@ -1,7 +1,7 @@
 """Error bar of the cylinder estimate of s: alternative extrapolation models, backtests,
 rounding sensitivity.
 
-usage: python3 errbar.py > out_errbar.txt      (writes errbar.json)
+usage: python3 src/errbar.py > out/out_errbar.txt      (writes errbar.json)
 
 Inputs: sector values of log(lambda) from tm2.py (sec_king_cyl_*.json, w <= 19) and
 cylw.py (eig_king_cyl_w*_p*.json, w = 20..25), all float64; if present, the
@@ -20,7 +20,8 @@ Models for the tail s - f_W = sum_{j>=1} d_(W+2j), each fitted on the last few w
 Each model is run with the data truncated at W = 19, 21, 23, 25 (backtest).
 Even widths: the same models on the sector midpoints m_w and on each sector.
 """
-import glob, json
+import json
+from paths import P, G
 import numpy as np
 from mpmath import mp, mpf, exp, log, findroot, nsum, inf, sqrt
 
@@ -30,19 +31,19 @@ def load():
     """Cylinder sector log(lambda) (float64) and longdouble reruns, keyed by (w, parity)."""
     lam = {}
     for fn in ('sec_king_cyl_3_13.json', 'sec_king_cyl_14_19.json'):
-        for w, d in json.load(open(fn)).items():
+        for w, d in json.load(open(P(fn))).items():
             for p, x in d.items():
                 lam[int(w), int(p)] = mpf(x)
-    for fn in glob.glob('eig_king_cyl_w*_p*.json'):
-        d = json.load(open(fn))
+    for fn in G('eig_king_cyl_w*_p*.json'):
+        d = json.load(open(P(fn)))
         lam[d['w'], d['parity']] = mpf(d['log_lambda'])
     for w in sorted({w for w, _ in lam}):
         if w % 2:
             x = lam.get((w, 1), lam.get((w, 0)))
             lam[w, 0] = lam[w, 1] = x
     ld = {}
-    for fn in glob.glob('lean_king_cyl_w*_p*_longdouble.json'):
-        d = json.load(open(fn))
+    for fn in G('lean_king_cyl_w*_p*_longdouble.json'):
+        d = json.load(open(P(fn)))
         if d['converged']:
             ld[d['w'], d['parity']] = mpf(d['log_lambda'])
     return lam, ld
@@ -212,7 +213,7 @@ def main():
                    sec0={W: {k: str(v) for k, v in m.items()} for W, m in s0res.items()},
                    sec1={W: {k: str(v) for k, v in m.items()} for W, m in s1res.items()},
                    rounding={w: str(x) for w, x in rnd.items()}, sensitivity={w: str(x) for w, x in sens.items()}),
-              open('errbar.json', 'w'), indent=1)
+              open(P('errbar.json'), 'w'), indent=1)
 
 
 if __name__ == '__main__':

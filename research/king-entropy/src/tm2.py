@@ -1,4 +1,5 @@
 import sys, time, json
+from paths import P
 import numpy as np
 from tm import row
 
@@ -30,4 +31,4 @@ if __name__ == '__main__':
             r[p] = lam_sector(w, lat, bc, p)
         out[w] = {p: r[p][0] for p in r}
         print(f'{lat} {bc} w={w:2d} even: {r[0][0]:.15f} ({r[0][1]})  odd: {r[1][0]:.15f} ({r[1][1]})  /w: {r[0][0]/w:.13f} {r[1][0]/w:.13f}  t={time.time()-t:.1f}s', flush=True)
-        json.dump(out, open(f'sec_{lat}_{bc}_{w0}_{w1}.json', 'w'))
+        json.dump(out, open(P(f'sec_{lat}_{bc}_{w0}_{w1}.json'), 'w'))

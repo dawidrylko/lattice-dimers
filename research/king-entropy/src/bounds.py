@@ -1,6 +1,6 @@
 """Rigorous bounds on the king-graph dimer entropy s, and the Calkin-Wilf check.
 
-usage: python3 bounds.py <wmax> > out_bounds.txt
+usage: python3 src/bounds.py <wmax> > out/out_bounds.txt
 
 LOWER (Fekete). Free strips side by side tile the plane, so
 Z(K, k w) >= Z(K, w)^k and s >= log(lambda_w) / w for every w, where
@@ -36,6 +36,7 @@ king graph has d_v <= 8 and (d!)^(1/(2d)) increases with d, so
 s <= log(8!)/16.
 """
 import itertools, json, sys, time
+from paths import P
 import numpy as np
 from mpmath import mp, mpf, log, sqrt, factorial, floor, ceil
 import tm
@@ -167,7 +168,7 @@ for m in (2, 3, 4, 5, 6):
 print('      M < 0 already for m=3 (the tridiagonal 1-1-1 block, 1 - sqrt 2): the diagonal crossing edges')
 print('      are mapped to the other diagonal by the reflection, so neither natural cut is reflection positive.')
 
-kf = json.load(open('sec_king_free_1_18.json'))
+kf = json.load(open(P('sec_king_free_1_18.json')))
 lam = {int(k): v['0'] for k, v in kf.items()}
 lam.update({w: lamfree[w] for w in lamfree if w not in lam})
 viol, worst, tested = 0, -np.inf, 0
@@ -195,4 +196,4 @@ for c, q2, p in sorted(cand)[-6:]:
 print(f'  largest candidate {max(cand)[0]:.13f}; compare the cylinder estimate in out_estimate.txt')
 json.dump(dict(lower={w: float(b) for w, b in low.items()}, upper={w: float(b) for w, b in upp.items()},
                log_lambda_free={w: float(x) for w, x in lamfree.items()}, z_open=Z_OPEN,
-               kahn_lovasz=float(log(factorial(8)) / 16)), open('bounds.json', 'w'), indent=1)
+               kahn_lovasz=float(log(factorial(8)) / 16)), open(P('bounds.json'), 'w'), indent=1)

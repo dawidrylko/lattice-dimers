@@ -215,7 +215,7 @@ and the midpoints converge to $s$ at the same rate as the odd widths, from indep
 
 \begin{table}[ht]
 \caption{Odd cylinders: $f_w = \log\lambda_w / w$, $d_w = f_w - f_{w-2}$, $r_w = d_{w-2}/d_w$ and the
-geometric extrapolation $s_w$ (\file{out\_estimate.txt}).}\label{tab:odd}
+geometric extrapolation $s_w$ (\file{out/out\_estimate.txt}).}\label{tab:odd}
 \begin{tabular}{rllrl}
 \toprule
 $w$ & $f_w$ & $d_w$ & $r_w$ & $s_w$ \\
@@ -242,7 +242,7 @@ shows the result.
 
 \begin{table}[ht]
 \caption{Estimates of $s$ by model: from the odd widths up to $W = 25$, from the even midpoints up
-to $W = 24$, and the backtest change $|s(23) - s(25)|$ on the odd widths (\file{out\_errbar.txt}).}
+to $W = 24$, and the backtest change $|s(23) - s(25)|$ on the odd widths (\file{out/out\_errbar.txt}).}
 \label{tab:models}
 \begin{tabular}{lllr}
 \toprule
@@ -311,7 +311,7 @@ they improve with $w$. Since $\log \lambda_w / w = s + f(w)/w$ with $f(w) \to -2
 does like $0.497/w$.
 
 \begin{table}[ht]
-\caption{Certified bounds from strips of width $w$ (\file{out\_bounds.txt}).}\label{tab:bounds}
+\caption{Certified bounds from strips of width $w$ (\file{out/out\_bounds.txt}).}\label{tab:bounds}
 \begin{tabular}{rll}
 \toprule
 $w$ & lower bound on $\underline s$ & upper bound on $\bar s$ \\
@@ -479,7 +479,7 @@ $a_k$ from extended-precision power iteration for $k = 14, \dots, 24$ and float6
 Collatz--Wielandt bracket for $k = 25, 26$).
 
 \begin{table}[ht]
-\caption{$f(k) = \log\lambda_k - sk$ for free strips (\file{out\_surface.txt}).}\label{tab:surface}
+\caption{$f(k) = \log\lambda_k - sk$ for free strips (\file{out/out\_surface.txt}).}\label{tab:surface}
 \begin{tabular}{rlrl}
 \toprule
 $k$ & $f(k)$ & $k$ & $f(k)$ \\
@@ -512,7 +512,7 @@ rms $9.3\cdot10^{-4}$, and extrapolating $1/\xi_w$ linearly in $1/w$ gives $\xi_
 So $\xi \approx 1.23$.
 
 \begin{table}[ht]
-\caption{Splitting of the parity sectors on even cylinders (\file{out\_estimate.txt}).}\label{tab:z2}
+\caption{Splitting of the parity sectors on even cylinders (\file{out/out\_estimate.txt}).}\label{tab:z2}
 \begin{tabular}{rll@{\qquad}rll}
 \toprule
 $w$ & $\Delta_w$ & $\xi_w$ & $w$ & $\Delta_w$ & $\xi_w$ \\
@@ -619,8 +619,8 @@ $(1, \tfrac{9}{10})$ and $(1, \tfrac{19}{20})$), and for equal
 diagonal weights $x = \tfrac32, 2, 3$, which keep it.
 
 \begin{table}[ht]
-\caption{Tests of (L), $Z(2q)^2 \le Z(2q-2)Z(2q+2)$, at unit weights (\file{out\_ltest.txt},
-\file{out\_lcert\_m25.txt}, \file{out\_lcert\_m26.txt}); the row range shrinks as $m$ grows.}\label{tab:L}
+\caption{Tests of (L), $Z(2q)^2 \le Z(2q-2)Z(2q+2)$, at unit weights (\file{out/out\_ltest.txt},
+\file{out/out\_lcert\_m25.txt}, \file{out/out\_lcert\_m26.txt}); the row range shrinks as $m$ grows.}\label{tab:L}
 \begin{tabular}{lllrr}
 \toprule
 lattice, boundary & widths $m$ & rows $2q$ & cases & violations \\
@@ -747,35 +747,39 @@ All code and outputs are in the repository
 \end{center}
 tag \texttt{v1.0-king-entropy}, directory \texttt{research/king-entropy/}. The scripts need
 Python~3.13 with numpy~2.5.3, mpmath~1.4.1 and scipy~1.18.1, as pinned in
-\file{requirements.txt}. Every number in this paper is listed in \file{paper/NUMBERS.md},
-with the committed output file it is read from and the command that wrote that file. The main commands, run from that directory:
-\begin{center}
+\file{src/requirements.txt}. Every number in this paper is listed in \file{paper/NUMBERS.md},
+with the committed output file it is read from and the command that wrote that file. The paths below
+follow the later layout in subdirectories (\file{src/}, \file{data/}, \file{out/}, \file{logs/},
+\file{notes/}); at the tag \texttt{v1.0-king-entropy} their files sit directly in
+\texttt{research/king-entropy/}. The main commands, each run as \texttt{python3} followed by the script
+and its arguments from \texttt{research/king-entropy/}:
+\begin{center}\small
 \begin{tabular}{ll}
 \toprule
-command & output \\
+script & output \\
 \midrule
-\texttt{python3 tm2.py king cyl 3 13}, \texttt{\dots\ 14 19} & \file{sec\_king\_cyl\_*.json} \\
-\texttt{python3 cylw.py king cyl \textit{w} \textit{p}}, $w = 20, \dots, 25$ & \file{eig\_king\_cyl\_w*\_p*.json} \\
-\texttt{python3 estimate.py} & \file{out\_estimate.txt}, \file{z2.json} \\
-\texttt{python3 errbar.py} & \file{out\_errbar.txt} \\
-\texttt{python3 bounds.py 24} & \file{out\_bounds.txt}, \file{bounds.json} \\
-\texttt{python3 audit\_bounds.py} & \file{out\_audit\_bounds.txt} \\
-\texttt{python3 surface.py} & \file{out\_surface.txt} \\
-\texttt{python3 cw.py} & \file{out\_cw.txt} \\
-\texttt{python3 zexact.py \dots}; \texttt{python3 ltest.py} & \file{zex\_*.json}, \file{out\_ltest.txt} \\
-\texttt{python3 lcert.py 25 30}, \texttt{\dots\ 26 30} & \file{out\_lcert\_m25.txt}, \dots \\
-\texttt{python3 lweight.py} [\texttt{big}] & \file{out\_lweight*.txt} \\
-\texttt{python3 symmetry.py}, \texttt{linf.py}, \texttt{involution.py} (in \file{L/}) & \file{L/out\_*.txt} \\
-\texttt{python3 validate.py}; \texttt{python3 crosscheck.py} & \file{out\_validate.txt}, \dots \\
-\texttt{python3 paper/derived.py} & \file{paper/out\_derived.txt} \\
+\texttt{src/tm2.py king cyl 3 13}, \texttt{\dots\ 14 19} & \file{data/sec/sec\_king\_cyl\_*.json} \\
+\texttt{src/cylw.py king cyl \textit{w} \textit{p}}, $w = 20, \dots, 25$ & \file{data/eig/eig\_king\_cyl\_w*\_p*.json} \\
+\texttt{src/estimate.py} & \file{out/out\_estimate.txt}, \file{data/z2.json} \\
+\texttt{src/errbar.py} & \file{out/out\_errbar.txt} \\
+\texttt{src/bounds.py 24} & \file{out/out\_bounds.txt}, \file{data/bounds.json} \\
+\texttt{src/audit\_bounds.py} & \file{out/out\_audit\_bounds.txt} \\
+\texttt{src/surface.py} & \file{out/out\_surface.txt} \\
+\texttt{src/cw.py} & \file{out/out\_cw.txt} \\
+\texttt{src/zexact.py \dots}; \texttt{src/ltest.py} & \file{data/zex/zex\_*.json}, \file{out/out\_ltest.txt} \\
+\texttt{src/lcert.py 25 30}, \texttt{\dots\ 26 30} & \file{out/out\_lcert\_m25.txt}, \dots \\
+\texttt{src/lweight.py} [\texttt{big}] & \file{out/out\_lweight*.txt} \\
+\texttt{L/symmetry.py}, \texttt{L/linf.py 16}, \texttt{L/involution.py} & \file{L/out\_*.txt} \\
+\texttt{src/validate.py}; \texttt{src/crosscheck.py} & \file{out/out\_validate.txt}, \dots \\
+\texttt{paper/derived.py} & \file{paper/out\_derived.txt} \\
 \bottomrule
 \end{tabular}
 \end{center}
 The outputs were produced on a machine with four cores and $15.7$\,GiB of memory. The widest
 runs dominate the cost: the cylinder $w = 25$ ($8.4$\,GiB, $22.5$ min), the certified bounds at
 $w = 24$ ($22$ min), and the certified (L) tests at $m = 26$ ($8.0$\,GiB, $43$ min). The script
-\file{repro.py} re-runs \texttt{estimate.py}, \texttt{cw.py}, \texttt{bounds.py 16} and
-\texttt{cylw.py king cyl 20 0} from a clean export of the repository and
+\file{src/repro.py} re-runs \texttt{src/estimate.py}, \texttt{src/cw.py}, \texttt{src/bounds.py 16} and
+\texttt{src/cylw.py king cyl 20 0} from a clean export of the repository and
 checks that their outputs are identical up to timings and commit tags.
 
 \section*{Data availability statement}

@@ -1,6 +1,6 @@
 """Adversarial audit of the rigorous bounds in bounds.py.
 
-usage: python3 audit_bounds.py > out_audit_bounds.txt     (exit status 1 if any check fails)
+usage: python3 src/audit_bounds.py > out/out_audit_bounds.txt     (exit status 1 if any check fails)
 
 Everything here is exact (Python integers / Fractions, mpmath interval arithmetic);
 the boards are built from the lattice definition only (no code shared with tm.py).
@@ -21,10 +21,11 @@ LOWER (PROOF-lower.md)
  L3 certified bounds against the true growth rates (dense eigenvalues, w <= 9).
 """
 import functools, itertools, math, sys
+from paths import P
 from fractions import Fraction
 import numpy as np
 from mpmath import mp, mpf, iv, log, sqrt
-from tmfast import nbits, row
+from tmfast import nbits, row, e0_spectrum
 
 
 
@@ -32,7 +33,7 @@ def load_bounds():
     """bounds.py is a script (it recomputes everything and rewrites bounds.json when imported).
     Execute only its imports, constants and function definitions: the code under audit, unchanged."""
     import ast, types
-    tree = ast.parse(open('bounds.py').read())
+    tree = ast.parse(open(P('bounds.py')).read())
     body = []
     for node in tree.body[1:]:                       # skip the module docstring
         if isinstance(node, ast.Expr):               # first top-level statement with output: stop
@@ -293,8 +294,7 @@ for w in range(2, 10):
             e[S] = 1
             T[:, S] = row(e, 'king', 'free', w, z=z)
         # e0-visible growth: largest |eigenvalue| with nonzero weight on e0
-        lam, R = np.linalg.eig(T)
-        c = R[0, :] * np.linalg.inv(R)[:, 0]
+        lam, c = e0_spectrum(T)
         vis = [abs(l) for l, ci in zip(lam, c) if abs(ci) > 1e-10]
         g = mpf(max(vis))
         b, _, _, _ = bounds.certify(w, z, upper=upper)

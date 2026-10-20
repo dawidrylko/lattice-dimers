@@ -1,9 +1,10 @@
 import json, math
+from paths import P
 from mpmath import mp, catalan, pi, log, factorial, exp
 mp.dps = 20
-kc = {**json.load(open('sec_king_cyl_3_13.json')), **json.load(open('sec_king_cyl_14_19.json'))}
-kf = json.load(open('sec_king_free_1_18.json'))
-tc = json.load(open('sec_tri_cyl_3_18.json'))
+kc = {**json.load(open(P('sec_king_cyl_3_13.json'))), **json.load(open(P('sec_king_cyl_14_19.json')))}
+kf = json.load(open(P('sec_king_free_1_18.json')))
+tc = json.load(open(P('sec_tri_cyl_3_18.json')))
 g = lambda d, w, p='0': d[str(w)][p]
 print('odd-w cylinder logλ/w:')
 odd = [(w, g(kc, w)/w) for w in range(9, 20, 2)]

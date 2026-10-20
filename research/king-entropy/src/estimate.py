@@ -1,6 +1,6 @@
 """Final estimate of s from king cylinders, and the Z2 sector splitting.
 
-usage: python3 estimate.py > out_estimate.txt     (also writes z2.json)
+usage: python3 src/estimate.py > out/out_estimate.txt     (also writes z2.json)
 
 Inputs: sec_king_cyl_3_13.json, sec_king_cyl_14_19.json (tm2.py, w <= 19) and
 eig_king_cyl_w<w>_p<p>.json (cylw.py, w >= 20). For odd w the two parity
@@ -15,18 +15,19 @@ Z2: Delta_w = log lambda_even - log lambda_odd on even w; local correlation
 length xi_w = 2 / log(Delta_{w-2} / Delta_w) and a least-squares fit
 log Delta = a - w / xi (+ b log w) over w >= 10.
 """
-import glob, json, re
+import json, re
+from paths import P, G
 import numpy as np
 from mpmath import mp, mpf
 
 mp.dps = 30
 lam = {}                                   # (w, parity) -> log lambda
 for fn in ('sec_king_cyl_3_13.json', 'sec_king_cyl_14_19.json'):
-    for w, d in json.load(open(fn)).items():
+    for w, d in json.load(open(P(fn))).items():
         for p, x in d.items():
             lam[int(w), int(p)] = (x, fn)
-for fn in sorted(glob.glob('eig_king_cyl_w*_p*.json')):
-    d = json.load(open(fn))
+for fn in sorted(G('eig_king_cyl_w*_p*.json')):
+    d = json.load(open(P(fn)))
     assert d['converged'], fn
     lam[d['w'], d['parity']] = (d['log_lambda'], f'{fn} @{d["commit"]}')
 for w in sorted({w for w, _ in lam}):
@@ -107,15 +108,15 @@ k = np.polyfit([1 / x for x, _ in inv[-4:]], [y for _, y in inv[-4:]], 1)
 print(f'  local 1/xi_w linear in 1/w (last 4 points): xi_inf = {1 / k[1]:.4f} (prefactor exponent b = {-k[0]:.3f})')
 json.dump(dict(xi_inf_local=1 / k[1], table=rows, fit_exp=dict(xi=1 / c1[1], a=c1[0], rms=rms1, widths=fitw),
                fit_exp_pow=dict(xi=1 / c2[1], a=c2[0], b=c2[2], rms=rms2, widths=fitw),
-               s_estimate=str(best), s_error=str(err)), open('z2.json', 'w'), indent=1)
+               s_estimate=str(best), s_error=str(err)), open(P('z2.json'), 'w'), indent=1)
 
 print('\ncost per width (cylw.py runs; up to three ran concurrently on 4 cores)')
 print('   w  p  iters  s/iter   wall s  peak RSS MiB  commit')
-for fn in sorted(glob.glob('eig_king_cyl_w*_p*.json'), key=lambda f: [int(x) for x in re.findall(r'\d+', f)]):
-    d = json.load(open(fn))
+for fn in sorted(G('eig_king_cyl_w*_p*.json'), key=lambda f: [int(x) for x in re.findall(r'\d+', f)]):
+    d = json.load(open(P(fn)))
     print(f'  {d["w"]:2d}  {d["parity"]}  {d["iterations"]:5d}  {d["sec_per_iteration"]:6.2f}  {d["wall"]:7.1f}  {d["maxrss_mib"]:12.0f}  {d["commit"]}')
 print('tm2.py runs (both sectors per width; peak RSS is per process, i.e. of its widest w):')
 for fn in ('king_cyl_3_13', 'king_cyl_14_19'):
-    t = {int(m[1]): float(m[2]) for m in re.finditer(r'w=\s*(\d+) .* t=([\d.]+)s', open(f'log_{fn}.txt').read())}
-    rss = re.search(r'maxrss=(\d+)MiB', open(f'time_{fn}.txt').read())[1]
+    t = {int(m[1]): float(m[2]) for m in re.finditer(r'w=\s*(\d+) .* t=([\d.]+)s', open(P(f'log_{fn}.txt')).read())}
+    rss = re.search(r'maxrss=(\d+)MiB', open(P(f'time_{fn}.txt')).read())[1]
     print(f'  {fn}: ' + ', '.join(f'w={w} {x:.1f}s' for w, x in t.items()) + f'; peak RSS {rss} MiB')

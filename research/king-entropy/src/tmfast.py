@@ -65,3 +65,20 @@ def count_mod(h, w, lattice, bc, p):
     for _ in range(h):
         v = row(v, lattice, bc, w, mod=p)
     return int(v[0])
+
+
+def e0_spectrum(T):
+    """Eigenvalues of a dense transfer T and their weights c_i on (T^k)_00 = sum_i c_i lam_i^k.
+    T is first restricted to the states both reachable from state 0 and leading back to it, which
+    leaves (T^k)_00 unchanged and drops the nilpotent part that makes the full eigenbasis singular."""
+    def reach(M):
+        seen, todo = {0}, [0]
+        while todo:
+            for t in np.nonzero(M[:, todo.pop()])[0].tolist():
+                if t not in seen:
+                    seen.add(t)
+                    todo.append(t)
+        return seen
+    core = sorted(reach(T) & reach(T.T))
+    lam, R = np.linalg.eig(T[np.ix_(core, core)])
+    return lam, R[0, :] * np.linalg.inv(R)[:, 0]

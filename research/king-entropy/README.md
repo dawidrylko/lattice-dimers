@@ -7,43 +7,57 @@ Results are written up in a paper draft. The PDF is [`paper/main.pdf`](paper/mai
 source `paper/main.tex`. Every number in it is mapped to its output file and the script that wrote
 it in [`paper/NUMBERS.md`](paper/NUMBERS.md). The commit SHAs recorded in the outputs refer to the
 history under the tag `v1.0-king-entropy`. Full proofs of the rigorous bounds are in
-[`PROOF-upper.md`](PROOF-upper.md) and [`PROOF-lower.md`](PROOF-lower.md); the Calkin-Wilf
-question in [`CW-NOTE.md`](CW-NOTE.md); hypothesis (L) and the experiments on it in
-[`L-NOTE.md`](L-NOTE.md) and the directory [`L/`](L/).
+[`notes/PROOF-upper.md`](notes/PROOF-upper.md) and [`notes/PROOF-lower.md`](notes/PROOF-lower.md); the Calkin-Wilf
+question in [`notes/CW-NOTE.md`](notes/CW-NOTE.md); hypothesis (L) and the experiments on it in
+[`notes/L-NOTE.md`](notes/L-NOTE.md) and the directory [`L/`](L/).
 
 All commands below are run from this directory (`research/king-entropy/`)
-with Python 3.13.
+with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to it too.
+
+| directory | contents |
+| --- | --- |
+| `src/` | the scripts and `src/requirements.txt`; `src/paths.py` maps every file name to its directory |
+| `data/` | JSON results: `data/eig/`, `data/sec/`, `data/zex/`, `data/lean/` by file prefix, the rest at the top |
+| `out/` | `out/out_*.txt`, the printed output of each script |
+| `logs/` | `logs/log_*.txt` progress logs and `logs/time_*.txt` wall time and peak RSS |
+| `notes/` | proofs of the bounds and the notes on Calkin-Wilf and (L) |
+| `L/` | the experiments on (L), scripts with their outputs |
+| `paper/` | the paper, its number map and `paper/derived.py` |
+
+The tag `v1.0-king-entropy` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
 
 ```sh
-python3 -m pip install -r requirements.txt
+python3 -m pip install -r src/requirements.txt
 ```
 
 ## Files
 
 | file | what it does |
 | --- | --- |
-| `tm.py` | cell-by-cell row transfer; lattices `king`, `tri`, `sq`; boundary `free` (open strip) or `cyl` (periodic across the width); exact counts with `count(h, w, lattice, bc)` |
-| `tmfast.py` | the same transfer with reshaped views (bit-identical to `tm.py`, ~17x faster); open-side weight `z` for `bounds.py`; counts mod p |
-| `tm2.py` | float64 power iteration on `T^2` separately in each parity sector; writes `sec_<lat>_<bc>_<w0>_<w1>.json` |
-| `cylw.py` | one width and one sector per run with `tmfast.py`, convergence check, Collatz-Wielandt bracket, time and peak RSS; writes `eig_<lat>_<bc>_w<w>_p<p>.json` |
-| `summary.py` | reads the four `sec_*.json`, prints estimators and bounds (first pass) |
-| `fitsq.py` | fits on the exact L x L counts in `../../data/domiculeTilingTests.json` |
-| `validate.py` | brute force, repo data, square-lattice closed forms, triangular Kasteleyn, free-strip ratios |
-| `crosscheck.py` | exact-integer ratios (w = 9..13) and ARPACK on the full w = 20 transfer vs the power iteration |
-| `bounds.py` | certified Fekete lower bounds, open-strip upper bounds, Kahn-Lovasz, Calkin-Wilf hypothesis checks |
-| `cw.py` | Calkin-Wilf hypothesis: RP obstruction, spectral measure, exact log-convexity tests, limit form, conditional bounds (see `CW-NOTE.md`) |
-| `estimate.py` | final estimate of s from all cylinders, Z2 splitting table and correlation length; writes `z2.json` |
-| `timed.py` | runs a command and appends wall time and peak RSS to stderr |
-| `zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `zex_*.json` |
-| `lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `lean_*.json` |
-| `audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`PROOF-*.md`) |
-| `errbar.py` | alternative extrapolation models, backtests and rounding check for s |
-| `surface.py` | surface free energy sigma from free strips |
-| `lcert.py` | certified log-convexity tests of (L) at m = 25, 26 in extended precision with a rigorous error bound |
-| `L/` | why (L) is not structural: J-symmetry and Krein signature (`symmetry.py`), partial sign-reversing involution (`involution.py`), (L_inf) tests at other weights (`linf.py`), with their outputs |
-| `ltest.py` | exact (L) tests and Hankel (moment) tests on all `zex_*.json` |
-| `lparity.py`, `lspec.py`, `lweight.py` | path-parity form of (L), spectral obstructions, (L) under diagonal weights |
-| `repro.py` | re-runs `estimate.py`, `cw.py`, `bounds.py 16` and `cylw.py king cyl 20 0` from a clean export of HEAD and compares outputs |
+| `src/tm.py` | cell-by-cell row transfer; lattices `king`, `tri`, `sq`; boundary `free` (open strip) or `cyl` (periodic across the width); exact counts with `count(h, w, lattice, bc)` |
+| `src/tmfast.py` | the same transfer with reshaped views (bit-identical to `src/tm.py`, ~17x faster); open-side weight `z` for `src/bounds.py`; counts mod p |
+| `src/tm2.py` | float64 power iteration on `T^2` separately in each parity sector; writes `data/sec/sec_<lat>_<bc>_<w0>_<w1>.json` |
+| `src/cylw.py` | one width and one sector per run with `src/tmfast.py`, convergence check, Collatz-Wielandt bracket, time and peak RSS; writes `data/eig/eig_<lat>_<bc>_w<w>_p<p>.json` |
+| `src/summary.py` | reads the four `data/sec/sec_*.json`, prints estimators and bounds (first pass) |
+| `src/fitsq.py` | fits on the exact L x L counts in `../../data/domiculeTilingTests.json` |
+| `src/validate.py` | brute force, repo data, square-lattice closed forms, triangular Kasteleyn, free-strip ratios |
+| `src/crosscheck.py` | exact-integer ratios (w = 9..13) and ARPACK on the full w = 20 transfer vs the power iteration |
+| `src/bounds.py` | certified Fekete lower bounds, open-strip upper bounds, Kahn-Lovasz, Calkin-Wilf hypothesis checks |
+| `src/cw.py` | Calkin-Wilf hypothesis: RP obstruction, spectral measure, exact log-convexity tests, limit form, conditional bounds (see `notes/CW-NOTE.md`) |
+| `src/estimate.py` | final estimate of s from all cylinders, Z2 splitting table and correlation length; writes `data/z2.json` |
+| `src/timed.py` | runs a command and appends wall time and peak RSS to stderr |
+| `src/paths.py` | the directory of each file by its name, so the scripts read and write the right place from any working directory |
+| `src/test_paths.py` | smoke test: `src/tm2.py`, `src/cylw.py`, `src/lean.py`, `src/zexact.py` on tiny inputs from another directory write where `src/paths.py` says and record the commit |
+| `src/zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `data/zex/zex_*.json` |
+| `src/lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/lean/lean_*.json` |
+| `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`notes/PROOF-*.md`) |
+| `src/errbar.py` | alternative extrapolation models, backtests and rounding check for s |
+| `src/surface.py` | surface free energy sigma from free strips |
+| `src/lcert.py` | certified log-convexity tests of (L) at m = 25, 26 in extended precision with a rigorous error bound |
+| `L/` | why (L) is not structural: J-symmetry and Krein signature (`L/symmetry.py`), partial sign-reversing involution (`L/involution.py`), (L_inf) tests at other weights (`L/linf.py`), with their outputs |
+| `src/ltest.py` | exact (L) tests and Hankel (moment) tests on all `data/zex/zex_*.json` |
+| `src/lparity.py`, `src/lspec.py`, `src/lweight.py` | path-parity form of (L), spectral obstructions, (L) under diagonal weights |
+| `src/repro.py` | re-runs `src/estimate.py`, `src/cw.py`, `src/bounds.py 16` and `src/cylw.py king cyl 20 0` from a clean export of HEAD and compares outputs |
 | `paper/derived.py` | numbers of the paper that are simple functions of committed outputs; writes `paper/out_derived.txt` |
 
 ## Reproduce
@@ -51,46 +65,47 @@ python3 -m pip install -r requirements.txt
 Sector eigenvalues up to w = 19 (the four runs are independent, run them in parallel):
 
 ```sh
-python3 timed.py python3 tm2.py king cyl 3 13  > log_king_cyl_3_13.txt  2> time_king_cyl_3_13.txt
-python3 timed.py python3 tm2.py king cyl 14 19 > log_king_cyl_14_19.txt 2> time_king_cyl_14_19.txt
-python3 timed.py python3 tm2.py king free 1 18 > log_king_free_1_18.txt 2> time_king_free_1_18.txt
-python3 timed.py python3 tm2.py tri cyl 3 18   > log_tri_cyl_3_18.txt   2> time_tri_cyl_3_18.txt
-python3 summary.py > out_summary.txt
-python3 fitsq.py   > out_fitsq.txt
+python3 src/timed.py python3 src/tm2.py king cyl 3 13  > logs/log_king_cyl_3_13.txt  2> logs/time_king_cyl_3_13.txt
+python3 src/timed.py python3 src/tm2.py king cyl 14 19 > logs/log_king_cyl_14_19.txt 2> logs/time_king_cyl_14_19.txt
+python3 src/timed.py python3 src/tm2.py king free 1 18 > logs/log_king_free_1_18.txt 2> logs/time_king_free_1_18.txt
+python3 src/timed.py python3 src/tm2.py tri cyl 3 18   > logs/log_tri_cyl_3_18.txt   2> logs/time_tri_cyl_3_18.txt
+python3 src/summary.py > out/out_summary.txt
+python3 src/fitsq.py   > out/out_fitsq.txt
 ```
 
 Wide cylinders, one process per width and sector (odd w: one sector is enough):
 
 ```sh
 for a in "20 0" "20 1" "21 1" "22 0" "22 1" "23 1" "24 0" "24 1" "25 1"; do
-  set -- $a; python3 cylw.py king cyl $1 $2 > log_eig_king_cyl_w$1_p$2.txt
+  set -- $a; python3 src/cylw.py king cyl $1 $2 > logs/log_eig_king_cyl_w$1_p$2.txt
 done
 ```
 
 Checks, bounds, estimate:
 
 ```sh
-python3 timed.py python3 validate.py   > out_validate.txt   2> time_validate.txt
-python3 timed.py python3 crosscheck.py > out_crosscheck.txt 2> time_crosscheck.txt
-python3 timed.py python3 bounds.py 24  > out_bounds.txt     2> time_bounds.txt
-python3 estimate.py > out_estimate.txt
-python3 timed.py python3 cw.py > out_cw.txt 2> time_cw.txt   # needs bounds.json and z2.json
+python3 src/timed.py python3 src/validate.py   > out/out_validate.txt   2> logs/time_validate.txt
+python3 src/timed.py python3 src/crosscheck.py > out/out_crosscheck.txt 2> logs/time_crosscheck.txt
+python3 src/timed.py python3 src/bounds.py 24  > out/out_bounds.txt     2> logs/time_bounds.txt
+python3 src/estimate.py > out/out_estimate.txt
+python3 src/timed.py python3 src/cw.py > out/out_cw.txt 2> logs/time_cw.txt   # needs data/bounds.json and data/z2.json
 ```
 
 Peak memory: about 1.1 GiB at w = 22, 2.2 GiB at w = 23, 4.3 GiB at w = 24
-and 8.4 GiB at w = 25 per `cylw.py` process (`out_estimate.txt`, cost table).
+and 8.4 GiB at w = 25 per `src/cylw.py` process (`out/out_estimate.txt`, cost table).
 
-Audit, error bar and (L) (each writes `out_<name>.txt`; `zexact.py`/`lean.py` runs as listed in `paper/NUMBERS.md`):
+Audit, error bar and (L) (each writes `out/out_<name>.txt`; `src/zexact.py`/`src/lean.py` runs as listed in `paper/NUMBERS.md`):
 
 ```sh
-python3 audit_bounds.py > out_audit_bounds.txt
-python3 errbar.py > out_errbar.txt
-python3 surface.py > out_surface.txt
-python3 ltest.py > out_ltest.txt
-python3 lparity.py > out_lparity.txt
-python3 lspec.py > out_lspec.txt
-python3 lweight.py > out_lweight.txt; python3 lweight.py big > out_lweight_big.txt
-python3 repro.py > out_repro.txt
+python3 src/audit_bounds.py > out/out_audit_bounds.txt
+python3 src/errbar.py > out/out_errbar.txt
+python3 src/surface.py > out/out_surface.txt
+python3 src/ltest.py > out/out_ltest.txt
+python3 src/lparity.py > out/out_lparity.txt
+python3 src/lspec.py > out/out_lspec.txt
+python3 src/lweight.py > out/out_lweight.txt; python3 src/lweight.py big > out/out_lweight_big.txt
+python3 src/repro.py > out/out_repro.txt
+python3 src/test_paths.py
 ```
 
 Paper (needs a TeX distribution with `latexmk`, e.g. TeX Live with

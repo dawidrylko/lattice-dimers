@@ -1,6 +1,6 @@
 """Hypothesis (L): q -> Z(2q, m) is log-convex for every width m. Exact tests.
 
-usage: python3 ltest.py > out_ltest.txt       (reads zex_*.json from zexact.py, writes ltest.json)
+usage: python3 src/ltest.py > out/out_ltest.txt       (reads zex_*.json from zexact.py, writes ltest.json)
 
 For every (lattice, bc, m) with exact counts Z(k, m), k <= K:
  L2  Z(2q)^2 <= Z(2q-2) Z(2q+2) for all 2 <= 2q <= K-2 (exact integers);
@@ -13,7 +13,8 @@ For every (lattice, bc, m) with exact counts Z(k, m), k <= K:
      with room to spare. The first negative minor (if any) is reported: it kills that route.
  L2b whether mu_q decreases in q, and its last ratio mu_q / mu_(q-1) (-> rho^2, rho = |lambda_2 / lambda_1|).
 """
-import glob, json, re
+import json, re
+from paths import P, G
 from fractions import Fraction
 from mpmath import mp, mpf, log
 
@@ -38,8 +39,8 @@ def bareiss_minors(H):
 
 
 data = []
-for fn in glob.glob('zex_*.json'):
-    d = json.load(open(fn))
+for fn in G('zex_*.json'):
+    d = json.load(open(P(fn)))
     d['Z'] = [int(x) for x in d['Z']]
     data.append(d)
 best = {}
@@ -94,4 +95,4 @@ for lat in ('king', 'tri', 'sq'):
         print(f'  total: {viol_tot} violations in {tot} cases (exact integers)')
         summary[f'{lat}_{bc}'] = dict(cases=tot, violations=viol_tot, rows=rows)
 
-json.dump(summary, open('ltest.json', 'w'), indent=1)
+json.dump(summary, open(P('ltest.json'), 'w'), indent=1)

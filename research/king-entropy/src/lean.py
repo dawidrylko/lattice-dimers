@@ -1,7 +1,7 @@
 """Memory-lean power iteration on T^2 (cell steps ping-pong between two buffers),
 in float64 or x87 extended precision (np.longdouble, 64-bit mantissa).
 
-usage: python3 lean.py <lat> <bc> <w> <parity|-> <float64|longdouble> [cw]
+usage: python3 src/lean.py <lat> <bc> <w> <parity|-> <float64|longdouble> [cw]
 
 Same transfer (tmfast.step) and same start vector as cylw.sector_eig (parity sector p,
 seed 7) for 'cyl'; e0 (empty boundary) for 'free' (parity '-'), as in bounds.certify.
@@ -13,6 +13,7 @@ min/max (T^2 v)_i / v_i (a third buffer). Peak memory: 2 (3 with cw) vectors.
 Writes lean_<lat>_<bc>_w<w>_p<p>_<dtype>.json (log lambda as a decimal string).
 """
 import json, resource, subprocess, sys, time
+from paths import P, ROOT
 import numpy as np
 from tmfast import nbits, step
 
@@ -69,7 +70,7 @@ def run(lat, bc, w, p, dtype, cw=False, maxit=60):
                                 np.format_float_positional(np.log(r.max()) / 2, precision=21, unique=False)]
         out['support_closed'] = bool(not (x[~sup] > 0).any())
     out.update(wall=time.time() - t0, maxrss_mib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
-               commit=subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip())
+               commit=subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True, cwd=ROOT).stdout.strip())
     return out
 
 
@@ -77,9 +78,9 @@ def main():
     lat, bc, w, p, dtype = sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4], sys.argv[5]
     p = int(p) if p != '-' else '-'
     out = run(lat, bc, w, p, dtype, cw='cw' in sys.argv[6:])
-    out['cmd'] = 'python3 lean.py ' + ' '.join(sys.argv[1:])
+    out['cmd'] = 'python3 src/lean.py ' + ' '.join(sys.argv[1:])
     print(json.dumps({k: v for k, v in out.items() if k != 'history'}), flush=True)
-    json.dump(out, open(f'lean_{lat}_{bc}_w{w}_p{p}_{dtype}.json', 'w'), indent=1)
+    json.dump(out, open(P(f'lean_{lat}_{bc}_w{w}_p{p}_{dtype}.json'), 'w'), indent=1)
 
 
 if __name__ == '__main__':

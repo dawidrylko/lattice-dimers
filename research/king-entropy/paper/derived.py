@@ -9,8 +9,8 @@ import json
 from mpmath import mp, mpf, exp, log
 
 mp.dps = 40
-surf = json.load(open('surface.json'))
-bnd = json.load(open('bounds.json'))
+surf = json.load(open('data/surface.json'))
+bnd = json.load(open('data/bounds.json'))
 s = mpf('0.5655119110413253')            # out_errbar.txt, RECOMMENDATION
 print(f's = {mp.nstr(s, 16)}  (out_errbar.txt)')
 print(f'2s (per dimer) = {mp.nstr(2 * s, 16)}')
@@ -47,7 +47,7 @@ print(f'12 w u at w=24: {mp.nstr(12 * 24 * mpf(2) ** -53, 4)}')
 print(f'-4 sigma = {mp.nstr(-4 * mpf(surf["sigma"]), 10)}')
 
 # triangular free strip m = 5: (L) violation from the exact counts
-zt = [int(x) for x in json.load(open('zex_tri_free_m5_K60.json'))['Z']]
+zt = [int(x) for x in json.load(open('data/zex/zex_tri_free_m5_K60.json'))['Z']]
 print(f'tri free m=5: Z(6), Z(8), Z(10) = {zt[6]}, {zt[8]}, {zt[10]}; '
       f'Z(8)^2 - Z(6) Z(10) = {zt[8] ** 2 - zt[6] * zt[10]}')
 
@@ -62,7 +62,7 @@ for w in range(20, 26):
     row = []
     for p in (0, 1):
         try:
-            e = json.load(open(f'eig_king_cyl_w{w}_p{p}.json'))
+            e = json.load(open(f'data/eig/eig_king_cyl_w{w}_p{p}.json'))
             row.append(f'p{p} {e["per_site"]:.16f}')
         except FileNotFoundError:
             pass

@@ -1,6 +1,6 @@
 """Is (L) robust? Log-convexity of q -> Z_x(2q, m) when every diagonal edge has weight x.
 
-usage: python3 lweight.py > out_lweight.txt
+usage: python3 src/lweight.py > out/out_lweight.txt
 
 Second table: asymmetric weights, x_dl on down-left and x_dr on down-right diagonals
 ((1, 0) is the triangular lattice up to reflection, where (L) fails from m = 5 on).
@@ -142,7 +142,7 @@ for m in range(10, 14):
         line += f'{f"{len(bad)}/{n}" + (f"({bad[0]})" if bad else ""):>14}'
     print(line, flush=True)
 
-# python3 lweight.py big > out_lweight_big.txt : near-symmetric weights, wider strips, more rows
+# python3 src/lweight.py big > out/out_lweight_big.txt : near-symmetric weights, wider strips, more rows
 import sys
 if sys.argv[1:] == ['big']:
     KB = 80

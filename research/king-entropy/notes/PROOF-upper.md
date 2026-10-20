@@ -1,13 +1,13 @@
 # Upper bound s ≤ 0.586216605404: full proof and audit
 
-Claim under audit (`bounds.py 24` → `out_bounds.txt`):
+Claim under audit (`src/bounds.py 24` → `out/out_bounds.txt`):
 
 > **s ≤ log(μ₂₄)/24 ≤ 0.586216605404**, where μ_w is the growth rate of a free strip of
 > width w whose side cells may be "covered from outside" with weight z = √φ.
 
 **Verdict: CONFIRMED.** Every step below was checked; the two inequalities
 the proof rests on were tested exactly on small boards and the float certificate was
-recomputed in exact rational arithmetic (`audit_bounds.py` → `out_audit_bounds.txt`,
+recomputed in exact rational arithmetic (`src/audit_bounds.py` → `out/out_audit_bounds.txt`,
 commit `0c53f27`, 0 failures). Caveats at the end (§8).
 
 ## 0. Notation
@@ -86,7 +86,7 @@ configuration counted by W(K, w) corresponds to exactly one path of states from 
 state e₀ back to e₀ after K rows, so **W(K, w) = e₀ᵀ T_zᴷ e₀** and Z(K, w) = e₀ᵀ T₀ᴷ e₀.
 Checked: transfer = brute-force W(K, w; z) as a polynomial in z (agreement at 2K+2 integer
 points, K ≤ 6, w ≤ 6: 162 evaluations, `U4`); transfer = brute force for Z on 90 boards
-(`validate.py`).
+(`src/validate.py`).
 
 ## 5. Lemma (Collatz-Wielandt certificate, upper). If A = T_z² ≥ 0, v ≥ 0, v₀ > 0 and Av ≤ Cv
 componentwise (including Av = 0 where v = 0), then W(2j, w) ≤ Cʲ for all j.
@@ -125,7 +125,7 @@ of horizontal dominoes), so it suffices to take K = 2j even. With L = kw + r:
 
   (KL)⁻¹ log Z(K, L) ≤ (k/L) (2j)⁻¹ log W(2j, w) + C w K/(KL) ≤ (k/L) · (log C_w)/2 + Cw/L,
 
-and k/L → 1/w. So **s̄ ≤ log C_w / (2w)**. With C_24 from `bounds.py 24`:
+and k/L → 1/w. So **s̄ ≤ log C_w / (2w)**. With C_24 from `src/bounds.py 24`:
 s ≤ 0.586216605404. ∎
 
 ## 8. Caveats and remarks (skeptic's list)
@@ -137,12 +137,12 @@ s ≤ 0.586216605404. ∎
    formally verified line by line for all w. The certificate's validity does not depend on
    how v was produced, only on A being the right matrix.
 3. *Platform.* Relies on IEEE-754 binary64 with round-to-nearest in numpy ufuncs (no FMA
-   contraction, no flush-to-zero); `out_audit_bounds.txt` shows float/exact agreement to
+   contraction, no flush-to-zero); `out/out_audit_bounds.txt` shows float/exact agreement to
    ~10⁻¹⁶ on this machine.
 4. *Room for improvement, not an error.* The bound converges like 0.497/w
    (log μ_w − s·w → 0.497); even z = 1 would give 0.315/w and stays above s, so a sharper
    crossing bound than Fibonacci/√φ per cell could be valid, but the O(1/w) rate is
    structural (two open sides). Better upper bounds need another idea (open question).
-5. *Provenance.* `out_bounds.txt` was written by `bounds.py 24` at `102b7e5`; the code is
-   unchanged since, and its output for w ≤ 16 was re-run from the current tree (`repro.py` →
-   `out_repro.txt`).
+5. *Provenance.* `out/out_bounds.txt` was written by `src/bounds.py 24` at `102b7e5`; the code is
+   unchanged since apart from file paths, and its output for w ≤ 16 was re-run from the current tree (`src/repro.py` →
+   `out/out_repro.txt`).
