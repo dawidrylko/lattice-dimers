@@ -26,7 +26,7 @@ const CHROME_CSS = `
  */
 function renderHeader({ root, current, notes }) {
   const home = root || './';
-  const logo = `<img src="${root}domino.svg" alt="" width="32" height="32">Domino Tiling`;
+  const logo = `<img src="${root}domino.svg" alt="" width="32" height="32">Lattice Dimers`;
   const brand = current === 'home' ? `<h1 class="brand">${logo}</h1>` : `<a class="brand" href="${home}">${logo}</a>`;
   const links = [
     { slug: 'home', href: home, label: 'Home' },

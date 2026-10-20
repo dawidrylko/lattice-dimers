@@ -1,4 +1,4 @@
-# <img src=".github/assets/domino.svg" alt="" width="36" height="36"> Domino and Domicule Tilings
+# <img src=".github/assets/domino.svg" alt="" width="36" height="36"> Lattice Dimers
 
 [![Continuous Integration](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml)
 [![Pages](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml)

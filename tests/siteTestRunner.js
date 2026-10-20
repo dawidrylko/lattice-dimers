@@ -572,7 +572,7 @@ async function checkChrome(page, baseUrl, width) {
   const home = await page.evaluate(READ_CHROME);
   const homeUrl = `${baseUrl}/`;
 
-  if (home.brand !== 'Domino Tiling' || !home.logo || !home.nav || !home.footer) {
+  if (home.brand !== 'Lattice Dimers' || !home.logo || !home.nav || !home.footer) {
     problems.push(`the main page header or footer is incomplete: ${JSON.stringify(home)}`);
   }
 

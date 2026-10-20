@@ -266,13 +266,13 @@ function buildJsonLd() {
         '@type': 'WebSite',
         '@id': `${SITE_URL}#website`,
         url: SITE_URL,
-        name: 'Domino Tiling',
+        name: 'Lattice Dimers',
         inLanguage: 'en',
         author: AUTHOR,
       },
       {
         '@type': 'SoftwareSourceCode',
-        name: 'Domino Tiling',
+        name: 'Lattice Dimers',
         description:
           'Exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, A239273) of 2n×2n boards: a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.',
         codeRepository: 'https://github.com/dawidrylko/lattice-dimers',
