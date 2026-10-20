@@ -47,6 +47,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/estimate.py` | final estimate of s from all cylinders, Z2 splitting table and correlation length; writes `data/z2.json` |
 | `src/timed.py` | runs a command and appends wall time and peak RSS to stderr |
 | `src/paths.py` | the directory of each file by its name, so the scripts read and write the right place from any working directory |
+| `src/test_paths.py` | smoke test: the scripts that write JSON, on tiny inputs from another directory, write where `src/paths.py` says |
 | `src/zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `data/zex/zex_*.json` |
 | `src/lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/lean/lean_*.json` |
 | `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`notes/PROOF-*.md`) |
@@ -104,6 +105,7 @@ python3 src/lparity.py > out/out_lparity.txt
 python3 src/lspec.py > out/out_lspec.txt
 python3 src/lweight.py > out/out_lweight.txt; python3 src/lweight.py big > out/out_lweight_big.txt
 python3 src/repro.py > out/out_repro.txt
+python3 src/test_paths.py
 ```
 
 Paper (needs a TeX distribution with `latexmk`, e.g. TeX Live with

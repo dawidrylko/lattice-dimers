@@ -140,10 +140,10 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | 0.047 | `out/out_lspec.txt` (m = 10, 0.0468; rounded) | `src/lspec.py` |
 | 3.4·10⁶ pairs | `out/out_lparity.txt` (m = 5, q = 2: 3410589 pairs) | `src/lparity.py` |
 | 1847660, 912656, 32616 | `out/out_lparity.txt` | `src/lparity.py` |
-| Prony modes 0.1147, −0.072, ratio 0.007 at 2q = 24, factor 0.63 per step, four windows | `L/out_linf.txt` (king (1, 1) from data/surface.json; 0.0718...0.0730; 0.0722/0.1147) | `L/linf.py` |
-| (L∞) positive to 2q = 14 for (1, 0.95), (1, 0.9), (1, 0.75), (1, 0.5), triangular (1, 0) | `L/out_linf.txt` | `L/linf.py` |
-| x = 3/2: −6.2·10⁻⁴; x = 2: −2.8·10⁻³ (2q = 8); negatives at 2q = 8, 12; x = 5/4 ratios 2.0, 376, 0.16, 48 | `L/out_linf.txt` | `L/linf.py` |
-| Z(8, m)² > Z(6, m)Z(10, m) for 35 ≤ m ≤ 60 (x = 3/2), 21 ≤ m ≤ 60 (x = 2), 19 ≤ m ≤ 60 (x = 3); none for x = 1, 5/4, m ≤ 60 | `L/out_linf.txt` (last block) | `L/linf.py` |
+| Prony modes 0.1147, −0.072, ratio 0.007 at 2q = 24, factor 0.63 per step, four windows | `L/out_linf.txt` (king (1, 1) from data/surface.json; 0.0718...0.0730; 0.0722/0.1147) | `L/linf.py 16` |
+| (L∞) positive to 2q = 14 for (1, 0.95), (1, 0.9), (1, 0.75), (1, 0.5), triangular (1, 0) | `L/out_linf.txt` | `L/linf.py 16` |
+| x = 3/2: −6.2·10⁻⁴; x = 2: −2.8·10⁻³ (2q = 8); negatives at 2q = 8, 12; x = 5/4 ratios 2.0, 376, 0.16, 48 | `L/out_linf.txt` | `L/linf.py 16` |
+| Z(8, m)² > Z(6, m)Z(10, m) for 35 ≤ m ≤ 60 (x = 3/2), 21 ≤ m ≤ 60 (x = 2), 19 ≤ m ≤ 60 (x = 3); none for x = 1, 5/4, m ≤ 60 | `L/out_linf.txt` (last block) | `L/linf.py 16` |
 | T = HM, M^T = JMJ, G = JM, m ≤ 7, five weight sets; 7·10⁻¹³ (m ≤ 9) | `L/out_symmetry.txt` (A, B; 7.1e-13) | `L/symmetry.py` |
 | K = 0.70, 1.31, 1.63 (m = 4, 5, 8), ε = 10⁻³ ... 3·10⁻² | `L/out_symmetry.txt` (C; −0.695 ... −0.713, −1.306 ... −1.351, −1.628 ... −1.664) | `L/symmetry.py` |
 | J-odd level above at m = 4, 8 among m ≤ 11 | `L/out_symmetry.txt` (B) | `L/symmetry.py` |

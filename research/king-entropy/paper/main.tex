@@ -751,7 +751,7 @@ Python~3.13 with numpy~2.5.3, mpmath~1.4.1 and scipy~1.18.1, as pinned in
 with the committed output file it is read from and the command that wrote that file. The paths below
 follow the later layout in subdirectories (\file{src/}, \file{data/}, \file{out/}, \file{logs/},
 \file{notes/}); at the tag \texttt{v1.0-king-entropy} their files sit directly in
-\texttt{research/king-entropy/}. The main commands, run from that directory:
+\texttt{research/king-entropy/}. The main commands, run from \texttt{research/king-entropy/}:
 \begin{center}
 \begin{tabular}{ll}
 \toprule
@@ -768,7 +768,7 @@ command & output \\
 \texttt{python3 src/zexact.py \dots}; \texttt{python3 src/ltest.py} & \file{data/zex/zex\_*.json}, \file{out/out\_ltest.txt} \\
 \texttt{python3 src/lcert.py 25 30}, \texttt{\dots\ 26 30} & \file{out/out\_lcert\_m25.txt}, \dots \\
 \texttt{python3 src/lweight.py} [\texttt{big}] & \file{out/out\_lweight*.txt} \\
-\texttt{python3 L/symmetry.py}, \texttt{L/linf.py}, \texttt{L/involution.py} & \file{L/out\_*.txt} \\
+\texttt{python3 L/symmetry.py}, \texttt{L/linf.py 16}, \texttt{L/involution.py} & \file{L/out\_*.txt} \\
 \texttt{python3 src/validate.py}; \texttt{python3 src/crosscheck.py} & \file{out/out\_validate.txt}, \dots \\
 \texttt{python3 paper/derived.py} & \file{paper/out\_derived.txt} \\
 \bottomrule

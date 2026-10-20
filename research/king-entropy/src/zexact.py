@@ -10,7 +10,7 @@ any graph with N vertices and degree <= 8, N = K * m (needs m >= 3 for 'cyl').
 The CRT result is therefore the exact integer, not a residue.
 """
 import json, math, subprocess, sys, time
-from paths import P
+from paths import P, ROOT
 import numpy as np
 from tmfast import nbits, row
 
@@ -82,9 +82,9 @@ def zexact(lat, bc, m, K, log=None):
 def main():
     lat, bc, m, K = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])
     t = time.time()
-    commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
-    Z, P = zexact(lat, bc, m, K, log=sys.stdout)
-    json.dump(dict(lattice=lat, bc=bc, m=m, K=K, Z=[str(x) for x in Z], primes=P, commit=commit,
+    commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True, cwd=ROOT).stdout.strip()
+    Z, primes = zexact(lat, bc, m, K, log=sys.stdout)
+    json.dump(dict(lattice=lat, bc=bc, m=m, K=K, Z=[str(x) for x in Z], primes=primes, commit=commit,
                    cmd='python3 src/zexact.py ' + ' '.join(sys.argv[1:]), wall=time.time() - t),
               open(P(f'zex_{lat}_{bc}_m{m}_K{K}.json'), 'w'))
     print(f'done {time.time() - t:.0f}s', flush=True)

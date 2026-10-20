@@ -135,7 +135,7 @@ matrices of route 2 are the M-Gram matrices of {u₀, u₂, u₄, ...} and {u₁
 
 Every claim below comes from `python3 L/<script>.py > L/out_<script>.txt` (code and output
 committed together: `L/symmetry.py` at `f64b477`, `L/involution.py` at `78576e2`, `L/linf.py` at
-`91c8bae`). "Exact" means integer arithmetic, "float" means float64.
+`91c8bae`; `L/out_linf.txt` is `python3 L/linf.py 16`). "Exact" means integer arithmetic, "float" means float64.
 
 Structure (lemma). T = H M, where H (horizontal tilings) is symmetric and J-invariant and M is
 the crossing kernel. For any diagonal weights M^T = JMJ, so G = JM is symmetric and GT is

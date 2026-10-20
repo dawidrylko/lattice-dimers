@@ -1,6 +1,6 @@
 """Is (L-infinity) as fragile as (L)?
 
-usage: python3 linf.py > out_linf.txt
+usage: python3 linf.py [kmax] > out_linf.txt      (kmax default 18; the committed out_linf.txt has kmax = 16)
 
 (L-inf): q -> a_{2q} = log lambda_{2q} convex (lambda_k = growth rate of the free strip with k rows
 and length -> infinity). `surface.py` checks it for the king lattice up to 2q = 24. symmetry.py shows

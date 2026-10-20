@@ -12,7 +12,7 @@ with R~ the computed ratio (the last factor covers the three float operations of
 lower bound exceeds 1, (L) holds at q exactly. Small values are checked against zexact.py.
 """
 import json, subprocess, sys, time
-from paths import P
+from paths import P, ROOT
 import numpy as np
 from mpmath import mp, mpf
 from tmfast import nbits, step
@@ -53,7 +53,7 @@ def main():
         rows.append(dict(q=q, margin=str(mp.log(R)), certified_lower=str(low - 1), certified=bool(cert)))
         print(f'  m={m} 2q={2 * q:3d}  computed margin log R = {mp.nstr(mp.log(R), 6):>12}   certified R - 1 >= '
               f'{mp.nstr(low - 1, 4):>11}   {"(L) holds" if cert else "UNDECIDED"}', flush=True)
-    commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
+    commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True, cwd=ROOT).stdout.strip()
     print(f'  m={m}: (L) certified for all 2 <= 2q <= {K - 2}: {ok}   ({time.time() - t:.0f}s, commit {commit})')
     json.dump(dict(m=m, K=K, rows=rows, all_certified=ok, commit=commit, Z=[str(z) for z in Z]),
               open(P(f'lcert_m{m}_K{K}.json'), 'w'), indent=1)

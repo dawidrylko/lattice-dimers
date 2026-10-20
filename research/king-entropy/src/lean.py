@@ -13,7 +13,7 @@ min/max (T^2 v)_i / v_i (a third buffer). Peak memory: 2 (3 with cw) vectors.
 Writes lean_<lat>_<bc>_w<w>_p<p>_<dtype>.json (log lambda as a decimal string).
 """
 import json, resource, subprocess, sys, time
-from paths import P
+from paths import P, ROOT
 import numpy as np
 from tmfast import nbits, step
 
@@ -70,7 +70,7 @@ def run(lat, bc, w, p, dtype, cw=False, maxit=60):
                                 np.format_float_positional(np.log(r.max()) / 2, precision=21, unique=False)]
         out['support_closed'] = bool(not (x[~sup] > 0).any())
     out.update(wall=time.time() - t0, maxrss_mib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
-               commit=subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip())
+               commit=subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True, cwd=ROOT).stdout.strip())
     return out
 
 
