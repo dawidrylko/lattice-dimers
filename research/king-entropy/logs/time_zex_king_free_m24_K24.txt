@@ -1,0 +1,2 @@
+# cmd: python3 src/zexact.py king free 24 24
+# exit=0 wall=3116.4s user=2985.3s maxrss=1562MiB
