@@ -6,7 +6,7 @@ i.e. domicule tilings. Goal: the entropy per site
 Results are written up in a paper draft. The PDF is [`paper/main.pdf`](paper/main.pdf), the
 source `paper/main.tex`. Every number in it is mapped to its output file and the script that wrote
 it in [`paper/NUMBERS.md`](paper/NUMBERS.md). The commit SHAs recorded in the outputs refer to the
-history under the tag `v1.0-king-entropy`. Full proofs of the rigorous bounds are in
+history under the tag `king-entropy-v0.1.0`. Full proofs of the rigorous bounds are in
 [`notes/PROOF-upper.md`](notes/PROOF-upper.md) and [`notes/PROOF-lower.md`](notes/PROOF-lower.md); the Calkin-Wilf
 question in [`notes/CW-NOTE.md`](notes/CW-NOTE.md); hypothesis (L) and the experiments on it in
 [`notes/L-NOTE.md`](notes/L-NOTE.md) and the directory [`L/`](L/).
@@ -28,7 +28,7 @@ with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to i
 | `L/` | the experiments on (L), scripts with their outputs |
 | `paper/` | the paper, its number map and `paper/derived.py` |
 
-The tag `v1.0-king-entropy` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
+The tag `king-entropy-v0.1.0` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
 
 ```sh
 python3 -m pip install -r src/requirements.txt
