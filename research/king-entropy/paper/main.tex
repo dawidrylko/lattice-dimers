@@ -16,9 +16,6 @@
 \usepackage{url}
 \usepackage{microtype}
 \emergencystretch=2em
-% The bibliography first uses OT1 lmr at 9pt in math mode; selecting it once in text
-% lets microtype set it up before that, avoiding a pdfTeX font-expansion warning.
-\AtBeginDocument{\sbox0{\footnotesize\fontencoding{OT1}\selectfont x}}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -51,30 +48,26 @@
 \begin{document}
 
 \begin{abstract}
-We compute the entropy per site of the perfect matchings (dimer coverings) of the king's
-graph, the square lattice with both diagonals; equivalently, of the domicule tilings of
-rectangular boards counted in OEIS A239264 and A239273. Row transfer matrices on cylinders of
-circumference up to $25$, split by a conserved parity, give
+We compute the entropy per site $s$ of the perfect matchings of the king's graph, the square
+lattice with both diagonals; equivalently, of the domicule tilings counted in OEIS A239264. The
+graph is not planar, and its boards with both sides at least $3$ admit no Pfaffian orientation, so
+Kasteleyn's method does not apply. Row transfer matrices on cylinders of circumference up to $25$,
+split by a conserved parity of the dimers crossing a loop, converge exponentially; a L\"uscher-type
+extrapolation with predictive backtests and an error budget gives
 \[
   s = 0.5655119110413253 \pm 6\cdot 10^{-16},
 \]
-with an error bar supported by several extrapolation models, backtests and an
-extended-precision check of the rounding; this error bar is not rigorous. We prove $0.545343749727 \le s \le 0.586216605404$
-with computer-assisted Collatz--Wielandt certificates;
-the upper bound uses a Fibonacci bound for the matchings across a cut. We also give the surface
-free energy of a free edge, $\sigma = 0.242017935766251 \pm 9\cdot 10^{-15}$, and the
-exponential decay of the splitting between the two parity sectors, with decay length
-$\xi \approx 1.23$. Finally we conjecture that the logarithm of the growth rate of the free strip
-of width $2q$ is convex in $q$ for $2q \ge 22$; this would raise the rigorous lower bound to
-$s \ge 0.565511911035$, and it holds numerically up to $2q = 24$. The stronger log-convexity of
-$q \mapsto Z(2q, m)$ holds in all $1451$ cases we checked, but it is not a structural property:
-it fails on the triangular lattice, under small asymmetric changes of the diagonal
-weights (we tested $(1, 9/10)$ and $(1, 19/20)$), and for equal diagonal weights $x = 3/2, 2, 3$.
+a non-rigorous estimate. Computer-assisted Collatz--Wielandt certificates, combined with a bound
+for the matchings across a cut that depends on the runs of crossing cells, prove
+$0.545343749727 \le s \le RWUPPER$. We also estimate the surface free energy of a free edge,
+$\sigma = 0.242017935766251 \pm 9\cdot 10^{-15}$, the corner free energy, which gives the asymptotics of
+A239273, and the decay length $\xi = 1.235 \pm 0.004$ of the splitting between the two parity
+sectors. Two sign properties of the strip growth rates, convexity in the even width and a
+one-sided bound on the odd increments, hold numerically and would give
+$0.565511911035 \le s \le 0.565511911049$.
 \end{abstract}
 
 \maketitle
-% The first-page footnote (date, MSC, keywords) overfills page 1 by 1.7pt.
-\enlargethispage{2pt}
 
 \section{Introduction}
 
@@ -141,20 +134,22 @@ estimate and the certificates from the same code.
 
 \medskip\noindent\textbf{Results.}
 \begin{enumerate}
+\item No king board with both sides at least $3$ has a Pfaffian orientation
+  (Theorem~\ref{thm:pfaff}).
 \item $s = 0.5655119110413253 \pm 6\cdot10^{-16}$ (\S\ref{sec:value}), i.e.\ $2s = 1.13102382208265$
   per dimer and $e^{s} = 1.76034869404198$. The error bar is not rigorous.
-\item Rigorously, $0.545343749727 \le s \le 0.586216605404$ (Theorem~\ref{thm:bounds}).
-\item The surface free energy of a free edge is $\sigma = 0.242017935766251 \pm 9\cdot10^{-15}$
-  (\S\ref{sec:surface}).
-\item On even cylinders the two parity sectors split by $\Delta_w \approx e^{-w/\xi}$,
-  $\xi \approx 1.23$; we observe that all finite-size corrections are exponentially small (\S\ref{sec:z2}),
-  in contrast with the critical square lattice.
-\item The conjecture (L$_\infty$) that $q \mapsto \log\lambda_{2q}$ is convex for $2q \ge 22$
-  would give the rigorous bound $s \ge 0.565511911035$ (ten correct digits). The stronger
-  log-convexity (L) of $q \mapsto Z(2q, m)$ holds in every case we tested at unit weights, but
-  we show that it is not structural: it fails for diagonal weights $(1, \tfrac{9}{10})$ and for
-  equal diagonal weights $x = \tfrac32, 2, 3$, and a Krein-signature argument for the left--right
-  symmetry explains the failures under unequal weights (\S\ref{sec:conj}).
+\item Rigorously, $0.545343749727 \le s \le RWUPPER$ (Theorem~\ref{thm:bounds}); the upper bound
+  uses the run structure of the matchings across a cut (Lemma~\ref{lem:runs}).
+\item The surface free energy of a free edge is $\sigma = 0.242017935766251 \pm 9\cdot10^{-15}$, and
+  the corner free energy is $\kappa = 0.36319625605 \pm 3\cdot10^{-10}$, which gives the
+  asymptotics of A239273 (\S\ref{sec:surface}).
+\item On even cylinders the two parity sectors split by $\Delta_w \approx e^{-w/\xi}$ with
+  $\xi = 1.235 \pm 0.004$, and all finite-size corrections we see are exponentially small
+  (\S\ref{sec:z2}), in contrast with the critical square lattice.
+\item Convexity of $q \mapsto \log\lambda_{2q}$ (L$_\infty$) and a bound on the odd increments (O)
+  of the strip growth rates hold wherever we can compute and would give
+  $0.565511911035 \le s \le 0.565511911049$ (\S\ref{sec:conj}). The stronger log-convexity of the
+  finite counts is not structural; a companion note \cite{rylko2026lnote} treats it.
 \end{enumerate}
 The same code reproduces the exactly known entropies of the square and triangular lattices
 (\S\ref{sec:checks}). All scripts, outputs and the map from every number in this paper to the
@@ -649,7 +644,7 @@ inequalities on $58$ boards ($K \le 8$, $kw \le 12$); $\max M(A, B) = F_{n+1}$ f
 columns of length $m \le 11$, and the branching step for $m \le 8$; the transfer with weight $z$
 against brute force as a polynomial in $z$ ($162$ evaluations); and, for $w = 2, \dots, 12$, the
 float ratios against exact rational ratios for the same float vector ($|\text{float}/\text{exact}
-- 1| \le 1.7\cdot10^{-16}$). The test has power: with $z = 0$ the strip inequality fails on all
+- 1| \le 1.7\cdot10^{-16}$). The audit is sensitive: with $z = 0$ the strip inequality fails on all
 $40$ boards with $k \ge 2$. On these small boards $z = 0.5$ would suffice; the weight $\sqrt\varphi$ is
 needed by the proof, not by the data. For the run weights, also exactly: $M(A, B) \le
 \min(F(A), F(B))$ and $M(S, S) = F(S)$ for all $A, B$ in columns of length $m \le 8$; the strip
@@ -721,7 +716,8 @@ Since A239273 counts the squares, $a(n) = Z(2n, 2n)$,
   C = e^\kappa = 1.437918032, \quad d = e^{4s} = 9.60273202731337, \quad f = e^{8\sigma} = 6.931966132248,
 \end{gather*}
 with relative error $-2.0\cdot10^{-9}$ at $n = 12$ and about a factor $5.6$ smaller per step in $n$.
-The b-file of A239273 up to $n = 12$ comes from the same computation by the author.
+The ratio of the extrapolation differences is still drifting at $L = 24$, so the slowest edge and
+corner correction is not yet settled; the error bar of $\kappa$ allows for this by doubling.
 
 The counts alone also give $s$. The second differences
 $[\log Z(L+2, L+2) - 2\log Z(L, L) + \log Z(L-2, L-2)]/8$ approach $s$ from above, $5.3\cdot10^{-9}$
