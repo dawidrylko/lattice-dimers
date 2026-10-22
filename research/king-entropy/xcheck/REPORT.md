@@ -62,8 +62,13 @@ w = 27 (long double, 12.0 GiB, 23 min): f_27 = 0.5655119110413246284, d_27 = 6.0
 L1 prediction 6.06022e-15 from the fit at W = 25 (ratio 1.00015); L1 at W = 27 gives
 0.5655119110413253187 (change 1.1e-18 from W = 25), all models in [...3253187, ...3253190].
 
-Convergence claim: the estimate changes shrink by 0.1147 per iteration of T^2 at every w = 16..25
-(paper: 0.115).
+Table 2 (model estimates and backtests), own implementations of the models G, L1, L2, PE, R1 and
+Wynn: all 12 estimates agree with the paper to its 17 printed digits (odd W = 25: G ...32523, the
+others ...32532; midpoints W = 24: G ...32564, PE and R1 ...32531, the others ...32532); backtest changes L1 1.42e-17 / 6.44e-17 and L2 1.35e-18 / 3.54e-18 (paper 1.4e-17 / 6.5e-17 and
+1.5e-18 / 3.5e-18).
+
+Convergence claim: the estimate changes shrink by 0.1147 per iteration of T^2 at every w = 16..27
+(paper: 0.115); the own runs stop after 22-25 iterations at a change below 1e-19.
 
 ## Claim 3 - Theorem 2.1 (Pfaffian orientation iff min(K, L) <= 2): CONFIRMED
 
@@ -115,18 +120,29 @@ Surface free energy (Section 5): -2 sigma = -0.4840358715325006 (odd k, Aitken a
 8.719). Table 4 reproduced to <= 4e-17 for k <= 24; at k = 25, 26 (float64 in the paper) the
 differences are 1.4e-16 and 8.3e-16, inside the paper's error bar. `out/analyze_eig.txt` section 9.
 
-## Claim 6 - failure modes: IN PROGRESS
+## Claim 6 - hunt for failure modes: NONE FOUND
 
-Section 8 sign properties hold on the own free-strip values (`out/analyze_eig.txt` section 10):
+| failure mode | test | result |
+| --- | --- | --- |
+| hidden slower mode beyond w = 25 | widths 26 and 27 (28 running), computed blind and compared with the L1 predictions made at W = 24 / 25 | d_26, d_27 agree to 1.9e-4 and 1.5e-4 relative; a mode e^(-w/1.2351) with the amplitude the paper admits in its budget (B = 0.001..0.003 d_25) would shift d_27 by at least 0.2 %, so the data exclude it: the hidden-mode term of the budget is conservative |
+| level crossing | convergence ratio of the power iteration (= (lambda_3/lambda_1)^2 in the sector) at every w and sector | 0.1147 at all w = 16..27, both sectors; for w <= 10 the full spectra show a simple leading eigenvalue and a negative subleading one (lambda_2/lambda_1 = -0.339 at w = 10) |
+| sector mislabelling | parity rule checked entrywise on the row transfer; sectors of odd w | T maps sector p to p + w (mod 2); odd-w sectors equal to < 1e-15; sector 0 (with e0) is the larger one for every even cylinder, f^(1) < s < f^(0) for w = 4..26 |
+| reducible sector (a component not seen from e0) | Tarjan SCCs of T^2 per sector, w <= 10, cylinders and free strips | every sector is strongly connected; for free strips the sector of e0 is all reachable |
+| floating-point loss | long double vs float64 of the own code; own vs repository extended values; exact count ratios vs eigenvalues | 1.1e-17 per site; 7.8e-20 per site; 1e-19 (m <= 12, K = 80) |
+| off-by-one K vs L | Z(K, L) = Z(L, K) for K, L <= 12; OEIS array orientation; count ratios along the strip vs the strip eigenvalue | all consistent |
+| lemma outside its hypotheses | Lemma 4.3 needs supp v in supp A^n e0: own v is A^n e0 (exact support, or float iteration from e0); Lemma 4.8 needs (Av)_i = 0 off supp v: checked (0 violations); Lemmas 4.4-4.7 need w >= 2 (used w >= 4); Theorem 2.1 needs KL even (stated); Proposition 8.2 uses s = lim a_k / k, which needs the existence of the double limit (the paper calls it standard and keeps it outside Theorem 4.1) | no violation found |
+
+The sign properties of Section 8 hold on the own free-strip values (`out/analyze_eig.txt` section 10):
 even second differences positive for 2q = 2..24, odd ones negative for k = 3..23, increments
 alternate for k = 0..25, margin of (O) at k = 23 5.91e-12, (a_24 - a_22)/2 = 0.5655119110355933 and
-a_24 - a_23 = 0.565511911047236; the sectors without e0 win at k = 6, 10, 14, 18 and the sector
-difference ratio is -13.84. Float64 vs long double: 1.1e-17 per site at most (paper: 6.2e-17).
+a_24 - a_23 = 0.565511911047236 (the paper's conditional interval [0.565511911035, 0.565511911049]);
+the free-strip sectors without e0 win at k = 6, 10, 14, 18 and their difference ratio is -13.84.
+`out/spectrum.txt`, `out/analyze_eig.txt`.
 
-So far: every parity sector of the row transfer is strongly connected for w <= 10 (cylinder and free
-strip), T maps sector p to p + w (mod 2) entrywise, the leading eigenvalue is simple, the subleading
-eigenvalue of T in a sector is negative (-0.339 at w = 10); exact count ratios agree with the power
-iteration (to 1e-19 for m <= 12); Z(K, L) = Z(L, K) for K, L <= 12. `out/spectrum.txt`.
+A failure mode of the own code was found on the way: a running sum of 2^w terms in the eigenvalue
+estimate loses about 1e-12 relative in float64 at w >= 24 (sqrt(n) eps); it is now a blocked sum in
+long double, and all affected runs were redone. The paper's float64 values are not affected (they agree
+with the own long double values to 7.1e-17 per site).
 
 ## Commands
 
