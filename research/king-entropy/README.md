@@ -6,8 +6,9 @@ i.e. domicule tilings. Goal: the entropy per site
 Results are written up in a paper draft. The PDF is [`paper/main.pdf`](paper/main.pdf), the
 source `paper/main.tex`. Every number in it is mapped to its output file and the script that wrote
 it in [`paper/NUMBERS.md`](paper/NUMBERS.md). The commit SHAs recorded in the outputs refer to the
-history under the tag `v1.0-king-entropy`. Full proofs of the rigorous bounds are in
-[`notes/PROOF-upper.md`](notes/PROOF-upper.md) and [`notes/PROOF-lower.md`](notes/PROOF-lower.md); the Calkin-Wilf
+history under the tag `v1.0-king-entropy` for the outputs of the first version, and to the branch
+that becomes `v1.1-king-entropy` for the outputs added or regenerated since (`paper/NUMBERS.md`). Full proofs of the rigorous bounds are in
+[`notes/PROOF-upper.md`](notes/PROOF-upper.md) (the run-weighted upper bound in its §9) and [`notes/PROOF-lower.md`](notes/PROOF-lower.md); the Calkin-Wilf
 question in [`notes/CW-NOTE.md`](notes/CW-NOTE.md); hypothesis (L) and the experiments on it in
 [`notes/L-NOTE.md`](notes/L-NOTE.md) and the directory [`L/`](L/).
 
