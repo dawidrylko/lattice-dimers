@@ -110,7 +110,9 @@ the strip inequality with both weights on 47 boards, 0 violations; with z = 0 th
 23 of the 29 boards with k >= 2 (the other six are equalities: one row, or K k w odd with Z = 0),
 so the check is sensitive. Proposition 8.2 inputs, rigorous: log lambda_24 in
 [13.08824999346080, 13.08824999346081], log lambda_23 >= 12.52273808241356, log lambda_22 <=
-11.95722617138962, all consistent with (and tighter than) the paper's values.
+11.95722617138962, all consistent with (and tighter than) the paper's values; with them the
+conditional interval of Proposition 8.2 is [0.565511911035, 0.565511911048] (paper: [0.565511911035,
+0.565511911049]); `out/misc.txt` (`python3 misc.py`, from `out/cert.txt`).
 
 ## Claim 5 - kappa and the asymptotics of A239273: CONFIRMED
 
@@ -142,7 +144,7 @@ differences are 1.4e-16 and 8.3e-16, inside the paper's error bar. `out/analyze_
 | level crossing | convergence ratio of the power iteration (= (lambda_3/lambda_1)^2 in the sector) at every w and sector | 0.1147 at all w = 16..27, both sectors; for w <= 10 the full spectra show a simple leading eigenvalue and a negative subleading one (lambda_2/lambda_1 = -0.339 at w = 10) |
 | sector mislabelling | parity rule checked entrywise on the row transfer; sectors of odd w | T maps sector p to p + w (mod 2); odd-w sectors equal to < 1e-15; sector 0 (with e0) is the larger one for every even cylinder, f^(1) < s < f^(0) for w = 4..26 |
 | reducible sector (a component not seen from e0) | Tarjan SCCs of T^2 per sector, w <= 10, cylinders and free strips | every sector is strongly connected; for free strips the sector of e0 is all reachable |
-| floating-point loss | long double vs float64 of the own code; own vs repository extended values; exact count ratios vs eigenvalues | 1.1e-17 per site; 7.8e-20 per site; 1e-19 (m <= 12, K = 80) |
+| floating-point loss | long double vs float64 of the own code; own vs repository extended values; exact count ratios vs eigenvalues | 1.1e-17 per site; 7.8e-20 per site; <= 6.4e-19 in log lambda (m <= 12, K = 80) |
 | off-by-one K vs L | Z(K, L) = Z(L, K) for K, L <= 12; OEIS array orientation; count ratios along the strip vs the strip eigenvalue | all consistent |
 | lemma outside its hypotheses | Lemma 4.3 needs supp v in supp A^n e0: own v is A^n e0 (exact support, or float iteration from e0); Lemma 4.8 needs (Av)_i = 0 off supp v: checked (0 violations); Lemmas 4.4-4.7 need w >= 2 (used w >= 4); Theorem 2.1 needs KL even (stated); Proposition 8.2 uses s = lim a_k / k, which needs the existence of the double limit (the paper calls it standard and keeps it outside Theorem 4.1) | no violation found |
 
@@ -154,8 +156,9 @@ the free-strip sectors without e0 win at k = 6, 10, 14, 18 and their difference 
 `out/spectrum.txt`, `out/analyze_eig.txt`.
 
 A failure mode of the own code was found on the way: a running sum of 2^w terms in the eigenvalue
-estimate loses about 1e-12 relative in float64 at w >= 24 (sqrt(n) eps); it is now a blocked sum in
-long double, and all affected runs were redone. The paper's float64 values are not affected (they agree
+estimate and in the internal mass check lost more than 1e-12 relative in float64 at w = 24 (the mass
+check stopped the run-weighted certificate); it is now a blocked sum in long double, and all affected
+runs were redone. The paper's float64 values are not affected (they agree
 with the own long double values to 6.2e-17 per site, as the paper states). A second slip of the own
 code: `compare_eig.py` first read float64 values through their decimal repr, which inflated the
 difference at w = 5 to 7.1e-17; it now uses the exact binary value.
@@ -186,5 +189,5 @@ Machine: x86-64, 4 cores, 15 GiB.
 
 `run_bg.sh` runs `counts.py` and both `eigrun.py` groups in sequence. The cylinder runs w <= 24 in long
 double were recomputed after a change of the summation of the eigenvalue estimate (blocked long double
-sums instead of a running sum, which lost about 1e-12 in float64 at w >= 24);
+sums instead of a running sum, which lost more than 1e-12 in float64 at w = 24);
 `out/eig_redo_log.txt` is the log of that recomputation (`python3 eigrun.py base 'king_cyl_w(0[3-9]|1[0-9]|2[0-4])_[01]_ld'`).

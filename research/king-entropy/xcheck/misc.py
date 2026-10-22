@@ -4,6 +4,8 @@ transfer code (cylinders w = 17, 18 and the tri sector bracket).
 
 Run: python3 misc.py > out/misc.txt
 """
+import re
+
 import mpmath
 
 import kdrun
@@ -19,7 +21,23 @@ def loglam(lat, bc, w, start):
     return mpmath.log(parse_hex(last[1])) / 2
 
 
+def conditional_interval():
+    """Proposition 8.2 from the rigorous enclosures of log lambda_w in out/cert.txt, rounded outward."""
+    enc = {}
+    for line in open("out/cert.txt"):
+        m = re.match(r"\s*(\d+)\s+log lambda_w in\s+\[([\d.]+), ([\d.]+)\]", line)
+        if m:
+            enc[int(m.group(1))] = (mpmath.mpf(m.group(2)), mpmath.mpf(m.group(3)))
+    lo = (enc[24][0] - enc[22][1]) / 2
+    hi = enc[24][1] - enc[23][0]
+    lo12 = mpmath.floor(lo * 10**12) / 10**12
+    hi12 = mpmath.ceil(hi * 10**12) / 10**12
+    print(f"Proposition 8.2 with the own enclosures: (L_inf) -> s >= {mpmath.nstr(lo12, 12)}, (O) -> s <= "
+          f"{mpmath.nstr(hi12, 12)} (unrounded {mpmath.nstr(lo, 15)}, {mpmath.nstr(hi, 15)}); paper [0.565511911035, 0.565511911049]")
+
+
 def main():
+    conditional_interval()
     print("Kahn-Lovasz log(8!)/16 =", mpmath.nstr(mpmath.log(40320) / 16, 12), "(paper 0.662787681422)")
     print("2s =", mpmath.nstr(2 * S, 15), " e^s =", mpmath.nstr(mpmath.e ** S, 15),
           "(paper 1.13102382208265, 1.76034869404198)")
