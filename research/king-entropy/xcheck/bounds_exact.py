@@ -6,7 +6,7 @@ check (a sliding window of w+1 cells, bit k = cell p+k):
   lower : plain strip; v = A^n e0 rescaled with ceilings (so supp v = supp A^n e0
           exactly), c = min (Av)_i / v_i as a fraction, bound log(c)/(2w);
   upper : side cells may be covered from outside, uniform weight sqrt(phi)
-          (Lemma 4.8) or the run weights 1, sqrt2, sqrt(phi) (Lemma 4.6 and the
+          (Lemma 4.7) or the run weights 1, sqrt2, sqrt(phi) (Lemma 4.6 and the
           transfer described after it); C = max (Av)_i / v_i, checked that
           (Av)_i = 0 off supp v; bound log(C)/(2w).
   Irrational weights are replaced by rationals g/D >= weight (D = 2^64); every
@@ -236,7 +236,7 @@ def part_b():
             prev = x
         return out
 
-    cut_bad = strip_bad = zero_fail = nboards = 0
+    cut_bad = strip_bad = zero_fail = nboards = nk2 = 0
     for K in range(1, 7):
         for w in (2, 3, 4):
             for k in (1, 2, 3):
@@ -267,12 +267,13 @@ def part_b():
                 W0 = Ntab[(frozenset(), frozenset())]
                 if Zb > Wphi**k or Zb > Wrun**k:
                     strip_bad += 1
-                if k >= 2 and Zb > W0**k:
-                    zero_fail += 1
+                if k >= 2:
+                    nk2 += 1
+                    zero_fail += Zb > W0**k
                 nboards += 1
-    print(f"cut identity (Lemma 4.4) and strip inequality (Lemma 4.8, both weights): {nboards} boards "
+    print(f"cut identity (Lemma 4.4) and strip inequality (Lemma 4.7, both weights): {nboards} boards "
           f"(K <= 6, w = 2..4, k = 1..3), cut violations {cut_bad}, strip violations {strip_bad}")
-    print(f"with z = 0 (no outside covers) the strip inequality fails on {zero_fail} boards with k >= 2")
+    print(f"with z = 0 (no outside covers) the strip inequality fails on {zero_fail} of the {nk2} boards with k >= 2")
     return bad + cut_bad + strip_bad
 
 

@@ -15,7 +15,7 @@ None of substance so far. Minor, last digits only:
 - **Table 1, row w = 25 (and r_23)** is computed from float64 eigenvalues and carries their rounding
   noise: the paper prints d_25 = 5.994e-14, r_25 = 9.992, s_25 = 0.5655119110413253; the long double
   values (own, and the repository's own `data/lean/*longdouble*`, which agree with the own ones to
-  5e-20 per site) give d_25 = 5.991e-14, r_25 = 9.9976, s_25 = 0.56551191104132523 (the paper's own
+  7.8e-20 per site) give d_25 = 5.991e-14, r_25 = 9.9976, s_25 = 0.56551191104132523 (the paper's own
   Table 2 has G = 0.56551191104132523), and r_23 = 10.1354 (printed 10.136). The text's "r_w drifts
   from 13.4 to 9.99" should end at 10.0. No effect on the result. `out/analyze_eig.txt` section 2.
 - **Section 5.1, "|rho(K, L) - kappa| <= 6.2e-8 for min(K, L) >= 20"**: the maximum is 6.249e-8
@@ -45,7 +45,7 @@ from the own counts has 14930 bytes, so the file differs from it in format or co
 | --- | --- | --- | --- |
 | s, L1 on odd w, W = 25 | 0.5655119110413253176 | 0.5655119110413253176 (centre) | < 1e-19 |
 | s, L1 on even-w midpoints, W = 24 | 0.5655119110413253237 | 0.56551191104132532 | 4e-18 |
-| spread of L1, L2, PE, R1, Wynn (odd W = 25 / midpoints W = 24) | [...253051, ...253237] | +- 6e-16 | inside |
+| span of L1, L2, PE, R1, Wynn: odd W = 25; midpoints W = 24 | [...3253176, ...3253222]; [...3253051, ...3253237] | +- 6e-16 | inside |
 | in-sector gap m per row (convergence of the power iteration, w = 16..25) | 1.08272 | 1.082727 | 7e-6 |
 | even-w brackets w = 18..24, midpoint w = 24 | all digits as printed | Section 3.1 | 0 |
 | f^(1)_w < s < f^(0)_w, all even w = 4..24 | holds | holds | - |
@@ -81,7 +81,7 @@ All 18 entries of Table 3 reproduced to the last printed digit, by two independe
 | 16, 20, 24 | directed rounding FE_DOWNWARD / FE_UPWARD in C (`out/cert.txt`, `out/certrun.txt`) | same | same | same |
 
 w = 24: lower 0.545343749727 (unrounded 0.5453437497275336), upper sqrt(phi) 0.586216605404,
-run weights **0.582767477484** (unrounded 0.5827674774831951). Lemmas 4.4-4.8 checked by brute force:
+run weights **0.582767477484** (unrounded 0.5827674774831951). Lemmas 4.4-4.7 checked by brute force:
 M(A, B) <= min(F(A), F(B)), M(S, S) = F(S) for 250952 pairs (columns m <= 10); the cut identity and
 the strip inequality with both weights on 47 boards, 0 violations; with z = 0 the inequality fails on
 23 boards (the check is sensitive). Proposition 8.2 inputs, rigorous: log lambda_24 in
@@ -122,3 +122,32 @@ So far: every parity sector of the row transfer is strongly connected for w <= 1
 strip), T maps sector p to p + w (mod 2) entrywise, the leading eigenvalue is simple, the subleading
 eigenvalue of T in a sector is negative (-0.339 at w = 10); exact count ratios agree with the power
 iteration (to 1e-19 for m <= 12); Z(K, L) = Z(L, K) for K, L <= 12. `out/spectrum.txt`.
+
+## Commands
+
+From `research/king-entropy/xcheck/`, after `python3 -m pip install -r requirements.txt` and
+`sh build.sh` (gcc 13, `-O2 -fopenmp -frounding-math -ffp-contract=off`). All outputs are independent of
+the number of OpenMP threads (fixed summation order, fixed seeds) except the timing lines.
+Machine: x86-64, 4 cores, 15 GiB.
+
+| output | command | wall time here |
+| --- | --- | --- |
+| `out/validate.txt` | `python3 validate.py` | minutes |
+| `out/counts_free.json`, `out/counts_cyl.json`, `out/counts_log.txt` | `python3 counts.py` | 7 min |
+| `out/oeis_fetch.txt`, `out/oeis_check.txt` | `sh fetch_oeis.sh DIR > out/oeis_fetch.txt; python3 oeis_check.py DIR` | seconds |
+| `out/compare_counts.txt` | `python3 compare_counts.py` | minutes |
+| `out/pfaff.txt` | `python3 pfaff.py` | 10 s |
+| `out/bounds_exact.txt` | `python3 bounds_exact.py 4 8 12` | minutes |
+| `out/cert.txt` | `python3 cert.py 16 20 22 23 24` | about 30 min |
+| `out/certrun.txt` | `python3 certrun.py 4 8 12 16 20 24` | 35 min (w = 24: 5 GiB) |
+| `out/eig/*.txt`, `out/eig_base_log.txt`, `out/eig_wide_log.txt` | `python3 eigrun.py base; python3 eigrun.py wide` | 2 h; 3 h (w = 27, 28: 12 GiB) |
+| `out/analyze_eig.txt`, `out/eig_summary.json` | `python3 analyze_eig.py` | 1 min |
+| `out/compare_eig.txt` | `python3 compare_eig.py` | seconds |
+| `out/spectrum.txt` | `python3 spectrum.py` | minutes |
+| `out/corner.txt` | `python3 corner.py` (after `analyze_eig.py`) | seconds |
+| `out/misc.txt` | `python3 misc.py` | seconds |
+
+`run_bg.sh` runs `counts.py` and both `eigrun.py` groups in sequence. The cylinder runs w <= 24 in long
+double were recomputed after a change of the summation of the eigenvalue estimate (blocked long double
+sums instead of a running sum, which lost about 1e-12 in float64 at w >= 24);
+`out/eig_redo_log.txt` is the log of that recomputation (`python3 eigrun.py base 'king_cyl_w(0[3-9]|1[0-9]|2[0-4])_[01]_ld'`).
