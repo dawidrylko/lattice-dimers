@@ -192,6 +192,11 @@ mid W=26: L1 = 0.5655119110413253192  L1 - paper = 1.92e-17; models L1,L2,PE,R1,
 odd w=27: d_w measured 6.06113e-15, L1 prediction 6.06022e-15, ratio 1.00015; f_w - s_paper = -6.716e-16
 midpoint w=26: d_w measured -1.90309e-14, L1 prediction -1.90272e-14, ratio 1.00019; bracket [0.565511911036870506, 0.5655119110457844447] contains s_paper: True
 
+== 6b. hidden slow mode: d_w = L1 form + B x^((w-25)/2), x = e^(-2/1.2351), least squares on w = 13..W ==
+W=25: best B = 0.002 d_25 (rel. rms 9.97e-5); admitted (rms within 3x): B/d_25 in [0.001, 0.003]; shift of s over admitted B: 2.0e-17
+W=27: best B = 0.001 d_25 (rel. rms 0.000196); admitted (rms within 3x): B/d_25 in [0.0, 0.0025]; shift of s over admitted B: 5.19e-18
+paper (W = 25): admits 0.001 d_25 <= B <= 0.003 d_25, term 3.0e-17
+
 == 7. parity splitting (Table 5) ==
  w  Delta_w (mine)   paper          xi_w (mine)  paper
 10  0.0001521094     1.521094e-4    1.15438      1.15438

@@ -252,6 +252,34 @@ def main():
                   f"ratio {mpmath.nstr(dm / model_mid(w), 6)}; bracket [{fmt(f1[w], 19)}, {fmt(f0[w], 19)}] "
                   f"contains s_paper: {f1[w] < S_PAPER < f0[w]}")
 
+    print("\n== 6b. hidden slow mode: d_w = L1 form + B x^((w-25)/2), x = e^(-2/1.2351), least squares on w = 13..W ==")
+    x = mpmath.e ** (-2 / mpmath.mpf("1.2351"))
+    for W in [w for w in (25, 27) if w in f]:
+        ws = list(range(13, W + 1, 2))
+        d = {w: f[w] - f[w - 2] for w in ws}
+        d25 = d[25]
+
+        def fit(B):
+            A = mpmath.matrix([[mpmath.e ** (-m_gap * w) * w ** mpmath.mpf(-1.5) * w ** (-k) / d[w] for k in (0, 1)] for w in ws])
+            y = mpmath.matrix([(d[w] - B * x ** ((w - 25) / mpmath.mpf(2))) / d[w] for w in ws])
+            sol = mpmath.qr_solve(A, y)[0]
+            rms = mpmath.sqrt(mpmath.fsum((A * sol - y)[i] ** 2 for i in range(len(ws))) / len(ws))
+
+            def model(w):
+                return mpmath.e ** (-m_gap * w) * w ** mpmath.mpf(-1.5) * (sol[0] + sol[1] / w) + B * x ** ((w - 25) / mpmath.mpf(2))
+
+            return rms, f[W] + tail(model, W)
+
+        grid = [d25 * mpmath.mpf(k) / 2000 for k in range(-40, 41)]
+        res6 = [(B, *fit(B)) for B in grid]
+        best = min(res6, key=lambda t: t[1])
+        adm = [t for t in res6 if t[1] <= 3 * best[1]]
+        print(f"W={W}: best B = {mpmath.nstr(best[0] / d25, 3)} d_25 (rel. rms {mpmath.nstr(best[1], 3)}); "
+              f"admitted (rms within 3x): B/d_25 in [{mpmath.nstr(min(t[0] for t in adm) / d25, 3)}, "
+              f"{mpmath.nstr(max(t[0] for t in adm) / d25, 3)}]; shift of s over admitted B: "
+              f"{mpmath.nstr(max(t[2] for t in adm) - min(t[2] for t in adm), 3)}")
+    print("paper (W = 25): admits 0.001 d_25 <= B <= 0.003 d_25, term 3.0e-17")
+
     print("\n== 7. parity splitting (Table 5) ==")
     print(" w  Delta_w (mine)   paper          xi_w (mine)  paper")
     Dl = {w: (f0[w] - f1[w]) * w for w in f0}
