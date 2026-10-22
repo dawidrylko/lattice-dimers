@@ -59,7 +59,7 @@ extrapolation with predictive backtests and an error budget gives
 \]
 a non-rigorous estimate. Computer-assisted Collatz--Wielandt certificates, combined with a bound
 for the matchings across a cut that depends on the runs of crossing cells, prove
-$0.545343749727 \le s \le RWUPPER$. We also estimate the surface free energy of a free edge,
+$0.545343749727 \le s \le 0.582767477484$. We also estimate the surface free energy of a free edge,
 $\sigma = 0.242017935766251 \pm 9\cdot 10^{-15}$, the corner free energy, which gives the asymptotics of
 A239273, and the decay length $\xi = 1.235 \pm 0.004$ of the splitting between the two parity
 sectors. Two sign properties of the strip growth rates, convexity in the even width and a
@@ -138,7 +138,7 @@ estimate and the certificates from the same code.
   (Theorem~\ref{thm:pfaff}).
 \item $s = 0.5655119110413253 \pm 6\cdot10^{-16}$ (\S\ref{sec:value}), i.e.\ $2s = 1.13102382208265$
   per dimer and $e^{s} = 1.76034869404198$. The error bar is not rigorous.
-\item Rigorously, $0.545343749727 \le s \le RWUPPER$ (Theorem~\ref{thm:bounds}); the upper bound
+\item Rigorously, $0.545343749727 \le s \le 0.582767477484$ (Theorem~\ref{thm:bounds}); the upper bound
   uses the run structure of the matchings across a cut (Lemma~\ref{lem:runs}).
 \item The surface free energy of a free edge is $\sigma = 0.242017935766251 \pm 9\cdot10^{-15}$, and
   the corner free energy is $\kappa = 0.36319625605 \pm 3\cdot10^{-10}$, which gives the
@@ -407,7 +407,7 @@ independent, eigenvalue-free check of $s$, discussed with the corner free energy
 \section{Rigorous bounds}\label{sec:bounds}
 
 \begin{theorem}[computer-assisted]\label{thm:bounds}
-$0.545343749727 \le \underline s \le \bar s \le RWUPPER$.
+$0.545343749727 \le \underline s \le \bar s \le 0.582767477484$.
 \end{theorem}
 
 For comparison, the Kahn--Lov\'asz bound (the number of perfect matchings of a graph is at most
@@ -443,7 +443,7 @@ $w$ & lower bound on $\underline s$ & upper, weight $\sqrt\varphi$ & upper, run 
 12 & 0.525175645897 & 0.606921301094 & 0.600023045982 \\
 16 & 0.535259669620 & 0.596568952598 & 0.591395260725 \\
 20 & 0.541310117470 & 0.590357544276 & 0.586218590772 \\
-24 & 0.545343749727 & 0.586216605404 & RWUPPER \\
+24 & 0.545343749727 & 0.586216605404 & 0.582767477484 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -610,7 +610,7 @@ $\sqrt\varphi$),
   + \frac{w \log(5 + 2\sqrt2)}{L} \longrightarrow \frac{\log C_w}{2w}.
 \]
 The certificate of \S\ref{sec:float} at $w = 24$ gives $\bar s \le 0.586216605404$ with the weight
-$\sqrt\varphi$ and $\bar s \le RWUPPER$ with the run weights.
+$\sqrt\varphi$ and $\bar s \le 0.582767477484$ with the run weights.
 \end{proof}
 
 \subsection{Floating-point certificates}\label{sec:float}
@@ -937,7 +937,7 @@ runs use the 64-bit mantissa of the x87 \texttt{long double}, which \file{src/le
 algorithms are those of \S\ref{sec:model}; the implementation applies each cell step to reshaped
 views of the state vector, without forming the transfer matrix. The widest
 runs dominate the cost: the cylinder $w = 25$ ($8.4$\,GiB, $22.5$ min), the certified bounds at
-$w = 24$ ($17$ min), the run-weighted bound at $w = 24$ (RWTIME), the exact counts of the
+$w = 24$ ($17$ min), the run-weighted bound at $w = 24$ ($13.3$\,GiB including the memory-mapped vector, $63$ min), the exact counts of the
 $24 \times 24$ board ($1.5$\,GiB, $52$ min), and the certified (L) tests at $m = 26$ ($8.0$\,GiB, $43$ min). The script
 \file{src/repro.py} re-runs \texttt{src/estimate.py}, \texttt{src/cw.py}, \texttt{src/bounds.py 16} and
 \texttt{src/cylw.py king cyl 20 0} from a clean export of the repository and

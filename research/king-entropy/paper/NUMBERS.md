@@ -49,7 +49,8 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | number | meaning | file | script |
 | --- | --- | --- | --- |
 | 0.5655119110413253 ± 6·10⁻¹⁶ | s, error bar | `out/out_errbar.txt` (RECOMMENDATION line) | `src/errbar.py` |
-| 0.545343749727, 0.586216605404 | certified bounds, w = 24 | `out/out_bounds.txt` (BEST CERTIFIED) | `src/bounds.py 24` |
+| 0.545343749727, 0.586216605404 | certified bounds, w = 24 (lower; upper with weight √φ) | `out/out_bounds.txt` (BEST CERTIFIED) | `src/bounds.py 24` |
+| 0.582767477484 | run-weighted upper bound, w = 24 | `out/out_runweight_3state.txt` | `src/runweight.py 3state 24 --disk <dir>` |
 | 0.242017935766251 ± 9·10⁻¹⁵ | σ | `out/out_surface.txt` (RESULT; 9.2e-15 rounded) | `src/surface.py` |
 | ξ = 1.235 ± 0.004 | splitting length | `out/out_estimate.txt` (fits 1.2323, 1.2351, 1.2387; centre and half-range) | `src/estimate.py` |
 | 0.565511911035, 0.565511911049 | conditional bounds given (L∞), (O) | `out/out_cw.txt` (section E, CONDITIONAL INTERVAL) | `src/cw.py` |
@@ -106,8 +107,8 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | --- | --- | --- |
 | 0.662787681422 | `out/out_bounds.txt` (Kahn-Lovasz) | `src/bounds.py 24` |
 | Table 3, columns 2-3 | `out/out_bounds.txt` | `src/bounds.py 24` |
-| Table 3, column 4; RWUPPER (Theorem 4.1) | `out/out_runweight_3state.txt` | `src/runweight.py 3state` |
-| 0.484/w, 0.497/w, RWRATE/w | `paper/out_derived.txt` (w(s − lower_w) = 0.484, w(upper_w − s) = 0.4969, run weights; rounded) | `paper/derived.py` |
+| Table 3, column 4; 0.582767477484 (Theorem 4.1) | `out/out_runweight_3state.txt` (w = 24 line) | `src/runweight.py 3state` |
+| 0.484/w, 0.497/w, 0.414/w | `paper/out_derived.txt` (w(s − lower_w) = 0.484, w(upper_w − s) = 0.4969, run-weighted 0.4141; rounded) | `paper/derived.py` |
 | M(A, B) ≤ min(F(A), F(B)), F_(l+1) ≤ 2φ^(l−2) | Lemma 4.6, proof in the paper; checked in `out/out_audit_bounds.txt` (U6) | `src/audit_bounds.py` |
 | 8w + 14n − 20 ≤ 12w | rounding count, `src/runweight.py` docstring | - |
 | m ≤ 8; 58 boards; 57 evaluations; w = 2...8, 1.7·10⁻¹⁶ | `out/out_audit_bounds.txt` (U6-U9; max 1.63e-16; rounded up) | `src/audit_bounds.py` |
@@ -178,7 +179,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | four cores, about 16 GiB, two machines | see the note below | - |
 | 8.4 GiB, 22.5 min | `data/eig/eig_king_cyl_w25_p1.json` | `src/cylw.py king cyl 25 1` |
 | 17 min | `logs/time_bounds.txt` (wall 1042.1 s) | `src/timed.py python3 -u src/bounds.py 24` |
-| RWTIME | `logs/time_runweight_3state_w24.txt` | `src/timed.py python3 src/runweight.py 3state 24 --disk <dir>` |
+| 13.3 GiB, 63 min | `logs/time_runweight_3state_w24.txt` (maxrss 13581 MiB incl. the memory-mapped vector, wall 3787.2 s) | `src/timed.py python3 src/runweight.py 3state 24 --disk <dir>` |
 | 1.5 GiB, 52 min | `logs/time_zex_king_free_m24_K24.txt` (maxrss 1562 MiB, wall 3116.4 s) | `src/timed.py python3 src/zexact.py king free 24 24` |
 | 8.0 GiB, 43 min | `logs/time_lcert_m26.txt` (maxrss 8223 MiB, wall 2557.3 s) | `src/timed.py python3 src/lcert.py 26 30` |
 
@@ -198,7 +199,7 @@ have the same sources.
 
 | number | file | script |
 | --- | --- | --- |
-| 0.5655119110413253 ± 6·10⁻¹⁶; 0.545343749727 and the upper bound of Theorem 4.1 | as in the paper | - |
+| 0.5655119110413253 ± 6·10⁻¹⁶; 0.545343749727, 0.582767477484 | as in the paper (Theorem 4.1) | - |
 | 1451 cases, m ≤ 26, cylinders m ≤ 22; Table 1 | `out/out_ltest.txt`, `out/out_lcert_m25.txt`, `out/out_lcert_m26.txt` | `src/ltest.py`, `src/lcert.py` |
 | triangular, weights, onsets, Krein signature, J-orbits | `out/out_lweight*.txt`, `L/out_symmetry.txt`, `L/out_linf.txt` | as in Section 8 above |
 | Z(8, m)² > Z(6, m)Z(10, m): 35 ≤ m (x = 3/2), 21 ≤ m (x = 2), 19 ≤ m (x = 3), m ≤ 60 | `L/out_linf.txt` (last block) | `L/linf.py 16` |
