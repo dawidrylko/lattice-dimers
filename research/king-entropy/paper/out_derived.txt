@@ -42,6 +42,7 @@ certified w=24: lower 0.5453437497275, upper 0.5862166054033
   w=20: w*(s - lower_w) = 0.484, w*(upper_w - s) = 0.4969
   w=24: w*(s - lower_w) = 0.484, w*(upper_w - s) = 0.4969
 Kahn-Lovasz log(8!)/16 = 0.6627876814216
+run-weighted upper bounds (runweight_3state.json): w=12: w*(upper_w - s) = 0.4141, w=16: w*(upper_w - s) = 0.4141, w=20: w*(upper_w - s) = 0.4141, w=22: w*(upper_w - s) = 0.4141, w=23: w*(upper_w - s) = 0.4141
 12 w u at w=24: 3.197e-14
 -4 sigma = -0.9680717431
 tri free m=5: Z(6), Z(8), Z(10) = 6475, 210560, 6842465; Z(8)^2 - Z(6) Z(10) = 30552725

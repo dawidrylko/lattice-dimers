@@ -60,6 +60,10 @@ for w in (12, 16, 20, 24):
     print(f'  w={w}: w*(s - lower_w) = {mp.nstr(w * (s - mpf(bnd["lower"][str(w)])), 4)}, '
           f'w*(upper_w - s) = {mp.nstr(w * (mpf(bnd["upper"][str(w)]) - s), 4)}')
 print(f'Kahn-Lovasz log(8!)/16 = {mp.nstr(log(40320) / 16, 13)}')
+rw = json.load(open('data/runweight_3state.json'))
+print('run-weighted upper bounds (runweight_3state.json): ' + ', '.join(
+    f'w={w}: w*(upper_w - s) = {mp.nstr(int(w) * (mpf(rw[w]["upper"]) - s), 4)}'
+    for w in sorted(rw, key=int) if int(w) in (12, 16, 20, 22, 23, 24)))
 
 # rounding budget of the certificates: 12 w u, u = 2^-53, at w = 24
 print(f'12 w u at w=24: {mp.nstr(12 * 24 * mpf(2) ** -53, 4)}')
