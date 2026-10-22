@@ -5,10 +5,13 @@
   python3 eigrun.py wide     cylinders w = 26 (both sectors) and w = 27 (long double),
                              w = 28 (both sectors, float64: long double does not fit in 15 GiB)
 
+  python3 eigrun.py <group> <regex> ...   only the runs whose file name matches one of the regexes
+
 A run file is kept only when complete; existing complete files are skipped.
 Each file ends with "# wall=<s> maxrss_mib=<MiB>".
 """
 import os
+import re
 import subprocess
 import sys
 import time
@@ -48,6 +51,8 @@ def main():
     os.makedirs(EIG, exist_ok=True)
     for binary, lat, bc, w, start, maxit, tol in jobs(sys.argv[1]):
         fn = fname(binary, lat, bc, w, start)
+        if sys.argv[2:] and not any(re.search(p, os.path.basename(fn)) for p in sys.argv[2:]):
+            continue
         if os.path.exists(fn):
             continue
         t = time.time()

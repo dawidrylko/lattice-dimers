@@ -5,5 +5,6 @@
 set -e
 cd "$(dirname "$0")"
 FLAGS="-O2 -march=x86-64 -fopenmp -frounding-math -ffp-contract=off -fno-fast-math -Wall"
-gcc $FLAGS -o kd_ld kd.c -lm
-gcc $FLAGS -DUSE_DOUBLE -o kd_d kd.c -lm
+# build under temporary names and rename, so that running processes keep their binary
+gcc $FLAGS -o kd_ld.new kd.c -lm && mv kd_ld.new kd_ld
+gcc $FLAGS -DUSE_DOUBLE -o kd_d.new kd.c -lm && mv kd_d.new kd_d

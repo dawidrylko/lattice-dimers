@@ -44,6 +44,11 @@ def ld_ceil_hex(x):
     return f"0x{mant:x}p{e - 63:+d}"
 
 
+def fixed(x, nd):
+    """x, already rounded to nd decimals, printed with exactly nd decimals."""
+    return mpmath.nstr(x, nd + 1 + int(mpmath.floor(mpmath.log10(abs(x)))), strip_zeros=False, min_fixed=-100, max_fixed=100)
+
+
 def run_cert(w, direction, zhex, iters=40):
     out = kdrun.run(["cert", "king", w, direction, zhex, iters, 1])
     d = dict(line.split(None, 1) for line in out.splitlines() if not line.startswith("#"))
@@ -77,12 +82,12 @@ def main():
         lo12 = mpmath.floor(lo * 10**12) / 10**12
         hi12 = mpmath.ceil(hi * 10**12) / 10**12
         p = PAPER.get(w, ("", ""))
-        print(f"{w:2d}  lower bound on s          {mpmath.nstr(lo12, 12):24s}  {p[0]}   (unrounded {mpmath.nstr(lo, 18)})")
-        print(f"{w:2d}  upper bound, sqrt(phi)    {mpmath.nstr(hi12, 12):24s}  {p[1]}   (unrounded {mpmath.nstr(hi, 18)})")
+        print(f"{w:2d}  lower bound on s          {fixed(lo12, 12):24s}  {p[0]}   (unrounded {mpmath.nstr(lo, 18)})")
+        print(f"{w:2d}  upper bound, sqrt(phi)    {fixed(hi12, 12):24s}  {p[1]}   (unrounded {mpmath.nstr(hi, 18)})")
         # Proposition 8.2 inputs: log lambda_w enclosed by the plain-strip certificates
         llo = mpmath.floor(mpmath.log(c) / 2 * 10**14) / 10**14
         lhi = mpmath.ceil(mpmath.log(C0) / 2 * 10**14) / 10**14
-        print(f"{w:2d}  log lambda_w in           [{mpmath.nstr(llo, 16)}, {mpmath.nstr(lhi, 16)}]"
+        print(f"{w:2d}  log lambda_w in           [{fixed(llo, 14)}, {fixed(lhi, 14)}]"
               f"  paper: >= {PAPER_LOG.get(f'{w} lower', '-')}, <= {PAPER_LOG.get(f'{w} upper', '-')}")
         print(f"    support {dl['nsupp']} states, min v on support {dl['vmin_supp']}", flush=True)
 

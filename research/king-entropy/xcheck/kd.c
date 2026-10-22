@@ -199,6 +199,23 @@ static void setup(const char *lat, const char *bc, int w)
     NSTATES = 1ULL << NB;
 }
 
+/* sum of x[0..n) in long double, in blocks of 4096 summed in a fixed order (deterministic) */
+static long double sum_ld(const REAL *x, uint64_t n)
+{
+    uint64_t nb = (n + 4095) / 4096;
+    long double *part = malloc(sizeof(long double) * nb), tot = 0;
+#pragma omp parallel for schedule(static)
+    for (uint64_t b = 0; b < nb; b++) {
+        long double s = 0;
+        uint64_t e = (b + 1) * 4096 < n ? (b + 1) * 4096 : n;
+        for (uint64_t i = b * 4096; i < e; i++) s += x[i];
+        part[b] = s;
+    }
+    for (uint64_t b = 0; b < nb; b++) tot += part[b];
+    free(part);
+    return tot;
+}
+
 /* logical index of row set A (bit k = column k) at the start of a row, cell p0 */
 static inline uint64_t row_state(uint64_t A, long p0)
 {
@@ -261,16 +278,132 @@ static void apply_T2(REAL *a, const REAL *u, REAL *u2, REAL zside)
         make_step(p, &st);
         step_real(a, &X, &st, st.side ? zside : 0);
     }
-    REAL tot = 0, got = 0;
-    for (uint64_t i = 0; i < NSTATES; i++) tot += a[i];
-    for (uint64_t A = 0; A < R; A++) {
-        u2[A] = a[row_state(A, 2L * W) ^ X];
-        got += u2[A];
-    }
-    if (!(fabsl((long double)(tot - got)) <= 1e-12L * (long double)tot)) {
-        fprintf(stderr, "mass outside row states: %Lg of %Lg\n", (long double)(tot - got), (long double)tot);
+    for (uint64_t A = 0; A < R; A++) u2[A] = a[row_state(A, 2L * W) ^ X];
+    long double tot = sum_ld(a, NSTATES), got = sum_ld(u2, R);
+    if (!(fabsl(tot - got) <= 1e-12L * tot)) {
+        fprintf(stderr, "mass outside row states: %Lg of %Lg\n", tot - got, tot);
         exit(4);
     }
+}
+
+/* ---------- run-weighted free strip: 9 blocks b = 3*l + r ----------
+ * l (r) = position of the previous row's cell of column 0 (w-1) in a run of
+ * outside covers: 0 none, 1 first cell, 2 later cell. An outside cover of a side
+ * cell in position l gets RUNF[l] (1, sqrt2, sqrt(phi), rounded up) and moves to
+ * min(l+1, 2); any other move of the side cell resets it to 0. */
+static REAL RUNF[3];
+
+static void side_mix(REAL *a, uint64_t X, const step_t *st, int left)
+{
+    uint64_t half = NSTATES >> 1, Q = 1ULL << st->q, xq = (X >> st->q) & 1;
+    int q = st->q;
+    for (int o = 0; o < 3; o++) {
+        REAL *B0 = a + (left ? 0 * 3 + o : o * 3 + 0) * NSTATES;
+        REAL *B1 = a + (left ? 1 * 3 + o : o * 3 + 1) * NSTATES;
+        REAL *B2 = a + (left ? 2 * 3 + o : o * 3 + 2) * NSTATES;
+#pragma omp parallel
+        {
+            fesetround(g_round);
+#pragma omp for schedule(static)
+            for (uint64_t k = 0; k < half; k++) {
+                uint64_t j = insert_bit(k, q, xq), jq = j ^ Q;
+                REAL b0 = B0[j], b1 = B1[j], b2 = B2[j];
+                REAL sq = B0[jq] + B1[jq] + B2[jq];
+                B2[jq] = RUNF[1] * b1 + RUNF[2] * b2;  /* outside cover, new layout (bit q flipped) */
+                B2[j] = 0;
+                B1[jq] = RUNF[0] * b0;
+                B1[j] = 0;
+                B0[j] = b0 + b1 + b2;                  /* other moves of the side cell: summed, old layout */
+                B0[jq] = sq;
+            }
+        }
+    }
+}
+
+static void apply_T2_run(REAL *a, const REAL *u, REAL *u2)
+{
+    uint64_t R = 1ULL << W, X = 0, Xc;
+    memset(a, 0, sizeof(REAL) * NSTATES * 9);
+    for (int b = 0; b < 9; b++)
+        for (uint64_t A = 0; A < R; A++) a[b * NSTATES + row_state(A, 0)] = u[b * R + A];
+    step_t st;
+    for (long p = 0; p < 2L * W; p++) {
+        make_step(p, &st);
+        int c = (int)(p % W);
+        if (c == 0 || c == W - 1) {
+            side_mix(a, X, &st, c == 0);
+            for (int o = 0; o < 3; o++) {
+                Xc = X;
+                step_real(a + (c == 0 ? 0 * 3 + o : o * 3 + 0) * NSTATES, &Xc, &st, 0);
+            }
+        } else {
+            for (int b = 0; b < 9; b++) {
+                Xc = X;
+                step_real(a + b * NSTATES, &Xc, &st, 0);
+            }
+        }
+        X ^= 1ULL << st.q;
+    }
+    for (int b = 0; b < 9; b++)
+        for (uint64_t A = 0; A < R; A++) u2[b * R + A] = a[b * NSTATES + (row_state(A, 2L * W) ^ X)];
+    long double tot = sum_ld(a, NSTATES * 9), got = sum_ld(u2, 9 * R);
+    if (!(fabsl(tot - got) <= 1e-12L * tot)) {
+        fprintf(stderr, "mass outside row states\n");
+        exit(4);
+    }
+}
+
+static int mode_certrun(int argc, char **argv)
+{
+    /* certrun w f2_hex f3_hex iters : upper certificate, run weights 1, f2, f3 */
+    if (argc < 6) return 2;
+    setup("king", "free", atoi(argv[2]));
+    if (W < 2) return 2;
+    RUNF[0] = 1;
+    RUNF[1] = STRTOR(argv[3], 0);
+    RUNF[2] = STRTOR(argv[4], 0);
+    int iters = atoi(argv[5]);
+    uint64_t R = 1ULL << W, n = 9 * R;
+    REAL *a = malloc(sizeof(REAL) * NSTATES * 9), *u = malloc(sizeof(REAL) * n), *u2 = malloc(sizeof(REAL) * n);
+    if (!a || !u || !u2) { fprintf(stderr, "alloc\n"); return 3; }
+    memset(u, 0, sizeof(REAL) * n);
+    u[0] = 1;
+    g_round = FE_TONEAREST;
+    fesetround(g_round);
+    printf("# certrun w=%d f2=" RHEX " f3=" RHEX " iters=%d real=%s threads=%d\n", W, RUNF[1], RUNF[2], iters, RNAME,
+           omp_get_max_threads());
+    for (int it = 1; it <= iters; it++) {
+        apply_T2_run(a, u, u2);
+        REAL tot = (REAL)sum_ld(u2, n), mn = INFINITY, mx = 0;
+        for (uint64_t i = 0; i < n; i++) {
+            if (u[i] > 0) {
+                REAL r = u2[i] / u[i];
+                if (r < mn) mn = r;
+                if (r > mx) mx = r;
+            }
+        }
+        printf("it %d " RFMT " " RFMT "\n", it, mn, mx);
+        fflush(stdout);
+        for (uint64_t i = 0; i < n; i++) u[i] = u2[i] / tot;
+    }
+    g_round = FE_UPWARD;
+    fesetround(g_round);
+    apply_T2_run(a, u, u2);
+    REAL best = 0;
+    uint64_t nsupp = 0, viol = 0;
+    for (uint64_t i = 0; i < n; i++) {
+        if (u[i] > 0) {
+            REAL r = u2[i] / u[i];
+            if (r > best) best = r;
+            nsupp++;
+        } else if (u2[i] != 0) viol++;
+    }
+    REAL v0 = u[0];
+    fesetround(FE_TONEAREST);
+    printf("ratio_hex " RHEX "\nratio " RFMT "\nv0_hex " RHEX "\nnsupp %" PRIu64 "\nzero_viol %" PRIu64 "\n", best, best, v0,
+           nsupp, viol);
+    free(a); free(u); free(u2);
+    return 0;
 }
 
 static int mode_power(int argc, char **argv)
@@ -299,10 +432,11 @@ static int mode_power(int argc, char **argv)
     int calm = 0;
     for (int it = 1; it <= maxit; it++) {
         apply_T2(a, u, u2, 0);
-        REAL tot = 0, mn = INFINITY, mx = 0;
+        /* u sums to 1 up to rounding: the estimate is sum(u2) / sum(u), both summed in long double */
+        long double est = sum_ld(u2, R) / sum_ld(u, R);
+        REAL tot = (REAL)sum_ld(u2, R), mn = INFINITY, mx = 0;
         uint64_t nsupp = 0, viol = 0;
         for (uint64_t A = 0; A < R; A++) {
-            tot += u2[A];
             if (u[A] > 0) {
                 REAL r = u2[A] / u[A];
                 if (r < mn) mn = r;
@@ -310,11 +444,11 @@ static int mode_power(int argc, char **argv)
                 nsupp++;
             } else if (u2[A] > 0) viol++;
         }
-        printf("%d " RHEX " " RHEX " " RHEX " " RFMT " " RFMT " " RFMT " %" PRIu64 " %" PRIu64 "\n", it, tot, mn, mx, tot,
+        printf("%d %La " RHEX " " RHEX " %.21Lg " RFMT " " RFMT " %" PRIu64 " %" PRIu64 "\n", it, est, mn, mx, est,
                mn, mx, nsupp, viol);
         fflush(stdout);
         for (uint64_t A = 0; A < R; A++) u[A] = u2[A] / tot;
-        long double lt = logl((long double)tot);
+        long double lt = logl(est);
         if (prev >= 0 && fabsl(lt - prev) < tol && viol == 0) calm++;
         else calm = 0;
         prev = lt;
@@ -341,8 +475,7 @@ static int mode_cert(int argc, char **argv)
     fesetround(g_round);
     for (int it = 1; it <= iters; it++) {
         apply_T2(a, u, u2, z);
-        REAL tot = 0;
-        for (uint64_t A = 0; A < R; A++) tot += u2[A];
+        REAL tot = (REAL)sum_ld(u2, R);
         for (uint64_t A = 0; A < R; A++) u[A] = u2[A] / tot;
     }
     /* certificate: one product in directed rounding */
@@ -374,6 +507,7 @@ int main(int argc, char **argv)
     if (!strcmp(argv[1], "count")) return mode_count(argc, argv);
     if (!strcmp(argv[1], "power")) return mode_power(argc, argv);
     if (!strcmp(argv[1], "cert")) return mode_cert(argc, argv);
+    if (!strcmp(argv[1], "certrun")) return mode_certrun(argc, argv);
     fprintf(stderr, "unknown mode\n");
     return 2;
 }
