@@ -53,22 +53,46 @@ free  10  1     512     1      0  176.106589527319727  0.194173     0.81950  sim
      -> sector ratio lambda(1)/lambda(0) = 1.000000900782
 
 == 2. exact count ratios vs power iteration (free strips and cylinders) ==
+free k= 1: (log Z(34,k) - log Z(32,k))/2 - log lambda_k = 0.0
+free k= 2: (log Z(34,k) - log Z(32,k))/2 - log lambda_k = -4.37e-11
+free k= 3: (log Z(32,k) - log Z(30,k))/2 - log lambda_k = -8.6e-12
+free k= 4: (log Z(32,k) - log Z(30,k))/2 - log lambda_k = -8.03e-14
+free k= 5: (log Z(30,k) - log Z(28,k))/2 - log lambda_k = -6.53e-12
+free k= 6: (log Z(30,k) - log Z(28,k))/2 - log lambda_k = -2.67e-11
+free k= 7: (log Z(28,k) - log Z(26,k))/2 - log lambda_k = -1.24e-10
+free k= 8: (log Z(28,k) - log Z(26,k))/2 - log lambda_k = -5.42e-11
+free k= 9: (log Z(26,k) - log Z(24,k))/2 - log lambda_k = -2.72e-10
+free k=10: (log Z(26,k) - log Z(24,k))/2 - log lambda_k = -4.3e-10
+free k=11: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.51e-9
+free k=12: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=13: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.17e-9
+free k=14: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.23e-9
+free k=15: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=16: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=17: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=18: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=19: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.28e-9
+free k=20: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.29e-9
+free k=21: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.29e-9
+free k=22: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.3e-9
+free k=23: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.3e-9
+free k=24: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.31e-9
 cyl  m= 3: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -4.27e-20
 cyl  m= 4: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -2.86e-21
 cyl  m= 5: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -2.43e-20
 cyl  m= 6: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 3.74e-20
-cyl  m= 7: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 6.77e-21
-cyl  m= 8: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 8.01e-20
-cyl  m= 9: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 1.17e-19
-cyl  m=10: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 1.07e-19
-cyl  m=11: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -4.28e-20
-cyl  m=12: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -6.4e-19
-cyl  m=13: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.28e-18
-cyl  m=14: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.42e-18
-cyl  m=15: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -3.78e-18
-cyl  m=16: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.78e-18
-cyl  m=17: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.76e-18
-cyl  m=18: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -3.86e-18
+cyl  m= 7: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -3.37e-20
+cyl  m= 8: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -2.33e-19
+cyl  m= 9: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -4.56e-19
+cyl  m=10: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 5.42e-19
+cyl  m=11: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 1.34e-20
+cyl  m=12: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 7.01e-19
+cyl  m=13: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -3.82e-18
+cyl  m=14: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.36e-18
+cyl  m=15: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.61e-18
+cyl  m=16: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.83e-18
+cyl  m=17: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.99e-18
+cyl  m=18: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -3.15e-18
 cyl  m=19: (log Z(28,m) - log Z(26,m))/2 - log lambda^(0)_m = -1.44e-12
 cyl  m=20: (log Z(28,m) - log Z(26,m))/2 - log lambda^(0)_m = -1.52e-12
 cyl  m=21: (log Z(22,m) - log Z(20,m))/2 - log lambda^(0)_m = -1.06e-9

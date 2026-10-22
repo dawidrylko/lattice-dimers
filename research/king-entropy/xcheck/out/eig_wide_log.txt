@@ -1,0 +1,1 @@
+king_cyl_w26_0_ld.txt wall=762.5s
