@@ -4,7 +4,7 @@ usage: python3 src/corner.py > out/out_corner.txt      (writes corner.json)
 
 Inputs: exact counts Z(k, m) of free king boards (zex_king_free_m<m>_K<K>.json, zexact.py), s from
 errbar.json (RECOMMENDATION), sigma from surface.json; for a check from a separate code base, the
-square counts of the JavaScript solvers (../../data/domiculeTilingTests.json, L <= 18) and their
+square counts of the JavaScript solvers (../../data/domiculeTilingTests.json, L <= 20) and their
 20 x 20 count (README, also checked in validate.py).
 
 1. rho(K, L) = log Z(K, L) - s K L + 2 sigma (K + L) tends to the corner free energy kappa, so that
