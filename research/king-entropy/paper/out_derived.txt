@@ -42,6 +42,11 @@ king 3x3: V = 9, E = 20, 3V - 6 = 21
 king 4x4: V = 16, E = 42, 3V - 6 = 42
 king 5x5: V = 25, E = 72, 3V - 6 = 69
 
+lattice context: degree d, s, Bethe value, ratio s / Bethe, Kahn-Lovasz bound log(d!)/(2d)
+  square     d=4: s = 0.291560904030819, Bethe 0.2616240719, s/Bethe 1.1144, KL 0.3972567288
+  triangular d=6: s = 0.428594537464959, Bethe 0.4400758426, s/Bethe 0.97391, KL 0.5482709343
+  king       d=8: s = 0.565511911041325, Bethe 0.5723608967, s/Bethe 0.98803, KL 0.6627876814
+
 king cylinders, log(lambda_w)/w (eig_*.json, float64; sector 1 for odd w)
   w=20: p0 0.5655119118867462  p1 0.5655119102001318
   w=21: p0 0.5655119110406597  p1 0.5655119110406597

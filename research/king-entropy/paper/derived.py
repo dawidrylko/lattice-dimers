@@ -6,7 +6,7 @@ Reads only committed files (surface.json, bounds.json, z2.json, eig_*.json); com
 new about the transfer matrices.
 """
 import json
-from mpmath import mp, mpf, exp, log
+from mpmath import mp, mpf, exp, log, catalan, pi, factorial
 
 mp.dps = 40
 surf = json.load(open('data/surface.json'))
@@ -55,6 +55,15 @@ print(f'tri free m=5: Z(6), Z(8), Z(10) = {zt[6]}, {zt[8]}, {zt[10]}; '
 for n in (3, 4, 5):
     E = 2 * n * (n - 1) + 2 * (n - 1) ** 2
     print(f'king {n}x{n}: V = {n * n}, E = {E}, 3V - 6 = {3 * n * n - 6}')
+
+# context: Bethe (random-regular) value and Kahn-Lovasz bound for the three lattices of the code
+# s_Bethe(d) = (1/2) log((d-1)^(d-1) / d^(d-2)) per vertex (Bollobas-McKay); KL(d) = log(d!) / (2d)
+print('\nlattice context: degree d, s, Bethe value, ratio s / Bethe, Kahn-Lovasz bound log(d!)/(2d)')
+tri = mpf('0.428594537464959')          # out_validate.txt, section 4 (Bloch average)
+for name, d, sv in (('square', 4, catalan / pi), ('triangular', 6, tri), ('king', 8, s)):
+    sb = ((d - 1) * log(d - 1) - (d - 2) * log(d)) / 2
+    print(f'  {name:10s} d={d}: s = {mp.nstr(sv, 15)}, Bethe {mp.nstr(sb, 10)}, s/Bethe {mp.nstr(sv / sb, 5)},'
+          f' KL {mp.nstr(log(factorial(d)) / (2 * d), 10)}')
 
 # odd-width cylinders used for the estimate
 print('\nking cylinders, log(lambda_w)/w (eig_*.json, float64; sector 1 for odd w)')
