@@ -217,7 +217,9 @@ bracket $s$ in all our data: $f^{(0)}_w > s > f^{(1)}_w$.
 For free strips only the sector of $e_0$ enters $Z$, and the spectral radius of $T$ is not the
 growth rate $\lambda_w$ in general: for $w = 6, 10, 14, 18$ the other sector has the larger
 eigenvalue (e.g.\ $w = 6$: $\log\lambda = 2.909568954808860$ there, against
-$a_6 = 2.909403518708946$).
+$a_6 = 2.909403518708946$). The difference of the two sectors of the free strip of even width
+$k$ alternates in sign with period $4$ and shrinks by a factor $13.84$ per two columns
+($k \le 18$).
 
 \subsection{Computation}
 We use float64 power iteration on $T^2$ restricted to one sector, from a random positive start
@@ -676,190 +678,79 @@ king       & 8 & 0.565511911041            & 0.572360897 & 0.98803 & 0.662787681
 \end{tabular}
 \end{table}
 
-\section{A convexity conjecture for the strip growth rates}\label{sec:conj}
+\section{Convexity conjectures and a conditional two-sided bound}\label{sec:conj}
 
-\subsection{Statement and consequence}
-\begin{conjecture}[L$_\infty$]\label{conj:Linf}
-For the king's graph, $q \mapsto a_{2q} = \log\lambda_{2q}$ is convex on $2q \ge 22$, i.e.\
-$a_{2q+2} - 2a_{2q} + a_{2q-2} \ge 0$ for $2q \ge 24$.
+The bounds of Theorem~\ref{thm:bounds} converge like $1/w$ because every strip has two free
+sides. Differences of strip growth rates cancel the surface term. On the square lattice,
+reflection positivity turns them into rigorous bounds that converge exponentially
+\cite{calkinwilf1998}; here it fails. The gluing form between two half-boards is the number
+$M(A, B)$ of matchings across the cut (Lemma~\ref{lem:fib}), and it is indefinite: for columns of
+length $3$ its smallest eigenvalue is $1 - \sqrt2$, on a vector realised by actual half-boards.
+Nor do cylinders give upper bounds: at every odd circumference the cylinder value $f_w$ lies below
+$s$ (Table~\ref{tab:odd}), while reflection positivity would make it an upper bound. We state the
+two sign properties that the data show instead.
+
+\begin{conjecture}\label{conj:Linf}
+Let $a_0 = a_1 = 0$ and $a_k = \log\lambda_k$ for $k \ge 2$.
+\begin{enumerate}
+\item[(L$_\infty$)] $q \mapsto a_{2q}$ is convex: $a_{2q+2} - 2a_{2q} + a_{2q-2} \ge 0$ for all
+  $q \ge 1$.
+\item[(O)] $a_{k+1} - a_k \ge s$ for every odd $k$.
+\end{enumerate}
 \end{conjecture}
 
 \begin{proposition}\label{prop:cond}
-(L$_\infty$) implies $\underline s \ge 0.565511911035$.
+(L$_\infty$) implies $s \ge 0.565511911035$, and (O) implies $s \le 0.565511911049$.
 \end{proposition}
 \begin{proof}
-Under (L$_\infty$) the increments $b_q = a_{2q+2} - a_{2q}$ are nondecreasing for
-$q \ge 11$; since $a_{2q}/(2q) \to s^*$, they increase to $2s^*$, so $s^* \ge b_{11}/2$, and
-$\underline s \ge s^*$ by the proof of the lower bound. Finally $b_{11} \ge \log\lambda_{24}^{\mathrm{low}}
-- \log\lambda_{22}^{\mathrm{up}}$, with the certified lower bound for $w = 24$ (\S\ref{sec:float},
-minus $10^{-14}$ for the float storage of the per-site value) and a certified upper bound
-$\log\lambda_{22} \le 11.95722617139012$ from Lemma~\ref{lem:cwup} with $z = 0$. This gives
-$0.565511911035$.
+By the lower bound of Theorem~\ref{thm:bounds}, $s = \lim a_k/k$ (\S\ref{sec:model}). Under
+(L$_\infty$) the increments $a_{2q+2} - a_{2q}$ are nondecreasing; since $a_{2q}/(2q) \to s$, they
+increase to $2s$, so $s \ge (a_{24} - a_{22})/2$. Under (O), $s \le a_{24} - a_{23}$. The certificates
+of \S\ref{sec:float} give, with outward rounding,
+\[
+  \log\lambda_{24} \ge 13.08824999346029, \quad \log\lambda_{23} \ge 12.52273808241305, \quad
+  \log\lambda_{22} \le 11.95722617139012, \quad \log\lambda_{24} \le 13.08824999346131;
+\]
+the lower bounds are $24$ and $23$ times the per-site bounds of Table~\ref{tab:bounds} minus
+$10^{-14}$ for their storage as floats, and the upper bounds come from Lemma~\ref{lem:cwup} with
+$z = 0$. Hence $s \ge (13.08824999346029 - 11.95722617139012)/2 = 0.565511911035\ldots$ and
+$s \le 13.08824999346131 - 12.52273808241305 = 0.565511911048\ldots$, rounded outward.
 \end{proof}
 
-The gap between this bound and the estimate of $s$ is $5.7\cdot10^{-12}$: all $132$ candidates
-$(a_{2q+p} - a_{2q})/p$ with $2q \le 22$, $2q + p \le 24$ lie below $s$, the largest being
-$0.5655119110355926$ ($2q = 22$, $p = 2$). This is the Calkin--Wilf form of the lower bound
-\cite{calkinwilf1998}, whose standard proof via reflection positivity does not apply here
-(\S\ref{sec:obstructions}). The unconditional bound of Theorem~\ref{thm:bounds} remains
-$\underline s \ge 0.545343749727$.
+Under both hypotheses $s$ is known to ten digits, $0.5655119110$. The estimate of
+\S\ref{sec:value} lies $6.3\cdot10^{-12}$ above the lower and $7.7\cdot10^{-12}$ below the upper
+conditional bound. Only the tails are used: the lower bound needs $a_{24} - a_{22} \le 2s$, which is
+the Calkin--Wilf inequality that reflection positivity would give, and the upper bound needs (O)
+at $k = 23$. The unconditional bounds remain those of Theorem~\ref{thm:bounds}.
 
-\emph{Evidence for (L$_\infty$).} The second differences of $a_{2q}$ are positive at every
-$2q = 4, 6, \dots, 24$ and decay geometrically: $4.69\cdot10^{-5}$, $3.99\cdot10^{-6}$, $5.53\cdot10^{-7}$,
-$5.63\cdot10^{-8}$, $6.96\cdot10^{-9}$, $7.62\cdot10^{-10}$, $9.0\cdot10^{-11}$, $1.01\cdot10^{-11}$
-at $2q = 10, 12, \dots, 24$ (from uncertified power iteration, float error about $10^{-15}$); so
-numerically (L$_\infty$) holds at its first instance $2q = 24$, and beyond that it is
-extrapolation. A Prony fit of these differences finds two modes, a positive one $0.1147^q$ (the
-transfer gap, $e^{-2\cdot1.083}$) and an alternating one $(-0.072)^q$; their ratio is $0.007$ at
-$2q = 24$ and shrinks by a factor $0.63$ per step, stable over four fitting windows. The
-convexity is robust to breaking the left--right symmetry: with diagonal weights $(1, x)$ for
-$x = 0.95, 0.9, 0.75, 0.5$ and on the triangular lattice ($x = 0$) all second differences up to
-$2q = 14$ are positive. It is not robust in the size of equal diagonal weights
-(\S\ref{sec:notstructural}): for $x = \tfrac32, 2, 3$ on both diagonals it fails at $2q = 8$ and $2q = 12$.
-
-\subsection{The stronger finite statement (L)}
-For unit weights we also observed
+\emph{Evidence.} Both statements hold wherever we can compute: the second differences of
+$a_{2q}$ are positive for $2q = 2, 4, \dots, 24$, those of the odd widths are negative for
+$k = 3, 5, \dots, 23$, and the increments $a_{k+1} - a_k - s$ alternate in sign for
+$k = 0, \dots, 25$; at $k = 23$ the margin of (O) is $5.9\cdot10^{-12}$. One mode explains all of
+this. The ratio of consecutive increments tends to $-0.338 = -e^{-1.083}$, the in-sector gap of
+\S\ref{sec:z2}, so
 \[
-  \text{(L)}\qquad Z(2q, m)^2 \le Z(2q - 2, m)\, Z(2q + 2, m) \quad\text{for all } m, q \ge 1 .
+  g(k) = a_k - sk \approx -2\sigma + C(-\rho)^k, \qquad \rho = e^{-1.083},
 \]
-(L) implies (L$_\infty$): it makes $q \mapsto m^{-1}\log Z(2q, m)$ convex for each $m$; by
-$Z(2q, m) = Z(m, 2q)$ and \eqref{eq:lambda} this tends to $a_{2q}$ along even $m$, and a
-pointwise limit of convex sequences is convex. Table~\ref{tab:L} summarises the tests of (L):
-exact integer counts by a transfer modulo several $60$-bit primes and the Chinese remainder
-theorem, and for $m = 25, 26$ an x87 computation with a rigorous rounding bound (each cell step
-writes a sum of at most five nonnegative terms, so the computed $Z$ is within a factor
-$(1+u)^{5mk}$, $u = 2^{-64}$; the smallest certified margin is $1.237\cdot10^{-10}$). So (L) holds
-on free strips of width $m \le 26$ and on cylinders of circumference $m \le 22$ in the stated
-row ranges. The margin $\log Z(2q-2) + \log Z(2q+2) - 2\log Z(2q)$ decreases monotonically in $q$
-for every $m$, by a ratio tending to $0.16$--$0.20$; there is no dip at intermediate $q$ and
-nothing that shrinks with $m$.
+and a single sign, $C > 0$, gives both (L$_\infty$) and (O) for large $k$. A second, faster mode is
+the splitting of the two parity sectors of the free strip, which alternates with period $4$ and
+decays by a factor $-13.84$ per two columns (\S\ref{sec:model}). In the second differences of
+$a_{2q}$ the two modes are $0.1147^q = \rho^{2q}$ and $(-0.072)^q$, and at $2q = 24$ the second is
+$0.007$ of the first, shrinking by a factor $0.63$ per step.
 
-We do \emph{not} conjecture (L). It is a numerical observation at unit weights, not a structural
-property of the model: the next subsection shows that it fails under small
-perturbations of the diagonal weights that break the left--right symmetry (we tested
-$(1, \tfrac{9}{10})$ and $(1, \tfrac{19}{20})$), and for equal
-diagonal weights $x = \tfrac32, 2, 3$, which keep it.
-
-\begin{table}[ht]
-\caption{Tests of (L), $Z(2q)^2 \le Z(2q-2)Z(2q+2)$, at unit weights (\file{out/out\_ltest.txt},
-\file{out/out\_lcert\_m25.txt}, \file{out/out\_lcert\_m26.txt}); the row range shrinks as $m$ grows.}\label{tab:L}
-\begin{tabular}{lllrr}
-\toprule
-lattice, boundary & widths $m$ & rows $2q$ & cases & violations \\
-\midrule
-king, free     & $2$--$24$  & $\le 120$ to $\le 20$ & 873 & 0 \\
-king, cylinder & $3$--$22$  & $\le 80$ to $\le 22$  & 550 & 0 \\
-king, free (x87, certified) & $25, 26$ & $\le 28$ & 28 & 0 \\
-square, free / cylinder     & $\le 12$ & $\le 60$ & 319 / 290 & 0 / 0 \\
-triangular, cylinder        & $\le 12$ & $\le 60$ & 290 & 0 \\
-triangular, free            & $\le 12$ & $\le 60$ & 319 & \textbf{92} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Why (L) is not structural}\label{sec:notstructural}
-\emph{Triangular lattice.} On free triangular strips (L) fails from $m = 5$ on:
-$Z(6, 5) = 6475$, $Z(8, 5) = 210560$, $Z(10, 5) = 6842465$ and
-$210560^2 - 6475\cdot6842465 = 30552725 > 0$ (confirmed by brute force).
-
-\emph{The left--right symmetry and its Krein signature.} Give the orthogonal edges weight $1$ and
-the two diagonals weights $x_{\mathrm{dl}}, x_{\mathrm{dr}}$. The reflection $J\colon c \mapsto m - 1 - c$
-of a strip of width $m$ exchanges the two diagonals, so it is a symmetry exactly when
-$x_{\mathrm{dl}} = x_{\mathrm{dr}}$. Write the row transfer as $T = HM$, with $H$ the horizontal
-dimers inside a row and $M$ the crossing kernel. Then $H = H^{\mathsf T} = JHJ$ and, for
-\emph{any} diagonal weights, $M^{\mathsf T} = JMJ$; so $G = JM$ is symmetric and $GT$ is symmetric,
-i.e.\ $T$ is self-adjoint for the indefinite form $G$. If $r_j$ is the right eigenvector of a simple
-real eigenvalue, its weight in $Z(k, m) = (T^k)_{00}$ is
-\[
-  c_j = \frac{r_j(0)^2}{r_j^{\mathsf T} G\, r_j},
-\]
-so the sign of $c_j$ is the Krein signature of $r_j$. (Checked in exact arithmetic for $m \le 7$
-and five weight sets, and against a direct eigendecomposition for $m \le 9$, relative error
-$7\cdot10^{-13}$.) With equal weights the empty state is $J$-even, $Z$ sees only the $J$-even
-sector, and there $G = M$; on the $J$-odd sector $G = -M$. Under the perturbation $(1, 1 - \varepsilon)$
-the top $J$-odd level, which is $M$-positive, becomes visible with a \emph{negative} weight
-$-K\varepsilon^2$ ($K = 0.70, 1.31, 1.63$ at $m = 4, 5, 8$, constant for
-$\varepsilon = 10^{-3}, \dots, 3\cdot10^{-2}$). Wherever that level lies above the leading visible
-$J$-even level ($m = 4$ and $m = 8$ among $m \le 11$), (L) must fail for large $q$, and it does
-(exact): the weights $(1, \tfrac{9}{10})$ violate (L) at $m = 4$ from $2q = 56$, at $m = 8$ from
-$2q = 86$ and at $m = 12$ from $2q = 112$, and $(1, \tfrac{19}{20})$ at $m = 8$ from $2q = 118$. At
-$m = 4$ and $m = 8$ the onsets agree exactly with those predicted from the spectrum; the onset
-prediction was computed only for $m \le 10$, so the failure at $m = 12$ was found but not predicted. Earlier
-tests of these weights ($m \le 16$, $2q \le 78$) had stopped just short of them. Clearly unequal
-weights fail much earlier: $(1, \tfrac12)$ at $m = 5, 8, 9$ and at no other $m \le 9$, in
-particular not at $m = 6, 7$ ($14$ of $19$ values of $q$ at $m = 5$, $2q \le 38$);
-$(1, \tfrac34)$ at $m = 9$ ($5$ of $19$, first at $2q = 30$). The symmetrised transfer
-$H(M + M^{\mathsf T})/2$ has no violation wherever we tested it: for $m \le 9$, $2q \le 38$ and
-the weights $(1, \tfrac12)$, $(1, \tfrac34)$, $(1, 0)$ and $(1, \tfrac{9}{10})$, and for
-$(1, \tfrac{9}{10})$ at $m = 8$ up to $2q = 198$; this includes every case in those ranges where
-$HM$ fails. It was not tested on the counterexamples at $m = 4$ and $m = 12$ or on
-$(1, \tfrac{19}{20})$. Every pair of unequal diagonal weights on which (L) was tested, namely
-$(1, \tfrac{9}{10})$, $(1, \tfrac{19}{20})$, $(1, \tfrac34)$, $(1, \tfrac12)$, $(1, \tfrac14)$,
-$(1, \tfrac{1}{10})$, $(1, 0)$ and $(2, \tfrac12)$, violates it at some $m$.
-
-\emph{Equal weights are not enough.} With equal weights $x$ on both diagonals (L) holds for
-$x \in \{0, \tfrac14, \tfrac12, 1, 2, 4, 10, 100\}$ on narrow strips ($m \le 9$, $2q \le 38$), but
-not on wide ones. Exactly, $Z(8, m)^2 > Z(6, m)\,Z(10, m)$ for every $m$ with $35 \le m \le 60$
-at $x = \tfrac32$, $21 \le m \le 60$ at $x = 2$ and $19 \le m \le 60$ at $x = 3$, while $x = 1$
-and $x = \tfrac54$ give no violation at $2q = 8$ for $m \le 60$. These are the finite-width traces of a
-failure of (L$_\infty$) itself: the second difference of $a_{2q}$ at $2q = 8$ is $-6.2\cdot10^{-4}$
-at $x = \tfrac32$ and $-2.8\cdot10^{-3}$ at $x = 2$, and the differences alternate in sign. In the
-language of the Prony fit above, the alternating mode, which at $x = 1$ is $0.007$ of the positive
-one at $2q = 24$, is already comparable to it at $x = \tfrac54$ (ratios of consecutive second
-differences $2.0$, $376$, $0.16$, $48$) and dominates at $x = \tfrac32, 2, 3$. So symmetry alone does not suffice, since equal weights
-$x = \tfrac32, 2, 3$ violate (L) too. At $x = 1$ both (L) and (L$_\infty$) are quantitative
-facts: $x = 1$ lies below a transition $x^* \le \tfrac32$. Any proof has to see this, which rules
-out arguments that are uniform in the weights.
-
-(L) is also specific to even row counts: for even $m$, $j \mapsto Z(2j + 1, m)$ is
-log-\emph{concave} in $217$ of $220$ tested cases.
-
-\subsection{Obstructions to standard proofs}\label{sec:obstructions}
-\emph{Reflection positivity} fails for every reflection line of the king lattice. Between rows a
-reflection maps one diagonal to the other, and the gluing form $M(A, B)$ (the crossing matchings of
-\S\ref{sec:bounds}) is indefinite: its smallest eigenvalue is $1 - \sqrt2$ already for columns of
-length $m = 3$, and the eigenvector $(1, -\sqrt2, 1)$ on $A = \{0\}, \{1\}, \{2\}$ is realised by
-actual three-row half-boards (with weights $10, 4, 10$). This vector is $J$-even, so restricting
-to the sector that $Z$ sees does not help: on the $J$-even sector $M$ has $1, 1, 3, 8, 20, 34, 93,
-186$ negative eigenvalues for $m = 3, \dots, 10$. Through a line of vertices the kernel is
-$[U \ne D]$ with eigenvalues $\pm1$. The transfer is not symmetric ($w = 3$:
-$T[\emptyset \to \{1\}] = 2$, $T[\{1\} \to \emptyset] = 0$).
-\emph{Moment sequences.} If $Z(2q, m)$ were a Stieltjes moment sequence, (L) would follow; but
-$e_0$-visible eigenvalues of $T^2$ are non-real or negative from $m = 3$ on (small, at most
-$0.047\,\lambda_1^2$ in modulus at $m = 10$), and the Hankel matrices have negative minors.
-\emph{Total nonnegativity} of the transfer fails for the same reason, and the
-Lindstr\"om--Gessel--Viennot lemma needs a planar path model that the crossing diagonals do not
-provide. \emph{Interlacing} of the strip spectra would need a Hermitian structure, or a Pontryagin
-space of small negative index, but $G$ has exponentially many negative directions. Monotonicity of
-the gap gives the decay rate of the second differences, not their sign.
-
-\subsection{Reformulations of (L)}
-Superpose a matching $X$ of rows $[0, 2q)$ with a matching $Y$ of rows $[2, 2q+2)$ ($Z(2q)^2$
-pairs), or $X'$ of $[0, 2q+2)$ with $Y'$ of $[2, 2q)$ ($Z(2q+2)Z(2q-2)$ pairs). The union $H$ has
-degree one on the top rows $\{0, 1\}$ and the bottom rows $\{2q, 2q+1\}$ and degree two in between,
-so it consists of paths and even cycles. In the first case top--top and bottom--bottom paths have
-odd length and top--bottom (TB) paths even length; in the second all paths are odd. Each $H$ has
-$2^{c(H)}$ labelings, $c(H)$ the number of cycles of length at least four, so
-\[
-  Z(2q-2)Z(2q+2) - Z(2q)^2 = \sum_{H:\,t(H) \ge 1} 2^{c(H)}
-  \bigl([\text{all TB paths odd}] - [\text{all TB paths even}]\bigr),
-\]
-where $t(H)$ is the number of TB paths. We checked this identity pair by pair for small
-$(m, q)$ (up to $3.4\cdot10^{6}$ pairs). The odd configurations win separately for every $t$
-(e.g.\ $m = 5$, $q = 2$: $t = 2$: $1847660$ against $912656$; $t = 4$: $32616$ against $0$). So (L)
-asks for a sign-reversing injection that flips the parity of all top--bottom paths; by
-\S\ref{sec:notstructural} it would have to depend on the size of the diagonal weight. Cut-and-swap
-involutions below the first row where the two boundaries agree (plainly or after the reflection
-$J$) do pair off part of the configurations, but the unmatched remainder does not shrink with $q$.
-Equivalently, cutting the board in the middle, (L) says that the indefinite form $M$ is positive
-semidefinite on the span of two boundary vectors $u_{q-1}, u_{q+1}$ of half-boards.
+The convexity is a quantitative property of unit weights, not a structural one. Its finite form
+$Z(2q, m)^2 \le Z(2q-2, m)Z(2q+2, m)$ holds in all $1451$ cases we tested on the king's graph, but it
+fails on the triangular lattice, for every unequal pair of diagonal weights we tried, and for equal
+diagonal weights $x = \tfrac32, 2, 3$ on wide strips; along equal weights the two rates above cross
+between $x = \tfrac32$ and $x = 2$. The companion note \cite{rylko2026lnote} collects these tests,
+the counterexamples, the mechanism behind them (the Krein signature of the left--right
+reflection) and the obstructions to the standard proof techniques.
 
 \begin{problem}
-Prove (L$_\infty$) for the king's graph; this would make the lower bound $s \ge 0.565511911035$
-a theorem. A proof must distinguish unit diagonal weights from equal weights $x = \tfrac32, 2, 3$,
-where (L$_\infty$) fails. The only route we see is a computer-assisted proof of the asymptotics
-of the strip free energy $a_{2q}$, with the leading finite-size correction controlled to relative
-accuracy about $0.6$ for every $2q \ge 22$.
+Prove (L$_\infty$) and (O) at unit weights, i.e.\ the sign $C > 0$ with a bound on the remainder
+for every $k \ge 22$; Proposition~\ref{prop:cond} would then give ten rigorous digits. Another
+route to ten digits is the sector bracket $f^{(1)}_w \le s \le f^{(0)}_w$ on even cylinders, which
+holds in all our data (\S\ref{sec:model}) and has width $5.06\cdot10^{-11}$ at $w = 24$.
 \end{problem}
 
 \section{Reproducibility}\label{sec:repro}

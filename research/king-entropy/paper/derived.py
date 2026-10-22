@@ -27,6 +27,27 @@ for q2 in range(4, 26, 2):
     if q2 - 2 in f and q2 + 2 in f:
         d2 = f[q2 + 2] - 2 * f[q2] + f[q2 - 2]
         print(f'  2q={q2:2d}: {mp.nstr(d2, 3)}   sources {surf["sources"][str(q2 - 2)]} | {surf["sources"][str(q2 + 2)]}')
+# Section 8: the sign pattern of g(k) = a_k - s k (a_0 = a_1 = 0) and its two modes
+g = dict(f)
+g[0], g[1] = mpf(0), -s
+ks = sorted(g)
+print('\n(L-infinity) for all q, with a_0 = 0: even second differences at 2q = 2..24 all positive:',
+      all(g[k + 2] - 2 * g[k] + g[k - 2] > 0 for k in range(2, 25, 2) if k + 2 in g))
+odd = {k: g[k + 2] - 2 * g[k] + g[k - 2] for k in range(3, 25, 2) if k + 2 in g}
+print('odd second differences a(k+2) - 2 a(k) + a(k-2), k = 3..' + str(max(odd)) + ': all negative:',
+      all(v < 0 for v in odd.values()), '; ' + ', '.join(f'k={k}: {mp.nstr(v, 3)}' for k, v in sorted(odd.items())))
+inc = {k: g[k + 1] - g[k] for k in range(0, max(ks)) if k + 1 in g}
+print('increments a(k+1) - a(k) - s alternate in sign for k = 0..' + str(max(inc)) + ':',
+      all(inc[k] * inc[k + 1] < 0 for k in inc if k + 1 in inc),
+      '; (O) at k = 23: a(24) - a(23) - s =', mp.nstr(inc[23], 4))
+print('step-1 ratios (a(k+2) - a(k+1) - s) / (a(k+1) - a(k) - s), k = 16..24: '
+      + ', '.join(f'{mp.nstr(inc[k + 1] / inc[k], 4)}' for k in range(16, 25) if k + 1 in inc))
+sec = json.load(open('data/sec/sec_king_free_1_18.json'))
+D = {int(k): mpf(v['0']) - mpf(v['1']) for k, v in sec.items() if int(k) % 2 == 0 and int(k) >= 4}
+print('free-strip parity splitting D(k) = log lambda^(0)_k - log lambda^(1)_k (sec_king_free_1_18.json): '
+      + ', '.join(f'k={k}: {mp.nstr(v, 4)}' for k, v in sorted(D.items())))
+print('  ratios D(k) / D(k+2): ' + ', '.join(f'{mp.nstr(D[k] / D[k + 2], 5)}' for k in sorted(D) if k + 2 in D))
+
 print('\nf(k) = log lambda_k - s k, free strips (surface.json)')
 for k in range(18, 27):
     print(f'  k={k}: {mp.nstr(f[k], 16)}')

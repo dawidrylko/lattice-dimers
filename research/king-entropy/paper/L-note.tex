@@ -1,0 +1,349 @@
+\documentclass[11pt]{amsart}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[margin=1.1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+  pdftitle={Log-convexity of strip dimer counts on the king's graph},
+  pdfauthor={Dawid Ry\l{}ko},
+  pdfsubject={MSC2020: Primary 05C70; Secondary 82B20, 15B48},
+  pdfkeywords={king's graph, domicule tilings, perfect matchings, log-convexity, transfer matrix,
+    Krein signature},
+  pdfcreator={LaTeX with hyperref},
+}
+\usepackage{url}
+\usepackage{microtype}
+\emergencystretch=2em
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{problem}[theorem]{Open problem}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\file}[1]{\texttt{#1}}
+
+\title{Log-convexity of strip dimer counts on the king's graph}
+\author{Dawid Ry\l{}ko}
+\address{Independent researcher, Bielsko-Bia\l{}a, Poland}
+\email{dawid.rylko@gmail.com}
+\date{October 2026}
+\thanks{This work is licensed under CC BY 4.0, \url{https://creativecommons.org/licenses/by/4.0/}.}
+\subjclass[2020]{Primary 05C70; Secondary 82B20, 15B48}
+\keywords{king's graph, domicule tilings, perfect matchings, log-convexity, transfer matrix,
+  Krein signature}
+
+\begin{document}
+
+\begin{abstract}
+Let $Z(k, m)$ be the number of perfect matchings of the $k \times m$ king board, the square grid
+with both diagonals, i.e.\ the number of its domicule tilings. In all $1451$ cases we tested, on free
+strips of width $m \le 26$ and cylinders of circumference $m \le 22$, the sequence $q \mapsto Z(2q, m)$
+is log-convex; the tests are exact or carry a rigorous rounding bound. The property is not
+structural. It fails on free strips of the triangular lattice, for every unequal pair of diagonal
+weights we tried, where a Krein-signature argument for the left--right reflection predicts the
+onset, and on wide strips for equal diagonal weights $x = \frac32, 2, 3$. Its limit, convexity of
+$q \mapsto \log\lambda_{2q}$ for the strip growth rates, would give a conditional lower bound on the
+entropy with ten correct digits. Along equal weights it is a competition between two modes of the
+transfer matrix whose rates cross between $x = \frac32$ and $x = 2$. We collect the obstructions to the
+standard proof techniques and two exact reformulations.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+A \emph{domicule} is a pair of cells of the square grid that share a side or a corner, and a
+domicule tiling of a board is a perfect matching of the \emph{king's graph} on its cells: cells are
+adjacent when they are at chessboard king distance $1$. Let $Z(k, m)$ be the number of tilings of the
+board with $k$ rows and $m$ columns (OEIS A239264 \cite{oeisA239264}), and $Z_{\mathrm{cyl}}(k, m)$
+the same number when column $m - 1$ is also adjacent to column $0$. The companion paper
+\cite{rylko2026entropy} computes the entropy per site $s = \lim \log Z(K, L)/(KL)$,
+\[
+  s = 0.5655119110413253 \pm 6\cdot10^{-16} \quad\text{(not rigorous)}, \qquad
+  0.545343749727 \le s \le 0.586216605404 \quad\text{(rigorous)}.
+\]
+The rigorous bounds come from strips with free sides and converge only like $1/w$ in the width $w$.
+On the square lattice, reflection positivity gives the Calkin--Wilf bounds
+$(a_{2q+p} - a_{2q})/p \le s$ \cite{calkinwilf1998}, which converge exponentially; here
+$a_k = \log\lambda_k$ and $\lambda_k$ is the growth rate of the free strip of width $k$,
+$\lambda_k^2 = \lim_j Z(2j, k)^{1/j}$. Reflection positivity fails for the king's graph
+(\S\ref{sec:obstructions}). The weakest hypothesis that still gives the even-$p$ bounds is
+\begin{equation}\label{eq:Linf}
+  \text{(L$_\infty$)}\qquad q \mapsto a_{2q} \text{ is convex}, \tag{L$_\infty$}
+\end{equation}
+since a convex sequence with $a_{2q}/(2q) \to s$ has increments that increase to $2s$. Under
+(L$_\infty$), certified values of $\lambda_{22}$ and $\lambda_{24}$ give $s \ge 0.565511911035$
+\cite[Prop.~8.2]{rylko2026entropy}. This note is about the finite statement behind it,
+\begin{equation}\label{eq:L}
+  \text{(L)}\qquad Z(2q, m)^2 \le Z(2q - 2, m)\, Z(2q + 2, m) \quad\text{for all } m \ge 1,\ q \ge 1. \tag{L}
+\end{equation}
+(L) implies (L$_\infty$): it makes $q \mapsto m^{-1}\log Z(2q, m)$ convex for every $m$; since
+$Z(2q, m) = Z(m, 2q)$, these sequences tend to $a_{2q}$ along even $m$, and a pointwise limit of
+convex sequences is convex.
+
+We do \emph{not} conjecture (L). It holds in every case we tested at unit weights
+(\S\ref{sec:tests}), but it is not a structural property of the model: it fails on the triangular
+lattice, under asymmetric diagonal weights, and for larger equal diagonal weights
+(\S\ref{sec:counter}). The conjecture of the companion paper is (L$_\infty$), and
+\S\ref{sec:modes} explains why it is a quantitative statement about unit weights.
+
+\section{Tests at unit weights}\label{sec:tests}
+
+The counts $Z(k, m)$ were computed exactly with the row transfer of \cite{rylko2026entropy},
+reduced modulo $60$-bit primes and combined by the Chinese remainder theorem; the number of primes
+is chosen so that their product exceeds the Kahn--Lov\'asz bound on the number of perfect matchings,
+so the result is the exact integer. For $m = 25, 26$ we used x87 extended precision ($64$-bit
+mantissa) with a rigorous rounding bound: each cell step writes a sum of at most five nonnegative
+terms, so the computed $Z(k, m)$ is within a factor $(1 + u)^{5mk}$ of the true value,
+$u = 2^{-64}$, and the smallest certified margin is $1.237\cdot10^{-10}$. Table~\ref{tab:L} lists the
+tests. (L) holds on free strips of width $m \le 26$ and on cylinders of circumference $m \le 22$ in
+the stated row ranges. The margin $\log Z(2q-2) + \log Z(2q+2) - 2\log Z(2q)$ decreases monotonically
+in $q$ for every $m$, by a ratio tending to $0.16$--$0.20$; there is no dip at intermediate $q$ and
+nothing that shrinks with $m$.
+
+\begin{table}[ht]
+\caption{Tests of (L), $Z(2q)^2 \le Z(2q-2)Z(2q+2)$, at unit weights. The row range shrinks as the
+width grows.}\label{tab:L}
+\begin{tabular}{lllrr}
+\toprule
+lattice, boundary & widths $m$ & rows $2q$ & cases & violations \\
+\midrule
+king, free     & $2$--$24$  & $\le 120$ to $\le 20$ & 873 & 0 \\
+king, cylinder & $3$--$22$  & $\le 80$ to $\le 22$  & 550 & 0 \\
+king, free (x87, certified) & $25, 26$ & $\le 28$ & 28 & 0 \\
+square, free / cylinder     & $\le 12$ & $\le 60$ & 319 / 290 & 0 / 0 \\
+triangular, cylinder        & $\le 12$ & $\le 60$ & 290 & 0 \\
+triangular, free            & $\le 12$ & $\le 60$ & 319 & \textbf{92} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+(L) is specific to even row counts: for even $m$, the sequence $j \mapsto Z(2j + 1, m)$ is
+log-\emph{concave} in $217$ of the $220$ cases tested. This matches the free strips of the
+companion paper, where even widths approach the limit of $a_k - sk$ from above and odd widths from
+below.
+
+\section{Counterexamples}\label{sec:counter}
+
+\subsection{The triangular lattice}
+On free strips of the triangular lattice (one diagonal per square) (L) fails from $m = 5$ on:
+$Z(6, 5) = 6475$, $Z(8, 5) = 210560$, $Z(10, 5) = 6842465$ and
+$210560^2 - 6475\cdot6842465 = 30552725 > 0$, confirmed by brute force. An argument for (L) must
+therefore use the king's graph itself, not only non-planarity or non-bipartiteness.
+
+\subsection{Unequal diagonal weights and the Krein signature}\label{sec:krein}
+Give the orthogonal edges weight $1$ and the two diagonals weights $x_{\mathrm{dl}}$ and
+$x_{\mathrm{dr}}$. The reflection $J\colon c \mapsto m - 1 - c$ of a strip of width $m$ exchanges the
+two diagonals, so it is a symmetry exactly when $x_{\mathrm{dl}} = x_{\mathrm{dr}}$. Write the row
+transfer as $T = HM$, with $H$ the horizontal dimers inside a row and $M$ the kernel of the edges
+between two rows. Then $H = H^{\mathsf T} = JHJ$ and, for \emph{any} diagonal weights,
+$M^{\mathsf T} = JMJ$: transposition exchanges the roles of the two rows, which exchanges the two
+kinds of diagonals, and conjugation by $J$ exchanges them back. Hence $G = JM$ is symmetric and $GT = JMHM$ is symmetric, i.e.\ $T$
+is self-adjoint for the indefinite form $G$, and $G e_0 = e_0$ for the empty state $e_0$.
+
+\begin{lemma}\label{lem:krein}
+Let $\lambda_j$ be a simple real eigenvalue of $T$ with right eigenvector $r_j$, and suppose
+$r_j^{\mathsf T} G r_j \ne 0$. Then the weight of $\lambda_j$ in
+$Z(k, m) = (T^k)_{00} = \sum_i c_i \lambda_i^k$ is
+\[
+  c_j = \frac{r_j(0)^2}{r_j^{\mathsf T} G\, r_j},
+\]
+so the sign of $c_j$ is the Krein signature of $r_j$.
+\end{lemma}
+\begin{proof}
+From $GT = T^{\mathsf T} G$, the vector $G r_j$ is a left eigenvector for $\lambda_j$, so the spectral
+projection is $P_j = r_j (G r_j)^{\mathsf T} / (r_j^{\mathsf T} G r_j)$, and
+$c_j = (P_j)_{00} = r_j(0)\,(G r_j)(0) / (r_j^{\mathsf T} G r_j)$. Finally
+$(G r_j)(0) = e_0^{\mathsf T} G r_j = (G e_0)^{\mathsf T} r_j = r_j(0)$.
+\end{proof}
+
+We checked the algebra in exact arithmetic for $m \le 7$ and five weight sets, and the formula
+against a direct eigendecomposition for $m \le 9$ (relative error $7\cdot10^{-13}$). With equal
+weights the empty state is $J$-even, $Z$ sees only the $J$-even sector, and there $G = M$; on the
+$J$-odd sector $G = -M$. Under the perturbation $(1, 1 - \varepsilon)$ the top $J$-odd level, which
+is $M$-positive, becomes visible with a \emph{negative} weight $-K\varepsilon^2$
+($K = 0.70, 1.31, 1.63$ at $m = 4, 5, 8$, constant for $\varepsilon = 10^{-3}, \dots, 3\cdot10^{-2}$).
+
+The sign of $Z(2q - 2)Z(2q + 2) - Z(2q)^2$ for large $q$ follows from the spectrum. Write
+$Z(2q) = c_1 L_1^q + c_2 L_2^q + \dots$ with $L_i = \lambda_i^2$, where $L_1$ is the Perron root of
+the irreducible part of $T^2$ that $e_0$ sees, and $L_2$ the visible level of next largest modulus.
+If $L_2$ is real and positive and dominates the rest, then
+\[
+  Z(2q-2)Z(2q+2) - Z(2q)^2 \sim c_1 c_2 (L_1 L_2)^{q-1} (L_1 - L_2)^2 ,
+\]
+and $c_1 > 0$, so (L) fails for large $q$ exactly when $c_2 < 0$. The Perron vector is positive,
+hence $J$-even; so a $J$-odd level can only matter if it lies above every visible level other than
+the Perron root. Among $m \le 11$ this happens at $m = 4$ and $m = 8$; the onsets were computed for
+$m \le 10$. The exact counts confirm the prediction: the weights $(1, \tfrac{9}{10})$ violate (L) at
+$m = 4$ from $2q = 56$, at $m = 8$ from $2q = 86$ and at $m = 12$ from $2q = 112$, and
+$(1, \tfrac{19}{20})$ at $m = 8$ from $2q = 118$. At $m = 4$ and $m = 8$ the onsets agree exactly with
+the predicted ones; the failure at $m = 12$ lies outside the range of the prediction.
+
+Clearly unequal weights fail much earlier. The weights $(1, \tfrac12)$ violate (L) at $m = 5$
+($14$ of $19$ values of $q$, $2q \le 38$), $m = 8$ and $m = 9$, and at no other $m \le 9$;
+$(1, \tfrac34)$ fails at $m = 9$ ($5$ of $19$ values, first at $2q = 30$). Every pair of unequal
+diagonal weights on which (L) was tested, namely $(1, \tfrac{9}{10})$, $(1, \tfrac{19}{20})$,
+$(1, \tfrac34)$, $(1, \tfrac12)$, $(1, \tfrac14)$, $(1, \tfrac{1}{10})$, $(1, 0)$ and
+$(2, \tfrac12)$, violates it at some $m$. The symmetrised transfer $H(M + M^{\mathsf T})/2$ has no
+violation where we tested it: for $m \le 9$, $2q \le 38$ and the weights $(1, \tfrac12)$,
+$(1, \tfrac34)$, $(1, 0)$ and $(1, \tfrac{9}{10})$, and for $(1, \tfrac{9}{10})$ at $m = 8$ up to
+$2q = 198$. This covers every failure of $HM$ in those ranges, but not the counterexamples at
+$m = 4$ and $m = 12$ or the weights $(1, \tfrac{19}{20})$.
+
+The orbits of $J$ split the count as $Z = Z_+ + Z_-$ with $Z_\pm = (Z \pm F)/2$, where $F$ counts the
+$J$-symmetric tilings. $Z_+$ satisfies (L) for $m \le 12$; $Z_-$ does not (at $m = 4$ for every $q$,
+otherwise only at the trivial $q = 1$, where $Z_-(0) = 0$).
+
+\subsection{Equal diagonal weights}\label{sec:equal}
+With equal weights $x$ on both diagonals, $J$ remains a symmetry, and (L) holds for
+$x \in \{0, \tfrac14, \tfrac12, 1, 2, 4, 10, 100\}$ on narrow strips ($m \le 9$, $2q \le 38$), but
+not on wide ones. Exactly, $Z(8, m)^2 > Z(6, m)\,Z(10, m)$ for every $m$ with $35 \le m \le 60$ at
+$x = \tfrac32$, with $21 \le m \le 60$ at $x = 2$ and with $19 \le m \le 60$ at $x = 3$, while $x = 1$
+and $x = \tfrac54$ give no violation at $2q = 8$ for $m \le 60$. These finite failures are exact
+and do not depend on any extrapolation. So the left--right symmetry alone does not imply (L).
+
+They are the finite-width traces of a failure of convexity of the growth rates at small $q$: for
+$x \ge \tfrac32$ the second differences $a_{2q+2} - 2a_{2q} + a_{2q-2}$ are negative at $2q = 8$ and
+$2q = 12$ (at $x = \tfrac32$: $-6.2\cdot10^{-4}$ at $2q = 8$). Whether (L$_\infty$), which is a
+statement about large $q$, fails as well is the subject of the next section.
+
+\section{Two modes and the crossing of their rates}\label{sec:modes}
+At unit weights the second differences of $a_{2q}$ are positive for $2q = 2, \dots, 24$ ($a_0 = 0$),
+those of the odd widths are negative for $k = 3, \dots, 23$, and the increments $a_{k+1} - a_k - s$
+alternate in sign for $k = 0, \dots, 25$ \cite[\S8]{rylko2026entropy}. All of this is the
+signature of one alternating mode, $a_k - sk \approx -2\sigma + C(-\rho)^k$ with $\rho = e^{-1.083}$
+(the in-sector gap of the transfer) and $C > 0$. A second, faster mode comes from the splitting of
+the two parity sectors of the free strip, which alternates with period $4$ in $k$ and decays by a
+factor $-13.84$ per two columns. In the second differences
+$d_q = a_{2q+2} - 2a_{2q} + a_{2q-2}$ the two modes appear as
+\[
+  d_q \approx P \rho_+^q + Q \rho_-^q, \qquad \rho_+ = \rho^2 = 0.1147,\quad \rho_- = -0.072,
+\]
+and at $2q = 24$ the second term is $0.007$ of the first, shrinking by a factor $0.63$ per step.
+Along equal weights $x$ both rates grow, at different speeds. (L$_\infty$) holds for large $q$ when
+$\rho_+ > |\rho_-|$ and $P > 0$, and fails when $|\rho_-| > \rho_+$. We define $x^*$ as the weight at
+which the two rates cross, $\rho_+(x^*) = |\rho_-(x^*)|$.
+
+\input{L-note-modes}
+
+The large-$x$ limit is suggestive. Diagonal steps preserve the colour of the checkerboard, so at
+$x = \infty$ the model decouples into two square-lattice dimer models, one on each colour class
+(each class with its diagonal edges is a square lattice turned by $45^\circ$), which are critical.
+The alternating mode that takes over above $x^*$ may be a precursor of this decoupled limit. We do
+not know whether $x^*$ marks a phase transition or only a crossover in the subleading spectrum.
+Either way, $x = 1$ lies below $x^*$, and a proof of (L$_\infty$) at $x = 1$ has to see the size of the
+diagonal weight; this rules out arguments that are uniform in $x$.
+
+\section{Obstructions to standard proofs}\label{sec:obstructions}
+
+\emph{Reflection positivity.} Reflect through a line between two rows. The reflection exchanges the
+two diagonals, and the form that glues a top half to a bottom half is the number $M(A, B)$ of
+matchings between the sets $A, B$ of cells matched across the line, with $a \sim b$ iff
+$|a - b| \le 1$. This form is indefinite: for columns of length $m = 3$ its smallest eigenvalue is
+$1 - \sqrt2$, with eigenvector $c = (1, -\sqrt2, 1)$ on $A = \{0\}, \{1\}, \{2\}$. Reflection
+positivity would need $\langle F, \theta F\rangle \ge 0$ for every function $F$ of the top half. Take
+$F = \sum_A (c_A / g(A))\,[\text{boundary state} = A]$, where $g(A) > 0$ is the number of three-row
+half-boards with boundary state $A$ (here $10, 4, 10$); then $\langle F, \theta F\rangle = c^{\mathsf T}
+M c < 0$. The vector $c$ is $J$-even, so restricting to the sector that $Z$ sees does not help: on the
+$J$-even sector $M$ has $1, 1, 3, 8, 20, 34, 93, 186$ negative eigenvalues for $m = 3, \dots, 10$. By
+the symmetry of the lattice the same holds for lines between columns. For a reflection through a line
+of vertices the gluing kernel is $[U \ne D]$, which is indefinite (eigenvalues $\pm1$ already for
+one vertex); we have not checked whether its negative directions are realised. At equal weights
+$T = HM$ with $H$ and $M$ symmetric, so the obstruction is the indefiniteness of $M$, not the
+asymmetry of $T$.
+
+\emph{Moment sequences.} If $q \mapsto Z(2q, m)$ were a Stieltjes moment sequence of a positive
+measure, (L) would follow; it is not. The eigenvalues of $T^2$ that $e_0$ sees are non-real or real
+negative from $m = 3$ on (small: at most $0.047\,\lambda_1^2$ in modulus at $m = 10$), and the
+Hankel matrices $[Z(2(i+j), m)]$ and $[Z(2(i+j+1), m)]$ have negative minors for every free width
+$m \ge 3$ and every circumference $m \ge 7$. (L) is only the consecutive $2 \times 2$ part of this.
+
+\emph{Total nonnegativity} of the transfer, in any ordering of the states, would force a real
+nonnegative spectrum, and fails for the same reason. The
+Lindstr\"om--Gessel--Viennot lemma needs a planar, acyclic path model that the crossing diagonals do
+not provide. \emph{Interlacing} of the strip spectra would need a Hermitian structure, or a
+Pontryagin space of small negative index, but $G$ has exponentially many negative directions.
+Monotonicity of the gap gives the decay rate of the second differences, not their sign.
+
+\section{Reformulations}\label{sec:reform}
+
+\emph{Parity of paths.} Superpose a matching $X$ of rows $[0, 2q)$ with a matching $Y$ of rows
+$[2, 2q+2)$ ($Z(2q)^2$ pairs), or $X'$ of $[0, 2q+2)$ with $Y'$ of $[2, 2q)$ ($Z(2q+2)Z(2q-2)$
+pairs). The union $H$ has degree one on the top rows $\{0, 1\}$ and the bottom rows $\{2q, 2q+1\}$
+and degree two in between, so it consists of paths and even cycles. In the first case top--top and
+bottom--bottom paths have odd length and top--bottom (TB) paths even length; in the second all
+paths are odd. Each $H$ has $2^{c(H)}$ labelings, $c(H)$ the number of cycles of length at least
+four, so
+\[
+  Z(2q-2)Z(2q+2) - Z(2q)^2 = \sum_{H:\,t(H) \ge 1} 2^{c(H)}
+  \bigl([\text{all TB paths odd}] - [\text{all TB paths even}]\bigr),
+\]
+where $t(H)$ is the number of TB paths. We checked this identity pair by pair for small $(m, q)$,
+up to $3.4\cdot10^{6}$ pairs. The odd configurations win separately for every $t$ (e.g.\ $m = 5$,
+$q = 2$: for $t = 2$, $1847660$ against $912656$; for $t = 4$, $32616$ against $0$). So (L) asks for
+a sign-reversing injection that flips the parity of all top--bottom paths, and by
+\S\ref{sec:counter} it would have to depend on the lattice and on the size of the diagonal weight.
+With a shift of one row instead of two, the same identity computes $Z(2q+1)Z(2q-1) - Z(2q)^2$,
+which is negative for even $m$; there the even configurations win.
+
+\emph{A Krein-space form.} Cut the $2q$-row board in the middle and reflect the bottom half (the
+lattice is invariant under $r \mapsto -r$). Then $Z(k_1 + k_2) = u_{k_1}^{\mathsf T} M u_{k_2}$,
+with $u_k$ the boundary vector of a $k$-row half-board and $M$ the symmetric, indefinite gluing form
+above. Since $Z(2q \pm 2) = u_{q \pm 1}^{\mathsf T} M u_{q \pm 1} > 0$, (L) says exactly that $M$ is
+positive semidefinite on the span of $u_{q-1}$ and $u_{q+1}$: the Gram determinant of the pair is
+$Z(2q-2)Z(2q+2) - Z(2q)^2$. The Hankel matrices of \S\ref{sec:obstructions} are the $M$-Gram matrices
+of the longer families $\{u_0, u_2, u_4, \dots\}$ and $\{u_1, u_3, \dots\}$, on which $M$ is not
+positive.
+
+\emph{Partial involutions.} Swapping the parts of two superposed matchings below the first row
+where their boundaries agree (plainly or after the reflection $J$) is an involution between the
+two types of pairs, preserves the number of diagonal dimers, and accounts for part of the
+difference. It leaves an unmatched remainder that does not shrink with $q$: the ratio of the two
+unmatched counts tends to $1$ (from $0.26$ to $0.98$ at $m = 3$ and from $0.54$ to $0.99999$ at
+$m = 5$, for $q = 2, \dots, 8$). Together with the flip of the pairs without top--bottom paths, it
+reduces the even-type pairs with $t \ge 1$ only from $194$ to $104$ ($m = 3$) and from $912656$ to
+$861364$ ($m = 5$). With asymmetric weights the twisted swap breaks the identity, as it must.
+
+\section{Open problems}
+
+\begin{problem}
+Prove (L$_\infty$) at unit weights, or its consequence $a_{24} - a_{22} \le 2s$. By
+\S\ref{sec:modes} this amounts to the sign $C > 0$ of the amplitude of the bulk mode in
+$a_k - sk$, with the faster alternating mode and the remainder controlled for every even $k \ge 22$.
+\end{problem}
+
+\begin{problem}
+Locate $x^*$ more precisely, and decide whether (L$_\infty$) fails at $x = 2$ and $x = 3$, where the
+two-mode fits favour the alternating mode, and holds at $x = \frac32$, where they favour the bulk
+mode. Both need growth rates of wider strips than those used here.
+\end{problem}
+
+\section*{Reproducibility}
+All scripts and outputs are in the repository \url{https://github.com/dawidrylko/lattice-dimers},
+directory \texttt{research/king-entropy/}; every number of this note is mapped to its output file in
+\file{paper/NUMBERS.md}. The tests of \S\ref{sec:tests} are \file{src/zexact.py},
+\file{src/ltest.py}, \file{src/lcert.py} and \file{src/cw.py}; the weights of \S\ref{sec:counter}
+are \file{src/lweight.py}, \file{L/symmetry.py} and \file{L/linf.py}; the two modes of
+\S\ref{sec:modes} are \file{L/modes.py}; the obstructions and reformulations are
+\file{src/lspec.py}, \file{src/lparity.py} and \file{L/involution.py}. The laboratory notes with the
+history of these experiments are \file{notes/L-NOTE.md} and \file{notes/CW-NOTE.md}.
+
+\section*{Data availability statement}
+The code and data that support the findings of this note are openly available in the repository
+\url{https://github.com/dawidrylko/lattice-dimers}.
+
+\section*{Disclosure statement}
+The author reports no competing interests.
+
+\bibliographystyle{amsplain}
+\bibliography{refs}
+
+\end{document}
