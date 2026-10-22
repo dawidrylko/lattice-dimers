@@ -5,7 +5,7 @@ usage: python3 src/repro.py > out/out_repro.txt        (about 10 minutes)
 
 First checks that the code commits recorded with these outputs (`commit` fields of eig_*.json,
 out_estimate.txt, and the provenance in CW-NOTE.md and PROOF-upper.md) exist in this repository;
-they live in the history under the tag v1.0-king-entropy, and a clone without it (shallow or
+they live in the history under the tag king-entropy-v0.1.0, and a clone without it (shallow or
 --no-tags) only gets a warning. Then checks that the current code reproduces the committed
 numbers. It works in a temporary copy (the scripts rewrite their JSON outputs), strips wall-clock
 timings and commit tags, compares.
@@ -18,7 +18,7 @@ missing = [c for c in CITED if subprocess.run(['git', 'cat-file', '-e', c + '^{c
 head = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True, cwd=ROOT).stdout.strip()
 print(f'HEAD {head}; recorded code commits missing from the repository: {len(missing)} of {len(CITED)}: {" ".join(missing) or "none"}')
 if missing:
-    print('warning: fetch the tag v1.0-king-entropy to resolve the recorded commits; the numbers are checked anyway')
+    print('warning: fetch the tag king-entropy-v0.1.0 to resolve the recorded commits; the numbers are checked anyway')
 
 
 def clean(text):

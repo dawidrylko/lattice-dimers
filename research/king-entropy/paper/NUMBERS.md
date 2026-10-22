@@ -8,8 +8,8 @@ The numbers of the companion note `paper/L-note.tex` are listed at the end.
 
 All commands run from `research/king-entropy/`. Code commit = last change of the script before the
 output was committed (see `git log -- <script>`). Outputs of the first version record commit SHAs
-of the history under the tag `v1.0-king-entropy`; outputs added or regenerated in this version record
-SHAs of the branch that becomes `v1.1-king-entropy`.
+of the history under the tag `king-entropy-v0.1.0`; outputs added or regenerated in this version record
+SHAs of the branch that becomes `king-entropy-v1.0.0`.
 
 | file | command |
 | --- | --- |
