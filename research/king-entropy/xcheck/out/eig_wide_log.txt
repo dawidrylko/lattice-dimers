@@ -2,3 +2,4 @@ king_cyl_w26_0_ld.txt wall=762.5s
 king_cyl_w26_1_ld.txt wall=635.7s
 king_cyl_w27_0_ld.txt wall=1380.7s
 king_cyl_w28_0_d.txt wall=1652.9s
+king_cyl_w28_1_d.txt wall=1640.3s

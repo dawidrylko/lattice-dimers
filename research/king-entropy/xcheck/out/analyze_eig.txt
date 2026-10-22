@@ -78,6 +78,8 @@ cyl   25  0    ld      23  0.0             2.2e-19         0.1147        816.4  
 cyl   26  0    ld      25  0.0             2.4e-19         0.1147        762.5     6147
 cyl   26  1    ld      23  4.0e-20         2.4e-19         0.1147        635.7     6147
 cyl   27  0    ld      24  0.0             3.1e-19         0.1147       1380.7    12292
+cyl   28  0    d       21  6.7e-20         4.8e-16         0.1147       1652.9    12294
+cyl   28  1    d       21  3.4e-19         4.8e-16         0.1147       1640.3    12294
 free   1  e0   ld       8  0.0             0.0             -               1.7       11
 free   2  1    ld       8  0.0             0.0             -               0.8       11
 free   2  e0   ld      36  0.0             0.0             0.25           10.2       11
@@ -135,7 +137,7 @@ w=26 p=1: ratio     0.1147  m = 1.08272
 w=27 p=0: ratio     0.1147  m = 1.08272
 median m = 1.082724   (paper: 1.082727 from ARPACK at w = 20)
 
-odd w: 3..27, even w: 4..26 (w = 28: float64; all others x87 long double)
+odd w: 3..27, even w: 4..28 (w = 28: float64; all others x87 long double)
 
 == 2. Table 1: odd cylinders ==
  w  f_w (mine)            paper f_w            diff      d_w          r_w      s_w (Aitken)          paper s_w
@@ -162,6 +164,7 @@ odd w: 3..27, even w: 4..26 (w = 28: float64; all others x87 long double)
 22  0.565511910896325104  0.5655119111867461828 0.5655119110415356434 True   paper [0.5655119108963251, 0.5655119111867462]
 24  0.5655119110160358953 0.5655119110666571172 0.5655119110413465063 True   paper [0.5655119110160359, 0.5655119110666571]
 26  0.565511911036870506  0.5655119110457844447 0.5655119110413274753 True
+28  0.5655119110405338324 0.5655119110421172479 0.5655119110413255402 True
 paper midpoint w = 24: 0.5655119110413465
 
 == 4. extrapolation of s (models of the paper, own implementation; m = own gap) ==
@@ -173,11 +176,13 @@ mid W=20: G=0.5655119110413724336  L1=0.5655119110413263625  L2=0.56551191104132
 mid W=22: G=0.5655119110413291374  L1=0.565511911041325388  L2=0.5655119110413253151  PE=0.5655119110413252324  R1=0.5655119110413251178  WY=0.5655119110413253734
 mid W=24: G=0.5655119110413256382  L1=0.5655119110413253237  L2=0.5655119110413253186  PE=0.5655119110413253129  R1=0.5655119110413253051  WY=0.5655119110413253212
 mid W=26: G=0.5655119110413253462  L1=0.5655119110413253192  L2=0.5655119110413253188  PE=0.5655119110413253184  R1=0.5655119110413253178  WY=0.565511911041325319
+mid W=28: G=0.5655119110413253211  L1=0.5655119110413253187  L2=0.5655119110413253187  PE=0.5655119110413253187  R1=0.5655119110413253186  WY=0.5655119110413253187
 
 backtest change (estimate at W minus estimate at W-2), L1:
   mid W=22: L1 change -9.74e-16, L2 change 6.12e-17
   mid W=24: L1 change -6.44e-17, L2 change 3.54e-18
   mid W=26: L1 change -4.5e-18, L2 change 1.82e-19
+  mid W=28: L1 change -4.28e-19, L2 change -9.75e-20
   odd W=23: L1 change 1.82e-16, L2 change 4.07e-17
   odd W=25: L1 change 1.42e-17, L2 change 1.35e-18
   odd W=27: L1 change 1.11e-18, L2 change 6.61e-20
@@ -187,10 +192,12 @@ odd W=25: L1 = 0.5655119110413253176  L1 - paper = 1.76e-17; models L1,L2,PE,R1,
 mid W=24: L1 = 0.5655119110413253237  L1 - paper = 2.37e-17; models L1,L2,PE,R1,WY span [0.5655119110413253051, 0.5655119110413253237]  inside +-6e-16: True
 odd W=27: L1 = 0.5655119110413253187  L1 - paper = 1.87e-17; models L1,L2,PE,R1,WY span [0.5655119110413253187, 0.565511911041325319]  inside +-6e-16: True
 mid W=26: L1 = 0.5655119110413253192  L1 - paper = 1.92e-17; models L1,L2,PE,R1,WY span [0.5655119110413253178, 0.5655119110413253192]  inside +-6e-16: True
+mid W=28: L1 = 0.5655119110413253187  L1 - paper = 1.87e-17; models L1,L2,PE,R1,WY span [0.5655119110413253186, 0.5655119110413253187]  inside +-6e-16: True
 
 == 6. widths beyond the paper: measured vs predicted from the fit at W = 25 (odd) / 24 (midpoints) ==
 odd w=27: d_w measured 6.06113e-15, L1 prediction 6.06022e-15, ratio 1.00015; f_w - s_paper = -6.716e-16
 midpoint w=26: d_w measured -1.90309e-14, L1 prediction -1.90272e-14, ratio 1.00019; bracket [0.565511911036870506, 0.5655119110457844447] contains s_paper: True
+midpoint w=28: d_w measured -1.93518e-15, L1 prediction -1.93413e-15, ratio 1.00054; bracket [0.5655119110405338324, 0.5655119110421172479] contains s_paper: True
 
 == 6b. hidden slow mode: d_w = L1 form + B x^((w-25)/2), x = e^(-2/1.2351), least squares on w = 13..W ==
 W=25: best B = 0.002 d_25 (rel. rms 9.97e-5); admitted (rms within 3x): B/d_25 in [0.001, 0.003]; shift of s over admitted B: 2.0e-17
@@ -208,6 +215,7 @@ paper (W = 25): admits 0.001 d_25 <= B <= 0.003 d_25, term 3.0e-17
 22  6.389264e-9      6.389264e-9    1.20204      1.20204
 24  1.214909e-9      1.214909e-9    1.20486      1.20486
 26  2.317624e-10                    1.20721      
+28  4.433564e-11                    1.20925      
 fit a - w/xi, w = 10..24: xi = 1.1931, rms 0.015
 fit a - w/xi + b log w, w = 10..24: xi = 1.2323, b = -0.4327, rms 0.00093
 fit with b = -1/2: xi = 1.2387, rms 0.0026

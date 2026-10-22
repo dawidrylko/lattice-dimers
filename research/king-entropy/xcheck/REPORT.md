@@ -3,12 +3,12 @@
 **Verdict.** Claims 1-5 CONFIRMED, claim 6 found no failure mode; no contradiction of substance. Three
 minor last-digit issues are listed under Contradictions. One check is NOT REACHED: the A239264 b-file
 (oeis.org is blocked from this machine). The widths w = 26 and 27, beyond the paper, agree with its
-extrapolation to 1e-18 in s (w = 28 is running in float64; this file is updated when it finishes).
+extrapolation to 1e-18 in s, and so do both sectors of w = 28 (float64).
 
 | claim | verdict | own value | paper |
 | --- | --- | --- | --- |
 | 1. exact counts | CONFIRMED (A239264 b-file NOT REACHED) | 0 mismatches: 5562 `data/zex` values, 88 OEIS data terms, A239273 b-file by SHA-256 | - |
-| 2. s | CONFIRMED | 0.5655119110413253176 (L1, W = 25); 0.5655119110413253187 (W = 27) | 0.5655119110413253 +- 6e-16 |
+| 2. s | CONFIRMED | 0.5655119110413253176 (L1, W = 25); 0.5655119110413253187 (odd W = 27 and midpoints W = 28) | 0.5655119110413253 +- 6e-16 |
 | 3. Theorem 2.1 | CONFIRMED | B(3, 4): no Pfaffian orientation, 6-equation certificate | 43 matchings, 29 edges |
 | 4. Theorem 4.1 | CONFIRMED | 0.545343749727 <= s <= 0.582767477484 | same, all 18 entries of Table 3 |
 | 5. kappa | CONFIRMED | 0.3631962560475 | 0.36319625605 +- 3e-10 |
@@ -51,7 +51,7 @@ NOT REACHED: the A239264 b-file (antidiagonals 0..36). oeis.org is blocked here 
 `oeis/oeisdata` has only its LFS pointer (SHA-256 `21ecae3e...`, 14988 bytes); a plain `n a(n)` rebuild
 from the own counts has 14930 bytes, so the file differs from it in format or content (undecided).
 
-## Claim 2 - cylinder eigenvalues and s: CONFIRMED (w <= 25 as in the paper; w = 26, 27 beyond it; 28 running)
+## Claim 2 - cylinder eigenvalues and s: CONFIRMED (w <= 25 as in the paper; w = 26, 27, 28 beyond it)
 
 `out/analyze_eig.txt` (`python3 eigrun.py base; python3 analyze_eig.py`), `out/compare_eig.txt`.
 
@@ -62,7 +62,7 @@ from the own counts has 14930 bytes, so the file differs from it in format or co
 | span of L1, L2, PE, R1, Wynn: odd W = 25; midpoints W = 24 | [...3253176, ...3253222]; [...3253051, ...3253237] | +- 6e-16 | inside |
 | in-sector gap m per row (median over the power-iteration convergence ratios, w = 16..27) | 1.082724 | 1.082727 | 3e-6 |
 | even-w brackets w = 18..24, midpoint w = 24 | as printed, except the last digit of both w = 20 values (float64 noise, see Contradictions) | Section 3.1 | <= 8e-17 |
-| f^(1)_w < s < f^(0)_w, all even w = 4..26 | holds | holds (w <= 24) | - |
+| f^(1)_w < s < f^(0)_w, all even w = 4..28 | holds | holds (w <= 24) | - |
 | own log lambda vs `data/lean` (extended; cylinders and free strips), per site | max 7.8e-20 | - | - |
 | own log lambda vs `data/sec`, `data/eig` (float64, exact binary values), per site | max 6.2e-17, 3.9e-17 | 6.2e-17 quoted | 0 |
 
@@ -76,12 +76,24 @@ w = 27 (long double, 12.0 GiB, 23 min): f_27 = 0.5655119110413246284, d_27 = 6.0
 L1 prediction 6.06022e-15 from the fit at W = 25 (ratio 1.00015); L1 at W = 27 gives
 0.5655119110413253187 (change 1.1e-18 from W = 25), all models in [...3253187, ...3253190].
 
+w = 28 (float64, both sectors, 12.0 GiB, 28 min each; long double does not fit): bracket
+[0.5655119110405338, 0.5655119110421172] contains s; d_28 = -1.93518e-15 against the prediction
+-1.93413e-15 from W = 24 (ratio 1.00054, inside the float64 noise of about 3e-17 per site); L1 on the
+midpoints at W = 28 gives 0.5655119110413253187 (change -4.3e-19 from W = 26), all models in
+[...3253186, ...3253187]. The odd sequence (W = 27) and the midpoints (W = 28) now agree to 1e-19.
+
+Parity splitting (Section 6, Table 5): Delta_w and xi_w for w = 10..24 agree with every printed digit;
+the fits on w = 10..24 give xi = 1.1931 (rms 0.015), 1.2323 with b = -0.4327 (rms 9.3e-4) and 1.2387
+with b = -1/2 (rms 0.0026), as in the paper; the own two-point extrapolation of 1/xi_w linear in 1/w
+gives 1.2367 (paper's version 1.2351), inside xi = 1.235 +- 0.004. Beyond the paper: Delta_26 =
+2.317624e-10 (xi_26 = 1.20721), Delta_28 = 4.433564e-11 (xi_28 = 1.20925, float64).
+
 Table 2 (model estimates and backtests), own implementations of the models G, L1, L2, PE, R1 and
 Wynn: all 12 estimates agree with the paper to its 17 printed digits (odd W = 25: G ...32523, the
 others ...32532; midpoints W = 24: G ...32564, PE and R1 ...32531, the others ...32532); backtest changes L1 1.42e-17 / 6.44e-17 and L2 1.35e-18 / 3.54e-18 (paper 1.4e-17 / 6.5e-17 and
 1.5e-18 / 3.5e-18).
 
-Convergence claim: the estimate changes shrink by 0.1147 per iteration of T^2 at every w = 16..27
+Convergence claim: the estimate changes shrink by 0.1147 per iteration of T^2 at every w = 16..28
 (paper: 0.115); the own runs stop after 22-25 iterations at a change below 1e-19.
 
 ## Claim 3 - Theorem 2.1 (Pfaffian orientation iff min(K, L) <= 2): CONFIRMED
@@ -140,9 +152,9 @@ differences are 1.4e-16 and 8.3e-16, inside the paper's error bar. `out/analyze_
 
 | failure mode | test | result |
 | --- | --- | --- |
-| hidden slower mode beyond w = 25 | widths 26 and 27 (28 running), computed blind and compared with the L1 predictions made at W = 24 / 25; the paper's hidden-mode fit (L1 + B x^((w-25)/2), x = e^(-2/1.2351), least squares on w = 13..W, B admitted if the rms is within 3x of the best) | d_26, d_27 agree with the predictions to 1.9e-4 and 1.5e-4 relative. Hidden-mode fit: W = 25 admits 0.001 <= B/d_25 <= 0.003 as in the paper (shift of s 2.0e-17, paper 3.0e-17); with w = 27 added it admits 0 <= B/d_25 <= 0.0025 and the shift falls to 5.2e-18. `out/analyze_eig.txt` sections 6, 6b |
-| level crossing | convergence ratio of the power iteration (= (lambda_3/lambda_1)^2 in the sector) at every w and sector | 0.1147 at all w = 16..27, both sectors; for w <= 10 the full spectra show a simple leading eigenvalue and a negative subleading one (lambda_2/lambda_1 = -0.339 at w = 10) |
-| sector mislabelling | parity rule checked entrywise on the row transfer; sectors of odd w | T maps sector p to p + w (mod 2); odd-w sectors equal to < 1e-15; sector 0 (with e0) is the larger one for every even cylinder, f^(1) < s < f^(0) for w = 4..26 |
+| hidden slower mode beyond w = 25 | widths 26, 27 and 28, computed blind and compared with the L1 predictions made at W = 24 / 25; the paper's hidden-mode fit (L1 + B x^((w-25)/2), x = e^(-2/1.2351), least squares on w = 13..W, B admitted if the rms is within 3x of the best) | d_26, d_27 agree with the predictions to 1.9e-4 and 1.5e-4 relative, d_28 (float64) to 5.4e-4. Hidden-mode fit: W = 25 admits 0.001 <= B/d_25 <= 0.003 as in the paper (shift of s 2.0e-17, paper 3.0e-17); with w = 27 added it admits 0 <= B/d_25 <= 0.0025 and the shift falls to 5.2e-18. `out/analyze_eig.txt` sections 6, 6b |
+| level crossing | convergence ratio of the power iteration (= (lambda_3/lambda_1)^2 in the sector) at every w and sector | 0.1147 at all w = 16..28, both sectors; for w <= 10 the full spectra show a simple leading eigenvalue and a negative subleading one (lambda_2/lambda_1 = -0.339 at w = 10) |
+| sector mislabelling | parity rule checked entrywise on the row transfer; sectors of odd w | T maps sector p to p + w (mod 2); odd-w sectors equal to < 1e-15; sector 0 (with e0) is the larger one for every even cylinder, f^(1) < s < f^(0) for w = 4..28 |
 | reducible sector (a component not seen from e0) | Tarjan SCCs of T^2 per sector, w <= 10, cylinders and free strips | every sector is strongly connected; for free strips the sector of e0 is all reachable |
 | floating-point loss | long double vs float64 of the own code; own vs repository extended values; exact count ratios vs eigenvalues | 1.1e-17 per site; 7.8e-20 per site; <= 6.4e-19 in log lambda (m <= 12, K = 80) |
 | off-by-one K vs L | Z(K, L) = Z(L, K) for K, L <= 12; OEIS array orientation; count ratios along the strip vs the strip eigenvalue | all consistent |
