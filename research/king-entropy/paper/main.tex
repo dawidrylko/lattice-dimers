@@ -635,9 +635,9 @@ are at least $1$ ($z$ is rounded up, so $T_{\fl(z)} \ge T_{\sqrt\varphi}$ entryw
 entries on the support exceed $10^{-280}$, so there is no underflow and a float entry vanishes iff
 the exact one does. Since $10^{-12} \gg 3.2\cdot10^{-14} + u$, the inequalities $Av \ge cv$ and
 $Av \le Cv$ hold exactly. For the run-weighted transfer with $n = 3$ states per side, an interior
-cell step is unchanged; at the left side column an entry collects at most $4n$ terms, and at the
-right one at most $3n$, plus at most two products by a factor and one addition for the states
-reached by an outside cover. Over the $2w$ steps of $A$ this is at most
+cell step is unchanged; at the left side column an entry of run state $0$ collects at most $4n$ terms, and at the
+right one at most $3n$, while an entry of run state $1$ or $2$ is reached only by outside covers and
+needs at most two products by a factor and one addition. Over the $2w$ steps of $A$ this is at most
 $2\bigl(4(w-2) + (4n-1) + (3n-1)\bigr) = 8w + 14n - 20 \le 12w$ roundings for $w \ge 6$, the same
 budget. The factors are rounded up to floats, so the float transfer dominates the exact one
 entrywise, and the factor $1$ is exact. The logarithms are taken with 30-digit arithmetic and the results are
