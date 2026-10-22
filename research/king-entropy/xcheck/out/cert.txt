@@ -16,3 +16,7 @@ z = sqrt(phi) rounded up to long double: 0xa2d18a354422af4ap-63 (excess 9.04e-20
 23  upper bound, sqrt(phi)    0.587116809507               (unrounded 0.587116809506005683)
 23  log lambda_w in           [12.52273808241356, 12.52273808241357]  paper: >= 12.52273808241305, <= -
     support 4194304 states, min v on support 0x8.6e5b0bc879fb7bep-30
+24  lower bound on s          0.545343749727            0.545343749727   (unrounded 0.545343749727533557)
+24  upper bound, sqrt(phi)    0.586216605404            0.586216605404   (unrounded 0.586216605403316634)
+24  log lambda_w in           [13.08824999346080, 13.08824999346081]  paper: >= 13.08824999346029, <= 13.08824999346131
+    support 8388608 states, min v on support 0xe.8a023164ae4003bp-33

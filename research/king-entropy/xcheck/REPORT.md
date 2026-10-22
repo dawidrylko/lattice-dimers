@@ -1,0 +1,118 @@
+# Independent recomputation of `paper/main.tex` (king-graph dimer entropy)
+
+**Status: interim.** Claims 1, 3, 4 and 5 are complete; claim 2 is complete up to w = 25 (the widths
+26-28 beyond the paper are running); claim 6 is in progress. This file is updated with every stage.
+
+All code in this directory was written from scratch for this check; nothing is imported from or
+adapted from `src/` or `L/`. The committed outputs of the repository (`data/`, `out/`) were read only
+after the own result existed, by the `compare_*` scripts. Commands are run from
+`research/king-entropy/xcheck/`; Python 3.13 with `requirements.txt`, gcc with OpenMP (`sh build.sh`).
+
+## Contradictions
+
+None of substance so far. Minor, last digits only:
+
+- **Table 1, row w = 25 (and r_23)** is computed from float64 eigenvalues and carries their rounding
+  noise: the paper prints d_25 = 5.994e-14, r_25 = 9.992, s_25 = 0.5655119110413253; the long double
+  values (own, and the repository's own `data/lean/*longdouble*`, which agree with the own ones to
+  5e-20 per site) give d_25 = 5.991e-14, r_25 = 9.9976, s_25 = 0.56551191104132523 (the paper's own
+  Table 2 has G = 0.56551191104132523), and r_23 = 10.1354 (printed 10.136). The text's "r_w drifts
+  from 13.4 to 9.99" should end at 10.0. No effect on the result. `out/analyze_eig.txt` section 2.
+- **Section 5.1, "|rho(K, L) - kappa| <= 6.2e-8 for min(K, L) >= 20"**: the maximum is 6.249e-8
+  (at 20 x 20, with either kappa), so the bound holds only as 6.25e-8. `out/corner.txt`.
+- **Section 7, "overestimates s by 2.6 % and 1.2 %"**: (Bethe - s)/s is 2.68 % for the triangular
+  lattice; 2.6 % is (Bethe - s)/Bethe. `out/misc.txt`.
+
+## Claim 1 - exact counts Z(K, L): CONFIRMED (one b-file NOT REACHED)
+
+| check | result | file, command |
+| --- | --- | --- |
+| brute force vs row transfer vs C cell transfer (king, square, triangular; free and cylinder; w <= 7) | 306 values, 0 mismatches | `out/validate.txt`, `python3 validate.py` |
+| own counts, free L = 1..24 (K <= max(24, 36 - L)), cylinders m = 3..22 | 16 primes < 2^62, 15 reconstruct, 1 checks | `out/counts_*.json`, `python3 counts.py` |
+| OEIS data sections A239264 (78 terms), A239273 (n = 0..9) | 0 mismatches | `out/oeis_check.txt` |
+| A239273 b-file, n = 0..12 | rebuilt text has the SHA-256 of the OEIS file (Git LFS pointer `0d398db8...`, 624 bytes): byte-identical | `sh fetch_oeis.sh DIR; python3 oeis_check.py DIR` |
+| all 86 `data/zex/*.json` (5562 values, up to 24 x 24, K <= 120) and the JS solver test data (15 boards) | 0 mismatches | `out/compare_counts.txt`, `python3 compare_counts.py` |
+
+NOT REACHED: the A239264 b-file (antidiagonals 0..36). oeis.org is blocked here and the GitHub mirror
+`oeis/oeisdata` has only its LFS pointer (SHA-256 `21ecae3e...`, 14988 bytes); a plain `n a(n)` rebuild
+from the own counts has 14930 bytes, so the file differs from it in format or content (undecided).
+
+## Claim 2 - cylinder eigenvalues and s: CONFIRMED up to w = 25 (w = 26-28 running)
+
+`out/analyze_eig.txt` (`python3 eigrun.py base; python3 analyze_eig.py`), `out/compare_eig.txt`.
+
+| quantity | own (x87 long double) | paper | difference |
+| --- | --- | --- | --- |
+| s, L1 on odd w, W = 25 | 0.5655119110413253176 | 0.5655119110413253176 (centre) | < 1e-19 |
+| s, L1 on even-w midpoints, W = 24 | 0.5655119110413253237 | 0.56551191104132532 | 4e-18 |
+| spread of L1, L2, PE, R1, Wynn (odd W = 25 / midpoints W = 24) | [...253051, ...253237] | +- 6e-16 | inside |
+| in-sector gap m per row (convergence of the power iteration, w = 16..25) | 1.08272 | 1.082727 | 7e-6 |
+| even-w brackets w = 18..24, midpoint w = 24 | all digits as printed | Section 3.1 | 0 |
+| f^(1)_w < s < f^(0)_w, all even w = 4..24 | holds | holds | - |
+| own log lambda vs `data/lean` (extended), per site | max 5.3e-20 | - | - |
+| own log lambda vs `data/sec`, `data/eig` (float64), per site | max 7.1e-17, 3.9e-17 | 6.2e-17 quoted | - |
+
+Convergence claim: the estimate changes shrink by 0.1147 per iteration of T^2 at every w = 16..25
+(paper: 0.115).
+
+## Claim 3 - Theorem 2.1 (Pfaffian orientation iff min(K, L) <= 2): CONFIRMED
+
+`out/pfaff.txt` (`python3 pfaff.py`). GF(2) system over all perfect matchings, own enumeration.
+B(1, L), L <= 12 and B(2, L), L <= 12: solvable; the orientation is re-checked from scratch (all
+matchings one sign) and det(A) = Z^2 by exact Bareiss elimination. B(3, 4) (29 edges, 43 matchings),
+B(4, 3), B(3, 6), B(3, 8), B(4, 4), B(4, 5), B(4, 6), B(4, 7), B(5, 6), B(6, 5): inconsistent, each
+with an independently verified certificate of 5 or 6 equations. For B(3, 4) the inconsistency appears
+after 23 equations in the own enumeration order (paper: 23). The conformal-corner reduction and the
+genus bound (g >= 74 at 24 x 24) were checked by hand.
+
+## Claim 4 - Theorem 4.1 (0.545343749727 <= s <= 0.582767477484): CONFIRMED
+
+All 18 entries of Table 3 reproduced to the last printed digit, by two independent methods:
+
+| w | method | lower | upper sqrt(phi) | upper, run weights |
+| --- | --- | --- | --- | --- |
+| 4, 8, 12 | exact integer Collatz-Wielandt (`out/bounds_exact.txt`) | same | same | same |
+| 16, 20, 24 | directed rounding FE_DOWNWARD / FE_UPWARD in C (`out/cert.txt`, `out/certrun.txt`) | same | same | same |
+
+w = 24: lower 0.545343749727 (unrounded 0.5453437497275336), upper sqrt(phi) 0.586216605404,
+run weights **0.582767477484** (unrounded 0.5827674774831951). Lemmas 4.4-4.8 checked by brute force:
+M(A, B) <= min(F(A), F(B)), M(S, S) = F(S) for 250952 pairs (columns m <= 10); the cut identity and
+the strip inequality with both weights on 47 boards, 0 violations; with z = 0 the inequality fails on
+23 boards (the check is sensitive). Proposition 8.2 inputs, rigorous: log lambda_24 in
+[13.08824999346080, 13.08824999346081], log lambda_23 >= 12.52273808241356, log lambda_22 <=
+11.95722617138962, all consistent with (and tighter than) the paper's values.
+
+## Claim 5 - kappa and the asymptotics of A239273: CONFIRMED
+
+`out/corner.txt` (`python3 corner.py`), from the own exact counts up to 24 x 24 and the own s and sigma
+(`out/eig_summary.json`).
+
+| quantity | own | paper |
+| --- | --- | --- |
+| kappa, Aitken at L = 24 | 0.3631962560475 | 0.363196256048 |
+| change from L = 22; ratio linear in 1/L | -1.4e-10; -2.6e-11 | 1.4e-10; 2.6e-11 |
+| kappa (quoted) | 0.3631962560475, i.e. 2.5e-12 from the paper | 0.36319625605 +- 3e-10 |
+| ratios of the differences of rho(L) | 5.85 -> 5.58 | 5.85 -> 5.58 |
+| C = e^kappa, d = e^(4s), f = e^(8 sigma) | 1.437918032, 9.60273202731337, 6.931966132248 | same |
+| (formula - a(n))/a(n) at n = 12; ratio per step | -2.0e-9; 5.58 | -2.0e-9; 5.6 |
+| second differences - s at L = 22; extrapolated | 5.26e-9; 1.03e-10 | 5.3e-9; 1.0e-10 |
+| mixed differences - s at L = 22; extrapolated | -1.15e-11; 5.95e-13 | 1.1e-11 below; 5.9e-13 |
+| rectangles 20 <= K, L <= 24: max abs(rho - kappa), sign | 6.249e-8; + for even min, - for odd | <= 6.2e-8; by parity |
+
+Surface free energy (Section 5): -2 sigma = -0.4840358715325006 (odd k, Aitken and Wynn; even k Wynn
+-0.4840358715325006), paper -0.484035871532501 +- 1.8e-14; ratio of odd differences 8.718 (paper
+8.719). Table 4 reproduced to <= 4e-17 for k <= 24; at k = 25, 26 (float64 in the paper) the
+differences are 1.4e-16 and 8.3e-16, inside the paper's error bar. `out/analyze_eig.txt` section 9.
+
+## Claim 6 - failure modes: IN PROGRESS
+
+Section 8 sign properties hold on the own free-strip values (`out/analyze_eig.txt` section 10):
+even second differences positive for 2q = 2..24, odd ones negative for k = 3..23, increments
+alternate for k = 0..25, margin of (O) at k = 23 5.91e-12, (a_24 - a_22)/2 = 0.5655119110355933 and
+a_24 - a_23 = 0.565511911047236; the sectors without e0 win at k = 6, 10, 14, 18 and the sector
+difference ratio is -13.84. Float64 vs long double: 1.1e-17 per site at most (paper: 6.2e-17).
+
+So far: every parity sector of the row transfer is strongly connected for w <= 10 (cylinder and free
+strip), T maps sector p to p + w (mod 2) entrywise, the leading eigenvalue is simple, the subleading
+eigenvalue of T in a sector is negative (-0.339 at w = 10); exact count ratios agree with the power
+iteration (to 1e-19 for m <= 12); Z(K, L) = Z(L, K) for K, L <= 12. `out/spectrum.txt`.

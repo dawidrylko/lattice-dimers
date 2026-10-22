@@ -1,0 +1,50 @@
+
+######## own s and sigma: s = 0.5655119110413253176, sigma = 0.2420179357662503
+ L   rho(L)                  diff ratio (step 2)
+ 2  0.7727081306328109      
+ 4  0.4588859987680495      
+ 6  0.3765671096361169      3.8123
+ 8  0.3655602554285246      7.4789
+10  0.3635907489580472      5.5886
+12  0.363263714960933       6.0223
+14  0.3632078168090019      5.8505
+16  0.3631982624886123      5.8506
+18  0.3631966079934145      5.7748
+20  0.3631963185403664      5.7159
+22  0.3631962672400091      5.6423
+24  0.3631962580520962      5.5835
+Aitken at L = 24: kappa = 0.3631962560475; change from L = 22: -1.4e-10; ratio linear in 1/L: 0.3631962560213 (change -2.6e-11)
+paper: 0.363196256048, 1.4e-10 from L = 22, 2.6e-11 with the ratio linear in 1/L, kappa = 0.36319625605 +- 3e-10; ratios 5.85 -> 5.58
+rectangles 20 <= K, L <= 24: max |rho(K, L) - kappa| = 6.249e-8 at 20x20; (parity of min, sign>0) pairs seen: [(0, True), (1, False)]  (paper: <= 6.2e-8, sign by parity of min)
+C = e^kappa = 1.437918032, d = e^(4s) = 9.60273202731337, f = e^(8 sigma) = 6.931966132248
+paper: C = 1.437918032, d = 9.60273202731337, f = 6.931966132248
+relative error (formula - a(n)) / a(n): n=4: -0.00236, n=5: -0.000394, n=6: -6.75e-5, n=7: -1.16e-5, n=8: -2.01e-6, n=9: -3.52e-7, n=10: -6.25e-8, n=11: -1.12e-8, n=12: -2.0e-9
+error ratio per step: 5.7, 5.63, 5.58, 5.58   (paper: -2.0e-9 at n = 12, factor 5.6 per step)
+second differences - s at L = 22: 5.26e-9; geometric extrapolation - s: 1.03e-10  (paper: 5.3e-9, 1.0e-10)
+mixed differences - s at L = 22: -1.15e-11; geometric extrapolation - s: 5.95e-13  (paper: -1.1e-11, 5.9e-13 in absolute value)
+
+######## paper s and sigma: s = 0.5655119110413253176, sigma = 0.242017935766251
+ L   rho(L)                  diff ratio (step 2)
+ 2  0.7727081306328164      
+ 4  0.4588859987680605      
+ 6  0.3765671096361335      3.8123
+ 8  0.3655602554285467      7.4789
+10  0.3635907489580749      5.5886
+12  0.3632637149609661      6.0223
+14  0.3632078168090406      5.8505
+16  0.3631982624886566      5.8506
+18  0.3631966079934643      5.7748
+20  0.3631963185404218      5.7159
+22  0.3631962672400699      5.6423
+24  0.3631962580521626      5.5835
+Aitken at L = 24: kappa = 0.3631962560476; change from L = 22: -1.4e-10; ratio linear in 1/L: 0.3631962560214 (change -2.6e-11)
+paper: 0.363196256048, 1.4e-10 from L = 22, 2.6e-11 with the ratio linear in 1/L, kappa = 0.36319625605 +- 3e-10; ratios 5.85 -> 5.58
+rectangles 20 <= K, L <= 24: max |rho(K, L) - kappa| = 6.249e-8 at 20x20; (parity of min, sign>0) pairs seen: [(0, True), (1, False)]  (paper: <= 6.2e-8, sign by parity of min)
+C = e^kappa = 1.437918032, d = e^(4s) = 9.60273202731337, f = e^(8 sigma) = 6.931966132248
+paper: C = 1.437918032, d = 9.60273202731337, f = 6.931966132248
+relative error (formula - a(n)) / a(n): n=4: -0.00236, n=5: -0.000394, n=6: -6.75e-5, n=7: -1.16e-5, n=8: -2.01e-6, n=9: -3.52e-7, n=10: -6.25e-8, n=11: -1.12e-8, n=12: -2.0e-9
+error ratio per step: 5.7, 5.63, 5.58, 5.58   (paper: -2.0e-9 at n = 12, factor 5.6 per step)
+second differences - s at L = 22: 5.26e-9; geometric extrapolation - s: 1.03e-10  (paper: 5.3e-9, 1.0e-10)
+mixed differences - s at L = 22: -1.15e-11; geometric extrapolation - s: 5.95e-13  (paper: -1.1e-11, 5.9e-13 in absolute value)
+
+kappa (own) - kappa (paper's s, sigma) = -6.88e-14; own kappa - paper's 0.36319625605 = -2.48e-12

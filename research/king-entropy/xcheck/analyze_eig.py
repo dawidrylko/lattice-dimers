@@ -96,10 +96,11 @@ def est_L(f, W, m, nterms=1):
 
 def est_PE(f, W):
     ws = [W, W - 2, W - 4]
+    sg = mpmath.sign(f[W] - f[W - 2])  # the midpoints decrease, the odd widths increase
     A = [[1, -w, mpmath.log(w)] for w in ws]
-    b = [mpmath.log(f[w] - f[w - 2]) for w in ws]
+    b = [mpmath.log(sg * (f[w] - f[w - 2])) for w in ws]
     la, ix, bb = mpmath.lu_solve(mpmath.matrix(A), mpmath.matrix(b))
-    return f[W] + tail(lambda w: mpmath.e ** (la - ix * w) * w ** bb, W)
+    return f[W] + sg * tail(lambda w: mpmath.e ** (la - ix * w) * w ** bb, W)
 
 
 def est_R1(f, W):
@@ -154,7 +155,8 @@ def main():
         summary[f"{bc}_w{w}_{start}_{real}"] = dict(loglam=fmt(r["loglam"], 22), cw_lo=fmt(r["cw"][0], 22),
                                                     cw_hi=fmt(r["cw"][1], 22), iters=r["iters"])
         assert r["viol"] == 0
-        assert r["loglam"] >= r["cw"][0] - mpmath.mpf("1e-17") and r["loglam"] <= r["cw"][1] + mpmath.mpf("1e-17")
+        tol = mpmath.mpf("1e-17" if real == "ld" else "1e-15")  # rounding of the elementwise ratios
+        assert r["loglam"] >= r["cw"][0] - tol and r["loglam"] <= r["cw"][1] + tol, (bc, w, start, real)
 
     # gap from the convergence of the power iteration on T^2: ratio = (lambda_3/lambda_1)^2
     print("\n== 1. in-sector gap m = -log(ratio)/2 per row, from the convergence of the power iteration ==")
@@ -194,7 +196,7 @@ def main():
         sw = f[w] + d / (r - 1)
         p = TABLE1.get(w)
         print(f"{w:2d}  {fmt(f[w], 19):21s} {p[0] if p else '':20s} "
-              f"{mpmath.nstr(f[w] - mpmath.mpf(p[0]), 2) if p else '':9s} {mpmath.nstr(d, 4):11s} {mpmath.nstr(r, 5):8s} "
+              f"{mpmath.nstr(f[w] - mpmath.mpf(p[0]), 2) if p else '':9s} {mpmath.nstr(d, 4):11s} {mpmath.nstr(r, 6):8s} "
               f"{fmt(sw, 19):21s} {p[3] if p else ''}")
 
     print("\n== 3. even cylinders: sector bracket f1 < s < f0 ==")

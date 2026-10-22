@@ -62,14 +62,14 @@ def analyse(logZ, s, sig, label):
                 rect.append((abs(rr), K, L, rr))
     mx = max(rect)
     signs = {(min(K, L) % 2, rr > 0) for _, K, L, rr in rect}
-    print(f"rectangles 20 <= K, L <= 24: max |rho(K, L) - kappa| = {mpmath.nstr(mx[0], 3)} at {mx[1]}x{mx[2]}; "
+    print(f"rectangles 20 <= K, L <= 24: max |rho(K, L) - kappa| = {mpmath.nstr(mx[0], 4)} at {mx[1]}x{mx[2]}; "
           f"(parity of min, sign>0) pairs seen: {sorted(signs)}  (paper: <= 6.2e-8, sign by parity of min)")
 
     C, dd, f = mpmath.e ** k24, mpmath.e ** (4 * s), mpmath.e ** (8 * sig)
     print(f"C = e^kappa = {mpmath.nstr(C, 10)}, d = e^(4s) = {mpmath.nstr(dd, 15)}, f = e^(8 sigma) = {mpmath.nstr(f, 13)}")
     print("paper: C = 1.437918032, d = 9.60273202731337, f = 6.931966132248")
-    errs = {n: mpmath.e ** (logZ[(2 * n, 2 * n)] - (k24 + 4 * s * n * n - 8 * sig * n)) - 1 for n in range(4, 13)}
-    print("relative error of the asymptotic formula: " + ", ".join(f"n={n}: {mpmath.nstr(errs[n], 3)}" for n in errs))
+    errs = {n: mpmath.e ** ((k24 + 4 * s * n * n - 8 * sig * n) - logZ[(2 * n, 2 * n)]) - 1 for n in range(4, 13)}
+    print("relative error (formula - a(n)) / a(n): " + ", ".join(f"n={n}: {mpmath.nstr(errs[n], 3)}" for n in errs))
     print("error ratio per step: " + ", ".join(f"{mpmath.nstr(errs[n - 1] / errs[n], 3)}" for n in range(9, 13)),
           "  (paper: -2.0e-9 at n = 12, factor 5.6 per step)")
 

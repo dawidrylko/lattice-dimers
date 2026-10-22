@@ -36,3 +36,5 @@ king_cyl_w21_0_ld.txt wall=54.6s
 king_cyl_w22_0_ld.txt wall=99.0s
 king_cyl_w22_1_ld.txt wall=97.6s
 king_cyl_w23_0_ld.txt wall=189.7s
+king_cyl_w24_0_ld.txt wall=382.5s
+king_cyl_w24_1_ld.txt wall=317.2s
