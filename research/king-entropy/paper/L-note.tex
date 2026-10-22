@@ -52,7 +52,7 @@ weights we tried, where a Krein-signature argument for the left--right reflectio
 onset, and on wide strips for equal diagonal weights $x = \frac32, 2, 3$. Its limit, convexity of
 $q \mapsto \log\lambda_{2q}$ for the strip growth rates, would give a conditional lower bound on the
 entropy with ten correct digits. Along equal weights it is a competition between two modes of the
-transfer matrix whose rates cross between $x = \frac32$ and $x = 2$. We collect the obstructions to the
+transfer matrix whose rates cross, on our data, between $x = \frac74$ and $x = 2$. We collect the obstructions to the
 standard proof techniques and two exact reformulations.
 \end{abstract}
 
@@ -66,10 +66,10 @@ adjacent when they are at chessboard king distance $1$. Let $Z(k, m)$ be the num
 board with $k$ rows and $m$ columns (OEIS A239264 \cite{oeisA239264}), and $Z_{\mathrm{cyl}}(k, m)$
 the same number when column $m - 1$ is also adjacent to column $0$. The companion paper
 \cite{rylko2026entropy} computes the entropy per site $s = \lim \log Z(K, L)/(KL)$,
-\[
-  s = 0.5655119110413253 \pm 6\cdot10^{-16} \quad\text{(not rigorous)}, \qquad
+\begin{gather*}
+  s = 0.5655119110413253 \pm 6\cdot10^{-16} \quad\text{(not rigorous)},\\
   0.545343749727 \le s \le 0.586216605404 \quad\text{(rigorous)}.
-\]
+\end{gather*}
 The rigorous bounds come from strips with free sides and converge only like $1/w$ in the width $w$.
 On the square lattice, reflection positivity gives the Calkin--Wilf bounds
 $(a_{2q+p} - a_{2q})/p \le s$ \cite{calkinwilf1998}, which converge exponentially; here
@@ -232,7 +232,50 @@ Along equal weights $x$ both rates grow, at different speeds. (L$_\infty$) holds
 $\rho_+ > |\rho_-|$ and $P > 0$, and fails when $|\rho_-| > \rho_+$. We define $x^*$ as the weight at
 which the two rates cross, $\rho_+(x^*) = |\rho_-(x^*)|$.
 
-\input{L-note-modes}
+\begin{table}[ht]
+\centering
+\caption{Two-mode Prony fits of the second differences $d_q$ of the free strips with both diagonal
+weights $x$, widths $2q \le 22$. The ratio $|\rho_-|/\rho_+$ is given for the first and the last of
+four sliding windows (window $2q = 8..14$ and $2q = 14..20$); the last column lists the even widths
+$2q \le 20$ with $d_q < 0$.}\label{tab:modes}
+\begin{tabular}{lllllll}
+\toprule
+$x$ & $\rho_+$ & $\rho_-$ & \multicolumn{2}{l}{$|\rho_-|/\rho_+$} & dominant & $d_q < 0$ at $2q =$\\
+ & & & first & last & & \\
+\midrule
+$1$     & $0.1147$ & $-0.0718$ & $0.670$ & $0.627$ & positive & none\\
+$5/4$   & $0.1433$ & $-0.1217$ & $0.873$ & $0.849$ & positive & none\\
+$3/2$   & $0.1710$ & $-0.1611$ & $0.971$ & $0.942$ & positive & $8, 12, 16, 20$\\
+$7/4$   & $0.1971$ & $-0.1938$ & $1.019$ & $0.984$ & positive & $8, 12, 16, 20$\\
+$2$     & $0.2214$ & $-0.2219$ & $1.047$ & $1.002$ & alternating & $8, 12, 16, 20$\\
+$3$     & $0.3027$ & $-0.3082$ & $1.095$ & $1.018$ & alternating & $8, 12, 16, 20$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:modes} gives the fits (\texttt{L/modes.py}, float64 power iteration to a relative
+tolerance $10^{-15}$; the smallest $|d_q|$ used, $7.6\cdot10^{-10}$ at $x = 1$, is five orders of
+magnitude above the error of the growth rates). At $x = 1$ the fitted $\rho_+ = 0.1147$ and
+$\rho_- = -0.072$ agree with the two rates read off the unit-weight data above. Three features
+matter.
+
+\emph{At $x = 3/2$ the asymptotic sign is unresolved and leans convex.} The second differences are
+negative at $2q = 8, 12, 16, 20$ and positive in between; the last negative value is
+$-3.6\cdot10^{-9}$ at $2q = 20$. In the two-mode model the positive mode wins, $|\rho_-|/\rho_+ =
+0.942$, and the model predicts $d_q > 0$ from about $2q = 24$ on. This is an extrapolation from four
+windows, not a computation; what is exact at $x = 3/2$ are only the finite-strip failures of
+Section~\ref{sec:equal}.
+
+\emph{The ratio drifts downwards with the window} at every $x$, by $0.03$ to $0.08$ from the first
+to the last window. At $x = 2$ and $x = 3$ the last ratios are $1.002$ and $1.018$, so the
+alternating mode dominates on the data, and (L$_\infty$) would fail for large $q$ if these ratios
+are the limits. That failure is plausible, but it is an extrapolation too: a further drift of the
+same size would bring both ratios below $1$.
+
+\emph{The crossing.} Linear interpolation of $\rho_+ - |\rho_-|$ between $x = 7/4$ and $x = 2$ gives
+$x^* \approx 1.96$ from the last windows. Because of the drift this is a lower estimate of $x^*$
+rather than a value; on the present data $x^* \in (7/4, 2)$, and widths beyond $22$ would be needed
+to locate it better. Nothing in the data suggests a crossing at $x \le 3/2$.
 
 The large-$x$ limit is suggestive. Diagonal steps preserve the colour of the checkerboard, so at
 $x = \infty$ the model decouples into two square-lattice dimer models, one on each colour class
@@ -316,7 +359,7 @@ $861364$ ($m = 5$). With asymmetric weights the twisted swap breaks the identity
 
 \begin{problem}
 Prove (L$_\infty$) at unit weights, or its consequence $a_{24} - a_{22} \le 2s$. By
-\S\ref{sec:modes} this amounts to the sign $C > 0$ of the amplitude of the bulk mode in
+\S\ref{sec:modes} this amounts to the sign $C > 0$ of the amplitude of the mode $C(-\rho)^k$ in
 $a_k - sk$, with the faster alternating mode and the remainder controlled for every even $k \ge 22$.
 \end{problem}
 
@@ -327,14 +370,14 @@ mode. Both need growth rates of wider strips than those used here.
 \end{problem}
 
 \section*{Reproducibility}
-All scripts and outputs are in the repository \url{https://github.com/dawidrylko/lattice-dimers},
+{\sloppy All scripts and outputs are in the repository \url{https://github.com/dawidrylko/lattice-dimers},
 directory \texttt{research/king-entropy/}; every number of this note is mapped to its output file in
 \file{paper/NUMBERS.md}. The tests of \S\ref{sec:tests} are \file{src/zexact.py},
 \file{src/ltest.py}, \file{src/lcert.py} and \file{src/cw.py}; the weights of \S\ref{sec:counter}
 are \file{src/lweight.py}, \file{L/symmetry.py} and \file{L/linf.py}; the two modes of
 \S\ref{sec:modes} are \file{L/modes.py}; the obstructions and reformulations are
 \file{src/lspec.py}, \file{src/lparity.py} and \file{L/involution.py}. The laboratory notes with the
-history of these experiments are \file{notes/L-NOTE.md} and \file{notes/CW-NOTE.md}.
+history of these experiments are \file{notes/L-NOTE.md} and \file{notes/CW-NOTE.md}.\par}
 
 \section*{Data availability statement}
 The code and data that support the findings of this note are openly available in the repository

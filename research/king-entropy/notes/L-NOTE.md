@@ -196,3 +196,16 @@ finite-size mode takes over. The proof routes tried here (RP, moments, TN, LGV, 
 symmetric sectors, cut-and-swap involutions) are all qualitative or uniform in the weights and
 cannot see this. The paper therefore keeps s >= 0.545343749727 as a theorem and states
 s >= 0.565511911035 as conditional on (L-infinity), not on (L).
+
+## Erratum (October 2026): x* and x = 3/2
+
+The conclusion above places x = 1 below "a transition x* <= 3/2". That is not supported. At
+x = 3/2 the second differences are negative at 2q = 8, 12, 16, 20 (finite widths; the exact
+failures of (L) at x = 3/2, 2, 3 for m <= 60 stand), but the two-mode Prony fits of `L/modes.py`
+(`L/out_modes.txt`, widths 2q <= 22) give |rho_-| / rho_+ = 0.942 in the last window, so the
+positive mode wins and the model predicts convexity from about 2q = 24. The asymptotic sign at
+x = 3/2 is unresolved and leans convex. The alternating mode dominates only at x = 2 (ratio 1.002)
+and x = 3 (1.018), and even there the ratio drifts downwards with the window, so a large-q failure
+at x = 2, 3 is plausible but an extrapolation. x* is defined as the crossing of the two rates,
+rho_+(x*) = |rho_-(x*)|; on the present data x* is in (7/4, 2), interpolated x* ~ 1.96, a lower
+estimate because of the drift. The companion note `paper/L-note.tex` states this version.
