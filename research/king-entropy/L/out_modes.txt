@@ -1,0 +1,60 @@
+free strips of even width 2..22, both diagonals weight x, float64 power iteration (tol 1e-15)
+
+x = 1  (91 s): second differences d_q at 2q = 2: +3.973e-01, 4: +3.541e-02, 6: +4.881e-03, 8: +2.596e-04, 10: +4.689e-05, 12: +3.988e-06, 14: +5.527e-07, 16: +5.632e-08, 18: +6.964e-09, 20: +7.620e-10
+  negative at 2q = none
+  window 2q = 8..14: rho_+ = +0.1133, rho_- = -0.0760, |rho_-| / rho_+ = 0.670, P = +3.52e-04, Q = -9.22e-05
+  window 2q = 10..16: rho_+ = +0.1143, rho_- = -0.0707, |rho_-| / rho_+ = 0.619, P = +3.95e-05, Q = +7.41e-06
+  window 2q = 12..18: rho_+ = +0.1146, rho_- = -0.0730, |rho_-| / rho_+ = 0.638, P = +4.50e-06, Q = -5.11e-07
+  window 2q = 14..20: rho_+ = +0.1147, rho_- = -0.0718, |rho_-| / rho_+ = 0.627, P = +5.15e-07, Q = +3.78e-08
+  last window: positive mode dominates; convex from about 2q = 20 (two-mode model)
+
+x = 1.25  (94 s): second differences d_q at 2q = 2: +4.414e-01, 4: +2.235e-02, 6: +1.112e-02, 8: +2.953e-05, 10: +1.868e-04, 12: +3.876e-06, 14: +3.319e-06, 16: +1.380e-07, 18: +6.088e-08, 20: +3.723e-09
+  negative at 2q = none
+  window 2q = 8..14: rho_+ = +0.1412, rho_- = -0.1232, |rho_-| / rho_+ = 0.873, P = +7.20e-04, Q = -6.91e-04
+  window 2q = 10..16: rho_+ = +0.1427, rho_- = -0.1214, |rho_-| / rho_+ = 0.850, P = +1.01e-04, Q = +8.63e-05
+  window 2q = 12..18: rho_+ = +0.1432, rho_- = -0.1220, |rho_-| / rho_+ = 0.852, P = +1.43e-05, Q = -1.04e-05
+  window 2q = 14..20: rho_+ = +0.1433, rho_- = -0.1217, |rho_-| / rho_+ = 0.849, P = +2.04e-06, Q = +1.27e-06
+  last window: positive mode dominates; convex from about 2q = 20 (two-mode model)
+
+x = 1.5  (92 s): second differences d_q at 2q = 2: +4.681e-01, 4: +1.331e-02, 6: +1.912e-02, 8: -6.237e-04, 10: +5.138e-04, 12: -1.448e-05, 14: +1.393e-05, 16: -2.686e-07, 18: +3.812e-07, 20: -3.646e-09
+  negative at 2q = [8, 12, 16, 20]
+  window 2q = 8..14: rho_+ = +0.1675, rho_- = -0.1626, |rho_-| / rho_+ = 0.971, P = +1.25e-03, Q = -1.87e-03
+  window 2q = 10..16: rho_+ = +0.1701, rho_- = -0.1609, |rho_-| / rho_+ = 0.946, P = +2.06e-04, Q = +3.08e-04
+  window 2q = 12..18: rho_+ = +0.1707, rho_- = -0.1614, |rho_-| / rho_+ = 0.945, P = +3.49e-05, Q = -4.94e-05
+  window 2q = 14..20: rho_+ = +0.1710, rho_- = -0.1611, |rho_-| / rho_+ = 0.942, P = +5.95e-06, Q = +7.98e-06
+  last window: positive mode dominates; convex from about 2q = 24 (two-mode model)
+
+x = 1.75  (93 s): second differences d_q at 2q = 2: +4.832e-01, 4: +7.636e-03, 6: +2.770e-02, 8: -1.606e-03, 10: +1.057e-03, 12: -6.427e-05, 14: +3.996e-05, 16: -2.353e-06, 18: +1.519e-06, 20: -8.494e-08
+  negative at 2q = [8, 12, 16, 20]
+  window 2q = 8..14: rho_+ = +0.1920, rho_- = -0.1957, |rho_-| / rho_+ = 1.019, P = +1.92e-03, Q = -3.52e-03
+  window 2q = 10..16: rho_+ = +0.1958, rho_- = -0.1937, |rho_-| / rho_+ = 0.989, P = +3.61e-04, Q = +6.96e-04
+  window 2q = 12..18: rho_+ = +0.1966, rho_- = -0.1941, |rho_-| / rho_+ = 0.987, P = +7.04e-05, Q = -1.35e-04
+  window 2q = 14..20: rho_+ = +0.1971, rho_- = -0.1938, |rho_-| / rho_+ = 0.984, P = +1.38e-05, Q = +2.62e-05
+  last window: positive mode dominates; convex from about 2q = 92 (two-mode model)
+
+x = 2  (94 s): second differences d_q at 2q = 2: +4.907e-01, 4: +4.418e-03, 6: +3.631e-02, 8: -2.821e-03, 10: +1.815e-03, 12: -1.538e-04, 14: +8.884e-05, 16: -7.691e-06, 18: +4.370e-06, 20: -3.803e-07
+  negative at 2q = [8, 12, 16, 20]
+  window 2q = 8..14: rho_+ = +0.2144, rho_- = -0.2244, |rho_-| / rho_+ = 1.047, P = +2.69e-03, Q = -5.51e-03
+  window 2q = 10..16: rho_+ = +0.2198, rho_- = -0.2219, |rho_-| / rho_+ = 1.010, P = +5.64e-04, Q = +1.25e-03
+  window 2q = 12..18: rho_+ = +0.2206, rho_- = -0.2223, |rho_-| / rho_+ = 1.008, P = +1.23e-04, Q = -2.77e-04
+  window 2q = 14..20: rho_+ = +0.2214, rho_- = -0.2219, |rho_-| / rho_+ = 1.002, P = +2.71e-05, Q = +6.17e-05
+  last window: the alternating mode dominates (or P <= 0); (L_inf) fails for large q in this model
+
+x = 3  (122 s): second differences d_q at 2q = 2: +4.857e-01, 4: +4.124e-03, 6: +6.737e-02, 8: -8.869e-03, 10: +6.601e-03, 12: -9.772e-04, 14: +6.199e-04, 16: -9.634e-05, 18: +5.836e-05, 20: -9.311e-06
+  negative at 2q = [8, 12, 16, 20]
+  window 2q = 8..14: rho_+ = +0.2865, rho_- = -0.3138, |rho_-| / rho_+ = 1.095, P = +6.36e-03, Q = -1.52e-02
+  window 2q = 10..16: rho_+ = +0.2994, rho_- = -0.3090, |rho_-| / rho_+ = 1.032, P = +1.75e-03, Q = +4.85e-03
+  window 2q = 12..18: rho_+ = +0.2999, rho_- = -0.3092, |rho_-| / rho_+ = 1.031, P = +5.22e-04, Q = -1.50e-03
+  window 2q = 14..20: rho_+ = +0.3027, rho_- = -0.3082, |rho_-| / rho_+ = 1.018, P = +1.55e-04, Q = +4.65e-04
+  last window: the alternating mode dominates (or P <= 0); (L_inf) fails for large q in this model
+
+crossing of the two rates (last windows): x, rho_+, |rho_-|
+  x = 1: rho_+ = 0.1147, |rho_-| = 0.0718  -> positive mode dominates
+  x = 1.25: rho_+ = 0.1433, |rho_-| = 0.1217  -> positive mode dominates
+  x = 1.5: rho_+ = 0.1710, |rho_-| = 0.1611  -> positive mode dominates
+  x = 1.75: rho_+ = 0.1971, |rho_-| = 0.1938  -> positive mode dominates
+  x = 2: rho_+ = 0.2214, |rho_-| = 0.2219  -> alternating mode dominates
+  x = 3: rho_+ = 0.3027, |rho_-| = 0.3082  -> alternating mode dominates
+  x* in (1.75, 2); linear interpolation of rho_+ - |rho_-|: x* ~ 1.96
+
+total time 585 s

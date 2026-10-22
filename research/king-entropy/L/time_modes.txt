@@ -1,0 +1,2 @@
+# cmd: python3 L/modes.py 22
+# exit=0 wall=585.5s user=395.5s maxrss=259MiB
