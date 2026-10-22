@@ -12,7 +12,7 @@ min/max (T^2 v)_i / v_i (a third buffer). Peak memory: 2 (3 with cw) vectors.
 
 Writes lean_<lat>_<bc>_w<w>_p<p>_<dtype>.json (log lambda as a decimal string).
 """
-import json, resource, subprocess, sys, time
+import json, platform, resource, subprocess, sys, time
 from paths import P, ROOT
 import numpy as np
 from tmfast import nbits, step
@@ -30,6 +30,8 @@ def T2(x, y, lat, bc, w, z=0):
 def run(lat, bc, w, p, dtype, cw=False, maxit=60):
     t0 = time.time()
     dt = np.longdouble if dtype == 'longdouble' else np.float64
+    # x87 extended precision has a 64-bit mantissa; elsewhere (e.g. aarch64) longdouble may be float64
+    assert dtype != 'longdouble' or np.finfo(dt).nmant == 63, 'longdouble is not x87 extended precision'
     nb = nbits(w, bc)
     x = np.zeros(1 << nb, dtype=dt)
     if bc == 'cyl':
@@ -69,7 +71,8 @@ def run(lat, bc, w, p, dtype, cw=False, maxit=60):
         out['cw_log_lambda'] = [np.format_float_positional(np.log(r.min()) / 2, precision=21, unique=False),
                                 np.format_float_positional(np.log(r.max()) / 2, precision=21, unique=False)]
         out['support_closed'] = bool(not (x[~sup] > 0).any())
-    out.update(wall=time.time() - t0, maxrss_mib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
+    out.update(machine=platform.machine(), nmant=int(np.finfo(dt).nmant),
+               wall=time.time() - t0, maxrss_mib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
                commit=subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True, cwd=ROOT).stdout.strip())
     return out
 
