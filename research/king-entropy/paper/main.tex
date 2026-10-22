@@ -716,10 +716,10 @@ Rectangles agree: $|\rho(K, L) - \kappa| \le 6.2\cdot10^{-8}$ for $\min(K, L) \g
 sign alternating with the parity of $\min(K, L)$.
 
 Since A239273 counts the squares, $a(n) = Z(2n, 2n)$,
-\[
-  a(n) \sim C\, d^{\,n^2} f^{-n}, \qquad C = e^\kappa = 1.437918032, \quad d = e^{4s} = 9.60273202731337,
-  \quad f = e^{8\sigma} = 6.931966132248,
-\]
+\begin{gather*}
+  a(n) \sim C\, d^{\,n^2} f^{-n},\\
+  C = e^\kappa = 1.437918032, \quad d = e^{4s} = 9.60273202731337, \quad f = e^{8\sigma} = 6.931966132248,
+\end{gather*}
 with relative error $-2.0\cdot10^{-9}$ at $n = 12$ and about a factor $5.6$ smaller per step in $n$.
 The b-file of A239273 up to $n = 12$ comes from the same computation by the author.
 
@@ -737,8 +737,9 @@ For even $w$ let $\Delta_w = \log\lambda^{(0)}_w - \log\lambda^{(1)}_w$ and
 $\xi_w = 2/\log(\Delta_{w-2}/\Delta_w)$ (Table~\ref{tab:z2}). A pure exponential
 $\log\Delta_w = a - w/\xi$ fits $w = 10, \dots, 24$ poorly ($\xi = 1.1931$, rms $1.5\cdot10^{-2}$);
 with a power prefactor, $\log\Delta_w = a - w/\xi + b\log w$ gives $\xi = 1.2323$, $b = -0.433$,
-rms $9.3\cdot10^{-4}$, and extrapolating $1/\xi_w$ linearly in $1/w$ gives $\xi_\infty = 1.2351$.
-So $\xi \approx 1.23$.
+rms $9.3\cdot10^{-4}$, and extrapolating $1/\xi_w$ linearly in $1/w$ gives $\xi_\infty = 1.2351$
+(prefactor exponent $b = -0.467$). With $b$ fixed at $-1/2$, $\xi = 1.2387$ (rms $2.6\cdot10^{-3}$).
+The three estimates span $\xi \in [1.2323, 1.2387]$; we quote $\xi = 1.235 \pm 0.004$.
 
 \begin{table}[ht]
 \caption{Splitting of the parity sectors on even cylinders.}\label{tab:z2}
@@ -845,10 +846,10 @@ By the lower bound of Theorem~\ref{thm:bounds}, $s = \lim a_k/k$ (\S\ref{sec:mod
 (L$_\infty$) the increments $a_{2q+2} - a_{2q}$ are nondecreasing; since $a_{2q}/(2q) \to s$, they
 increase to $2s$, so $s \ge (a_{24} - a_{22})/2$. Under (O), $s \le a_{24} - a_{23}$. The certificates
 of \S\ref{sec:float} give, with outward rounding,
-\[
-  \log\lambda_{24} \ge 13.08824999346029, \quad \log\lambda_{23} \ge 12.52273808241305, \quad
-  \log\lambda_{22} \le 11.95722617139012, \quad \log\lambda_{24} \le 13.08824999346131;
-\]
+\begin{gather*}
+  \log\lambda_{24} \ge 13.08824999346029, \qquad \log\lambda_{23} \ge 12.52273808241305,\\
+  \log\lambda_{22} \le 11.95722617139012, \qquad \log\lambda_{24} \le 13.08824999346131;
+\end{gather*}
 the lower bounds are $24$ and $23$ times the per-site bounds of Table~\ref{tab:bounds} minus
 $10^{-14}$ for their storage as floats, and the upper bounds come from Lemma~\ref{lem:cwup} with
 $z = 0$. Hence $s \ge (13.08824999346029 - 11.95722617139012)/2 = 0.565511911035\ldots$ and
@@ -879,8 +880,8 @@ $0.007$ of the first, shrinking by a factor $0.63$ per step.
 The convexity is a quantitative property of unit weights, not a structural one. Its finite form
 $Z(2q, m)^2 \le Z(2q-2, m)Z(2q+2, m)$ holds in all $1451$ cases we tested on the king's graph, but it
 fails on the triangular lattice, for every unequal pair of diagonal weights we tried, and for equal
-diagonal weights $x = \tfrac32, 2, 3$ on wide strips; along equal weights the two rates above cross
-between $x = \tfrac32$ and $x = 2$. The companion note \cite{rylko2026lnote} collects these tests,
+diagonal weights $x = \tfrac32, 2, 3$ on wide strips; along equal weights the two rates above cross,
+on our data, between $x = \tfrac74$ and $x = 2$. The companion note \cite{rylko2026lnote} collects these tests,
 the counterexamples, the mechanism behind them (the Krein signature of the left--right
 reflection) and the obstructions to the standard proof techniques.
 
@@ -926,7 +927,8 @@ script & output \\
 \texttt{src/zexact.py \dots}; \texttt{src/ltest.py} & \file{data/zex/zex\_*.json}, \file{out/out\_ltest.txt} \\
 \texttt{src/lcert.py 25 30}, \texttt{\dots\ 26 30} & \file{out/out\_lcert\_m25.txt}, \dots \\
 \texttt{src/lweight.py} [\texttt{big}] & \file{out/out\_lweight*.txt} \\
-\texttt{L/symmetry.py}, \texttt{L/linf.py 16}, \texttt{L/involution.py}, \texttt{L/modes.py} & \file{L/out\_*.txt} \\
+\texttt{L/symmetry.py}, \texttt{L/linf.py 16} & \file{L/out\_*.txt} \\
+\texttt{L/involution.py}, \texttt{L/modes.py} & \file{L/out\_*.txt} \\
 \texttt{src/validate.py}; \texttt{src/crosscheck.py} & \file{out/out\_validate.txt}, \dots \\
 \texttt{paper/derived.py} & \file{paper/out\_derived.txt} \\
 \bottomrule
@@ -939,8 +941,8 @@ runs use the 64-bit mantissa of the x87 \texttt{long double}, which \file{src/le
 algorithms are those of \S\ref{sec:model}; the implementation applies each cell step to reshaped
 views of the state vector, without forming the transfer matrix. The widest
 runs dominate the cost: the cylinder $w = 25$ ($8.4$\,GiB, $22.5$ min), the certified bounds at
-$w = 24$ ($22$ min), the run-weighted bound at $w = 24$ (RWTIME), the exact counts of the
-$24 \times 24$ board (ZEXTIME), and the certified (L) tests at $m = 26$ ($8.0$\,GiB, $43$ min). The script
+$w = 24$ ($17$ min), the run-weighted bound at $w = 24$ (RWTIME), the exact counts of the
+$24 \times 24$ board ($1.5$\,GiB, $52$ min), and the certified (L) tests at $m = 26$ ($8.0$\,GiB, $43$ min). The script
 \file{src/repro.py} re-runs \texttt{src/estimate.py}, \texttt{src/cw.py}, \texttt{src/bounds.py 16} and
 \texttt{src/cylw.py king cyl 20 0} from a clean export of the repository and
 checks that their outputs are identical up to timings and commit tags.

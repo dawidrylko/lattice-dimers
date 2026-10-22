@@ -2,22 +2,28 @@
 
 Every number printed in `paper/main.tex` is listed below with the committed file it is read from and
 the script (and arguments) that wrote that file. Paths are relative to `research/king-entropy/`.
+The numbers of the companion note `paper/L-note.tex` are listed at the end.
 
 ## Scripts and the files they write
 
 All commands run from `research/king-entropy/`. Code commit = last change of the script before the
-output was committed (see `git log -- <script>`). The commit SHAs recorded in the outputs refer to
-the history under the tag `v1.0-king-entropy`.
+output was committed (see `git log -- <script>`). Outputs of the first version record commit SHAs
+of the history under the tag `v1.0-king-entropy`; outputs added or regenerated in this version record
+SHAs of the branch that becomes `v1.1-king-entropy`.
 
 | file | command |
 | --- | --- |
 | `data/sec/sec_king_cyl_3_13.json`, `data/sec/sec_king_cyl_14_19.json`, `data/sec/sec_king_free_1_18.json`, `data/sec/sec_tri_cyl_3_18.json` | `python3 src/tm2.py <lat> <bc> <w0> <w1>` |
 | `data/eig/eig_king_cyl_w<w>_p<p>.json`, `logs/log_eig_*.txt` | `python3 src/cylw.py king cyl <w> <p>` |
 | `data/lean/lean_*.json`, `logs/log_lean_*.txt` | `python3 src/lean.py <lat> <bc> <w> <p\|-> <float64\|longdouble> [cw]` |
+| `out/out_errbar.txt`, `data/errbar.json` | `python3 src/errbar.py` (run before `estimate.py`, which reads `errbar.json`) |
 | `out/out_estimate.txt`, `data/z2.json` | `python3 src/estimate.py` |
-| `out/out_errbar.txt`, `data/errbar.json` | `python3 src/errbar.py` |
 | `out/out_bounds.txt`, `data/bounds.json` | `python3 src/bounds.py 24` |
+| `out/out_runweight_3state.txt`, `data/runweight_3state.json` | `python3 src/runweight.py 3state 2 3 ... 23`, then `python3 src/runweight.py 3state 24 --disk <dir>` (its line appended) |
 | `out/out_audit_bounds.txt` | `python3 src/audit_bounds.py` |
+| `out/out_pfaff.txt` | `python3 src/pfaff_rigor.py` |
+| `out/out_corner.txt`, `data/corner.json` | `python3 src/corner.py` (after `errbar.py` and `surface.py`) |
+| `L/out_modes.txt` | `python3 L/modes.py` |
 | `out/out_surface.txt`, `data/surface.json` | `python3 src/surface.py` |
 | `out/out_cw.txt`, `data/cw.json` | `python3 src/cw.py` |
 | `out/out_validate.txt` | `python3 src/validate.py` |
@@ -45,12 +51,15 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | 0.5655119110413253 ± 6·10⁻¹⁶ | s, error bar | `out/out_errbar.txt` (RECOMMENDATION line) | `src/errbar.py` |
 | 0.545343749727, 0.586216605404 | certified bounds, w = 24 | `out/out_bounds.txt` (BEST CERTIFIED) | `src/bounds.py 24` |
 | 0.242017935766251 ± 9·10⁻¹⁵ | σ | `out/out_surface.txt` (RESULT; 9.2e-15 rounded) | `src/surface.py` |
-| ξ ≈ 1.23 | splitting length | `out/out_estimate.txt` (fits 1.2323, 1.2351; rounded) | `src/estimate.py` |
-| 0.565511911035 | bound given (L∞) | `out/out_cw.txt` (section E) | `src/cw.py` |
+| ξ = 1.235 ± 0.004 | splitting length | `out/out_estimate.txt` (fits 1.2323, 1.2351, 1.2387; centre and half-range) | `src/estimate.py` |
+| 0.565511911035, 0.565511911049 | conditional bounds given (L∞), (O) | `out/out_cw.txt` (section E, CONDITIONAL INTERVAL) | `src/cw.py` |
+| κ = 0.36319625605 ± 3·10⁻¹⁰ | corner free energy | `out/out_corner.txt` (RESULT) | `src/corner.py` |
 | 1451 | (L) cases checked on the king's graph | 873 + 550 (`out/out_ltest.txt` totals) + 14 + 14 (`out/out_lcert_m25.txt`, `out/out_lcert_m26.txt`, 2q = 2...28) | `src/ltest.py`, `src/lcert.py` |
 | A239264, A239273, A239265, A239268, A243510 | OEIS ids | literature (`paper/refs.bib`) | - |
 | 72 > 3·25 − 6 | edges of the 5×5 king graph | `paper/out_derived.txt` | `paper/derived.py` |
-| 1.34254...1.34265 | hard-square constant | Finch, arXiv:2001.00578, §5.12 (literature) | - |
+| 1.34254...1.34265 | constant listed by Finch | Finch, arXiv:2001.00578, §5.12 (literature) | - |
+| 1.342643951124... | non-attacking kings, A247413 | literature (`paper/refs.bib`, `oeisA247413`) | - |
+| e⁻⁶ ... e⁻³ | diagonal fugacities of Sandvik and Moessner | literature (`sandvikmoessner2006`) | - |
 | 2s = 1.13102382208265, eˢ = 1.76034869404198 | per dimer, per site | `paper/out_derived.txt` (rounded to 14 decimals; both ends of s ± 6·10⁻¹⁶ round to the same) | `paper/derived.py` |
 | 3 | tilings of the 2×2 board | `out/out_validate.txt` (`2x2 = 3`) | `src/validate.py` |
 
@@ -64,6 +73,11 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | 2²⁸ doubles | state vector at w = 25 | `tmfast.nbits` (w + 3 = 28) | - |
 | 8.4 GiB, 22.5 min | w = 25 run | `data/eig/eig_king_cyl_w25_p1.json` (`maxrss_mib` 8641.5, `wall` 1351.3 s) | `src/cylw.py king cyl 25 1` |
 | f⁽⁰⁾ > s > f⁽¹⁾ | even sectors bracket s | `out/out_estimate.txt` (even widths table) | `src/estimate.py` |
+| period 4, factor 13.84 per two columns, k ≤ 18 | free-strip sector difference | `paper/out_derived.txt` (ratios D(k)/D(k+2), −13.838 ... −13.851) | `paper/derived.py` |
+| 0.115 per iteration | convergence of the power iteration | arithmetic: e^(−2·1.0827) = 0.1147 | - |
+| 29 edges, 43 perfect matchings, 23 equations | Theorem 2.1, B(3, 4) | `out/out_pfaff.txt` | `src/pfaff_rigor.py` |
+| B(2, L), L ≤ 12; B(3, 6), B(4, 4), B(4, 5), B(4, 6); eleven boards up to B(11, 12) | Pfaffian checks | `out/out_pfaff.txt` | `src/pfaff_rigor.py` |
+| E = 4KL − 3K − 3L + 2, g ≥ 74 at 24 × 24 | genus bound | `out/out_pfaff.txt` (edge count and Euler genus bound) | `src/pfaff_rigor.py` |
 
 ### Section 3 (value of s)
 
@@ -72,44 +86,61 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | r_w 13.4 → 9.99 | `out/out_estimate.txt` (odd widths, r = 13.382 ... 9.992; rounded) | `src/estimate.py` |
 | even-w sector brackets w = 18...24, midpoint 0.5655119110413465 | `out/out_estimate.txt` | `src/estimate.py` |
 | Table 1 (all entries) | `out/out_estimate.txt` (odd widths) | `src/estimate.py` |
-| Table 2 (all entries) | `out/out_errbar.txt` (rows W = 25 odd, W = 24 midpoints; backtest block) | `src/errbar.py` |
-| ξ_odd = 0.9324, b = −1.880 | `out/out_errbar.txt` (extras at W = 25) | `src/errbar.py` |
-| [0.5655119110413252, 0.56551191104132547], centre 0.56551191104132534, half-width 1.3·10⁻¹⁶ | `out/out_errbar.txt` | `src/errbar.py` |
-| 4.1·10⁻¹⁷ per site, 1.49 | `out/out_errbar.txt` (rounding block: 4.09e-17, sum 1.494; rounded) | `src/errbar.py` (inputs `data/lean/lean_king_cyl_w*_p1_longdouble.json`) |
-| 0.56551191104132531-2 | `out/out_errbar.txt` (PE/R1/R2/2E on longdouble values) | `src/errbar.py` |
+| extended-precision inputs: odd w = 5...25, even w = 4...24 | `out/out_errbar.txt` (first line); `data/lean/lean_king_cyl_w*_p*_longdouble.json` | `src/errbar.py`, `src/lean.py` |
+| m = 1.082727; same gap at w = 20...25 | `out/out_crosscheck.txt` (in-sector gap); `out/out_errbar.txt` (gap block, 1.0827 ... 1.082701) | `src/crosscheck.py`, `src/errbar.py` |
+| Table 2 (all entries) | `out/out_errbar.txt` (rows W = 25 odd, W = 24 midpoints; backtest change = difference from the row W − 2); also `data/errbar.json` | `src/errbar.py` |
+| 1 % of \|d_W\|: 6.0·10⁻¹⁶, 1.9·10⁻¹⁵; G dropped | `out/out_errbar.txt` (predictive backtest: \|d_W\| = 5.99e-14, 1.89e-13; kept/dropped) | `src/errbar.py` |
+| ξ_odd = 0.929, b = −1.80 | `out/out_errbar.txt` (extras at W = 25: 0.9294, −1.803) | `src/errbar.py` |
+| L1 backtests 2-4·10⁻⁵, L2 and R2 1-2·10⁻⁶ at W = 23 | `out/out_errbar.txt` (predictive backtest, odd) | `src/errbar.py` |
+| 18 kept, [0.565511911041325278, 0.565511911041325337] | `out/out_errbar.txt` (kept range) | `src/errbar.py` |
+| 9.0·10⁻¹⁷ = 3.0·10⁻¹⁷ + 6.0·10⁻¹⁷; 3.0·10⁻¹⁷; 6·10⁻²⁰; 1.5·10⁻¹⁶; total 2.7·10⁻¹⁶ | `out/out_errbar.txt` (BUDGET line; gap 5.6e-20) | `src/errbar.py` |
+| x = e^(−2/1.2351), w = 13...25, factor 3, 0.001 d₂₅ ≤ B ≤ 0.003 d₂₅ | `out/out_errbar.txt` (hidden slow mode block) | `src/errbar.py` |
+| 6.2·10⁻¹⁷ per site over 33 cylinders | `out/out_errbar.txt` (rounding block) | `src/errbar.py` |
+| 0.5655119110413253 ± 6·10⁻¹⁶, centre 0.5655119110413253176 | `out/out_errbar.txt` (RECOMMENDATION; `data/errbar.json` `recommended.s`) | `src/errbar.py` |
 | 4.1·10⁻¹⁶ | `out/out_crosscheck.txt` section A (max diff 4.06e-16; rounded) | `src/crosscheck.py` |
 | 1.8·10⁻¹⁵ | `out/out_crosscheck.txt` section B (−1.78e-15; rounded) | `src/crosscheck.py` |
-| 0.565512081672 | `out/out_fitsq.txt` (fit on [16, 18, 20]) | `src/fitsq.py` |
 
 ### Section 4 (bounds)
 
 | number | file | script |
 | --- | --- | --- |
 | 0.662787681422 | `out/out_bounds.txt` (Kahn-Lovasz) | `src/bounds.py 24` |
-| Table 3 (all entries) | `out/out_bounds.txt` | `src/bounds.py 24` |
-| 0.484/w, 0.497/w | `paper/out_derived.txt` (w(s − lower_w) = 0.484, w(upper_w − s) = 0.4969; rounded) | `paper/derived.py` |
+| Table 3, columns 2-3 | `out/out_bounds.txt` | `src/bounds.py 24` |
+| Table 3, column 4; RWUPPER (Theorem 4.1) | `out/out_runweight_3state.txt` | `src/runweight.py 3state` |
+| 0.484/w, 0.497/w, RWRATE/w | `paper/out_derived.txt` (w(s − lower_w) = 0.484, w(upper_w − s) = 0.4969, run weights; rounded) | `paper/derived.py` |
+| M(A, B) ≤ min(F(A), F(B)), F_(l+1) ≤ 2φ^(l−2) | Lemma 4.6, proof in the paper; checked in `out/out_audit_bounds.txt` (U6) | `src/audit_bounds.py` |
+| 8w + 14n − 20 ≤ 12w | rounding count, `src/runweight.py` docstring | - |
+| m ≤ 8; 58 boards; 57 evaluations; w = 2...8, 1.7·10⁻¹⁶ | `out/out_audit_bounds.txt` (U6-U9; max 1.63e-16; rounded up) | `src/audit_bounds.py` |
 | 3.2·10⁻¹⁴ | `paper/out_derived.txt` (12wu at w = 24 = 3.197e-14) | `paper/derived.py` |
 | 10⁻¹², 10⁻²⁸⁰ | constants in `src/bounds.py` (`certify`) | - |
 | 58 boards, K ≤ 8, kw ≤ 12; m ≤ 11; m ≤ 8; 162 evaluations; 40 boards; z = 0.5 | `out/out_audit_bounds.txt` (U1-U4, L1) | `src/audit_bounds.py` |
 | 1.7·10⁻¹⁶ | `out/out_audit_bounds.txt` (U5/L2, max \|float/exact − 1\| = 1.71e-16; rounded) | `src/audit_bounds.py` |
-| 11.95722617139012 | `out/out_cw.txt` (section E, `log lambda_22 <=`) | `src/cw.py` |
+| (5 + 2√2), constant c′ | proof of the upper bound | - |
 
 ### Section 5 (surface)
 
 | number | file | script |
 | --- | --- | --- |
-| Table 4 | `out/out_surface.txt` (f(k) lines) | `src/surface.py` |
+| Table 4 (g(k) in the paper) | `out/out_surface.txt` (f(k) lines) | `src/surface.py` |
+| 8.719 per two columns, k = 19...25 | arithmetic on Table 4: (g(21) − g(19))/(g(23) − g(21)) = 8.718, next 8.719; e^(2·1.0827) = 8.719 | - |
+| 13.84 | as in Section 2 | `paper/derived.py` |
+| −26 δs, 13 δs | arithmetic (k = 26) | - |
 | [−0.4840358715325015, −0.4840358715325006], −0.484035871532501 ± 1.8·10⁻¹⁴ | `out/out_surface.txt` | `src/surface.py` |
-| a = −0.96808 | `out/out_fitsq.txt` ([16, 18, 20]: a = −0.9680783717; rounded) | `src/fitsq.py` |
-| −4σ = −0.9680717 | `paper/out_derived.txt` (−0.9680717431; rounded) | `paper/derived.py` |
+| κ, 0.363196256048, 1.4·10⁻¹⁰, 2.6·10⁻¹¹, 1.2·10⁻¹², 3·10⁻¹⁰; ratios 5.85 → 5.58 | `out/out_corner.txt` (section 1) | `src/corner.py` |
+| 6.2·10⁻⁸ for min(K, L) ≥ 20; sign by parity | `out/out_corner.txt` (rectangles) | `src/corner.py` |
+| C = 1.437918032, d = 9.60273202731337, f = 6.931966132248; −2.0·10⁻⁹ at n = 12; factor 5.6 | `out/out_corner.txt` (section 2) | `src/corner.py` |
+| 5.3·10⁻⁹, 1.0·10⁻¹⁰, 1.1·10⁻¹¹, 5.9·10⁻¹³; JS counts L ≤ 20 | `out/out_corner.txt` (section 3) | `src/corner.py` |
+| exact counts K, L ≤ 24 | `data/zex/zex_king_free_m*_K*.json` | `src/zexact.py king free <m> <K>` |
 
 ### Section 6 (splitting)
 
 | number | file | script |
 | --- | --- | --- |
-| Table 5; ξ = 1.1931, rms 1.5·10⁻²; ξ = 1.2323, b = −0.433, rms 9.3·10⁻⁴; ξ_∞ = 1.2351 | `out/out_estimate.txt` (Z2 block) | `src/estimate.py` |
-| 1.082727 | `out/out_crosscheck.txt` (in-sector gap) | `src/crosscheck.py` |
-| 1/ξ_odd ≈ 1.07 | arithmetic: 1/0.9324 (`out/out_errbar.txt`) | - |
+| Table 5; ξ = 1.1931, rms 1.5·10⁻²; ξ = 1.2323, b = −0.433, rms 9.3·10⁻⁴; ξ_∞ = 1.2351, b = −0.467; ξ = 1.2387, rms 2.6·10⁻³ (b = −1/2) | `out/out_estimate.txt` (Z2 block) | `src/estimate.py` |
+| 1.082727, negative λ₃ | `out/out_crosscheck.txt` (in-sector gap; eigenvalue −2.765e4) | `src/crosscheck.py` |
+| same gap at w = 20...25 | `out/out_errbar.txt` (gap block) | `src/errbar.py` |
+| 0.92 | arithmetic: 1/1.0827 | - |
+| 1/ξ_odd ≈ 1.07 | arithmetic: 1/0.929 (`out/out_errbar.txt`) | - |
 | π/6, G/π ± 6·10⁻⁸ | `out/out_validate.txt` (section 3: 5.68e-8; rounded) | `src/validate.py` |
 
 ### Section 7 (solvable lattices)
@@ -120,50 +151,61 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | 10⁻¹⁶ (square lattice) | `out/out_validate.txt` (section 3, max\|diff\| ≤ 6.0e-17) | `src/validate.py` |
 | 1848358752, 1852300296658080, 57261989986381118073728 | `out/out_validate.txt` (section 4) | `src/validate.py` |
 | 0.428594537464959, 0.428594537464956, 2.9·10⁻¹⁵ | `out/out_validate.txt` (section 4) | `src/validate.py` |
+| 0.857189074 per dimer | literature (`wu2006`); 2 × 0.428594537 | - |
+| Table 6 (context), 2.6 %, 1.2 % | `paper/out_derived.txt` (lattice context) | `paper/derived.py` |
 
-### Section 8 (conjecture (L∞); (L) observed, not structural)
+### Section 8 (convexity conjectures and the conditional bound)
 
 | number | file | script |
 | --- | --- | --- |
-| 0.565511911035, 5.7·10⁻¹², 132 candidates, 0.5655119110355926 | `out/out_cw.txt` (sections D, E; 5.73e-12 rounded) | `src/cw.py` |
-| 4.69e-5 ... 1.01e-11 (second differences) | `paper/out_derived.txt` | `paper/derived.py` (from `data/surface.json`) |
-| float error about 10⁻¹⁵ of those inputs | `notes/L-NOTE.md` §0; Collatz-Wielandt spreads ≤ 1.6e-15 in `out/out_bounds.txt` | `src/bounds.py 24` |
-| 1.237·10⁻¹⁰ | `out/out_lcert_m25.txt` (2q = 28) | `src/lcert.py 25 30` |
-| ratio 0.16-0.20 | `out/out_ltest.txt` (`last ratio`, king free m ≥ 13: 0.1631 ... 0.1945) | `src/ltest.py` |
-| Table 6 | `out/out_ltest.txt` (totals and K per m), `out/out_lcert_m25.txt`, `out/out_lcert_m26.txt` | `src/ltest.py`, `src/lcert.py` |
-| 6475, 210560, 6842465, 30552725 | `paper/out_derived.txt` (from `data/zex/zex_tri_free_m5_K60.json`) | `paper/derived.py` |
-| weights: equal x ∈ {0, ¼, ½, 1, 2, 4, 10, 100}, m ≤ 9; (1, ½) fails at m = 5, 8, 9 only (14/19 at m = 5); (1, ¾) 5/19 at m = 9, first 2q = 30 | `out/out_lweight.txt` | `src/lweight.py` |
-| (1, 9/10), (1, 19/20) to m = 16, 2q ≤ 78 | `out/out_lweight_big.txt` ((10, 10, 9), (20, 20, 19)) | `src/lweight.py big` |
-| 217 of 220 | `out/out_cw.txt` (I3) | `src/cw.py` |
-| 1 − √2, (1, −√2, 1), 10, 4, 10 | `out/out_cw.txt` (section A: −0.4142, g(A) = 10, 4, 10) | `src/cw.py` |
-| T[∅→{1}] = 2, T[{1}→∅] = 0 | `out/out_bounds.txt` (Calkin-Wilf block (a)) | `src/bounds.py 24` |
-| 0.047 | `out/out_lspec.txt` (m = 10, 0.0468; rounded) | `src/lspec.py` |
-| 3.4·10⁶ pairs | `out/out_lparity.txt` (m = 5, q = 2: 3410589 pairs) | `src/lparity.py` |
-| 1847660, 912656, 32616 | `out/out_lparity.txt` | `src/lparity.py` |
-| Prony modes 0.1147, −0.072, ratio 0.007 at 2q = 24, factor 0.63 per step, four windows | `L/out_linf.txt` (king (1, 1) from data/surface.json; 0.0718...0.0730; 0.0722/0.1147) | `L/linf.py 16` |
-| (L∞) positive to 2q = 14 for (1, 0.95), (1, 0.9), (1, 0.75), (1, 0.5), triangular (1, 0) | `L/out_linf.txt` | `L/linf.py 16` |
-| x = 3/2: −6.2·10⁻⁴; x = 2: −2.8·10⁻³ (2q = 8); negatives at 2q = 8, 12; x = 5/4 ratios 2.0, 376, 0.16, 48 | `L/out_linf.txt` | `L/linf.py 16` |
-| Z(8, m)² > Z(6, m)Z(10, m) for 35 ≤ m ≤ 60 (x = 3/2), 21 ≤ m ≤ 60 (x = 2), 19 ≤ m ≤ 60 (x = 3); none for x = 1, 5/4, m ≤ 60 | `L/out_linf.txt` (last block) | `L/linf.py 16` |
-| T = HM, M^T = JMJ, G = JM, m ≤ 7, five weight sets; 7·10⁻¹³ (m ≤ 9) | `L/out_symmetry.txt` (A, B; 7.1e-13) | `L/symmetry.py` |
-| K = 0.70, 1.31, 1.63 (m = 4, 5, 8), ε = 10⁻³ ... 3·10⁻² | `L/out_symmetry.txt` (C; −0.695 ... −0.713, −1.306 ... −1.351, −1.628 ... −1.664) | `L/symmetry.py` |
-| J-odd level above at m = 4, 8 among m ≤ 11 | `L/out_symmetry.txt` (B) | `L/symmetry.py` |
-| (1, 9/10): m = 4, 8, 12 from 2q = 56, 86, 112; (1, 19/20): m = 8 from 2q = 118; predicted onsets equal at m = 4, 8; no prediction for m > 10 | `L/out_symmetry.txt` (D1; (10, 10, 9), (20, 20, 19)) | `L/symmetry.py` |
-| symmetrised H(M + M^T)/2: no violation for m ≤ 9, 2q ≤ 38 and (1, 9/10) at m = 8 to 2q = 198 | `L/out_symmetry.txt` (D2; (2, 2, 1), (4, 4, 3), (1, 1, 0), (10, 10, 9)) | `L/symmetry.py` |
-| negative index of M on the J-even sector 1, 1, 3, 8, 20, 34, 93, 186 (m = 3...10) | `L/out_symmetry.txt` (E) | `L/symmetry.py` |
-| cut-and-swap remainder does not shrink with q | `L/out_involution.txt` | `L/involution.py` |
-| relative accuracy about 0.6 for a certified tail | `notes/L-NOTE.md` §5 (paragraph (L-infinity), ((1-r)/(1+r))² ≈ 0.63) | - |
+| 1 − √2 | `out/out_cw.txt` (section A: −0.4142) | `src/cw.py` |
+| 0.565511911035, 0.565511911049, width 1.32·10⁻¹¹ | `out/out_cw.txt` (section E, CONDITIONAL INTERVAL) | `src/cw.py` |
+| 13.08824999346029, 12.52273808241305, 11.95722617139012, 13.08824999346131; 10⁻¹⁴ | `out/out_cw.txt` (section E) | `src/cw.py` |
+| 0.5655119110; 6.3·10⁻¹², 7.7·10⁻¹² | arithmetic from the interval and s | - |
+| second differences positive 2q = 2...24, odd negative k = 3...23, alternation k = 0...25, 5.9·10⁻¹² | `paper/out_derived.txt` (sign-pattern block) | `paper/derived.py` |
+| −0.338 | `paper/out_derived.txt` (step-1 ratios, −0.3327 ... −0.3425) | `paper/derived.py` |
+| −13.84 | `paper/out_derived.txt` (ratios D(k)/D(k+2)) | `paper/derived.py` |
+| 0.1147, −0.072, 0.007, 0.63 | `L/out_linf.txt` | `L/linf.py 16` |
+| 1451 | as in the introduction | `src/ltest.py`, `src/lcert.py` |
+| x = 7/4 ... 2 | `L/out_modes.txt` (crossing) | `L/modes.py` |
+| 5.06·10⁻¹¹ at w = 24 | `paper/out_derived.txt` (king cylinders w = 24: p0 − p1) | `paper/derived.py` |
 
 ### Section 9 (reproducibility)
 
 | number | file | script |
 | --- | --- | --- |
 | Python 3.13, numpy 2.5.3, mpmath 1.4.1, scipy 1.18.1 | `README.md`, `src/requirements.txt` | - |
-| four cores, 15.7 GiB | 4 cores: `out/out_estimate.txt` (cost header); 15.7 GiB: machine specification, stated in the note below | - |
+| four cores, about 16 GiB, two machines | see the note below | - |
 | 8.4 GiB, 22.5 min | `data/eig/eig_king_cyl_w25_p1.json` | `src/cylw.py king cyl 25 1` |
-| 22 min | `logs/time_bounds.txt` (wall 1326.3 s) | `src/timed.py python3 -u src/bounds.py 24` |
+| 17 min | `logs/time_bounds.txt` (wall 1042.1 s) | `src/timed.py python3 -u src/bounds.py 24` |
+| RWTIME | `logs/time_runweight_3state_w24.txt` | `src/timed.py python3 src/runweight.py 3state 24 --disk <dir>` |
+| 1.5 GiB, 52 min | `logs/time_zex_king_free_m24_K24.txt` (maxrss 1562 MiB, wall 3116.4 s) | `src/timed.py python3 src/zexact.py king free 24 24` |
 | 8.0 GiB, 43 min | `logs/time_lcert_m26.txt` (maxrss 8223 MiB, wall 2557.3 s) | `src/timed.py python3 src/lcert.py 26 30` |
 
-Note on the machine. All runs used one machine with four cores and 15.7 GiB of memory. From the
+Note on the machines. The runs of the first version used one machine with four cores and 15.7 GiB of
+memory. The runs added in this version (`data/lean/*longdouble*` of the cylinders, `runweight.py`,
+`zexact.py` 24 × 24, `pfaff_rigor.py`, `corner.py`, `L/modes.py`, the re-runs of `bounds.py`,
+`audit_bounds.py`, `errbar.py`, `estimate.py` and `cw.py`) used a second x86-64 machine with four
+cores and 15.7 GiB; the `lean.py` outputs record `machine` and `nmant` = 63. From the
 measured memory of `src/cylw.py` (`out/out_estimate.txt`, cost table: 8.4 GiB at w = 25, about doubling
 per width), the cylinder w = 26 needs about 17 GiB, more than the machine has, so w >= 26 was not
 run. `/usr/bin/time` was not available; `src/timed.py` records wall time and peak RSS instead.
+
+## Companion note `paper/L-note.tex`
+
+The note shares `refs.bib` and the outputs above; numbers that also appear in Section 8 of the paper
+have the same sources.
+
+| number | file | script |
+| --- | --- | --- |
+| 0.5655119110413253 ± 6·10⁻¹⁶; 0.545343749727 and the upper bound of Theorem 4.1 | as in the paper | - |
+| 1451 cases, m ≤ 26, cylinders m ≤ 22; Table 1 | `out/out_ltest.txt`, `out/out_lcert_m25.txt`, `out/out_lcert_m26.txt` | `src/ltest.py`, `src/lcert.py` |
+| triangular, weights, onsets, Krein signature, J-orbits | `out/out_lweight*.txt`, `L/out_symmetry.txt`, `L/out_linf.txt` | as in Section 8 above |
+| Z(8, m)² > Z(6, m)Z(10, m): 35 ≤ m (x = 3/2), 21 ≤ m (x = 2), 19 ≤ m (x = 3), m ≤ 60 | `L/out_linf.txt` (last block) | `L/linf.py 16` |
+| Table 2 (two modes): ρ₊, ρ₋, first and last ratios, negative 2q | `L/out_modes.txt` | `L/modes.py` |
+| −3.6·10⁻⁹ at 2q = 20 (x = 3/2); 0.942; convex from about 2q = 24 | `L/out_modes.txt` (x = 1.5) | `L/modes.py` |
+| 1.002, 1.018 (x = 2, 3); drift 0.03-0.08 | `L/out_modes.txt` | `L/modes.py` |
+| x* ∈ (7/4, 2), x* ≈ 1.96 | `L/out_modes.txt` (crossing) | `L/modes.py` |
+| 7.6·10⁻¹⁰ (smallest d_q at x = 1) | `L/out_modes.txt` (x = 1, 2q = 20) | `L/modes.py` |
+| 1 − √2, (1, −√2, 1) | `out/out_cw.txt` (section A) | `src/cw.py` |
+| 0.047; 3.4·10⁶ pairs; 1847660, 912656, 32616 | `out/out_lspec.txt`, `out/out_lparity.txt` | `src/lspec.py`, `src/lparity.py` |
