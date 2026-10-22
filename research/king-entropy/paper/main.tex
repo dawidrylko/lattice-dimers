@@ -168,8 +168,8 @@ $w \ge 3$ identifies column $c$ with $c + w$; its count is $Z_{\mathrm{cyl}}(K, 
 \]
 over $K, L \to \infty$ with $KL$ even. The equality of the two limits is standard for dimer
 models on $\Z^2$-periodic graphs (a sub- and superadditivity argument, as for the dimer problem on
-$\Z^d$ \cite{friedlandpeled2005}); Theorem~\ref{thm:bounds} bounds $\underline s$ and $\bar s$
-separately and does not use it.
+$\Z^d$ \cite{friedlandpeled2005}), and for the king's graph it is shown below;
+Theorem~\ref{thm:bounds} bounds $\underline s$ and $\bar s$ separately and does not use it.
 
 For a strip of width $k$, stacking boards gives $Z(2i + 2j, k) \ge Z(2i, k) Z(2j, k)$, so by
 Fekete's lemma \cite{fekete1923} the limit
@@ -178,7 +178,11 @@ Fekete's lemma \cite{fekete1923} the limit
 \end{equation}
 exists. We call $\lambda_k$ the growth rate of the free strip and write $a_k = \log \lambda_k$.
 Placing strips side by side gives $\lambda_{k_1 + k_2} \ge \lambda_{k_1}\lambda_{k_2}$, so
-$a_k/k \to s^* = \sup_k a_k/k$.
+$a_k/k \to s^* = \sup_k a_k/k$. By \eqref{eq:lambda}, $Z(2j, L) \le \lambda_L^{2j}$, so
+$\log Z(2j, L)/(2jL) \le a_L/L \le s^*$; for odd $K$ (then $L$ is even) $Z(K, L) \le Z(K+1, L)$
+(add a row of horizontal dominoes). Hence $\bar s \le s^*$, and with $\underline s \ge s^*$ (the
+proof of the lower bound in \S\ref{sec:bounds}) the limit $s$ exists and equals
+$s^* = \lim_k a_k/k$.
 
 \subsection{Transfer matrix}
 We scan a strip of width $w$ cell by cell in row-major order. A cell is either already covered,
@@ -600,7 +604,7 @@ Let $K, L \to \infty$ with $KL$ even. If $K$ is odd then $L$ is even and $Z(K, L
 $(KL)^{-1}\log Z(K, L) \le \frac{K+1}{K}\,((K+1)L)^{-1}\log Z(K+1, L)$ and the factor
 $(K+1)/K$ tends to $1$; we may therefore take $K = 2j$. Write $L = kw + r$, $0 \le r < w$.
 Cutting off a last strip of width $r$ as in Lemma~\ref{lem:strip} gives
-$Z(K, L) \le W(K, w)^k W_r(K)$, where $W_r$ counts the configurations of a width-$r$ strip with
+$Z(K, L) \le W_h(K, w)^k W_r(K)$ ($h$ the uniform or the run weight), where $W_r$ counts the configurations of a width-$r$ strip with
 weighted outside covers; crudely $W_r(K) \le (5 + 2\sqrt2)^{Kr}$ (per cell: already covered, one of
 at most four later partners, or one of at most two outside covers, each of weight at most $\sqrt2$).
 By Lemma~\ref{lem:cwup}, with the constant $c' \ge 1$ above for the run weights ($c' = 1$ for
@@ -676,7 +680,7 @@ $k$ & $g(k)$ & $k$ & $g(k)$ \\
 \end{tabular}
 \end{table}
 
-The odd sequence converges cleanly (all models of \S\ref{sec:value} agree to $10^{-16}$): its
+The odd sequence converges cleanly (all models of \S\ref{sec:value} agree to $2\cdot10^{-16}$): its
 differences $g(k+2) - g(k)$ shrink by a factor $8.719$ per two columns ($k = 19, \dots, 25$), that
 is $e^{2 \cdot 1.0827}$, the in-sector gap of \S\ref{sec:z2}. The even one carries two corrections,
 this mode and the parity-splitting mode of the free strip, which alternates with period $4$ and
@@ -798,7 +802,7 @@ $\frac12\log\bigl((d-1)^{d-1}/d^{d-2}\bigr)$ per vertex is the growth rate of th
 perfect matchings of a random $d$-regular graph \cite{bollobasmckay1986} and the zeroth order of
 Nagle's expansion \cite{nagle1966}. For $d$-regular bipartite graphs it is a lower bound
 \cite{schrijver1998}, and the square lattice lies above it; on the non-bipartite triangular and
-king lattices it overestimates $s$, by $2.6\%$ and $1.2\%$.
+king lattices it overestimates $s$, by $2.7\%$ and $1.2\%$.
 
 \begin{table}[ht]
 \caption{Entropy per site of the three lattices, the Bethe value and the Kahn--Lov\'asz bound
@@ -839,7 +843,8 @@ Let $a_0 = a_1 = 0$ and $a_k = \log\lambda_k$ for $k \ge 2$.
 (L$_\infty$) implies $s \ge 0.565511911035$, and (O) implies $s \le 0.565511911049$.
 \end{proposition}
 \begin{proof}
-By the lower bound of Theorem~\ref{thm:bounds}, $s = \lim a_k/k$ (\S\ref{sec:model}). Under
+By \S\ref{sec:model} and the proof of the lower bound of Theorem~\ref{thm:bounds},
+$s = \lim a_k/k$. Under
 (L$_\infty$) the increments $a_{2q+2} - a_{2q}$ are nondecreasing; since $a_{2q}/(2q) \to s$, they
 increase to $2s$, so $s \ge (a_{24} - a_{22})/2$. Under (O), $s \le a_{24} - a_{23}$. The certificates
 of \S\ref{sec:float} give, with outward rounding,
@@ -847,8 +852,9 @@ of \S\ref{sec:float} give, with outward rounding,
   \log\lambda_{24} \ge 13.08824999346029, \qquad \log\lambda_{23} \ge 12.52273808241305,\\
   \log\lambda_{22} \le 11.95722617139012, \qquad \log\lambda_{24} \le 13.08824999346131;
 \end{gather*}
-the lower bounds are $24$ and $23$ times the per-site bounds of Table~\ref{tab:bounds} minus
-$10^{-14}$ for their storage as floats, and the upper bounds come from Lemma~\ref{lem:cwup} with
+the lower bounds are $24$ and $23$ times the certified per-site lower bounds at $w = 24, 23$ as
+stored in \file{data/bounds.json} (before the outward rounding to $12$ decimals of
+Table~\ref{tab:bounds}), minus $10^{-14}$ for their storage as floats, and the upper bounds come from Lemma~\ref{lem:cwup} with
 $z = 0$. Hence $s \ge (13.08824999346029 - 11.95722617139012)/2 = 0.565511911035\ldots$ and
 $s \le 13.08824999346131 - 12.52273808241305 = 0.565511911048\ldots$, rounded outward.
 \end{proof}

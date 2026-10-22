@@ -127,6 +127,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | 13.84 | as in Section 2 | `paper/derived.py` |
 | −26 δs, 13 δs | arithmetic (k = 26) | - |
 | [−0.4840358715325015, −0.4840358715325006], −0.484035871532501 ± 1.8·10⁻¹⁴ | `out/out_surface.txt` | `src/surface.py` |
+| odd models agree to 2·10⁻¹⁶ | `out/out_surface.txt` (odd k, row W = 25: −0.4840358715325007 ... −0.4840358715325009) | `src/surface.py` |
 | κ, 0.363196256048, 1.4·10⁻¹⁰, 2.6·10⁻¹¹, 1.2·10⁻¹², 3·10⁻¹⁰; ratios 5.85 → 5.58 | `out/out_corner.txt` (section 1) | `src/corner.py` |
 | 6.2·10⁻⁸ for min(K, L) ≥ 20; sign by parity | `out/out_corner.txt` (rectangles) | `src/corner.py` |
 | C = 1.437918032, d = 9.60273202731337, f = 6.931966132248; −2.0·10⁻⁹ at n = 12; factor 5.6 | `out/out_corner.txt` (section 2) | `src/corner.py` |
@@ -153,7 +154,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | 1848358752, 1852300296658080, 57261989986381118073728 | `out/out_validate.txt` (section 4) | `src/validate.py` |
 | 0.428594537464959, 0.428594537464956, 2.9·10⁻¹⁵ | `out/out_validate.txt` (section 4) | `src/validate.py` |
 | 0.857189074 per dimer | literature (`wu2006`); 2 × 0.428594537 | - |
-| Table 6 (context), 2.6 %, 1.2 % | `paper/out_derived.txt` (lattice context) | `paper/derived.py` |
+| Table 6 (context); 2.7 %, 1.2 % | `paper/out_derived.txt` (lattice context); the percentages are arithmetic, Bethe/s − 1 = 1/0.97391 − 1 = 2.68 % and 1/0.98803 − 1 = 1.21 % | `paper/derived.py` |
 
 ### Section 8 (convexity conjectures and the conditional bound)
 
@@ -161,7 +162,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | --- | --- | --- |
 | 1 − √2 | `out/out_cw.txt` (section A: −0.4142) | `src/cw.py` |
 | 0.565511911035, 0.565511911049, width 1.32·10⁻¹¹ | `out/out_cw.txt` (section E, CONDITIONAL INTERVAL) | `src/cw.py` |
-| 13.08824999346029, 12.52273808241305, 11.95722617139012, 13.08824999346131; 10⁻¹⁴ | `out/out_cw.txt` (section E) | `src/cw.py` |
+| 13.08824999346029, 12.52273808241305, 11.95722617139012, 13.08824999346131; 10⁻¹⁴ | `out/out_cw.txt` (section E); the lower bounds are 24 and 23 times `data/bounds.json` `lower` 24, 23 minus 10⁻¹⁴ (`src/cw.py`, `low`) | `src/cw.py` |
 | 0.5655119110; 6.3·10⁻¹², 7.7·10⁻¹² | arithmetic from the interval and s | - |
 | second differences positive 2q = 2...24, odd negative k = 3...23, alternation k = 0...25, 5.9·10⁻¹² | `paper/out_derived.txt` (sign-pattern block) | `paper/derived.py` |
 | −0.338 | `paper/out_derived.txt` (step-1 ratios, −0.3327 ... −0.3425) | `paper/derived.py` |
