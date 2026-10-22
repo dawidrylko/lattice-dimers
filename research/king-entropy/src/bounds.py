@@ -51,12 +51,18 @@ if mpf(Z_OPEN) < sqrt(PHI):
 assert mpf(Z_OPEN) >= sqrt(PHI)
 
 
+def fixed(n, d):
+    """The integer n / 10^d with exactly d decimals (trailing zeros kept)."""
+    sign, n = ('-' if n < 0 else ''), abs(n)
+    return f'{sign}{n // 10**d}.{n % 10**d:0{d}d}'
+
+
 def down(x, d=12):
-    return mp.nstr(floor(x * 10**d) / 10**d, d + 2)
+    return fixed(int(floor(x * 10**d)), d)
 
 
 def up(x, d=12):
-    return mp.nstr(ceil(x * 10**d) / 10**d, d + 2)
+    return fixed(int(ceil(x * 10**d)), d)
 
 
 def certify(w, z, upper, tol=4e-15, maxit=80):
