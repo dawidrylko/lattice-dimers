@@ -11,6 +11,10 @@ history under the tag `v1.0-king-entropy`. Full proofs of the rigorous bounds ar
 question in [`notes/CW-NOTE.md`](notes/CW-NOTE.md); hypothesis (L) and the experiments on it in
 [`notes/L-NOTE.md`](notes/L-NOTE.md) and the directory [`L/`](L/).
 
+License: the scripts are MIT ([`LICENSE`](../../LICENSE)); the paper, the notes, the data and the outputs in
+this directory are CC BY 4.0 ([`LICENSES/CC-BY-4.0.txt`](../../LICENSES/CC-BY-4.0.txt)); the exact split is in
+the License section of the [root README](../../README.md#license).
+
 All commands below are run from this directory (`research/king-entropy/`)
 with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to it too.
 
