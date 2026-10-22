@@ -1,0 +1,9 @@
+Kahn-Lovasz log(8!)/16 = 0.662787681422 (paper 0.662787681422)
+2s = 1.13102382208265  e^s = 1.76034869404198 (paper 1.13102382208265, 1.76034869404198)
+G/pi = 0.291560904031 (paper 0.291560904031)
+square     d=4: Bethe 0.261624072, s/Bethe 1.1144, Kahn-Lovasz 0.397256729, (Bethe - s)/s = -10.3 %, (Bethe - s)/Bethe = -11.4 %
+triangular d=6: Bethe 0.440075843, s/Bethe 0.97391, Kahn-Lovasz 0.548270934, (Bethe - s)/s = 2.68 %, (Bethe - s)/Bethe = 2.61 %
+king       d=8: Bethe 0.572360897, s/Bethe 0.98803, Kahn-Lovasz 0.662787681, (Bethe - s)/s = 1.21 %, (Bethe - s)/Bethe = 1.2 %
+(paper Table 6: 0.261624072, 1.1144, 0.397256729; 0.440075843, 0.97391, 0.548270934; 0.572360897, 0.98803, 0.662787681; overestimates 2.6 %, 1.2 %)
+triangular cylinder w = 17: 0.4285945374649561 (paper 0.428594537464956; Kasteleyn value 0.428594537464959)
+triangular cylinder w = 18 sectors: 0.428594532623776, 0.4285945423061406
