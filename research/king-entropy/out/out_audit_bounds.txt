@@ -48,13 +48,40 @@
 [PASS] L3 w=4 upper certified 0.689765394231972 vs true 0.689765394231847 (gap 1.3e-13)
 [PASS] L3 w=5 lower certified 0.468459348809152 vs true 0.468459348809253 (gap 1.0e-13)
 [PASS] L3 w=5 upper certified 0.664888531736889 vs true 0.664888531736789 (gap 1.0e-13)
-[PASS] L3 w=6 lower certified 0.484900586451408 vs true 0.484900586451491 (gap 8.3e-14)
-[PASS] L3 w=6 upper certified 0.648332504425665 vs true 0.648332504425582 (gap 8.3e-14)
+[PASS] L3 w=6 lower certified 0.484900586451408 vs true 0.484900586451491 (gap 8.4e-14)
+[PASS] L3 w=6 upper certified 0.648332504425665 vs true 0.648332504425581 (gap 8.3e-14)
 [PASS] L3 w=7 lower certified 0.4963432333469 vs true 0.496343233346971 (gap 7.1e-14)
 [PASS] L3 w=7 upper certified 0.636498933410059 vs true 0.636498933409987 (gap 7.1e-14)
 [PASS] L3 w=8 lower certified 0.505014525148524 vs true 0.505014525148587 (gap 6.3e-14)
-[PASS] L3 w=8 upper certified 0.627626147025109 vs true 0.627626147025046 (gap 6.3e-14)
+[PASS] L3 w=8 upper certified 0.627626147025109 vs true 0.627626147025047 (gap 6.2e-14)
 [PASS] L3 w=9 lower certified 0.511728281509035 vs true 0.51172828150909 (gap 5.6e-14)
-[PASS] L3 w=9 upper certified 0.62072438411116 vs true 0.620724384111105 (gap 5.5e-14)
+[PASS] L3 w=9 upper certified 0.62072438411116 vs true 0.620724384111104 (gap 5.6e-14)
+
+== U6. run form of the crossing lemma: M(A, B) <= min(F(A), F(B)), F(S) = prod over runs of F_(l+1)
+[PASS] U6 M(A, B) <= min(F(A), F(B)), M(S, S) = F(S) (17576 pairs, columns m <= 8)
+[PASS] U6 F_(l+1) <= 2 phi^(l-2) for l = 2..59 (interval arithmetic), F_2 = 1 
+
+== U7. Z(K, kw) <= W_h(K, w)^k with the run weights, exact in interval arithmetic
+[PASS] U7 3state (58 boards); smallest W_h^k / Z = 2.0000
+[PASS] U7 1bit (58 boards); smallest W_h^k / Z = 2.2361
+
+== U8. run-weighted transfer (runweight.step_run) = brute-force W_h(K, w) at rational weights
+[PASS] U8 transfer = brute force (57 evaluations, three weight sets, K <= 6)
+
+== U9. float Collatz-Wielandt ratio of runweight.certify vs the exact ratio for the same float vector
+[PASS] U9 3state w=2 max ratio float 22.090075921314906, |float/exact - 1| = 5.35e-17; support closed: True
+[PASS] U9 3state w=3 max ratio float 68.09269953282319, |float/exact - 1| = 6.70e-17; support closed: True
+[PASS] U9 3state w=4 max ratio float 211.18282494965715, |float/exact - 1| = 1.10e-16; support closed: True
+[PASS] U9 3state w=5 max ratio float 654.12854612134674, |float/exact - 1| = 5.71e-17; support closed: True
+[PASS] U9 3state w=6 max ratio float 2027.270516400393, |float/exact - 1| = 1.55e-17; support closed: True
+[PASS] U9 3state w=7 max ratio float 6281.8728978423742, |float/exact - 1| = 8.02e-17; support closed: True
+[PASS] U9 3state w=8 max ratio float 19466.719920019397, |float/exact - 1| = 4.57e-17; support closed: True
+[PASS] U9 1bit w=2 max ratio float 23.102105954690156, |float/exact - 1| = 1.70e-17; support closed: True
+[PASS] U9 1bit w=3 max ratio float 71.347599059677222, |float/exact - 1| = 6.24e-18; support closed: True
+[PASS] U9 1bit w=4 max ratio float 221.21799147560182, |float/exact - 1| = 1.11e-16; support closed: True
+[PASS] U9 1bit w=5 max ratio float 685.31936361196927, |float/exact - 1| = 1.63e-16; support closed: True
+[PASS] U9 1bit w=6 max ratio float 2123.8509173188277, |float/exact - 1| = 3.27e-17; support closed: True
+[PASS] U9 1bit w=7 max ratio float 6581.2509433378191, |float/exact - 1| = 1.39e-16; support closed: True
+[PASS] U9 1bit w=8 max ratio float 20394.352720314659, |float/exact - 1| = 6.13e-17; support closed: True
 
 0 failures

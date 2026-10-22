@@ -401,7 +401,7 @@ formally verified.
 
 Both bounds of Theorem~\ref{thm:bounds} come from strips of width $w = 24$; the upper bound uses
 the run-weighted transfer of Lemma~\ref{lem:runs}. Table~\ref{tab:bounds} shows how the bounds
-improve with $w$. Since $\log \lambda_w / w = s + f(w)/w$ with $f(w) \to -2\sigma$
+improve with $w$. Since $\log \lambda_w / w = s + g(w)/w$ with $g(w) \to -2\sigma$
 (\S\ref{sec:surface}), the lower bound approaches $s$ like $2\sigma/w = 0.484/w$; the upper bound
 with the uniform weight $\sqrt\varphi$ approaches it, empirically, like $0.497/w$, and the
 run-weighted one like RWRATE$/w$.
@@ -625,13 +625,13 @@ $40$ boards with $k \ge 2$. On these small boards $z = 0.5$ would suffice; the w
 needed by the proof, not by the data. For the run weights, also exactly: $M(A, B) \le
 \min(F(A), F(B))$ and $M(S, S) = F(S)$ for all $A, B$ in columns of length $m \le 8$; the strip
 inequality with the run weights in interval arithmetic on the same $58$ boards; the run-weighted
-transfer against brute force at rational factors (AUDITN evaluations); and the float ratios against
-exact ones for $w = 2, \dots, 8$ (AUDITREL).
+transfer against brute force at rational factors ($57$ evaluations); and the float ratios against
+exact ones for $w = 2, \dots, 8$ ($|\text{float}/\text{exact} - 1| \le 1.7\cdot10^{-16}$).
 
 \section{Surface free energy}\label{sec:surface}
 For the free strip of width $k$, $\log Z(K, k) = K a_k + O(1)$, and
 \[
-  f(k) = a_k - s k \longrightarrow -2\sigma,
+  g(k) = a_k - s k \longrightarrow -2\sigma,
 \]
 where $\sigma$ is the free energy per unit length of a free edge. Even $k$ approach the limit from
 above, odd $k$ from below, and every even value lies above every odd one (Table~\ref{tab:surface};
@@ -639,10 +639,10 @@ $a_k$ from extended-precision power iteration for $k = 14, \dots, 24$ and float6
 Collatz--Wielandt bracket for $k = 25, 26$).
 
 \begin{table}[ht]
-\caption{$f(k) = \log\lambda_k - sk$ for free strips.}\label{tab:surface}
+\caption{$g(k) = \log\lambda_k - sk$ for free strips.}\label{tab:surface}
 \begin{tabular}{rlrl}
 \toprule
-$k$ & $f(k)$ & $k$ & $f(k)$ \\
+$k$ & $g(k)$ & $k$ & $g(k)$ \\
 \midrule
 19 & $-0.4840358718678495$ & 20 & $-0.4840358714180326$ \\
 21 & $-0.4840358715709653$ & 22 & $-0.4840358715195378$ \\
@@ -653,7 +653,7 @@ $k$ & $f(k)$ & $k$ & $f(k)$ \\
 \end{table}
 
 The odd sequence converges cleanly (all models of \S\ref{sec:value} agree to $10^{-16}$): its
-differences $f(k+2) - f(k)$ shrink by a factor $8.719$ per two columns ($k = 19, \dots, 25$), that
+differences $g(k+2) - g(k)$ shrink by a factor $8.719$ per two columns ($k = 19, \dots, 25$), that
 is $e^{2 \cdot 1.0827}$, the in-sector gap of \S\ref{sec:z2}. The even one carries two corrections,
 this mode and the parity-splitting mode of the free strip, which alternates with period $4$ and
 shrinks by a factor $13.84$ per two columns (\S\ref{sec:model}); and only the two-exponential and Wynn models are stable under the
