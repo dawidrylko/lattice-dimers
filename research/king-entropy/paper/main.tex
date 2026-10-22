@@ -327,58 +327,87 @@ $w$ & $f_w$ & $d_w$ & $r_w$ & $s_w$ \\
 \end{table}
 
 \subsection{Extrapolation models and error bar}
-The tail $s - f_W = \sum_{j \ge 1} d_{W + 2j}$ was extrapolated with seven models, each fitted
-on the last few widths: geometric (G, constant ratio $r_W$); $d_w = A e^{-w/\xi} w^b$ through
-three points (PE) or by least squares on six (PE6); $r_w = r_\infty + c/w$ (R1) and
-$r_w = r_\infty + c/w + e/w^2$ (R2); two exponentials by Prony's method (2E); and two variants of
-Wynn's $\varepsilon$ algorithm (WY). Each model was rerun with the data cut at $W = 19, 21, 23$
-(backtest), and the same models were applied to the even-width midpoints. Table~\ref{tab:models}
-shows the result.
+All extrapolations below use the cylinders recomputed in x87 extended precision (64-bit mantissa):
+the odd widths $w = 5, \dots, 25$ and both sectors of the even widths $w = 4, \dots, 24$. Float64
+enters only through a separate rounding term.
+
+\emph{Main model.} The corrections come from the gap inside a sector (\S\ref{sec:z2}): at $w = 20$
+ARPACK gives $m = \log(\lambda_1/|\lambda_3|) = 1.082727$ per row, and the power iterations give the
+same value at every $w = 20, \dots, 25$. For a massive correction the natural form is that of
+L\"uscher \cite{luscher1986},
+\[
+  d_w = C e^{-mw} w^{-3/2} \Bigl(1 + \frac{c_1}{w}\Bigr),
+\]
+with $m$ fixed at the gap and $C, c_1$ fitted through $d_{W-2}, d_W$ (L1), or with a further term
+$c_2/w^2$ through three differences (L2). The tail $s - f_W = \sum_{j \ge 1} d_{W+2j}$ is then
+summed. As checks we use the generic models of the first version of this work: geometric (G,
+constant ratio $r_W$); $d_w = A e^{-w/\xi} w^b$ through three points (PE) or by least squares on
+six (PE6); $r_w = r_\infty + c/w$ (R1) and $r_w = r_\infty + c/w + e/w^2$ (R2); two exponentials
+by Prony's method (2E); and Wynn's $\varepsilon$ algorithm \cite{wynn1956} on $f_w$, its last
+full diagonal entry (WY) and the one before (WY$-$). The same models are applied to the even-width
+sector midpoints, a second sequence from independent data.
 
 \begin{table}[ht]
-\caption{Estimates of $s$ by model: from the odd widths up to $W = 25$, from the even midpoints up
-to $W = 24$, and the backtest change $|s(23) - s(25)|$ on the odd widths (\file{out/out\_errbar.txt}).}
+\caption{Estimates of $s$ by model on extended-precision inputs: from the odd widths up to
+$W = 25$ and from the even midpoints up to $W = 24$, with the backtest change of each, the
+difference from the estimate with the last width removed.}
 \label{tab:models}
-\begin{tabular}{lllr}
+\begin{tabular}{lllll}
 \toprule
-model & odd, $W = 25$ & midpoints, $W = 24$ & backtest \\
+model & odd, $W = 25$ & midpoints, $W = 24$ & \multicolumn{2}{l}{backtest change} \\
+ & & & odd & midpoints \\
 \midrule
-G   & 0.5655119110413253 & 0.5655119110413256 & $1.05\cdot10^{-15}$ \\
-PE  & 0.5655119110413254 & 0.5655119110413253 & $3.13\cdot10^{-17}$ \\
-PE6 & 0.5655119110413254 & 0.5655119110413253 & $2.67\cdot10^{-17}$ \\
-R1  & 0.5655119110413254 & 0.5655119110413253 & $4.2\cdot10^{-18}$ \\
-R2  & 0.5655119110413254 & 0.5655119110413253 & $5.14\cdot10^{-17}$ \\
-2E  & 0.5655119110413254 & 0.5655119110413253 & $1.12\cdot10^{-16}$ \\
-WY  & 0.5655119110413254 & 0.5655119110413253 & $8.8\cdot10^{-17}$ \\
+L1   & 0.56551191104132532 & 0.56551191104132532 & $1.4\cdot10^{-17}$ & $6.5\cdot10^{-17}$ \\
+L2   & 0.56551191104132532 & 0.56551191104132532 & $1.5\cdot10^{-18}$ & $3.5\cdot10^{-18}$ \\
+G    & 0.56551191104132523 & 0.56551191104132564 & $1.0\cdot10^{-15}$ & $3.5\cdot10^{-15}$ \\
+PE   & 0.56551191104132532 & 0.56551191104132531 & $1.7\cdot10^{-17}$ & $8.1\cdot10^{-17}$ \\
+PE6  & 0.56551191104132533 & 0.56551191104132528 & $6.7\cdot10^{-17}$ & $6.0\cdot10^{-16}$ \\
+R1   & 0.56551191104132532 & 0.56551191104132531 & $4.4\cdot10^{-17}$ & $1.9\cdot10^{-16}$ \\
+R2   & 0.56551191104132532 & 0.56551191104132532 & $6.1\cdot10^{-19}$ & $1.6\cdot10^{-17}$ \\
+2E   & 0.56551191104132531 & 0.56551191104132534 & $6.0\cdot10^{-17}$ & $2.5\cdot10^{-16}$ \\
+WY   & 0.56551191104132532 & 0.56551191104132532 & $4.0\cdot10^{-18}$ & $5.4\cdot10^{-17}$ \\
+WY$-$& 0.56551191104132532 & 0.56551191104132528 & $7.2\cdot10^{-18}$ & $9.3\cdot10^{-17}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The geometric model is the only one that fails its backtest (it ignores the drift of $r_w$,
-which the PE fit attributes to a power prefactor: $\xi_{\mathrm{odd}} = 0.9324$, $b = -1.880$).
-The models that pass their backtest (change $< 5\cdot10^{-16}$) on either data set give
-\[
-  s \in [0.5655119110413252,\ 0.56551191104132547],
-\]
-with centre $0.56551191104132534$ and half-width $1.3\cdot10^{-16}$.
+\emph{Predictive backtest.} A model is kept if its backtest change is below $1\%$ of the last
+correction $|d_W|$ of its sequence ($6.0\cdot10^{-16}$ for the odd widths, $1.9\cdot10^{-15}$ for
+the midpoints). Every model passes on both sequences except G, which ignores the drift of $r_w$
+(the PE fit attributes it to a power prefactor, $\xi_{\mathrm{odd}} = 0.929$, $b = -1.80$). Measured
+against $|d_W|$, the backtest changes of L1 stay at $2$--$4\cdot10^{-5}$ on the odd widths for every
+cut $W = 19, 21, 23$, and those of L2 and R2 fall to $1$--$2\cdot10^{-6}$ at $W = 23$. The $18$ kept estimates lie in
+$[0.565511911041325278,\ 0.565511911041325337]$.
 
-\emph{Rounding.} We recomputed the odd cylinders $w = 15, 17, \dots, 25$ in x87 extended
-precision (64-bit mantissa). The float64 values differ by at most $4.1\cdot10^{-17}$ per site, and
-the extrapolation has sensitivity $\sum_w |\partial s_{\mathrm G} / \partial f_w| = 1.49$. On the
-extended-precision values alone the models give $0.56551191104132531$--$2$.
+\emph{Error budget.} We add four terms:
+\begin{enumerate}
+\item model form, $9.0\cdot10^{-17}$: the half-spread of the kept estimates ($3.0\cdot10^{-17}$) plus
+the largest predicted remaining error, each model's backtest change scaled by the ratio
+$|d_W/d_{W-2}|$ of the last two corrections ($6.0\cdot10^{-17}$);
+\item a hidden slow mode, $3.0\cdot10^{-17}$: we subtract a term $B x^{(w-25)/2}$ with
+$x = e^{-2/1.2351}$, the slowest decay seen anywhere in the data (the parity splitting of
+\S\ref{sec:z2}), refit L1 by least squares on $w = 13, \dots, 25$, and allow every $B$ whose
+relative rms is within a factor $3$ of the best fit; this admits $0.001\,d_{25} \le B \le 0.003\,d_{25}$, and
+the largest shift of $s$ over the admitted $B$ is the term;
+\item the gap, $6\cdot10^{-20}$: the change of L1 when $m$ runs over the measured gaps;
+\item rounding, $1.5\cdot10^{-16}$: the largest change of a kept model between float64 and
+extended-precision inputs (the float64 values of $\log\lambda_w$ differ by at most $6.2\cdot10^{-17}$
+per site over $33$ cylinders).
+\end{enumerate}
+The total is $2.7\cdot10^{-16}$. We quote a little more than twice this,
+\[
+  \boxed{\,s = 0.5655119110413253 \pm 6\cdot10^{-16}\,}
+\]
+with the main model L1 on the odd widths, $s = 0.5655119110413253176$, as the centre. This is an
+estimate, not a bound: the budget assumes that no correction slower than those in the data
+appears beyond $w = 25$.
 
 \emph{Cross-checks of the float64 eigenvalues.} Exact integer ratios
 $Z_{\mathrm{cyl}}(K+2, w)/Z_{\mathrm{cyl}}(K, w)$ for $w = 9, 11, 12, 13$ agree with the power
 iteration to $4.1\cdot10^{-16}$ in $\log \lambda$, and ARPACK on the full $w = 20$ transfer
-reproduces both sector values to $1.8\cdot10^{-15}$.
-
-We take three times the sum of the model half-width and the propagated rounding:
-\[
-  \boxed{\,s = 0.5655119110413253 \pm 6\cdot10^{-16}\,}
-\]
-This is an estimate, not a bound. For comparison, the exact counts of the square boards up to
-$20\times20$ alone give about six digits (a fit $\log Z(L, L) = sL^2 + aL + b$ on $L = 16, 18, 20$
-gives $0.565512081672$).
+reproduces both sector values to $1.8\cdot10^{-15}$. The exact counts of the square boards give an
+independent, eigenvalue-free check of $s$, discussed with the corner free energy in
+\S\ref{sec:corner}.
 
 \section{Rigorous bounds}\label{sec:bounds}
 
@@ -665,8 +694,43 @@ error of $s$, multiplied by $k = 26$, dominates:
 \]
 The errors of $\sigma$ and $s$ are correlated: an error $\delta s$ in $s$ moves the extrapolated
 $-2\sigma$ by $-26\,\delta s$, so $\delta\sigma \approx 13\,\delta s$, and quantities that depend on
-both add their errors linearly. The fit to the exact square boards in \S\ref{sec:value} has linear coefficient $a = -0.96808$
-(four free edges), consistent with $-4\sigma = -0.9680717$.
+both add their errors linearly.
+
+\subsection{Corner free energy and exact counts}\label{sec:corner}
+The exact counts $Z(K, L)$ of the free boards for $K, L \le 24$ (computed modulo ten primes and
+reconstructed by the Chinese remainder theorem, \file{src/zexact.py}) test $s$ and $\sigma$
+without eigenvalues and give the next term of the expansion,
+\[
+  \log Z(K, L) = sKL - 2\sigma(K + L) + \kappa + o(1).
+\]
+On the squares, $\rho(L) = \log Z(L, L) - sL^2 + 4\sigma L$ converges to $\kappa$ with
+differences shrinking by a ratio that drifts from $5.85$ to $5.58$ over $L = 14, \dots, 24$. A
+geometric (Aitken) extrapolation at $L = 24$ gives $0.363196256048$; it changes by
+$1.4\cdot10^{-10}$ from $L = 22$, and by $2.6\cdot10^{-11}$ if the ratio is extrapolated linearly in
+$1/L$. The errors of $s$ and $\sigma$ enter as $L^2\,\delta s + 4L\,\delta\sigma = 1.2\cdot10^{-12}$,
+added linearly because they are correlated. Taking twice the larger extrapolation difference,
+\[
+  \kappa = 0.36319625605 \pm 3\cdot10^{-10}.
+\]
+Rectangles agree: $|\rho(K, L) - \kappa| \le 6.2\cdot10^{-8}$ for $\min(K, L) \ge 20$, with the
+sign alternating with the parity of $\min(K, L)$.
+
+Since A239273 counts the squares, $a(n) = Z(2n, 2n)$,
+\[
+  a(n) \sim C\, d^{\,n^2} f^{-n}, \qquad C = e^\kappa = 1.437918032, \quad d = e^{4s} = 9.60273202731337,
+  \quad f = e^{8\sigma} = 6.931966132248,
+\]
+with relative error $-2.0\cdot10^{-9}$ at $n = 12$ and about a factor $5.6$ smaller per step in $n$.
+The b-file of A239273 up to $n = 12$ comes from the same computation by the author.
+
+The counts alone also give $s$. The second differences
+$[\log Z(L+2, L+2) - 2\log Z(L, L) + \log Z(L-2, L-2)]/8$ approach $s$ from above, $5.3\cdot10^{-9}$
+above it at $L = 22$, and their geometric extrapolation is $1.0\cdot10^{-10}$ above the value of
+\S\ref{sec:value}. The mixed differences
+$[\log Z(L+2, L+2) - \log Z(L+2, L) - \log Z(L, L+2) + \log Z(L, L)]/4$, in which the edge and
+corner terms cancel exactly, approach $s$ from below ($1.1\cdot10^{-11}$ at $L = 22$), and their
+extrapolation agrees with it to $5.9\cdot10^{-13}$. The square counts of the JavaScript solvers of
+the repository, an independent code base, agree with these counts where both exist ($L \le 20$).
 
 \section{Parity splitting and its decay length}\label{sec:z2}
 For even $w$ let $\Delta_w = \log\lambda^{(0)}_w - \log\lambda^{(1)}_w$ and
