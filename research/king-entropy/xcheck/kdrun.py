@@ -39,7 +39,7 @@ def primes_below(bound, m):
     return out
 
 
-PRIMES = primes_below(1 << 62, 16)
+PRIMES = primes_below(1 << 62, 40)
 
 
 def run(args, binary="kd_ld", threads=None):

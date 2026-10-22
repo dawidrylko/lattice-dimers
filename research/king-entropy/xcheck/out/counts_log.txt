@@ -1,0 +1,45 @@
+free L= 1 K=35 wall=     0.6s
+free L= 2 K=34 wall=     1.0s
+free L= 3 K=33 wall=     1.4s
+free L= 4 K=32 wall=     1.7s
+free L= 5 K=31 wall=     2.0s
+free L= 6 K=30 wall=     2.3s
+free L= 7 K=29 wall=     2.6s
+free L= 8 K=28 wall=     2.8s
+free L= 9 K=27 wall=     3.0s
+free L=10 K=26 wall=     3.2s
+free L=11 K=25 wall=     3.4s
+free L=12 K=24 wall=     3.5s
+free L=13 K=24 wall=     3.9s
+free L=14 K=24 wall=     4.1s
+free L=15 K=24 wall=     4.5s
+free L=16 K=24 wall=     5.0s
+free L=17 K=24 wall=     5.2s
+free L=18 K=24 wall=     6.4s
+free L=19 K=24 wall=    10.9s
+free L=20 K=24 wall=    15.5s
+free L=21 K=24 wall=    26.3s
+free L=22 K=24 wall=    50.9s
+free L=23 K=24 wall=   126.1s
+free L=24 K=24 wall=   160.9s
+cyl m= 3 K=80 wall=     0.0s
+cyl m= 4 K=80 wall=     0.0s
+cyl m= 5 K=80 wall=     0.0s
+cyl m= 6 K=80 wall=     0.0s
+cyl m= 7 K=80 wall=     0.0s
+cyl m= 8 K=80 wall=     0.0s
+cyl m= 9 K=80 wall=     0.0s
+cyl m=10 K=80 wall=     0.1s
+cyl m=11 K=80 wall=     0.1s
+cyl m=12 K=80 wall=     0.2s
+cyl m=13 K=40 wall=     0.1s
+cyl m=14 K=40 wall=     0.4s
+cyl m=15 K=40 wall=     0.8s
+cyl m=16 K=40 wall=     1.5s
+cyl m=17 K=40 wall=     3.1s
+cyl m=18 K=40 wall=     6.0s
+cyl m=19 K=28 wall=    10.5s
+cyl m=20 K=28 wall=    19.7s
+cyl m=21 K=22 wall=    36.3s
+cyl m=22 K=22 wall=    71.2s
+peak RSS of children (MiB): 4097
