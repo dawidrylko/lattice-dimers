@@ -37,7 +37,7 @@ NOT REACHED: the A239264 b-file (antidiagonals 0..36). oeis.org is blocked here 
 `oeis/oeisdata` has only its LFS pointer (SHA-256 `21ecae3e...`, 14988 bytes); a plain `n a(n)` rebuild
 from the own counts has 14930 bytes, so the file differs from it in format or content (undecided).
 
-## Claim 2 - cylinder eigenvalues and s: CONFIRMED (w <= 25 as in the paper, w = 26 beyond it; 27, 28 running)
+## Claim 2 - cylinder eigenvalues and s: CONFIRMED (w <= 25 as in the paper; w = 26, 27 beyond it; 28 running)
 
 `out/analyze_eig.txt` (`python3 eigrun.py base; python3 analyze_eig.py`), `out/compare_eig.txt`.
 
@@ -57,6 +57,10 @@ Beyond the paper, w = 26 (both sectors, long double, 6.1 GiB, 13 min each): brac
 against the L1 prediction -1.90272e-14 from the fit at W = 24 (ratio 1.00019); L1 on the midpoints
 at W = 26 gives 0.5655119110413253192 (1.6e-18 from the paper's centre, change -4.5e-18 from W = 24),
 and L1, L2, PE, R1, Wynn span [...3253178, ...3253192].
+
+w = 27 (long double, 12.0 GiB, 23 min): f_27 = 0.5655119110413246284, d_27 = 6.06113e-15 against the
+L1 prediction 6.06022e-15 from the fit at W = 25 (ratio 1.00015); L1 at W = 27 gives
+0.5655119110413253187 (change 1.1e-18 from W = 25), all models in [...3253187, ...3253190].
 
 Convergence claim: the estimate changes shrink by 0.1147 per iteration of T^2 at every w = 16..25
 (paper: 0.115).
