@@ -166,7 +166,7 @@ def main():
             gaps[(w, start)] = -mpmath.log(abs(r["ratio"])) / 2
             print(f"w={w:2d} p={start}: ratio {mpmath.nstr(r['ratio'], 6):>10s}  m = {mpmath.nstr(gaps[(w, start)], 6)}")
     m_gap = mpmath.mpf(sorted(gaps.values())[len(gaps) // 2])
-    print(f"median m = {mpmath.nstr(m_gap, 6)}   (paper: 1.082727 from ARPACK at w = 20)")
+    print(f"median m = {mpmath.nstr(m_gap, 7)}   (paper: 1.082727 from ARPACK at w = 20)")
 
     # cylinder values
     f, f0, f1 = {}, {}, {}

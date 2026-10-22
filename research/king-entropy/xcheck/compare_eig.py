@@ -1,5 +1,6 @@
 """Claim 2, part 2: own eigenvalues against the committed ones of the repository
 (data/lean/*longdouble*.json and *float64*.json, data/eig/*.json, data/sec/*.json).
+float64 values are compared through their exact binary value, not their decimal repr.
 
 Run (after analyze_eig.py): python3 compare_eig.py > out/compare_eig.txt
 """
@@ -35,7 +36,7 @@ def main():
         p0 = p if (("cyl", w, p, "ld") in runs) else "0"
         mine = runs.get(("cyl", w, p0, "ld"))
         if mine is not None:
-            rows.append(("eig float64", "cyl", w, p, mpmath.mpf(d["log_lambda"]), mine["loglam"]))
+            rows.append(("eig float64", "cyl", w, p, mpmath.mpf(float(d["log_lambda"])), mine["loglam"]))
     for fn in sorted(glob.glob(os.path.join(DATA, "sec", "sec_king_*.json"))):
         bc = "cyl" if "_cyl_" in fn else "free"
         d = json.load(open(fn))
@@ -51,7 +52,7 @@ def main():
                     key = ("cyl", w_, p if ("cyl", w_, p, "ld") in runs else "0", "ld")
                 mine = runs.get(key)
                 if mine is not None:
-                    rows.append(("sec float64", bc, w_, str(p), mpmath.mpf(repr(val)), mine["loglam"]))
+                    rows.append(("sec float64", bc, w_, str(p), mpmath.mpf(val), mine["loglam"]))
     print("source         bc     w  p   theirs log lambda          mine (long double)         diff per site")
     worst = {}
     for src, bc, w, p, theirs, mine in rows:
@@ -65,7 +66,7 @@ def main():
     for k, val in bj["log_lambda_free"].items():
         mine = runs.get(("free", int(k), "e0", "ld"))
         if mine is not None:
-            mx = max(mx, abs(mine["loglam"] - mpmath.mpf(repr(val))) / int(k))
+            mx = max(mx, abs(mine["loglam"] - mpmath.mpf(val)) / int(k))
             n += 1
     print(f"data/bounds.json log_lambda_free (float64): {n} widths, max |diff| per site {mpmath.nstr(mx, 2)}")
 

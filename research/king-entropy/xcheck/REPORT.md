@@ -28,7 +28,10 @@ None of substance. Minor, last digits only:
   values (own, and the repository's own `data/lean/*longdouble*`, which agree with the own ones to
   7.8e-20 per site) give d_25 = 5.991e-14, r_25 = 9.9976, s_25 = 0.56551191104132523 (the paper's own
   Table 2 has G = 0.56551191104132523), and r_23 = 10.1354 (printed 10.136). The text's "r_w drifts
-  from 13.4 to 9.99" should end at 10.0. No effect on the result. `out/analyze_eig.txt` section 2.
+  from 13.4 to 9.99" should end at 10.0. In the same way the 16th decimal of f_13, f_15, f_19 in Table 1
+  and of both sector values at w = 20 in Section 3.1 is one unit off the long double value (differences
+  <= 8e-17, within the paper's float64 error of 6.2e-17 per site plus rounding to 16 decimals). No
+  effect on the result. `out/analyze_eig.txt` sections 2, 3.
 - **Section 5.1, "|rho(K, L) - kappa| <= 6.2e-8 for min(K, L) >= 20"**: the maximum is 6.249e-8
   (at 20 x 20, with either kappa), so the bound holds only as 6.25e-8. `out/corner.txt`.
 - **Section 7, "overestimates s by 2.6 % and 1.2 %"**: (Bethe - s)/s is 2.68 % for the triangular
@@ -57,11 +60,11 @@ from the own counts has 14930 bytes, so the file differs from it in format or co
 | s, L1 on odd w, W = 25 | 0.5655119110413253176 | 0.5655119110413253176 (centre) | < 1e-19 |
 | s, L1 on even-w midpoints, W = 24 | 0.5655119110413253237 | 0.56551191104132532 | 4e-18 |
 | span of L1, L2, PE, R1, Wynn: odd W = 25; midpoints W = 24 | [...3253176, ...3253222]; [...3253051, ...3253237] | +- 6e-16 | inside |
-| in-sector gap m per row (convergence of the power iteration, w = 16..25) | 1.08272 | 1.082727 | 7e-6 |
-| even-w brackets w = 18..24, midpoint w = 24 | all digits as printed | Section 3.1 | 0 |
-| f^(1)_w < s < f^(0)_w, all even w = 4..24 | holds | holds | - |
+| in-sector gap m per row (median over the power-iteration convergence ratios, w = 16..27) | 1.082724 | 1.082727 | 3e-6 |
+| even-w brackets w = 18..24, midpoint w = 24 | as printed, except the last digit of both w = 20 values (float64 noise, see Contradictions) | Section 3.1 | <= 8e-17 |
+| f^(1)_w < s < f^(0)_w, all even w = 4..26 | holds | holds (w <= 24) | - |
 | own log lambda vs `data/lean` (extended; cylinders and free strips), per site | max 7.8e-20 | - | - |
-| own log lambda vs `data/sec`, `data/eig` (float64), per site | max 7.1e-17, 3.9e-17 | 6.2e-17 quoted | - |
+| own log lambda vs `data/sec`, `data/eig` (float64, exact binary values), per site | max 6.2e-17, 3.9e-17 | 6.2e-17 quoted | 0 |
 
 Beyond the paper, w = 26 (both sectors, long double, 6.1 GiB, 13 min each): bracket
 [0.5655119110368705, 0.5655119110457844] contains s; the midpoint difference d_26 = -1.90309e-14
@@ -153,7 +156,9 @@ the free-strip sectors without e0 win at k = 6, 10, 14, 18 and their difference 
 A failure mode of the own code was found on the way: a running sum of 2^w terms in the eigenvalue
 estimate loses about 1e-12 relative in float64 at w >= 24 (sqrt(n) eps); it is now a blocked sum in
 long double, and all affected runs were redone. The paper's float64 values are not affected (they agree
-with the own long double values to 7.1e-17 per site).
+with the own long double values to 6.2e-17 per site, as the paper states). A second slip of the own
+code: `compare_eig.py` first read float64 values through their decimal repr, which inflated the
+difference at w = 5 to 7.1e-17; it now uses the exact binary value.
 
 ## Commands
 

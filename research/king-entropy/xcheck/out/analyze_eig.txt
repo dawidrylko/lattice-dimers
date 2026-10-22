@@ -133,7 +133,7 @@ w=25 p=0: ratio     0.1147  m = 1.08272
 w=26 p=0: ratio   0.114699  m = 1.08272
 w=26 p=1: ratio     0.1147  m = 1.08272
 w=27 p=0: ratio     0.1147  m = 1.08272
-median m = 1.08272   (paper: 1.082727 from ARPACK at w = 20)
+median m = 1.082724   (paper: 1.082727 from ARPACK at w = 20)
 
 odd w: 3..27, even w: 4..26 (w = 28: float64; all others x87 long double)
 
