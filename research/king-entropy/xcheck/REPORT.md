@@ -1,7 +1,18 @@
 # Independent recomputation of `paper/main.tex` (king-graph dimer entropy)
 
-**Status: interim.** Claims 1, 3, 4 and 5 are complete; claim 2 is complete up to w = 25 (the widths
-26-28 beyond the paper are running); claim 6 is in progress. This file is updated with every stage.
+**Verdict.** Claims 1-5 CONFIRMED, claim 6 found no failure mode; no contradiction of substance. Three
+minor last-digit issues are listed under Contradictions. One check is NOT REACHED: the A239264 b-file
+(oeis.org is blocked from this machine). The widths w = 26 and 27, beyond the paper, agree with its
+extrapolation to 1e-18 in s (w = 28 is running in float64; this file is updated when it finishes).
+
+| claim | verdict | own value | paper |
+| --- | --- | --- | --- |
+| 1. exact counts | CONFIRMED (A239264 b-file NOT REACHED) | 0 mismatches: 5562 `data/zex` values, 88 OEIS data terms, A239273 b-file by SHA-256 | - |
+| 2. s | CONFIRMED | 0.5655119110413253176 (L1, W = 25); 0.5655119110413253187 (W = 27) | 0.5655119110413253 +- 6e-16 |
+| 3. Theorem 2.1 | CONFIRMED | B(3, 4): no Pfaffian orientation, 6-equation certificate | 43 matchings, 29 edges |
+| 4. Theorem 4.1 | CONFIRMED | 0.545343749727 <= s <= 0.582767477484 | same, all 18 entries of Table 3 |
+| 5. kappa | CONFIRMED | 0.3631962560475 | 0.36319625605 +- 3e-10 |
+| 6. failure modes | none found | see the table in Claim 6 | - |
 
 All code in this directory was written from scratch for this check; nothing is imported from or
 adapted from `src/` or `L/`. The committed outputs of the repository (`data/`, `out/`) were read only
@@ -10,7 +21,7 @@ after the own result existed, by the `compare_*` scripts. Commands are run from
 
 ## Contradictions
 
-None of substance so far. Minor, last digits only:
+None of substance. Minor, last digits only:
 
 - **Table 1, row w = 25 (and r_23)** is computed from float64 eigenvalues and carries their rounding
   noise: the paper prints d_25 = 5.994e-14, r_25 = 9.992, s_25 = 0.5655119110413253; the long double
