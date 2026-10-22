@@ -49,7 +49,7 @@ from the own counts has 14930 bytes, so the file differs from it in format or co
 | in-sector gap m per row (convergence of the power iteration, w = 16..25) | 1.08272 | 1.082727 | 7e-6 |
 | even-w brackets w = 18..24, midpoint w = 24 | all digits as printed | Section 3.1 | 0 |
 | f^(1)_w < s < f^(0)_w, all even w = 4..24 | holds | holds | - |
-| own log lambda vs `data/lean` (extended), per site | max 5.3e-20 | - | - |
+| own log lambda vs `data/lean` (extended; cylinders and free strips), per site | max 7.8e-20 | - | - |
 | own log lambda vs `data/sec`, `data/eig` (float64), per site | max 7.1e-17, 3.9e-17 | 6.2e-17 quoted | - |
 
 Convergence claim: the estimate changes shrink by 0.1147 per iteration of T^2 at every w = 16..25
