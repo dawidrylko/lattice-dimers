@@ -369,8 +369,9 @@ for name, (wt, nxt) in SCH.items():
         up = Wh ** k
         n += 1
         ok &= bool(up.a >= Zfull)
-        r = float(mpf(up.a) / Zfull)
-        worst = r if worst is None else min(worst, r)
+        if Zfull:
+            r = float(mpf(up.a) / Zfull)
+            worst = r if worst is None else min(worst, r)
     check(f'U7 {name}', ok, f'({n} boards); smallest W_h^k / Z = {worst:.4f}')
 
 

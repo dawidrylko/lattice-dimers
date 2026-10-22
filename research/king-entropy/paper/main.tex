@@ -8,7 +8,7 @@
 \hypersetup{
   pdftitle={The dimer entropy of the king's graph},
   pdfauthor={Dawid Ry\l{}ko},
-  pdfsubject={MSC2020: Primary 05C70; Secondary 82B20, 05A16},
+  pdfsubject={MSC2020: Primary 05C70; Secondary 82B20, 82B80, 05A16},
   pdfkeywords={king's graph, domicule tilings, perfect matchings, dimer model, entropy,
     transfer matrix},
   pdfcreator={LaTeX with hyperref},
@@ -42,9 +42,9 @@
 \author{Dawid Ry\l{}ko}
 \address{Independent researcher, Bielsko-Bia\l{}a, Poland}
 \email{dawid.rylko@gmail.com}
-\date{Draft, October 2026}
+\date{October 2026}
 \thanks{This work is licensed under CC BY 4.0, \url{https://creativecommons.org/licenses/by/4.0/}.}
-\subjclass[2020]{Primary 05C70; Secondary 82B20, 05A16}
+\subjclass[2020]{Primary 05C70; Secondary 82B20, 82B80, 05A16}
 \keywords{king's graph, domicule tilings, perfect matchings, dimer model, entropy,
   transfer matrix}
 
@@ -310,7 +310,7 @@ and the midpoints converge to $s$ at the same rate as the odd widths, from indep
 
 \begin{table}[ht]
 \caption{Odd cylinders: $f_w = \log\lambda_w / w$, $d_w = f_w - f_{w-2}$, $r_w = d_{w-2}/d_w$ and the
-geometric extrapolation $s_w$ (\file{out/out\_estimate.txt}).}\label{tab:odd}
+geometric extrapolation $s_w$.}\label{tab:odd}
 \begin{tabular}{rllrl}
 \toprule
 $w$ & $f_w$ & $d_w$ & $r_w$ & $s_w$ \\
@@ -383,7 +383,7 @@ gives $0.565512081672$).
 \section{Rigorous bounds}\label{sec:bounds}
 
 \begin{theorem}[computer-assisted]\label{thm:bounds}
-$0.545343749727 \le \underline s \le \bar s \le 0.586216605404$.
+$0.545343749727 \le \underline s \le \bar s \le RWUPPER$.
 \end{theorem}
 
 For comparison, the Kahn--Lov\'asz bound (the number of perfect matchings of a graph is at most
@@ -399,23 +399,27 @@ transfer matrix must be the right matrix: the code is argued correct and validat
 brute-force enumeration on small boards (\S\ref{sec:float}, \S\ref{sec:checks}), but it has not been
 formally verified.
 
-Both bounds of Theorem~\ref{thm:bounds} come from strips of width $w = 24$; Table~\ref{tab:bounds}
-shows how they improve with $w$. Since $\log \lambda_w / w = s + f(w)/w$ with $f(w) \to -2\sigma$
-(\S\ref{sec:surface}), the lower bound approaches $s$ like $2\sigma/w = 0.484/w$, and the upper
-bound, empirically, like $0.497/w$.
+Both bounds of Theorem~\ref{thm:bounds} come from strips of width $w = 24$; the upper bound uses
+the run-weighted transfer of Lemma~\ref{lem:runs}. Table~\ref{tab:bounds} shows how the bounds
+improve with $w$. Since $\log \lambda_w / w = s + f(w)/w$ with $f(w) \to -2\sigma$
+(\S\ref{sec:surface}), the lower bound approaches $s$ like $2\sigma/w = 0.484/w$; the upper bound
+with the uniform weight $\sqrt\varphi$ approaches it, empirically, like $0.497/w$, and the
+run-weighted one like RWRATE$/w$.
 
 \begin{table}[ht]
-\caption{Certified bounds from strips of width $w$ (\file{out/out\_bounds.txt}).}\label{tab:bounds}
-\begin{tabular}{rll}
+\caption{Certified bounds from strips of width $w$: the lower bound, the upper bound with the
+uniform side weight $\sqrt\varphi$ (Lemma~\ref{lem:strip}) and the run-weighted upper bound
+(Lemma~\ref{lem:runs}).}\label{tab:bounds}
+\begin{tabular}{rlll}
 \toprule
-$w$ & lower bound on $\underline s$ & upper bound on $\bar s$ \\
+$w$ & lower bound on $\underline s$ & upper, weight $\sqrt\varphi$ & upper, run weights \\
 \midrule
-4  & 0.445893077494 & 0.689765394232 \\
-8  & 0.505014525148 & 0.627626147026 \\
-12 & 0.525175645897 & 0.606921301094 \\
-16 & 0.535259669620 & 0.596568952598 \\
-20 & 0.541310117470 & 0.590357544276 \\
-24 & 0.545343749727 & 0.586216605404 \\
+4  & 0.445893077494 & 0.689765394232 & 0.669090528409 \\
+8  & 0.505014525148 & 0.627626147026 & 0.617278850986 \\
+12 & 0.525175645897 & 0.606921301094 & 0.600023045982 \\
+16 & 0.535259669620 & 0.596568952598 & 0.591395260725 \\
+20 & 0.541310117470 & 0.590357544276 & 0.586218590772 \\
+24 & 0.545343749727 & 0.586216605404 & RWUPPER \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -494,7 +498,40 @@ $a_2 b_1$ (the rest is $n-2$ against $n-2$), so $M(n) \le M(n-1) + M(n-2)$ with
 $M(0) = M(1) = 1$, i.e.\ $M(n) \le F_{n+1}$. Finally $F_{n+1} \le \varphi^n$ by induction.
 \end{proof}
 
-Equality holds when $A = B$ is an interval. Put $z = \sqrt\varphi$ and
+Equality holds when $A = B$ is an interval. The same branching gives more when $A$ is not an
+interval. A \emph{run} of a set $S$ of rows is a maximal block of consecutive rows in $S$; put
+$F(S) = \prod_{\text{runs } R \text{ of } S} F_{|R|+1}$.
+
+\begin{lemma}[crossing matchings, run form]\label{lem:runs}
+$M(A, B) \le \min(F(A), F(B))$, with equality $M(S, S) = F(S)$. Moreover $F_2 = 1$ and
+$F_{l+1} \le 2\varphi^{l-2}$ for $l \ge 2$.
+\end{lemma}
+\begin{proof}
+The relation $a \sim b$ is symmetric, so it suffices to show $M(A, B) \le F(A)$, by induction on
+$n = |A| = |B|$ (the case $n = 0$ is trivial, and $M = 0$ if $|A| \ne |B|$). Let $a_1$ be the
+smallest row of $A$ and $l$ the length of its run. By the proof of Lemma~\ref{lem:fib}, every
+matching contains $a_1 b_1$, or contains $a_1 b_2$ and $a_2 b_1$ with $a_2 = a_1 + 1 \in A$; the
+second case needs $l \ge 2$. Removing $a_1$ shortens the first run to $l - 1$, removing $a_1, a_2$
+shortens it to $l - 2$ (a run of length $0$ disappears, and $F_1 = 1$), and the other runs are
+unchanged; write $R$ for the product of their factors. By induction
+$M(A, B) \le F_l R + F_{l-1} R = F(A)$ if $l \ge 2$, and $M(A, B) \le F(A \setminus \{a_1\}) = F(A)$
+if $l = 1$. For $A = B = S$, two runs of $S$ are at distance at least $2$, so no edge joins
+different runs, and on a run of length $l$ the count is $F_{l+1}$ (Lemma~\ref{lem:fib}). Finally
+$F_3 = 2$, $F_4 = 3 \le 2\varphi$ and $F_{l+2} = F_{l+1} + F_l \le 2\varphi^{l-3}(\varphi + 1) =
+2\varphi^{l-1}$.
+\end{proof}
+
+Hence $M(A, B) \le \sqrt{F(A) F(B)} \le h(A)\, h(B)$ for every weight $h$ with $h(S)^2 \ge F(S)$.
+We use weights that are products over the runs of $S$ of per-cell factors depending on the position
+in the run: $1, \sqrt2, \sqrt\varphi, \sqrt\varphi, \dots$, so that a run of length $l$ gets
+$h^2 = 1, 2, 2\varphi, 2\varphi^2, \dots$, which is at least $F_{l+1}$ by Lemma~\ref{lem:runs}. The
+uniform weight $h(S) = \varphi^{|S|/2}$ of Lemma~\ref{lem:fib} is the special case of one factor
+$\sqrt\varphi$ per cell; it overpays on short runs, and for $A = B = \{0, 2, 4, \dots\}$, a set of
+runs of length $1$, it gives $\varphi^{|S|}$ where $F(S) = 1$. The smallest admissible weight is
+$h = \sqrt F$ itself, with factors $\sqrt{F_{t+2}/F_{t+1}}$ for the $t$-th cell of a run; it needs
+the full run length as a state, and the three factors above truncate it after the second cell.
+
+Put $z = \sqrt\varphi$ and
 \[
   W(K, w) = \sum_{A, B} N(B, A)\, z^{|A| + |B|},
 \]
@@ -502,18 +539,28 @@ the weighted number of matchings of a strip in which a cell of the first or last
 ``covered from outside'' at weight $z$.
 
 \begin{lemma}[strip inequality]\label{lem:strip}
-$Z(K, kw) \le W(K, w)^k$.
+$Z(K, kw) \le W(K, w)^k$. More generally $Z(K, kw) \le W_h(K, w)^k$ with
+$W_h(K, w) = \sum_{A, B} N(B, A)\, h(A)\, h(B)$, for every $h$ with $h(S)^2 \ge F(S)$.
 \end{lemma}
 \begin{proof}
 In Lemma~\ref{lem:cut} replace $M(A_j, B_{j+1})$ by $\varphi^n = z^{|A_j|} z^{|B_{j+1}|}$
 (Lemma~\ref{lem:fib}). The factor $z^{|A_j|}$ belongs to strip $j$ and $z^{|B_{j+1}|}$ to strip
 $j+1$, so each summand is at most $\prod_j N(B_j, A_j) z^{|B_j| + |A_j|}$. Dropping the constraints
 $|A_j| = |B_{j+1}|$ and $B_1 = A_k = \emptyset$ adds only nonnegative terms, and the sum
-factorises over the strips.
+factorises over the strips. For general $h$ replace $\varphi^n$ by $h(A_j)\, h(B_{j+1})$
+(Lemma~\ref{lem:runs}); $h(\emptyset) = 1$.
 \end{proof}
 
 The transfer of \S\ref{sec:model} computes $W$ when a cell in column $0$ or $w-1$ may also be
-covered from outside at weight $z$: $W(K, w) = e_0^\top T_z^K e_0$, $T_z \ge 0$.
+covered from outside at weight $z$: $W(K, w) = e_0^\top T_z^K e_0$, $T_z \ge 0$. For the run weights
+the transfer carries, for each of the two side columns, the position of the previous row's side
+cell in a run of outside covers ($0$: not covered from outside, $1$: first cell of a run, $2$: a
+later cell). A side cell covered from outside gets the factor of its position, $1$, $\sqrt2$ or
+$\sqrt\varphi$, and advances the state; any other move of a side cell resets it to $0$. The state
+space grows by a factor $9$, and $W_h(K, w) = \sum_{l, r} (T_h^K e_{0})_{(l, r, 0)}$ with
+$T_h \ge 0$. Lemma~\ref{lem:cwup} holds for $T_h$ with the same proof, applied to each of the nine
+final entries: $W_h(2j, w) \le c' C^j$ with $c' = \sum_{l, r} v_{(l, r, 0)} / v_0$, a constant
+independent of $j$.
 
 \begin{lemma}[Collatz--Wielandt, upper]\label{lem:cwup}
 If $A = T_z^2$, $v \ge 0$, $v_0 > 0$ and $Av \le Cv$ componentwise (including $(Av)_i = 0$
@@ -530,13 +577,16 @@ $(KL)^{-1}\log Z(K, L) \le \frac{K+1}{K}\,((K+1)L)^{-1}\log Z(K+1, L)$ and the f
 $(K+1)/K$ tends to $1$; we may therefore take $K = 2j$. Write $L = kw + r$, $0 \le r < w$.
 Cutting off a last strip of width $r$ as in Lemma~\ref{lem:strip} gives
 $Z(K, L) \le W(K, w)^k W_r(K)$, where $W_r$ counts the configurations of a width-$r$ strip with
-weighted outside covers; crudely $W_r(K) \le (5 + 2z)^{Kr}$ (per cell: already covered, one of at
-most four later partners, or one of at most two outside covers). By Lemma~\ref{lem:cwup},
+weighted outside covers; crudely $W_r(K) \le (5 + 2\sqrt2)^{Kr}$ (per cell: already covered, one of
+at most four later partners, or one of at most two outside covers, each of weight at most $\sqrt2$).
+By Lemma~\ref{lem:cwup}, with the constant $c' \ge 1$ above for the run weights ($c' = 1$ for
+$\sqrt\varphi$),
 \[
-  \frac{\log Z(K, L)}{KL} \le \frac{k}{L}\,\frac{\log C_w}{2} + \frac{w \log(5 + 2z)}{L}
-  \longrightarrow \frac{\log C_w}{2w}.
+  \frac{\log Z(K, L)}{KL} \le \frac{k}{L}\,\frac{\log C_w}{2} + \frac{k \log c'}{KL}
+  + \frac{w \log(5 + 2\sqrt2)}{L} \longrightarrow \frac{\log C_w}{2w}.
 \]
-The certificate of \S\ref{sec:float} at $w = 24$ gives $\bar s \le 0.586216605404$.
+The certificate of \S\ref{sec:float} at $w = 24$ gives $\bar s \le 0.586216605404$ with the weight
+$\sqrt\varphi$ and $\bar s \le RWUPPER$ with the run weights.
 \end{proof}
 
 \subsection{Floating-point certificates}\label{sec:float}
@@ -556,7 +606,13 @@ $12wu\,(1 + o(1)) = 3.2\cdot10^{-14}$ at $w = 24$, plus one rounding in the divi
 are at least $1$ ($z$ is rounded up, so $T_{\fl(z)} \ge T_{\sqrt\varphi}$ entrywise) and the
 entries on the support exceed $10^{-280}$, so there is no underflow and a float entry vanishes iff
 the exact one does. Since $10^{-12} \gg 3.2\cdot10^{-14} + u$, the inequalities $Av \ge cv$ and
-$Av \le Cv$ hold exactly. The logarithms are taken with 30-digit arithmetic and the results are
+$Av \le Cv$ hold exactly. For the run-weighted transfer with $n = 3$ states per side, an interior
+cell step is unchanged; at the left side column an entry collects at most $4n$ terms, and at the
+right one at most $3n$, plus at most two products by a factor and one addition for the states
+reached by an outside cover. Over the $2w$ steps of $A$ this is at most
+$2\bigl(4(w-2) + (4n-1) + (3n-1)\bigr) = 8w + 14n - 20 \le 12w$ roundings for $w \ge 6$, the same
+budget. The factors are rounded up to floats, so the float transfer dominates the exact one
+entrywise, and the factor $1$ is exact. The logarithms are taken with 30-digit arithmetic and the results are
 rounded outward to 12 decimals.
 
 \emph{Audit.} The following were checked in exact arithmetic: the cut identity and both strip
@@ -566,7 +622,11 @@ against brute force as a polynomial in $z$ ($162$ evaluations); and, for $w = 2,
 float ratios against exact rational ratios for the same float vector ($|\text{float}/\text{exact}
 - 1| \le 1.7\cdot10^{-16}$). The test has power: with $z = 0$ the strip inequality fails on all
 $40$ boards with $k \ge 2$. On these small boards $z = 0.5$ would suffice; the weight $\sqrt\varphi$ is
-needed by the proof, not by the data.
+needed by the proof, not by the data. For the run weights, also exactly: $M(A, B) \le
+\min(F(A), F(B))$ and $M(S, S) = F(S)$ for all $A, B$ in columns of length $m \le 8$; the strip
+inequality with the run weights in interval arithmetic on the same $58$ boards; the run-weighted
+transfer against brute force at rational factors (AUDITN evaluations); and the float ratios against
+exact ones for $w = 2, \dots, 8$ (AUDITREL).
 
 \section{Surface free energy}\label{sec:surface}
 For the free strip of width $k$, $\log Z(K, k) = K a_k + O(1)$, and
@@ -579,7 +639,7 @@ $a_k$ from extended-precision power iteration for $k = 14, \dots, 24$ and float6
 Collatz--Wielandt bracket for $k = 25, 26$).
 
 \begin{table}[ht]
-\caption{$f(k) = \log\lambda_k - sk$ for free strips (\file{out/out\_surface.txt}).}\label{tab:surface}
+\caption{$f(k) = \log\lambda_k - sk$ for free strips.}\label{tab:surface}
 \begin{tabular}{rlrl}
 \toprule
 $k$ & $f(k)$ & $k$ & $f(k)$ \\
@@ -592,18 +652,23 @@ $k$ & $f(k)$ & $k$ & $f(k)$ \\
 \end{tabular}
 \end{table}
 
-The odd sequence converges cleanly (all models of \S\ref{sec:value} agree to $10^{-16}$); the even
-one carries two corrections, and only the two-exponential and Wynn models are stable under the
+The odd sequence converges cleanly (all models of \S\ref{sec:value} agree to $10^{-16}$): its
+differences $f(k+2) - f(k)$ shrink by a factor $8.719$ per two columns ($k = 19, \dots, 25$), that
+is $e^{2 \cdot 1.0827}$, the in-sector gap of \S\ref{sec:z2}. The even one carries two corrections,
+this mode and the parity-splitting mode of the free strip, which alternates with period $4$ and
+shrinks by a factor $13.84$ per two columns (\S\ref{sec:model}); and only the two-exponential and Wynn models are stable under the
 backtest. The stable models give $-2\sigma \in [-0.4840358715325015, -0.4840358715325006]$; the
 error of $s$, multiplied by $k = 26$, dominates:
 \[
   -2\sigma = -0.484035871532501 \pm 1.8\cdot10^{-14}, \qquad
   \sigma = 0.242017935766251 \pm 9\cdot10^{-15}.
 \]
-The fit to the exact square boards in \S\ref{sec:value} has linear coefficient $a = -0.96808$
+The errors of $\sigma$ and $s$ are correlated: an error $\delta s$ in $s$ moves the extrapolated
+$-2\sigma$ by $-26\,\delta s$, so $\delta\sigma \approx 13\,\delta s$, and quantities that depend on
+both add their errors linearly. The fit to the exact square boards in \S\ref{sec:value} has linear coefficient $a = -0.96808$
 (four free edges), consistent with $-4\sigma = -0.9680717$.
 
-\section{Parity splitting and correlation length}\label{sec:z2}
+\section{Parity splitting and its decay length}\label{sec:z2}
 For even $w$ let $\Delta_w = \log\lambda^{(0)}_w - \log\lambda^{(1)}_w$ and
 $\xi_w = 2/\log(\Delta_{w-2}/\Delta_w)$ (Table~\ref{tab:z2}). A pure exponential
 $\log\Delta_w = a - w/\xi$ fits $w = 10, \dots, 24$ poorly ($\xi = 1.1931$, rms $1.5\cdot10^{-2}$);
@@ -612,7 +677,7 @@ rms $9.3\cdot10^{-4}$, and extrapolating $1/\xi_w$ linearly in $1/w$ gives $\xi_
 So $\xi \approx 1.23$.
 
 \begin{table}[ht]
-\caption{Splitting of the parity sectors on even cylinders (\file{out/out\_estimate.txt}).}\label{tab:z2}
+\caption{Splitting of the parity sectors on even cylinders.}\label{tab:z2}
 \begin{tabular}{rll@{\qquad}rll}
 \toprule
 $w$ & $\Delta_w$ & $\xi_w$ & $w$ & $\Delta_w$ & $\xi_w$ \\
@@ -625,12 +690,21 @@ $w$ & $\Delta_w$ & $\xi_w$ & $w$ & $\Delta_w$ & $\xi_w$ \\
 \end{tabular}
 \end{table}
 
-Inside a sector the transfer has a gap: at $w = 20$ ARPACK gives $\log(\lambda_1/|\lambda_3|) =
-1.082727$ per row. The odd-width corrections behave like $e^{-w/\xi_{\mathrm{odd}}} w^b$ with
-$1/\xi_{\mathrm{odd}} \approx 1.07$, close to this gap. All finite-size corrections we see are
-exponentially small, as expected for a non-critical (gapped) dimer liquid. On the
-square lattice, which is critical, the corrections are algebraic, $(f_w - G/\pi)w^2 \to \pi/6$, and the
-same transfer-matrix extrapolation from $w \le 18$ yields only $G/\pi \pm 6\cdot10^{-8}$.
+The length $\xi$ describes the splitting of the two topological sectors, a property of the
+cylinder; it is not the bulk correlation length. Inside a sector the transfer has a gap: at
+$w = 20$ ARPACK gives $\log(\lambda_1/|\lambda_3|) = 1.082727$ per row, with a negative subleading
+eigenvalue $\lambda_3$ (\file{out/out\_crosscheck.txt}), and the convergence of the power iteration
+gives the same gap at every $w = 20, \dots, 25$. The bulk correlation length along the cylinder is
+therefore $1/1.0827 = 0.92$, and the odd-width corrections, which behave like
+$e^{-w/\xi_{\mathrm{odd}}} w^b$ with $1/\xi_{\mathrm{odd}} \approx 1.07$, are governed by the same
+gap. The prefactor form $w^b$ of $\Delta_w$ follows the analysis of the topological splitting in
+\cite{ioselevich2002, yaokivelson2012}; we take only the form from there, not their value of
+$\xi$, which belongs to other models. All finite-size corrections we see are exponentially small,
+as expected for a non-critical (gapped) dimer liquid. On the square lattice, which is critical, the
+corrections are algebraic, $(f_w - G/\pi)w^2 \to \pi/6$, and a polynomial fit in $1/w^2$ to the
+transfer-matrix values for $w \le 18$ gives $G/\pi$ only to $6\cdot10^{-8}$; the exact free-fermion
+values give the same digits, so the truncated asymptotic series, not the transfer matrix, limits
+this check (\file{out/out\_validate.txt}).
 
 \section{Checks on solvable lattices}\label{sec:checks}
 The transfer code has a switch for the square lattice (no diagonals) and the triangular lattice
@@ -758,13 +832,15 @@ All code and outputs are in the repository
 \begin{center}
 \url{https://github.com/dawidrylko/lattice-dimers},
 \end{center}
-tag \texttt{v1.0-king-entropy}, directory \texttt{research/king-entropy/}. The scripts need
-Python~3.13 with numpy~2.5.3, mpmath~1.4.1 and scipy~1.18.1, as pinned in
+tag \texttt{v1.1-king-entropy}, directory \texttt{research/king-entropy/}. The scripts need
+Python~3.13 with numpy~2.5.3 \cite{numpy2020}, mpmath~1.4.1 \cite{mpmath} and scipy~1.18.1
+\cite{scipy2020} (whose sparse eigensolver is ARPACK \cite{arpack1998}), as pinned in
 \file{src/requirements.txt}. Every number in this paper is listed in \file{paper/NUMBERS.md},
-with the committed output file it is read from and the command that wrote that file. The paths below
-follow the later layout in subdirectories (\file{src/}, \file{data/}, \file{out/}, \file{logs/},
-\file{notes/}); at the tag \texttt{v1.0-king-entropy} their files sit directly in
-\texttt{research/king-entropy/}. The main commands, each run as \texttt{python3} followed by the script
+with the committed output file it is read from and the command that wrote that file; the captions
+and the text name the main ones. Many outputs record the commit of the code that wrote them. The
+first version of this work is the tag \texttt{v1.0-king-entropy}, where the files sit directly in
+\texttt{research/king-entropy/}; the commits recorded in the outputs of that version refer to its
+history, which the tag keeps. The main commands, each run as \texttt{python3} followed by the script
 and its arguments from \texttt{research/king-entropy/}:
 \begin{center}\small
 \begin{tabular}{ll}
@@ -774,23 +850,33 @@ script & output \\
 \texttt{src/tm2.py king cyl 3 13}, \texttt{\dots\ 14 19} & \file{data/sec/sec\_king\_cyl\_*.json} \\
 \texttt{src/cylw.py king cyl \textit{w} \textit{p}}, $w = 20, \dots, 25$ & \file{data/eig/eig\_king\_cyl\_w*\_p*.json} \\
 \texttt{src/estimate.py} & \file{out/out\_estimate.txt}, \file{data/z2.json} \\
-\texttt{src/errbar.py} & \file{out/out\_errbar.txt} \\
+\texttt{src/lean.py king cyl \textit{w} \textit{p} longdouble} & \file{data/lean/lean\_*.json} \\
+\texttt{src/errbar.py} & \file{out/out\_errbar.txt}, \file{data/errbar.json} \\
 \texttt{src/bounds.py 24} & \file{out/out\_bounds.txt}, \file{data/bounds.json} \\
+\texttt{src/runweight.py 3state \textit{w}\dots} & \file{out/out\_runweight\_3state.txt} \\
 \texttt{src/audit\_bounds.py} & \file{out/out\_audit\_bounds.txt} \\
+\texttt{src/pfaff\_rigor.py} & \file{out/out\_pfaff.txt} \\
+\texttt{src/corner.py} & \file{out/out\_corner.txt}, \file{data/corner.json} \\
 \texttt{src/surface.py} & \file{out/out\_surface.txt} \\
 \texttt{src/cw.py} & \file{out/out\_cw.txt} \\
 \texttt{src/zexact.py \dots}; \texttt{src/ltest.py} & \file{data/zex/zex\_*.json}, \file{out/out\_ltest.txt} \\
 \texttt{src/lcert.py 25 30}, \texttt{\dots\ 26 30} & \file{out/out\_lcert\_m25.txt}, \dots \\
 \texttt{src/lweight.py} [\texttt{big}] & \file{out/out\_lweight*.txt} \\
-\texttt{L/symmetry.py}, \texttt{L/linf.py 16}, \texttt{L/involution.py} & \file{L/out\_*.txt} \\
+\texttt{L/symmetry.py}, \texttt{L/linf.py 16}, \texttt{L/involution.py}, \texttt{L/modes.py} & \file{L/out\_*.txt} \\
 \texttt{src/validate.py}; \texttt{src/crosscheck.py} & \file{out/out\_validate.txt}, \dots \\
 \texttt{paper/derived.py} & \file{paper/out\_derived.txt} \\
 \bottomrule
 \end{tabular}
 \end{center}
-The outputs were produced on a machine with four cores and $15.7$\,GiB of memory. The widest
+The outputs were produced on two x86-64 machines with four cores and about $16$\,GiB of memory
+each: the first version on one, the runs added in this version (extended precision, run weights,
+the corner counts, the Pfaffian certificate and the two-mode fits) on the other. The extended-precision
+runs use the 64-bit mantissa of the x87 \texttt{long double}, which \file{src/lean.py} asserts. The
+algorithms are those of \S\ref{sec:model}; the implementation applies each cell step to reshaped
+views of the state vector, without forming the transfer matrix. The widest
 runs dominate the cost: the cylinder $w = 25$ ($8.4$\,GiB, $22.5$ min), the certified bounds at
-$w = 24$ ($22$ min), and the certified (L) tests at $m = 26$ ($8.0$\,GiB, $43$ min). The script
+$w = 24$ ($22$ min), the run-weighted bound at $w = 24$ (RWTIME), the exact counts of the
+$24 \times 24$ board (ZEXTIME), and the certified (L) tests at $m = 26$ ($8.0$\,GiB, $43$ min). The script
 \file{src/repro.py} re-runs \texttt{src/estimate.py}, \texttt{src/cw.py}, \texttt{src/bounds.py 16} and
 \texttt{src/cylw.py king cyl 20 0} from a clean export of the repository and
 checks that their outputs are identical up to timings and commit tags.
@@ -799,7 +885,7 @@ checks that their outputs are identical up to timings and commit tags.
 % TODO(submission): tag the release, archive it on Zenodo, then replace the placeholder.
 The code and data that support the findings of this paper are openly available in the
 repository \url{https://github.com/dawidrylko/lattice-dimers} at the tag
-\texttt{v1.0-king-entropy}, and are archived on Zenodo,
+\texttt{v1.1-king-entropy}, and are archived on Zenodo,
 DOI: TO-BE-ASSIGNED (Zenodo) \TODO{replace with the DOI minted for the tag}.
 
 \section*{Disclosure statement}
