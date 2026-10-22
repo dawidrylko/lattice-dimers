@@ -1,24 +1,39 @@
-"""Error bar of the cylinder estimate of s: alternative extrapolation models, backtests,
-rounding sensitivity.
+"""Error budget of the cylinder estimate of s: extrapolation models, predictive backtests,
+a hidden slow mode, the gap parameter and float64 rounding.
 
 usage: python3 src/errbar.py > out/out_errbar.txt      (writes errbar.json)
 
-Inputs: sector values of log(lambda) from tm2.py (sec_king_cyl_*.json, w <= 19) and
-cylw.py (eig_king_cyl_w*_p*.json, w = 20..25), all float64; if present, the
-extended-precision reruns lean_king_cyl_w*_p*_longdouble.json (lean.py) are used to
-measure the float64 rounding error of the same quantities.
+Inputs: sector values of log(lambda) from tm2.py (sec_king_cyl_*.json, w <= 19) and cylw.py
+(eig_king_cyl_w*_p*.json, w = 20..25), all float64, and the x87 extended-precision reruns
+lean_king_cyl_w*_p*_longdouble.json (lean.py) of every cylinder w = 4..25 that the models use.
+The budget is computed on the extended-precision values; float64 enters only as the rounding term.
 
 Odd widths: f_w = log(lambda_w)/w increases to s; d_w = f_w - f_(w-2), r_w = d_(w-2)/d_w.
-Models for the tail s - f_W = sum_{j>=1} d_(W+2j), each fitted on the last few widths:
-  G    geometric, r constant = r_W (the original estimate)
+Even widths: the sector midpoints m_w, a second sequence with its own corrections (the leading
+term of the parity splitting cancels in the midpoint). Models for the tail s - f_W, each fitted on
+the last few widths:
+  L1   d_w = C e^(-m w) w^(-3/2) (1 + c1/w), m = 1.082727 the in-sector gap (Luscher form of a
+       massive correction), through d_(W-2), d_W        <- main model
+  L2   the same with (1 + c1/w + c2/w^2), through d_(W-4), d_(W-2), d_W
+  G    geometric, r constant = r_W
   PE   d_w = A exp(-w/xi) w^b, exact through d_(W-4), d_(W-2), d_W
   PE6  the same, least squares over the last 6 differences
   R1   r_w = r_inf + c/w through r_(W-2), r_W
   R2   r_w = r_inf + c/w + e/w^2 through r_(W-4), r_(W-2), r_W
   2E   d_w = A rho1^w + B rho2^w through the last 4 differences (Prony)
-  WY   Wynn epsilon table on the odd sequence f_w (last full diagonal entry)
-Each model is run with the data truncated at W = 19, 21, 23, 25 (backtest).
-Even widths: the same models on the sector midpoints m_w and on each sector.
+  WY, WY-  Wynn epsilon table on f_w (last full diagonal entry, and the one before)
+Each model is rerun with the data cut at W - 2, W - 4, W - 6 (backtest).
+
+BUDGET (all terms added):
+ 1. model form: a model is kept if its backtest change |s(W) - s(W-2)| is below 1% of the last
+    correction |d_W| on its sequence; the term is the half-spread of the kept estimates of both
+    sequences plus the largest predicted remaining error |s(W) - s(W-2)| |d_W / d_(W-2)|;
+ 2. hidden slow mode: d_w - B x^((w-25)/2), x = exp(-2/1.2351) (the decay of the parity splitting,
+    the slowest rate in the data), fitted with L1's form by least squares on w = 13..25 for forced
+    amplitudes B; every B whose relative rms is within a factor 3 of the best fit is allowed, and
+    the term is the largest shift of s over the allowed B;
+ 3. gap: the change of L1 when m runs over the gaps measured at w = 20..25 (estimate.py);
+ 4. rounding: the largest change of a kept model between float64 and longdouble inputs.
 """
 import json
 from paths import P, G
@@ -127,14 +142,55 @@ def models(f, W):
 KEYS = ['G', 'PE', 'PE6', 'R1', 'R2', '2E', 'WY', 'WY-']
 
 
+M_GAP = mpf('1.082727')                      # in-sector gap per row, ARPACK at w = 20 (crosscheck.py)
+X_HIDDEN = exp(-2 / mpf('1.2351'))            # decay per two widths of the parity splitting (estimate.py)
+ALL = ['L1', 'L2'] + KEYS
+
+
+def luscher(f, W, m=M_GAP, order=1):
+    """L1 (order 1) / L2 (order 2): d_w = C e^(-m w) w^(-3/2) (1 + c1/w [+ c2/w^2]) through the last
+    order + 1 differences; returns the estimate of s."""
+    ws, d = diffs(f, W)
+    ws = [w for w in ws if w in d][-(order + 1):]
+    sg = 1 if d[W] > 0 else -1
+    y = [sg * d[w] * exp(m * w) * mpf(w) ** mpf(1.5) for w in ws]   # = C (1 + c1/w + ...)
+    M = mp.matrix([[1 / mpf(w) ** i for i in range(order + 1)] for w in ws])
+    c = mp.lu_solve(M, mp.matrix(y))
+    term = lambda w: exp(-m * w) * mpf(w) ** mpf(-1.5) * sum(c[i] / mpf(w) ** i for i in range(order + 1))
+    return f[W] + sg * nsum(lambda j: term(W + 2 * j), [1, inf])
+
+
+def gaps_from_histories(floor=mpf('1e-10')):
+    """Gap per row from cylw.py's histories of the estimate of log(lambda) (one T^2 step per entry): the
+    changes shrink by exp(-2 gap) per step; median ratio over the changes above `floor` (below it,
+    float64 noise takes over)."""
+    out = {}
+    for fn in G('eig_king_cyl_w*_p*.json'):
+        d = json.load(open(P(fn)))
+        h = [mpf(x) for x in d['history']]
+        dd = [h[i] - h[i - 1] for i in range(1, len(h))]
+        rr = [dd[i + 1] / dd[i] for i in range(len(dd) - 1) if abs(dd[i + 1]) > floor and dd[i] != 0]
+        if rr:
+            rr.sort()
+            out[d['w'], d['parity']] = -log(rr[len(rr) // 2]) / 2
+    return out
+
+
+def allmodels(f, W):
+    out = models(f, W)
+    out['L1'] = luscher(f, W, order=1)
+    out['L2'] = luscher(f, W, order=2)
+    return out
+
+
 def table(name, f, Ws):
     print(f'\n== {name}: estimates of s by model and by last width used (W)')
-    print('   W   ' + ''.join(f'{k:>21}' for k in KEYS))
+    print('   W   ' + ''.join(f'{k:>21}' for k in ALL))
     res = {}
     for W in Ws:
-        m = models(f, W)
+        m = allmodels(f, W)
         res[W] = m
-        print(f'  {W:2d}   ' + ''.join(f'{mp.nstr(m[k], 16) if k in m else "-":>21}' for k in KEYS))
+        print(f'  {W:2d}   ' + ''.join(f'{mp.nstr(m[k], 17) if k in m else "-":>21}' for k in ALL))
     W = Ws[-1]
     m = res[W]
     print(f'  extras at W={W}: PE xi, b = {m["_PE_xi_b"][0]:.4f}, {m["_PE_xi_b"][1]:.3f}; PE6 rms(log d) = {m["_PE6_rms"]:.1e};'
@@ -143,76 +199,147 @@ def table(name, f, Ws):
     return res
 
 
+def hidden_mode(f, B_fracs, wlo=13, m=M_GAP, x=X_HIDDEN):
+    """Stress test: d_w - B x^((w-W)/2) fitted with L1's form (C, c1; m fixed) by relative least squares
+    over w = wlo..W, for forced amplitudes B = frac * d_W. Returns {frac: (s, rel rms)}."""
+    ws, d = diffs(f, max(f))
+    W = max(f)
+    fitw = [w for w in ws if w in d and w >= wlo]
+    out = {}
+    for frac in B_fracs:
+        B = frac * d[W]
+        rows, y, wt = [], [], []
+        for w in fitw:
+            g = exp(-m * w) * mpf(w) ** mpf(-1.5)
+            rows.append([g, g / w])
+            y.append(d[w] - B * x ** (mpf(w - W) / 2))
+            wt.append(1 / d[w])
+        A = mp.matrix([[r[0] * q, r[1] * q] for r, q in zip(rows, wt)])
+        Y = mp.matrix([v * q for v, q in zip(y, wt)])
+        C, D = mp.lu_solve(A.T * A, A.T * Y)
+        rms = sqrt(sum(((C * r[0] + D * r[1] - v) * q) ** 2 for r, v, q in zip(rows, y, wt)) / len(fitw))
+        tail = nsum(lambda j: exp(-m * (W + 2 * j)) * mpf(W + 2 * j) ** mpf(-1.5) * (C + D / (W + 2 * j)), [1, inf])
+        out[frac] = (f[W] + tail + B * x / (1 - x), rms)
+    return out
+
+
 def main():
     lam, ld = load()
-    odd = {w: lam[w, 0] / w for w in sorted({w for w, _ in lam}) if w % 2 and w >= 5}
-    mid = {w: (lam[w, 0] + lam[w, 1]) / (2 * w) for w in sorted({w for w, _ in lam}) if w % 2 == 0 and w >= 4}
-    sec0 = {w: lam[w, 0] / w for w in mid}
-    sec1 = {w: lam[w, 1] / w for w in mid}
-    oddres = table('odd widths f_w', odd, [19, 21, 23, 25])
-    midres = table('even-width sector midpoints m_w', mid, [18, 20, 22, 24])
-    s0res = table('even widths, sector 0 (from above)', sec0, [18, 20, 22, 24])
-    s1res = table('even widths, sector 1 (from below)', sec1, [18, 20, 22, 24])
+    widths = sorted({w for w, _ in lam})
+    seq = {}
+    for name, src in (('f64', lam), ('ld', None)):
+        def val(w, p):
+            if src is not None:
+                return src[w, p]
+            if (w, p) in ld:
+                return ld[w, p]
+            if w % 2 and (w, 1 - p) in ld:
+                return ld[w, 1 - p]
+            return None
+        odd = {w: val(w, 1) / w for w in widths if w % 2 and w >= 5 and val(w, 1) is not None}
+        mid = {w: (val(w, 0) + val(w, 1)) / (2 * w) for w in widths if w % 2 == 0 and w >= 4
+               and val(w, 0) is not None and val(w, 1) is not None}
+        seq[name] = (odd, mid)
+    odd, mid = seq['ld']
+    missing = [w for w in widths if w >= 5 and ((w % 2 and w not in odd) or (w % 2 == 0 and w not in mid))]
+    print(f'extended-precision inputs: odd w = {min(odd)}..{max(odd)}, even w = {min(mid)}..{max(mid)}'
+          f' (both sectors); widths without them: {missing or "none"}')
+    Wo, We = max(odd), max(mid)
+    res = {'odd': table('odd widths f_w (extended precision)', odd, [Wo - 6, Wo - 4, Wo - 2, Wo]),
+           'mid': table('even-width sector midpoints m_w (extended precision)', mid, [We - 6, We - 4, We - 2, We])}
+    res64 = {'odd': {Wo: allmodels(seq['f64'][0], Wo)}, 'mid': {We: allmodels(seq['f64'][1], We)}}
 
-    best = oddres[25]['G']
-    print(f'\n== spreads relative to the original estimate s_G(25) = {mp.nstr(best, 17)}')
-    for name, res, W in (('odd', oddres, 25), ('mid', midres, 24), ('sec0', s0res, 24), ('sec1', s1res, 24)):
-        vals = {k: res[W][k] for k in KEYS if k in res[W]}
-        print(f'  {name:4s} W={W}: ' + ', '.join(f'{k} {mp.nstr(v - best, 3)}' for k, v in vals.items()))
-    core = [oddres[25][k] for k in ('G', 'PE', 'PE6', 'R1', 'R2', '2E') if k in oddres[25]]
-    print(f'  odd W=25, models G, PE, PE6, R1, R2, 2E: min {mp.nstr(min(core), 17)}, max {mp.nstr(max(core), 17)},'
-          f' spread {mp.nstr(max(core) - min(core), 3)}')
-    # combined recommendation: every model that passes its own backtest (|est(W) - est(W-2)| < 5e-16)
-    # on the two independent data sets (odd widths, even-width midpoints)
-    keep = [(n, k, r[W][k]) for n, r, W in (('odd', oddres, 25), ('mid', midres, 24)) for k in KEYS
-            if k in r[W] and k in r[W - 2] and abs(r[W][k] - r[W - 2][k]) < mpf('5e-16')]
+    # ------------------------------------------------------------- predictive backtest
+    print('\n== predictive backtest: |s(W) - s(W_last)| / |d_W| per model (the share of the last correction'
+          ' that the model gets wrong)')
+    dl = {}
+    for nm, f, Wl in (('odd', odd, Wo), ('mid', mid, We)):
+        _, d = diffs(f, Wl)
+        dl[nm] = d
+        print(f'  {nm}: |d_W| = ' + ', '.join(f'W={W} {mp.nstr(abs(d[W]), 3)}' for W in sorted(res[nm])))
+        for k in ALL:
+            if all(k in res[nm][W] for W in res[nm]):
+                print(f'    {k:4s}: ' + ', '.join(f'W={W} {mp.nstr(abs(res[nm][W][k] - res[nm][Wl][k]) / abs(d[W]), 2)}'
+                                              for W in sorted(res[nm]) if W < Wl))
+    keep, pred = [], []
+    for nm, Wl in (('odd', Wo), ('mid', We)):
+        d = dl[nm]
+        for k in ALL:
+            r = res[nm]
+            if k in r[Wl] and k in r[Wl - 2]:
+                ch = abs(r[Wl][k] - r[Wl - 2][k])
+                if ch < mpf('0.01') * abs(d[Wl]):
+                    keep.append((nm, k, r[Wl][k]))
+                    pred.append(ch * abs(d[Wl] / d[Wl - 2]))
     kv = [v for *_, v in keep]
-    centre, half = (max(kv) + min(kv)) / 2, (max(kv) - min(kv)) / 2
-    print(f'  models passing their backtest (< 5e-16): {", ".join(f"{n} {k}" for n, k, _ in keep)}')
-    print(f'  their range [{mp.nstr(min(kv), 17)}, {mp.nstr(max(kv), 17)}]: centre {mp.nstr(centre, 17)}, half-width {mp.nstr(half, 2)}')
-    print('  backtest, |s_model(W) - s_model(25)| for the odd sequence:')
-    for k in ('G', 'PE', 'PE6', 'R1', 'R2', '2E', 'WY'):
-        if all(k in oddres[W] for W in (19, 21, 23, 25)):
-            print(f'    {k:4s}: ' + ', '.join(f'W={W} {mp.nstr(abs(oddres[W][k] - oddres[25][k]), 3)}' for W in (19, 21, 23)))
+    lo, hi = min(kv), max(kv)
+    half = (hi - lo) / 2
+    pmax = max(pred)
+    print(f'  kept (|s(W) - s(W-2)| < 1% of |d_W|): {", ".join(f"{n} {k}" for n, k, _ in keep)}')
+    print(f'  kept range [{mp.nstr(lo, 18)}, {mp.nstr(hi, 18)}], half-spread {mp.nstr(half, 2)};'
+          f' largest predicted remaining error {mp.nstr(pmax, 2)}')
+    dropped = [(n, k) for n in ('odd', 'mid') for k in ALL if (n, k) not in [(a, b) for a, b, _ in keep]]
+    print(f'  dropped: {", ".join(f"{n} {k}" for n, k in dropped)}')
 
-    # ----------------------------------------------------------------- rounding
-    print('\n== float64 rounding of log(lambda): extended-precision reruns (lean.py, longdouble)')
-    rnd = {}
-    for (w, p), x in sorted(ld.items()):
-        dlt = lam[w, p] - x
-        rnd[w] = dlt
-        print(f'  w={w:2d} p={p}: float64 - longdouble = {mp.nstr(dlt, 3)} in log lambda, {mp.nstr(dlt / w, 3)} per site')
-    if rnd:
-        worst = max(abs(x) / w for w, x in rnd.items())
-        print(f'  max per-site rounding error seen: {mp.nstr(worst, 3)}')
-    # sensitivity of the G estimate to the three inputs it uses (numerical partial derivatives)
-    h = mpf(10) ** -20
-    sens = {}
-    for w in (21, 23, 25):
-        g = dict(odd)
-        g[w] = g[w] + h
-        sens[w] = (models(g, 25)['G'] - best) / h
-    print('  d s_G / d f_w: ' + ', '.join(f'w={w} {mp.nstr(v, 4)}' for w, v in sens.items())
-          + f'; sum |.| = {mp.nstr(sum(abs(v) for v in sens.values()), 4)}')
-    if len(ld) >= 3 and all((w, 1) in ld for w in (21, 23, 25)):
-        g = dict(odd)
-        for w in (21, 23, 25):
-            g[w] = ld[w, 1] / w
-        print(f'  G estimate from the longdouble values of w = 21, 23, 25: {mp.nstr(models(g, 25)["G"], 18)}')
-        for k in ('PE', 'R1', 'R2', '2E'):
-            if k in models(g, 25):
-                print(f'    {k}: {mp.nstr(models(g, 25)[k], 18)}')
+    # ------------------------------------------------------------- hidden slow mode
+    fr = [-0.1, -0.03, -0.01, -0.005, -0.003, -0.002, -0.001, 0, 0.001, 0.002, 0.003, 0.005, 0.01, 0.03, 0.1]
+    hm = hidden_mode(odd, fr)
+    best = min(hm.values(), key=lambda t: t[1])[1]
+    s0 = hm[0][0]
+    print(f'\n== hidden slow mode in the odd widths: B x^((w-25)/2), x = {mp.nstr(X_HIDDEN, 4)} per two widths,'
+          f' fitted with the L1 form on w = 13..{Wo}')
+    for k in fr:
+        sv, rms = hm[k]
+        print(f'  B/d_{Wo} = {k:+.3f}: relative rms {mp.nstr(rms, 3)} ({mp.nstr(rms / best, 3)} x best),'
+              f' s - s(B=0) = {mp.nstr(sv - s0, 3)}')
+    allowed = [k for k in fr if hm[k][1] <= 3 * best]
+    hid = max(abs(hm[k][0] - s0) for k in allowed)
+    print(f'  allowed (rms within 3 x best): B/d_{Wo} in [{min(allowed)}, {max(allowed)}]; largest shift {mp.nstr(hid, 2)}')
 
-    rmax = max([abs(x) / w for w, x in rnd.items()] or [mpf(0)])
-    rec = 3 * (half + rmax * sum(abs(v) for v in sens.values()))
-    print(f'\n== RECOMMENDATION: s = {mp.nstr(centre, 16)} +- {mp.nstr(rec, 1)}  (3 x (model half-width + rounding'
-          f' {mp.nstr(rmax, 2)} per site x sum|ds/df| {mp.nstr(sum(abs(v) for v in sens.values()), 3)}));'
-          f' original estimate: +- 3.9e-15')
-    json.dump(dict(recommended=dict(s=str(centre), err=str(rec), half_width=str(half), rounding=str(rmax)), odd={W: {k: str(v) for k, v in m.items()} for W, m in oddres.items()},
-                   mid={W: {k: str(v) for k, v in m.items()} for W, m in midres.items()},
-                   sec0={W: {k: str(v) for k, v in m.items()} for W, m in s0res.items()},
-                   sec1={W: {k: str(v) for k, v in m.items()} for W, m in s1res.items()},
-                   rounding={w: str(x) for w, x in rnd.items()}, sensitivity={w: str(x) for w, x in sens.items()}),
+    # ------------------------------------------------------------- gap parameter
+    gaps = gaps_from_histories()
+    print('\n== in-sector gap per row from the power-iteration histories (eig_*.json):'
+          ' successive changes of the estimate shrink by exp(-2 gap)')
+    print('  ' + ', '.join(f'w={w} p={p}: {mp.nstr(g, 7)}' for (w, p), g in sorted(gaps.items())))
+    gvals = list(gaps.values()) + [M_GAP]
+    gl, gh = min(gvals), max(gvals)
+    sg = [luscher(odd, Wo, m=g) for g in (gl, gh)]
+    gapterm = max(abs(x - res['odd'][Wo]['L1']) for x in sg)
+    print(f'\n== gap parameter: m in [{mp.nstr(gl, 6)}, {mp.nstr(gh, 6)}] (power-iteration gaps at w = 20..25, estimate.py,'
+          f' and ARPACK {mp.nstr(M_GAP, 7)}): L1 moves by {mp.nstr(gapterm, 2)}')
+
+    # ------------------------------------------------------------- rounding
+    print('\n== float64 rounding: kept models on float64 inputs minus the same models on extended precision')
+    rnd = []
+    for nm, k, v in keep:
+        Wl = Wo if nm == 'odd' else We
+        if k in res64[nm][Wl]:
+            dv = res64[nm][Wl][k] - v
+            rnd.append(abs(dv))
+            print(f'  {nm} {k:4s}: {mp.nstr(dv, 3)}')
+    rterm = max(rnd)
+    fl = {(w, p): lam[w, p] - ld[w, p] for (w, p) in ld if (w, p) in lam}
+    print(f'  largest change {mp.nstr(rterm, 2)}; float64 - longdouble in log lambda per site: max'
+          f' {mp.nstr(max(abs(x) / w for (w, p), x in fl.items()), 3)} over {len(fl)} cylinders')
+
+    centre = res['odd'][Wo]['L1']
+    total = half + pmax + hid + gapterm + rterm
+    quoted = mpf('6e-16')
+    print(f'\n== BUDGET: model form {mp.nstr(half + pmax, 2)} (half-spread {mp.nstr(half, 2)} + predicted {mp.nstr(pmax, 2)}),'
+          f' hidden mode {mp.nstr(hid, 2)}, gap {mp.nstr(gapterm, 2)}, rounding {mp.nstr(rterm, 2)}: total {mp.nstr(total, 2)}')
+    verdict = 'supports' if total <= quoted else 'does NOT support'
+    print(f'  main model L1 on the odd widths, W = {Wo}: s = {mp.nstr(centre, 18)}; the budget {verdict} +- 6e-16')
+    print(f'== RECOMMENDATION: s = {mp.nstr(centre, 16)} +- {mp.nstr(quoted if total <= quoted else total, 1)}'
+          f'  (budget {mp.nstr(total, 2)}; the earlier geometric estimate of estimate.py is superseded)')
+    json.dump(dict(recommended=dict(s=str(centre), err=str(quoted if total <= quoted else total), budget=str(total),
+                                    model_form=str(half + pmax), half_spread=str(half), predicted=str(pmax),
+                                    hidden_mode=str(hid), gap=str(gapterm), rounding=str(rterm),
+                                    kept=[f'{n} {k}' for n, k, _ in keep]),
+                   odd={W: {k: str(v) for k, v in m.items()} for W, m in res['odd'].items()},
+                   mid={W: {k: str(v) for k, v in m.items()} for W, m in res['mid'].items()},
+                   odd_float64={k: str(v) for k, v in res64['odd'][Wo].items()},
+                   mid_float64={k: str(v) for k, v in res64['mid'][We].items()},
+                   hidden={str(k): [str(a), str(b)] for k, (a, b) in hm.items()}),
               open(P('errbar.json'), 'w'), indent=1)
 
 

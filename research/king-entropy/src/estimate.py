@@ -9,7 +9,8 @@ listed.
 
 s: odd widths approach s from below, f_w = s - c rho^w (1 + ...). With
 d_w = f_w - f_{w-2} and r_w = d_{w-2} / d_w, each triple gives the geometric
-extrapolation s_w = f_w + d_w / (r_w - 1).
+extrapolation s_w = f_w + d_w / (r_w - 1). This is a first pass; the final value and its
+error bar come from errbar.py (errbar.json), which is run first.
 
 Z2: Delta_w = log lambda_even - log lambda_odd on even w; local correlation
 length xi_w = 2 / log(Delta_{w-2} / Delta_w) and a least-squares fit
@@ -69,7 +70,15 @@ alt = odd[ws[-1]] + tail / (lastr * 2 / 3 - 1)
 err = max(spread, abs(alt - best))
 print(f'\n  last two extrapolations differ by {mp.nstr(spread, 3)}; tail with ratios dropping to'
       f' 2/3 of r={mp.nstr(lastr, 4)} would add {mp.nstr(abs(alt - best), 3)} more')
-print(f'  ESTIMATE s = {mp.nstr(best, 15)}  +- {mp.nstr(err, 2)}   (geometric extrapolation of w={ws[-1] - 4},{ws[-1] - 2},{ws[-1]})')
+print(f'  first pass: s = {mp.nstr(best, 15)}  +- {mp.nstr(err, 2)}   (geometric extrapolation of w={ws[-1] - 4},{ws[-1] - 2},{ws[-1]})')
+try:
+    rec = json.load(open(P('errbar.json')))['recommended']
+    final, ferr = mpf(rec['s']), mpf(rec['err'])
+    print(f'  ESTIMATE s = {mp.nstr(final, 16)}  +- {mp.nstr(ferr, 1)}   (error budget of errbar.py, which supersedes'
+          f' the first pass; first pass minus final = {mp.nstr(best - final, 2)})')
+except (FileNotFoundError, KeyError):
+    final, ferr = best, err
+    print('  ESTIMATE: errbar.json not found, the first pass stands')
 
 print('\neven widths: sector values bracket s; midpoint m_w and its geometric extrapolation')
 ev = sorted(w for w, p in lam if w % 2 == 0 and p == 0 and w >= 4)
@@ -106,9 +115,15 @@ print(f'  fit log Delta = a - w/xi + b log w, w={fitw[0]}..{fitw[-1]}: xi = {1 /
 inv = [(w - 1, 1 / r['xi_local']) for r in rows[1:] if r['w'] >= 12 for w in [r['w']]]
 k = np.polyfit([1 / x for x, _ in inv[-4:]], [y for _, y in inv[-4:]], 1)
 print(f'  local 1/xi_w linear in 1/w (last 4 points): xi_inf = {1 / k[1]:.4f} (prefactor exponent b = {-k[0]:.3f})')
+# prefactor fixed at w^(-1/2), the form predicted for the even-odd effect by Yao and Kivelson
+c3 = np.linalg.lstsq(A1, y + 0.5 * np.log(fitw), rcond=None)[0]
+rms3 = float(np.sqrt(np.mean((A1 @ c3 - 0.5 * np.log(fitw) - y) ** 2)))
+print(f'  fit log Delta = a - w/xi - (1/2) log w, w={fitw[0]}..{fitw[-1]}: xi = {1 / c3[1]:.4f}, rms = {rms3:.1e}')
 json.dump(dict(xi_inf_local=1 / k[1], table=rows, fit_exp=dict(xi=1 / c1[1], a=c1[0], rms=rms1, widths=fitw),
                fit_exp_pow=dict(xi=1 / c2[1], a=c2[0], b=c2[2], rms=rms2, widths=fitw),
-               s_estimate=str(best), s_error=str(err)), open(P('z2.json'), 'w'), indent=1)
+               fit_exp_half=dict(xi=1 / c3[1], a=c3[0], rms=rms3, widths=fitw),
+               s_estimate=str(final), s_error=str(ferr), s_first_pass=str(best), s_first_pass_error=str(err)),
+          open(P('z2.json'), 'w'), indent=1)
 
 print('\ncost per width (cylw.py runs; up to three ran concurrently on 4 cores)')
 print('   w  p  iters  s/iter   wall s  peak RSS MiB  commit')

@@ -19,6 +19,8 @@ reflection positivity (RP). Sections:
     the CW bound holds for every even p: a weaker sufficient hypothesis than RP.
  D. The limit statement itself: f(k) = a_k - s k from the free strips k <= 24
     (bounds.json) and every CW candidate against the cylinder estimate of s.
+ E. Conditional bounds from certified lambdas: a lower bound given (L_inf) (convexity of
+    q -> a_(2q)) and an upper bound given (O) (a_(k+1) - a_k >= s for odd k).
 """
 import itertools, json
 from paths import P
@@ -205,19 +207,47 @@ def growth_upper(w, maxit=80, tol=4e-15):
     return (log(mpf(float((y[sup] / v[sup]).max()))) + log(1 + mpf(1e-12))) / 2
 
 
-print('\n== E. conditional bounds: rigorous IF the stated hypothesis holds (certified lambdas, rounded down)')
-print('   s >= (log lambda_{2q+p}^low - log lambda_{2q}^up) / p; p even needs (L), p odd needs (L) and (O)')
+print('\n== E. conditional bounds: rigorous IF the stated hypothesis holds (certified lambdas, rounded outward)')
+print('   (L_inf) q -> a_(2q) convex:      s >= (log lambda_(2q+p)^low - log lambda_(2q)^up) / p for even p')
+print('   (O) a_(k+1) - a_k >= s, odd k:   s <= log lambda_(k+1)^up - log lambda_k^low')
+print('   (odd p needs both: a_(2q+p) - a_(2q) <= (p+1) s - s)')
+
+
+def fixed(n, d):
+    sign, n = ('-' if n < 0 else ''), abs(n)
+    return f'{sign}{n // 10**d}.{n % 10**d:0{d}d}'
+
+
+def dn(x, d=14):
+    return fixed(int(mp.floor(x * 10**d)), d)
+
+
+def upr(x, d=14):
+    return fixed(int(mp.ceil(x * 10**d)), d)
+
+
 # certified log lambda_w lower bounds; bounds.json stores them as floats, so give back 1e-14
 low = {int(k): mpf(x) * int(k) - mpf('1e-14') for k, x in b['lower'].items()}
+upw = {}
+for w in (20, 22, 24):
+    upw[w] = growth_upper(w)
+    print(f'  certified: log lambda_{w} <= {upr(upw[w])};  log lambda_{w - 1} >= {dn(low[w - 1])};'
+          f'  log lambda_{w} >= {dn(low[w])}')
 best_c = None
 for q2 in (20, 22):
-    up_ = growth_upper(q2)
     for p in (1, 2, 4):
         if q2 + p in low:
-            c = (low[q2 + p] - up_) / p
-            hyp = '(L)' if p % 2 == 0 else '(L)+(O)'
-            print(f'  2q={q2} p={p}: s >= {mp.nstr(mp.floor(c * 10**12) / 10**12, 14)}  given {hyp:8s}'
-                  f' (log lambda_{q2} <= {mp.nstr(up_, 16)})')
+            c = (low[q2 + p] - upw[q2]) / p
+            hyp = '(L_inf)' if p % 2 == 0 else '(L_inf)+(O)'
+            print(f'  2q={q2} p={p}: s >= {dn(c, 12)}  given {hyp}')
             if p % 2 == 0:
                 best_c = c if best_c is None else max(best_c, c)
-print(f'  best bound given (L) alone: s >= {mp.nstr(mp.floor(best_c * 10**12) / 10**12, 14)}')
+best_u = None
+for k in (19, 21, 23):
+    u = upw[k + 1] - low[k]
+    print(f'  k={k}: s <= {upr(u, 12)}  given (O)  (log lambda_{k + 1}^up - log lambda_{k}^low = {upr(u, 16)})')
+    best_u = u if best_u is None else min(best_u, u)
+print(f'  best bound given (L_inf) alone: s >= {dn(best_c, 12)}')
+print(f'  best bound given (O) alone:     s <= {upr(best_u, 12)}')
+print(f'  CONDITIONAL INTERVAL given (L_inf) and (O): {dn(best_c, 12)} <= s <= {upr(best_u, 12)}'
+      f'  (width {mp.nstr(best_u - best_c, 3)})')
