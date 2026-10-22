@@ -84,8 +84,8 @@ w = 24: lower 0.545343749727 (unrounded 0.5453437497275336), upper sqrt(phi) 0.5
 run weights **0.582767477484** (unrounded 0.5827674774831951). Lemmas 4.4-4.7 checked by brute force:
 M(A, B) <= min(F(A), F(B)), M(S, S) = F(S) for 250952 pairs (columns m <= 10); the cut identity and
 the strip inequality with both weights on 47 boards, 0 violations; with z = 0 the inequality fails on
-23 of the 29 boards with k >= 2 (the others have one row, where it is an equality), so the check is
-sensitive. Proposition 8.2 inputs, rigorous: log lambda_24 in
+23 of the 29 boards with k >= 2 (the other six are equalities: one row, or K k w odd with Z = 0),
+so the check is sensitive. Proposition 8.2 inputs, rigorous: log lambda_24 in
 [13.08824999346080, 13.08824999346081], log lambda_23 >= 12.52273808241356, log lambda_22 <=
 11.95722617138962, all consistent with (and tighter than) the paper's values.
 
