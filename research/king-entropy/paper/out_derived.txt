@@ -17,6 +17,13 @@ exp(s - ds), exp(s + ds) = 1.7603486940419768, 1.7603486940419789
   2q=22: 9.0e-11   sources lean_king_free_w20_p-_longdouble.json @f410768 | lean_king_free_w24_p-_longdouble.json @b6266b5
   2q=24: 1.01e-11   sources lean_king_free_w22_p-_longdouble.json @dc2c22a | lean_king_free_w26_p-_float64.json @2f3664b
 
+(L-infinity) for all q, with a_0 = 0: even second differences at 2q = 2..24 all positive: True
+odd second differences a(k+2) - 2 a(k) + a(k-2), k = 3..23: all negative: True ; k=3: -0.0629, k=5: -0.00761, k=7: -0.000954, k=9: -0.000113, k=11: -1.31e-5, k=13: -1.51e-6, k=15: -1.74e-7, k=17: -2.0e-8, k=19: -2.29e-9, k=21: -2.63e-10, k=23: -3.01e-11
+increments a(k+1) - a(k) - s alternate in sign for k = 0..25: True ; (O) at k = 23: a(24) - a(23) - s = 5.911e-12
+step-1 ratios (a(k+2) - a(k+1) - s) / (a(k+1) - a(k) - s), k = 16..24: -0.3327, -0.3366, -0.3425, -0.34, -0.3363, -0.3378, -0.3402, -0.3392, -0.3374
+free-strip parity splitting D(k) = log lambda^(0)_k - log lambda^(1)_k (sec_king_free_1_18.json): k=4: 0.002685, k=6: -0.0001654, k=8: 1.261e-5, k=10: -9.008e-7, k=12: 6.528e-8, k=14: -4.713e-9, k=16: 3.406e-10, k=18: -2.46e-11
+  ratios D(k) / D(k+2): -16.229, -13.121, -13.998, -13.799, -13.851, -13.838, -13.842
+
 f(k) = log lambda_k - s k, free strips (surface.json)
   k=18: -0.4840358705545159
   k=19: -0.4840358718678495
@@ -35,12 +42,18 @@ certified w=24: lower 0.5453437497275, upper 0.5862166054033
   w=20: w*(s - lower_w) = 0.484, w*(upper_w - s) = 0.4969
   w=24: w*(s - lower_w) = 0.484, w*(upper_w - s) = 0.4969
 Kahn-Lovasz log(8!)/16 = 0.6627876814216
+run-weighted upper bounds (runweight_3state.json): w=12: w*(upper_w - s) = 0.4141, w=16: w*(upper_w - s) = 0.4141, w=20: w*(upper_w - s) = 0.4141, w=22: w*(upper_w - s) = 0.4141, w=23: w*(upper_w - s) = 0.4141, w=24: w*(upper_w - s) = 0.4141
 12 w u at w=24: 3.197e-14
 -4 sigma = -0.9680717431
 tri free m=5: Z(6), Z(8), Z(10) = 6475, 210560, 6842465; Z(8)^2 - Z(6) Z(10) = 30552725
 king 3x3: V = 9, E = 20, 3V - 6 = 21
 king 4x4: V = 16, E = 42, 3V - 6 = 42
 king 5x5: V = 25, E = 72, 3V - 6 = 69
+
+lattice context: degree d, s, Bethe value, ratio s / Bethe, Kahn-Lovasz bound log(d!)/(2d)
+  square     d=4: s = 0.291560904030819, Bethe 0.2616240719, s/Bethe 1.1144, KL 0.3972567288
+  triangular d=6: s = 0.428594537464959, Bethe 0.4400758426, s/Bethe 0.97391, KL 0.5482709343
+  king       d=8: s = 0.565511911041325, Bethe 0.5723608967, s/Bethe 0.98803, KL 0.6627876814
 
 king cylinders, log(lambda_w)/w (eig_*.json, float64; sector 1 for odd w)
   w=20: p0 0.5655119118867462  p1 0.5655119102001318

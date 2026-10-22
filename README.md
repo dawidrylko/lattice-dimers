@@ -179,7 +179,19 @@ If you use the code or the numbers, cite the repository; [`CITATION.cff`](CITATI
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+The code is MIT, see [LICENSE](LICENSE). Text and data are licensed under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), see
+[LICENSES/CC-BY-4.0.txt](LICENSES/CC-BY-4.0.txt). CC BY 4.0 covers exactly these paths:
+
+- text: `research/king-entropy/paper/` except `paper/derived.py`, `research/king-entropy/notes/`
+  and `notes/`;
+- data: `research/king-entropy/data/`, `research/king-entropy/out/`, `research/king-entropy/logs/`,
+  the outputs `research/king-entropy/L/out_*.txt` and `research/king-entropy/L/time_*.txt`, the
+  JSON files in `data/` and the measurements in `benchmarks/results/`.
+
+Everything else is MIT, in particular all programs and scripts: `src/`, `pari/`, `site/`, `tests/`,
+`benchmarks/benchmarkRunner.js`, `data/index.js`, `research/king-entropy/src/`,
+`research/king-entropy/L/*.py` and `research/king-entropy/paper/derived.py`.
 
 ## Author
 

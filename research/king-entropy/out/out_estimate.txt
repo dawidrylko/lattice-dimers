@@ -37,7 +37,8 @@ odd widths: f_w, d_w = f_w - f_(w-2), r_w = d_(w-2)/d_w, s_w = f_w + d_w/(r_w - 
   w=25  f=0.5655119110413186  d= 5.994e-14  r=  9.992  s_w=0.5655119110413253
 
   last two extrapolations differ by 1.05e-15; tail with ratios dropping to 2/3 of r=9.992 would add 3.92e-15 more
-  ESTIMATE s = 0.565511911041325  +- 3.9e-15   (geometric extrapolation of w=21,23,25)
+  first pass: s = 0.565511911041325  +- 3.9e-15   (geometric extrapolation of w=21,23,25)
+  ESTIMATE s = 0.5655119110413253  +- 6.0e-16   (error budget of errbar.py, which supersedes the first pass; first pass minus final = -5.4e-17)
 
 even widths: sector values bracket s; midpoint m_w and its geometric extrapolation
   w= 4  [0.562315611489543, 0.5701336987184235]  m=0.5662246551039832  m-s= 0.000713
@@ -68,6 +69,7 @@ Z2 splitting on even cylinders: Delta_w = log lambda_p0 - log lambda_p1
   fit log Delta = a - w/xi,           w=10..24: xi = 1.1931, a = -0.4348, rms = 1.5e-02
   fit log Delta = a - w/xi + b log w, w=10..24: xi = 1.2323, b = -0.433, rms = 9.3e-04
   local 1/xi_w linear in 1/w (last 4 points): xi_inf = 1.2351 (prefactor exponent b = -0.467)
+  fit log Delta = a - w/xi - (1/2) log w, w=10..24: xi = 1.2387, rms = 2.6e-03
 
 cost per width (cylw.py runs; up to three ran concurrently on 4 cores)
    w  p  iters  s/iter   wall s  peak RSS MiB  commit

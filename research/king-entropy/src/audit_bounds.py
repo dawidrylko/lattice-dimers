@@ -19,6 +19,13 @@ LOWER (PROOF-lower.md)
  L1 Z(K, k w) >= Z(K, w)^k (exact).
  L2 the float certificate of bounds.certify(upper=False) against the exact min ratio.
  L3 certified bounds against the true growth rates (dense eigenvalues, w <= 9).
+
+RUN-WEIGHTED UPPER BOUND (runweight.py)
+ U6 M(A, B) <= min(F(A), F(B)) with F(S) the product of F_(l+1) over the runs of S, M(S, S) = F(S),
+    and F_(l+1) <= 2 phi^(l-2) for l >= 2.
+ U7 Z(K, k w) <= W_h(K, w)^k for both run schemes, exact in interval arithmetic.
+ U8 the run-weighted transfer equals the brute-force W_h(K, w) at rational per-cell weights.
+ U9 the float certificate of runweight.certify against the exact ratio for the same float vector.
 """
 import functools, itertools, math, sys
 from paths import P
@@ -302,6 +309,133 @@ for w in range(2, 10):
         ok = b >= true if upper else b <= true
         check(f'L3 w={w} {"upper" if upper else "lower"}', ok, f'certified {mp.nstr(b, 15)} vs true {mp.nstr(true, 15)}'
               f' (gap {mp.nstr(abs(b - true), 2)})')
+
+# ------------------------------------------------------------------ U6-U9: run-weighted upper bound
+import runweight
+
+
+def runs(S):
+    """Lengths of the maximal runs of consecutive integers in S."""
+    out, prev = [], None
+    for x in sorted(S):
+        if prev is not None and x == prev + 1:
+            out[-1] += 1
+        else:
+            out.append(1)
+        prev = x
+    return out
+
+
+def F_run(S):
+    return math.prod(fib(l + 1) for l in runs(S))
+
+
+print('\n== U6. run form of the crossing lemma: M(A, B) <= min(F(A), F(B)), F(S) = prod over runs of F_(l+1)')
+okU6, nU6, eq = True, 0, True
+for m in range(1, 9):
+    cols = [frozenset(c) for n in range(m + 1) for c in itertools.combinations(range(m), n)]
+    for A in cols:
+        eq &= M_cross(A, A) == F_run(A)
+        for B in cols:
+            if len(A) == len(B):
+                nU6 += 1
+                okU6 &= M_cross(A, B) <= min(F_run(A), F_run(B))
+check('U6 M(A, B) <= min(F(A), F(B)), M(S, S) = F(S)', okU6 and eq, f'({nU6} pairs, columns m <= 8)')
+okw = all(fib(l + 1) <= 2 * PHI_IV ** (l - 2) for l in range(2, 60)) and fib(2) <= 1
+check('U6 F_(l+1) <= 2 phi^(l-2) for l = 2..59 (interval arithmetic), F_2 = 1', bool(okw))
+
+
+def run_weight(S, wt, nxt):
+    """Product of the per-cell weights over the runs of S (wt indexed by the run state)."""
+    out = 1
+    for l in runs(S):
+        t = 0
+        for _ in range(l):
+            out *= wt[t]
+            t = nxt[t]
+    return out
+
+
+SCH = {'3state': ([iv.mpf(1), iv.sqrt(2), iv.sqrt(PHI_IV)], [1, 2, 2]),
+       '1bit': ([iv.sqrt(2 / PHI_IV), iv.sqrt(PHI_IV)], [1, 1])}
+print('\n== U7. Z(K, kw) <= W_h(K, w)^k with the run weights, exact in interval arithmetic')
+for name, (wt, nxt) in SCH.items():
+    ok, n, worst = True, 0, None
+    for K, w, k in cases:
+        sub, N, Mx = Ncache[K, w]
+        Zfull = count_pm(board(K, k * w))
+        h = [run_weight(S, wt, nxt) for S in sub]
+        Wh = sum(N[B][A] * h[A] * h[B] for A in range(len(sub)) for B in range(len(sub)))
+        up = Wh ** k
+        n += 1
+        ok &= bool(up.a >= Zfull)
+        if Zfull:
+            r = float(mpf(up.a) / Zfull)
+            worst = r if worst is None else min(worst, r)
+    check(f'U7 {name}', ok, f'({n} boards); smallest W_h^k / Z = {worst:.4f}')
+
+
+print('\n== U8. run-weighted transfer (runweight.step_run) = brute-force W_h(K, w) at rational weights')
+okU8, nU8 = True, 0
+for wt, nxt in (([Fraction(2), Fraction(3), Fraction(5)], [1, 2, 2]), ([Fraction(7), Fraction(11)], [1, 1]),
+                ([Fraction(3, 2), Fraction(5, 4), Fraction(9, 7)], [1, 2, 2])):
+    n = len(wt)
+    for K, w in [(K, w) for K in range(1, 6) for w in (2, 3, 4)] + [(6, 2), (6, 3), (3, 5), (2, 6)]:
+        sub = subsets(K)
+        bf = 0
+        for B in sub:
+            for A in sub:
+                bf += (count_pm([x for x in board(K, w) if not (x[1] == 0 and x[0] in B)
+                                 and not (x[1] == w - 1 and x[0] in A)]) * run_weight(A, wt, nxt) * run_weight(B, wt, nxt))
+        V = np.zeros((n, n, 1 << nbits(w, 'free')), dtype=object)
+        V[...] = 0
+        V[0, 0, 0] = 1
+        buf = np.empty_like(V)
+        for _ in range(K):
+            for c in range(w):
+                runweight.step_run(V, w, c, wt, nxt, buf)
+                V, buf = buf, V
+        nU8 += 1
+        okU8 &= sum(V[l, r, 0] for l in range(n) for r in range(n)) == bf
+check('U8 transfer = brute force', okU8, f'({nU8} evaluations, three weight sets, K <= 6)')
+
+
+print('\n== U9. float Collatz-Wielandt ratio of runweight.certify vs the exact ratio for the same float vector')
+for name in ('3state', '1bit'):
+    wt, nxt = runweight.weights(name)
+    for w in range(2, 9):
+        n = len(wt)
+        v = np.zeros((n, n, 1 << nbits(w, 'free')))
+        v[0, 0, 0] = 1.0
+        buf, keep = np.empty_like(v), np.empty_like(v)
+        nsup = 0
+        for it in range(80):                              # the same loop as runweight.certify
+            keep[...] = v
+            runweight.apply_A(v, w, wt, nxt, buf)
+            ssum = v.sum()
+            rmin, rmax, ns, npos, _, _ = runweight.ratio_stats(v, keep)
+            stable = npos == ns == nsup
+            nsup = ns
+            gap = (rmax - rmin) / rmax if stable else np.inf
+            v /= ssum
+            if gap < 4e-15:
+                break
+        keep[...] = v
+        runweight.apply_A(v, w, wt, nxt, buf)
+        rmin, rmax, _, _, closed, _ = runweight.ratio_stats(v, keep)
+        vf = np.empty(keep.shape, dtype=object)
+        vf.reshape(-1)[:] = [Fraction(float(x)) for x in keep.reshape(-1)]
+        wf = [Fraction(x) for x in wt]
+        ye, bufe = vf.copy(), np.empty_like(vf)
+        runweight.apply_A(ye, w, wf, nxt, bufe)
+        flat_v, flat_y = vf.reshape(-1), ye.reshape(-1)
+        sup = [i for i in range(flat_v.size) if flat_v[i] > 0]
+        ex = max(flat_y[i] / flat_v[i] for i in sup)
+        closed_e = all(flat_y[i] == 0 for i in range(flat_v.size) if flat_v[i] == 0)
+        rel = abs(Fraction(rmax) / ex - 1)
+        cert = Fraction(rmax) * (1 + Fraction(1, 10**12))
+        check(f'U9 {name} w={w}', closed and closed_e and cert >= ex,
+              f'max ratio float {rmax:.17g}, |float/exact - 1| = {float(rel):.2e}; support closed: {closed_e}')
 
 print(f'\n{len(FAIL)} failures' + (f': {FAIL}' if FAIL else ''))
 sys.exit(1 if FAIL else 0)

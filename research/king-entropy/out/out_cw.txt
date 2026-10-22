@@ -50,7 +50,7 @@
   (I3) Z(2j+1,m)^2 <= Z(2j-1,m) Z(2j+3,m), even m: 217 violations in 220 cases (exact); first: [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (2, 10)]
 
 == D. the limit statement: f(k) = a_k - s k, a_k = log lambda_k (free strip, k rows)
-  s = 0.5655119110413253 +- 3.9e-15 (estimate.py); f(k) error from s: <= k * 3.9e-15
+  s = 0.5655119110413253 +- 6.0e-16 (estimate.py); f(k) error from s: <= k * 6.0e-16
   k= 8  f = -0.4839790871419
   k= 9  f = -0.4840526657901
   k=10  f = -0.4840305771579
@@ -70,17 +70,27 @@
   k=24  f = -0.484035871531
   even k: f decreasing True; odd k: f increasing True; every even f above every odd f: True
   a_(2q) convex (increments a_(2q+2) - a_(2q) increasing, k=8..24): True; last increment 1.131023822071185 vs 2s = 1.131023822082651
-  132 CW candidates (2q <= 24, all p): max = 0.5655119110355926 at 2q=22, p=2; s - max = 5.73e-12  (> s error 3.9e-15: True)
+  132 CW candidates (2q <= 24, all p): max = 0.5655119110355926 at 2q=22, p=2; s - max = 5.73e-12  (> s error 6.0e-16: True)
   (O) a_(k+1) - a_k >= s for odd k (k=3..23): min of a_(k+1) - a_k - s = 5.91e-12 at k=23  -> True
   CW(p even) follows from (L) = log-convexity of q -> Z(2q, m) for every m: a_(2q) is then convex in q,
   its increments increase to 2s. CW(p odd) follows from (L) and (O):
   a_(2q+p) - a_(2q) = (a_(2q+p+1) - a_(2q)) - (a_(2q+p+1) - a_(2q+p)) <= (p+1)s - s.
 
-== E. conditional bounds: rigorous IF the stated hypothesis holds (certified lambdas, rounded down)
-   s >= (log lambda_{2q+p}^low - log lambda_{2q}^up) / p; p even needs (L), p odd needs (L) and (O)
-  2q=20 p=1: s >= 0.565511910887  given (L)+(O)  (log lambda_20 <= 10.82620234940897)
-  2q=20 p=2: s >= 0.56551191099  given (L)      (log lambda_20 <= 10.82620234940897)
-  2q=20 p=4: s >= 0.565511911012  given (L)      (log lambda_20 <= 10.82620234940897)
-  2q=22 p=1: s >= 0.565511911022  given (L)+(O)  (log lambda_22 <= 11.95722617139012)
-  2q=22 p=2: s >= 0.565511911035  given (L)      (log lambda_22 <= 11.95722617139012)
-  best bound given (L) alone: s >= 0.565511911035
+== E. conditional bounds: rigorous IF the stated hypothesis holds (certified lambdas, rounded outward)
+   (L_inf) q -> a_(2q) convex:      s >= (log lambda_(2q+p)^low - log lambda_(2q)^up) / p for even p
+   (O) a_(k+1) - a_k >= s, odd k:   s <= log lambda_(k+1)^up - log lambda_k^low
+   (odd p needs both: a_(2q+p) - a_(2q) <= (p+1) s - s)
+  certified: log lambda_20 <= 10.82620234940898;  log lambda_19 >= 10.26069043791682;  log lambda_20 >= 10.82620234940796
+  certified: log lambda_22 <= 11.95722617139012;  log lambda_21 >= 11.39171426029635;  log lambda_22 >= 11.95722617138910
+  certified: log lambda_24 <= 13.08824999346131;  log lambda_23 >= 12.52273808241305;  log lambda_24 >= 13.08824999346029
+  2q=20 p=1: s >= 0.565511910887  given (L_inf)+(O)
+  2q=20 p=2: s >= 0.565511910990  given (L_inf)
+  2q=20 p=4: s >= 0.565511911012  given (L_inf)
+  2q=22 p=1: s >= 0.565511911022  given (L_inf)+(O)
+  2q=22 p=2: s >= 0.565511911035  given (L_inf)
+  k=19: s <= 0.565511911493  given (O)  (log lambda_20^up - log lambda_19^low = 0.5655119114921528)
+  k=21: s <= 0.565511911094  given (O)  (log lambda_22^up - log lambda_21^low = 0.5655119110937641)
+  k=23: s <= 0.565511911049  given (O)  (log lambda_24^up - log lambda_23^low = 0.5655119110482479)
+  best bound given (L_inf) alone: s >= 0.565511911035
+  best bound given (O) alone:     s <= 0.565511911049
+  CONDITIONAL INTERVAL given (L_inf) and (O): 0.565511911035 <= s <= 0.565511911049  (width 1.32e-11)

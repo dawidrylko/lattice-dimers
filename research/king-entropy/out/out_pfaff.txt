@@ -1,0 +1,45 @@
+B(3,4): 29 edges, 43 perfect matchings
+== full system (all perfect matchings; Z is printed only when the system is consistent)
+B(2,2): Z = 3 rank 2  Pfaffian: True  (0.0s)
+B(2,3): Z = 5 rank 4  Pfaffian: True  (0.0s)
+B(2,4): Z = 11 rank 6  Pfaffian: True  (0.0s)
+B(2,5): Z = 21 rank 8  Pfaffian: True  (0.0s)
+B(2,6): Z = 43 rank 10  Pfaffian: True  (0.0s)
+B(2,7): Z = 85 rank 12  Pfaffian: True  (0.0s)
+B(2,8): Z = 171 rank 14  Pfaffian: True  (0.0s)
+B(2,9): Z = 341 rank 16  Pfaffian: True  (0.0s)
+B(2,10): Z = 683 rank 18  Pfaffian: True  (0.0s)
+B(2,11): Z = 1365 rank 20  Pfaffian: True  (0.0s)
+B(2,12): Z = 2731 rank 22  Pfaffian: True  (0.1s)
+B(3,4): Z = >=23 rank 13  Pfaffian: False  (0.0s)
+B(4,3): Z = >=23 rank 13  Pfaffian: False  (0.0s)
+B(3,6): Z = >=84 rank 18  Pfaffian: False  (0.0s)
+B(4,4): Z = >=23 rank 13  Pfaffian: False  (0.0s)
+B(4,5): Z = >=24 rank 12  Pfaffian: False  (0.0s)
+B(4,6): Z = >=84 rank 18  Pfaffian: False  (0.0s)
+== controls: planar square and triangular boards must be Pfaffian
+sq B(4,4): Z = 36 rank 9  Pfaffian: True
+sq B(4,6): Z = 281 rank 15  Pfaffian: True
+sq B(5,6): Z = 1183 rank 20  Pfaffian: True
+tri B(3,4): Z = 15 rank 9  Pfaffian: True
+tri B(4,4): Z = 56 rank 15  Pfaffian: True
+tri B(4,6): Z = 749 rank 27  Pfaffian: True
+tri B(5,6): Z = 6475 rank 37  Pfaffian: True
+== conformal corner subsystem (43 matchings each)
+B(3,4) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(5,6) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(6,5) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(6,7) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(7,8) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(8,9) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(10,11) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(11,12) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(3,10) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(10,3) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+B(4,9) via corner: matchings used 23, rank 13, consistent: False  (0.0s)
+== edge count and Euler genus bound
+B(3,4): V=12 E=29 = 4KL-3K-3L+2; g >= -0.167 -> ceil 0
+B(4,4): V=16 E=42 = 4KL-3K-3L+2; g >= 0.000 -> ceil 0
+B(8,8): V=64 E=210 = 4KL-3K-3L+2; g >= 4.000 -> ceil 4
+B(24,24): V=576 E=2162 = 4KL-3K-3L+2; g >= 73.333 -> ceil 74
+B(24,100): V=2400 E=9230 = 4KL-3K-3L+2; g >= 339.333 -> ceil 340

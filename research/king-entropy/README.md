@@ -11,6 +11,10 @@ history under the tag `v1.0-king-entropy`. Full proofs of the rigorous bounds ar
 question in [`notes/CW-NOTE.md`](notes/CW-NOTE.md); hypothesis (L) and the experiments on it in
 [`notes/L-NOTE.md`](notes/L-NOTE.md) and the directory [`L/`](L/).
 
+License: the scripts are MIT ([`LICENSE`](../../LICENSE)); the paper, the notes, the data and the outputs in
+this directory are CC BY 4.0 ([`LICENSES/CC-BY-4.0.txt`](../../LICENSES/CC-BY-4.0.txt)); the exact split is in
+the License section of the [root README](../../README.md#license).
+
 All commands below are run from this directory (`research/king-entropy/`)
 with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to it too.
 
@@ -44,21 +48,25 @@ python3 -m pip install -r src/requirements.txt
 | `src/crosscheck.py` | exact-integer ratios (w = 9..13) and ARPACK on the full w = 20 transfer vs the power iteration |
 | `src/bounds.py` | certified Fekete lower bounds, open-strip upper bounds, Kahn-Lovasz, Calkin-Wilf hypothesis checks |
 | `src/cw.py` | Calkin-Wilf hypothesis: RP obstruction, spectral measure, exact log-convexity tests, limit form, conditional bounds (see `notes/CW-NOTE.md`) |
-| `src/estimate.py` | final estimate of s from all cylinders, Z2 splitting table and correlation length; writes `data/z2.json` |
+| `src/estimate.py` | first-pass estimate of s from all cylinders, the final value read from `data/errbar.json`, Z2 splitting table and decay length; writes `data/z2.json` |
 | `src/timed.py` | runs a command and appends wall time and peak RSS to stderr |
 | `src/paths.py` | the directory of each file by its name, so the scripts read and write the right place from any working directory |
 | `src/test_paths.py` | smoke test: `src/tm2.py`, `src/cylw.py`, `src/lean.py`, `src/zexact.py` on tiny inputs from another directory write where `src/paths.py` says and record the commit |
 | `src/zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `data/zex/zex_*.json` |
 | `src/lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/lean/lean_*.json` |
 | `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`notes/PROOF-*.md`) |
-| `src/errbar.py` | alternative extrapolation models, backtests and rounding check for s |
+| `src/errbar.py` | error budget of s on the extended-precision cylinders: Luscher main model, other models, predictive backtests, hidden-mode, gap and rounding terms; writes `data/errbar.json` |
+| `src/runweight.py` | run-weighted open-strip upper bound (schemes `3state`, `1bit`, `phi`); `--disk DIR` keeps the third vector in a memory-mapped file |
+| `src/corner.py` | corner free energy kappa from the exact square counts, asymptotics of A239273, s from exact counts alone |
+| `src/pfaff_rigor.py` | GF(2) certificate that king boards with both sides >= 3 have no Pfaffian orientation, with planar controls |
 | `src/surface.py` | surface free energy sigma from free strips |
 | `src/lcert.py` | certified log-convexity tests of (L) at m = 25, 26 in extended precision with a rigorous error bound |
-| `L/` | why (L) is not structural: J-symmetry and Krein signature (`L/symmetry.py`), partial sign-reversing involution (`L/involution.py`), (L_inf) tests at other weights (`L/linf.py`), with their outputs |
+| `L/` | why (L) is not structural: J-symmetry and Krein signature (`L/symmetry.py`), partial sign-reversing involution (`L/involution.py`), (L_inf) tests at other weights (`L/linf.py`), the two modes and their crossing along equal diagonal weights (`L/modes.py`), with their outputs |
 | `src/ltest.py` | exact (L) tests and Hankel (moment) tests on all `data/zex/zex_*.json` |
 | `src/lparity.py`, `src/lspec.py`, `src/lweight.py` | path-parity form of (L), spectral obstructions, (L) under diagonal weights |
 | `src/repro.py` | re-runs `src/estimate.py`, `src/cw.py`, `src/bounds.py 16` and `src/cylw.py king cyl 20 0` from a clean export of HEAD and compares outputs |
 | `paper/derived.py` | numbers of the paper that are simple functions of committed outputs; writes `paper/out_derived.txt` |
+| `paper/L-note.tex` | companion note on the log-convexity (L), shares `paper/refs.bib` |
 
 ## Reproduce
 
@@ -87,7 +95,10 @@ Checks, bounds, estimate:
 python3 src/timed.py python3 src/validate.py   > out/out_validate.txt   2> logs/time_validate.txt
 python3 src/timed.py python3 src/crosscheck.py > out/out_crosscheck.txt 2> logs/time_crosscheck.txt
 python3 src/timed.py python3 src/bounds.py 24  > out/out_bounds.txt     2> logs/time_bounds.txt
-python3 src/estimate.py > out/out_estimate.txt
+python3 src/timed.py python3 src/runweight.py 3state $(seq 2 23) > out/out_runweight_3state.txt 2> logs/time_runweight_3state.txt
+python3 src/timed.py python3 src/runweight.py 3state 24 --disk /tmp 2> logs/time_runweight_3state_w24.txt | tail -1 >> out/out_runweight_3state.txt
+python3 src/errbar.py > out/out_errbar.txt       # needs data/lean/lean_king_cyl_w*_p*_longdouble.json
+python3 src/estimate.py > out/out_estimate.txt   # needs data/errbar.json
 python3 src/timed.py python3 src/cw.py > out/out_cw.txt 2> logs/time_cw.txt   # needs data/bounds.json and data/z2.json
 ```
 
@@ -98,8 +109,10 @@ Audit, error bar and (L) (each writes `out/out_<name>.txt`; `src/zexact.py`/`src
 
 ```sh
 python3 src/audit_bounds.py > out/out_audit_bounds.txt
-python3 src/errbar.py > out/out_errbar.txt
+python3 src/pfaff_rigor.py > out/out_pfaff.txt
 python3 src/surface.py > out/out_surface.txt
+python3 src/corner.py > out/out_corner.txt       # needs data/errbar.json, data/surface.json and the zex counts to 24 x 24
+python3 L/modes.py > L/out_modes.txt
 python3 src/ltest.py > out/out_ltest.txt
 python3 src/lparity.py > out/out_lparity.txt
 python3 src/lspec.py > out/out_lspec.txt
@@ -113,5 +126,5 @@ Paper (needs a TeX distribution with `latexmk`, e.g. TeX Live with
 
 ```sh
 python3 paper/derived.py > paper/out_derived.txt
-cd paper && latexmk -pdf main.tex
+cd paper && latexmk -pdf main.tex && latexmk -pdf L-note.tex
 ```
