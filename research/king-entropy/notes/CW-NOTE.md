@@ -82,8 +82,9 @@ Conditional, rigorous given the hypothesis (certified `lambda` bounds from
 - given (L) and (O): s >= 0.565511911022 (2q = 22, p = 1; weaker than the p = 2 one)
 
 compared with the unconditional Fekete bound `s >= 0.545343749727` (w = 24) and
-the estimate `s = 0.565511911041325 +- 3.9e-15`. Proving (L) alone would thus
-raise the rigorous lower bound from 2 to 11 correct digits.
+the estimate `s = 0.5655119110413253 +- 6e-16` (`out/out_errbar.txt`; the first pass of
+`src/estimate.py` gave `0.565511911041325 +- 3.9e-15`). Proving (L), or only (L_inf) of the paper,
+would thus raise the rigorous lower bound from 1 to 10 correct decimals.
 
 ## 5. Open
 

@@ -1,5 +1,8 @@
 # Upper bound s ≤ 0.586216605404: full proof and audit
 
+The sharper run-weighted bound s ≤ 0.582767477484 of the paper (Theorem 4.1) reuses §1-§7 and is
+proved in §9.
+
 Claim under audit (`src/bounds.py 24` → `out/out_bounds.txt`):
 
 > **s ≤ log(μ₂₄)/24 ≤ 0.586216605404**, where μ_w is the growth rate of a free strip of
@@ -146,3 +149,39 @@ s ≤ 0.586216605404. ∎
 5. *Provenance.* `out/out_bounds.txt` was written by `src/bounds.py 24` at `102b7e5`; the code is
    unchanged since apart from file paths, and its output for w ≤ 16 was re-run from the current tree (`src/repro.py` →
    `out/out_repro.txt`).
+
+## 9. The run-weighted bound s ≤ 0.582767477484 (Theorem 4.1 of the paper)
+
+Claim (`src/runweight.py 3state 24 --disk <dir>` → last line of `out/out_runweight_3state.txt`):
+**s̄ ≤ 0.582767477484**. Same cut identity (§1), passage to the limit (§7) and float argument (§6);
+only the crossing bound, the transfer and the rounding count change. Paper: Lemma 4.6 and §4.3.
+
+- *Run form of the crossing lemma.* For a set S of rows let F(S) = ∏ over the maximal runs R of S of
+  F_{|R|+1}. Then M(A, B) ≤ min(F(A), F(B)), with M(S, S) = F(S). Proof: induction on n = |A| = |B|
+  with the branching of §2. Let a₁ be the smallest row of A and l the length of its run; every
+  matching contains a₁b₁, or a₁b₂ and a₂b₁ with a₂ = a₁ + 1 (so l ≥ 2). Removing a₁ (resp. a₁, a₂)
+  shortens that run to l − 1 (resp. l − 2) and leaves the other runs, so M(A, B) ≤ F_l R + F_{l−1} R
+  = F(A) (l ≥ 2) or ≤ F(A ∖ {a₁}) = F(A) (l = 1), R the product over the other runs. By symmetry of
+  a ~ b also M ≤ F(B). Checked exactly for all A, B in columns of length m ≤ 8 (`U6`).
+- *Weights.* F₂ = 1 and F_{l+1} ≤ 2φ^{l−2} for l ≥ 2 (F₃ = 2, F₄ = 3 ≤ 2φ, then induction). The
+  per-cell factors 1, √2, √φ, √φ, ... by position in a run give a run of length l the weight
+  h² = 1, 2, 2φ, 2φ², ... ≥ F_{l+1}, so M(A, B) ≤ √(F(A)F(B)) ≤ h(A)h(B), and the proof of §3 gives
+  Z(K, kw) ≤ W_h(K, w)ᵏ with W_h = Σ_{A,B} N(B, A) h(A) h(B) (checked in interval arithmetic on the
+  58 boards, `U7`). Remainder strip: every factor is ≤ √2, so W_r(K) ≤ (5 + 2√2)^{Kr}.
+- *Transfer.* The z = 0 transfer of §4 plus, for each side column, the run position of the previous
+  row's side cell (0: not covered from outside, 1: first of a run, 2: later). A side cell covered
+  from outside gets the factor of its position and moves the state on (0 → 1 → 2 → 2); any other
+  move resets it to 0. W_h(K, w) = Σ_{l,r} (T_h^K e₀)_{(l,r,0)} (checked against brute force at
+  rational factors, 57 evaluations, `U8`).
+- *Certificate.* §5 applied to each of the nine final entries: W_h(2j, w) ≤ c′ Cʲ with
+  c′ = Σ_{l,r} v_{(l,r,0)} / v₀ ≥ 1, a constant independent of j, which disappears in the limit of §7.
+- *Rounding.* Interior cell step: ≤ 5 terms (4 roundings). Left side step: ≤ 4n terms per entry,
+  right side step ≤ 3n (n = 3 run states); the entries reached by an outside cover need ≤ 2 products
+  by a factor and 1 addition, fewer than that. Over the 2w steps of A:
+  2(4(w − 2) + (4n − 1) + (3n − 1)) = 8w + 14n − 20 ≤ 12w roundings for w ≥ 6, the budget of §6. The
+  factors are rounded up (T only grows), the factor 1 is exact. Float ratios recomputed exactly for
+  w = 2...8: |float/exact − 1| ≤ 1.7·10⁻¹⁶ (`U9`).
+
+**Verdict: CONFIRMED** (the steps above; `out/out_audit_bounds.txt` U6-U9, 0 failures). The w = 24 run
+itself (13.3 GiB, 63 min) was not repeated in the independent review of October 2026; the widths
+w ≤ 22 of `out/out_runweight_3state.txt` were.
