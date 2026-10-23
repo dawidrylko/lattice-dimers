@@ -59,11 +59,11 @@ extended-precision inputs: odd w = 5..25, even w = 4..24 (both sectors); widths 
   B/d_25 = +0.010: relative rms 0.0016 (16.0 x best), s - s(B=0) = 1.0e-16
   B/d_25 = +0.030: relative rms 0.00555 (55.6 x best), s - s(B=0) = 3.0e-16
   B/d_25 = +0.100: relative rms 0.0194 (194.0 x best), s - s(B=0) = 1.0e-15
-  B free (C, c1, B fitted on 7 widths, rel rms 9.93e-5): B/d_25 = 0.00195 +- 0.00025 (standard error, 4 degrees of freedom)
-  allowed: B/d_25 in [0.0, 0.0027] (3 standard errors, widened to include B = 0); largest shift 2.7e-17
-  fitted B/d_25 by the lower end of the fit: w >= 11: 0.0009 +- 0.00083; w >= 13: 0.00195 +- 0.00025; w >= 15: 0.00184 +- 0.00033; w >= 17: 0.00144 +- 0.00029
-  out of sample (w = 27, long double, xcheck/out/eig_summary.json; not in the budget): d_27 = 6.06113e-15 against the L1 prediction 6.06023e-15 from W = 25, relative 0.00015
-  a mode with the fitted B = 0.00195 d_25 would move it by 0.001; read as a mode, the deviation gives |B| <= 0.00028 d_25, a shift of s <= 4.2e-18
+  B free, fit on w = 11..25 (8 widths, 5 degrees of freedom, rel rms 0.000399): B/d_25 = 0.0009 +- 0.00083, 3 standard errors [-0.0016, 0.0034]
+  B free, fit on w = 13..25 (7 widths, 4 degrees of freedom, rel rms 9.93e-5): B/d_25 = 0.00195 +- 0.00025, 3 standard errors [0.00119, 0.0027]
+  B free, fit on w = 15..25 (6 widths, 3 degrees of freedom, rel rms 0.000102): B/d_25 = 0.00184 +- 0.00033, 3 standard errors [0.000842, 0.00284]
+  B free, fit on w = 17..25 (5 widths, 2 degrees of freedom, rel rms 6.05e-5): B/d_25 = 0.00144 +- 0.00029, 3 standard errors [0.000584, 0.0023]
+  allowed: B/d_25 in [-0.0016, 0.0034] (union of the 3-standard-error ranges over the fit windows, widened to include B = 0); largest shift 3.4e-17
 
 == in-sector gap per row from the power-iteration histories (eig_*.json): successive changes of the estimate shrink by exp(-2 gap)
   w=20 p=0: 1.0827, w=20 p=1: 1.082701, w=21 p=0: 1.082701, w=21 p=1: 1.0827, w=22 p=0: 1.082701, w=22 p=1: 1.082701, w=23 p=1: 1.082701, w=24 p=0: 1.082701, w=24 p=1: 1.082701, w=25 p=1: 1.082701
@@ -91,6 +91,6 @@ extended-precision inputs: odd w = 5..25, even w = 4..24 (both sectors); widths 
   mid WY- : -7.51e-17
   largest change 1.5e-16; float64 - longdouble in log lambda per site: max 6.2e-17 over 33 cylinders
 
-== BUDGET: model form 9.0e-17 (half-spread 3.0e-17 + predicted 6.0e-17), hidden mode 2.7e-17, gap 5.6e-20, rounding 1.5e-16: total 2.6e-16
+== BUDGET: model form 9.0e-17 (half-spread 3.0e-17 + predicted 6.0e-17), hidden mode 3.4e-17, gap 5.6e-20, rounding 1.5e-16: total 2.7e-16
   main model L1 on the odd widths, W = 25: s = 0.565511911041325318; the budget supports +- 6e-16
-== RECOMMENDATION: s = 0.5655119110413253 +- 6.0e-16  (budget 2.6e-16; the earlier geometric estimate of estimate.py is superseded)
+== RECOMMENDATION: s = 0.5655119110413253 +- 6.0e-16  (budget 2.7e-16; the earlier geometric estimate of estimate.py is superseded)

@@ -1,0 +1,13 @@
+== 1. d_27 from xcheck (long double) against the L1 prediction from W = 25
+  f_25: here 0.56551191104131856735, xcheck 0.56551191104131856729, difference 5.7e-20
+  d_27 measured 6.0611286e-15, predicted 6.060231e-15, relative deviation 0.000148
+
+== 2. response to a hidden mode B x^((w-25)/2), x = 0.198, B in units of d_25
+  relative change of the prediction error of d_27: 0.5267 per unit B
+  B = 0.00195 d_25: 0.00103, 6.93 x the observed deviation
+  B = 0.0034 d_25: 0.00179, 12.1 x the observed deviation
+  the whole observed deviation read as a mode: |B| <= 0.000281 d_25
+
+== 3. error of the main estimate (L1, W = 25) caused by the mode
+  mode tail B x/(1-x) minus the part L1 extrapolates: 4.847e-15 per unit B (B x/(1-x) alone 1.479e-14)
+  RESULT: |B| <= 0.00028 d_25, shift of the main estimate <= 1.4e-18; a mode at the upper end 0.0034 d_25 of errbar.py would shift it by 1.6e-17

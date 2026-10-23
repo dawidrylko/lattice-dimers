@@ -181,6 +181,15 @@ with the own long double values to 6.2e-17 per site, as the paper states). A sec
 code: `compare_eig.py` first read float64 values through their decimal repr, which inflated the
 difference at w = 5 to 7.1e-17; it now uses the exact binary value.
 
+## Note added after this report
+
+The hidden-mode row of claim 6 checks the rule of the paper at the time of this report (forced B admitted
+if its rms is within 3x of the best; term 3.0e-17), which `out/analyze_eig.txt` section 6b reproduces. The
+paper has since replaced that rule: `src/errbar.py` fits B together with L1 on several windows and admits
+3 standard errors over all of them (term 3.4e-17, budget 2.7e-16, quoted bar unchanged), and
+`src/hidden_oos.py` compares the mode with the w = 27 value of this directory. The findings above are
+unchanged.
+
 ## Commands
 
 From `research/king-entropy/xcheck/`, after `python3 -m pip install -r requirements.txt` and
