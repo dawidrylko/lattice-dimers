@@ -124,8 +124,9 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    - root `README.md`: replace the grey `Zenodo DOI pending` badge with
      `[![DOI](https://zenodo.org/badge/DOI/<DOI_SOFT>.svg)](https://doi.org/<DOI_SOFT>)` and the
      sentence "until then the DOIs are pending" under the research results with the three DOIs;
-     the root `notes/00-research.md`, sections "Papers" and "How to cite", and the main page paragraph in
-     `site/template.html` get the same DOIs.
+     the root `notes/00-research.md`, sections "Papers" and "How to cite", gets the same DOIs; in
+     `site/build.js` add `identifier: 'https://doi.org/<DOI_PAPER>'` (and `<DOI_LNOTE>`) to the two
+     `PAPERS` entries; in `CITATION.cff` add `doi: <DOI_SOFT>` and a `preferred-citation` for the paper.
    - `oeis-draft.txt`: in the third `%H` line the two "DOI to be added" become `<DOI_PAPER>` and
      `<DOI_SOFT>`; delete the second `%H` line, which links to the `main.pdf` of the tag, still
      showing the DOI placeholder; update the "Before submitting" header.

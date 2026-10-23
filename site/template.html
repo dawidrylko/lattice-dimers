@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lattice Dimers: the dimer entropy of the king's graph and every tiling of a 2n × 2n board | Dawid Ryłko</title>
-<meta name="description" content="Research on lattice dimers: the entropy per site of the king's graph dimers to 16 digits with rigorous bounds, and domino (OEIS A004003) and domicule (A239273) tilings counted exactly up to 20×20, with a paper, notebooks and a gallery.">
+<meta name="description" content="Research on lattice dimers: the entropy per site of the king's graph dimers with rigorous bounds, and domino (OEIS A004003) and domicule (A239273) tilings counted exactly up to 20×20, with a paper, notebooks and a gallery.">
 <meta name="author" content="Dawid Ryłko">
 <meta name="keywords" content="dimer model, king's graph, perfect matchings, entropy per site, transfer matrix, Collatz-Wielandt bounds, Pfaffian orientation, domicule tiling, domino tiling, OEIS A004003, OEIS A239264, OEIS A239273, PARI/GP, combinatorics, statistical mechanics">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -19,14 +19,14 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:url" content="__SITE_URL__">
 <meta property="og:title" content="Lattice Dimers: the dimer entropy of the king's graph">
-<meta property="og:description" content="The entropy per site of domicule tilings, s = 0.5655119110413253 ± 6·10⁻¹⁶, with rigorous bounds; domino and domicule counts up to 20×20, notebooks and a gallery of every tiling.">
+<meta property="og:description" content="The entropy per site of domicule tilings, s = __RESEARCH_S__ ± __RESEARCH_DS__, with rigorous bounds; domino and domicule counts up to 20×20, notebooks and a gallery of every tiling.">
 <meta property="og:image" content="__SITE_URL__og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Four of the 3,263,262,629,905 domicule tilings of an 8×8 board, drawn as dimers">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Lattice Dimers: the dimer entropy of the king's graph">
-<meta name="twitter:description" content="The entropy per site of domicule tilings, s = 0.5655119110413253 ± 6·10⁻¹⁶, with rigorous bounds; domino and domicule counts up to 20×20, notebooks and a gallery of every tiling.">
+<meta name="twitter:description" content="The entropy per site of domicule tilings, s = __RESEARCH_S__ ± __RESEARCH_DS__, with rigorous bounds; domino and domicule counts up to 20×20, notebooks and a gallery of every tiling.">
 <meta name="twitter:image" content="__SITE_URL__og-image.png">
 <meta name="twitter:image:alt" content="Four of the 3,263,262,629,905 domicule tilings of an 8×8 board, drawn as dimers">
 <script type="application/ld+json">__JSON_LD__</script>
@@ -159,8 +159,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     20&nbsp;×&nbsp;20, including a domicule term that is not in the OEIS yet.
   </p>
   <p class="intro">
-    With diagonal pieces the tilings are the perfect matchings of the king's graph, which has no Pfaffian orientation.
-    Its entropy per site is s&nbsp;=&nbsp;__RESEARCH_S__&nbsp;±&nbsp;__RESEARCH_DS__, an estimate from transfer matrices on
+    With diagonal pieces the tilings are the perfect matchings of the king's graph, whose boards with both sides at least 3 have no Pfaffian orientation.
+    Its entropy per site is s&nbsp;=&nbsp;__RESEARCH_S__&nbsp;±&nbsp;__RESEARCH_DS__, an estimate extrapolated from transfer matrices on
     cylinders of circumference up to 25, and is proved to lie between __RESEARCH_LOWER__ and __RESEARCH_UPPER__; the
     <a href="notes/research.html">research page</a> summarises the <a href="papers/king-entropy.pdf">paper</a> and its
     <a href="papers/king-entropy-log-convexity.pdf">companion note</a>.

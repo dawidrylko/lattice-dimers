@@ -3,14 +3,14 @@
 [![Continuous Integration](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml)
 [![Pages](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml)
 [![Paper](https://img.shields.io/badge/Paper-PDF-ab3415?style=flat)](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf)
-[![Zenodo DOI](https://img.shields.io/badge/Zenodo_DOI-pending-9ca3af?style=flat)](research/king-entropy/paper/ZENODO.md)
+[![Zenodo DOI](https://img.shields.io/badge/Zenodo_DOI-pending-9ca3af?style=flat)](https://dawidrylko.github.io/lattice-dimers/notes/research.html#how-to-cite)
 [![Site](https://img.shields.io/badge/Site_%26_notebooks-dawidrylko.github.io-044cb6?style=flat)](https://dawidrylko.github.io/lattice-dimers/)
 
-Research code, data and papers on dimer coverings of two lattices: the square lattice, whose perfect matchings are domino tilings, and the king's graph, the square lattice with both diagonals, whose perfect matchings are domicule tilings. The repository holds a paper on the entropy per site of the king's graph dimers with its companion note, exact solvers for both kinds of tilings up to $20 \times 20$, and a site where every number is recomputed on each deploy.
+Research code, data and papers on dimer coverings of two lattices: the square lattice, whose perfect matchings are domino tilings, and the king's graph, the square lattice with both diagonals, whose perfect matchings are domicule tilings. The repository holds a paper on the entropy per site of the king's graph dimers with its companion note, exact solvers for both kinds of tilings up to $20 \times 20$, and a site that recounts the exact terms on each deploy and checks the research results against the committed data.
 
 ## Research: the dimer entropy of the king's graph
 
-The king's graph is not planar, and its boards with both sides at least 3 admit no Pfaffian orientation, so Kasteleyn's method does not apply. Row transfer matrices on cylinders of circumference up to 25, split by a conserved parity of the dimers crossing a loop, give the entropy per site to 16 digits; computer-assisted Collatz-Wielandt certificates prove a two-sided bound.
+The king's graph is not planar, and its boards with both sides at least 3 admit no Pfaffian orientation, so Kasteleyn's method does not apply. Row transfer matrices on cylinders of circumference up to 25 are split by a conserved parity of the dimers crossing a loop. Their growth rates, extrapolated in the circumference with predictive backtests and an error budget, give the entropy per site with an error bar of 6·10⁻¹⁶. Computer-assisted Collatz-Wielandt certificates prove a two-sided bound.
 
 | quantity | value | status |
 | --- | --- | --- |
@@ -111,7 +111,7 @@ src/solvers/      command-line solvers, one file per method
 src/renderer/     numbering, coupling from the past, the domicule chain, SVG and ASCII output
 src/dominoTilingRenderer.js         command line for drawing tilings
 pari/             PARI/GP programs
-notes/            the method and the notebooks, built into the site
+notes/            the research page, the method and the notebooks, built into the site
 data/             known values the solvers, the PARI programs and the site are checked against
 tests/            test runners for the solvers, the renderer, the PARI programs and the site
 benchmarks/       the benchmark runner and its results, one directory per month and machine
@@ -194,7 +194,7 @@ The gallery draws a tiling in three styles. Below are the same four 8×8 domicul
 
 ## Citation
 
-If you use the code or the numbers, cite the repository; [`CITATION.cff`](CITATION.cff) holds the metadata, and GitHub offers it as BibTeX under "Cite this repository".
+If you use the code or the counts, cite the repository; [`CITATION.cff`](CITATION.cff) holds the metadata, and GitHub offers it as BibTeX under "Cite this repository". For the entropy of the king's graph, cite the paper as given on the [research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html#how-to-cite); the Zenodo DOIs replace that reference when the release is out.
 
 ## License
 

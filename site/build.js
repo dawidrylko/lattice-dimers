@@ -61,8 +61,11 @@ const DOMICULE_BOARDS = [
 ];
 const DEFAULT_BOARD = '4x4';
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
+const NOTE_PROVENANCE = {
+  research: 'every output on this page was read from the committed research data, checked or computed during that build.',
+};
 const NOTE_SUMMARIES = {
-  research: "The entropy per site of the king's graph dimers: a 16-digit estimate, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
+  research: "The entropy per site of the king's graph dimers: an estimate with error bar 6·10⁻¹⁶, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
   method: 'How the tilings are counted, numbered and sampled, and how every number is checked.',
   a004003: 'Notebook: domino tilings by three methods, the resultant and the running time.',
   a239273: 'Notebook: domicule tilings up to 20 × 20, the modular solver and the Markov chain.',
@@ -267,6 +270,20 @@ function readEnvironment(directory) {
 }
 
 /**
+ * Rounds a decimal string to nearest at a given number of decimals, exactly (no floating point).
+ * @param {string} value The decimal, such as '0.56551191104132531763'.
+ * @param {number} digits The number of decimals to keep.
+ * @returns {string} The rounded decimal.
+ */
+function roundDecimal(value, digits) {
+  const [whole, fraction = ''] = value.split('.');
+  const scaled = BigInt(whole + fraction.padEnd(digits + 1, '0').slice(0, digits + 1));
+  const rounded = String((scaled + BigInt(5)) / BigInt(10)).padStart(digits + 1, '0');
+
+  return `${rounded.slice(0, -digits)}.${rounded.slice(-digits)}`;
+}
+
+/**
  * Reads the headline results of research/king-entropy from its committed data, so the main page
  * quotes the same numbers as the paper and the research note.
  * @returns {{ s: string, ds: string, lower: string, upper: string }} The estimate of s, its error bar and the proved bounds.
@@ -279,7 +296,7 @@ function readResearchResults() {
   const superscript = [...exponent].map(c => '⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)] || '').join('');
 
   return {
-    s: s.slice(0, 18),
+    s: roundDecimal(s, 16),
     ds: `${mantissa}·10${superscript}`,
     lower: String(widest(read('bounds.json').lower)).slice(0, 14),
     upper: widest(read('runweight_3state.json')).upper,
@@ -302,12 +319,12 @@ function buildJsonLd() {
         '@type': 'SoftwareSourceCode',
         name: 'Lattice Dimers',
         description:
-          'Exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, A239273) of 2n×2n boards: a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.',
+          "Code and data on dimers of the square lattice and the king's graph: transfer-matrix scripts, certificates and data for the entropy per site of the king's graph dimers, and exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, A239273): a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.",
         codeRepository: 'https://github.com/dawidrylko/lattice-dimers',
-        programmingLanguage: 'JavaScript',
+        programmingLanguage: ['JavaScript', 'Python'],
         runtimePlatform: 'Node.js',
         license: 'https://opensource.org/licenses/MIT',
-        keywords: 'domino tiling, dimer coverings, domicule tiling, perfect matchings, OEIS A004003, OEIS A239264, OEIS A239273, combinatorics',
+        keywords: "dimer model, king's graph, entropy per site, transfer matrix, domino tiling, domicule tiling, perfect matchings, OEIS A004003, OEIS A239264, OEIS A239273, combinatorics",
         author: AUTHOR,
         isBasedOn: 'https://oeis.org/A004003',
         subjectOf: {
@@ -321,6 +338,7 @@ function buildJsonLd() {
         '@type': 'ScholarlyArticle',
         headline: paper.title,
         url: `${SITE_URL}${paper.file}`,
+        ...(paper.identifier && { identifier: paper.identifier }),
         encodingFormat: 'application/pdf',
         datePublished: '2026-10',
         inLanguage: 'en',
@@ -389,7 +407,7 @@ async function buildNotes(notes, context) {
       .replace('__SITE_HEADER__', () => renderHeader({ root: '../', current: note.slug, notes }))
       .replace('__SITE_FOOTER__', () =>
         renderFooter([
-          `Built from <a href="${REPOSITORY_BLOB_URL}/notes/${note.file}">notes/${note.file}</a> on ${today}; every output on this page was computed during that build.`,
+          `Built from <a href="${REPOSITORY_BLOB_URL}/notes/${note.file}">notes/${note.file}</a> on ${today}; ${NOTE_PROVENANCE[note.slug] || 'every output on this page was computed during that build.'}`,
         ]),
       );
 
@@ -443,6 +461,7 @@ async function __main__() {
     benchmarkRun: `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`,
     domiculeBenchmark: data.domiculeBenchmark,
     countDomicule: board => countDomiculeTilings(board).then(BigInt),
+    roundDecimal,
   });
   const readScripts = files => files.map(file => fs.readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8')).join('\n');
   const scripts = readScripts(BROWSER_SCRIPTS);
@@ -450,10 +469,10 @@ async function __main__() {
   const template = fs.readFileSync(path.join(__dirname, 'template.html'), 'utf-8');
   const research = readResearchResults();
   const html = template
-    .replace('__RESEARCH_S__', research.s)
-    .replace('__RESEARCH_DS__', research.ds)
-    .replace('__RESEARCH_LOWER__', research.lower)
-    .replace('__RESEARCH_UPPER__', research.upper)
+    .replaceAll('__RESEARCH_S__', research.s)
+    .replaceAll('__RESEARCH_DS__', research.ds)
+    .replaceAll('__RESEARCH_LOWER__', research.lower)
+    .replaceAll('__RESEARCH_UPPER__', research.upper)
     .replace('__SCRIPTS__', () => scripts)
     .replace('__DATA__', () => JSON.stringify(data))
     .replace('__WORKER__', () => JSON.stringify(workerSource).replace(/</g, '\\u003c'))
