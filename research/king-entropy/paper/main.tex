@@ -137,7 +137,8 @@ estimate and the certificates from the same code.
 \item No king board with both sides at least $3$ has a Pfaffian orientation
   (Theorem~\ref{thm:pfaff}).
 \item $s = 0.5655119110413253 \pm 6\cdot10^{-16}$ (\S\ref{sec:value}), i.e.\ $2s = 1.13102382208265$
-  per dimer and $e^{s} = 1.76034869404198$. The error bar is not rigorous.
+  per dimer and $e^{s} = 1.76034869404198$, both rounded to $14$ decimals. The error bar is not
+  rigorous.
 \item Rigorously, $0.545343749727 \le s \le 0.582767477484$ (Theorem~\ref{thm:bounds}); the upper bound
   uses the run structure of the matchings across a cut (Lemma~\ref{lem:runs}).
 \item The surface free energy of a free edge is $\sigma = 0.242017935766251 \pm 9\cdot10^{-15}$, and
@@ -294,7 +295,8 @@ signed sum of \cite{wildeboerseidel2020} is a single Pfaffian.
 
 \subsection{Data}
 Table~\ref{tab:odd} lists the odd cylinders. The values $f_w$ increase to $s$; the differences
-$d_w = f_w - f_{w-2}$ decay by a ratio $r_w = d_{w-2}/d_w$ that drifts from $13.4$ to $10.0$.
+$d_w = f_w - f_{w-2}$ decay by a ratio $r_w = d_{w-2}/d_w$ that drifts from $13.4$ at $w = 9$ to
+$10.0$ at $w = 25$ (the table starts at $w = 13$).
 The geometric (Aitken) estimate $s_w = f_w + d_w/(r_w - 1)$ settles at $0.5655119110413253$.
 For even $w$ the sector values bracket $s$:
 \[
@@ -305,7 +307,8 @@ For even $w$ the sector values bracket $s$:
   w = 24: & [0.5655119110160359,\ 0.5655119110666571], & \text{midpoint } 0.5655119110413465,
 \end{array}
 \]
-and the midpoints converge to $s$ at the same rate as the odd widths, from independent data.
+and the midpoints converge to $s$ at the same rate as the odd widths. They come from other
+cylinders, but from the same code; an independent code is compared at the end of this section.
 
 \begin{table}[ht]
 \caption{Odd cylinders: $f_w = \log\lambda_w / w$, $d_w = f_w - f_{w-2}$, $r_w = d_{w-2}/d_w$ and the
@@ -319,7 +322,7 @@ $w$ & $f_w$ & $d_w$ & $r_w$ & $s_w$ \\
 13 & 0.5655119032044848 & $7.943\cdot10^{-8}$  & 11.68 & 0.5655119106414456 \\
 15 & 0.5655119103137916 & $7.109\cdot10^{-9}$  & 11.172 & 0.5655119110126792 \\
 17 & 0.5655119109720268 & $6.582\cdot10^{-10}$ & 10.801 & 0.5655119110391899 \\
-19 & 0.5655119110345892 & $6.256\cdot10^{-11}$ & 10.521 & 0.56551191104116 \\
+19 & 0.5655119110345892 & $6.256\cdot10^{-11}$ & 10.521 & 0.5655119110411600 \\
 21 & 0.5655119110406597 & $6.071\cdot10^{-12}$ & 10.306 & 0.5655119110413121 \\
 23 & 0.5655119110412587 & $5.989\cdot10^{-13}$ & 10.136 & 0.5655119110413242 \\
 25 & 0.5655119110413186 & $5.994\cdot10^{-14}$ &  9.992 & 0.5655119110413253 \\
@@ -346,7 +349,7 @@ constant ratio $r_W$); $d_w = A e^{-w/\xi} w^b$ through three points (PE) or by 
 six (PE6); $r_w = r_\infty + c/w$ (R1) and $r_w = r_\infty + c/w + e/w^2$ (R2); two exponentials
 by Prony's method (2E); and Wynn's $\varepsilon$ algorithm \cite{wynn1956} on $f_w$, its last
 full diagonal entry (WY) and the one before (WY$-$). The same models are applied to the even-width
-sector midpoints, a second sequence from independent data.
+sector midpoints, a second sequence from other cylinders computed by the same code.
 
 \begin{table}[ht]
 \caption{Estimates of $s$ by model on extended-precision inputs: from the odd widths up to
@@ -378,7 +381,7 @@ the midpoints). Every model passes on both sequences except G, which ignores the
 (the PE fit attributes it to a power prefactor, $\xi_{\mathrm{odd}} = 0.929$, $b = -1.80$). Measured
 against $|d_W|$, the backtest changes of L1 stay at $2$--$4\cdot10^{-5}$ on the odd widths for every
 cut $W = 19, 21, 23$, and those of L2 and R2 fall to $1$--$2\cdot10^{-6}$ at $W = 23$. The $18$ kept estimates lie in
-$[0.565511911041325278,\ 0.565511911041325337]$.
+$[0.56551191104132528,\ 0.56551191104132534]$.
 
 \emph{Error budget.} We add four terms:
 \begin{enumerate}
@@ -411,12 +414,31 @@ with the main model L1 on the odd widths, $s = 0.5655119110413253176$, as the ce
 estimate, not a bound: the budget assumes that no correction slower than those in the data
 appears beyond $w = 25$.
 
+\emph{Further digits.} Each further digit of $s$ needs about $\log 10/m = 2.13$ more widths, and the
+state vector, with it the peak memory of \file{src/cylw.py}, doubles with each width ($4.3$\,GiB at
+$w = 24$, $8.4$\,GiB at $w = 25$), so a digit costs about $2^{2.13} = 4.4$ times the memory, and the
+run time grows by about the same factor. Restricting the full row transfer to zero momentum and to states even under reflection would
+divide the state space by about $2w$, but the cell steps used here break the rotation symmetry of the
+intermediate states, so this needs a different implementation. Beyond a few more digits the natural
+tools are the corner transfer matrices and their renormalization-group variant mentioned in the
+introduction, with the parity sector built into the encoding.
+
 \emph{Cross-checks of the float64 eigenvalues.} Exact integer ratios
 $Z_{\mathrm{cyl}}(K+2, w)/Z_{\mathrm{cyl}}(K, w)$ for $w = 9, 11, 12, 13$ agree with the power
 iteration to $4.1\cdot10^{-16}$ in $\log \lambda$, and ARPACK on the full $w = 20$ transfer
 reproduces both sector values to $1.8\cdot10^{-15}$. The exact counts of the square boards give an
 independent, eigenvalue-free check of $s$, discussed with the corner free energy in
 \S\ref{sec:corner}.
+
+\emph{Independent recomputation.} A transfer-matrix code written from scratch to check this paper
+(\file{xcheck/}; nothing in it is taken from \file{src/}) reproduces the cylinder values per site to
+$7.8\cdot10^{-20}$ against the extended-precision inputs and to $6.2\cdot10^{-17}$ against the float64
+ones. It also goes beyond them: both sectors of $w = 26$ and the odd width $w = 27$ in extended
+precision, and both sectors of $w = 28$ in float64. The new differences $d_{26}$, $d_{27}$ and $d_{28}$
+agree with the L1 predictions made at $W = 24$ (midpoints) and $W = 25$ (odd widths) to
+$1.9\cdot10^{-4}$, $1.5\cdot10^{-4}$ and $5.4\cdot10^{-4}$ relative, and L1 on the odd widths up to
+$W = 27$ gives $0.5655119110413253187$, $1.1\cdot10^{-18}$ from the centre above. These widths test the
+extrapolation outside its sample; they are not used in the estimate.
 
 \section{Rigorous bounds}\label{sec:bounds}
 
@@ -659,8 +681,9 @@ columns of length $m \le 11$, and the branching step for $m \le 8$; the transfer
 against brute force as a polynomial in $z$ ($162$ evaluations); and, for $w = 2, \dots, 12$, the
 float ratios against exact rational ratios for the same float vector ($|\text{float}/\text{exact}
 - 1| \le 1.7\cdot10^{-16}$). The audit is sensitive: with $z = 0$ the strip inequality fails on all
-$40$ boards with $k \ge 2$. On these small boards $z = 0.5$ would suffice; the weight $\sqrt\varphi$ is
-needed by the proof, not by the data. For the run weights, also exactly: $M(A, B) \le
+$40$ boards with $k \ge 2$. On these small boards $z = 0.5$ would suffice. The proof needs only
+$h(S)^2 \ge F(S)$ for every $S$, which $\sqrt\varphi$ meets uniformly and the run weights meet with
+less to spare. For the run weights, also exactly: $M(A, B) \le
 \min(F(A), F(B))$ and $M(S, S) = F(S)$ for all $A, B$ in columns of length $m \le 8$; the strip
 inequality with the run weights in interval arithmetic on the same $58$ boards; the run-weighted
 transfer against brute force at rational factors ($57$ evaluations); and the float ratios against
@@ -731,6 +754,8 @@ Since A239273 counts the squares, $a(n) = Z(2n, 2n)$,
 \end{gather*}
 with relative error $-2.0\cdot10^{-9}$ at $n = 12$ and about a factor $5.6$ smaller per step in $n$.
 The b-file of A239273 up to $n = 12$, contributed by the author, agrees with these counts term by term.
+The form, a constant times one exponential in the side and one in the area, is the one McKay found
+numerically for the hard squares, the independent sets of the $n \times n$ grid \cite{oeisA006506}.
 The ratio of the extrapolation differences is still drifting at $L = 24$, so the slowest edge and
 corner correction is not yet settled; the error bar of $\kappa$ allows for this by doubling.
 
@@ -836,9 +861,11 @@ reflection positivity turns them into rigorous bounds that converge exponentiall
 \cite{calkinwilf1998}; here it fails. The gluing form between two half-boards is the number
 $M(A, B)$ of matchings across the cut (Lemma~\ref{lem:fib}), and it is indefinite: for columns of
 length $3$ its smallest eigenvalue is $1 - \sqrt2$, on a vector realised by actual half-boards.
-Nor do cylinders give upper bounds: at every odd circumference the cylinder value $f_w$ lies below
-$s$ (Table~\ref{tab:odd}), while reflection positivity would make it an upper bound. We state the
-two sign properties that the data show instead.
+Nor do cylinders give upper bounds: at every odd circumference $w = 3, 5, \dots, 25$ the cylinder
+value $f_w$ lies below the estimate of $s$, by $2.5\cdot10^{-3}$ at $w = 3$ and $6.7\cdot10^{-15}$ at
+$w = 25$ (Table~\ref{tab:odd}), while reflection positivity would make it an upper bound; on even
+cylinders only the sector $p = 0$ lies above it. The comparison is with the estimate, so this is
+evidence, not a proof. We state the two sign properties that the data show instead.
 
 \begin{conjecture}\label{conj:Linf}
 Let $a_0 = a_1 = 0$ and $a_k = \log\lambda_k$ for $k \ge 2$.
@@ -894,9 +921,10 @@ The convexity is a quantitative property of unit weights, not a structural one. 
 $Z(2q, m)^2 \le Z(2q-2, m)Z(2q+2, m)$ holds in all $1453$ cases we tested on the king's graph, but it
 fails on the triangular lattice, for every unequal pair of diagonal weights we tried, and for equal
 diagonal weights $x = \tfrac32, 2, 3$ on wide strips; along equal weights the two rates above cross,
-on our data, between $x = \tfrac74$ and $x = 2$. The companion note \cite{rylko2026lnote} collects these tests,
-the counterexamples, the mechanism behind them (the Krein signature of the left--right
-reflection) and the obstructions to the standard proof techniques.
+on our data, between $x = \tfrac74$ and $x = 2$. The companion note \cite{rylko2026lnote} collects these tests
+and the counterexamples, explains the onsets for nearly equal diagonal weights at $m = 4$ and $8$ by
+the Krein signature of the left--right reflection, and lists the obstructions to the standard proof
+techniques.
 
 \begin{problem}
 Prove (L$_\infty$) and (O) at unit weights, i.e.\ the sign $C > 0$ with a bound on the remainder

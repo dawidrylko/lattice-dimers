@@ -72,6 +72,18 @@ Description:
 `<DOI_PAPER>`, `<DOI_LNOTE>` and `<DOI_SOFT>` stand for bare DOIs of the form `10.5281/zenodo.N`;
 the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
 
+0. Before anything else, on the x86-64 machine and from a clean clone with tags, check that the
+   committed outputs match the code and the data:
+   - `python3 src/repro.py > out/out_repro.txt` (about 10 minutes). Every line must read `[SAME]`,
+     and the first line must name a commit of master and report no missing recorded commits.
+   - An output is stale when a data file it reads was added or changed after the output was last
+     committed: PR #38 found `out/out_ltest.txt` still counting 1451 (L) cases after
+     `data/zex/zex_king_free_m24_K24.json` had raised them to 1453. For every command in the table of
+     `main.tex`, Section "Reproducibility", compare `git log -1 --format=%ci -- <output>` with the
+     same for its script and its inputs, rerun the stale ones, and update the numbers that changed
+     in `main.tex`, `L-note.tex`, `NUMBERS.md` and `oeis-draft.txt`.
+   - Commit `out/out_repro.txt` and any rerun output on a `d/*` branch and merge it with a merge
+     commit before step 3, so the tag carries them.
 1. Create both preprint drafts on Zenodo with the metadata above except the related identifiers,
    reserve their DOIs, save without publishing. Write down `<DOI_PAPER>` and `<DOI_LNOTE>`.
 2. In each draft add the `references` relation to the other preprint's DOI (resource type
