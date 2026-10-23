@@ -231,8 +231,11 @@ by less than $4\cdot10^{-15}$ for three consecutive iterations (19 iterations fo
 The changes of the estimate shrink by a factor $0.115$ per iteration (the gap of
 \S\ref{sec:z2}), so the truncation error after stopping is far below one ulp of $\log\lambda$.
 Afterwards the Collatz--Wielandt bracket $\min_i (T^2 v)_i / v_i \le \lambda^2 \le \max_i (T^2
-v)_i / v_i$ \cite{collatz1942,wielandt1950} over the support of $v$ is evaluated; for
-$w = 20, \dots, 25$ it closes to within one ulp of $\log \lambda$. Computed without directed
+v)_i / v_i$ \cite{collatz1942,wielandt1950} over the support of $v$ is evaluated. It is valid
+there: the start vector is positive on the whole sector, so $v$ is nonzero on every state that
+lies on a cycle of $T^2$, and the spectral radius of a nonnegative matrix is that of its
+restriction to these states. For $w = 20, \dots, 25$ the bracket closes to within one ulp of
+$\log \lambda$. Computed without directed
 rounding, it is a diagnostic here, not a certificate (the certificates are in
 \S\ref{sec:float}). Widths $w \le 19$ take minutes; $w = 25$ (one sector suffices for odd $w$)
 works on vectors of $2^{28}$ doubles and needs $8.4$\,GiB and $22.5$ minutes on four cores.
