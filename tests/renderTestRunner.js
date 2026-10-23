@@ -24,6 +24,11 @@ const UNRANK_SAMPLE_SIZE = 1000;
 const RANDOM_SEED = 2024;
 const SAMPLES_PER_TILING = 200;
 const CLI_TIMEOUT = 30000;
+const labelWidthTestCases = [
+  { rowCount: 16, colCount: 16, first: BigInt('125468628332598003063877133633598664929040628978461090301') },
+  { rowCount: 14, colCount: 14, first: BigInt('8212337965975290675433764125340416032951') },
+  { rowCount: 4, colCount: 4, label: 'tiling "a" <&> of a long sample' },
+];
 const randomTestCases = [
   { rowCount: 2, colCount: 2, expectedResult: 2, criticalValue: 10.83 },
   { rowCount: 4, colCount: 4, expectedResult: 36, criticalValue: 66.62 },
@@ -581,6 +586,25 @@ function runEngravingContainmentTest({ tiling: fixed, ...options }) {
   return true;
 }
 
+function runLabelWidthTest({ first, label: custom, ...options }) {
+  const boardWidth = options.colCount * renderSheet.CELL_SIZE;
+  const label = custom || `#${first}`;
+  const escaped = label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const sheet = renderSheet([[]], first || 1, { ...options, labels: custom && [custom] });
+  const [, title, attribute, shown] = sheet.match(/<g><title>([^<]*)<\/title><text [^>]*data-label="([^"]*)"[^>]*>([^<]*)<\/text><\/g>/) || [];
+  const visible = shown && shown.replace(/&(amp|lt|gt|quot);/g, '_');
+
+  if (!shown || title !== escaped || attribute !== escaped || [...visible].length * renderSheet.LABEL_CHAR_WIDTH > boardWidth || !escaped.endsWith(shown.split('…').pop())) {
+    console.error(`Failed! Label ${label} renders as ${JSON.stringify(shown)} with title ${JSON.stringify(title)}.`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function runReadmeImagesTest() {
   const stale = Object.entries(buildReadmeImages()).filter(([file, svg]) => {
     const target = path.join(__dirname, '..', file);
@@ -671,6 +695,7 @@ function __main__() {
     domiculeShapeTestCases,
     styleTestCases,
     engravingContainmentTestCases,
+    labelWidthTestCases,
     cliTestCases,
   ].reduce(
     (sum, suite) => sum + suite.length,
@@ -692,6 +717,7 @@ function __main__() {
     runSuite('sheet style', styleTestCases, runStyleTest),
     runSuite('engraving containment', engravingContainmentTestCases, runEngravingContainmentTest),
     runSuite('domino output', [{ rowCount: 4, colCount: 4 }], runDominoOutputTest),
+    runSuite('label width', labelWidthTestCases, runLabelWidthTest),
     runSuite('readme images', [{ rowCount: 8, colCount: 8 }], runReadmeImagesTest),
     runSuite('command line', cliTestCases, runCliTest),
   ];
