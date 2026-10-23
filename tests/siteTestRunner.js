@@ -58,6 +58,8 @@ const siteTestCases = [
   { width: 1440, check: 'benchmark' },
   { width: 1440, check: 'pieces' },
   { width: 1440, check: 'styles' },
+  { width: 1440, check: 'labels' },
+  { width: 1440, check: 'history' },
   { width: 375, check: 'styles' },
   { width: 1440, check: 'landing' },
   { width: 1440, check: 'notes' },
@@ -472,6 +474,68 @@ async function checkStyles(page, baseUrl, width) {
   return problems;
 }
 
+async function checkLongLabels(page, baseUrl, width) {
+  const board = '14x14-diagonal';
+  const problems = [];
+  await loadSite(page, baseUrl, width, `gallery/${board}/1`);
+  const number = await page.evaluate(`String(BigInt(DATA.boards.find(b => b.id === '${board}').total) - BigInt(50))`);
+  await page.evaluate(`goToTiling(DATA.boards.find(b => b.id === '${board}'), BigInt('${number}'))`);
+  await page.waitFor(
+    `[...document.querySelectorAll('#sheet text')].some(text => text.style.fill === 'var(--hit)')`,
+    `the highlighted ${board} tiling`,
+  );
+  await page.settle();
+  const state = await page.evaluate(`(() => {
+    const texts = [...document.querySelectorAll('#sheet text')];
+    const boxes = texts.map(text => text.getBoundingClientRect());
+    const overlaps = boxes.filter((box, i) => i && Math.abs(box.top - boxes[i - 1].top) < 1 && box.left < boxes[i - 1].right).length;
+    const hit = texts.find(text => text.style.fill === 'var(--hit)');
+    return { overlaps, hit: hit && (hit.dataset.label || hit.textContent), title: hit && hit.parentNode.querySelector('title')?.textContent };
+  })()`);
+
+  if (state.overlaps) {
+    problems.push(`${state.overlaps} ${board} labels overlap their neighbours`);
+  }
+
+  if (state.hit !== `#${number}` || state.title !== `#${number}`) {
+    problems.push(`#${number} is highlighted as ${JSON.stringify(state)}`);
+  }
+
+  return problems;
+}
+
+async function checkHistory(page, baseUrl, width) {
+  const problems = [];
+  await loadSite(page, baseUrl, width, 'gallery/10x10/1');
+  await page.waitFor("document.querySelector('#sheet svg')", 'the 10x10 sheet');
+  await page.evaluate("window.fragmentNavigations = 0; addEventListener('hashchange', () => window.fragmentNavigations++); document.getElementById('random').click()");
+  await page.waitFor(
+    "location.hash !== '#gallery/10x10/1' && [...document.querySelectorAll('#sheet text')].some(text => text.style.fill === 'var(--hit)')",
+    'the random 10x10 tiling',
+  );
+  const random = await page.evaluate(`(() => {
+    const [, , pageNumber, highlight] = location.hash.split('/');
+    const hit = [...document.querySelectorAll('#sheet text')].find(text => text.style.fill === 'var(--hit)');
+    return { hash: location.hash, fragmentNavigations, hit: hit && hit.textContent, highlight, pageNumber, input: document.getElementById('page').value.replace(/,/g, '') };
+  })()`);
+
+  if (random.fragmentNavigations) {
+    problems.push(`Random navigated to a URL fragment ${random.fragmentNavigations} times`);
+  }
+
+  if (random.hit !== `#${random.highlight}` || random.input !== random.pageNumber) {
+    problems.push(`Random shows ${JSON.stringify(random)}`);
+  }
+
+  await page.evaluate('history.back()');
+  await page.waitFor(
+    "location.hash === '#gallery/10x10/1' && document.getElementById('page').value === '1' && [...document.querySelectorAll('#sheet text')].some(text => text.textContent === '#1')",
+    'the first 10x10 page after going back',
+  );
+
+  return problems;
+}
+
 async function checkLanding(page, baseUrl, width) {
   await loadSite(page, baseUrl, width, 'gallery/4x4/1');
   await page.settle();
@@ -684,6 +748,8 @@ const CHECKS = {
   confirmation: { label: '18x18 and 16x16 domicule confirmation', run: checkConfirmation },
   pieces: { label: 'straight and diagonal switch', run: checkPieces },
   styles: { label: 'sheet style switch', run: checkStyles },
+  labels: { label: 'long tiling numbers', run: checkLongLabels },
+  history: { label: 'random jump and back', run: checkHistory },
   landing: { label: 'main page', run: checkLanding },
   notes: { label: 'notes', run: checkNotes },
   chrome: { label: 'shared header and footer', run: checkChrome },

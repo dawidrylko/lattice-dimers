@@ -1,6 +1,8 @@
 const CELL_SIZE = 16;
 const PADDING = 12;
 const LABEL_HEIGHT = 14;
+const LABEL_FONT_SIZE = 11;
+const LABEL_CHAR_WIDTH = 0.6 * LABEL_FONT_SIZE;
 const SHEET_COLUMNS = 10;
 const STYLES = ['blocks', 'dimer', 'engraving'];
 const COLORS = { h: '#044cb6', v: '#5eaceb', d: '#ab3415', a: '#f09c17' };
@@ -10,7 +12,7 @@ const EDGE = '#1f2937';
 const ENGRAVING_OUTLINE = 1;
 const ENGRAVING_HATCH_WIDTH = 1;
 const ENGRAVING_AXIS_WIDTH = 2.4;
-const COMMON_STYLE = [`.b{fill:${BOARD_COLOR}}`, 'text{font:11px monospace;fill:#4b5563;text-anchor:middle}'].join('');
+const COMMON_STYLE = [`.b{fill:${BOARD_COLOR}}`, `text{font:${LABEL_FONT_SIZE}px monospace;fill:#4b5563;text-anchor:middle}`].join('');
 const SHEET_STYLES = {
   blocks: {
     straight: ['.h,.v{stroke:#1f2937;stroke-width:1}', `.h{fill:${COLORS.h}}`, `.v{fill:${COLORS.v}}`].join(''),
@@ -140,6 +142,19 @@ const RENDERERS = {
   engraving: { straight: renderEngravedBlock, diagonal: renderEngravedDiagonal },
 };
 
+function renderLabel(label, x, y, width) {
+  const fit = Math.floor(width / LABEL_CHAR_WIDTH);
+
+  if (label.length <= fit) {
+    return `<text x="${x}" y="${y}">${label}</text>`;
+  }
+
+  const tail = Math.floor((fit - 1) / 2);
+  const shown = `${label.slice(0, fit - 1 - tail)}…${label.slice(-tail)}`;
+
+  return `<g><title>${label}</title><text x="${x}" y="${y}" data-label="${label}">${shown}</text></g>`;
+}
+
 function renderTiling(tiling, label, offsetX, offsetY, options) {
   const { rowCount, colCount, style } = options;
   const boardWidth = colCount * CELL_SIZE;
@@ -151,7 +166,7 @@ function renderTiling(tiling, label, offsetX, offsetY, options) {
     `<rect class="b" x="${offsetX}" y="${offsetY}" width="${boardWidth}" height="${boardHeight}"/>`,
     ...pieces.filter(piece => !isDiagonal(piece)).map(piece => renderers.straight(piece, offsetX, offsetY)),
     ...pieces.filter(isDiagonal).map(piece => renderers.diagonal(piece, offsetX, offsetY)),
-    `<text x="${offsetX + boardWidth / 2}" y="${offsetY + boardHeight + LABEL_HEIGHT - 2}">${label}</text>`,
+    renderLabel(label, offsetX + boardWidth / 2, offsetY + boardHeight + LABEL_HEIGHT - 2, boardWidth),
   ].join('');
 }
 
