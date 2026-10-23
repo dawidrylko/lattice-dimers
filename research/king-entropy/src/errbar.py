@@ -29,9 +29,11 @@ BUDGET (all terms added):
     correction |d_W| on its sequence; the term is the half-spread of the kept estimates of both
     sequences plus the largest predicted remaining error |s(W) - s(W-2)| |d_W / d_(W-2)|;
  2. hidden slow mode: d_w - B x^((w-25)/2), x = exp(-2/1.2351) (the decay of the parity splitting,
-    the slowest rate in the data), fitted with L1's form by least squares on w = 13..25 for forced
-    amplitudes B; every B whose relative rms is within a factor 3 of the best fit is allowed, and
-    the term is the largest shift of s over the allowed B;
+    the slowest rate in the data), fitted together with L1's form (C, c1, B free) by relative least
+    squares on w = wlo..25 for each wlo in HIDDEN_WLO; every B within 3 standard errors of a fitted
+    value is allowed (the union over the windows), the range widened to include B = 0, and the term
+    is the largest shift of s over the allowed B (s is linear in B, so the endpoints suffice). The
+    scan over forced B is printed for context; hidden_oos.py checks the mode against w = 27;
  3. gap: the change of L1 when m runs over the gaps measured at w = 20..25 (estimate.py);
  4. rounding: the largest change of a kept model between float64 and longdouble inputs.
 """
@@ -144,6 +146,7 @@ KEYS = ['G', 'PE', 'PE6', 'R1', 'R2', '2E', 'WY', 'WY-']
 
 M_GAP = mpf('1.082727')                      # in-sector gap per row, ARPACK at w = 20 (crosscheck.py)
 X_HIDDEN = exp(-2 / mpf('1.2351'))            # decay per two widths of the parity splitting (estimate.py)
+HIDDEN_WLO = (11, 13, 15, 17)                 # lower ends of the fit windows of the hidden-mode test
 ALL = ['L1', 'L2'] + KEYS
 
 
@@ -223,6 +226,30 @@ def hidden_mode(f, B_fracs, wlo=13, m=M_GAP, x=X_HIDDEN):
     return out
 
 
+def hidden_free(f, wlo=13, m=M_GAP, x=X_HIDDEN):
+    """B as a free parameter: d_w = C e^(-m w) w^(-3/2) (1 + c1/w) + B x^((w-W)/2), all three fitted by
+    relative least squares over w = wlo..W. Returns (B / d_W, its standard error / |d_W|, n, rel rms),
+    the standard error from the residual variance with n - 3 degrees of freedom. The residuals are
+    the misfit of the model, not independent noise, so 3 standard errors is a rule for the width of
+    the allowed range, not a confidence level (with 4 degrees of freedom it would be about 96 %)."""
+    ws, d = diffs(f, max(f))
+    W = max(f)
+    fitw = [w for w in ws if w in d and w >= wlo]
+    rows = []
+    for w in fitw:
+        g = exp(-m * w) * mpf(w) ** mpf(-1.5)
+        rows.append([g / d[w], g / w / d[w], x ** (mpf(w - W) / 2) / d[w]])
+    A = mp.matrix(rows)
+    Y = mp.matrix([1] * len(fitw))
+    N = A.T * A
+    c = mp.lu_solve(N, A.T * Y)
+    res = A * c - Y
+    rss = sum(r ** 2 for r in res)
+    n = len(fitw)
+    cov = mp.inverse(N) * (rss / (n - 3))
+    return c[2] / d[W], sqrt(cov[2, 2]) / abs(d[W]), n, sqrt(rss / n)
+
+
 def main():
     lam, ld = load()
     widths = sorted({w for w, _ in lam})
@@ -292,9 +319,17 @@ def main():
         sv, rms = hm[k]
         print(f'  B/d_{Wo} = {k:+.3f}: relative rms {mp.nstr(rms, 3)} ({mp.nstr(rms / best, 3)} x best),'
               f' s - s(B=0) = {mp.nstr(sv - s0, 3)}')
-    allowed = [k for k in fr if hm[k][1] <= 3 * best]
-    hid = max(abs(hm[k][0] - s0) for k in allowed)
-    print(f'  allowed (rms within 3 x best): B/d_{Wo} in [{min(allowed)}, {max(allowed)}]; largest shift {mp.nstr(hid, 2)}')
+    fits = {wlo: hidden_free(odd, wlo=wlo) for wlo in HIDDEN_WLO}
+    for wlo, (b, e, n, r) in fits.items():
+        print(f'  B free, fit on w = {wlo}..{Wo} ({n} widths, {n - 3} degrees of freedom, rel rms {mp.nstr(r, 3)}):'
+              f' B/d_{Wo} = {mp.nstr(b, 3)} +- {mp.nstr(e, 2)}, 3 standard errors [{mp.nstr(b - 3 * e, 3)}, {mp.nstr(b + 3 * e, 3)}]')
+    bh, sb, nfit, rmsf = fits[13]
+    blo = min([mpf(0)] + [b - 3 * e for b, e, _, _ in fits.values()])
+    bhi = max([mpf(0)] + [b + 3 * e for b, e, _, _ in fits.values()])
+    ends = hidden_mode(odd, [blo, bhi])
+    hid = max(abs(sv - s0) for sv, _ in ends.values())
+    print(f'  allowed: B/d_{Wo} in [{mp.nstr(blo, 3)}, {mp.nstr(bhi, 3)}] (union of the 3-standard-error ranges over the'
+          f' fit windows, widened to include B = 0); largest shift {mp.nstr(hid, 2)}')
 
     # ------------------------------------------------------------- gap parameter
     gaps = gaps_from_histories()
@@ -339,7 +374,10 @@ def main():
                    mid={W: {k: str(v) for k, v in m.items()} for W, m in res['mid'].items()},
                    odd_float64={k: str(v) for k, v in res64['odd'][Wo].items()},
                    mid_float64={k: str(v) for k, v in res64['mid'][We].items()},
-                   hidden={str(k): [str(a), str(b)] for k, (a, b) in hm.items()}),
+                   hidden={str(k): [str(a), str(b)] for k, (a, b) in hm.items()},
+                   hidden_free=dict(fits={str(wlo): dict(B_over_dW=str(b), stderr=str(e), widths=n, rel_rms=str(r))
+                                          for wlo, (b, e, n, r) in fits.items()},
+                                    allowed=[str(blo), str(bhi)], shift=str(hid))),
               open(P('errbar.json'), 'w'), indent=1)
 
 

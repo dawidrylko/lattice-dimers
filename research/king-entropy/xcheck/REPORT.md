@@ -158,7 +158,7 @@ differences are 1.4e-16 and 8.3e-16, inside the paper's error bar. `out/analyze_
 
 | failure mode | test | result |
 | --- | --- | --- |
-| hidden slower mode beyond w = 25 | widths 26, 27 and 28, computed blind and compared with the L1 predictions made at W = 24 / 25; the paper's hidden-mode fit (L1 + B x^((w-25)/2), x = e^(-2/1.2351), least squares on w = 13..W, B admitted if the rms is within 3x of the best) | d_26, d_27 agree with the predictions to 1.9e-4 and 1.5e-4 relative, d_28 (float64) to 5.4e-4. Hidden-mode fit: W = 25 admits 0.001 <= B/d_25 <= 0.003 as in the paper (shift of s 2.0e-17, paper 3.0e-17); with w = 27 added it admits 0 <= B/d_25 <= 0.0025 and the shift falls to 5.2e-18. `out/analyze_eig.txt` sections 6, 6b |
+| hidden slower mode beyond w = 25 | widths 26, 27 and 28, computed blind and compared with the L1 predictions made at W = 24 / 25; the paper's hidden-mode fit (L1 + B x^((w-25)/2), x = e^(-2/1.2351), least squares on w = 13..W, B admitted if the rms is within 3x of the best) | d_26, d_27 agree with the predictions to 1.9e-4 and 1.5e-4 relative, d_28 (float64) to 5.4e-4. Hidden-mode fit: W = 25 admits 0.001 <= B/d_25 <= 0.003 as in the paper (shift of s 2.0e-17, paper 3.0e-17; the paper has since changed this rule, see the note at the end); with w = 27 added it admits 0 <= B/d_25 <= 0.0025 and the shift falls to 5.2e-18. `out/analyze_eig.txt` sections 6, 6b |
 | level crossing | convergence ratio of the power iteration (= (lambda_3/lambda_1)^2 in the sector) at every w and sector | 0.1147 at all w = 16..28, both sectors; for w <= 10 the full spectra show a simple leading eigenvalue and a negative subleading one (lambda_2/lambda_1 = -0.339 at w = 10) |
 | sector mislabelling | parity rule checked entrywise on the row transfer; sectors of odd w | T maps sector p to p + w (mod 2); odd-w sectors equal to < 1e-15; sector 0 (with e0) is the larger one for every even cylinder, f^(1) < s < f^(0) for w = 4..28 |
 | reducible sector (a component not seen from e0) | Tarjan SCCs of T^2 per sector, w <= 10, cylinders and free strips | every sector is strongly connected; for free strips the sector of e0 is all reachable |
@@ -180,6 +180,15 @@ runs were redone. The paper's float64 values are not affected (they agree
 with the own long double values to 6.2e-17 per site, as the paper states). A second slip of the own
 code: `compare_eig.py` first read float64 values through their decimal repr, which inflated the
 difference at w = 5 to 7.1e-17; it now uses the exact binary value.
+
+## Note added after this report
+
+The hidden-mode row of claim 6 checks the rule of the paper at the time of this report (forced B admitted
+if its rms is within 3x of the best; term 3.0e-17), which `out/analyze_eig.txt` section 6b reproduces. The
+paper has since replaced that rule: `src/errbar.py` fits B together with L1 on several windows and admits
+3 standard errors over all of them (term 3.4e-17, budget 2.7e-16, quoted bar unchanged), and
+`src/hidden_oos.py` compares the mode with the w = 27 value of this directory. The findings above are
+unchanged.
 
 ## Commands
 

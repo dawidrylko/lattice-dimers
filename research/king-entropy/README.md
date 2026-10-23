@@ -58,6 +58,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/lean/lean_*.json` |
 | `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`notes/PROOF-*.md`) |
 | `src/errbar.py` | error budget of s on the extended-precision cylinders: Luscher main model, other models, predictive backtests, hidden-mode, gap and rounding terms; writes `data/errbar.json` |
+| `src/hidden_oos.py` | out-of-sample check of the hidden mode against w = 27 from the independent code in `xcheck/` (not part of the budget) |
 | `src/runweight.py` | run-weighted open-strip upper bound (schemes `3state`, `1bit`, `phi`); `--disk DIR` keeps the third vector in a memory-mapped file |
 | `src/corner.py` | corner free energy kappa from the exact square counts, asymptotics of A239273, s from exact counts alone |
 | `src/pfaff_rigor.py` | GF(2) certificate that king boards with both sides >= 3 have no Pfaffian orientation, with planar controls |
@@ -100,6 +101,7 @@ python3 src/timed.py python3 src/bounds.py 24  > out/out_bounds.txt     2> logs/
 python3 src/timed.py python3 src/runweight.py 3state $(seq 2 23) > out/out_runweight_3state.txt 2> logs/time_runweight_3state.txt
 python3 src/timed.py python3 src/runweight.py 3state 24 --disk /tmp 2> logs/time_runweight_3state_w24.txt | tail -1 >> out/out_runweight_3state.txt
 python3 src/errbar.py > out/out_errbar.txt       # needs data/lean/lean_king_cyl_w*_p*_longdouble.json
+python3 src/hidden_oos.py > out/out_hidden_oos.txt   # needs the same and xcheck/out/eig_summary.json
 python3 src/estimate.py > out/out_estimate.txt   # needs data/errbar.json
 python3 src/timed.py python3 src/cw.py > out/out_cw.txt 2> logs/time_cw.txt   # needs data/bounds.json and data/z2.json
 ```

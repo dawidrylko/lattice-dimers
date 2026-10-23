@@ -385,11 +385,19 @@ $[0.565511911041325278,\ 0.565511911041325337]$.
 \item model form, $9.0\cdot10^{-17}$: the half-spread of the kept estimates ($3.0\cdot10^{-17}$) plus
 the largest predicted remaining error, each model's backtest change scaled by the ratio
 $|d_W/d_{W-2}|$ of the last two corrections ($6.0\cdot10^{-17}$);
-\item a hidden slow mode, $3.0\cdot10^{-17}$: we subtract a term $B x^{(w-25)/2}$ with
+\item a hidden slow mode, $3.4\cdot10^{-17}$: we add a term $B x^{(w-25)/2}$ with
 $x = e^{-2/1.2351}$, the slowest decay seen anywhere in the data (the parity splitting of
-\S\ref{sec:z2}), refit L1 by least squares on $w = 13, \dots, 25$, and allow every $B$ whose
-relative rms is within a factor $3$ of the best fit; this admits $0.001\,d_{25} \le B \le 0.003\,d_{25}$, and
-the largest shift of $s$ over the admitted $B$ is the term;
+\S\ref{sec:z2}), and fit it together with L1 ($C$, $c_1$ and $B$) by relative least squares on
+$w = w_0, \dots, 25$ for $w_0 = 11, 13, 15, 17$. The fitted $B$ depends on the window, between
+$0.9\cdot10^{-3}\,d_{25}$ ($w_0 = 11$) and $1.95\cdot10^{-3}\,d_{25}$ ($w_0 = 13$). We allow every $B$ within three
+standard errors of a fitted value, over all windows and widened to include $B = 0$:
+$-1.6\cdot10^{-3}\,d_{25} \le B \le 3.4\cdot10^{-3}\,d_{25}$. Since $s$ is linear in $B$, the larger shift at
+the two ends is the term. The next odd width does not show such a mode: the independent code of
+\file{xcheck/} gives $d_{27}$ within $1.5\cdot10^{-4}$ of the L1 prediction from $W = 25$, where a mode
+with $B = 1.95\cdot10^{-3}\,d_{25}$ would move it by $1.0\cdot10^{-3}$. This is consistent with the fitted $B$
+taking up the misfit of L1 at small $w$, though it rests on one width. Read as a mode, the whole
+deviation allows $|B| \le 2.8\cdot10^{-4}\,d_{25}$, which would move the main estimate by at most
+$1.4\cdot10^{-18}$; this check is not part of the budget;
 \item the gap, $6\cdot10^{-20}$: the change of L1 when $m$ runs over the measured gaps;
 \item rounding, $1.5\cdot10^{-16}$: the largest change of a kept model between float64 and
 extended-precision inputs (the float64 values of $\log\lambda_w$ differ by at most $6.2\cdot10^{-17}$
