@@ -81,13 +81,13 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    - An output is stale when its script or a data file it reads changed in a commit the output does
      not contain: PR #38 found `out/out_ltest.txt` still counting 1451 (L) cases after
      `data/zex/zex_king_free_m24_K24.json` had raised them to 1453. For every command in the table of
-     `king-entropy.tex`, Section "Reproducibility", take its inputs from the script's docstring and the
+     `paper/king-entropy.tex`, Section "Reproducibility", take its inputs from the script's docstring and the
      `# needs` comments of `README.md`, and run
      `git rev-list -1 "$(git log -1 --format=%H -- <output>)"..HEAD -- <script> <inputs>`; any output
      means stale, except when the only commit listed is fc5e453: it renamed files and changed only
      paths in docstrings, comments and printed labels (`README.md`, "Renamed before
-     king-entropy-v1.0.0"), so it makes no output stale. Rerun the stale ones and update the numbers that changed in `king-entropy.tex`,
-     `king-entropy-log-convexity.tex`, `NUMBERS.md`, `oeis-draft.txt`, the descriptions above and `.zenodo.json`.
+     king-entropy-v1.0.0"), so it makes no output stale. Rerun the stale ones and update the numbers that changed in `paper/king-entropy.tex`,
+     `paper/king-entropy-log-convexity.tex`, `paper/NUMBERS.md`, `oeis-draft.txt`, the descriptions above and `.zenodo.json`.
    - Rebuild both PDFs with the `docker run` line of step 8, run in `paper/`.
    - Commit all of it on a `d/*` branch and merge it with a merge commit before step 1, so the
      preprint drafts and the tag carry the same numbers and PDFs.
@@ -116,11 +116,11 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    the record page, and write down its version DOI `<DOI_SOFT>` (cite the version, not the concept
    DOI). The tagged snapshot still carries the placeholders below; that is expected.
 7. On a `d/*` branch fill in the DOIs:
-   - `king-entropy.tex`, Data availability: replace `TO-BE-ASSIGNED (Zenodo) \TODO{...}` with `<DOI_SOFT>`
+   - `paper/king-entropy.tex`, Data availability: replace `TO-BE-ASSIGNED (Zenodo) \TODO{...}` with `<DOI_SOFT>`
      and drop the `% TODO(submission)` comment.
-   - `king-entropy-log-convexity.tex`, Data availability: add "at the tag `king-entropy-v1.0.0`, and are archived on
-     Zenodo, DOI: `<DOI_SOFT>`", worded as in `king-entropy.tex`.
-   - `refs.bib`: in `rylko2026entropy` and `rylko2026lnote` set `howpublished` to
+   - `paper/king-entropy-log-convexity.tex`, Data availability: add "at the tag `king-entropy-v1.0.0`, and are archived on
+     Zenodo, DOI: `<DOI_SOFT>`", worded as in `paper/king-entropy.tex`.
+   - `paper/refs.bib`: in `rylko2026entropy` and `rylko2026lnote` set `howpublished` to
      `{Preprint, Zenodo, \url{https://doi.org/<DOI_PAPER>}}` and `{..., \url{https://doi.org/<DOI_LNOTE>}}`,
      and drop "their Zenodo DOIs are assigned at publication" from the comment above them.
    - root `README.md`: replace the grey `Zenodo DOI pending` badge with
@@ -130,7 +130,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      `site/build.js` add `identifier: 'https://doi.org/<DOI_PAPER>'` (and `<DOI_LNOTE>`) to the two
      `PAPERS` entries; in `CITATION.cff` add `doi: <DOI_SOFT>` and a `preferred-citation` for the paper.
    - `oeis-draft.txt`: in the third `%H` line the two "DOI to be added" become `<DOI_PAPER>` and
-     `<DOI_SOFT>`; delete the second `%H` line, which links to the `king-entropy.pdf` of the tag, still
+     `<DOI_SOFT>`; delete the second `%H` line, which links to the `paper/king-entropy.pdf` of the tag, still
      showing the DOI placeholder; update the "Before submitting" header.
 8. Rebuild both PDFs in the pinned image and commit them with the sources:
    ```bash
@@ -141,5 +141,5 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    ```bash
    for f in king-entropy.pdf king-entropy-log-convexity.pdf; do pdftotext "$f" - | grep -E 'xcheck|L/(modes|linf|symmetry|involution)|paper/derived|L-NOTE|CW-NOTE|PROOF-'; done
    ```
-9. Upload the rebuilt `king-entropy.pdf` and `king-entropy-log-convexity.pdf` to their drafts, add `isSupplementedBy`
+9. Upload the rebuilt `paper/king-entropy.pdf` and `paper/king-entropy-log-convexity.pdf` to their drafts, add `isSupplementedBy`
    `<DOI_SOFT>` (resource type Software) to each, publish both. Then the OEIS entry.

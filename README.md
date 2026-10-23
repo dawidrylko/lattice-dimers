@@ -27,7 +27,7 @@ The free energies give the asymptotics of [A239273](https://oeis.org/A239273), $
 - [Research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html): the results above read from the committed data on every build.
 - [`research/king-entropy`](research/king-entropy): scripts, data, outputs, proofs of the bounds, and [`replication/`](research/king-entropy/replication/REPORT.md), an independent recomputation written from scratch. [`paper/NUMBERS.md`](research/king-entropy/paper/NUMBERS.md) maps every number of the paper to its output file and script.
 
-The code, data and both preprints are archived on Zenodo when the tag `king-entropy-v1.0.0` is released; until then the DOIs are pending ([`ZENODO.md`](research/king-entropy/paper/ZENODO.md)).
+The code, data and both preprints are archived on Zenodo when the tag `king-entropy-v1.0.0` is released; until then the DOIs are pending ([`ZENODO.md`](research/king-entropy/release/ZENODO.md)).
 
 ## Exact counts: OEIS A004003 and A239273
 
@@ -193,14 +193,15 @@ The code is MIT, see [LICENSE](LICENSE). Text and data are licensed under
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), see
 [LICENSES/CC-BY-4.0.txt](LICENSES/CC-BY-4.0.txt). CC BY 4.0 covers exactly these paths:
 
-- text: `research/king-entropy/paper/`, `research/king-entropy/notes/` and `notes/`;
+- text: `research/king-entropy/paper/`, `research/king-entropy/proofs/`, `research/king-entropy/notes/`,
+  `research/king-entropy/release/`, `research/king-entropy/replication/REPORT.md` and `notes/`;
 - data: `research/king-entropy/data/`, `research/king-entropy/out/`, `research/king-entropy/logs/`,
-  the outputs `research/king-entropy/log-convexity/out_*.txt` and `research/king-entropy/log-convexity/time_*.txt`, the
-  JSON files in `data/` and the measurements in `benchmarks/results/`.
+  `research/king-entropy/replication/out/`, the outputs `research/king-entropy/log-convexity/out_*.txt` and
+  `research/king-entropy/log-convexity/time_*.txt`, the JSON files in `data/` and the measurements in `benchmarks/results/`.
 
 Everything else is MIT, in particular all programs and scripts: `src/`, `pari/`, `site/`, `tests/`,
 `benchmarks/benchmarkRunner.js`, `data/index.js`, `research/king-entropy/src/`,
-and `research/king-entropy/log-convexity/*.py`.
+`research/king-entropy/log-convexity/*.py` and the code in `research/king-entropy/replication/`.
 
 ## Author
 

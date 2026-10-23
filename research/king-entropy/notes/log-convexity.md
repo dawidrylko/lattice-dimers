@@ -2,7 +2,7 @@
 
 **(L)** For every width m: q ↦ Z(2q, m) is log-convex, Z(2q, m)² ≤ Z(2q−2, m) Z(2q+2, m)
 (Z(k, m) = perfect matchings of the k × m king board). `notes/calkin-wilf.md`: (L) ⇒ Calkin-Wilf for even p
-⇒ s ≥ 0.565511911035 (`notes/calkin-wilf.md`, audited in `notes/proof-lower-bound.md` §6).
+⇒ s ≥ 0.565511911035 (`notes/calkin-wilf.md`, audited in `proofs/lower-bound.md` §6).
 
 **Status: UNRESOLVED.** No counterexample at unit weights (exact, much larger range than `src/cw.py`), no
 proof. Five proof routes closed with explicit obstructions; two exact reformulations; two
@@ -29,7 +29,7 @@ not suffice; neither observation shows that the symmetry is necessary.
 ## 0. What is really needed: (L∞), much weaker than (L)
 
 The conditional bound uses only convexity of a_{2q} = log λ_{2q} (free strip of width 2q) for
-2q ≥ 22 (`notes/proof-lower-bound.md` §6). Call this **(L∞)**. (L) for all m implies (L∞) by m → ∞, not
+2q ≥ 22 (`proofs/lower-bound.md` §6). Call this **(L∞)**. (L) for all m implies (L∞) by m → ∞, not
 conversely. (L∞) checked on the strip eigenvalues (`src/surface.py` → `data/surface.json`, f(k) column;
 longdouble for k = 14...24, float64 with Collatz-Wielandt bracket for k = 25, 26): the second
 differences Δ²a at 2q = 10, 12, ..., 24 are 4.7e-5, 4.0e-6, 5.5e-7, 5.6e-8, 7.0e-9, 7.6e-10,

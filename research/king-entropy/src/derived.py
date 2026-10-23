@@ -17,7 +17,7 @@ print(f'2s (per dimer) = {mp.nstr(2 * s, 16)}')
 print(f'exp(s) = {mp.nstr(exp(s), 16)},  exp(2s) = {mp.nstr(exp(2 * s), 16)}')
 ds = mpf('6e-16')                        # its error bar
 print(f's - ds, s + ds = {mp.nstr(s - ds, 16)}, {mp.nstr(s + ds, 16)} '
-      f'(digits shared by both ends are the ones quoted in paper/oeis-draft.txt)')
+      f'(digits shared by both ends are the ones quoted in release/oeis-draft.txt)')
 print(f'exp(s - ds), exp(s + ds) = {mp.nstr(exp(s - ds), 17)}, {mp.nstr(exp(s + ds), 17)}')
 
 # second differences of a_k = log lambda_k (free strips); the s k part cancels

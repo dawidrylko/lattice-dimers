@@ -8,12 +8,12 @@ source `paper/king-entropy.tex`. Every number in it is mapped to its output file
 it in [`paper/NUMBERS.md`](paper/NUMBERS.md). The commit SHAs recorded in the outputs refer to the
 history under the tag `king-entropy-v0.1.0` for the outputs of the first version, and to the branch
 that becomes `king-entropy-v1.0.0` for the outputs added or regenerated since (`paper/NUMBERS.md`).
-Full proofs of the rigorous bounds are in [`notes/proof-upper-bound.md`](notes/proof-upper-bound.md) (the
-run-weighted upper bound in its §9) and [`notes/proof-lower-bound.md`](notes/proof-lower-bound.md); the Calkin-Wilf
+Full proofs of the rigorous bounds are in [`proofs/upper-bound.md`](proofs/upper-bound.md) (the
+run-weighted upper bound in its §9) and [`proofs/lower-bound.md`](proofs/lower-bound.md); the Calkin-Wilf
 question in [`notes/calkin-wilf.md`](notes/calkin-wilf.md); hypothesis (L) and the experiments on it in
 [`notes/log-convexity.md`](notes/log-convexity.md) and the directory [`log-convexity/`](log-convexity/).
 
-License: the scripts are MIT ([`LICENSE`](../../LICENSE)); the paper, the notes, the data and the outputs in
+License: the scripts are MIT ([`LICENSE`](../../LICENSE)); the paper, the proofs, the notes, the release documents, the data and the outputs in
 this directory are CC BY 4.0 ([`LICENSES/CC-BY-4.0.txt`](../../LICENSES/CC-BY-4.0.txt)); the exact split is in
 the License section of the [root README](../../README.md#license).
 
@@ -26,9 +26,11 @@ with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to i
 | `data/` | JSON results: `data/eig/`, `data/sec/`, `data/zex/`, `data/lean/` by file prefix, the rest at the top |
 | `out/` | `out/out_*.txt`, the printed output of each script |
 | `logs/` | `logs/log_*.txt` progress logs and `logs/time_*.txt` wall time and peak RSS |
-| `notes/` | proofs of the bounds and the notes on Calkin-Wilf and (L) |
+| `proofs/` | the proofs of the rigorous bounds: `proofs/lower-bound.md`, `proofs/upper-bound.md` |
+| `notes/` | the laboratory notes on Calkin-Wilf (`notes/calkin-wilf.md`) and on hypothesis (L) (`notes/log-convexity.md`) |
 | `log-convexity/` | the experiments on (L), scripts with their outputs |
-| `paper/` | the paper and the companion note (sources and PDFs), the number map `paper/NUMBERS.md`, the Zenodo runbook and the OEIS draft |
+| `paper/` | the paper and the companion note (sources and PDFs), the bibliography and the number map `paper/NUMBERS.md` |
+| `release/` | the Zenodo runbook `release/ZENODO.md` and the OEIS draft `release/oeis-draft.txt` |
 | `replication/` | an independent recomputation written from scratch, with its own outputs; verdicts and commands in `replication/REPORT.md` |
 
 The tag `king-entropy-v0.1.0` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
@@ -57,7 +59,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/test_paths.py` | smoke test: `src/tm2.py`, `src/cylw.py`, `src/lean.py`, `src/zexact.py` on tiny inputs from another directory write where `src/paths.py` says and record the commit |
 | `src/zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `data/zex/zex_*.json` |
 | `src/lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/lean/lean_*.json` |
-| `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`notes/proof-*-bound.md`) |
+| `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`proofs/*-bound.md`) |
 | `src/errbar.py` | error budget of s on the extended-precision cylinders: Luscher main model, other models, predictive backtests, hidden-mode, gap and rounding terms; writes `data/errbar.json` |
 | `src/hidden_oos.py` | out-of-sample check of the hidden mode against w = 27 from the independent code in `replication/` (not part of the budget) |
 | `src/runweight.py` | run-weighted open-strip upper bound (schemes `3state`, `1bit`, `phi`); `--disk DIR` keeps the third vector in a memory-mapped file |
@@ -145,5 +147,6 @@ These files and directories were renamed in October 2026, before the release. Th
 | `paper/main.tex`, `paper/main.pdf` | `paper/king-entropy.tex`, `paper/king-entropy.pdf` |
 | `paper/L-note.tex`, `paper/L-note.pdf` | `paper/king-entropy-log-convexity.tex`, `paper/king-entropy-log-convexity.pdf` |
 | `paper/derived.py`, `paper/out_derived.txt` | `src/derived.py`, `out/out_derived.txt` |
-| `notes/PROOF-lower.md`, `notes/PROOF-upper.md` | `notes/proof-lower-bound.md`, `notes/proof-upper-bound.md` |
+| `notes/PROOF-lower.md`, `notes/PROOF-upper.md` | `proofs/lower-bound.md`, `proofs/upper-bound.md` |
+| `paper/ZENODO.md`, `paper/oeis-draft.txt` | `release/ZENODO.md`, `release/oeis-draft.txt` |
 | `notes/CW-NOTE.md`, `notes/L-NOTE.md` | `notes/calkin-wilf.md`, `notes/log-convexity.md` |
