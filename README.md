@@ -1,15 +1,37 @@
-# <img src=".github/assets/domino.svg" alt="" width="36" height="36"> Lattice Dimers
+# <img src=".github/assets/dimer.svg" alt="" width="36" height="36"> Lattice Dimers
 
 [![Continuous Integration](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml)
 [![Pages](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml)
+[![Paper](https://img.shields.io/badge/Paper-PDF-ab3415?style=flat)](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf)
+[![Zenodo DOI](https://img.shields.io/badge/Zenodo_DOI-pending-9ca3af?style=flat)](research/king-entropy/paper/ZENODO.md)
 [![Site](https://img.shields.io/badge/Site_%26_notebooks-dawidrylko.github.io-044cb6?style=flat)](https://dawidrylko.github.io/lattice-dimers/)
-[![Blog post](https://img.shields.io/badge/Blog_post_%28PL%29-dawidrylko.com-f09c17?style=flat)](https://dawidrylko.com/domino-tiling/)
 
-## Abstract
+Research code, data and papers on dimer coverings of two lattices: the square lattice, whose perfect matchings are domino tilings, and the king's graph, the square lattice with both diagonals, whose perfect matchings are domicule tilings. The repository holds a paper on the entropy per site of the king's graph dimers with its companion note, exact solvers for both kinds of tilings up to $20 \times 20$, and a site where every number is recomputed on each deploy.
 
-How many ways are there to cover a $2n \times 2n$ board with pieces that each cover two neighbouring cells, and what does any one of those coverings look like? For dominoes, which join cells that share a side, the count is [OEIS A004003](https://oeis.org/A004003) and has a closed form found by Kasteleyn [1] and Fisher [2] in 1961. For domicules, which may also join cells that share only a corner, the count is [OEIS A239273](https://oeis.org/A239273) on squares and [A239264](https://oeis.org/A239264) on rectangles [6], and no closed form is used here. This repository counts both exactly, numbers every tiling so that any single one can be drawn from its number, and samples tilings of boards too large to number. It evaluates the domino product formula exactly as a resultant of two integer polynomials, counts domicule tilings with a cell-by-cell transfer that runs modulo primes in parallel and is rebuilt with the Chinese remainder theorem, and checks the solvers against each other, against the OEIS and against two PARI/GP programs run in CI. The results, the method and the computations are on the [project site](https://dawidrylko.github.io/lattice-dimers/).
+## Research: the dimer entropy of the king's graph
 
-## Results
+The king's graph is not planar, and its boards with both sides at least 3 admit no Pfaffian orientation, so Kasteleyn's method does not apply. Row transfer matrices on cylinders of circumference up to 25, split by a conserved parity of the dimers crossing a loop, give the entropy per site to 16 digits; computer-assisted Collatz-Wielandt certificates prove a two-sided bound.
+
+| quantity | value | status |
+| --- | --- | --- |
+| entropy per site $s$ | 0.5655119110413253 ± 6·10⁻¹⁶ | estimate, not rigorous |
+| bounds on $s$ | 0.545343749727 ≤ s ≤ 0.582767477484 | proved, computer-assisted |
+| surface free energy $\sigma$ of a free edge | 0.242017935766251 ± 9·10⁻¹⁵ | estimate |
+| corner free energy $\kappa$ | 0.36319625605 ± 3·10⁻¹⁰ | estimate |
+| decay length $\xi$ of the parity splitting | 1.235 ± 0.004 | estimate |
+
+The free energies give the asymptotics of [A239273](https://oeis.org/A239273), $a(n) \sim e^{\kappa}\, e^{4sn^2} e^{-8\sigma n}$, with relative error $6 \cdot 10^{-8}$ at $n = 10$.
+
+- Paper: *The dimer entropy of the king's graph* ([PDF](research/king-entropy/paper/main.pdf), [source](research/king-entropy/paper/main.tex)).
+- Companion note: *Log-convexity of strip dimer counts on the king's graph* ([PDF](research/king-entropy/paper/L-note.pdf), [source](research/king-entropy/paper/L-note.tex)), the convexity hypothesis tested in 1453 cases and where it fails.
+- [Research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html): the results above read from the committed data on every build.
+- [`research/king-entropy`](research/king-entropy): scripts, data, outputs, proofs of the bounds, and [`xcheck/`](research/king-entropy/xcheck/REPORT.md), an independent recomputation written from scratch. [`paper/NUMBERS.md`](research/king-entropy/paper/NUMBERS.md) maps every number of the paper to its output file and script.
+
+The code, data and both preprints are archived on Zenodo when the tag `king-entropy-v1.0.0` is released; until then the DOIs are pending ([`ZENODO.md`](research/king-entropy/paper/ZENODO.md)).
+
+## Exact counts: OEIS A004003 and A239273
+
+How many ways are there to cover a $2n \times 2n$ board with pieces that each cover two neighbouring cells, and what does any one of those coverings look like? For dominoes, which join cells that share a side, the count is [OEIS A004003](https://oeis.org/A004003) and has a closed form found by Kasteleyn [1] and Fisher [2] in 1961. For domicules, which may also join cells that share only a corner, the count is [OEIS A239273](https://oeis.org/A239273) on squares and [A239264](https://oeis.org/A239264) on rectangles [6], and no closed form is used here. This repository counts both exactly, numbers every tiling so that any single one can be drawn from its number, and samples tilings of boards too large to number. It evaluates the domino product formula exactly as a resultant of two integer polynomials, counts domicule tilings with a cell-by-cell transfer that runs modulo primes in parallel and is rebuilt with the Chinese remainder theorem, and checks the solvers against each other, against the OEIS and against two PARI/GP programs run in CI.
 
 Both sequences up to $20 \times 20$. The site recounts the $20 \times 20$ domicule term on every build and the modular solver checks it against an extra prime.
 
@@ -31,13 +53,10 @@ Both sequences up to $20 \times 20$. The site recounts the $20 \times 20$ domicu
 
 The notes are Markdown files with code cells. The site build runs every cell and publishes the output under it, so the rendered pages are notebooks whose results are recomputed from this repository on every deploy.
 
+- [Research](notes/00-research.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/research.html)): the king's graph paper in brief, its results checked against the committed data, and the asymptotics of A239273 against the exact terms.
 - [Method](notes/01-method.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/method.html)): the closed form and the resultant, transfer by rows and by cells, numbering, coupling from the past, counting modulo primes, the Markov chain for domicules, and how every number is verified.
 - [A004003 notebook](notes/02-a004003.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/a004003.html)): three methods side by side, the floating-point error of the product, the polynomial behind the resultant, running times.
 - [A239273 notebook](notes/03-a239273.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/a239273.html)): the sequence up to $20 \times 20$, the A239264 table, the Kahn-Lovász bound, the Chinese remainder theorem at work, a uniformity test of the Markov chain.
-
-## Research
-
-[`research/king-entropy`](research/king-entropy) computes an estimate of the entropy per site s of domicule tilings, the perfect matchings of the king's graph, 0.5655119110413253 ± 6e-16 (not rigorous), with the rigorous bounds 0.545343749727 ≤ s ≤ 0.582767477484; the paper draft is [`research/king-entropy/paper/main.pdf`](research/king-entropy/paper/main.pdf).
 
 ## Method in brief
 

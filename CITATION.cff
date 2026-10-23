@@ -6,6 +6,8 @@ abstract: >-
   of rectangular boards: the domino product formula evaluated as a resultant of integer
   polynomials, transfer-matrix dynamic programming, a modular solver with the Chinese
   remainder theorem, numbering and sampling of individual tilings, and PARI/GP programs.
+  The directory research/king-entropy holds the scripts, data and papers on the entropy per
+  site of the king's graph dimers, with rigorous bounds.
 type: software
 authors:
   - family-names: Ryłko

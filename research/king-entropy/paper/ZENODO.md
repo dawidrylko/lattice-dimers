@@ -121,6 +121,11 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    - `refs.bib`: in `rylko2026entropy` and `rylko2026lnote` set `howpublished` to
      `{Preprint, Zenodo, \url{https://doi.org/<DOI_PAPER>}}` and `{..., \url{https://doi.org/<DOI_LNOTE>}}`,
      and drop "their Zenodo DOIs are assigned at publication" from the comment above them.
+   - root `README.md`: replace the grey `Zenodo DOI pending` badge with
+     `[![DOI](https://zenodo.org/badge/DOI/<DOI_SOFT>.svg)](https://doi.org/<DOI_SOFT>)` and the
+     sentence "until then the DOIs are pending" under the research results with the three DOIs;
+     the root `notes/00-research.md`, sections "Papers" and "How to cite", and the main page paragraph in
+     `site/template.html` get the same DOIs.
    - `oeis-draft.txt`: in the third `%H` line the two "DOI to be added" become `<DOI_PAPER>` and
      `<DOI_SOFT>`; delete the second `%H` line, which links to the `main.pdf` of the tag, still
      showing the DOI placeholder; update the "Before submitting" header.

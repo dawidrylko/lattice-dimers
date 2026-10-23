@@ -1,7 +1,7 @@
 const { escapeHtml } = require('./notes');
 
 const REPOSITORY_URL = 'https://github.com/dawidrylko/lattice-dimers';
-const NOTE_LABELS = { method: 'Method', a004003: 'A004003', a239273: 'A239273' };
+const NOTE_LABELS = { research: 'Research', method: 'Method', a004003: 'A004003', a239273: 'A239273' };
 
 const CHROME_CSS = `
 .site-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 20px; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -26,7 +26,7 @@ const CHROME_CSS = `
  */
 function renderHeader({ root, current, notes }) {
   const home = root || './';
-  const logo = `<img src="${root}domino.svg" alt="" width="32" height="32">Lattice Dimers`;
+  const logo = `<img src="${root}dimer.svg" alt="" width="32" height="32">Lattice Dimers`;
   const brand = current === 'home' ? `<h1 class="brand">${logo}</h1>` : `<a class="brand" href="${home}">${logo}</a>`;
   const links = [
     { slug: 'home', href: home, label: 'Home' },
@@ -56,7 +56,7 @@ function renderFooter(lines = []) {
     '© <a href="https://dawidrylko.com" rel="author">Dawid Ryłko</a>',
     `<a href="${REPOSITORY_URL}/blob/master/LICENSE">MIT License</a>`,
     `<a href="${REPOSITORY_URL}">GitHub</a>`,
-    '<a href="https://dawidrylko.com/domino-tiling/" hreflang="pl">Blog post</a>',
+    '<a href="https://dawidrylko.com/domino-tiling/" hreflang="pl">Blog post (PL)</a>',
   ];
 
   return [
