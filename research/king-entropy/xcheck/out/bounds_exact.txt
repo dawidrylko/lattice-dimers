@@ -1,0 +1,18 @@
+== A. exact Collatz-Wielandt certificates (12 decimals, rounded outward) ==
+ w  bound            mine (12 dp)      paper (Table 3)   unrounded                      CW spread  states
+ 4  lower            4.45893077494e-1  0.445893077494    0.44589307749417214173        1.8e-30       8  same
+ 4  upper sqrt(phi)  6.89765394232e-1  0.689765394232    0.68976539423184698007        1.9e-30      16  same
+ 4  upper runs       6.69090528409e-1  0.669090528409    0.6690905284080324946         2.0e-29     120  same
+ 8  lower            5.05014525148e-1  0.505014525148    0.50501452514858657788        4.4e-30     128  same
+ 8  upper sqrt(phi)  6.27626147026e-1  0.627626147026    0.627626147025046502          5.9e-30     256  same
+ 8  upper runs       6.17278850986e-1  0.617278850986    0.61727885098511884049        3.5e-28    2264  same
+12  lower            5.25175645897e-1  0.525175645897    0.52517564589770488438        1.0e-29    2048  same
+12  upper sqrt(phi)  6.06921301094e-1  0.606921301094    0.60692130109310207894        1.1e-29    4096  same
+12  upper runs       6.00023045982e-1  0.600023045982    0.60002304598138377299        7.7e-27   36808  same
+
+== B. lemmas on small boards (brute force) ==
+M(A,B) <= min(F(A),F(B)), M(S,S) = F(S), max M = F_(n+1): 250952 pairs, columns m <= 10, violations 0
+cut identity (Lemma 4.4) and strip inequality (Lemma 4.7, both weights): 47 boards (K <= 6, w = 2..4, k = 1..3), cut violations 0, strip violations 0
+with z = 0 (no outside covers) the strip inequality fails on 23 of the 29 boards with k >= 2
+
+TOTAL VIOLATIONS: 0

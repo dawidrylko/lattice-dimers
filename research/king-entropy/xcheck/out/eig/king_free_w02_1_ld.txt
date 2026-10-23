@@ -1,0 +1,11 @@
+# power lat=king bc=free w=2 start=1 real=long double mant=64 threads=4
+# it est_hex cwmin_hex cwmax_hex est cwmin cwmax nsupp zero_viol
+1 0x8p-1 0x8.75e4c60d376bbacp-2 0x9.2f903bbf504e449p+2 4 2.11513051467577970887 36.743178307370929301 2 0
+2 0x8p-1 0x8p-1 0x8p-1 4 4 4 2 0
+3 0x8p-1 0x8p-1 0x8p-1 4 4 4 2 0
+4 0x8p-1 0x8p-1 0x8p-1 4 4 4 2 0
+5 0x8p-1 0x8p-1 0x8p-1 4 4 4 2 0
+6 0x8p-1 0x8p-1 0x8p-1 4 4 4 2 0
+7 0x8p-1 0x8p-1 0x8p-1 4 4 4 2 0
+8 0x8p-1 0x8p-1 0x8p-1 4 4 4 2 0
+# wall=0.8 maxrss_mib=11
