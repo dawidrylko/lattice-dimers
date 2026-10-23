@@ -142,17 +142,21 @@ const RENDERERS = {
   engraving: { straight: renderEngravedBlock, diagonal: renderEngravedDiagonal },
 };
 
+function escapeXml(text) {
+  return text.replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char]);
+}
+
 function renderLabel(label, x, y, width) {
   const fit = Math.floor(width / LABEL_CHAR_WIDTH);
 
-  if (label.length <= fit) {
-    return `<text x="${x}" y="${y}">${label}</text>`;
+  if (label.length <= fit || fit < 3) {
+    return `<text x="${x}" y="${y}">${escapeXml(label)}</text>`;
   }
 
   const tail = Math.floor((fit - 1) / 2);
   const shown = `${label.slice(0, fit - 1 - tail)}…${label.slice(-tail)}`;
 
-  return `<g><title>${label}</title><text x="${x}" y="${y}" data-label="${label}">${shown}</text></g>`;
+  return `<g><title>${escapeXml(label)}</title><text x="${x}" y="${y}" data-label="${escapeXml(label)}">${escapeXml(shown)}</text></g>`;
 }
 
 function renderTiling(tiling, label, offsetX, offsetY, options) {
@@ -220,6 +224,8 @@ function renderSheet(tilings, firstNumber, options) {
 }
 
 renderSheet.STYLES = STYLES;
+renderSheet.CELL_SIZE = CELL_SIZE;
+renderSheet.LABEL_CHAR_WIDTH = LABEL_CHAR_WIDTH;
 
 if (typeof module !== 'undefined') {
   module.exports = renderSheet;

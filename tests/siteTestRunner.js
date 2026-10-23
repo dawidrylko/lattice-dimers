@@ -532,6 +532,22 @@ async function checkHistory(page, baseUrl, width) {
     "location.hash === '#gallery/10x10/1' && document.getElementById('page').value === '1' && [...document.querySelectorAll('#sheet text')].some(text => text.textContent === '#1')",
     'the first 10x10 page after going back',
   );
+  await page.evaluate("const field = document.getElementById('page'); field.value = 'abc'; field.dispatchEvent(new Event('change'))");
+  const field = await page.evaluate("document.getElementById('page').value");
+
+  if (field !== '1') {
+    problems.push(`the page field keeps "${field}" after an invalid entry`);
+  }
+
+  await page.evaluate("fragmentNavigations = 0; document.querySelector('nav.tabs a[data-tab=benchmark]').click()");
+  await page.waitFor("location.hash === '#benchmark' && !document.getElementById('benchmark').hidden", 'the benchmark tab');
+  const tabs = await page.evaluate('fragmentNavigations');
+  await page.evaluate('history.back()');
+  await page.waitFor("location.hash === '#gallery/10x10/1' && !document.getElementById('gallery').hidden", 'the gallery after going back from a tab');
+
+  if (tabs) {
+    problems.push(`tab links navigated to a URL fragment ${tabs} times`);
+  }
 
   return problems;
 }

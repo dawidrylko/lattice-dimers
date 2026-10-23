@@ -398,7 +398,7 @@ function parseHash() {
 
 function go(board, page, highlight) {
   const hash = `#gallery/${board.id}/${page}${highlight ? `/${highlight}` : ''}`;
-  if (hash === location.hash) return;
+  if (hash === location.hash) return updateControls(parseHash());
   history.pushState(null, '', hash);
   render();
 }
@@ -650,6 +650,13 @@ new ResizeObserver(() => {
   if (moved) scrollBy(0, moved.getBoundingClientRect().top - anchorTop);
 }).observe($('gallery'));
 
+document.querySelector('nav.tabs').addEventListener('click', e => {
+  const link = e.target.closest('a');
+  if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  if (link.hash !== location.hash) history.pushState(null, '', link.hash);
+  render();
+});
 window.addEventListener('popstate', render);
 render();
 </script>
