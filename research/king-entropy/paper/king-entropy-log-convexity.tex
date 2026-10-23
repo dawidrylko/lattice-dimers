@@ -72,10 +72,12 @@ the same number when column $m - 1$ is also adjacent to column $0$. The companio
   0.545343749727 \le s \le 0.582767477484 \quad\text{(rigorous)}.
 \end{gather*}
 The rigorous bounds come from strips with free sides and converge only like $1/w$ in the width $w$.
-On the square lattice, reflection positivity gives the Calkin--Wilf bounds
-$(a_{2q+p} - a_{2q})/p \le s$ \cite{calkinwilf1998}, which converge exponentially; here
-$a_k = \log\lambda_k$ and $\lambda_k$ is the growth rate of the free strip of width $k$,
-$\lambda_k^2 = \lim_j Z(2j, k)^{1/j}$. Reflection positivity fails for the king's graph
+For hard squares on the square lattice, the symmetric strip transfer matrix gives the Calkin--Wilf
+lower bounds \cite{calkinwilf1998}, differences of logarithmic strip growth rates divided by $p$,
+and Pavlov \cite{pavlov2012} proved that these differences converge exponentially. For the king's
+graph the same bounds would read $(a_{2q+p} - a_{2q})/p \le s$, where $a_k = \log\lambda_k$ and
+$\lambda_k$ is the growth rate of the free strip of width $k$, $\lambda_k^2 = \lim_j Z(2j, k)^{1/j}$.
+The reflection positivity that the symmetric transfer provides fails for the king's graph
 (\S\ref{sec:obstructions}). The weakest hypothesis that still gives the even-$p$ bounds is
 \begin{equation*}\label{eq:Linf}
   \text{(L$_\infty$)}\qquad q \mapsto a_{2q} \text{ is convex}, \tag{L$_\infty$}

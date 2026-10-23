@@ -95,11 +95,12 @@ $5 \times 5$ board already has $72 > 3\cdot 25 - 6$ edges), but planarity is onl
 Pfaffian orientation. We show that no king board with both sides at least $3$ has one
 (Theorem~\ref{thm:pfaff}), so a single Pfaffian cannot count its domicule tilings, and no
 determinantal formula for $Z$ is known. Wildeboer and Seidel \cite{wildeboerseidel2020} give a
-``pre-Kasteleyn'' orientation of this lattice whose Pfaffian is the signed sum
-$\sum_D (-1)^{n_c(D)}$ over the dimer coverings $D$, where $n_c(D)$ is the number of pairs of
-crossing diagonal dimers, and they note that the unsigned problem is not addressable by Pfaffian
-methods. Yao and Kivelson \cite{yaokivelson2012} write the variant without crossing dimers as a
-Grassmann integral with a quartic interaction. Wildeboer, Nussinov and Seidel
+``pre-Kasteleyn'' orientation of this lattice under which the Pfaffian weights each dimer
+covering $D$ by $(-1)^{n_c(D)}$, up to a sign that may depend on the topological sector, where
+$n_c(D)$ is the number of pairs of crossing diagonal dimers; on a board, which has a single
+sector, the Pfaffian is $\pm\sum_D (-1)^{n_c(D)}$. They note that the unsigned problem is not
+addressable by Pfaffian methods. Yao and Kivelson \cite{yaokivelson2012} write the variant without
+crossing dimers as a Grassmann integral with a quartic interaction. Wildeboer, Nussinov and Seidel
 \cite{wildeboernussinovseidel2020} and Wildeboer et al.\ \cite{wildeboer2026} solve different,
 constrained dimer models on lattices with crossed plaquettes.
 
@@ -108,8 +109,8 @@ simulated dimers on the nearest- and next-nearest-neighbour bonds of the square 
 Carlo, at a small fugacity $w_2$ of the diagonal dimers between $e^{-6}$ and $e^{-3}$; they show
 that the diagonal dimers deconfine monomers, with a correlation length $\propto 1/w_2$. The
 equal-weight point $w_2 = 1$ studied here was not simulated, and no entropy is given. Finch's
-errata \cite[\S 5.12]{finch2020errata} list a constant $1.34254\ldots 1.34265$ for the square
-lattice with ``crossed diagonal bonds''; it is the growth constant $1.342643951124\ldots$ of
+errata \cite[first volume, \S 5.12]{finch2020errata} list a constant $1.34254\ldots 1.34265$ for
+the square lattice with ``crossed diagonal bonds''; it is the growth constant $1.342643951124\ldots$ of
 non-attacking kings (independent sets of the king's graph, OEIS A247413 \cite{oeisA247413}), not a
 dimer constant. Series expansions for dimer and monomer--dimer problems on the standard two- and
 three-dimensional lattices go back to Nagle \cite{nagle1966} and Gaunt \cite{gaunt1969}; Nagle's
@@ -120,7 +121,8 @@ knowledge no numerical value of $s$ has been published.
 eigenvalues of strip transfer matrices; Friedland and Peled \cite{friedlandpeled2005} developed
 the approach for monomer--dimer systems, and Louidor and Marcus \cite{louidormarcus2010}
 sharpened the lower bounds with Rayleigh quotients. These bounds converge fast, but their proofs
-need a symmetric, reflection-positive transfer, which the king lattice does not have
+use a symmetric transfer matrix (in \cite{friedlandpeled2005} a hidden symmetry), and the king
+lattice has no reflection-positive transfer
 (\S\ref{sec:conj}). Pavlov \cite{pavlov2012}, Marcus and Pavlov \cite{marcuspavlov2013} and
 Gamarnik and Katz \cite{gamarnikkatz2009} compute entropies rigorously from strong spatial
 mixing. For perfect matchings, the parity of the number of dimers crossing a closed curve is
@@ -287,8 +289,8 @@ orientation either. Theorem~\ref{thm:pfaff} excludes a single Pfaffian; it does 
 other determinantal formulas, and it does not imply hardness. The perfect matchings of a graph
 of genus $g$ are a linear combination of $4^g$ Pfaffians \cite{galluccioloebl1999,tesler2000};
 with $V = KL$ vertices and $E = 4KL - 3K - 3L + 2$ edges, Euler's formula gives
-$g \ge (E - 3V + 6)/6 = ((K-3)(L-3) - 1)/6$, that is $g \ge 74$ for the $24 \times 24$ board. The
-signed sum of \cite{wildeboerseidel2020} is a single Pfaffian.
+$g \ge (E - 3V + 6)/6 = ((K-3)(L-3) - 1)/6$, that is $g \ge 74$ for the $24 \times 24$ board. On a
+board, the signed sum of \cite{wildeboerseidel2020} is, up to sign, a single Pfaffian.
 \end{remark}
 
 \section{The value of \texorpdfstring{$s$}{s}}\label{sec:value}
@@ -803,11 +805,13 @@ eigenvalue $\lambda_3$ (\file{out/out\_crosscheck.txt}), and the convergence of 
 gives the same gap at every $w = 20, \dots, 25$. The bulk correlation length along the cylinder is
 therefore $1/1.0827 = 0.92$, and the odd-width corrections, which behave like
 $e^{-w/\xi_{\mathrm{odd}}} w^b$ with $1/\xi_{\mathrm{odd}} \approx 1.07$, are governed by the same
-gap. The prefactor form $w^b$ of $\Delta_w$ follows the analysis of the topological splitting in
-\cite{ioselevich2002, yaokivelson2012}; we take only the form from there, not their value of
-$\xi$, which belongs to other models. All finite-size corrections we see are exponentially small,
-as expected for a non-critical (gapped) dimer liquid. On the square lattice, which is critical, the
-corrections are algebraic, $(f_w - G/\pi)w^2 \to \pi/6$, and a polynomial fit in $1/w^2$ to the
+gap. The power prefactor $w^b$ of $\Delta_w$ is our fitting ansatz: \cite{ioselevich2002}
+estimate the splitting of the topological sectors only to exponential accuracy, and the power
+prefactors in \cite{ioselevich2002, yaokivelson2012} belong to other quantities (correlation
+functions, the columnar order at odd circumference); we take neither their prefactors nor their
+value of $\xi$, which belongs to other models. All finite-size corrections we see are
+exponentially small, as expected for a non-critical (gapped) dimer liquid. On the square lattice,
+which is critical, the corrections are algebraic, $(f_w - G/\pi)w^2 \to \pi/6$, and a polynomial fit in $1/w^2$ to the
 transfer-matrix values for $w \le 18$ gives $G/\pi$ only to $6\cdot10^{-8}$; the exact free-fermion
 values give the same digits, so the truncated asymptotic series, not the transfer matrix, limits
 this check (\file{out/out\_validate.txt}).
@@ -861,9 +865,11 @@ king       & 8 & 0.565511911041            & 0.572360897 & 0.98803 & 0.662787681
 \section{Convexity conjectures and a conditional two-sided bound}\label{sec:conj}
 
 The bounds of Theorem~\ref{thm:bounds} converge like $1/w$ because every strip has two free
-sides. Differences of strip growth rates cancel the surface term. On the square lattice,
-reflection positivity turns them into rigorous bounds that converge exponentially
-\cite{calkinwilf1998}; here it fails. The gluing form between two half-boards is the number
+sides. Differences of strip growth rates cancel the surface term. For hard squares on the square
+lattice, the symmetric strip transfer matrix turns them into rigorous bounds \cite{calkinwilf1998}
+(see also \cite{louidormarcus2010}), and Pavlov \cite{pavlov2012} proved that the differences
+converge exponentially. In our terms the symmetry gives reflection positivity of the transfer,
+and here that fails. The gluing form between two half-boards is the number
 $M(A, B)$ of matchings across the cut (Lemma~\ref{lem:fib}), and it is indefinite: for columns of
 length $3$ its smallest eigenvalue is $1 - \sqrt2$, on a vector realised by actual half-boards.
 Nor do the cylinders give a proven upper bound. At every odd circumference $w = 3, 5, \dots, 25$ the
