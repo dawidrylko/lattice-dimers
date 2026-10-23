@@ -250,7 +250,6 @@ def hidden_free(f, wlo=13, m=M_GAP, x=X_HIDDEN):
     return c[2] / d[W], sqrt(cov[2, 2]) / abs(d[W]), n, sqrt(rss / n)
 
 
-
 def main():
     lam, ld = load()
     widths = sorted({w for w, _ in lam})

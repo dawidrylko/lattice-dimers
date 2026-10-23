@@ -12,14 +12,13 @@ error budget.
 3. The error of the main estimate caused by such a mode: its own tail B x / (1 - x) minus the part of
    it that L1, calibrated on d_23 and d_25, already extrapolates.
 """
-import json
+import json, os
 from paths import ROOT
 from errbar import load, diffs, M_GAP, X_HIDDEN
 from mpmath import mp, mpf, exp, nsum, inf
-import os
 
 mp.dps = 40
-lam, ld = load()
+_, ld = load()
 odd = {}
 for (w, p), v in ld.items():
     if w % 2 and w >= 5:
