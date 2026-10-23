@@ -18,10 +18,11 @@ not suffice; neither observation shows that the symmetry is necessary.
 > near-equal weights (1, 0.9), (1, 0.95) "survive", and that the oscillating eigenvalue "never shows up
 > with equal diagonal weights", are false beyond the tested range. (1, 9/10) violates (L) at m = 4, 8, 12
 > from 2q = 56, 86, 112 and (1, 19/20) at m = 8 from 2q = 118; equal weights x = 3/2, 2, 3 violate (L)
-> at 2q = 8 for every m ≥ 35, 21, 19 respectively (checked to m = 60), and (L∞) itself fails there.
-> Every pair of unequal diagonal weights on which (L) was tested violates it at some m (the mechanism is the Krein
-> signature of the J-odd sector), and the left-right symmetry alone does not suffice, since equal
-> weights x = 3/2, 2, 3 violate it too.
+> at 2q = 8 for every m ≥ 35, 21, 19 respectively (checked to m = 60); whether (L∞) itself fails
+> there is open at x = 3/2 and an extrapolation at x = 2, 3 (see the erratum at the end).
+> Every pair of unequal diagonal weights on which (L) was tested violates it at some m (for nearly
+> equal weights at m = 4 and 8 the onset follows the Krein signature of the J-odd sector), and the
+> left-right symmetry alone does not suffice, since equal weights x = 3/2, 2, 3 violate it too.
 > See §5.
 
 ## 0. What is really needed: (L∞), much weaker than (L)
@@ -203,7 +204,8 @@ The conclusion above places x = 1 below "a transition x* <= 3/2". That is not su
 x = 3/2 the second differences are negative at 2q = 8, 12, 16, 20 (finite widths; the exact
 failures of (L) at x = 3/2, 2, 3 for m <= 60 stand), but the two-mode Prony fits of `L/modes.py`
 (`L/out_modes.txt`, widths 2q <= 22) give |rho_-| / rho_+ = 0.942 in the last window, so the
-positive mode wins and the model predicts convexity from about 2q = 24. The asymptotic sign at
+positive mode wins, but by a margin (0.995 at 2q = 24) smaller than the drift of the ratio over the
+windows (0.971 to 0.942), so the model does not say from which 2q on the strips are convex. The asymptotic sign at
 x = 3/2 is unresolved and leans convex. The alternating mode dominates only at x = 2 (ratio 1.002)
 and x = 3 (1.018), and even there the ratio drifts downwards with the window, so a large-q failure
 at x = 2, 3 is plausible but an extrapolation. x* is defined as the crossing of the two rates,

@@ -29,6 +29,7 @@ with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to i
 | `notes/` | proofs of the bounds and the notes on Calkin-Wilf and (L) |
 | `L/` | the experiments on (L), scripts with their outputs |
 | `paper/` | the paper, its number map and `paper/derived.py` |
+| `xcheck/` | an independent recomputation written from scratch, with its own outputs; verdicts and commands in `xcheck/REPORT.md` |
 
 The tag `king-entropy-v0.1.0` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
 

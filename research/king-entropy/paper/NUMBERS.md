@@ -94,18 +94,20 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | 1 % of \|d_W\|: 6.0·10⁻¹⁶, 1.9·10⁻¹⁵; G dropped | `out/out_errbar.txt` (predictive backtest: \|d_W\| = 5.99e-14, 1.89e-13; kept/dropped) | `src/errbar.py` |
 | ξ_odd = 0.929, b = −1.80 | `out/out_errbar.txt` (extras at W = 25: 0.9294, −1.803) | `src/errbar.py` |
 | L1 backtests 2-4·10⁻⁵, L2 and R2 1-2·10⁻⁶ at W = 23 | `out/out_errbar.txt` (predictive backtest, odd) | `src/errbar.py` |
-| 18 kept, [0.56551191104132528, 0.56551191104132534] | `out/out_errbar.txt` (kept range 0.565511911041325278 ... 0.565511911041325337; rounded to the 17 decimals of Table 2) | `src/errbar.py` |
+| 18 kept, [0.56551191104132527, 0.56551191104132534] | `out/out_errbar.txt` (kept range 0.565511911041325278 ... 0.565511911041325337; rounded outward to the 17 decimals of Table 2) | `src/errbar.py` |
 | 9.0·10⁻¹⁷ = 3.0·10⁻¹⁷ + 6.0·10⁻¹⁷; 3.4·10⁻¹⁷; 6·10⁻²⁰; 1.5·10⁻¹⁶; total 2.7·10⁻¹⁶ (2.72·10⁻¹⁶ before rounding, `data/errbar.json` `budget`) | `out/out_errbar.txt` (BUDGET line; gap 5.6e-20) | `src/errbar.py` |
 | x = e^(−2/1.2351), w₀ = 11, 13, 15, 17; fitted B between 0.9·10⁻³ d₂₅ (w₀ = 11) and 1.95·10⁻³ d₂₅ (w₀ = 13); −1.6·10⁻³ d₂₅ ≤ B ≤ 3.4·10⁻³ d₂₅ | `out/out_errbar.txt` (hidden slow mode block: B free per window, allowed) | `src/errbar.py` |
 | d₂₇ within 1.5·10⁻⁴ of the L1 prediction, 1.0·10⁻³ for B = 1.95·10⁻³ d₂₅, \|B\| ≤ 2.8·10⁻⁴ d₂₅, 1.4·10⁻¹⁸ | `out/out_hidden_oos.txt` (sections 1-3); w = 25, 27 from `xcheck/out/eig_summary.json` | `src/hidden_oos.py` |
 | 6.2·10⁻¹⁷ per site over 33 cylinders | `out/out_errbar.txt` (rounding block) | `src/errbar.py` |
 | 0.5655119110413253 ± 6·10⁻¹⁶, centre 0.5655119110413253176 | `out/out_errbar.txt` (RECOMMENDATION; `data/errbar.json` `recommended.s`) | `src/errbar.py` |
 | further digits: 2.13 widths, 4.4 times the memory per digit | `paper/out_derived.txt` (widths per decimal digit 2.127, memory factor 4.37; rounded), with m = 1.082727 | `paper/derived.py` |
+| rounding term 1.5·10⁻¹⁶ of 2.7·10⁻¹⁶; 7.8·10⁻²⁰ per site, about 19 digits | as in the error budget below; `xcheck/out/compare_eig.txt` (lean longdouble); `paper/out_derived.txt` (19.1 digits) | `src/errbar.py`, `xcheck/compare_eig.py`, `paper/derived.py` |
 | 4.3 GiB at w = 24, 8.4 GiB at w = 25; time about the same factor | `out/out_estimate.txt` (cost table: peak RSS 4353 and 8642 MiB, wall 660.2 and 1351.3 s) | `src/cylw.py king cyl <w> <p>` |
 | 4.1·10⁻¹⁶ | `out/out_crosscheck.txt` section A (max diff 4.06e-16; rounded) | `src/crosscheck.py` |
 | 1.8·10⁻¹⁵ | `out/out_crosscheck.txt` section B (−1.78e-15; rounded) | `src/crosscheck.py` |
 | independent code: 7.8·10⁻²⁰ (extended), 6.2·10⁻¹⁷ (float64) per site | `xcheck/out/compare_eig.txt` (max \|diff\| per site by source: lean longdouble 7.8e-20; sec float64 6.2e-17, eig float64 3.9e-17, lean float64 3.1e-17) | `xcheck/compare_eig.py` |
 | w = 26 (both sectors) and 27 extended, w = 28 (both sectors) float64; 1.9·10⁻⁴, 1.5·10⁻⁴, 5.4·10⁻⁴ | `xcheck/out/analyze_eig.txt` (section 6: ratios 1.00019, 1.00015, 1.00054 of measured to predicted d_w) | `xcheck/analyze_eig.py` |
+| d₂₈ resolved to about 6·10⁻³ | `paper/out_derived.txt` (resolution of d_28: 0.0057), from `xcheck/out/analyze_eig.txt` (section 8: float64 vs long double ≤ 1.11e-17 per site) and \|d₂₈\| = 1.93518e-15 | `paper/derived.py` |
 | 0.5655119110413253187; 1.1·10⁻¹⁸ | `xcheck/out/analyze_eig.txt` (section 5, odd W = 27, L1); `paper/out_derived.txt` (difference from the centre) | `xcheck/analyze_eig.py`, `paper/derived.py` |
 
 ### Section 4 (bounds)
@@ -168,7 +170,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | number | file | script |
 | --- | --- | --- |
 | 1 − √2 | `out/out_cw.txt` (section A: −0.4142) | `src/cw.py` |
-| odd w = 3...25 below the estimate, 2.5·10⁻³ at w = 3, 6.7·10⁻¹⁵ at w = 25 | `paper/out_derived.txt` (odd cylinders, s − f_w: 0.00249 ... 6.71e-15, all positive) | `paper/derived.py` |
+| odd w = 3...25 below the estimate, 2.5·10⁻³ at w = 3, 6.7·10⁻¹⁵ at w = 25; even w: sector 0 above it | `paper/out_derived.txt` (odd cylinders, s − f_w: 0.00249 ... 6.71e-15, all positive; even cylinders w = 4...24, sector 0 above and sector 1 below at every w) | `paper/derived.py` |
 | 0.565511911035, 0.565511911049, width 1.32·10⁻¹¹ | `out/out_cw.txt` (section E, CONDITIONAL INTERVAL) | `src/cw.py` |
 | 13.08824999346029, 12.52273808241305, 11.95722617139012, 13.08824999346131; 10⁻¹⁴ | `out/out_cw.txt` (section E); the lower bounds are 24 and 23 times `data/bounds.json` `lower` 24, 23 minus 10⁻¹⁴ (`src/cw.py`, `low`) | `src/cw.py` |
 | 0.5655119110; 6.3·10⁻¹², 7.7·10⁻¹² | arithmetic from the interval and s | - |
@@ -215,7 +217,7 @@ have the same sources.
 | Z(8, m)² > Z(6, m)Z(10, m): 35 ≤ m (x = 3/2), 21 ≤ m (x = 2), 19 ≤ m (x = 3), m ≤ 60 | `L/out_linf.txt` (last block) | `L/linf.py 16` |
 | Table 2 (two modes): ρ₊, ρ₋, first and last ratios, negative 2q | `L/out_modes.txt` | `L/modes.py` |
 | −3.6·10⁻⁹ at 2q = 20 (x = 3/2); 0.942; drift 0.971 → 0.942 | `L/out_modes.txt` (x = 1.5) | `L/modes.py` |
-| 1.34 at 2q = 14, 0.995 at 2q = 24 (x = 3/2) | `paper/out_derived.txt` (x = 3/2 line, from P = 5.95e-6, Q = 7.98e-6 of the last window in `L/out_modes.txt`) | `paper/derived.py` |
+| 1.34 at 2q = 14, 0.995 at 2q = 24 (x = 3/2); 0.946 of the third window | `paper/out_derived.txt` (x = 3/2 lines, from P = 5.95e-6, Q = 7.98e-6 of the last window in `L/out_modes.txt`; with 0.946 the ratio at 2q = 24 is 1.02) | `paper/derived.py` |
 | 1.002, 1.018 (x = 2, 3); drift 0.03-0.08 | `L/out_modes.txt` | `L/modes.py` |
 | x* ∈ (7/4, 2), x* ≈ 1.96 | `L/out_modes.txt` (crossing) | `L/modes.py` |
 | 7.6·10⁻¹⁰ (smallest d_q at x = 1) | `L/out_modes.txt` (x = 1, 2q = 20) | `L/modes.py` |

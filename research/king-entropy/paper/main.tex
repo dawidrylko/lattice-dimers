@@ -381,7 +381,7 @@ the midpoints). Every model passes on both sequences except G, which ignores the
 (the PE fit attributes it to a power prefactor, $\xi_{\mathrm{odd}} = 0.929$, $b = -1.80$). Measured
 against $|d_W|$, the backtest changes of L1 stay at $2$--$4\cdot10^{-5}$ on the odd widths for every
 cut $W = 19, 21, 23$, and those of L2 and R2 fall to $1$--$2\cdot10^{-6}$ at $W = 23$. The $18$ kept estimates lie in
-$[0.56551191104132528,\ 0.56551191104132534]$.
+$[0.56551191104132527,\ 0.56551191104132534]$.
 
 \emph{Error budget.} We add four terms:
 \begin{enumerate}
@@ -396,7 +396,7 @@ $0.9\cdot10^{-3}\,d_{25}$ ($w_0 = 11$) and $1.95\cdot10^{-3}\,d_{25}$ ($w_0 = 13
 standard errors of a fitted value, over all windows and widened to include $B = 0$:
 $-1.6\cdot10^{-3}\,d_{25} \le B \le 3.4\cdot10^{-3}\,d_{25}$. Since $s$ is linear in $B$, the larger shift at
 the two ends is the term. The next odd width does not show such a mode: the independent code of
-\file{xcheck/} gives $d_{27}$ within $1.5\cdot10^{-4}$ of the L1 prediction from $W = 25$, where a mode
+\file{xcheck/}, described at the end of this section, gives $d_{27}$ within $1.5\cdot10^{-4}$ of the L1 prediction from $W = 25$, where a mode
 with $B = 1.95\cdot10^{-3}\,d_{25}$ would move it by $1.0\cdot10^{-3}$. This is consistent with the fitted $B$
 taking up the misfit of L1 at small $w$, though it rests on one width. Read as a mode, the whole
 deviation allows $|B| \le 2.8\cdot10^{-4}\,d_{25}$, which would move the main estimate by at most
@@ -414,10 +414,14 @@ with the main model L1 on the odd widths, $s = 0.5655119110413253176$, as the ce
 estimate, not a bound: the budget assumes that no correction slower than those in the data
 appears beyond $w = 25$.
 
-\emph{Further digits.} Each further digit of $s$ needs about $\log 10/m = 2.13$ more widths, and the
-state vector, with it the peak memory of \file{src/cylw.py}, doubles with each width ($4.3$\,GiB at
-$w = 24$, $8.4$\,GiB at $w = 25$), so a digit costs about $2^{2.13} = 4.4$ times the memory, and the
-run time grows by about the same factor. Restricting the full row transfer to zero momentum and to states even under reflection would
+\emph{Further digits.} Each further digit of the truncation error needs about $\log 10/m = 2.13$
+more widths. The state vector doubles with each width, and with it the peak memory of
+\file{src/cylw.py} ($4.3$\,GiB at $w = 24$, $8.4$\,GiB at $w = 25$), so a digit costs about
+$2^{2.13} = 4.4$ times the memory, and the run time grows by about the same factor. The quoted error
+bar would not follow: its largest term is the rounding term ($1.5\cdot10^{-16}$ of
+$2.7\cdot10^{-16}$), which more widths do not reduce, and the extended-precision inputs agree with
+the independent code below to $7.8\cdot10^{-20}$ per site, so about $19$ digits is the end of the
+$64$-bit mantissa of the x87 \texttt{long double}. Restricting the full row transfer to zero momentum and to states even under reflection would
 divide the state space by about $2w$, but the cell steps used here break the rotation symmetry of the
 intermediate states, so this needs a different implementation. Beyond a few more digits the natural
 tools are the corner transfer matrices and their renormalization-group variant mentioned in the
@@ -434,9 +438,10 @@ independent, eigenvalue-free check of $s$, discussed with the corner free energy
 (\file{xcheck/}; nothing in it is taken from \file{src/}) reproduces the cylinder values per site to
 $7.8\cdot10^{-20}$ against the extended-precision inputs and to $6.2\cdot10^{-17}$ against the float64
 ones. It also goes beyond them: both sectors of $w = 26$ and the odd width $w = 27$ in extended
-precision, and both sectors of $w = 28$ in float64. The new differences $d_{26}$, $d_{27}$ and $d_{28}$
-agree with the L1 predictions made at $W = 24$ (midpoints) and $W = 25$ (odd widths) to
-$1.9\cdot10^{-4}$, $1.5\cdot10^{-4}$ and $5.4\cdot10^{-4}$ relative, and L1 on the odd widths up to
+precision, and both sectors of $w = 28$ in float64. The new differences $d_{26}$ and $d_{27}$ agree
+with the L1 predictions made at $W = 24$ (midpoints) and $W = 25$ (odd widths) to $1.9\cdot10^{-4}$ and
+$1.5\cdot10^{-4}$ relative, and $d_{28}$, whose float64 inputs resolve it only to about
+$6\cdot10^{-3}$, to $5.4\cdot10^{-4}$; L1 on the odd widths up to
 $W = 27$ gives $0.5655119110413253187$, $1.1\cdot10^{-18}$ from the centre above. These widths test the
 extrapolation outside its sample; they are not used in the estimate.
 
@@ -861,11 +866,12 @@ reflection positivity turns them into rigorous bounds that converge exponentiall
 \cite{calkinwilf1998}; here it fails. The gluing form between two half-boards is the number
 $M(A, B)$ of matchings across the cut (Lemma~\ref{lem:fib}), and it is indefinite: for columns of
 length $3$ its smallest eigenvalue is $1 - \sqrt2$, on a vector realised by actual half-boards.
-Nor do cylinders give upper bounds: at every odd circumference $w = 3, 5, \dots, 25$ the cylinder
-value $f_w$ lies below the estimate of $s$, by $2.5\cdot10^{-3}$ at $w = 3$ and $6.7\cdot10^{-15}$ at
-$w = 25$ (Table~\ref{tab:odd}), while reflection positivity would make it an upper bound; on even
-cylinders only the sector $p = 0$ lies above it. The comparison is with the estimate, so this is
-evidence, not a proof. We state the two sign properties that the data show instead.
+Nor do the cylinders give a proven upper bound. At every odd circumference $w = 3, 5, \dots, 25$ the
+cylinder value $f_w$ lies below the estimate of $s$, by $2.5\cdot10^{-3}$ at $w = 3$ and
+$6.7\cdot10^{-15}$ at $w = 25$ (Table~\ref{tab:odd} lists $w \ge 13$); on even cylinders the sector
+$p = 0$ lies above it at every width we computed, but we have no argument that makes it a bound. The
+comparison is with the estimate, so this is evidence, not a proof. We state the two sign properties
+that the data show instead.
 
 \begin{conjecture}\label{conj:Linf}
 Let $a_0 = a_1 = 0$ and $a_k = \log\lambda_k$ for $k \ge 2$.

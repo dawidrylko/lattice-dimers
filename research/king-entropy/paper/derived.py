@@ -118,8 +118,18 @@ odd_gap = {w: s - mpf(sec[str(w)]['0']) / w for w in range(3, 20, 2)}
 odd_gap.update({w: s - mpf(json.load(open(f'data/eig/eig_king_cyl_w{w}_p1.json'))['per_site']) for w in range(21, 26, 2)})
 print('odd cylinders, s - f_w: ' + ', '.join(f'w={w}: {mp.nstr(v, 3)}' for w, v in sorted(odd_gap.items()))
       + f'; all positive: {all(v > 0 for v in odd_gap.values())}')
+even = {w: [mpf(sec[str(w)][p]) / w for p in ('0', '1')] for w in range(4, 20, 2)}
+even.update({w: [mpf(json.load(open(f'data/eig/eig_king_cyl_w{w}_p{p}.json'))['per_site']) for p in (0, 1)]
+             for w in range(20, 25, 2)})
+print(f'even cylinders w = 4..24: sector 0 above s at every w: {all(v[0] > s for v in even.values())}, '
+      f'sector 1 below s at every w: {all(v[1] < s for v in even.values())}')
+
+# Section 3: float64 resolution of d_28 (xcheck/out/analyze_eig.txt: float64 vs long double <= 1.11e-17 per site)
+print(f'resolution of d_28: 1.11e-17 / 1.93518e-15 = {mp.nstr(mpf("1.11e-17") / mpf("1.93518e-15"), 2)}; '
+      f'digits of a 7.8e-20 agreement per site: {mp.nstr(-log(mpf("7.8e-20"), 10), 3)}')
 
 # L-note, x = 3/2: last two-mode window 2q = 14..20 (L/out_modes.txt), |Q/P| at 2q = 14 and its decay
 P, Q, r = mpf('5.95e-6'), mpf('7.98e-6'), mpf('0.942')
 print(f'x = 3/2: |Q/P| = {mp.nstr(Q / P, 3)} at 2q = 14, '
       + ', '.join(f'{mp.nstr(Q / P * r ** j, 3)} at 2q = {14 + 2 * j}' for j in range(1, 7)))
+print(f'x = 3/2 with the third-window ratio 0.946: |Q/P| at 2q = 24 = {mp.nstr(Q / P * mpf("0.946") ** 5, 3)}')
