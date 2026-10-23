@@ -22,8 +22,8 @@ const ASSETS = {
   'dimer.svg': '.github/assets/dimer.svg',
   'apple-touch-icon.png': '.github/assets/apple-touch-icon.png',
   'og-image.png': '.github/assets/og-image.png',
-  'papers/king-entropy.pdf': 'research/king-entropy/paper/main.pdf',
-  'papers/king-entropy-log-convexity.pdf': 'research/king-entropy/paper/L-note.pdf',
+  'papers/king-entropy.pdf': 'research/king-entropy/paper/king-entropy.pdf',
+  'papers/king-entropy-log-convexity.pdf': 'research/king-entropy/paper/king-entropy-log-convexity.pdf',
 };
 const RESEARCH_DATA = 'research/king-entropy/data';
 const PAPERS = [

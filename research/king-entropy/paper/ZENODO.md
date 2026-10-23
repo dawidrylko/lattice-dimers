@@ -16,7 +16,7 @@ it, or that release is archived as the king-entropy snapshot.
 | Resource type | Publication / Preprint |
 | Title | The dimer entropy of the king's graph |
 | Creator | Ryłko, Dawid (personal; leave the affiliation empty) |
-| Files | `main.pdf` |
+| Files | `king-entropy.pdf` |
 | DOI | "Get a DOI now!" (reserve; the draft stays unpublished) |
 | License | Creative Commons Attribution 4.0 International (`cc-by-4.0`) |
 | Language | English |
@@ -46,7 +46,7 @@ Description:
 | Resource type | Publication / Preprint |
 | Title | Log-convexity of strip dimer counts on the king's graph |
 | Creator | Ryłko, Dawid (personal; leave the affiliation empty) |
-| Files | `L-note.pdf` |
+| Files | `king-entropy-log-convexity.pdf` |
 | DOI | "Get a DOI now!" (reserve; the draft stays unpublished) |
 | License | Creative Commons Attribution 4.0 International (`cc-by-4.0`) |
 | Language | English |
@@ -81,11 +81,13 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    - An output is stale when its script or a data file it reads changed in a commit the output does
      not contain: PR #38 found `out/out_ltest.txt` still counting 1451 (L) cases after
      `data/zex/zex_king_free_m24_K24.json` had raised them to 1453. For every command in the table of
-     `main.tex`, Section "Reproducibility", take its inputs from the script's docstring and the
+     `king-entropy.tex`, Section "Reproducibility", take its inputs from the script's docstring and the
      `# needs` comments of `README.md`, and run
      `git rev-list -1 "$(git log -1 --format=%H -- <output>)"..HEAD -- <script> <inputs>`; any output
-     means stale. Rerun the stale ones and update the numbers that changed in `main.tex`,
-     `L-note.tex`, `NUMBERS.md`, `oeis-draft.txt`, the descriptions above and `.zenodo.json`.
+     means stale, unless the only commit listed moves files without changing them
+     (`git show --stat -M <commit>` shows renames only), as the renames listed in `README.md`,
+     "Renamed before king-entropy-v1.0.0", do. Rerun the stale ones and update the numbers that changed in `king-entropy.tex`,
+     `king-entropy-log-convexity.tex`, `NUMBERS.md`, `oeis-draft.txt`, the descriptions above and `.zenodo.json`.
    - Rebuild both PDFs with the `docker run` line of step 8, run in `paper/`.
    - Commit all of it on a `d/*` branch and merge it with a merge commit before step 1, so the
      preprint drafts and the tag carry the same numbers and PDFs.
@@ -107,17 +109,17 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    ```bash
    git tag -a king-entropy-v1.0.0 <SHA> -m "king-entropy v1.0.0: code, data and outputs of the king's graph entropy paper"
    git push origin king-entropy-v1.0.0
-   gh release create king-entropy-v1.0.0 --repo dawidrylko/lattice-dimers --verify-tag --latest=false --title "king-entropy v1.0.0" --notes "Code, data and outputs behind research/king-entropy/paper/main.tex and L-note.tex."
+   gh release create king-entropy-v1.0.0 --repo dawidrylko/lattice-dimers --verify-tag --latest=false --title "king-entropy v1.0.0" --notes "Code, data and outputs behind research/king-entropy/paper/king-entropy.tex and king-entropy-log-convexity.tex."
    ```
    `king-entropy-v0.1.0` stays; the outputs cite its SHAs.
 6. Wait for the Zenodo record, check its title, creator, license, keywords and the two relations on
    the record page, and write down its version DOI `<DOI_SOFT>` (cite the version, not the concept
    DOI). The tagged snapshot still carries the placeholders below; that is expected.
 7. On a `d/*` branch fill in the DOIs:
-   - `main.tex`, Data availability: replace `TO-BE-ASSIGNED (Zenodo) \TODO{...}` with `<DOI_SOFT>`
+   - `king-entropy.tex`, Data availability: replace `TO-BE-ASSIGNED (Zenodo) \TODO{...}` with `<DOI_SOFT>`
      and drop the `% TODO(submission)` comment.
-   - `L-note.tex`, Data availability: add "at the tag `king-entropy-v1.0.0`, and are archived on
-     Zenodo, DOI: `<DOI_SOFT>`", worded as in `main.tex`.
+   - `king-entropy-log-convexity.tex`, Data availability: add "at the tag `king-entropy-v1.0.0`, and are archived on
+     Zenodo, DOI: `<DOI_SOFT>`", worded as in `king-entropy.tex`.
    - `refs.bib`: in `rylko2026entropy` and `rylko2026lnote` set `howpublished` to
      `{Preprint, Zenodo, \url{https://doi.org/<DOI_PAPER>}}` and `{..., \url{https://doi.org/<DOI_LNOTE>}}`,
      and drop "their Zenodo DOIs are assigned at publication" from the comment above them.
@@ -128,12 +130,12 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      `site/build.js` add `identifier: 'https://doi.org/<DOI_PAPER>'` (and `<DOI_LNOTE>`) to the two
      `PAPERS` entries; in `CITATION.cff` add `doi: <DOI_SOFT>` and a `preferred-citation` for the paper.
    - `oeis-draft.txt`: in the third `%H` line the two "DOI to be added" become `<DOI_PAPER>` and
-     `<DOI_SOFT>`; delete the second `%H` line, which links to the `main.pdf` of the tag, still
+     `<DOI_SOFT>`; delete the second `%H` line, which links to the `king-entropy.pdf` of the tag, still
      showing the DOI placeholder; update the "Before submitting" header.
 8. Rebuild both PDFs in the pinned image and commit them with the sources:
    ```bash
    cd research/king-entropy/paper
-   docker run --rm -v "$PWD":/work -w /work texlive/texlive@sha256:e8148b126545105c4aeeaa212f8a7bd02d05b500351372881055e1e59ae67d33 sh -c 'latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex && latexmk -pdf -interaction=nonstopmode -halt-on-error L-note.tex'
+   docker run --rm -v "$PWD":/work -w /work texlive/texlive@sha256:e8148b126545105c4aeeaa212f8a7bd02d05b500351372881055e1e59ae67d33 sh -c 'latexmk -pdf -interaction=nonstopmode -halt-on-error king-entropy.tex && latexmk -pdf -interaction=nonstopmode -halt-on-error king-entropy-log-convexity.tex'
    ```
-9. Upload the rebuilt `main.pdf` and `L-note.pdf` to their drafts, add `isSupplementedBy`
+9. Upload the rebuilt `king-entropy.pdf` and `king-entropy-log-convexity.pdf` to their drafts, add `isSupplementedBy`
    `<DOI_SOFT>` (resource type Software) to each, publish both. Then the OEIS entry.

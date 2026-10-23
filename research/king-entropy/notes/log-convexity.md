@@ -1,8 +1,8 @@
 # Hypothesis (L): attack log
 
 **(L)** For every width m: q ↦ Z(2q, m) is log-convex, Z(2q, m)² ≤ Z(2q−2, m) Z(2q+2, m)
-(Z(k, m) = perfect matchings of the k × m king board). `notes/CW-NOTE.md`: (L) ⇒ Calkin-Wilf for even p
-⇒ s ≥ 0.565511911035 (`notes/CW-NOTE.md`, audited in `notes/PROOF-lower.md` §6).
+(Z(k, m) = perfect matchings of the k × m king board). `notes/calkin-wilf.md`: (L) ⇒ Calkin-Wilf for even p
+⇒ s ≥ 0.565511911035 (`notes/calkin-wilf.md`, audited in `notes/proof-lower-bound.md` §6).
 
 **Status: UNRESOLVED.** No counterexample at unit weights (exact, much larger range than `src/cw.py`), no
 proof. Five proof routes closed with explicit obstructions; two exact reformulations; two
@@ -29,7 +29,7 @@ not suffice; neither observation shows that the symmetry is necessary.
 ## 0. What is really needed: (L∞), much weaker than (L)
 
 The conditional bound uses only convexity of a_{2q} = log λ_{2q} (free strip of width 2q) for
-2q ≥ 22 (`notes/PROOF-lower.md` §6). Call this **(L∞)**. (L) for all m implies (L∞) by m → ∞, not
+2q ≥ 22 (`notes/proof-lower-bound.md` §6). Call this **(L∞)**. (L) for all m implies (L∞) by m → ∞, not
 conversely. (L∞) checked on the strip eigenvalues (`src/surface.py` → `data/surface.json`, f(k) column;
 longdouble for k = 14...24, float64 with Collatz-Wielandt bracket for k = 25, 26): the second
 differences Δ²a at 2q = 10, 12, ..., 24 are 4.7e-5, 4.0e-6, 5.5e-7, 5.6e-8, 7.0e-9, 7.6e-10,
@@ -60,7 +60,7 @@ deep in the asymptotic regime (constant ratio).
 
 ## 2. Closed routes (dead ends, with the obstruction)
 
-1. **Reflection positivity / Cauchy-Schwarz** (`notes/CW-NOTE.md`): crossing kernel M indefinite.
+1. **Reflection positivity / Cauchy-Schwarz** (`notes/calkin-wilf.md`): crossing kernel M indefinite.
 2. **Stieltjes moments (Hankel PSD of the transfer moments).** Z(2q, m) would be a moment
    sequence of a positive measure iff all Hankel matrices [Z(2(i+j))], [Z(2(i+j+1))] are PSD.
    Exact leading minors (`src/ltest.py`, Bareiss): a negative minor appears for every free width
@@ -133,23 +133,23 @@ matrices of route 2 are the M-Gram matrices of {u₀, u₂, u₄, ...} and {u₁
 - Try (R2) with a different cut (vertex cut through a row, kernel V of `src/cw.py`) where the
   orbit vectors may lie in a cone on which the kernel is positive.
 
-## 5. The left-right reflection J (`L/`)
+## 5. The left-right reflection J (`log-convexity/`)
 
-Every claim below comes from `python3 L/<script>.py > L/out_<script>.txt` (code and output
-committed together: `L/symmetry.py` at `f64b477`, `L/involution.py` at `78576e2`, `L/linf.py` at
-`91c8bae`; `L/out_linf.txt` is `python3 L/linf.py 16`). "Exact" means integer arithmetic, "float" means float64.
+Every claim below comes from `python3 log-convexity/<script>.py > log-convexity/out_<script>.txt` (code and output
+committed together: `log-convexity/symmetry.py` at `f64b477`, `log-convexity/involution.py` at `78576e2`, `log-convexity/linf.py` at
+`91c8bae`; `log-convexity/out_linf.txt` is `python3 log-convexity/linf.py 16`). "Exact" means integer arithmetic, "float" means float64.
 
 Structure (lemma). T = H M, where H (horizontal tilings) is symmetric and J-invariant and M is
 the crossing kernel. For any diagonal weights M^T = JMJ, so G = JM is symmetric and GT is
 symmetric. The weight of a simple real eigenvalue is c_j = r_j(0)^2 / (r_j^T G r_j), i.e. its
 sign is the Krein signature. With equal weights Z sees only the J-even sector, where G = M; on
-the J-odd sector G = -M. Checked by `L/symmetry.py` A (exact, m <= 7, five weight sets) and B
+the J-odd sector G = -M. Checked by `log-convexity/symmetry.py` A (exact, m <= 7, five weight sets) and B
 (formula against eigendecomposition, relative error 7e-13).
 
 Breaking J (counterexample). Under (1, 1-eps) the top J-odd level, which is M-positive, becomes
 visible with weight -K eps^2 (K = 0.70, 1.31, 1.63 at m = 4, 5, 8; constant over eps = 1e-3 to
 3e-2). Where it lies above the leading visible J-even level (table B: m = 4, 8 among m <= 11),
-(L) must fail at large q. `L/symmetry.py` D1 (exact): (1, 9/10) fails at m = 4 from 2q = 56, at
+(L) must fail at large q. `log-convexity/symmetry.py` D1 (exact): (1, 9/10) fails at m = 4 from 2q = 56, at
 m = 8 from 2q = 86, at m = 12 from 2q = 112; (1, 19/20) fails at m = 8 from 2q = 118. The onsets
 predicted from the spectrum match exactly at m = 4 and 8; the prediction is computed only for
 m <= 10, so m = 12 is found, not predicted. Control (1, 1): 0/199, 0/129, 0/69. The earlier tests
@@ -157,18 +157,18 @@ of §2.5 stopped at 2q <= 78.
 
 Sector-wise (L). The J-symmetrised transfer H(M+M^T)/2 has no violation where tested: m <= 9,
 2q <= 38 for the weights (1, 1/2), (1, 3/4), (1, 0), (1, 9/10), and (1, 9/10) at m = 8 up to
-2q = 198 (`L/symmetry.py` D2). It was not run on the m = 4 and m = 12 counterexamples or on
+2q = 198 (`log-convexity/symmetry.py` D2). It was not run on the m = 4 and m = 12 counterexamples or on
 (1, 19/20). J-orbit counts (D3): F (symmetric tilings, = Z(k, (m-1)/2) for odd m) and
 Z_+ = (Z+F)/2 satisfy (L) for m <= 12; Z_- = (Z-F)/2 does not (m = 4 at every q; otherwise only
 the trivial q = 1, since Z_-(0) = 0).
 
 Reflection positivity inside the J-even sector (obstruction). M on the J-even sector is
-indefinite; its negative index is 1, 1, 3, 8, 20, 34, 93, 186 for m = 3 to 10 (`L/symmetry.py` E).
+indefinite; its negative index is 1, 1, 3, 8, 20, 34, 93, 186 for m = 3 to 10 (`log-convexity/symmetry.py` E).
 Already at m = 3 the J-even vector (1, -sqrt2, 1) is negative. The visible J-even spectrum is
 non-real from m = 4 on.
 
 Cut-and-swap involution (partial proof, obstruction for (L)). Swap the parts below the first row
-r with U_X(r) = U_Y(r) (plain) or U_X(r) = J U_Y(r) (twisted). `L/involution.py` checks every pair
+r with U_X(r) = U_Y(r) (plain) or U_X(r) = J U_Y(r) (twisted). `log-convexity/involution.py` checks every pair
 for (m, q) up to (5, 2) and (3, 3): involution, type 1 <-> type 2, diagonal count kept,
 N_2 - N_1 = D. A twisted cut allows top-bottom paths, unlike a plain one. The residual does not
 shrink: N_1/N_2 -> 1 (m = 3: 0.26 -> 0.98, m = 5: 0.54 -> 0.99999 for q = 2 to 8). The unmatched
@@ -183,7 +183,7 @@ weights the twisted swap breaks the identity, as the breaking-J paragraph requir
 (x = 2), m >= 19 (x = 3), checked up to m = 60. So symmetry alone does not suffice, while every
 pair of unequal diagonal weights on which (L) was tested violates it at some m (breaking-J
 paragraph). King d_q up to
-2q = 24, Prony fit (`L/linf.py`): a positive mode 0.1147^q (= e^{-2*1.083}, the transfer gap) and
+2q = 24, Prony fit (`log-convexity/linf.py`): a positive mode 0.1147^q (= e^{-2*1.083}, the transfer gap) and
 an alternating mode (-0.072)^q; their ratio is 0.007 at 2q = 24 and shrinks by a factor 0.63
 per step. At x = 1.25 the two modes are comparable (ratios d_q/d_{q+1} = 2.0, 376, 0.16, 48).
 Interlacing needs a Hermitian or small-index Pontryagin structure, but G has exponentially many
@@ -203,12 +203,12 @@ s >= 0.565511911035 as conditional on (L-infinity), not on (L).
 
 The conclusion above places x = 1 below "a transition x* <= 3/2". That is not supported. At
 x = 3/2 the second differences are negative at 2q = 8, 12, 16, 20 (finite widths; the exact
-failures of (L) at x = 3/2, 2, 3 for m <= 60 stand), but the two-mode Prony fits of `L/modes.py`
-(`L/out_modes.txt`, widths 2q <= 22) give |rho_-| / rho_+ = 0.942 in the last window, and the
+failures of (L) at x = 3/2, 2, 3 for m <= 60 stand), but the two-mode Prony fits of `log-convexity/modes.py`
+(`log-convexity/out_modes.txt`, widths 2q <= 22) give |rho_-| / rho_+ = 0.942 in the last window, and the
 positive mode wins. Its margin (0.995 at 2q = 24) is smaller than the drift of the ratio over the
 windows (0.971 to 0.942), so the model does not say from which 2q on the strips are convex. The asymptotic sign at
 x = 3/2 is unresolved and leans convex. The alternating mode dominates only at x = 2 (ratio 1.002)
 and x = 3 (1.018), and even there the ratio drifts downwards with the window, so a large-q failure
 at x = 2, 3 is plausible but an extrapolation. x* is defined as the crossing of the two rates,
 rho_+(x*) = |rho_-(x*)|; on the present data x* is in (7/4, 2), interpolated x* ~ 1.96, a lower
-estimate because of the drift. The companion note `paper/L-note.tex` states this version.
+estimate because of the drift. The companion note `paper/king-entropy-log-convexity.tex` states this version.

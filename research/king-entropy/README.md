@@ -3,15 +3,15 @@
 Perfect matchings of the king's graph (square lattice plus both diagonals),
 i.e. domicule tilings. Goal: the entropy per site
 `s = lim log Z / N` to many digits, with rigorous bounds.
-Results are written up in a paper draft. The PDF is [`paper/main.pdf`](paper/main.pdf), the
-source `paper/main.tex`. Every number in it is mapped to its output file and the script that wrote
+Results are written up in a paper draft. The PDF is [`paper/king-entropy.pdf`](paper/king-entropy.pdf), the
+source `paper/king-entropy.tex`. Every number in it is mapped to its output file and the script that wrote
 it in [`paper/NUMBERS.md`](paper/NUMBERS.md). The commit SHAs recorded in the outputs refer to the
 history under the tag `king-entropy-v0.1.0` for the outputs of the first version, and to the branch
 that becomes `king-entropy-v1.0.0` for the outputs added or regenerated since (`paper/NUMBERS.md`).
-Full proofs of the rigorous bounds are in [`notes/PROOF-upper.md`](notes/PROOF-upper.md) (the
-run-weighted upper bound in its §9) and [`notes/PROOF-lower.md`](notes/PROOF-lower.md); the Calkin-Wilf
-question in [`notes/CW-NOTE.md`](notes/CW-NOTE.md); hypothesis (L) and the experiments on it in
-[`notes/L-NOTE.md`](notes/L-NOTE.md) and the directory [`L/`](L/).
+Full proofs of the rigorous bounds are in [`notes/proof-upper-bound.md`](notes/proof-upper-bound.md) (the
+run-weighted upper bound in its §9) and [`notes/proof-lower-bound.md`](notes/proof-lower-bound.md); the Calkin-Wilf
+question in [`notes/calkin-wilf.md`](notes/calkin-wilf.md); hypothesis (L) and the experiments on it in
+[`notes/log-convexity.md`](notes/log-convexity.md) and the directory [`log-convexity/`](log-convexity/).
 
 License: the scripts are MIT ([`LICENSE`](../../LICENSE)); the paper, the notes, the data and the outputs in
 this directory are CC BY 4.0 ([`LICENSES/CC-BY-4.0.txt`](../../LICENSES/CC-BY-4.0.txt)); the exact split is in
@@ -27,11 +27,25 @@ with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to i
 | `out/` | `out/out_*.txt`, the printed output of each script |
 | `logs/` | `logs/log_*.txt` progress logs and `logs/time_*.txt` wall time and peak RSS |
 | `notes/` | proofs of the bounds and the notes on Calkin-Wilf and (L) |
-| `L/` | the experiments on (L), scripts with their outputs |
-| `paper/` | the paper, its number map and `paper/derived.py` |
-| `xcheck/` | an independent recomputation written from scratch, with its own outputs; verdicts and commands in `xcheck/REPORT.md` |
+| `log-convexity/` | the experiments on (L), scripts with their outputs |
+| `paper/` | the paper and the companion note (sources and PDFs), the number map `paper/NUMBERS.md`, the Zenodo runbook and the OEIS draft |
+| `replication/` | an independent recomputation written from scratch, with its own outputs; verdicts and commands in `replication/REPORT.md` |
 
 The tag `king-entropy-v0.1.0` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
+
+### Renamed before king-entropy-v1.0.0
+
+These files and directories were renamed in October 2026, before the release. The committed outputs, logs and `replication/out/` were written earlier and keep the old names in the commands and notes they print; the commit SHAs they record point at code under the old paths.
+
+| old name | new name |
+| --- | --- |
+| `L/` | `log-convexity/` |
+| `xcheck/` | `replication/` |
+| `paper/main.tex`, `paper/main.pdf` | `paper/king-entropy.tex`, `paper/king-entropy.pdf` |
+| `paper/L-note.tex`, `paper/L-note.pdf` | `paper/king-entropy-log-convexity.tex`, `paper/king-entropy-log-convexity.pdf` |
+| `paper/derived.py`, `paper/out_derived.txt` | `src/derived.py`, `out/out_derived.txt` |
+| `notes/PROOF-lower.md`, `notes/PROOF-upper.md` | `notes/proof-lower-bound.md`, `notes/proof-upper-bound.md` |
+| `notes/CW-NOTE.md`, `notes/L-NOTE.md` | `notes/calkin-wilf.md`, `notes/log-convexity.md` |
 
 ```sh
 python3 -m pip install -r src/requirements.txt
@@ -50,7 +64,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/validate.py` | brute force, repo data, square-lattice closed forms, triangular Kasteleyn, free-strip ratios |
 | `src/crosscheck.py` | exact-integer ratios (w = 9, 11, 12, 13) and ARPACK on the full w = 20 transfer vs the power iteration |
 | `src/bounds.py` | certified Fekete lower bounds, open-strip upper bounds, Kahn-Lovasz, Calkin-Wilf hypothesis checks |
-| `src/cw.py` | Calkin-Wilf hypothesis: RP obstruction, spectral measure, exact log-convexity tests, limit form, conditional bounds (see `notes/CW-NOTE.md`) |
+| `src/cw.py` | Calkin-Wilf hypothesis: RP obstruction, spectral measure, exact log-convexity tests, limit form, conditional bounds (see `notes/calkin-wilf.md`) |
 | `src/estimate.py` | first-pass estimate of s from all cylinders, the final value read from `data/errbar.json`, Z2 splitting table and decay length; writes `data/z2.json` |
 | `src/timed.py` | runs a command and appends wall time and peak RSS to stderr |
 | `src/paths.py` | the directory of each file by its name, so the scripts read and write the right place from any working directory |
@@ -59,18 +73,18 @@ python3 -m pip install -r src/requirements.txt
 | `src/lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/lean/lean_*.json` |
 | `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`notes/PROOF-*.md`) |
 | `src/errbar.py` | error budget of s on the extended-precision cylinders: Luscher main model, other models, predictive backtests, hidden-mode, gap and rounding terms; writes `data/errbar.json` |
-| `src/hidden_oos.py` | out-of-sample check of the hidden mode against w = 27 from the independent code in `xcheck/` (not part of the budget) |
+| `src/hidden_oos.py` | out-of-sample check of the hidden mode against w = 27 from the independent code in `replication/` (not part of the budget) |
 | `src/runweight.py` | run-weighted open-strip upper bound (schemes `3state`, `1bit`, `phi`); `--disk DIR` keeps the third vector in a memory-mapped file |
 | `src/corner.py` | corner free energy kappa from the exact square counts, asymptotics of A239273, s from exact counts alone |
 | `src/pfaff_rigor.py` | GF(2) certificate that king boards with both sides >= 3 have no Pfaffian orientation, with planar controls |
 | `src/surface.py` | surface free energy sigma from free strips |
 | `src/lcert.py` | certified log-convexity tests of (L) at m = 25, 26 in extended precision with a rigorous error bound |
-| `L/` | why (L) is not structural: J-symmetry and Krein signature (`L/symmetry.py`), partial sign-reversing involution (`L/involution.py`), (L_inf) tests at other weights (`L/linf.py`), the two modes and their crossing along equal diagonal weights (`L/modes.py`), with their outputs |
+| `log-convexity/` | why (L) is not structural: J-symmetry and Krein signature (`log-convexity/symmetry.py`), partial sign-reversing involution (`log-convexity/involution.py`), (L_inf) tests at other weights (`log-convexity/linf.py`), the two modes and their crossing along equal diagonal weights (`log-convexity/modes.py`), with their outputs |
 | `src/ltest.py` | exact (L) tests and Hankel (moment) tests on all `data/zex/zex_*.json` |
 | `src/lparity.py`, `src/lspec.py`, `src/lweight.py` | path-parity form of (L), spectral obstructions, (L) under diagonal weights |
 | `src/repro.py` | re-runs `src/estimate.py`, `src/cw.py`, `src/bounds.py 16` and `src/cylw.py king cyl 20 0` from a clean export of HEAD and compares outputs |
-| `paper/derived.py` | numbers of the paper that are simple functions of committed outputs; writes `paper/out_derived.txt` |
-| `paper/L-note.tex` | companion note on the log-convexity (L), shares `paper/refs.bib` |
+| `src/derived.py` | numbers of the paper that are simple functions of committed outputs; writes `out/out_derived.txt` |
+| `paper/king-entropy-log-convexity.tex` | companion note on the log-convexity (L), shares `paper/refs.bib` |
 
 ## Reproduce
 
@@ -102,7 +116,7 @@ python3 src/timed.py python3 src/bounds.py 24  > out/out_bounds.txt     2> logs/
 python3 src/timed.py python3 src/runweight.py 3state $(seq 2 23) > out/out_runweight_3state.txt 2> logs/time_runweight_3state.txt
 python3 src/timed.py python3 src/runweight.py 3state 24 --disk /tmp 2> logs/time_runweight_3state_w24.txt | tail -1 >> out/out_runweight_3state.txt
 python3 src/errbar.py > out/out_errbar.txt       # needs data/lean/lean_king_cyl_w*_p*_longdouble.json
-python3 src/hidden_oos.py > out/out_hidden_oos.txt   # needs the same and xcheck/out/eig_summary.json
+python3 src/hidden_oos.py > out/out_hidden_oos.txt   # needs the same and replication/out/eig_summary.json
 python3 src/estimate.py > out/out_estimate.txt   # needs data/errbar.json
 python3 src/timed.py python3 src/cw.py > out/out_cw.txt 2> logs/time_cw.txt   # needs data/bounds.json and data/z2.json
 ```
@@ -117,7 +131,7 @@ python3 src/audit_bounds.py > out/out_audit_bounds.txt
 python3 src/pfaff_rigor.py > out/out_pfaff.txt
 python3 src/surface.py > out/out_surface.txt
 python3 src/corner.py > out/out_corner.txt       # needs data/errbar.json, data/surface.json and the zex counts to 24 x 24
-python3 L/modes.py > L/out_modes.txt
+python3 log-convexity/modes.py > log-convexity/out_modes.txt
 python3 src/ltest.py > out/out_ltest.txt
 python3 src/lparity.py > out/out_lparity.txt
 python3 src/lspec.py > out/out_lspec.txt
@@ -130,6 +144,6 @@ Paper (needs a TeX distribution with `latexmk`, e.g. TeX Live with
 `texlive-latex-extra`):
 
 ```sh
-python3 paper/derived.py > paper/out_derived.txt
-cd paper && latexmk -pdf main.tex && latexmk -pdf L-note.tex
+python3 src/derived.py > out/out_derived.txt
+cd paper && latexmk -pdf king-entropy.tex && latexmk -pdf king-entropy-log-convexity.tex
 ```

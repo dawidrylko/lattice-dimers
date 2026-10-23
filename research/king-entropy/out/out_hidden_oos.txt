@@ -1,5 +1,5 @@
-== 1. d_27 from xcheck (long double) against the L1 prediction from W = 25
-  f_25: here 0.56551191104131856735, xcheck 0.56551191104131856729, difference 5.7e-20
+== 1. d_27 from replication (long double) against the L1 prediction from W = 25
+  f_25: here 0.56551191104131856735, replication 0.56551191104131856729, difference 5.7e-20
   d_27 measured 6.0611286e-15, predicted 6.060231e-15, relative deviation 0.000148
 
 == 2. response to a hidden mode B x^((w-25)/2), x = 0.198, B in units of d_25

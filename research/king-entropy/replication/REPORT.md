@@ -1,4 +1,4 @@
-# Independent recomputation of `paper/main.tex` (king-graph dimer entropy)
+# Independent recomputation of `paper/king-entropy.tex` (king-graph dimer entropy)
 
 **Verdict.** Claims 1-5 CONFIRMED, claim 6 found no failure mode; no contradiction of substance. Three
 minor last-digit issues are listed under Contradictions. One check is NOT REACHED: the A239264 b-file
@@ -14,16 +14,16 @@ extrapolation to 1e-18 in s, and so do both sectors of w = 28 (float64).
 | 5. kappa | CONFIRMED | 0.3631962560475 | 0.36319625605 +- 3e-10 |
 | 6. failure modes | none found | see the table in Claim 6 | - |
 
-The paper checked is `paper/main.tex` at b4b2c79. The later master 872d605 (merged into this branch)
+The paper checked is `paper/king-entropy.tex` at b4b2c79. The later master 872d605 (merged into this branch)
 fixes the "2.6 %" below to 2.7 %, proves the existence of the limit s in Section 2.1 (checked: the
 bound Z(2j, L) <= lambda_L^(2j) from (2.1) gives bar s <= s*, which with the lower bound closes the
 argument) and rewords the rounding count of Section 4.4; the other two minor items below are
 unchanged there.
 
 All code in this directory was written from scratch for this check; nothing is imported from or
-adapted from `src/` or `L/`. The committed outputs of the repository (`data/`, `out/`) were read only
+adapted from `src/` or `log-convexity/`. The committed outputs of the repository (`data/`, `out/`) were read only
 after the own result existed, by the `compare_*` scripts. Commands are run from
-`research/king-entropy/xcheck/`; Python 3.13 with `requirements.txt`, gcc with OpenMP (`sh build.sh`).
+`research/king-entropy/replication/`; Python 3.13 with `requirements.txt`, gcc with OpenMP (`sh build.sh`).
 
 ## Contradictions
 
@@ -198,7 +198,7 @@ branches already did; the five added rows differ by at most 5.7e-20 per site, an
 
 ## Commands
 
-From `research/king-entropy/xcheck/`, after `python3 -m pip install -r requirements.txt` and
+From `research/king-entropy/replication/`, after `python3 -m pip install -r requirements.txt` and
 `sh build.sh` (gcc 13, `-O2 -fopenmp -frounding-math -ffp-contract=off`). All outputs are independent of
 the number of OpenMP threads (fixed summation order, fixed seeds) except the timing lines.
 Machine: x86-64, 4 cores, 15 GiB.

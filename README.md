@@ -22,10 +22,10 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 
 The free energies give the asymptotics of [A239273](https://oeis.org/A239273), $a(n) \sim e^{\kappa}\, e^{4sn^2} e^{-8\sigma n}$, with relative error $6 \cdot 10^{-8}$ at $n = 10$.
 
-- Paper: *The dimer entropy of the king's graph* ([PDF](research/king-entropy/paper/main.pdf), [source](research/king-entropy/paper/main.tex)).
-- Companion note: *Log-convexity of strip dimer counts on the king's graph* ([PDF](research/king-entropy/paper/L-note.pdf), [source](research/king-entropy/paper/L-note.tex)), the convexity hypothesis tested in 1453 cases and where it fails.
+- Paper: *The dimer entropy of the king's graph* ([PDF](research/king-entropy/paper/king-entropy.pdf), [source](research/king-entropy/paper/king-entropy.tex)).
+- Companion note: *Log-convexity of strip dimer counts on the king's graph* ([PDF](research/king-entropy/paper/king-entropy-log-convexity.pdf), [source](research/king-entropy/paper/king-entropy-log-convexity.tex)), the convexity hypothesis tested in 1453 cases and where it fails.
 - [Research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html): the results above read from the committed data on every build.
-- [`research/king-entropy`](research/king-entropy): scripts, data, outputs, proofs of the bounds, and [`xcheck/`](research/king-entropy/xcheck/REPORT.md), an independent recomputation written from scratch. [`paper/NUMBERS.md`](research/king-entropy/paper/NUMBERS.md) maps every number of the paper to its output file and script.
+- [`research/king-entropy`](research/king-entropy): scripts, data, outputs, proofs of the bounds, and [`replication/`](research/king-entropy/replication/REPORT.md), an independent recomputation written from scratch. [`paper/NUMBERS.md`](research/king-entropy/paper/NUMBERS.md) maps every number of the paper to its output file and script.
 
 The code, data and both preprints are archived on Zenodo when the tag `king-entropy-v1.0.0` is released; until then the DOIs are pending ([`ZENODO.md`](research/king-entropy/paper/ZENODO.md)).
 
@@ -202,15 +202,14 @@ The code is MIT, see [LICENSE](LICENSE). Text and data are licensed under
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), see
 [LICENSES/CC-BY-4.0.txt](LICENSES/CC-BY-4.0.txt). CC BY 4.0 covers exactly these paths:
 
-- text: `research/king-entropy/paper/` except `paper/derived.py`, `research/king-entropy/notes/`
-  and `notes/`;
+- text: `research/king-entropy/paper/`, `research/king-entropy/notes/` and `notes/`;
 - data: `research/king-entropy/data/`, `research/king-entropy/out/`, `research/king-entropy/logs/`,
-  the outputs `research/king-entropy/L/out_*.txt` and `research/king-entropy/L/time_*.txt`, the
+  the outputs `research/king-entropy/log-convexity/out_*.txt` and `research/king-entropy/log-convexity/time_*.txt`, the
   JSON files in `data/` and the measurements in `benchmarks/results/`.
 
 Everything else is MIT, in particular all programs and scripts: `src/`, `pari/`, `site/`, `tests/`,
 `benchmarks/benchmarkRunner.js`, `data/index.js`, `research/king-entropy/src/`,
-`research/king-entropy/L/*.py` and `research/king-entropy/paper/derived.py`.
+and `research/king-entropy/log-convexity/*.py`.
 
 ## Author
 
