@@ -1,0 +1,4 @@
+kd_ld
+kd_d
+*.tmp
+__pycache__/

@@ -1,0 +1,11 @@
+== A239264, data section ==
+78 terms (antidiagonals 0..11), mismatches 0
+== A239273, data section ==
+10 terms (n = 0..9), mismatches 0
+
+== b-files rebuilt from the own counts vs the Git LFS pointers of the mirror ==
+b239264.txt: pointer sha256 21ecae3e787d1a9a... size 14988; 703 terms rebuilt -> no match
+b239273.txt: pointer sha256 0d398db838449a86... size 624; 13 terms rebuilt -> SHA-256 MATCH (LF, final newline): every term of the b-file equals the own count
+
+Z(24, 24) = 340650896198146298196891187041689251017498055954048415734068063266238400385677771111356769851429155341351115390439961298971619245320
+TOTAL MISMATCHES: 1

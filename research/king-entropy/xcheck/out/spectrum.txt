@@ -1,0 +1,99 @@
+== 1. row transfer structure and spectra (dense, per sector of T^2) ==
+bc    w  p  states  SCCs  reach  lambda1(T^2)^(1/2)     next/lam1 (T^2)  gap m
+cyl    3  0       4     1      4  5.414425696043515  0.125665     1.03707  simple: True
+cyl    3  1       4     1      0  5.414425696043514  0.125665     1.03707  simple: True
+     -> sector ratio lambda(1)/lambda(0) = 1.000000000000
+cyl    4  0       8     1      8  9.781910326435389  0.099746     1.15256  simple: True T: lambda_2/lambda_1 = -0.315826
+cyl    4  1       8     1      0  9.480740698407864  0.134790     1.00202  simple: True T: lambda_2/lambda_1 = -0.367138
+     -> sector ratio lambda(1)/lambda(0) = 0.969211573407
+cyl    5  0      16     1     16  16.890100911628121  0.115755     1.07814  simple: True
+cyl    5  1      16     1      0  16.890100911628117  0.115755     1.07814  simple: True
+     -> sector ratio lambda(1)/lambda(0) = 1.000000000000
+cyl    6  0      32     1     32  29.836944422278659  0.119548     1.06202  simple: True T: lambda_2/lambda_1 = -0.345757
+cyl    6  1      32     1      0  29.694837534652063  0.109527     1.10579  simple: True T: lambda_2/lambda_1 = -0.330949
+     -> sector ratio lambda(1)/lambda(0) = 0.995237217135
+cyl    7  0      64     1     64  52.378478441385695  0.114821     1.08219  simple: True
+cyl    7  1      64     1      0  52.378478441385717  0.114821     1.08219  simple: True
+     -> sector ratio lambda(1)/lambda(0) = 1.000000000000
+cyl    8  0     128     1    128  92.254797629983116  0.113959     1.08596  simple: True T: lambda_2/lambda_1 = -0.337578
+cyl    8  1     128     1      0  92.175476864280469  0.115449     1.07946  simple: True T: lambda_2/lambda_1 = -0.339778
+     -> sector ratio lambda(1)/lambda(0) = 0.999140199017
+cyl    9  0     256     1    256  162.324604921143276  0.114703     1.08271  simple: True
+cyl    9  1     256     1      0  162.324604921143248  0.114703     1.08271  simple: True
+     -> sector ratio lambda(1)/lambda(0) = 1.000000000000
+cyl   10  0     512     1    512  285.773102719178439  0.114919     1.08176  simple: True T: lambda_2/lambda_1 = -0.338997
+cyl   10  1     512     1      0  285.729637259650190  0.114475     1.08370  simple: True T: lambda_2/lambda_1 = -0.338341
+     -> sector ratio lambda(1)/lambda(0) = 0.999847902202
+free   2  0       2     1      2  2.000000000000000  0.250000     0.69315  simple: True T: lambda_2/lambda_1 = -0.500000
+free   2  1       2     1      0  2.000000000000000  0.000000     18.36840  simple: True T: lambda_2/lambda_1 = +0.000000
+     -> sector ratio lambda(1)/lambda(0) = 1.000000000000
+free   3  0       4     1      4  3.328710120733748  0.185162     0.84326  simple: True
+free   3  1       4     1      0  3.328710120733746  0.185162     0.84326  simple: True
+     -> sector ratio lambda(1)/lambda(0) = 1.000000000000
+free   4  0       8     1      8  5.951077585561211  0.164574     0.90220  simple: True T: lambda_2/lambda_1 = -0.405677
+free   4  1       8     1      0  5.935121248010545  0.208695     0.78344  simple: True T: lambda_2/lambda_1 = -0.456831
+     -> sector ratio lambda(1)/lambda(0) = 0.997318748190
+free   5  0      16     1     16  10.405107007658158  0.186515     0.83962  simple: True
+free   5  1      16     1      0  10.405107007658158  0.186515     0.83962  simple: True
+     -> sector ratio lambda(1)/lambda(0) = 1.000000000000
+free   6  0      32     1     32  18.345852345041905  0.195074     0.81719  simple: True T: lambda_2/lambda_1 = -0.441672
+free   6  1      32     1      0  18.348887662372082  0.187970     0.83574  simple: True T: lambda_2/lambda_1 = -0.433555
+     -> sector ratio lambda(1)/lambda(0) = 1.000165449785
+free   7  0      64     1     64  32.278540655061917  0.187987     0.83569  simple: True
+free   7  1      64     1      0  32.278540655061896  0.187987     0.83569  simple: True
+     -> sector ratio lambda(1)/lambda(0) = 1.000000000000
+free   8  0     128     1    128  56.832946477721975  0.192668     0.82339  simple: True T: lambda_2/lambda_1 = -0.438940
+free   8  1     128     1      0  56.832229890605568  0.193695     0.82074  simple: True T: lambda_2/lambda_1 = -0.440108
+     -> sector ratio lambda(1)/lambda(0) = 0.999987391343
+free   9  0     256     1    256  100.038442146472093  0.190455     0.82917  simple: True
+free   9  1     256     1      0  100.038442146472121  0.190455     0.82917  simple: True
+     -> sector ratio lambda(1)/lambda(0) = 1.000000000000
+free  10  0     512     1    512  176.106430893756851  0.194314     0.81914  simple: True T: lambda_2/lambda_1 = -0.440811
+free  10  1     512     1      0  176.106589527319727  0.194173     0.81950  simple: True T: lambda_2/lambda_1 = -0.440650
+     -> sector ratio lambda(1)/lambda(0) = 1.000000900782
+
+== 2. exact count ratios vs power iteration (free strips and cylinders) ==
+free k= 1: (log Z(34,k) - log Z(32,k))/2 - log lambda_k = 0.0
+free k= 2: (log Z(34,k) - log Z(32,k))/2 - log lambda_k = -4.37e-11
+free k= 3: (log Z(32,k) - log Z(30,k))/2 - log lambda_k = -8.6e-12
+free k= 4: (log Z(32,k) - log Z(30,k))/2 - log lambda_k = -8.03e-14
+free k= 5: (log Z(30,k) - log Z(28,k))/2 - log lambda_k = -6.53e-12
+free k= 6: (log Z(30,k) - log Z(28,k))/2 - log lambda_k = -2.67e-11
+free k= 7: (log Z(28,k) - log Z(26,k))/2 - log lambda_k = -1.24e-10
+free k= 8: (log Z(28,k) - log Z(26,k))/2 - log lambda_k = -5.42e-11
+free k= 9: (log Z(26,k) - log Z(24,k))/2 - log lambda_k = -2.72e-10
+free k=10: (log Z(26,k) - log Z(24,k))/2 - log lambda_k = -4.3e-10
+free k=11: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.51e-9
+free k=12: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=13: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.17e-9
+free k=14: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.23e-9
+free k=15: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=16: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=17: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=18: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.27e-9
+free k=19: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.28e-9
+free k=20: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.29e-9
+free k=21: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.29e-9
+free k=22: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.3e-9
+free k=23: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.3e-9
+free k=24: (log Z(24,k) - log Z(22,k))/2 - log lambda_k = -2.31e-9
+cyl  m= 3: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -4.27e-20
+cyl  m= 4: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -2.86e-21
+cyl  m= 5: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -2.43e-20
+cyl  m= 6: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 3.74e-20
+cyl  m= 7: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -3.37e-20
+cyl  m= 8: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -2.33e-19
+cyl  m= 9: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = -4.56e-19
+cyl  m=10: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 5.42e-19
+cyl  m=11: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 1.34e-20
+cyl  m=12: (log Z(80,m) - log Z(78,m))/2 - log lambda^(0)_m = 7.01e-19
+cyl  m=13: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -3.82e-18
+cyl  m=14: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.36e-18
+cyl  m=15: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.61e-18
+cyl  m=16: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.83e-18
+cyl  m=17: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -2.99e-18
+cyl  m=18: (log Z(40,m) - log Z(38,m))/2 - log lambda^(0)_m = -3.15e-18
+cyl  m=19: (log Z(28,m) - log Z(26,m))/2 - log lambda^(0)_m = -1.44e-12
+cyl  m=20: (log Z(28,m) - log Z(26,m))/2 - log lambda^(0)_m = -1.52e-12
+cyl  m=21: (log Z(22,m) - log Z(20,m))/2 - log lambda^(0)_m = -1.06e-9
+cyl  m=22: (log Z(22,m) - log Z(20,m))/2 - log lambda^(0)_m = -1.11e-9
