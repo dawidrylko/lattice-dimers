@@ -58,7 +58,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | 1453 | (L) cases checked on the king's graph | 875 + 550 (`out/out_ltest.txt` totals) + 14 + 14 (`out/out_lcert_m25.txt`, `out/out_lcert_m26.txt`, 2q = 2...28) | `src/ltest.py`, `src/lcert.py` |
 | A239264, A239273, A239265, A239268, A243510 | OEIS ids | literature (`paper/refs.bib`) | - |
 | 72 > 3·25 − 6 | edges of the 5×5 king graph | `out/out_derived.txt` | `src/derived.py` |
-| 1.34254...1.34265 | constant listed by Finch | Finch, arXiv:2001.00578, §5.12 (literature) | - |
+| 1.34254...1.34265 | constant listed by Finch | Finch, arXiv:2001.00578, first volume, §5.12 (literature) | - |
 | 1.342643951124... | non-attacking kings, A247413 | literature (`paper/refs.bib`, `oeisA247413`) | - |
 | e⁻⁶ ... e⁻³ | diagonal fugacities of Sandvik and Moessner | literature (`sandvikmoessner2006`) | - |
 | 2s = 1.13102382208265, eˢ = 1.76034869404198 | per dimer, per site | `out/out_derived.txt` (rounded to 14 decimals; both ends of s ± 6·10⁻¹⁶ round to the same) | `src/derived.py` |
