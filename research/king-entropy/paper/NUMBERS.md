@@ -95,8 +95,9 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | ξ_odd = 0.929, b = −1.80 | `out/out_errbar.txt` (extras at W = 25: 0.9294, −1.803) | `src/errbar.py` |
 | L1 backtests 2-4·10⁻⁵, L2 and R2 1-2·10⁻⁶ at W = 23 | `out/out_errbar.txt` (predictive backtest, odd) | `src/errbar.py` |
 | 18 kept, [0.565511911041325278, 0.565511911041325337] | `out/out_errbar.txt` (kept range) | `src/errbar.py` |
-| 9.0·10⁻¹⁷ = 3.0·10⁻¹⁷ + 6.0·10⁻¹⁷; 3.0·10⁻¹⁷; 6·10⁻²⁰; 1.5·10⁻¹⁶; total 2.7·10⁻¹⁶ | `out/out_errbar.txt` (BUDGET line; gap 5.6e-20) | `src/errbar.py` |
-| x = e^(−2/1.2351), w = 13...25, factor 3, 0.001 d₂₅ ≤ B ≤ 0.003 d₂₅ | `out/out_errbar.txt` (hidden slow mode block) | `src/errbar.py` |
+| 9.0·10⁻¹⁷ = 3.0·10⁻¹⁷ + 6.0·10⁻¹⁷; 2.7·10⁻¹⁷; 6·10⁻²⁰; 1.5·10⁻¹⁶; total 2.6·10⁻¹⁶ | `out/out_errbar.txt` (BUDGET line; gap 5.6e-20) | `src/errbar.py` |
+| x = e^(−2/1.2351), w = 13...25, B = (1.95 ± 0.25)·10⁻³ d₂₅, 0 ≤ B ≤ 2.7·10⁻³ d₂₅; 0.9·10⁻³ (w ≥ 11) to 1.4·10⁻³ (w ≥ 17) | `out/out_errbar.txt` (hidden slow mode block: B free, allowed, lower end of the fit) | `src/errbar.py` |
+| d₂₇ within 1.5·10⁻⁴ of the L1 prediction, 1.0·10⁻³ for the fitted B, \|B\| ≤ 2.8·10⁻⁴ d₂₅, 4.2·10⁻¹⁸ | `out/out_errbar.txt` (out of sample lines), w = 25, 27 from `xcheck/out/eig_summary.json` | `src/errbar.py` (`out_of_sample`) |
 | 6.2·10⁻¹⁷ per site over 33 cylinders | `out/out_errbar.txt` (rounding block) | `src/errbar.py` |
 | 0.5655119110413253 ± 6·10⁻¹⁶, centre 0.5655119110413253176 | `out/out_errbar.txt` (RECOMMENDATION; `data/errbar.json` `recommended.s`) | `src/errbar.py` |
 | 4.1·10⁻¹⁶ | `out/out_crosscheck.txt` section A (max diff 4.06e-16; rounded) | `src/crosscheck.py` |

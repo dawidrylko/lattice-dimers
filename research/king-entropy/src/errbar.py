@@ -29,14 +29,15 @@ BUDGET (all terms added):
     correction |d_W| on its sequence; the term is the half-spread of the kept estimates of both
     sequences plus the largest predicted remaining error |s(W) - s(W-2)| |d_W / d_(W-2)|;
  2. hidden slow mode: d_w - B x^((w-25)/2), x = exp(-2/1.2351) (the decay of the parity splitting,
-    the slowest rate in the data), fitted with L1's form by least squares on w = 13..25 for forced
-    amplitudes B; every B whose relative rms is within a factor 3 of the best fit is allowed, and
-    the term is the largest shift of s over the allowed B;
+    the slowest rate in the data), fitted together with L1's form (C, c1, B free) by relative least
+    squares on w = 13..25; every B within 3 standard errors of the fitted value is allowed, the range
+    widened to include B = 0, and the term is the largest shift of s over the allowed B (s is linear
+    in B, so the endpoints suffice). The scan over forced B is printed for context;
  3. gap: the change of L1 when m runs over the gaps measured at w = 20..25 (estimate.py);
  4. rounding: the largest change of a kept model between float64 and longdouble inputs.
 """
-import json
-from paths import P, G
+import json, os
+from paths import P, G, ROOT
 import numpy as np
 from mpmath import mp, mpf, exp, log, findroot, nsum, inf, sqrt
 
@@ -223,6 +224,55 @@ def hidden_mode(f, B_fracs, wlo=13, m=M_GAP, x=X_HIDDEN):
     return out
 
 
+def hidden_free(f, wlo=13, m=M_GAP, x=X_HIDDEN):
+    """B as a free parameter: d_w = C e^(-m w) w^(-3/2) (1 + c1/w) + B x^((w-W)/2), all three fitted by
+    relative least squares over w = wlo..W. Returns (B / d_W, its standard error / |d_W|, n, rel rms),
+    the standard error from the residual variance with n - 3 degrees of freedom."""
+    ws, d = diffs(f, max(f))
+    W = max(f)
+    fitw = [w for w in ws if w in d and w >= wlo]
+    rows = []
+    for w in fitw:
+        g = exp(-m * w) * mpf(w) ** mpf(-1.5)
+        rows.append([g / d[w], g / w / d[w], x ** (mpf(w - W) / 2) / d[w]])
+    A = mp.matrix(rows)
+    Y = mp.matrix([1] * len(fitw))
+    N = A.T * A
+    c = mp.lu_solve(N, A.T * Y)
+    res = A * c - Y
+    rss = sum(r ** 2 for r in res)
+    n = len(fitw)
+    cov = mp.inverse(N) * (rss / (n - 3))
+    return c[2] / d[W], sqrt(cov[2, 2]) / abs(d[W]), n, sqrt(rss / n)
+
+
+def out_of_sample(f, W, m=M_GAP, x=X_HIDDEN):
+    """Width W + 2 from the independent code in xcheck/ (long double), if present: its difference
+    d_(W+2) against the L1 prediction through d_(W-2), d_W, and the response of that prediction
+    error to a hidden mode B x^((w-W)/2). Returns None without the file."""
+    fn = os.path.join(ROOT, 'xcheck', 'out', 'eig_summary.json')
+    if not os.path.exists(fn):
+        return None
+    xe = json.load(open(fn))
+    wn = W + 2
+    fx = {w: mpf(xe[f'cyl_w{w}_0_ld']['loglam']) / w for w in (W, wn)}
+    meas = fx[wn] - fx[W]
+    _, d = diffs(f, W)
+    g = lambda w: exp(-m * w) * mpf(w) ** mpf(-1.5)
+    M = mp.matrix([[g(W - 2), g(W - 2) / (W - 2)], [g(W), g(W) / W]])
+
+    def l1_at(y):
+        C, D = mp.lu_solve(M, mp.matrix(y))
+        return g(wn) * (C + D / wn)
+    pred = l1_at([d[W - 2], d[W]])
+    mode = lambda w: d[W] * x ** (mpf(w - W) / 2)
+    resp = (mode(wn) - l1_at([mode(W - 2), mode(W)])) / meas
+    rel = (meas - pred) / meas
+    bmax = abs(rel / resp)
+    return dict(measured=meas, predicted=pred, rel=rel, rel_per_B=resp, bmax=bmax,
+                shift=bmax * abs(d[W]) * x / (1 - x))
+
+
 def main():
     lam, ld = load()
     widths = sorted({w for w, _ in lam})
@@ -292,9 +342,27 @@ def main():
         sv, rms = hm[k]
         print(f'  B/d_{Wo} = {k:+.3f}: relative rms {mp.nstr(rms, 3)} ({mp.nstr(rms / best, 3)} x best),'
               f' s - s(B=0) = {mp.nstr(sv - s0, 3)}')
-    allowed = [k for k in fr if hm[k][1] <= 3 * best]
-    hid = max(abs(hm[k][0] - s0) for k in allowed)
-    print(f'  allowed (rms within 3 x best): B/d_{Wo} in [{min(allowed)}, {max(allowed)}]; largest shift {mp.nstr(hid, 2)}')
+    bh, sb, nfit, rmsf = hidden_free(odd)
+    blo, bhi = min(mpf(0), bh - 3 * sb), max(mpf(0), bh + 3 * sb)
+    ends = hidden_mode(odd, [blo, bhi])
+    hid = max(abs(sv - s0) for sv, _ in ends.values())
+    print(f'  B free (C, c1, B fitted on {nfit} widths, rel rms {mp.nstr(rmsf, 3)}): B/d_{Wo} = {mp.nstr(bh, 3)}'
+          f' +- {mp.nstr(sb, 2)} (standard error, {nfit - 3} degrees of freedom)')
+    print(f'  allowed: B/d_{Wo} in [{mp.nstr(blo, 3)}, {mp.nstr(bhi, 3)}] (3 standard errors, widened to include B = 0);'
+          f' largest shift {mp.nstr(hid, 2)}')
+    scan = []
+    for wlo in (11, 13, 15, 17):
+        b, e, n, _ = hidden_free(odd, wlo=wlo)
+        scan.append(f'w >= {wlo}: {mp.nstr(b, 3)} +- {mp.nstr(e, 2)}')
+    print(f'  fitted B/d_{Wo} by the lower end of the fit: {"; ".join(scan)}')
+    oos = out_of_sample(odd, Wo)
+    if oos:
+        print(f'  out of sample (w = {Wo + 2}, long double, xcheck/out/eig_summary.json; not in the budget):'
+              f' d_{Wo + 2} = {mp.nstr(oos["measured"], 6)} against the L1 prediction {mp.nstr(oos["predicted"], 6)}'
+              f' from W = {Wo}, relative {mp.nstr(oos["rel"], 2)}')
+        print(f'  a mode with the fitted B = {mp.nstr(bh, 3)} d_{Wo} would move it by {mp.nstr(oos["rel_per_B"] * bh, 2)};'
+              f' read as a mode, the deviation gives |B| <= {mp.nstr(oos["bmax"], 2)} d_{Wo}, a shift of s'
+              f' <= {mp.nstr(oos["shift"], 2)}')
 
     # ------------------------------------------------------------- gap parameter
     gaps = gaps_from_histories()
@@ -339,7 +407,10 @@ def main():
                    mid={W: {k: str(v) for k, v in m.items()} for W, m in res['mid'].items()},
                    odd_float64={k: str(v) for k, v in res64['odd'][Wo].items()},
                    mid_float64={k: str(v) for k, v in res64['mid'][We].items()},
-                   hidden={str(k): [str(a), str(b)] for k, (a, b) in hm.items()}),
+                   hidden={str(k): [str(a), str(b)] for k, (a, b) in hm.items()},
+                   hidden_free=dict(B_over_dW=str(bh), stderr=str(sb), widths=nfit, rel_rms=str(rmsf),
+                                    allowed=[str(blo), str(bhi)], shift=str(hid)),
+                   out_of_sample={k: str(v) for k, v in oos.items()} if oos else None),
               open(P('errbar.json'), 'w'), indent=1)
 
 
