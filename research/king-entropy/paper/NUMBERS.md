@@ -84,10 +84,10 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 
 | number | file | script |
 | --- | --- | --- |
-| r_w 13.4 → 9.99 | `out/out_estimate.txt` (odd widths, r = 13.382 ... 9.992; rounded) | `src/estimate.py` |
+| r_w 13.4 → 10.0 | `out/out_estimate.txt` (odd widths, float64, r = 13.382 ... 9.992); the end value 10.0 from extended precision, next rows | `src/estimate.py` |
 | even-w sector brackets w = 18...24, midpoint 0.5655119110413465 | `out/out_estimate.txt` | `src/estimate.py` |
 | Table 1 (all entries) | `out/out_estimate.txt` (odd widths) | `src/estimate.py` |
-| Table 1 caption: 5.991·10⁻¹⁴, 9.998, 0.56551191104132523 (w = 25, extended precision); r_w drifts to 10.0 | `xcheck/out/analyze_eig.txt` (sections 2, 3), from `data/lean/*longdouble*` | `xcheck/analyze_eig.py` |
+| Table 1 caption: 5.991·10⁻¹⁴, 9.998, 0.56551191104132523 (w = 25, extended precision); r_w drifts to 10.0 | `xcheck/out/analyze_eig.txt` (section 2), from `data/lean/*longdouble*` | `xcheck/analyze_eig.py` |
 | extended-precision inputs: odd w = 5...25, even w = 4...24 | `out/out_errbar.txt` (first line); `data/lean/lean_king_cyl_w*_p*_longdouble.json` | `src/errbar.py`, `src/lean.py` |
 | m = 1.082727; same gap at w = 20...25 | `out/out_crosscheck.txt` (in-sector gap); `out/out_errbar.txt` (gap block, 1.0827 ... 1.082701) | `src/crosscheck.py`, `src/errbar.py` |
 | Table 2 (all entries) | `out/out_errbar.txt` (rows W = 25 odd, W = 24 midpoints; backtest change = difference from the row W − 2); also `data/errbar.json` | `src/errbar.py` |
