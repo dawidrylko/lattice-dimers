@@ -15,6 +15,7 @@ const CONTENT_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.pdf': 'application/pdf',
   '.txt': 'text/plain; charset=utf-8',
   '.xml': 'application/xml',
 };
@@ -43,6 +44,7 @@ const SHEET_BOARDS = [
 ];
 const CONFIRMATION_BOARDS = ['18x18', '16x16-diagonal'];
 const NOTES = [
+  { slug: 'research', cells: 2 },
   { slug: 'method', cells: 0 },
   { slug: 'a004003', cells: 6 },
   { slug: 'a239273', cells: 8 },
@@ -480,7 +482,15 @@ async function checkLanding(page, baseUrl, width) {
   }))()`);
   const problems = [];
 
-  if (state.oeis.join() !== 'https://oeis.org/A004003,https://oeis.org/A239273') {
+  const introLinks = [
+    'notes/research.html',
+    'papers/king-entropy.pdf',
+    'papers/king-entropy-log-convexity.pdf',
+    'https://oeis.org/A004003',
+    'https://oeis.org/A239273',
+  ];
+
+  if (state.oeis.join() !== introLinks.join()) {
     problems.push(`intro links ${state.oeis.join(', ')}`);
   }
 

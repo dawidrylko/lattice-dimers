@@ -2,7 +2,7 @@
   "name": "lattice-dimers",
   "version": "1.1.0",
   "private": true,
-  "description": "Exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, A239273): a resultant form of the product formula, transfer-matrix solvers, a modular CRT solver, PARI/GP programs, notebooks and an online gallery.",
+  "description": "Dimer coverings of the square lattice and the king's graph: the entropy per site of king's graph dimers with rigorous bounds, and exact counts, numbering and sampling of domino (OEIS A004003) and domicule (OEIS A239264, A239273) tilings.",
   "keywords": [
     "a004003",
     "a239264",
@@ -12,6 +12,9 @@
     "dimer-coverings",
     "domicule",
     "kings-graph",
+    "dimer-model",
+    "statistical-mechanics",
+    "transfer-matrix",
     "perfect-matchings",
     "chinese-remainder-theorem",
     "combinatorics",

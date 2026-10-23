@@ -37,3 +37,22 @@ jobs:
       - run: pnpm site:build
       - run: pnpm test:site
         timeout-minutes: 10
+
+  research:
+    name: Research
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: research/king-entropy
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: research/king-entropy/src/requirements.txt
+      - run: python -m pip install -r src/requirements.txt
+      - run: python src/test_paths.py
+      - run: python paper/derived.py > "$RUNNER_TEMP/out_derived.txt" && diff -u paper/out_derived.txt "$RUNNER_TEMP/out_derived.txt"
+      - run: python -m json.tool ../../.zenodo.json > /dev/null

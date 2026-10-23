@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>.e{fill:#1f2937;stroke:#1f2937}.h{fill:#044cb6;stroke:#044cb6}.v{fill:#5eaceb;stroke:#5eaceb}.d{fill:#ab3415;stroke:#ab3415}.a{fill:#f09c17;stroke:#f09c17}.r{fill:none;stroke:#f3f4f6}path{stroke-linecap:round}circle{stroke:none}</style>
+  <rect width="64" height="64" rx="10" fill="#f3f4f6"/>
+  <path class="e" d="M9 9L25 9M9 25L25 25M39 39L39 55M55 39L55 55" stroke-width="8.4"/>
+  <g class="e"><circle cx="9" cy="9" r="5.6"/><circle cx="25" cy="9" r="5.6"/><circle cx="9" cy="25" r="5.6"/><circle cx="25" cy="25" r="5.6"/><circle cx="39" cy="39" r="5.6"/><circle cx="39" cy="55" r="5.6"/><circle cx="55" cy="39" r="5.6"/><circle cx="55" cy="55" r="5.6"/></g>
+  <path class="h" d="M9 9L25 9M9 25L25 25" stroke-width="6"/>
+  <g class="h"><circle cx="9" cy="9" r="4.4"/><circle cx="25" cy="9" r="4.4"/><circle cx="9" cy="25" r="4.4"/><circle cx="25" cy="25" r="4.4"/></g>
+  <path class="v" d="M39 39L39 55M55 39L55 55" stroke-width="6"/>
+  <g class="v"><circle cx="39" cy="39" r="4.4"/><circle cx="39" cy="55" r="4.4"/><circle cx="55" cy="39" r="4.4"/><circle cx="55" cy="55" r="4.4"/></g>
+  <path class="e" d="M39 9L55 25M9 39L25 55" stroke-width="8.4"/>
+  <g class="e"><circle cx="39" cy="9" r="5.6"/><circle cx="55" cy="25" r="5.6"/><circle cx="9" cy="39" r="5.6"/><circle cx="25" cy="55" r="5.6"/></g>
+  <path class="d" d="M39 9L55 25M9 39L25 55" stroke-width="6"/>
+  <g class="d"><circle cx="39" cy="9" r="4.4"/><circle cx="55" cy="25" r="4.4"/><circle cx="9" cy="39" r="4.4"/><circle cx="25" cy="55" r="4.4"/></g>
+  <path class="r" d="M55 9L39 25M25 39L9 55" stroke-width="11.4"/>
+  <path class="e" d="M55 9L39 25M25 39L9 55" stroke-width="8.4"/>
+  <g class="e"><circle cx="55" cy="9" r="5.6"/><circle cx="39" cy="25" r="5.6"/><circle cx="25" cy="39" r="5.6"/><circle cx="9" cy="55" r="5.6"/></g>
+  <path class="a" d="M55 9L39 25M25 39L9 55" stroke-width="6"/>
+  <g class="a"><circle cx="55" cy="9" r="4.4"/><circle cx="39" cy="25" r="4.4"/><circle cx="25" cy="39" r="4.4"/><circle cx="9" cy="55" r="4.4"/></g>
+</svg>
