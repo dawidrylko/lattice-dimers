@@ -397,7 +397,10 @@ function parseHash() {
 }
 
 function go(board, page, highlight) {
-  location.hash = `gallery/${board.id}/${page}${highlight ? `/${highlight}` : ''}`;
+  const hash = `#gallery/${board.id}/${page}${highlight ? `/${highlight}` : ''}`;
+  if (hash === location.hash) return updateControls(parseHash());
+  history.pushState(null, '', hash);
+  render();
 }
 
 function goToTiling(board, number) {
@@ -427,8 +430,12 @@ function showSheet(board, tilings, first, labels) {
   svg.setAttribute('aria-label', `${board.pieces === 'domicule' ? 'Domicule' : 'Domino'} tilings of a ${board.rowCount} by ${board.colCount} board`);
 }
 
+function labelOf(text) {
+  return text.dataset.label || text.textContent;
+}
+
 function highlightTiling(number) {
-  const label = [...$('sheet').querySelectorAll('text')].find(t => t.textContent === `#${number}`);
+  const label = [...$('sheet').querySelectorAll('text')].find(t => labelOf(t) === `#${number}`);
 
   if (label) {
     label.style.fill = 'var(--hit)';
@@ -627,7 +634,7 @@ function visibleLabel(number) {
     return top >= 0 && top < innerHeight;
   });
 
-  return labels.find(text => text.textContent === `#${number}`) || labels[0];
+  return labels.find(text => labelOf(text) === `#${number}`) || labels[0];
 }
 
 new ResizeObserver(() => {
@@ -635,15 +642,23 @@ new ResizeObserver(() => {
   const { board, tilings, first, labels } = shownSheet;
   const { highlight } = parseHash();
   const anchor = visibleLabel(highlight);
-  const anchorText = anchor?.textContent;
+  const anchorText = anchor && labelOf(anchor);
   const anchorTop = anchor?.getBoundingClientRect().top;
   showSheet(board, tilings, first, labels);
   if (highlight) highlightTiling(highlight);
-  const moved = anchor && [...$('sheet').querySelectorAll('text')].find(text => text.textContent === anchorText);
+  const moved = anchor && [...$('sheet').querySelectorAll('text')].find(text => labelOf(text) === anchorText);
   if (moved) scrollBy(0, moved.getBoundingClientRect().top - anchorTop);
 }).observe($('gallery'));
 
-window.addEventListener('hashchange', render);
+document.querySelector('nav.tabs').addEventListener('click', e => {
+  const link = e.target.closest('a');
+  if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  if (link.hash === location.hash) return;
+  history.pushState(null, '', link.hash);
+  render();
+});
+window.addEventListener('popstate', render);
 render();
 </script>
 </body>
