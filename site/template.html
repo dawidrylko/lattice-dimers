@@ -152,18 +152,18 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
 <main>
   __SITE_HEADER__
   <p class="intro">
-    How many ways are there to cover a 2n&nbsp;×&nbsp;2n board with pieces that each cover two neighbouring cells?
-    Dominoes join cells that share a side (<a href="https://oeis.org/A004003">OEIS&nbsp;A004003</a>; a chessboard has
-    12,988,816 tilings), domicules may also join cells that share only a corner
-    (<a href="https://oeis.org/A239273">OEIS&nbsp;A239273</a>; 3,263,262,629,905 tilings). Both sequences are counted here up to
-    20&nbsp;×&nbsp;20, including a domicule term that is not in the OEIS yet.
+    Domicule tilings cover a board with pieces that join two cells sharing a side or only a corner; they are the perfect
+    matchings of the king's graph. Its boards with both sides at least 3 have no Pfaffian orientation, so Kasteleyn's
+    method does not count them. The entropy per site is s&nbsp;=&nbsp;__RESEARCH_S__&nbsp;±&nbsp;__RESEARCH_DS__, an estimate
+    extrapolated from transfer matrices on cylinders of circumference up to 25, and is proved to lie between
+    __RESEARCH_LOWER__ and __RESEARCH_UPPER__. The <a href="notes/research.html">research page</a> summarises the
+    <a href="papers/king-entropy.pdf">paper</a> and its <a href="papers/king-entropy-log-convexity.pdf">companion note</a>.
   </p>
   <p class="intro">
-    With diagonal pieces the tilings are the perfect matchings of the king's graph, whose boards with both sides at least 3 have no Pfaffian orientation.
-    Its entropy per site is s&nbsp;=&nbsp;__RESEARCH_S__&nbsp;±&nbsp;__RESEARCH_DS__, an estimate extrapolated from transfer matrices on
-    cylinders of circumference up to 25, and is proved to lie between __RESEARCH_LOWER__ and __RESEARCH_UPPER__; the
-    <a href="notes/research.html">research page</a> summarises the <a href="papers/king-entropy.pdf">paper</a> and its
-    <a href="papers/king-entropy-log-convexity.pdf">companion note</a>.
+    How many tilings does a 2n&nbsp;×&nbsp;2n board have? With dominoes, which join cells that share a side, the count is
+    <a href="https://oeis.org/A004003">OEIS&nbsp;A004003</a> (a chessboard has 12,988,816); with domicules it is
+    <a href="https://oeis.org/A239273">OEIS&nbsp;A239273</a> (3,263,262,629,905). Both sequences are counted here exactly up
+    to 20&nbsp;×&nbsp;20, including a domicule term that is not in the OEIS yet, and the gallery below draws any single tiling.
   </p>
   <noscript><p class="intro">The gallery needs JavaScript. The benchmark results are also available in the
     <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/benchmarks/results">repository</a>.</p></noscript>

@@ -483,11 +483,11 @@ async function checkLanding(page, baseUrl, width) {
   const problems = [];
 
   const introLinks = [
-    'https://oeis.org/A004003',
-    'https://oeis.org/A239273',
     'notes/research.html',
     'papers/king-entropy.pdf',
     'papers/king-entropy-log-convexity.pdf',
+    'https://oeis.org/A004003',
+    'https://oeis.org/A239273',
   ];
 
   if (state.oeis.join() !== introLinks.join()) {
