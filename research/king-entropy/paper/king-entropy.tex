@@ -396,7 +396,7 @@ $0.9\cdot10^{-3}\,d_{25}$ ($w_0 = 11$) and $1.95\cdot10^{-3}\,d_{25}$ ($w_0 = 13
 standard errors of a fitted value, over all windows and widened to include $B = 0$:
 $-1.6\cdot10^{-3}\,d_{25} \le B \le 3.4\cdot10^{-3}\,d_{25}$. Since $s$ is linear in $B$, the larger shift at
 the two ends is the term. The next odd width does not show such a mode: the independent code of
-\file{xcheck/}, described at the end of this section, gives $d_{27}$ within $1.5\cdot10^{-4}$ of the L1 prediction from $W = 25$, where a mode
+\file{replication/}, described at the end of this section, gives $d_{27}$ within $1.5\cdot10^{-4}$ of the L1 prediction from $W = 25$, where a mode
 with $B = 1.95\cdot10^{-3}\,d_{25}$ would move it by $1.0\cdot10^{-3}$. This is consistent with the fitted $B$
 taking up the misfit of L1 at small $w$, though it rests on one width. Read as a mode, the whole
 deviation allows $|B| \le 2.8\cdot10^{-4}\,d_{25}$, which would move the main estimate by at most
@@ -435,7 +435,7 @@ independent, eigenvalue-free check of $s$, discussed with the corner free energy
 \S\ref{sec:corner}.
 
 \emph{Independent recomputation.} A transfer-matrix code written from scratch to check this paper
-(\file{xcheck/}; nothing in it is taken from \file{src/}) reproduces the cylinder values per site to
+(\file{replication/}; nothing in it is taken from \file{src/}) reproduces the cylinder values per site to
 $7.8\cdot10^{-20}$ against the extended-precision inputs and to $6.2\cdot10^{-17}$ against the float64
 ones. It also goes beyond them: both sectors of $w = 26$ and the odd width $w = 27$ in extended
 precision, and both sectors of $w = 28$ in float64. The new differences $d_{26}$ and $d_{27}$ agree
@@ -974,10 +974,12 @@ script & output \\
 \texttt{src/zexact.py \dots}; \texttt{src/ltest.py} & \file{data/zex/zex\_*.json}, \file{out/out\_ltest.txt} \\
 \texttt{src/lcert.py 25 30}, \texttt{\dots\ 26 30} & \file{out/out\_lcert\_m25.txt}, \dots \\
 \texttt{src/lweight.py} [\texttt{big}] & \file{out/out\_lweight*.txt} \\
-\texttt{L/symmetry.py}, \texttt{L/linf.py 16} & \file{L/out\_*.txt} \\
-\texttt{L/involution.py}, \texttt{L/modes.py} & \file{L/out\_*.txt} \\
+\texttt{log-convexity/symmetry.py} & \file{log-convexity/out\_symmetry.txt} \\
+\texttt{log-convexity/linf.py 16} & \file{log-convexity/out\_linf.txt} \\
+\texttt{log-convexity/involution.py} & \file{log-convexity/out\_involution.txt} \\
+\texttt{log-convexity/modes.py} & \file{log-convexity/out\_modes.txt} \\
 \texttt{src/validate.py}; \texttt{src/crosscheck.py} & \file{out/out\_validate.txt}, \dots \\
-\texttt{paper/derived.py} & \file{paper/out\_derived.txt} \\
+\texttt{src/derived.py} & \file{out/out\_derived.txt} \\
 \bottomrule
 \end{tabular}
 \end{center}

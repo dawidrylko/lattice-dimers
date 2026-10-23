@@ -5,7 +5,7 @@ usage: python3 src/audit_bounds.py > out/out_audit_bounds.txt     (exit status 1
 Everything here is exact (Python integers / Fractions, mpmath interval arithmetic);
 the boards are built from the lattice definition only (no code shared with tm.py).
 
-UPPER (PROOF-upper.md)
+UPPER (proofs/upper-bound.md)
  U1 M(A, B) <= F_{n+1} for all A, B in a column of length m <= 11 (and the max is attained).
  U2 the cut identity Z(K, k w) = [(N M)^(k-1) N](empty, empty), N(B, A) = strip counts
     with B (column 0) and A (column w-1) removed, M(A, B) = crossing matchings.
@@ -15,7 +15,7 @@ UPPER (PROOF-upper.md)
  U5 the float Collatz-Wielandt certificate of bounds.certify(upper=True) against the exact
     max_i (A_z v)_i / v_i of the same float vector v (dyadic rationals, exact arithmetic).
 
-LOWER (PROOF-lower.md)
+LOWER (proofs/lower-bound.md)
  L1 Z(K, k w) >= Z(K, w)^k (exact).
  L2 the float certificate of bounds.certify(upper=False) against the exact min ratio.
  L3 certified bounds against the true growth rates (dense eigenvalues, w <= 9).

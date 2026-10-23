@@ -4,7 +4,7 @@ compare with the committed outputs.
 usage: python3 src/repro.py > out/out_repro.txt        (about 10 minutes)
 
 First checks that the code commits recorded with these outputs (`commit` fields of eig_*.json,
-out_estimate.txt, and the provenance in CW-NOTE.md and PROOF-upper.md) exist in this repository;
+out_estimate.txt, and the provenance in calkin-wilf.md and proofs/upper-bound.md) exist in this repository;
 they live in the history under the tag king-entropy-v0.1.0, and a clone without it (shallow or
 --no-tags) only gets a warning. Then checks that the current code reproduces the committed
 numbers. It works in a temporary copy (the scripts rewrite their JSON outputs), strips wall-clock

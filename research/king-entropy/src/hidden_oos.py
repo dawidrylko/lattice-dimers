@@ -3,10 +3,10 @@
 usage: python3 src/hidden_oos.py > out/out_hidden_oos.txt
 
 Inputs: the odd cylinders of errbar.py (extended precision, w <= 25) and w = 25, 27 in long double from
-the independent code in xcheck/ (xcheck/out/eig_summary.json, keys cyl_w<w>_0_ld). Not part of the
+the independent code in replication/ (replication/out/eig_summary.json, keys cyl_w<w>_0_ld). Not part of the
 error budget.
 
-1. d_27 = f_27 - f_25 (both from xcheck) against the L1 prediction through d_23, d_25, the main model.
+1. d_27 = f_27 - f_25 (both from replication) against the L1 prediction through d_23, d_25, the main model.
 2. A hidden mode B x^((w-25)/2), x = exp(-2/1.2351), added to the data moves that prediction error by
    B times a fixed response; reading the whole observed deviation as a mode bounds |B|.
 3. The error of the main estimate caused by such a mode: its own tail B x / (1 - x) minus the part of
@@ -24,7 +24,7 @@ for (w, p), v in ld.items():
     if w % 2 and w >= 5:
         odd[w] = v / w
 W, WN = 25, 27
-xe = json.load(open(os.path.join(ROOT, 'xcheck', 'out', 'eig_summary.json')))
+xe = json.load(open(os.path.join(ROOT, 'replication', 'out', 'eig_summary.json')))
 fx = {w: mpf(xe[f'cyl_w{w}_0_ld']['loglam']) / w for w in (W, WN)}
 m, x = M_GAP, X_HIDDEN
 g = lambda w: exp(-m * w) * mpf(w) ** mpf(-1.5)
@@ -48,8 +48,8 @@ _, d = diffs(odd, W)
 meas = fx[WN] - fx[W]
 pred = l1_at(l1([d[W - 2], d[W]]), WN)
 rel = (meas - pred) / meas
-print(f'== 1. d_{WN} from xcheck (long double) against the L1 prediction from W = {W}')
-print(f'  f_{W}: here {mp.nstr(odd[W], 20)}, xcheck {mp.nstr(fx[W], 20)}, difference {mp.nstr(odd[W] - fx[W], 2)}')
+print(f'== 1. d_{WN} from replication (long double) against the L1 prediction from W = {W}')
+print(f'  f_{W}: here {mp.nstr(odd[W], 20)}, replication {mp.nstr(fx[W], 20)}, difference {mp.nstr(odd[W] - fx[W], 2)}')
 print(f'  d_{WN} measured {mp.nstr(meas, 8)}, predicted {mp.nstr(pred, 8)}, relative deviation {mp.nstr(rel, 3)}')
 
 unit = lambda w: d[W] * x ** (mpf(w - W) / 2)

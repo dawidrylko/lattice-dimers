@@ -1,6 +1,6 @@
-"""Numbers in main.tex that are simple functions of committed outputs.
+"""Numbers in king-entropy.tex that are simple functions of committed outputs.
 
-usage (from research/king-entropy/): python3 paper/derived.py > paper/out_derived.txt
+usage (from research/king-entropy/): python3 src/derived.py > out/out_derived.txt
 
 Reads only committed files (surface.json, bounds.json, z2.json, eig_*.json); computes nothing
 new about the transfer matrices.
@@ -17,7 +17,7 @@ print(f'2s (per dimer) = {mp.nstr(2 * s, 16)}')
 print(f'exp(s) = {mp.nstr(exp(s), 16)},  exp(2s) = {mp.nstr(exp(2 * s), 16)}')
 ds = mpf('6e-16')                        # its error bar
 print(f's - ds, s + ds = {mp.nstr(s - ds, 16)}, {mp.nstr(s + ds, 16)} '
-      f'(digits shared by both ends are the ones quoted in paper/oeis-draft.txt)')
+      f'(digits shared by both ends are the ones quoted in release/oeis-draft.txt)')
 print(f'exp(s - ds), exp(s + ds) = {mp.nstr(exp(s - ds), 17)}, {mp.nstr(exp(s + ds), 17)}')
 
 # second differences of a_k = log lambda_k (free strips); the s k part cancels
@@ -107,7 +107,7 @@ m = mpf('1.082727')                      # out_crosscheck.txt, in-sector gap at 
 wpd = log(10) / m
 print(f'\nwidths per decimal digit log(10)/m = {mp.nstr(wpd, 4)}, memory factor 2^(log(10)/m) = {mp.nstr(mpf(2) ** wpd, 3)}')
 
-# Section 3, independent recomputation: L1 on the odd widths up to W = 27 (xcheck/out/analyze_eig.txt)
+# Section 3, independent recomputation: L1 on the odd widths up to W = 27 (replication/out/analyze_eig.txt)
 l1_27 = mpf('0.5655119110413253187')
 l1_25 = mpf('0.5655119110413253176')     # out_errbar.txt, L1 at W = 25, the centre
 print(f'L1 at W = 27 minus L1 at W = 25 = {mp.nstr(l1_27 - l1_25, 2)}')
@@ -124,11 +124,11 @@ even.update({w: [mpf(json.load(open(f'data/eig/eig_king_cyl_w{w}_p{p}.json'))['p
 print(f'even cylinders w = 4..24: sector 0 above s at every w: {all(v[0] > s for v in even.values())}, '
       f'sector 1 below s at every w: {all(v[1] < s for v in even.values())}')
 
-# Section 3: float64 resolution of d_28 (xcheck/out/analyze_eig.txt: float64 vs long double <= 1.11e-17 per site)
+# Section 3: float64 resolution of d_28 (replication/out/analyze_eig.txt: float64 vs long double <= 1.11e-17 per site)
 print(f'resolution of d_28: 1.11e-17 / 1.93518e-15 = {mp.nstr(mpf("1.11e-17") / mpf("1.93518e-15"), 2)}; '
       f'digits of a 7.8e-20 agreement per site: {mp.nstr(-log(mpf("7.8e-20"), 10), 3)}')
 
-# L-note, x = 3/2: last two-mode window 2q = 14..20 (L/out_modes.txt), |Q/P| at 2q = 14 and its decay
+# L-note, x = 3/2: last two-mode window 2q = 14..20 (log-convexity/out_modes.txt), |Q/P| at 2q = 14 and its decay
 P, Q, r = mpf('5.95e-6'), mpf('7.98e-6'), mpf('0.942')
 print(f'x = 3/2: |Q/P| = {mp.nstr(Q / P, 3)} at 2q = 14, '
       + ', '.join(f'{mp.nstr(Q / P * r ** j, 3)} at 2q = {14 + 2 * j}' for j in range(1, 7)))

@@ -4,10 +4,10 @@ The research part of this repository is a paper and a companion note on the perf
 
 ## Papers
 
-- *The dimer entropy of the king's graph.* Dawid Ryłko, preprint, October 2026. [PDF](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf), [LaTeX source](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/main.tex).
-- *Log-convexity of strip dimer counts on the king's graph.* Dawid Ryłko, companion note, October 2026. [PDF](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy-log-convexity.pdf), [LaTeX source](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/L-note.tex).
+- *The dimer entropy of the king's graph.* Dawid Ryłko, preprint, October 2026. [PDF](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf), [LaTeX source](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/king-entropy.tex).
+- *Log-convexity of strip dimer counts on the king's graph.* Dawid Ryłko, companion note, October 2026. [PDF](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy-log-convexity.pdf), [LaTeX source](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/king-entropy-log-convexity.tex).
 
-Both are archived with the code and data on Zenodo when the tag `king-entropy-v1.0.0` is released; the DOIs are pending until then. The steps are in [ZENODO.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/ZENODO.md).
+Both are archived with the code and data on Zenodo when the tag `king-entropy-v1.0.0` is released; the DOIs are pending until then. The steps are in [ZENODO.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/release/ZENODO.md).
 
 ## Abstract
 
@@ -129,11 +129,11 @@ The matchings of a strip of width $w$ are counted row by row with a transfer mat
 
 Superadditivity of strips and a lower Collatz-Wielandt certificate on the free strip of width 24 give the lower bound. An upper certificate for a transfer matrix that weights the open side of a strip by the runs of crossing cells gives the upper bound. The certificates are evaluated in IEEE binary64 arithmetic with a rounding analysis that makes them rigorous; the cut identity and the strip inequalities behind them are proved in the paper and, in addition, audited in exact arithmetic on small boards. A separate script checks that no king board with both sides at least 3 has a Pfaffian orientation.
 
-The directory `xcheck/` recomputes the counts, the spectra and the certificates with code written from scratch, including a C program that extends the cylinders to circumference 28; its verdicts are in [xcheck/REPORT.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/xcheck/REPORT.md).
+The directory `replication/` recomputes the counts, the spectra and the certificates with code written from scratch, including a C program that extends the cylinders to circumference 28; its verdicts are in [replication/REPORT.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/replication/REPORT.md).
 
 ## Reproducibility
 
-Every number of the paper is mapped to the committed file it is read from and the script and arguments that wrote it in [paper/NUMBERS.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/NUMBERS.md). The scripts, the layout of `research/king-entropy/` and the commands are described in its [README](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/README.md). The proofs of the bounds are written out in [PROOF-lower.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/notes/PROOF-lower.md) and [PROOF-upper.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/notes/PROOF-upper.md).
+Every number of the paper is mapped to the committed file it is read from and the script and arguments that wrote it in [paper/NUMBERS.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/NUMBERS.md). The scripts, the layout of `research/king-entropy/` and the commands are described in its [README](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/README.md). The proofs of the bounds are written out in [proofs/lower-bound.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/proofs/lower-bound.md) and [proofs/upper-bound.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/proofs/upper-bound.md).
 
 ## How to cite
 

@@ -1,6 +1,6 @@
 """The two modes in the second differences of a_{2q} = log lambda_{2q}, along equal diagonal weights x.
 
-usage: python3 L/modes.py [kmax] > L/out_modes.txt      (kmax default 22)
+usage: python3 log-convexity/modes.py [kmax] > log-convexity/out_modes.txt      (kmax default 22)
 
 lambda_k is the growth rate of the free strip of width k (orthogonal edges weight 1, both
 diagonals weight x), computed by float64 power iteration with the transfer of linf.py (same cell

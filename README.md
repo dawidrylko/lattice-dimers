@@ -22,16 +22,16 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 
 The free energies give the asymptotics of [A239273](https://oeis.org/A239273), $a(n) \sim e^{\kappa}\, e^{4sn^2} e^{-8\sigma n}$, with relative error $6 \cdot 10^{-8}$ at $n = 10$.
 
-- Paper: *The dimer entropy of the king's graph* ([PDF](research/king-entropy/paper/main.pdf), [source](research/king-entropy/paper/main.tex)).
-- Companion note: *Log-convexity of strip dimer counts on the king's graph* ([PDF](research/king-entropy/paper/L-note.pdf), [source](research/king-entropy/paper/L-note.tex)), the convexity hypothesis tested in 1453 cases and where it fails.
+- Paper: *The dimer entropy of the king's graph* ([PDF](research/king-entropy/paper/king-entropy.pdf), [source](research/king-entropy/paper/king-entropy.tex)).
+- Companion note: *Log-convexity of strip dimer counts on the king's graph* ([PDF](research/king-entropy/paper/king-entropy-log-convexity.pdf), [source](research/king-entropy/paper/king-entropy-log-convexity.tex)), the convexity hypothesis tested in 1453 cases and where it fails.
 - [Research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html): the results above read from the committed data on every build.
-- [`research/king-entropy`](research/king-entropy): scripts, data, outputs, proofs of the bounds, and [`xcheck/`](research/king-entropy/xcheck/REPORT.md), an independent recomputation written from scratch. [`paper/NUMBERS.md`](research/king-entropy/paper/NUMBERS.md) maps every number of the paper to its output file and script.
+- [`research/king-entropy`](research/king-entropy): scripts, data, outputs, proofs of the bounds, and [`replication/`](research/king-entropy/replication/REPORT.md), an independent recomputation written from scratch. [`paper/NUMBERS.md`](research/king-entropy/paper/NUMBERS.md) maps every number of the paper to its output file and script.
 
-The code, data and both preprints are archived on Zenodo when the tag `king-entropy-v1.0.0` is released; until then the DOIs are pending ([`ZENODO.md`](research/king-entropy/paper/ZENODO.md)).
+The code, data and both preprints are archived on Zenodo when the tag `king-entropy-v1.0.0` is released; until then the DOIs are pending ([`ZENODO.md`](research/king-entropy/release/ZENODO.md)).
 
 ## Exact counts: OEIS A004003 and A239273
 
-How many ways are there to cover a $2n \times 2n$ board with pieces that each cover two neighbouring cells, and what does any one of those coverings look like? For dominoes, which join cells that share a side, the count is [OEIS A004003](https://oeis.org/A004003) and has a closed form found by Kasteleyn [1] and Fisher [2] in 1961. For domicules, which may also join cells that share only a corner, the count is [OEIS A239273](https://oeis.org/A239273) on squares and [A239264](https://oeis.org/A239264) on rectangles [6], and no closed form is used here. This repository counts both exactly, numbers every tiling so that any single one can be drawn from its number, and samples tilings of boards too large to number. It evaluates the domino product formula exactly as a resultant of two integer polynomials, counts domicule tilings with a cell-by-cell transfer that runs modulo primes in parallel and is rebuilt with the Chinese remainder theorem, and checks the solvers against each other, against the OEIS and against two PARI/GP programs run in CI.
+How many ways are there to cover a $2n \times 2n$ board with pieces that each cover two neighbouring cells, and what does any one of those coverings look like? For dominoes, which join cells that share a side, the count is [OEIS A004003](https://oeis.org/A004003) and has a closed form found by [Kasteleyn](https://doi.org/10.1016/0031-8914%2861%2990063-5) and [Fisher](https://doi.org/10.1103/PhysRev.124.1664) in 1961. For domicules, which may also join cells that share only a corner, the count is [OEIS A239273](https://oeis.org/A239273) on squares and [A239264](https://oeis.org/A239264) on rectangles, and no closed form is used here. This repository counts both exactly, numbers every tiling so that any single one can be drawn from its number, and samples tilings of boards too large to number. It evaluates the domino product formula exactly as a resultant of two integer polynomials, counts domicule tilings with a cell-by-cell transfer that runs modulo primes in parallel and is rebuilt with the Chinese remainder theorem, and checks the solvers against each other, against the OEIS and against two PARI/GP programs run in CI.
 
 Both sequences up to $20 \times 20$. The site recounts the $20 \times 20$ domicule term on every build and the modular solver checks it against an extra prime.
 
@@ -60,11 +60,11 @@ The notes are Markdown files with code cells. The site build runs every cell and
 
 ## Method in brief
 
-The numbers $4\cos^2(j\pi/(2n+1))$ in the domino product are the roots of a monic integer polynomial $P$ with $P(x^2) = U_{2n}(x/2)$. The product therefore equals $(-1)^n \mathrm{Res}(P(x), P(-x))$, the determinant of a $2n \times 2n$ integer matrix, which fraction-free Bareiss elimination [3] computes exactly.
+The numbers $4\cos^2(j\pi/(2n+1))$ in the domino product are the roots of a monic integer polynomial $P$ with $P(x^2) = U_{2n}(x/2)$. The product therefore equals $(-1)^n \mathrm{Res}(P(x), P(-x))$, the determinant of a $2n \times 2n$ integer matrix, which fraction-free [Bareiss elimination](https://doi.org/10.1090/S0025-5718-1968-0226829-0) (1968) computes exactly.
 
-Both kinds of tilings are also counted by transfer. Dominoes go row by row with a bitmask of the next row. Domicules go cell by cell with a state of the next $w + 2$ cells, because a cell can be matched with its right, down-left, down or down-right neighbour. That transfer only adds, so it runs modulo primes below $2^{31}$ in `Uint32Array` tables, one worker thread per prime; the Kahn-Lovász bound [5] gives the number of primes, the Chinese remainder theorem rebuilds the count, and one more prime checks it.
+Both kinds of tilings are also counted by transfer. Dominoes go row by row with a bitmask of the next row. Domicules go cell by cell with a state of the next $w + 2$ cells, because a cell can be matched with its right, down-left, down or down-right neighbour. That transfer only adds, so it runs modulo primes below $2^{31}$ in `Uint32Array` tables, one worker thread per prime; the Kahn-Lovász bound ([Alon and Friedland, 2008](https://doi.org/10.37236/888)) gives the number of primes, the Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
-A table of completion counts turns a number into a tiling. Domino tilings too large to number are sampled exactly with monotone coupling from the past [4]. Domicule tilings are sampled with a symmetric Markov chain of pair swaps, which is only approximately uniform.
+A table of completion counts turns a number into a tiling. Domino tilings too large to number are sampled exactly with monotone [coupling from the past](https://doi.org/10.1002/%28SICI%291098-2418%28199608/09%299:1/2%3C223::AID-RSA14%3E3.0.CO;2-O) (Propp and Wilson, 1996). The full references are in the [method note](notes/01-method.md#references). Domicule tilings are sampled with a symmetric Markov chain of pair swaps, which is only approximately uniform.
 
 The PARI/GP programs, both run in CI against the known values:
 
@@ -183,15 +183,6 @@ The gallery draws a tiling in three styles. Below are the same four 8×8 domicul
 
 `-l` limits the number of tilings (default 1000), `-o` skips tilings, `-i` draws one tiling by its 1-based number, `--random` samples, `--all` lifts the limit on boards with at most 100,000 tilings, `--ascii` prints instead of writing SVG. The command line numbers boards whose table has at most 4 million entries: dominoes up to 14×14, domicules up to 12×12. The [gallery](https://dawidrylko.github.io/lattice-dimers/) does the same in the browser, up to 18×18 for dominoes and 16×16 for domicules, with sampling above that.
 
-## References
-
-1. P. W. Kasteleyn. The statistics of dimers on a lattice. *Physica* 27(12):1209-1225, 1961. [doi:10.1016/0031-8914(61)90063-5](https://doi.org/10.1016/0031-8914%2861%2990063-5)
-2. M. E. Fisher. Statistical mechanics of dimers on a plane lattice. *Physical Review* 124(6):1664-1672, 1961. [doi:10.1103/PhysRev.124.1664](https://doi.org/10.1103/PhysRev.124.1664)
-3. E. H. Bareiss. Sylvester's identity and multistep integer-preserving Gaussian elimination. *Mathematics of Computation* 22(103):565-578, 1968. [doi:10.1090/S0025-5718-1968-0226829-0](https://doi.org/10.1090/S0025-5718-1968-0226829-0)
-4. J. G. Propp and D. B. Wilson. Exact sampling with coupled Markov chains and applications to statistical mechanics. *Random Structures and Algorithms* 9(1-2):223-252, 1996. [doi:10.1002/(SICI)1098-2418(199608/09)9:1/2<223::AID-RSA14>3.0.CO;2-O](https://doi.org/10.1002/%28SICI%291098-2418%28199608/09%299:1/2%3C223::AID-RSA14%3E3.0.CO;2-O)
-5. N. Alon and S. Friedland. The maximum number of perfect matchings in graphs with a given degree sequence. *Electronic Journal of Combinatorics* 15:N13, 2008. [doi:10.37236/888](https://doi.org/10.37236/888)
-6. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [A004003](https://oeis.org/A004003), [A239264](https://oeis.org/A239264) and [A239273](https://oeis.org/A239273). [oeis.org](https://oeis.org)
-
 ## Citation
 
 If you use the code or the counts, cite the repository; [`CITATION.cff`](CITATION.cff) holds the metadata, and GitHub offers it as BibTeX under "Cite this repository". For the entropy of the king's graph, cite the paper as given on the [research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html#how-to-cite); the Zenodo DOIs replace that reference when the release is out.
@@ -202,15 +193,15 @@ The code is MIT, see [LICENSE](LICENSE). Text and data are licensed under
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), see
 [LICENSES/CC-BY-4.0.txt](LICENSES/CC-BY-4.0.txt). CC BY 4.0 covers exactly these paths:
 
-- text: `research/king-entropy/paper/` except `paper/derived.py`, `research/king-entropy/notes/`
-  and `notes/`;
+- text: `research/king-entropy/paper/`, `research/king-entropy/proofs/`, `research/king-entropy/notes/`,
+  `research/king-entropy/release/`, `research/king-entropy/replication/REPORT.md` and `notes/`;
 - data: `research/king-entropy/data/`, `research/king-entropy/out/`, `research/king-entropy/logs/`,
-  the outputs `research/king-entropy/L/out_*.txt` and `research/king-entropy/L/time_*.txt`, the
-  JSON files in `data/` and the measurements in `benchmarks/results/`.
+  `research/king-entropy/replication/out/`, the outputs `research/king-entropy/log-convexity/out_*.txt` and
+  `research/king-entropy/log-convexity/time_*.txt`, the JSON files in `data/` and the measurements in `benchmarks/results/`.
 
 Everything else is MIT, in particular all programs and scripts: `src/`, `pari/`, `site/`, `tests/`,
 `benchmarks/benchmarkRunner.js`, `data/index.js`, `research/king-entropy/src/`,
-`research/king-entropy/L/*.py` and `research/king-entropy/paper/derived.py`.
+`research/king-entropy/log-convexity/*.py` and the code in `research/king-entropy/replication/`.
 
 ## Author
 

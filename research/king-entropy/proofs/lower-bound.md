@@ -7,7 +7,7 @@ Claim under audit (`src/bounds.py 24` → `out/out_bounds.txt`):
 **Verdict: CONFIRMED.** Superadditivity is elementary; the float
 Collatz-Wielandt certificate was recomputed in exact rational arithmetic for w ≤ 12 and the
 rounding argument holds for every w (`src/audit_bounds.py` → `out/out_audit_bounds.txt`, commit
-`0c53f27`, 0 failures). Same notation as `notes/PROOF-upper.md` §0.
+`0c53f27`, 0 failures). Same notation as `proofs/upper-bound.md` §0.
 
 ## 1. Superadditivity
 
@@ -18,7 +18,7 @@ boards, `L1`).
 
 ## 2. Transfer
 
-Z(2j, w) = (Aʲ e₀)₀ with A = T₀², T₀ the free-strip row transfer (`notes/PROOF-upper.md` §4 with
+Z(2j, w) = (Aʲ e₀)₀ with A = T₀², T₀ the free-strip row transfer (`proofs/upper-bound.md` §4 with
 z = 0; validated against brute force by `src/validate.py` and by `U4` at z = 0).
 
 ## 3. Lemma (Collatz-Wielandt certificate, lower). Let v ≥ 0 with v₀ > 0 and
@@ -34,7 +34,7 @@ nonnegative), so supp v ⊆ supp Aⁿe₀ automatically; v₀ > 0 is asserted. (
 
 ## 4. Floating point
 
-c = min_{i ∈ supp v} fl(fl(Av)_i / v_i) · (1 − 10⁻¹²). As in `notes/PROOF-upper.md` §6:
+c = min_{i ∈ supp v} fl(fl(Av)_i / v_i) · (1 − 10⁻¹²). As in `proofs/upper-bound.md` §6:
 fl(Av)_i ≤ (1+u)^{12w} (Av)_i (≤ 5 terms per cell step, no multiplication at z = 0), no
 underflow (entries on the support > 10⁻²⁸⁰ asserted, weights 1), one rounding in the
 division. With 12wu ≤ 3.2·10⁻¹⁴ ≪ 10⁻¹², Av ≥ c v holds exactly on supp v; off the support
@@ -53,7 +53,7 @@ of the sides exchanged. Hence **s̲ ≥ log c_w / (2w)**; at w = 24: s ≥ 0.545
 
 ## 6. The conditional bound "given (L): s ≥ 0.565511911035" (`src/cw.py` §E)
 
-Audited as well, because it is the conditional bound stated in `notes/CW-NOTE.md`:
+Audited as well, because it is the conditional bound stated in `notes/calkin-wilf.md`:
 
 - (L) ⇒ for each m, q ↦ m⁻¹ log Z(2q, m) convex ⇒ (m → ∞, Z(2q, m) = Z(m, 2q)) a_{2q} := log λ_{2q}
   convex in q. Convex with a_{2q}/(2q) → s ⇒ increments b_q = a_{2q+2} − a_{2q} increase to 2s,
@@ -64,10 +64,10 @@ Audited as well, because it is the conditional bound stated in `notes/CW-NOTE.md
 - Numerics: s ≥ (log λ₂₄^{low} − log λ₂₂^{up})/2 with log λ₂₄^{low} = 24 · (certified per-site
   lower bound stored as a float in `data/bounds.json`) − 10⁻¹⁴ (covers the float storage,
   ≤ 24 · 0.5 ulp ≈ 1.3·10⁻¹⁵) and log λ₂₂^{up} from the upper Collatz-Wielandt certificate
-  (`cw.growth_upper`, same rounding margin, `notes/PROOF-upper.md` §5-6 with z = 0). **Correct.**
-- Status: conditional on an unproven hypothesis: UNRESOLVED, see `notes/L-NOTE.md`.
+  (`cw.growth_upper`, same rounding margin, `proofs/upper-bound.md` §5-6 with z = 0). **Correct.**
+- Status: conditional on an unproven hypothesis: UNRESOLVED, see `notes/log-convexity.md`.
 
 ## 7. Caveats
 
-Same as `notes/PROOF-upper.md` §8, items 1-3 and 5 (existence of s; transfer correctness tested,
+Same as `proofs/upper-bound.md` §8, items 1-3 and 5 (existence of s; transfer correctness tested,
 not formally verified; IEEE platform; provenance SHAs missing, code unchanged since `102b7e5` apart from file paths).

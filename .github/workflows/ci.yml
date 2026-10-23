@@ -54,5 +54,5 @@ jobs:
           cache-dependency-path: research/king-entropy/src/requirements.txt
       - run: python -m pip install -r src/requirements.txt
       - run: python src/test_paths.py
-      - run: python paper/derived.py > "$RUNNER_TEMP/out_derived.txt" && diff -u paper/out_derived.txt "$RUNNER_TEMP/out_derived.txt"
+      - run: python src/derived.py > "$RUNNER_TEMP/out_derived.txt" && diff -u out/out_derived.txt "$RUNNER_TEMP/out_derived.txt"
       - run: python -m json.tool ../../.zenodo.json > /dev/null

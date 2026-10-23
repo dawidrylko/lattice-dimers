@@ -19,7 +19,7 @@ only for xl = xr (J swaps the two diagonals below the cut). Hence, for equal dia
   Z(2q-2) Z(2q+2) - Z(2q)^2 = N_2 - N_1,   N_i = number of type-i pairs with NO cut,
 
 and (L) <=> N_1 <= N_2. Plain cuts alone are the classical argument: a plain cut forces t = 0 TB
-paths in the superposition (the reformulation R1 of L-NOTE §3), so it only reproduces the cancellation of
+paths in the superposition (the reformulation R1 of notes/log-convexity.md §3), so it only reproduces the cancellation of
 t = 0 superpositions; twisted cuts are compatible with TB paths and are new.
 
 Part 1: explicit enumeration of all pairs for small (m, q): Phi maps type 1 <-> type 2, Phi^2 = id,
