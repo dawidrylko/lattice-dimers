@@ -86,7 +86,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      `git rev-list -1 "$(git log -1 --format=%H -- <output>)"..HEAD -- <script> <inputs>`; any output
      means stale. Rerun the stale ones and update the numbers that changed in `main.tex`,
      `L-note.tex`, `NUMBERS.md`, `oeis-draft.txt`, the descriptions above and `.zenodo.json`.
-   - Rebuild both PDFs with the command of step 8.
+   - Rebuild both PDFs with the `docker run` line of step 8, run in `paper/`.
    - Commit all of it on a `d/*` branch and merge it with a merge commit before step 1, so the
      preprint drafts and the tag carry the same numbers and PDFs.
 1. Create both preprint drafts on Zenodo with the metadata above except the related identifiers,

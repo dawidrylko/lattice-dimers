@@ -132,4 +132,6 @@ print(f'resolution of d_28: 1.11e-17 / 1.93518e-15 = {mp.nstr(mpf("1.11e-17") / 
 P, Q, r = mpf('5.95e-6'), mpf('7.98e-6'), mpf('0.942')
 print(f'x = 3/2: |Q/P| = {mp.nstr(Q / P, 3)} at 2q = 14, '
       + ', '.join(f'{mp.nstr(Q / P * r ** j, 3)} at 2q = {14 + 2 * j}' for j in range(1, 7)))
-print(f'x = 3/2 with the third-window ratio 0.946: |Q/P| at 2q = 24 = {mp.nstr(Q / P * mpf("0.946") ** 5, 3)}')
+print(f'x = 3/2: ratio below which d_q > 0 at 2q = 24, (P/Q)^(1/5) = {mp.nstr((P / Q) ** (mpf(1) / 5), 4)}; |Q/P| at 2q = 24 '
+      + 'with the ratios of the earlier windows: '
+      + ', '.join(f'{rr}: {mp.nstr(Q / P * mpf(rr) ** 5, 3)}' for rr in ('0.945', '0.946', '0.971')))

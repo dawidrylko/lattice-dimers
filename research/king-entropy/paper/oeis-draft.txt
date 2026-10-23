@@ -8,7 +8,8 @@ The author's name is written with the HTML entity &#322; (l with stroke), which 
 Before submitting: create the tag king-entropy-v1.0.0 (the %H links point at it), fill in both
 Zenodo DOIs marked "DOI to be added", and check that A239264 has its extended b-file approved.
 The %C lines below are a list of facts, not submission text: the author rewrites them in his own
-words before submitting. Every number in them is in paper/NUMBERS.md. In %A, the date is the day of submission, in the OEIS form "Oct 23 2026".
+words before submitting. Every number in them is in paper/NUMBERS.md. In %A, the date is the
+day of submission, in the OEIS form "Oct 23 2026".
 
 %I A000000 (number to be assigned)
 %S A000000 5,6,5,5,1,1,9,1,1,0,4,1,3,2

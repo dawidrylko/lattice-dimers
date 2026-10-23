@@ -101,7 +101,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | 6.2·10⁻¹⁷ per site over 33 cylinders | `out/out_errbar.txt` (rounding block) | `src/errbar.py` |
 | 0.5655119110413253 ± 6·10⁻¹⁶, centre 0.5655119110413253176 | `out/out_errbar.txt` (RECOMMENDATION; `data/errbar.json` `recommended.s`) | `src/errbar.py` |
 | further digits: 2.13 widths, 4.4 times the memory per digit | `paper/out_derived.txt` (widths per decimal digit 2.127, memory factor 4.37; rounded), with m = 1.082727 | `paper/derived.py` |
-| rounding term 1.5·10⁻¹⁶ of 2.7·10⁻¹⁶; 7.8·10⁻²⁰ per site, about 19 digits | as in the error budget below; `xcheck/out/compare_eig.txt` (lean longdouble); `paper/out_derived.txt` (19.1 digits) | `src/errbar.py`, `xcheck/compare_eig.py`, `paper/derived.py` |
+| rounding term 1.5·10⁻¹⁶ of 2.7·10⁻¹⁶; 7.8·10⁻²⁰ per site, about 19 digits | as in the error budget above; `xcheck/out/compare_eig.txt` (lean longdouble); `paper/out_derived.txt` (19.1 digits) | `src/errbar.py`, `xcheck/compare_eig.py`, `paper/derived.py` |
 | 4.3 GiB at w = 24, 8.4 GiB at w = 25; time about the same factor | `out/out_estimate.txt` (cost table: peak RSS 4353 and 8642 MiB, wall 660.2 and 1351.3 s) | `src/cylw.py king cyl <w> <p>` |
 | 4.1·10⁻¹⁶ | `out/out_crosscheck.txt` section A (max diff 4.06e-16; rounded) | `src/crosscheck.py` |
 | 1.8·10⁻¹⁵ | `out/out_crosscheck.txt` section B (−1.78e-15; rounded) | `src/crosscheck.py` |
@@ -170,7 +170,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | number | file | script |
 | --- | --- | --- |
 | 1 − √2 | `out/out_cw.txt` (section A: −0.4142) | `src/cw.py` |
-| odd w = 3...25 below the estimate, 2.5·10⁻³ at w = 3, 6.7·10⁻¹⁵ at w = 25; even w: sector 0 above it | `paper/out_derived.txt` (odd cylinders, s − f_w: 0.00249 ... 6.71e-15, all positive; even cylinders w = 4...24, sector 0 above and sector 1 below at every w) | `paper/derived.py` |
+| odd w = 3...25 below the estimate, 2.5·10⁻³ at w = 3, 6.7·10⁻¹⁵ at w = 25; even w: sector 0 above it | `paper/out_derived.txt` (odd cylinders, s − f_w: 0.00249 ... 6.71e-15, all positive; even cylinders w = 4...24, sector 0 above and sector 1 below at every w); w = 26, 28 from `xcheck/out/analyze_eig.txt` (section 3) | `paper/derived.py`, `xcheck/analyze_eig.py` |
 | 0.565511911035, 0.565511911049, width 1.32·10⁻¹¹ | `out/out_cw.txt` (section E, CONDITIONAL INTERVAL) | `src/cw.py` |
 | 13.08824999346029, 12.52273808241305, 11.95722617139012, 13.08824999346131; 10⁻¹⁴ | `out/out_cw.txt` (section E); the lower bounds are 24 and 23 times `data/bounds.json` `lower` 24, 23 minus 10⁻¹⁴ (`src/cw.py`, `low`) | `src/cw.py` |
 | 0.5655119110; 6.3·10⁻¹², 7.7·10⁻¹² | arithmetic from the interval and s | - |
@@ -216,8 +216,8 @@ have the same sources.
 | triangular, weights, onsets, Krein signature, J-orbits | `out/out_lweight*.txt`, `L/out_symmetry.txt`, `L/out_linf.txt` | as in Section 8 above |
 | Z(8, m)² > Z(6, m)Z(10, m): 35 ≤ m (x = 3/2), 21 ≤ m (x = 2), 19 ≤ m (x = 3), m ≤ 60 | `L/out_linf.txt` (last block) | `L/linf.py 16` |
 | Table 2 (two modes): ρ₊, ρ₋, first and last ratios, negative 2q | `L/out_modes.txt` | `L/modes.py` |
-| −3.6·10⁻⁹ at 2q = 20 (x = 3/2); 0.942; drift 0.971 → 0.942 | `L/out_modes.txt` (x = 1.5) | `L/modes.py` |
-| 1.34 at 2q = 14, 0.995 at 2q = 24 (x = 3/2); 0.946 of the third window | `paper/out_derived.txt` (x = 3/2 lines, from P = 5.95e-6, Q = 7.98e-6 of the last window in `L/out_modes.txt`; with 0.946 the ratio at 2q = 24 is 1.02) | `paper/derived.py` |
+| −3.6·10⁻⁹ at 2q = 20 (x = 3/2); 0.942; drift 0.971 → 0.942 | `L/out_modes.txt` (x = 1.5; its lines "convex from about 2q = ..." are the point value of the last window's model, not a conclusion of the note) | `L/modes.py` |
+| 1.34 at 2q = 14, 0.995 at 2q = 24 (x = 3/2); below 0.943; earlier windows 0.945 to 0.971 | `paper/out_derived.txt` (x = 3/2 lines, from P = 5.95e-6, Q = 7.98e-6 of the last window in `L/out_modes.txt`: threshold 0.943, and 1.01, 1.02, 1.16 at 2q = 24 for 0.945, 0.946, 0.971); windows in `L/out_modes.txt` (x = 1.5: 0.971, 0.946, 0.945, 0.942) | `paper/derived.py`, `L/modes.py` |
 | 1.002, 1.018 (x = 2, 3); drift 0.03-0.08 | `L/out_modes.txt` | `L/modes.py` |
 | x* ∈ (7/4, 2), x* ≈ 1.96 | `L/out_modes.txt` (crossing) | `L/modes.py` |
 | 7.6·10⁻¹⁰ (smallest d_q at x = 1) | `L/out_modes.txt` (x = 1, 2q = 20) | `L/modes.py` |

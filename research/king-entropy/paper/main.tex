@@ -418,10 +418,10 @@ appears beyond $w = 25$.
 more widths. The state vector doubles with each width, and with it the peak memory of
 \file{src/cylw.py} ($4.3$\,GiB at $w = 24$, $8.4$\,GiB at $w = 25$), so a digit costs about
 $2^{2.13} = 4.4$ times the memory, and the run time grows by about the same factor. The quoted error
-bar would not follow: its largest term is the rounding term ($1.5\cdot10^{-16}$ of
-$2.7\cdot10^{-16}$), which more widths do not reduce, and the extended-precision inputs agree with
-the independent code below to $7.8\cdot10^{-20}$ per site, so about $19$ digits is the end of the
-$64$-bit mantissa of the x87 \texttt{long double}. Restricting the full row transfer to zero momentum and to states even under reflection would
+bar would not follow, because its largest term is the rounding term ($1.5\cdot10^{-16}$ of
+$2.7\cdot10^{-16}$), which measures the float64 inputs and does not shrink with more widths. The
+extended-precision inputs agree with the independent code below to $7.8\cdot10^{-20}$ per site, about
+$19$ digits, which is where the $64$-bit mantissa of the x87 \texttt{long double} ends. Restricting the full row transfer to zero momentum and to states even under reflection would
 divide the state space by about $2w$, but the cell steps used here break the rotation symmetry of the
 intermediate states, so this needs a different implementation. Beyond a few more digits the natural
 tools are the corner transfer matrices and their renormalization-group variant mentioned in the
