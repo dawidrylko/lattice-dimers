@@ -55,7 +55,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | ξ = 1.235 ± 0.004 | splitting length | `out/out_estimate.txt` (fits 1.2323, 1.2351, 1.2387; centre and half-range) | `src/estimate.py` |
 | 0.565511911035, 0.565511911049 | conditional bounds given (L∞), (O) | `out/out_cw.txt` (section E, CONDITIONAL INTERVAL) | `src/cw.py` |
 | κ = 0.36319625605 ± 3·10⁻¹⁰ | corner free energy | `out/out_corner.txt` (RESULT) | `src/corner.py` |
-| 1451 | (L) cases checked on the king's graph | 873 + 550 (`out/out_ltest.txt` totals) + 14 + 14 (`out/out_lcert_m25.txt`, `out/out_lcert_m26.txt`, 2q = 2...28) | `src/ltest.py`, `src/lcert.py` |
+| 1453 | (L) cases checked on the king's graph | 875 + 550 (`out/out_ltest.txt` totals) + 14 + 14 (`out/out_lcert_m25.txt`, `out/out_lcert_m26.txt`, 2q = 2...28) | `src/ltest.py`, `src/lcert.py` |
 | A239264, A239273, A239265, A239268, A243510 | OEIS ids | literature (`paper/refs.bib`) | - |
 | 72 > 3·25 − 6 | edges of the 5×5 king graph | `paper/out_derived.txt` | `paper/derived.py` |
 | 1.34254...1.34265 | constant listed by Finch | Finch, arXiv:2001.00578, §5.12 (literature) | - |
@@ -84,9 +84,10 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 
 | number | file | script |
 | --- | --- | --- |
-| r_w 13.4 → 9.99 | `out/out_estimate.txt` (odd widths, r = 13.382 ... 9.992; rounded) | `src/estimate.py` |
+| r_w 13.4 → 10.0 | `out/out_estimate.txt` (odd widths, float64, r = 13.382 ... 9.992); the end value 10.0 from extended precision, next rows | `src/estimate.py` |
 | even-w sector brackets w = 18...24, midpoint 0.5655119110413465 | `out/out_estimate.txt` | `src/estimate.py` |
 | Table 1 (all entries) | `out/out_estimate.txt` (odd widths) | `src/estimate.py` |
+| Table 1 caption: 5.991·10⁻¹⁴, 9.998, 0.56551191104132523 (w = 25, extended precision); r_w drifts to 10.0 | `xcheck/out/analyze_eig.txt` (section 2), from `data/lean/*longdouble*` | `xcheck/analyze_eig.py` |
 | extended-precision inputs: odd w = 5...25, even w = 4...24 | `out/out_errbar.txt` (first line); `data/lean/lean_king_cyl_w*_p*_longdouble.json` | `src/errbar.py`, `src/lean.py` |
 | m = 1.082727; same gap at w = 20...25 | `out/out_crosscheck.txt` (in-sector gap); `out/out_errbar.txt` (gap block, 1.0827 ... 1.082701) | `src/crosscheck.py`, `src/errbar.py` |
 | Table 2 (all entries) | `out/out_errbar.txt` (rows W = 25 odd, W = 24 midpoints; backtest change = difference from the row W − 2); also `data/errbar.json` | `src/errbar.py` |
@@ -129,7 +130,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | [−0.4840358715325015, −0.4840358715325006], −0.484035871532501 ± 1.8·10⁻¹⁴ | `out/out_surface.txt` | `src/surface.py` |
 | odd models agree to 2·10⁻¹⁶ | `out/out_surface.txt` (odd k, row W = 25: −0.4840358715325007 ... −0.4840358715325009) | `src/surface.py` |
 | κ, 0.363196256048, 1.4·10⁻¹⁰, 2.6·10⁻¹¹, 1.2·10⁻¹², 3·10⁻¹⁰; ratios 5.85 → 5.58 | `out/out_corner.txt` (section 1) | `src/corner.py` |
-| 6.2·10⁻⁸ for min(K, L) ≥ 20; sign by parity | `out/out_corner.txt` (rectangles) | `src/corner.py` |
+| 6.3·10⁻⁸ for min(K, L) ≥ 20; sign by parity | `out/out_corner.txt` (rectangles; printed 6.2e-8, the maximum is 6.249·10⁻⁸ at 20 × 20 per `xcheck/out/corner.txt`, so the bound is rounded up) | `src/corner.py` |
 | C = 1.437918032, d = 9.60273202731337, f = 6.931966132248; −2.0·10⁻⁹ at n = 12; factor 5.6 | `out/out_corner.txt` (section 2) | `src/corner.py` |
 | 5.3·10⁻⁹, 1.0·10⁻¹⁰, 1.1·10⁻¹¹, 5.9·10⁻¹³; JS counts L ≤ 20 | `out/out_corner.txt` (section 3) | `src/corner.py` |
 | exact counts K, L ≤ 24 | `data/zex/zex_king_free_m*_K*.json` | `src/zexact.py king free <m> <K>` |
@@ -168,7 +169,7 @@ computation from the listed values, done in `paper/derived.py` unless stated oth
 | −0.338 | `paper/out_derived.txt` (step-1 ratios, −0.3327 ... −0.3425) | `paper/derived.py` |
 | −13.84 | `paper/out_derived.txt` (ratios D(k)/D(k+2)) | `paper/derived.py` |
 | 0.1147, −0.072, 0.007, 0.63 | `L/out_linf.txt` | `L/linf.py 16` |
-| 1451 | as in the introduction | `src/ltest.py`, `src/lcert.py` |
+| 1453 | as in the introduction | `src/ltest.py`, `src/lcert.py` |
 | x = 7/4 ... 2 | `L/out_modes.txt` (crossing) | `L/modes.py` |
 | 5.06·10⁻¹¹ at w = 24 | `paper/out_derived.txt` (king cylinders w = 24: p0 − p1) | `paper/derived.py` |
 
@@ -201,7 +202,7 @@ have the same sources.
 | number | file | script |
 | --- | --- | --- |
 | 0.5655119110413253 ± 6·10⁻¹⁶; 0.545343749727, 0.582767477484 | as in the paper (Theorem 4.1) | - |
-| 1451 cases, m ≤ 26, cylinders m ≤ 22; Table 1 | `out/out_ltest.txt`, `out/out_lcert_m25.txt`, `out/out_lcert_m26.txt` | `src/ltest.py`, `src/lcert.py` |
+| 1453 cases, m ≤ 26, cylinders m ≤ 22; Table 1 | `out/out_ltest.txt`, `out/out_lcert_m25.txt`, `out/out_lcert_m26.txt` | `src/ltest.py`, `src/lcert.py` |
 | triangular, weights, onsets, Krein signature, J-orbits | `out/out_lweight*.txt`, `L/out_symmetry.txt`, `L/out_linf.txt` | as in Section 8 above |
 | Z(8, m)² > Z(6, m)Z(10, m): 35 ≤ m (x = 3/2), 21 ≤ m (x = 2), 19 ≤ m (x = 3), m ≤ 60 | `L/out_linf.txt` (last block) | `L/linf.py 16` |
 | Table 2 (two modes): ρ₊, ρ₋, first and last ratios, negative 2q | `L/out_modes.txt` | `L/modes.py` |

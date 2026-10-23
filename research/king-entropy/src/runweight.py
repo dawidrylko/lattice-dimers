@@ -23,8 +23,9 @@ state on; any other move resets it to 0.
 Certificate as in bounds.certify(upper=True): v >= 0 with v_0 > 0 and A v <= C v componentwise,
 A = T^2, gives W_h(2j, w) <= C^j, so s <= log(C) / (2 w). The weights are rounded up to floats
 (T only grows). ROUNDING: an entry after an interior cell step is a sum of at most 5 terms (4
-roundings); after a side step at most 4n terms (left) or 3n terms (right) for n run states,
-plus at most 2 products by a weight and 1 addition for the states reached by an outside cover.
+roundings); after a side step an entry of run state 0 collects at most 4n terms (left) or 3n
+terms (right) for n run states, while an entry of run state 1 or 2 is reached only by outside
+covers and needs at most 2 products by a weight and 1 addition.
 Over the 2w steps of A that is at most 2 (4 (w - 2) + (4n - 1) + (3n - 1)) = 8w + 14n - 20
 roundings, at most 12 w for w >= 6, the budget of bounds.py: relative error < 12 w u, far below
 the margin 1e-12. Entries below 1e-280 are checked to be absent.

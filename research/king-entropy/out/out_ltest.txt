@@ -23,8 +23,8 @@
   21  24    11   0        7.594     2.119e-8 (2q= 22)   True     0.174    H0:-/7  H1:4/6
   22  24    11   0        7.992     2.128e-8 (2q= 22)   True    0.1737    H0:-/7  H1:4/6
   23  20     9   0        8.389     7.347e-7 (2q= 18)   True    0.1636    H0:-/6  H1:4/5
-  24  20     9   0        8.786     7.416e-7 (2q= 18)   True    0.1631    H0:-/6  H1:4/5
-  total: 0 violations in 873 cases (exact integers)
+  24  24    11   0        8.786     2.146e-8 (2q= 22)   True     0.173    H0:-/7  H1:4/6
+  total: 0 violations in 875 cases (exact integers)
 
 == king cyl: (L) exact, Z(2q)^2 <= Z(2q-2) Z(2q+2)
    m   K  cases viol  margin at 2q=2   min margin (at 2q)  decreasing  last ratio   Hankel minors: first negative/size
