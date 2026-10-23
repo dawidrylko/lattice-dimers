@@ -340,12 +340,13 @@ enters only through a separate rounding term.
 
 \emph{Main model.} The corrections come from the gap inside a sector (\S\ref{sec:z2}): at $w = 20$
 ARPACK gives $m = \log(\lambda_1/|\lambda_3|) = 1.082727$ per row, and the power iterations give the
-same value at every $w = 20, \dots, 25$. For a massive correction the natural form is that of
-L\"uscher \cite{luscher1986},
+same value at every $w = 20, \dots, 25$. In a massive theory finite-size corrections decay
+exponentially, at a rate set by the spectrum of light particles \cite{luscher1986}; we fit the form
 \[
   d_w = C e^{-mw} w^{-3/2} \Bigl(1 + \frac{c_1}{w}\Bigr),
 \]
-with $m$ fixed at the gap and $C, c_1$ fitted through $d_{W-2}, d_W$ (L1), or with a further term
+whose power $w^{-3/2}$ and factor $1 + c_1/w$ are our ansatz, with $m$ fixed at the gap and $C, c_1$
+fitted through $d_{W-2}, d_W$ (L1), or with a further term
 $c_2/w^2$ through three differences (L2). The tail $s - f_W = \sum_{j \ge 1} d_{W+2j}$ is then
 summed. As checks we use the generic models of the first version of this work: geometric (G,
 constant ratio $r_W$); $d_w = A e^{-w/\xi} w^b$ through three points (PE) or by least squares on
