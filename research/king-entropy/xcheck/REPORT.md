@@ -14,6 +14,12 @@ extrapolation to 1e-18 in s, and so do both sectors of w = 28 (float64).
 | 5. kappa | CONFIRMED | 0.3631962560475 | 0.36319625605 +- 3e-10 |
 | 6. failure modes | none found | see the table in Claim 6 | - |
 
+The paper checked is `paper/main.tex` at b4b2c79. The later master 872d605 (merged into this branch)
+fixes the "2.6 %" below to 2.7 %, proves the existence of the limit s in Section 2.1 (checked: the
+bound Z(2j, L) <= lambda_L^(2j) from (2.1) gives bar s <= s*, which with the lower bound closes the
+argument) and rewords the rounding count of Section 4.4; the other two minor items below are
+unchanged there.
+
 All code in this directory was written from scratch for this check; nothing is imported from or
 adapted from `src/` or `L/`. The committed outputs of the repository (`data/`, `out/`) were read only
 after the own result existed, by the `compare_*` scripts. Commands are run from
@@ -35,7 +41,7 @@ None of substance. Minor, last digits only:
 - **Section 5.1, "|rho(K, L) - kappa| <= 6.2e-8 for min(K, L) >= 20"**: the maximum is 6.249e-8
   (at 20 x 20, with either kappa), so the bound holds only as 6.25e-8. `out/corner.txt`.
 - **Section 7, "overestimates s by 2.6 % and 1.2 %"**: (Bethe - s)/s is 2.68 % for the triangular
-  lattice; 2.6 % is (Bethe - s)/Bethe. `out/misc.txt`.
+  lattice; 2.6 % is (Bethe - s)/Bethe. `out/misc.txt`. Fixed on master (872d605: 2.7 %).
 
 ## Claim 1 - exact counts Z(K, L): CONFIRMED (one b-file NOT REACHED)
 
@@ -158,7 +164,7 @@ differences are 1.4e-16 and 8.3e-16, inside the paper's error bar. `out/analyze_
 | reducible sector (a component not seen from e0) | Tarjan SCCs of T^2 per sector, w <= 10, cylinders and free strips | every sector is strongly connected; for free strips the sector of e0 is all reachable |
 | floating-point loss | long double vs float64 of the own code; own vs repository extended values; exact count ratios vs eigenvalues | 1.1e-17 per site; 7.8e-20 per site; <= 6.4e-19 in log lambda (m <= 12, K = 80) |
 | off-by-one K vs L | Z(K, L) = Z(L, K) for K, L <= 12; OEIS array orientation; count ratios along the strip vs the strip eigenvalue | all consistent |
-| lemma outside its hypotheses | Lemma 4.3 needs supp v in supp A^n e0: own v is A^n e0 (exact support, or float iteration from e0); Lemma 4.8 needs (Av)_i = 0 off supp v: checked (0 violations); Lemmas 4.4-4.7 need w >= 2 (used w >= 4); Theorem 2.1 needs KL even (stated); Proposition 8.2 uses s = lim a_k / k, which needs the existence of the double limit (the paper calls it standard and keeps it outside Theorem 4.1) | no violation found |
+| lemma outside its hypotheses | Lemma 4.3 needs supp v in supp A^n e0: own v is A^n e0 (exact support, or float iteration from e0); Lemma 4.8 needs (Av)_i = 0 off supp v: checked (0 violations); Lemmas 4.4-4.7 need w >= 2 (used w >= 4); Theorem 2.1 needs KL even (stated); Proposition 8.2 uses s = lim a_k / k, which needs the existence of the double limit (called standard at b4b2c79; proved in Section 2.1 on master 872d605) | no violation found |
 
 The sign properties of Section 8 hold on the own free-strip values (`out/analyze_eig.txt` section 10):
 even second differences positive for 2q = 2..24, odd ones negative for k = 3..23, increments
