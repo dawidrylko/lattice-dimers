@@ -654,7 +654,8 @@ document.querySelector('nav.tabs').addEventListener('click', e => {
   const link = e.target.closest('a');
   if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
-  if (link.hash !== location.hash) history.pushState(null, '', link.hash);
+  if (link.hash === location.hash) return;
+  history.pushState(null, '', link.hash);
   render();
 });
 window.addEventListener('popstate', render);
