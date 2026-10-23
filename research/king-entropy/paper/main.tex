@@ -294,7 +294,7 @@ signed sum of \cite{wildeboerseidel2020} is a single Pfaffian.
 
 \subsection{Data}
 Table~\ref{tab:odd} lists the odd cylinders. The values $f_w$ increase to $s$; the differences
-$d_w = f_w - f_{w-2}$ decay by a ratio $r_w = d_{w-2}/d_w$ that drifts from $13.4$ to $9.99$.
+$d_w = f_w - f_{w-2}$ decay by a ratio $r_w = d_{w-2}/d_w$ that drifts from $13.4$ to $10.0$.
 The geometric (Aitken) estimate $s_w = f_w + d_w/(r_w - 1)$ settles at $0.5655119110413253$.
 For even $w$ the sector values bracket $s$:
 \[
@@ -309,7 +309,9 @@ and the midpoints converge to $s$ at the same rate as the odd widths, from indep
 
 \begin{table}[ht]
 \caption{Odd cylinders: $f_w = \log\lambda_w / w$, $d_w = f_w - f_{w-2}$, $r_w = d_{w-2}/d_w$ and the
-geometric extrapolation $s_w$.}\label{tab:odd}
+geometric extrapolation $s_w$, from the float64 eigenvalues; their error, at most $6.2\cdot10^{-17}$
+per site, can move the last digit of $f_w$ by one. At $w = 25$ the extended-precision inputs give
+$d_{25} = 5.991\cdot10^{-14}$, $r_{25} = 9.998$ and $s_{25} = 0.56551191104132523$.}\label{tab:odd}
 \begin{tabular}{rllrl}
 \toprule
 $w$ & $f_w$ & $d_w$ & $r_w$ & $s_w$ \\
@@ -711,7 +713,7 @@ added linearly because they are correlated. Taking twice the larger extrapolatio
 \[
   \kappa = 0.36319625605 \pm 3\cdot10^{-10}.
 \]
-Rectangles agree: $|\rho(K, L) - \kappa| \le 6.2\cdot10^{-8}$ for $\min(K, L) \ge 20$, with the
+Rectangles agree: $|\rho(K, L) - \kappa| \le 6.3\cdot10^{-8}$ for $\min(K, L) \ge 20$, with the
 sign alternating with the parity of $\min(K, L)$.
 
 Since A239273 counts the squares, $a(n) = Z(2n, 2n)$,
