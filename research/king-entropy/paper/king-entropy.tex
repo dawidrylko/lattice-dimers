@@ -231,9 +231,10 @@ by less than $4\cdot10^{-15}$ for three consecutive iterations (19 iterations fo
 The changes of the estimate shrink by a factor $0.115$ per iteration (the gap of
 \S\ref{sec:z2}), so the truncation error after stopping is far below one ulp of $\log\lambda$.
 Afterwards the Collatz--Wielandt bracket $\min_i (T^2 v)_i / v_i \le \lambda^2 \le \max_i (T^2
-v)_i / v_i$ \cite{collatz1942,wielandt1950} over the support of $v$ is evaluated; for
-$w = 20, \dots, 25$ it closes to within one ulp of $\log \lambda$. Computed without directed
-rounding, it is a diagnostic here, not a certificate (the certificates are in
+v)_i / v_i$ \cite{collatz1942,wielandt1950} is evaluated. In every run $v$ is positive on the
+whole sector ($2^{w-1}$ states, \file{data/eig/}), so the classical bounds apply as stated. For
+$w = 20, \dots, 25$ the bracket closes to within one ulp of $\log \lambda$. Computed without
+directed rounding, it is a diagnostic here, not a certificate (the certificates are in
 \S\ref{sec:float}). Widths $w \le 19$ take minutes; $w = 25$ (one sector suffices for odd $w$)
 works on vectors of $2^{28}$ doubles and needs $8.4$\,GiB and $22.5$ minutes on four cores.
 
@@ -706,7 +707,8 @@ For the free strip of width $k$, $\log Z(K, k) = K a_k + O(1)$, and
 where $\sigma$ is the free energy per unit length of a free edge. Even $k$ approach the limit from
 above, odd $k$ from below, and every even value lies above every odd one (Table~\ref{tab:surface};
 $a_k$ from extended-precision power iteration for $k = 14, \dots, 24$ and float64 with a
-Collatz--Wielandt bracket for $k = 25, 26$).
+Collatz--Wielandt bracket for $k = 25, 26$, valid by Lemmas~\ref{lem:cwlow} and~\ref{lem:cwup},
+the latter at $z = 0$).
 
 \begin{table}[ht]
 \caption{$g(k) = \log\lambda_k - sk$ for free strips.}\label{tab:surface}
