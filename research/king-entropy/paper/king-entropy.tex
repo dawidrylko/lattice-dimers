@@ -120,10 +120,11 @@ knowledge no numerical value of $s$ has been published.
 \emph{Related methods.} Calkin and Wilf \cite{calkinwilf1998} bounded the hard-square entropy by
 eigenvalues of strip transfer matrices; Friedland and Peled \cite{friedlandpeled2005} developed
 the approach for monomer--dimer systems, and Louidor and Marcus \cite{louidormarcus2010}
-sharpened the lower bounds with Rayleigh quotients. These bounds converge fast, but their proofs
-use a symmetric transfer matrix (in \cite{friedlandpeled2005} a hidden symmetry), and the king
-lattice has no reflection-positive transfer
-(\S\ref{sec:conj}). Pavlov \cite{pavlov2012}, Marcus and Pavlov \cite{marcuspavlov2013} and
+sharpened the lower bounds with Rayleigh quotients. These bounds converge to the entropy, for hard
+squares exponentially \cite{pavlov2012}, but their proofs use a symmetric transfer matrix (in
+\cite{friedlandpeled2005} a hidden symmetry), and on the king lattice the gluing form across a
+cut between two half-boards is indefinite (\S\ref{sec:conj}). Pavlov \cite{pavlov2012}, Marcus and
+Pavlov \cite{marcuspavlov2013} and
 Gamarnik and Katz \cite{gamarnikkatz2009} compute entropies rigorously from strong spatial
 mixing. For perfect matchings, the parity of the number of dimers crossing a closed curve is
 fixed by the number of sites it encloses, a non-local constraint that these arguments do not
@@ -805,14 +806,16 @@ eigenvalue $\lambda_3$ (\file{out/out\_crosscheck.txt}), and the convergence of 
 gives the same gap at every $w = 20, \dots, 25$. The bulk correlation length along the cylinder is
 therefore $1/1.0827 = 0.92$, and the odd-width corrections, which behave like
 $e^{-w/\xi_{\mathrm{odd}}} w^b$ with $1/\xi_{\mathrm{odd}} \approx 1.07$, are governed by the same
-gap. The power prefactor $w^b$ of $\Delta_w$ is our fitting ansatz: \cite{ioselevich2002}
-estimate the splitting of the topological sectors only to exponential accuracy, and the power
-prefactors in \cite{ioselevich2002, yaokivelson2012} belong to other quantities (correlation
-functions, the columnar order at odd circumference); we take neither their prefactors nor their
-value of $\xi$, which belongs to other models. All finite-size corrections we see are
-exponentially small, as expected for a non-critical (gapped) dimer liquid. On the square lattice,
-which is critical, the corrections are algebraic, $(f_w - G/\pi)w^2 \to \pi/6$, and a polynomial fit in $1/w^2$ to the
-transfer-matrix values for $w \le 18$ gives $G/\pi$ only to $6\cdot10^{-8}$; the exact free-fermion
+gap. The power prefactor $w^b$ of $\Delta_w$ is our fitting ansatz: Ioselevich, Ivanov and
+Feigelman \cite{ioselevich2002} estimate the splitting of the topological sectors only to
+exponential accuracy, and the power prefactors in \cite{ioselevich2002, yaokivelson2012} belong
+to other quantities (correlation functions, the columnar order at odd circumference). The
+exponent $-1/2$ of those prefactors serves only as one trial value of $b$ in the fits above, and
+we take no value of $\xi$ from there, since theirs belong to other models. All finite-size
+corrections we see are exponentially small, as expected for a non-critical (gapped) dimer liquid.
+On the square lattice, which is critical, the corrections are algebraic,
+$(f_w - G/\pi)w^2 \to \pi/6$, and a polynomial fit in $1/w^2$ to the transfer-matrix values for
+$w \le 18$ gives $G/\pi$ only to $6\cdot10^{-8}$; the exact free-fermion
 values give the same digits, so the truncated asymptotic series, not the transfer matrix, limits
 this check (\file{out/out\_validate.txt}).
 
@@ -866,10 +869,11 @@ king       & 8 & 0.565511911041            & 0.572360897 & 0.98803 & 0.662787681
 
 The bounds of Theorem~\ref{thm:bounds} converge like $1/w$ because every strip has two free
 sides. Differences of strip growth rates cancel the surface term. For hard squares on the square
-lattice, the symmetric strip transfer matrix turns them into rigorous bounds \cite{calkinwilf1998}
-(see also \cite{louidormarcus2010}), and Pavlov \cite{pavlov2012} proved that the differences
-converge exponentially. In our terms the symmetry gives reflection positivity of the transfer,
-and here that fails. The gluing form between two half-boards is the number
+lattice the strip transfer matrix is symmetric, and the maximum principle turns them into
+rigorous lower bounds \cite{calkinwilf1998} (see also \cite{louidormarcus2010}); Pavlov
+\cite{pavlov2012} proved that the differences of consecutive widths converge exponentially. In
+reflection terms the argument uses a positive semidefinite gluing form across the reflection line
+(reflection positivity). Here the gluing form between two half-boards is the number
 $M(A, B)$ of matchings across the cut (Lemma~\ref{lem:fib}), and it is indefinite: for columns of
 length $3$ its smallest eigenvalue is $1 - \sqrt2$, on a vector realised by actual half-boards.
 Nor do the cylinders give a proven upper bound. At every odd circumference $w = 3, 5, \dots, 25$ the
