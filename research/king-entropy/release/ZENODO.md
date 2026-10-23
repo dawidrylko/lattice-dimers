@@ -84,9 +84,9 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      `paper/king-entropy.tex`, Section "Reproducibility", take its inputs from the script's docstring and the
      `# needs` comments of `README.md`, and run
      `git rev-list -1 "$(git log -1 --format=%H -- <output>)"..HEAD -- <script> <inputs>`; any output
-     means stale, except when the only commit listed is fc5e453: it renamed files and changed only
-     paths in docstrings, comments and printed labels (`README.md`, "Renamed before
-     king-entropy-v1.0.0"), so it makes no output stale. Rerun the stale ones and update the numbers that changed in `paper/king-entropy.tex`,
+     means stale, except when the only commits listed are fc5e453 and 0cfbfaa: they renamed files and changed
+     only paths in docstrings, comments and printed labels (`README.md`, "Renamed before
+     king-entropy-v1.0.0"), so they make no output stale. Rerun the stale ones and update the numbers that changed in `paper/king-entropy.tex`,
      `paper/king-entropy-log-convexity.tex`, `paper/NUMBERS.md`, `oeis-draft.txt`, the descriptions above and `.zenodo.json`.
    - Rebuild both PDFs with the `docker run` line of step 8, run in `paper/`.
    - Commit all of it on a `d/*` branch and merge it with a merge commit before step 1, so the
