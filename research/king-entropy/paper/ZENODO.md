@@ -15,7 +15,7 @@ it, or that release is archived as the king-entropy snapshot.
 | --- | --- |
 | Resource type | Publication / Preprint |
 | Title | The dimer entropy of the king's graph |
-| Creator | Ryłko, Dawid (personal; affiliation: none, independent researcher) |
+| Creator | Ryłko, Dawid (personal; leave the affiliation empty) |
 | Files | `main.pdf` |
 | DOI | "Get a DOI now!" (reserve; the draft stays unpublished) |
 | License | Creative Commons Attribution 4.0 International (`cc-by-4.0`) |
@@ -45,7 +45,7 @@ Description:
 | --- | --- |
 | Resource type | Publication / Preprint |
 | Title | Log-convexity of strip dimer counts on the king's graph |
-| Creator | Ryłko, Dawid (personal; affiliation: none, independent researcher) |
+| Creator | Ryłko, Dawid (personal; leave the affiliation empty) |
 | Files | `L-note.pdf` |
 | DOI | "Get a DOI now!" (reserve; the draft stays unpublished) |
 | License | Creative Commons Attribution 4.0 International (`cc-by-4.0`) |
@@ -61,7 +61,7 @@ Description:
 > tests are exact or carry a rigorous rounding bound. The property is not structural. It fails on free
 > strips of the triangular lattice, for every unequal pair of diagonal weights we tried, where a
 > Krein-signature argument for the left-right reflection predicts the onset, and on wide strips for
-> equal diagonal weights x = 3/2, 2, 3. Its limit, convexity of q ↦ log λ_2q for the strip growth
+> equal diagonal weights x = 3/2, 2, 3. Its limit, convexity of q ↦ log λ<sub>2q</sub> for the strip growth
 > rates, would give a conditional lower bound on the entropy with ten correct digits. Along equal
 > weights it is a competition between two modes of the transfer matrix whose rates cross, on our data,
 > between x = 7/4 and x = 2. We collect the obstructions to the standard proof techniques and two
@@ -69,38 +69,48 @@ Description:
 
 ## Release runbook
 
-1. Create both preprint drafts on Zenodo with the metadata above, reserve their DOIs, save without
-   publishing. Write down `<DOI_PAPER>` and `<DOI_LNOTE>`.
-2. On a `d/*` branch add to `.zenodo.json` the relations of the software record and merge it:
+`<DOI_PAPER>`, `<DOI_LNOTE>` and `<DOI_SOFT>` stand for bare DOIs of the form `10.5281/zenodo.N`;
+the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
+
+1. Create both preprint drafts on Zenodo with the metadata above except the related identifiers,
+   reserve their DOIs, save without publishing. Write down `<DOI_PAPER>` and `<DOI_LNOTE>`.
+2. In each draft add the `references` relation to the other preprint's DOI (resource type
+   Publication / Preprint) and save, still without publishing.
+3. On a `d/*` branch add to `.zenodo.json` the relations of the software record, check it with
+   `python3 -m json.tool .zenodo.json` and merge it. Zenodo reads the file from the tag, so a mistake
+   here can be fixed only by a new tag:
    ```json
    "related_identifiers": [
      {"identifier": "<DOI_PAPER>", "relation": "isSupplementTo", "resource_type": "publication-preprint", "scheme": "doi"},
      {"identifier": "<DOI_LNOTE>", "relation": "isSupplementTo", "resource_type": "publication-preprint", "scheme": "doi"}
    ]
    ```
-3. Zenodo, GitHub settings: switch the toggle for `dawidrylko/lattice-dimers` on.
-4. Tag the merge commit of step 2 on master (`<SHA>`) and release it, never as latest:
+4. Zenodo, GitHub settings: switch the toggle for `dawidrylko/lattice-dimers` on.
+5. Tag the merge commit of step 3 on master (`<SHA>`) and release it, never as latest:
    ```bash
    git tag -a king-entropy-v1.0.0 <SHA> -m "king-entropy v1.0.0: code, data and outputs of the king's graph entropy paper"
    git push origin king-entropy-v1.0.0
    gh release create king-entropy-v1.0.0 --repo dawidrylko/lattice-dimers --verify-tag --latest=false --title "king-entropy v1.0.0" --notes "Code, data and outputs behind research/king-entropy/paper/main.tex and L-note.tex."
    ```
    `king-entropy-v0.1.0` stays; the outputs cite its SHAs.
-5. Wait for the Zenodo record and write down its version DOI `<DOI_SOFT>` (cite the version, not the
-   concept DOI). The tagged snapshot still carries the placeholders below; that is expected.
-6. On a `d/*` branch fill in the DOIs:
+6. Wait for the Zenodo record, check its title, creator, license, keywords and the two relations on
+   the record page, and write down its version DOI `<DOI_SOFT>` (cite the version, not the concept
+   DOI). The tagged snapshot still carries the placeholders below; that is expected.
+7. On a `d/*` branch fill in the DOIs:
    - `main.tex`, Data availability: replace `TO-BE-ASSIGNED (Zenodo) \TODO{...}` with `<DOI_SOFT>`
      and drop the `% TODO(submission)` comment.
    - `L-note.tex`, Data availability: add "at the tag `king-entropy-v1.0.0`, and are archived on
      Zenodo, DOI: `<DOI_SOFT>`", worded as in `main.tex`.
    - `refs.bib`: in `rylko2026entropy` and `rylko2026lnote` set `howpublished` to
-     `{Preprint, Zenodo, \url{https://doi.org/<DOI_PAPER>}}` and `{..., \url{https://doi.org/<DOI_LNOTE>}}`.
-   - `oeis-draft.txt`, the `%H` line of the paper: the two "DOI to be added" become `<DOI_PAPER>`
-     and `<DOI_SOFT>`; update the "Before submitting" header.
-7. Rebuild both PDFs in the pinned image and commit them with the sources:
+     `{Preprint, Zenodo, \url{https://doi.org/<DOI_PAPER>}}` and `{..., \url{https://doi.org/<DOI_LNOTE>}}`,
+     and drop "their Zenodo DOIs are assigned at publication" from the comment above them.
+   - `oeis-draft.txt`: in the third `%H` line the two "DOI to be added" become `<DOI_PAPER>` and
+     `<DOI_SOFT>`; delete the second `%H` line, which links to the `main.pdf` of the tag, still
+     showing the DOI placeholder; update the "Before submitting" header.
+8. Rebuild both PDFs in the pinned image and commit them with the sources:
    ```bash
    cd research/king-entropy/paper
    docker run --rm -v "$PWD":/work -w /work texlive/texlive@sha256:e8148b126545105c4aeeaa212f8a7bd02d05b500351372881055e1e59ae67d33 sh -c 'latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex && latexmk -pdf -interaction=nonstopmode -halt-on-error L-note.tex'
    ```
-8. Upload the rebuilt `main.pdf` and `L-note.pdf` to their drafts, add the `<DOI_SOFT>` relation,
-   publish both. Then the OEIS entry.
+9. Upload the rebuilt `main.pdf` and `L-note.pdf` to their drafts, add `isSupplementedBy`
+   `<DOI_SOFT>` (resource type Software) to each, publish both. Then the OEIS entry.
