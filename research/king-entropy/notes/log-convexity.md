@@ -136,7 +136,7 @@ matrices of route 2 are the M-Gram matrices of {u₀, u₂, u₄, ...} and {u₁
 ## 5. The left-right reflection J (`log-convexity/`)
 
 Every claim below comes from `python3 log-convexity/<script>.py > log-convexity/out_<script>.txt` (code and output
-committed together: `log-convexity/symmetry.py` at `f64b477`, `log-convexity/involution.py` at `78576e2`, `log-convexity/linf.py` at
+committed together, when the directory was still `L/`: `symmetry.py` at `f64b477`, `involution.py` at `78576e2`, `linf.py` at
 `91c8bae`; `log-convexity/out_linf.txt` is `python3 log-convexity/linf.py 16`). "Exact" means integer arithmetic, "float" means float64.
 
 Structure (lemma). T = H M, where H (horizontal tilings) is symmetric and J-invariant and M is

@@ -14,7 +14,7 @@ extrapolation to 1e-18 in s, and so do both sectors of w = 28 (float64).
 | 5. kappa | CONFIRMED | 0.3631962560475 | 0.36319625605 +- 3e-10 |
 | 6. failure modes | none found | see the table in Claim 6 | - |
 
-The paper checked is `paper/king-entropy.tex` at b4b2c79. The later master 872d605 (merged into this branch)
+The paper checked is `paper/main.tex` (now `paper/king-entropy.tex`) at b4b2c79. The later master 872d605 (merged into this branch)
 fixes the "2.6 %" below to 2.7 %, proves the existence of the limit s in Section 2.1 (checked: the
 bound Z(2j, L) <= lambda_L^(2j) from (2.1) gives bar s <= s*, which with the lower bound closes the
 argument) and rewords the rounding count of Section 4.4; the other two minor items below are

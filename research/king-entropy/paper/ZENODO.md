@@ -84,9 +84,9 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      `king-entropy.tex`, Section "Reproducibility", take its inputs from the script's docstring and the
      `# needs` comments of `README.md`, and run
      `git rev-list -1 "$(git log -1 --format=%H -- <output>)"..HEAD -- <script> <inputs>`; any output
-     means stale, unless the only commit listed moves files without changing them
-     (`git show --stat -M <commit>` shows renames only), as the renames listed in `README.md`,
-     "Renamed before king-entropy-v1.0.0", do. Rerun the stale ones and update the numbers that changed in `king-entropy.tex`,
+     means stale, except when the only commit listed is fc5e453: it renamed files and changed only
+     paths in docstrings, comments and printed labels (`README.md`, "Renamed before
+     king-entropy-v1.0.0"), so it makes no output stale. Rerun the stale ones and update the numbers that changed in `king-entropy.tex`,
      `king-entropy-log-convexity.tex`, `NUMBERS.md`, `oeis-draft.txt`, the descriptions above and `.zenodo.json`.
    - Rebuild both PDFs with the `docker run` line of step 8, run in `paper/`.
    - Commit all of it on a `d/*` branch and merge it with a merge commit before step 1, so the
@@ -136,6 +136,10 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    ```bash
    cd research/king-entropy/paper
    docker run --rm -v "$PWD":/work -w /work texlive/texlive@sha256:e8148b126545105c4aeeaa212f8a7bd02d05b500351372881055e1e59ae67d33 sh -c 'latexmk -pdf -interaction=nonstopmode -halt-on-error king-entropy.tex && latexmk -pdf -interaction=nonstopmode -halt-on-error king-entropy-log-convexity.tex'
+   ```
+   Then check that neither PDF still names a path renamed before the release; this prints nothing:
+   ```bash
+   for f in king-entropy.pdf king-entropy-log-convexity.pdf; do pdftotext "$f" - | grep -E 'xcheck|L/(modes|linf|symmetry|involution)|paper/derived|L-NOTE|CW-NOTE|PROOF-'; done
    ```
 9. Upload the rebuilt `king-entropy.pdf` and `king-entropy-log-convexity.pdf` to their drafts, add `isSupplementedBy`
    `<DOI_SOFT>` (resource type Software) to each, publish both. Then the OEIS entry.

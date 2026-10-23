@@ -33,20 +33,6 @@ with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to i
 
 The tag `king-entropy-v0.1.0` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
 
-### Renamed before king-entropy-v1.0.0
-
-These files and directories were renamed in October 2026, before the release. The committed outputs, logs and `replication/out/` were written earlier and keep the old names in the commands and notes they print; the commit SHAs they record point at code under the old paths.
-
-| old name | new name |
-| --- | --- |
-| `L/` | `log-convexity/` |
-| `xcheck/` | `replication/` |
-| `paper/main.tex`, `paper/main.pdf` | `paper/king-entropy.tex`, `paper/king-entropy.pdf` |
-| `paper/L-note.tex`, `paper/L-note.pdf` | `paper/king-entropy-log-convexity.tex`, `paper/king-entropy-log-convexity.pdf` |
-| `paper/derived.py`, `paper/out_derived.txt` | `src/derived.py`, `out/out_derived.txt` |
-| `notes/PROOF-lower.md`, `notes/PROOF-upper.md` | `notes/proof-lower-bound.md`, `notes/proof-upper-bound.md` |
-| `notes/CW-NOTE.md`, `notes/L-NOTE.md` | `notes/calkin-wilf.md`, `notes/log-convexity.md` |
-
 ```sh
 python3 -m pip install -r src/requirements.txt
 ```
@@ -71,7 +57,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/test_paths.py` | smoke test: `src/tm2.py`, `src/cylw.py`, `src/lean.py`, `src/zexact.py` on tiny inputs from another directory write where `src/paths.py` says and record the commit |
 | `src/zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `data/zex/zex_*.json` |
 | `src/lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/lean/lean_*.json` |
-| `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`notes/PROOF-*.md`) |
+| `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`notes/proof-*-bound.md`) |
 | `src/errbar.py` | error budget of s on the extended-precision cylinders: Luscher main model, other models, predictive backtests, hidden-mode, gap and rounding terms; writes `data/errbar.json` |
 | `src/hidden_oos.py` | out-of-sample check of the hidden mode against w = 27 from the independent code in `replication/` (not part of the budget) |
 | `src/runweight.py` | run-weighted open-strip upper bound (schemes `3state`, `1bit`, `phi`); `--disk DIR` keeps the third vector in a memory-mapped file |
@@ -147,3 +133,17 @@ Paper (needs a TeX distribution with `latexmk`, e.g. TeX Live with
 python3 src/derived.py > out/out_derived.txt
 cd paper && latexmk -pdf king-entropy.tex && latexmk -pdf king-entropy-log-convexity.tex
 ```
+
+## Renamed before king-entropy-v1.0.0
+
+These files and directories were renamed in October 2026, before the release. The commit SHAs recorded in the outputs point at code under the old paths. Two committed outputs still print an old name: `log-convexity/time_modes.txt` (`python3 L/modes.py 22`) and `log-convexity/out_involution.txt` (`L-NOTE §3`, now `notes/log-convexity.md` §3).
+
+| old name | new name |
+| --- | --- |
+| `L/` | `log-convexity/` |
+| `xcheck/` | `replication/` |
+| `paper/main.tex`, `paper/main.pdf` | `paper/king-entropy.tex`, `paper/king-entropy.pdf` |
+| `paper/L-note.tex`, `paper/L-note.pdf` | `paper/king-entropy-log-convexity.tex`, `paper/king-entropy-log-convexity.pdf` |
+| `paper/derived.py`, `paper/out_derived.txt` | `src/derived.py`, `out/out_derived.txt` |
+| `notes/PROOF-lower.md`, `notes/PROOF-upper.md` | `notes/proof-lower-bound.md`, `notes/proof-upper-bound.md` |
+| `notes/CW-NOTE.md`, `notes/L-NOTE.md` | `notes/calkin-wilf.md`, `notes/log-convexity.md` |
