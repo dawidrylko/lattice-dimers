@@ -25,11 +25,11 @@ def main():
     for fn in sorted(glob.glob(os.path.join(DATA, "lean", "lean_king_*.json"))):
         d = json.load(open(fn))
         bc, w, p, dtype = d["bc"], int(d["w"]), str(d["parity"]), d["dtype"]
-        start = "e0" if bc == "free" else p
+        start = "e0" if bc == "free" else (p if (bc, w, p, "ld") in runs else "0")
         mine = runs.get((bc, w, start, "ld"))
         if mine is None:
             continue
-        rows.append((f"lean {dtype}", bc, w, start, mpmath.mpf(d["log_lambda"]), mine["loglam"]))
+        rows.append((f"lean {dtype}", bc, w, start if bc == "free" else p, mpmath.mpf(d["log_lambda"]), mine["loglam"]))
     for fn in sorted(glob.glob(os.path.join(DATA, "eig", "eig_king_cyl_*.json"))):
         d = json.load(open(fn))
         w, p = int(d["w"]), str(d["parity"])

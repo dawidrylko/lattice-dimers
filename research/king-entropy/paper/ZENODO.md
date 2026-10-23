@@ -59,9 +59,9 @@ Description:
 > diagonals, i.e. the number of its domicule tilings. In all 1453 cases we tested, on free strips of
 > width m ≤ 26 and cylinders of circumference m ≤ 22, the sequence q ↦ Z(2q, m) is log-convex; the
 > tests are exact or carry a rigorous rounding bound. The property is not structural. It fails on free
-> strips of the triangular lattice, for every unequal pair of diagonal weights we tried, where a
-> Krein-signature argument for the left-right reflection predicts the onset, and on wide strips for
-> equal diagonal weights x = 3/2, 2, 3. Its limit, convexity of q ↦ log λ<sub>2q</sub> for the strip growth
+> strips of the triangular lattice, for every unequal pair of diagonal weights we tried (for nearly
+> equal weights at m = 4 and 8 a Krein-signature argument for the left-right reflection predicts the
+> onset exactly), and on wide strips for equal diagonal weights x = 3/2, 2, 3. Its limit, convexity of q ↦ log λ<sub>2q</sub> for the strip growth
 > rates, would give a conditional lower bound on the entropy with ten correct digits. Along equal
 > weights it is a competition between two modes of the transfer matrix whose rates cross, on our data,
 > between x = 7/4 and x = 2. We collect the obstructions to the standard proof techniques and two
@@ -72,6 +72,23 @@ Description:
 `<DOI_PAPER>`, `<DOI_LNOTE>` and `<DOI_SOFT>` stand for bare DOIs of the form `10.5281/zenodo.N`;
 the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
 
+0. Before anything else, check that the committed outputs and PDFs match the code and the data. Run
+   this on an x86-64 machine (eigenvalue outputs differ in their last digits on other
+   architectures), from a clean clone with tags, in `research/king-entropy/`:
+   - `python3 src/repro.py > out/out_repro.txt` (about 10 minutes). Every comparison line must read
+     `[SAME]` and the last line `all reproduced: True`; the first line must name a commit of master
+     and report 0 missing recorded commits.
+   - An output is stale when its script or a data file it reads changed in a commit the output does
+     not contain: PR #38 found `out/out_ltest.txt` still counting 1451 (L) cases after
+     `data/zex/zex_king_free_m24_K24.json` had raised them to 1453. For every command in the table of
+     `main.tex`, Section "Reproducibility", take its inputs from the script's docstring and the
+     `# needs` comments of `README.md`, and run
+     `git rev-list -1 "$(git log -1 --format=%H -- <output>)"..HEAD -- <script> <inputs>`; any output
+     means stale. Rerun the stale ones and update the numbers that changed in `main.tex`,
+     `L-note.tex`, `NUMBERS.md`, `oeis-draft.txt`, the descriptions above and `.zenodo.json`.
+   - Rebuild both PDFs with the `docker run` line of step 8, run in `paper/`.
+   - Commit all of it on a `d/*` branch and merge it with a merge commit before step 1, so the
+     preprint drafts and the tag carry the same numbers and PDFs.
 1. Create both preprint drafts on Zenodo with the metadata above except the related identifiers,
    reserve their DOIs, save without publishing. Write down `<DOI_PAPER>` and `<DOI_LNOTE>`.
 2. In each draft add the `references` relation to the other preprint's DOI (resource type

@@ -48,8 +48,9 @@ with both diagonals, i.e.\ the number of its domicule tilings. In all $1453$ cas
 strips of width $m \le 26$ and cylinders of circumference $m \le 22$, the sequence $q \mapsto Z(2q, m)$
 is log-convex; the tests are exact or carry a rigorous rounding bound. The property is not
 structural. It fails on free strips of the triangular lattice, for every unequal pair of diagonal
-weights we tried, where a Krein-signature argument for the left--right reflection predicts the
-onset, and on wide strips for equal diagonal weights $x = \frac32, 2, 3$. Its limit, convexity of
+weights we tried (for nearly equal weights at $m = 4$ and $8$ a Krein-signature argument for the
+left--right reflection predicts the onset exactly), and on wide strips for equal diagonal weights
+$x = \frac32, 2, 3$. Its limit, convexity of
 $q \mapsto \log\lambda_{2q}$ for the strip growth rates, would give a conditional lower bound on the
 entropy with ten correct digits. Along equal weights it is a competition between two modes of the
 transfer matrix whose rates cross, on our data, between $x = \frac74$ and $x = 2$. We collect the obstructions to the
@@ -89,8 +90,8 @@ since a convex sequence with $a_{2q}/(2q) \to s$ has increments that increase to
 $Z(2q, m) = Z(m, 2q)$, these sequences tend to $a_{2q}$ along even $m$, and a pointwise limit of
 convex sequences is convex.
 
-We do \emph{not} conjecture (L). It holds in every case we tested at unit weights
-(\S\ref{sec:tests}), but it is not a structural property of the model: it fails on the triangular
+We do \emph{not} conjecture (L). On the king's graph it holds in every case we tested at unit
+weights (\S\ref{sec:tests}), but it is not a structural property of the model: it fails on the triangular
 lattice, under asymmetric diagonal weights, and for larger equal diagonal weights
 (\S\ref{sec:counter}). The conjecture of the companion paper is (L$_\infty$), and
 \S\ref{sec:modes} explains why it is a quantitative statement about unit weights.
@@ -212,8 +213,9 @@ and do not depend on any extrapolation. So the left--right symmetry alone does n
 
 They are the finite-width traces of a failure of convexity of the growth rates at small $q$: for
 $x \ge \tfrac32$ the second differences $a_{2q+2} - 2a_{2q} + a_{2q-2}$ are negative at $2q = 8$ and
-$2q = 12$ (at $x = \tfrac32$: $-6.2\cdot10^{-4}$ at $2q = 8$). Whether (L$_\infty$), which is a
-statement about large $q$, fails as well is the subject of the next section.
+$2q = 12$ (at $x = \tfrac32$: $-6.2\cdot10^{-4}$ at $2q = 8$), so at these weights (L$_\infty$) fails
+as stated. Whether the growth rates become convex for large $q$, which is all that the conditional
+bound uses, is the subject of the next section.
 
 \section{Two modes and the crossing of their rates}\label{sec:modes}
 At unit weights the second differences of $a_{2q}$ are positive for $2q = 2, \dots, 24$ ($a_0 = 0$),
@@ -262,7 +264,13 @@ matter.
 \emph{At $x = 3/2$ the asymptotic sign is unresolved and leans convex.} The second differences are
 negative at $2q = 8, 12, 16, 20$ and positive in between; the last negative value is
 $-3.6\cdot10^{-9}$ at $2q = 20$. In the two-mode model the positive mode wins, $|\rho_-|/\rho_+ =
-0.942$, and the model predicts $d_q > 0$ from about $2q = 24$ on. This is an extrapolation from four
+0.942$, but slowly: with the amplitudes of the last window the alternating term is $1.34$ times the
+positive one at $2q = 14$ and still $0.995$ times at $2q = 24$, the next width at which the
+alternating term is negative. That margin is smaller than the drift of the fitted ratio over the
+windows, from $0.971$ to $0.942$: the margin needs a ratio below $0.943$, and the ratio of every
+earlier window, $0.945$ to $0.971$, would make $d_q < 0$ at $2q = 24$. So the model decides neither
+the sign at $2q = 24$ nor from which $2q$ on $d_q > 0$.
+This is an extrapolation from four
 windows, not a computation; what is exact at $x = 3/2$ are only the finite-strip failures of
 Section~\ref{sec:equal}.
 
@@ -364,9 +372,10 @@ $a_k - sk$, with the faster alternating mode and the remainder controlled for ev
 \end{problem}
 
 \begin{problem}
-Locate $x^*$ more precisely, and decide whether (L$_\infty$) fails at $x = 2$ and $x = 3$, where the
-two-mode fits favour the alternating mode, and holds at $x = \frac32$, where they favour the bulk
-mode. Both need growth rates of wider strips than those used here.
+Locate $x^*$ more precisely, and decide whether $q \mapsto a_{2q}$ is convex for large $q$ at
+$x = \frac32$, where the two-mode fits favour the bulk mode, and whether its second differences
+change sign infinitely often at $x = 2$ and $x = 3$, where they favour the alternating mode. Both
+need growth rates of wider strips than those used here.
 \end{problem}
 
 \section*{Reproducibility}

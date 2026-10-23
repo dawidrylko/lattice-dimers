@@ -29,6 +29,7 @@ with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to i
 | `notes/` | proofs of the bounds and the notes on Calkin-Wilf and (L) |
 | `L/` | the experiments on (L), scripts with their outputs |
 | `paper/` | the paper, its number map and `paper/derived.py` |
+| `xcheck/` | an independent recomputation written from scratch, with its own outputs; verdicts and commands in `xcheck/REPORT.md` |
 
 The tag `king-entropy-v0.1.0` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
 
@@ -47,7 +48,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/summary.py` | reads the four `data/sec/sec_*.json`, prints estimators and bounds (first pass) |
 | `src/fitsq.py` | fits on the exact L x L counts in `../../data/domiculeTilingTests.json` |
 | `src/validate.py` | brute force, repo data, square-lattice closed forms, triangular Kasteleyn, free-strip ratios |
-| `src/crosscheck.py` | exact-integer ratios (w = 9..13) and ARPACK on the full w = 20 transfer vs the power iteration |
+| `src/crosscheck.py` | exact-integer ratios (w = 9, 11, 12, 13) and ARPACK on the full w = 20 transfer vs the power iteration |
 | `src/bounds.py` | certified Fekete lower bounds, open-strip upper bounds, Kahn-Lovasz, Calkin-Wilf hypothesis checks |
 | `src/cw.py` | Calkin-Wilf hypothesis: RP obstruction, spectral measure, exact log-convexity tests, limit form, conditional bounds (see `notes/CW-NOTE.md`) |
 | `src/estimate.py` | first-pass estimate of s from all cylinders, the final value read from `data/errbar.json`, Z2 splitting table and decay length; writes `data/z2.json` |

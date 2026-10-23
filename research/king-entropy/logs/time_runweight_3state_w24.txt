@@ -1,2 +1,2 @@
-# cmd: python3 src/runweight.py 3state 24 --disk /tmp/claude-0/rwdisk
+# cmd: python3 src/runweight.py 3state 24 --disk <dir>
 # exit=0 wall=3787.2s user=2522.1s maxrss=13581MiB

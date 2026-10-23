@@ -7,6 +7,9 @@ before submitting. Every number below is in paper/NUMBERS.md.
 The author's name is written with the HTML entity &#322; (l with stroke), which OEIS renders.
 Before submitting: create the tag king-entropy-v1.0.0 (the %H links point at it), fill in both
 Zenodo DOIs marked "DOI to be added", and check that A239264 has its extended b-file approved.
+The %C lines below are a list of facts, not submission text: the author rewrites them in his own
+words before submitting. Every number in them is in paper/NUMBERS.md. In %A, the date is the
+day of submission, in the OEIS form "Oct 23 2026".
 
 %I A000000 (number to be assigned)
 %S A000000 5,6,5,5,1,1,9,1,1,0,4,1,3,2
@@ -29,4 +32,4 @@ Zenodo DOIs marked "DOI to be added", and check that A239264 has its extended b-
 %Y A000000 Cf. A220638 (king-move matchings with monomers on the n X n array), A247413 (entropy constant of non-attacking kings).
 %K A000000 nonn,cons,more
 %O A000000 0,1
-%A A000000 Dawid Ry&#322;ko, Oct 2026
+%A A000000 _Dawid Ry&#322;ko_, Oct ?? 2026

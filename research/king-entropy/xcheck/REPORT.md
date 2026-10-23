@@ -190,6 +190,12 @@ paper has since replaced that rule: `src/errbar.py` fits B together with L1 on s
 `src/hidden_oos.py` compares the mode with the w = 27 value of this directory. The findings above are
 unchanged.
 
+`compare_eig.py` first compared only 28 of the 33 extended-precision cylinder inputs: for the odd
+widths w = 17..25 it looked for an own run started in sector 1, and only sector-0 starts exist there
+(the sectors of an odd width are equal). It now falls back to the sector-0 start, as its eig and sec
+branches already did; the five added rows differ by at most 5.7e-20 per site, and the maximum of
+7.8e-20 above is unchanged.
+
 ## Commands
 
 From `research/king-entropy/xcheck/`, after `python3 -m pip install -r requirements.txt` and
