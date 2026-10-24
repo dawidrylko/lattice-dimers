@@ -88,9 +88,10 @@ site
 For dominoes (the square lattice) $s$ is known exactly, $G/\pi$ with Catalan's constant $G$, by
 the Pfaffian method of Kasteleyn and of Temperley and Fisher \cite{kasteleyn1961,
 temperleyfisher1961}. Kasteleyn's method needs a Pfaffian orientation, and planar graphs have
-one. The triangular lattice (one diagonal per square) is planar: Montroll gave an orientation
-for it \cite{montroll1964}, its entropy is tabulated by Wu \cite{wu2006}, and Fendley, Moessner
-and Sondhi computed its correlations \cite{fms2002}. The king's graph is not planar (the
+one \cite[Thm.~8.3.4]{lovaszplummer1986}. The triangular lattice (one diagonal per square) is
+planar: Montroll gave an orientation for it \cite{montroll1964}, its entropy is tabulated by Wu
+\cite{wu2006}, and Fendley, Moessner and Sondhi computed its correlations \cite{fms2002}. The
+king's graph is not planar (the
 $5 \times 5$ board already has $72 > 3\cdot 25 - 6$ edges), but planarity is only sufficient for a
 Pfaffian orientation. We show that no king board with both sides at least $3$ has one
 (Theorem~\ref{thm:pfaff}), so a single Pfaffian cannot count its domicule tilings, and no
@@ -120,13 +121,15 @@ knowledge no numerical value of $s$ has been published.
 \emph{Related methods.} Calkin and Wilf \cite{calkinwilf1998} bounded the hard-square entropy by
 eigenvalues of strip transfer matrices; Friedland and Peled \cite{friedlandpeled2005} developed
 the approach for monomer--dimer systems, and Louidor and Marcus \cite{louidormarcus2010}
-sharpened the lower bounds with Rayleigh quotients. These bounds converge to the entropy, for hard
-squares exponentially \cite{pavlov2012}, but their proofs use a symmetric transfer matrix (in
+sharpened the lower bounds with Rayleigh quotients. These bounds converge to the entropy (for hard
+squares the differences of consecutive strip entropies converge exponentially \cite{pavlov2012}),
+but their proofs use a symmetric transfer matrix (in
 \cite{friedlandpeled2005} a hidden symmetry), and on the king lattice the gluing form across a
 cut between two half-boards is indefinite (\S\ref{sec:conj}). Pavlov \cite{pavlov2012}, Marcus and
 Pavlov \cite{marcuspavlov2013} and Gamarnik and Katz \cite{gamarnikkatz2009} compute entropies
 rigorously from strong spatial
-mixing. For perfect matchings, the parity of the number of dimers crossing a closed curve is
+mixing (in \cite{pavlov2012} a version implied by disagreement percolation \cite{marcuspavlov2013}).
+For perfect matchings, the parity of the number of dimers crossing a closed curve is
 fixed by the number of sites it encloses, a non-local constraint that these arguments do not
 handle as they stand. Without rigour, corner transfer matrices gave the hard-square entropy to
 $43$ decimals \cite{baxter1999}, and their renormalization-group variant
@@ -171,8 +174,8 @@ $w \ge 3$ identifies column $c$ with $c + w$; its count is $Z_{\mathrm{cyl}}(K, 
   \bar s = \limsup \frac{\log Z(K, L)}{KL}, \qquad \underline s = \liminf \frac{\log Z(K, L)}{KL},
 \]
 over $K, L \to \infty$ with $KL$ even. The equality of the two limits is standard for dimer
-models on $\Z^2$-periodic graphs (a sub- and superadditivity argument, as for the dimer problem on
-$\Z^d$ \cite{friedlandpeled2005}), and for the king's graph it is shown below;
+models on $\Z^2$-periodic graphs (as for the dimer problem on $\Z^d$ \cite{friedlandpeled2005}),
+and for the king's graph it is shown below;
 Theorem~\ref{thm:bounds} bounds $\underline s$ and $\bar s$ separately and does not use it.
 
 For a strip of width $k$, stacking boards gives $Z(2i + 2j, k) \ge Z(2i, k) Z(2j, k)$, so by
@@ -242,8 +245,9 @@ works on vectors of $2^{28}$ doubles and needs $8.4$\,GiB and $22.5$ minutes on 
 An orientation of a graph is \emph{Pfaffian} if all perfect matchings have the same sign in the
 Pfaffian of the oriented adjacency matrix, which then equals the number of perfect matchings up to
 sign \cite[Ch.~8]{lovaszplummer1986}. Planar graphs have Pfaffian orientations
-\cite[Thm.~8.3.4]{lovaszplummer1986}, but so do some non-planar graphs, so the non-planarity of
-the king's graph does not by itself rule out Kasteleyn's method.
+\cite[Thm.~8.3.4]{lovaszplummer1986}, but so do some non-planar graphs
+\cite[p.~323]{lovaszplummer1986}, so the non-planarity of the king's graph does not by itself rule
+out Kasteleyn's method.
 
 \begin{theorem}\label{thm:pfaff}
 Let $KL$ be even. The king board $B(K, L)$ has a Pfaffian orientation if and only if
@@ -341,8 +345,9 @@ enters only through a separate rounding term.
 
 \emph{Main model.} The corrections come from the gap inside a sector (\S\ref{sec:z2}): at $w = 20$
 ARPACK gives $m = \log(\lambda_1/|\lambda_3|) = 1.082727$ per row, and the power iterations give the
-same value at every $w = 20, \dots, 25$. In a massive theory finite-size corrections decay
-exponentially, at a rate set by the spectrum of light particles \cite{luscher1986}; we fit the form
+same value at every $w = 20, \dots, 25$. In a massive quantum field theory the finite-size mass
+shift of a stable particle decays exponentially, at a rate set by the spectrum of light particles
+\cite{luscher1986}; by analogy we fit the form
 \[
   d_w = C e^{-mw} w^{-3/2} \Bigl(1 + \frac{c_1}{w}\Bigr),
 \]
