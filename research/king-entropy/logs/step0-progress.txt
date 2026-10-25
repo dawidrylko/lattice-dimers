@@ -39,3 +39,4 @@ ok zex_cyl_king_cyl_m7
 ok zex_cyl_king_cyl_m8
 ok zex_cyl_king_cyl_m9
 ok zex_cyl_king_cyl_m10
+ok zex_cyl_king_cyl_m11
