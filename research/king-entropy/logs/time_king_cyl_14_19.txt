@@ -1,2 +1,2 @@
-# cmd: python3 -u tm2.py king cyl 14 19
-# exit=0 wall=319.3s user=250.8s maxrss=200MiB
+# cmd: python3 src/tm2.py king cyl 14 19
+# exit=0 wall=564.6s user=402.9s maxrss=207MiB
