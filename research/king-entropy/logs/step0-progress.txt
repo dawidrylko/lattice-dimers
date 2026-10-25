@@ -1,3 +1,4 @@
 ok sec_king_cyl_3_13
 ok sec_king_cyl_14_19
 ok sec_king_free_1_18
+ok sec_tri_cyl_3_18
