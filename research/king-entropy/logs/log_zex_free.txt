@@ -94,3 +94,24 @@ king free m=9 K=120 prime 16/18 0.0s
 king free m=9 K=120 prime 17/18 0.0s
 king free m=9 K=120 prime 18/18 0.0s
 done 1s
+king free m=10 K=120 prime 1/20 0.1s
+king free m=10 K=120 prime 2/20 0.1s
+king free m=10 K=120 prime 3/20 0.1s
+king free m=10 K=120 prime 4/20 0.1s
+king free m=10 K=120 prime 5/20 0.1s
+king free m=10 K=120 prime 6/20 0.1s
+king free m=10 K=120 prime 7/20 0.1s
+king free m=10 K=120 prime 8/20 0.1s
+king free m=10 K=120 prime 9/20 0.1s
+king free m=10 K=120 prime 10/20 0.1s
+king free m=10 K=120 prime 11/20 0.1s
+king free m=10 K=120 prime 12/20 0.1s
+king free m=10 K=120 prime 13/20 0.1s
+king free m=10 K=120 prime 14/20 0.1s
+king free m=10 K=120 prime 15/20 0.1s
+king free m=10 K=120 prime 16/20 0.1s
+king free m=10 K=120 prime 17/20 0.1s
+king free m=10 K=120 prime 18/20 0.1s
+king free m=10 K=120 prime 19/20 0.1s
+king free m=10 K=120 prime 20/20 0.1s
+done 2s
