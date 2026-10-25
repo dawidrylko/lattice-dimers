@@ -50,3 +50,16 @@ king cyl m=8 K=80 prime 9/11 0.0s
 king cyl m=8 K=80 prime 10/11 0.1s
 king cyl m=8 K=80 prime 11/11 0.1s
 done 0s
+king cyl m=9 K=80 prime 1/12 0.1s
+king cyl m=9 K=80 prime 2/12 0.1s
+king cyl m=9 K=80 prime 3/12 0.1s
+king cyl m=9 K=80 prime 4/12 0.1s
+king cyl m=9 K=80 prime 5/12 0.0s
+king cyl m=9 K=80 prime 6/12 0.0s
+king cyl m=9 K=80 prime 7/12 0.0s
+king cyl m=9 K=80 prime 8/12 0.1s
+king cyl m=9 K=80 prime 9/12 0.0s
+king cyl m=9 K=80 prime 10/12 0.1s
+king cyl m=9 K=80 prime 11/12 0.1s
+king cyl m=9 K=80 prime 12/12 0.1s
+done 1s
