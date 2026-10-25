@@ -43,3 +43,18 @@ king free m=6 K=120 prime 10/12 0.0s
 king free m=6 K=120 prime 11/12 0.0s
 king free m=6 K=120 prime 12/12 0.0s
 done 0s
+king free m=7 K=120 prime 1/14 0.0s
+king free m=7 K=120 prime 2/14 0.0s
+king free m=7 K=120 prime 3/14 0.0s
+king free m=7 K=120 prime 4/14 0.0s
+king free m=7 K=120 prime 5/14 0.0s
+king free m=7 K=120 prime 6/14 0.0s
+king free m=7 K=120 prime 7/14 0.0s
+king free m=7 K=120 prime 8/14 0.0s
+king free m=7 K=120 prime 9/14 0.0s
+king free m=7 K=120 prime 10/14 0.0s
+king free m=7 K=120 prime 11/14 0.0s
+king free m=7 K=120 prime 12/14 0.0s
+king free m=7 K=120 prime 13/14 0.0s
+king free m=7 K=120 prime 14/14 0.0s
+done 0s
