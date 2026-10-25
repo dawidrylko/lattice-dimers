@@ -94,6 +94,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      for o in <outputs>; do
        a=$(git log --follow --diff-filter=AM --format=%H -- "$o" | grep -v -E '^(fc5e453|0cfbfaa)' | head -1)
        [ -n "$a" ] || { echo "NO ANCHOR: $o"; continue; }
+       echo "== $o"
        for f in <script> <imported modules> <inputs>; do
          [ -e "$f" ] || echo "MISSING: $f"
          git log --follow --format='%h %s' "$a"..HEAD -- "$f"
@@ -107,16 +108,17 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      stale; the `grep` keeps them from serving as the anchor of `out/out_hidden_oos.txt` and
      `out/out_derived.txt`, whose labels they edited. Every other commit listed means stale, including
      one that changes only a comment or a docstring, and including 9ddb2fb, which moved the files and
-     changed the I/O of every script. Rerun the stale outputs, commit each round on the `d/*` branch
-     and repeat the check, because a rerun file that another script reads makes that script's outputs
-     stale in turn. A rerun that leaves an output byte-identical leaves nothing to commit; count that
-     output as fresh. Stop when nothing is listed. The `data/lean/` files written before 6ef3190 have
-     no `machine` and `nmant` fields, and their rerun records both.
+     changed the I/O of the scripts it touched (`git show --stat -M 9ddb2fb`).
+     Rerun the stale outputs, commit each round on the `d/*` branch and repeat the check, because a
+     rerun file that another script reads makes that script's outputs stale in turn. A rerun that
+     leaves an output byte-identical leaves nothing to commit; count that output as fresh and leave it
+     out of the next round. Stop when nothing is listed for the outputs that remain. The `data/lean/`
+     files written before 6ef3190 have no `machine` and `nmant` fields, and their rerun records both.
    - Update every file that quotes a number that changed, found with `git grep` on the old value: the
      two papers, `paper/NUMBERS.md`, `oeis-draft.txt`, `notes/`, `proofs/`, `replication/REPORT.md`,
      the descriptions above, and at the root `.zenodo.json`, `README.md`, `notes/00-research.md` and
      `site/build.js`. Update also the provenance sentences that the reruns make untrue: which outputs
-     record SHAs under `king-entropy-v0.1.0` (`README.md`, `paper/NUMBERS.md` and Section
+     record SHAs under `king-entropy-v0.1.0` (this directory's `README.md`, `paper/NUMBERS.md` and Section
      "Reproducibility" of `paper/king-entropy.tex`), which machine wrote which runs (the same section
      and the note on the machines in `paper/NUMBERS.md`), and "the outputs cite its SHAs" in step 5.
    - Rebuild both PDFs with the `docker run` line of step 8, run in `paper/`.
