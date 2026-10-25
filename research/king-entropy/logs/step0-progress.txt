@@ -24,3 +24,4 @@ ok lean_free_w16
 ok lean_free_w17
 ok lean_free_w18
 ok lean_free_w19
+ok lean_free_w20
