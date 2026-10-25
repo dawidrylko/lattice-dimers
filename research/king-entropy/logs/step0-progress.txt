@@ -50,3 +50,4 @@ ok zex_cyl_king_cyl_m18
 ok zex_cyl_king_cyl_m19
 ok zex_cyl_king_cyl_m20
 ok zex_cyl_king_cyl_m21
+ok zex_cyl_king_cyl_m22
