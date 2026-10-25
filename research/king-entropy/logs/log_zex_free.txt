@@ -10,3 +10,12 @@ king free m=3 K=120 prime 4/6 0.0s
 king free m=3 K=120 prime 5/6 0.0s
 king free m=3 K=120 prime 6/6 0.0s
 done 0s
+king free m=4 K=120 prime 1/8 0.0s
+king free m=4 K=120 prime 2/8 0.0s
+king free m=4 K=120 prime 3/8 0.0s
+king free m=4 K=120 prime 4/8 0.0s
+king free m=4 K=120 prime 5/8 0.0s
+king free m=4 K=120 prime 6/8 0.0s
+king free m=4 K=120 prime 7/8 0.0s
+king free m=4 K=120 prime 8/8 0.0s
+done 0s
