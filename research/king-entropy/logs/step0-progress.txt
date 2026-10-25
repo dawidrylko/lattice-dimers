@@ -30,3 +30,4 @@ ok lean_free_w22
 ok lean_free_w23
 ok lean_free_w24
 ok lean_free_w25
+ok lean_free_w26
