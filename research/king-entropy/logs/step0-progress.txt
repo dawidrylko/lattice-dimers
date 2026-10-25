@@ -11,3 +11,4 @@ ok eig_w22_p1
 ok eig_w23_p1
 ok eig_w24_p0
 ok eig_w24_p1
+ok eig_w25_p1
