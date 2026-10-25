@@ -3,3 +3,10 @@ king cyl m=3 K=80 prime 2/4 0.0s
 king cyl m=3 K=80 prime 3/4 0.0s
 king cyl m=3 K=80 prime 4/4 0.0s
 done 0s
+king cyl m=4 K=80 prime 1/6 0.0s
+king cyl m=4 K=80 prime 2/6 0.0s
+king cyl m=4 K=80 prime 3/6 0.0s
+king cyl m=4 K=80 prime 4/6 0.0s
+king cyl m=4 K=80 prime 5/6 0.0s
+king cyl m=4 K=80 prime 6/6 0.0s
+done 0s
