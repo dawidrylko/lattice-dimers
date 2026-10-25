@@ -37,9 +37,11 @@
   "13.088249993460805363152",
   "13.088249993460805362284"
  ],
- "sec_per_iteration": 40.23580026626587,
- "wall": 1090.879205942154,
- "maxrss_mib": 2076.015625,
- "commit": "b6266b5",
- "cmd": "python3 lean.py king free 24 - longdouble"
+ "sec_per_iteration": 39.42107057571411,
+ "machine": "x86_64",
+ "nmant": 63,
+ "wall": 1081.3678076267242,
+ "maxrss_mib": 2081.421875,
+ "commit": "29b344c",
+ "cmd": "python3 src/lean.py king free 24 - longdouble"
 }
