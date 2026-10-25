@@ -35,9 +35,9 @@
  ],
  "support": 4194304,
  "residual_l1": 5.908778217903453e-17,
- "sec_per_iteration": 15.783634901046753,
- "wall": 320.2765996456146,
- "maxrss_mib": 2193.34765625,
- "commit": "8dc1359",
- "cmd": "python3 cylw.py king cyl 23 1"
+ "sec_per_iteration": 21.773650407791138,
+ "wall": 439.9022717475891,
+ "maxrss_mib": 2197.2890625,
+ "commit": "57fe401",
+ "cmd": "python3 src/cylw.py king cyl 23 1"
 }
