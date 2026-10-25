@@ -92,7 +92,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      so name the outputs and inputs file by file; a shell glob expands to single files:
      ```bash
      for o in <outputs>; do
-       a=$(git log --follow --diff-filter=AM --format=%H -- "$o" | grep -v -E '^(fc5e453|0cfbfaa)' | head -1)
+       a=$(git log --follow --diff-filter=AMC --format=%H -- "$o" | grep -v -E '^(fc5e453|0cfbfaa)' | head -1)
        [ -n "$a" ] || { echo "NO ANCHOR: $o"; continue; }
        echo "== $o"
        for f in <script> <imported modules> <inputs>; do
@@ -102,7 +102,10 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      done
      ```
      Without `--follow` a rename hides the changes before it: `git log -1 -- out/out_surface.txt`
-     stops at the move 9ddb2fb, not at the run that wrote the file. The rename commits fc5e453 and
+     stops at the move 9ddb2fb, not at the run that wrote the file. The filter keeps `C`, because
+     `--follow` reports a new file that resembles an older one as a copy: without it the anchor of
+     `data/zex/zex_king_free_m24_K24.json` falls into the history of `..._m24_K20.json`, two days
+     before 53b3180 wrote it. The rename commits fc5e453 and
      0cfbfaa changed only file paths, in docstrings, comments, printed labels and the input path of
      `src/hidden_oos.py` (`README.md`, "Renamed before king-entropy-v1.0.0"), so they make no output
      stale; the `grep` keeps them from serving as the anchor of `out/out_hidden_oos.txt` and
