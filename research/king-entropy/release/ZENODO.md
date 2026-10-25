@@ -82,29 +82,43 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    - `python3 src/repro.py > out/out_repro.txt` (about 10 minutes). Every comparison line must read
      `[SAME]` and the last line `all reproduced: True`; the first line must name a commit of master
      and report 0 missing recorded commits.
-   - An output is stale when its script, a module the script imports or a data file it reads changed
-     in a commit the output does not contain: PR #38 found `out/out_ltest.txt` still counting 1451 (L)
-     cases after `data/zex/zex_king_free_m24_K24.json` had raised them to 1453. For every command in the
-     table of `paper/king-entropy.tex`, Section "Reproducibility", and for every `replication/` output
-     that the paper or `paper/NUMBERS.md` cites, take the inputs from the script's docstring, its
-     imports and the `# needs` comments of `README.md`, and list the commits since the output was last
-     written, one file at a time (a shell glob is fine, it expands to single files):
+   - An output is stale when its script, a module it imports (directly or through another module) or
+     a data file it reads changed in a commit the output does not contain: PR #38 found
+     `out/out_ltest.txt` still counting 1451 (L) cases after `data/zex/zex_king_free_m24_K24.json` had
+     raised them to 1453. Check every output in the table of `paper/king-entropy.tex`, Section
+     "Reproducibility", and every `replication/` output that the paper or `paper/NUMBERS.md` cites.
+     Take the inputs from the script's docstring, its imports and the `# needs` comments of
+     `README.md`, and list the commits since each output was last written. `--follow` takes one path,
+     so name the outputs and inputs file by file; a shell glob expands to single files:
      ```bash
-     a=$(git log --follow --diff-filter=AM --format=%H -- <output> | grep -v -E '^(fc5e453|0cfbfaa)' | head -1)
-     for f in <script> <imported modules> <inputs>; do git log --follow --format='%h %s' "$a"..HEAD -- "$f"; done
+     for o in <outputs>; do
+       a=$(git log --follow --diff-filter=AM --format=%H -- "$o" | grep -v -E '^(fc5e453|0cfbfaa)' | head -1)
+       [ -n "$a" ] || { echo "NO ANCHOR: $o"; continue; }
+       for f in <script> <imported modules> <inputs>; do
+         [ -e "$f" ] || echo "MISSING: $f"
+         git log --follow --format='%h %s' "$a"..HEAD -- "$f"
+       done
+     done
      ```
      Without `--follow` a rename hides the changes before it: `git log -1 -- out/out_surface.txt`
-     stops at the move 9ddb2fb, not at the run that wrote the file. The `grep` skips fc5e453 and
-     0cfbfaa, which changed only printed labels in `out/out_hidden_oos.txt` and
-     `out/out_derived.txt` and would otherwise hide the run before them. Any commit listed means stale,
-     also one that changes only a comment or a docstring, except fc5e453 and 0cfbfaa: they renamed
-     files and changed only paths in docstrings, comments and printed labels (`README.md`, "Renamed
-     before king-entropy-v1.0.0"), so they make no output stale. Rerun the stale ones, then repeat the
-     check, because a rerun file that another script reads makes that script's outputs stale in turn;
-     stop when nothing is listed. The `data/lean/` files written before 6ef3190 have no `machine`
-     field, and their rerun records the x87 platform that `src/lean.py` now asserts. Update the numbers
-     that changed in `paper/king-entropy.tex`, `paper/king-entropy-log-convexity.tex`,
-     `paper/NUMBERS.md`, `oeis-draft.txt`, the descriptions above and `.zenodo.json`.
+     stops at the move 9ddb2fb, not at the run that wrote the file. The rename commits fc5e453 and
+     0cfbfaa changed only file paths, in docstrings, comments, printed labels and the input path of
+     `src/hidden_oos.py` (`README.md`, "Renamed before king-entropy-v1.0.0"), so they make no output
+     stale; the `grep` keeps them from serving as the anchor of `out/out_hidden_oos.txt` and
+     `out/out_derived.txt`, whose labels they edited. Every other commit listed means stale, including
+     one that changes only a comment or a docstring, and including 9ddb2fb, which moved the files and
+     changed the I/O of every script. Rerun the stale outputs, commit each round on the `d/*` branch
+     and repeat the check, because a rerun file that another script reads makes that script's outputs
+     stale in turn. A rerun that leaves an output byte-identical leaves nothing to commit; count that
+     output as fresh. Stop when nothing is listed. The `data/lean/` files written before 6ef3190 have
+     no `machine` and `nmant` fields, and their rerun records both.
+   - Update every file that quotes a number that changed, found with `git grep` on the old value: the
+     two papers, `paper/NUMBERS.md`, `oeis-draft.txt`, `notes/`, `proofs/`, `replication/REPORT.md`,
+     the descriptions above, and at the root `.zenodo.json`, `README.md`, `notes/00-research.md` and
+     `site/build.js`. Update also the provenance sentences that the reruns make untrue: which outputs
+     record SHAs under `king-entropy-v0.1.0` (`README.md`, `paper/NUMBERS.md` and Section
+     "Reproducibility" of `paper/king-entropy.tex`), which machine wrote which runs (the same section
+     and the note on the machines in `paper/NUMBERS.md`), and "the outputs cite its SHAs" in step 5.
    - Rebuild both PDFs with the `docker run` line of step 8, run in `paper/`.
    - Commit all of it on a `d/*` branch and merge it with a merge commit (`gh pr merge --merge`; the
      repository allows it next to squash) before step 1, so the outputs keep the branch SHAs they
@@ -134,7 +148,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
    gh release create king-entropy-v1.0.0 --repo dawidrylko/lattice-dimers --verify-tag --latest=false --title "king-entropy v1.0.0" --notes "Code, data and outputs behind research/king-entropy/paper/king-entropy.tex and king-entropy-log-convexity.tex."
    ```
    `king-entropy-v0.1.0` stays; the outputs cite its SHAs.
-6. Wait for the Zenodo record, check its title, creator, license, keywords and the two relations on
+6. Wait for the Zenodo record, check its title, creator, license, keywords and the three relations on
    the record page, and write down its version DOI `<DOI_SOFT>` (cite the version, not the concept
    DOI). The tagged snapshot still carries the placeholders below; that is expected.
 7. On a `d/*` branch fill in the DOIs:
@@ -150,7 +164,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      `[![DOI](https://zenodo.org/badge/DOI/<DOI_SOFT>.svg)](https://doi.org/<DOI_SOFT>)` and the
      sentence "until then the DOIs are pending" under the research results with the three DOIs; in
      section "Citation", replace "the Zenodo DOIs replace that reference when the release is out" with
-     `<DOI_PAPER>` for the paper and `<DOI_SOFT>` for the code and data behind it;
+     "the DOIs are `<DOI_PAPER>` for the paper and `<DOI_SOFT>` for the code and data behind it";
      the root `notes/00-research.md`, sections "Papers" and "How to cite", gets the same DOIs; in
      `site/build.js` add `identifier: 'https://doi.org/<DOI_PAPER>'` (and `<DOI_LNOTE>`) to the two
      `PAPERS` entries.
@@ -173,7 +187,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
          version: king-entropy-v1.0.0
          doi: <DOI_SOFT>
      ```
-   - The opening paragraph of this file now says the records are published and gives the three
+   - Rewrite the opening paragraph of this file to say the records are published, with the three
      DOIs. In `research/king-entropy/README.md` and `paper/NUMBERS.md`, "the branch that becomes
      `king-entropy-v1.0.0`" becomes "the tag `king-entropy-v1.0.0`".
    - `oeis-draft.txt`: the third `%H` line becomes two linked lines,
