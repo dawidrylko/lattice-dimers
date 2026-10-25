@@ -4,3 +4,4 @@ ok sec_king_free_1_18
 ok sec_tri_cyl_3_18
 ok eig_w20_p0
 ok eig_w20_p1
+ok eig_w21_p0
