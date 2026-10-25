@@ -69,3 +69,4 @@ ok zex_free_king_free_m16
 ok zex_free_king_free_m17
 ok zex_free_king_free_m18
 ok zex_free_king_free_m19
+ok zex_free_king_free_m20
