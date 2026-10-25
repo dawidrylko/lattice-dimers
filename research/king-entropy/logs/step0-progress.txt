@@ -9,3 +9,4 @@ ok eig_w21_p1
 ok eig_w22_p0
 ok eig_w22_p1
 ok eig_w23_p1
+ok eig_w24_p0
