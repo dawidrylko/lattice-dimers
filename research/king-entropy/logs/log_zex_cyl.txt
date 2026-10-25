@@ -154,3 +154,16 @@ king cyl m=16 K=40 prime 9/11 5.5s
 king cyl m=16 K=40 prime 10/11 4.8s
 king cyl m=16 K=40 prime 11/11 5.2s
 done 61s
+king cyl m=17 K=40 prime 1/12 12.1s
+king cyl m=17 K=40 prime 2/12 12.6s
+king cyl m=17 K=40 prime 3/12 12.1s
+king cyl m=17 K=40 prime 4/12 12.4s
+king cyl m=17 K=40 prime 5/12 12.5s
+king cyl m=17 K=40 prime 6/12 12.6s
+king cyl m=17 K=40 prime 7/12 11.9s
+king cyl m=17 K=40 prime 8/12 11.5s
+king cyl m=17 K=40 prime 9/12 11.8s
+king cyl m=17 K=40 prime 10/12 11.9s
+king cyl m=17 K=40 prime 11/12 12.2s
+king cyl m=17 K=40 prime 12/12 12.5s
+done 146s
