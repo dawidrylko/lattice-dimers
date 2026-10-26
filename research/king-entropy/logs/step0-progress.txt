@@ -135,3 +135,4 @@ ok cw
 ok audit_bounds
 ok surface
 ok corner
+ok ltest
