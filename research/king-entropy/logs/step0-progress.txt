@@ -136,3 +136,4 @@ ok audit_bounds
 ok surface
 ok corner
 ok ltest
+ok lparity
