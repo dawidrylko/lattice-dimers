@@ -123,3 +123,4 @@ ok lweight_big
 ok validate
 ok crosscheck
 ok linf
+ok bounds
