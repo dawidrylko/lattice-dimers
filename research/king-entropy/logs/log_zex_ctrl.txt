@@ -256,3 +256,6 @@ tri cyl m=12 K=60 prime 10/12 0.4s
 tri cyl m=12 K=60 prime 11/12 0.3s
 tri cyl m=12 K=60 prime 12/12 0.3s
 done 4s
+tri free m=2 K=60 prime 1/2 0.0s
+tri free m=2 K=60 prime 2/2 0.0s
+done 0s

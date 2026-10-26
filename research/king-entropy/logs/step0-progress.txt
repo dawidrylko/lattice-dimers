@@ -105,3 +105,4 @@ ok zex_ctrl_tri_cyl_m9
 ok zex_ctrl_tri_cyl_m10
 ok zex_ctrl_tri_cyl_m11
 ok zex_ctrl_tri_cyl_m12
+ok zex_ctrl_tri_free_m2
