@@ -137,3 +137,4 @@ ok surface
 ok corner
 ok ltest
 ok lparity
+ok lspec
