@@ -100,3 +100,4 @@ ok zex_ctrl_tri_cyl_m4
 ok zex_ctrl_tri_cyl_m5
 ok zex_ctrl_tri_cyl_m6
 ok zex_ctrl_tri_cyl_m7
+ok zex_ctrl_tri_cyl_m8
