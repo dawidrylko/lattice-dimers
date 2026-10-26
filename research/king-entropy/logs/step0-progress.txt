@@ -74,3 +74,4 @@ ok zex_free_king_free_m21
 ok zex_free_king_free_m22
 ok zex_free_king_free_m23
 ok zex_free_king_free_m24
+ok zex_ctrl_sq_cyl_m3
