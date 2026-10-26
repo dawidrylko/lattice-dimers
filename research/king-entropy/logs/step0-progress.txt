@@ -118,3 +118,4 @@ ok zex_ctrl_tri_free_m11
 ok zex_ctrl_tri_free_m12
 ok lcert_m25
 ok lcert_m26
+ok lweight
