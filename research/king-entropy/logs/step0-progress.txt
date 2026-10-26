@@ -140,3 +140,4 @@ ok lparity
 ok lspec
 ok derived
 ok replication_corner
+ok test_paths
