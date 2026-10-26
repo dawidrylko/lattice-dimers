@@ -7,6 +7,7 @@ This directory holds the files that the step 0 rerun of `release/ZENODO.md` chan
 - Driver `release/step0-rerun.sh`, report `release/STEP0-REPORT.md`, progress `logs/step0-progress.txt` (all here): 144 of 144 jobs `ok`, from 2026-10-25 17:46Z to 2026-10-26 18:14Z.
 - Machine: x86_64, 4 cores, 15 GiB, no swap; Python 3.13.14, numpy 2.5.3, `np.finfo(np.longdouble).nmant` = 63.
 - `out/out_repro.txt`: 0 of 11 recorded code commits missing, every comparison `[SAME]`, `all reproduced: True`.
+- The cloud run committed to `d/king-entropy-step0`, the branch `release/STEP0-REPORT.md` names; the history merged with these files is its rewrite, `d/king-entropy-step0-rerun`.
 - The commit SHAs these files record refer to the history merged with them. That history was rewritten once before the merge, to set the author, and every recorded SHA was replaced by the SHA of the rewritten commit; the code of each commit is byte-identical to the one that ran.
 
 ## Summary
@@ -21,7 +22,7 @@ This directory holds the files that the step 0 rerun of `release/ZENODO.md` chan
 
 ## Numbers that differ
 
-`data/errbar.json`: 24 fields. The recommended `s` and `err` are identical, and `out/out_errbar.txt`, which prints the error budget, is byte-identical.
+`data/errbar.json`: 24 fields. The recommended `s` and `err` are identical, and `out/out_errbar.txt`, which prints the error budget, is byte-identical. No file quotes these fields, so `data/errbar.json` counts as reproduced under step 0 of `release/ZENODO.md`.
 
 | field | original | rerun | relative difference |
 | --- | --- | --- | --- |
@@ -67,7 +68,7 @@ This directory holds the files that the step 0 rerun of `release/ZENODO.md` chan
 | 16 files, e.g. `logs/time_audit_bounds.txt`, `logs/time_validate.txt` | timing log |
 | 9 files, e.g. `out/out_bounds.txt`, `out/out_surface.txt` | commit, timing or memory fields |
 
-In the text files, the differing fields are commit SHAs, run times in seconds, peak memory, the sha1 that `out/out_repro.txt` prints for outputs containing those SHAs and, in `logs/log_zex_ctrl.txt`, the order of the runs. The lean files gain `machine` and `nmant`, which the originals did not record.
+In the text files, the differing fields are commit SHAs, run times in seconds, peak memory, the sha1 values that `out/out_repro.txt` prints (the original record predates the last changes to `out_cw.txt` and `out_bounds.txt`, and `out_estimate.txt` records commit SHAs) and, in `logs/log_zex_ctrl.txt`, the order of the runs. The sha1 of `out_estimate.txt` in `out/out_repro.txt` of the rerun was computed before the history was rewritten, so the re-stamped cost table no longer hashes to it. The lean files gain `machine` and `nmant`, which the originals did not record.
 
 ## Rerun byte-identical to the original
 

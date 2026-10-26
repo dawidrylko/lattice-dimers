@@ -97,6 +97,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
        echo "== $o"
        for f in <script> <imported modules> <inputs>; do
          [ -e "$f" ] || echo "MISSING: $f"
+         git diff --quiet "$a" HEAD -- "$f" && continue
          git log --follow --format='%h %s' "$a"..HEAD -- "$f"
        done
      done
@@ -105,7 +106,8 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      stops at the move 9ddb2fb, not at the run that wrote the file. The filter keeps `C`, because
      `--follow` reports a new file that resembles an older one as a copy: without it the anchor of
      `data/zex/zex_king_free_m24_K24.json` falls into the history of `..._m24_K20.json`, two days
-     before 53b3180 wrote it. The rename commits fc5e453 and
+     before 53b3180 wrote it. An input whose content at `HEAD` equals its content at the anchor is
+     skipped: a commit that changed it and a later one that changed it back make no output stale. The rename commits fc5e453 and
      0cfbfaa changed only file paths, in docstrings, comments, printed labels and the input path of
      `src/hidden_oos.py` (`README.md`, "Renamed before king-entropy-v1.0.0"), so they make no output
      stale; the `grep` keeps them from serving as the anchor of `out/out_hidden_oos.txt` and
@@ -117,15 +119,16 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      leaves an output byte-identical leaves nothing to commit; count that output as fresh and leave it
      out of the next round. Stop when nothing is listed for the outputs that remain. The `data/lean/`
      files written before 6ef3190 have no `machine` and `nmant` fields, and their rerun records both.
-   - The rerun may also sit alongside the originals instead of replacing them: its files go to the
-     same relative paths under `rerun/<year>-<month>/` with a `COMPARISON.md` against the originals,
-     and the originals stay the sources of the paper. An output then also counts as fresh when its
-     rerun under the current code reproduced its numbers there: byte-identical, or differing only in
-     commit, command path, timing, memory or machine fields. The loop above cannot see this, because a
-     byte-identical rerun leaves no commit and the commit that restores an original becomes its
-     anchor, so for those outputs `COMPARISON.md` is the check. The rerun of October 2026 is
-     `rerun/2026-10/`: 144 jobs, one numeric difference (24 derived fields of `data/errbar.json`, at
-     relative 1.4e-11 or below, with `s`, `err` and `out/out_errbar.txt` unchanged).
+   - The rerun may also sit alongside the originals instead of replacing them. Its files then go to
+     the same relative paths under `rerun/<year>-<month>/`, with a `COMPARISON.md` against the
+     originals, and the originals stay the sources of the paper. An output also counts as fresh when
+     its rerun under the current code reproduced it there: byte-identical, or differing only in commit
+     SHAs, command paths, run times, peak memory, the `machine` and `nmant` fields, or the order of log
+     lines. A byte-identical rerun leaves no commit, so the loop still lists such an output, and its
+     row in `COMPARISON.md` is the check. The rerun of October 2026 is `rerun/2026-10/`. Its one numeric
+     difference is in 24 fitted fields of `data/errbar.json`, at relative 1.4e-11 or less. `s`, `err`
+     and `out/out_errbar.txt` are unchanged and no file quotes those fields, so `data/errbar.json`
+     counts as reproduced too.
    - Update every file that quotes a number that changed, found with `git grep` on the old value: the
      two papers, `paper/NUMBERS.md`, `oeis-draft.txt`, `notes/`, `proofs/`, `replication/REPORT.md`,
      the descriptions above, and at the root `.zenodo.json`, `README.md`, `notes/00-research.md` and
