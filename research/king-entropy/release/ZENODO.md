@@ -117,6 +117,15 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      leaves an output byte-identical leaves nothing to commit; count that output as fresh and leave it
      out of the next round. Stop when nothing is listed for the outputs that remain. The `data/lean/`
      files written before 6ef3190 have no `machine` and `nmant` fields, and their rerun records both.
+   - The rerun may also sit alongside the originals instead of replacing them: its files go to the
+     same relative paths under `rerun/<year>-<month>/` with a `COMPARISON.md` against the originals,
+     and the originals stay the sources of the paper. An output then also counts as fresh when its
+     rerun under the current code reproduced its numbers there: byte-identical, or differing only in
+     commit, command path, timing, memory or machine fields. The loop above cannot see this, because a
+     byte-identical rerun leaves no commit and the commit that restores an original becomes its
+     anchor, so for those outputs `COMPARISON.md` is the check. The rerun of October 2026 is
+     `rerun/2026-10/`: 144 jobs, one numeric difference (24 derived fields of `data/errbar.json`, at
+     relative 1.4e-11 or below, with `s`, `err` and `out/out_errbar.txt` unchanged).
    - Update every file that quotes a number that changed, found with `git grep` on the old value: the
      two papers, `paper/NUMBERS.md`, `oeis-draft.txt`, `notes/`, `proofs/`, `replication/REPORT.md`,
      the descriptions above, and at the root `.zenodo.json`, `README.md`, `notes/00-research.md` and
