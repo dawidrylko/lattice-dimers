@@ -116,7 +116,7 @@ job linf "$T python3 log-convexity/linf.py 16 > log-convexity/out_linf.txt 2> lo
 # bounds
 job bounds "$T python3 src/bounds.py 24 > out/out_bounds.txt 2> logs/time_bounds.txt"
 job runweight_2_23 "$T python3 src/runweight.py 3state \$(seq 2 23) > out/out_runweight_3state.txt 2> logs/time_runweight_3state.txt"
-job runweight_24 "grep -qxF 'ok runweight_2_23' $PROG && $T python3 src/runweight.py 3state 24 --disk /tmp > /tmp/runweight_w24.txt 2> logs/time_runweight_3state_w24.txt && tail -1 /tmp/runweight_w24.txt >> out/out_runweight_3state.txt"
+job runweight_24 "grep -qxF 'ok runweight_2_23' $PROG && $T python3 src/runweight.py 3state 24 --disk ${RW_DISK:-/tmp} > /tmp/runweight_w24.txt 2> logs/time_runweight_3state_w24.txt && tail -1 /tmp/runweight_w24.txt >> out/out_runweight_3state.txt"
 
 # readers of the files rerun above
 job summary "python3 src/summary.py > out/out_summary.txt"
