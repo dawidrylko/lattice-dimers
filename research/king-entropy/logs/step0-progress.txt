@@ -128,3 +128,4 @@ ok runweight_2_23
 ok runweight_24
 ok summary
 ok fitsq
+ok errbar
