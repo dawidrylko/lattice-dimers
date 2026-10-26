@@ -22,3 +22,7 @@ Driver: `release/step0-rerun.sh`, branch `d/king-entropy-step0`.
 `git diff --stat origin/master -- research/king-entropy`, last line (before this report):
 
     204 files changed, 2052 insertions(+), 1692 deletions(-)
+
+## Repro rerun with tags
+
+`src/repro.py` rerun at a9d775c after `git fetch --tags` and `--unshallow`: 0 of 11 recorded code commits missing, `all reproduced: True` (wall 820.7 s, maxrss 3223 MiB).

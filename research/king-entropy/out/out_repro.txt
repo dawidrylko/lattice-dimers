@@ -1,5 +1,4 @@
-HEAD 513b043; recorded code commits missing from the repository: 11 of 11: 102b7e5 76fc5e1 73a0628 ee63b57 0357d17 0cf6903 106661e b08b04a 8dc1359 73289ea a32a0fe
-warning: fetch the tag king-entropy-v0.1.0 to resolve the recorded commits; the numbers are checked anyway
+HEAD a9d775c; recorded code commits missing from the repository: 0 of 11: none
 [SAME] python3 estimate.py  vs out_estimate.txt  (sha1 ec0221dac100)
 [SAME] python3 cw.py        vs out_cw.txt  (sha1 df2274ad034f)
 [SAME] python3 bounds.py 16 vs out_bounds.txt, section "Fekete", w <= 16  (sha1 a225e6ffb89a)
