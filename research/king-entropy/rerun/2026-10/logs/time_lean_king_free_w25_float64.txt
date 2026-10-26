@@ -1,0 +1,2 @@
+# cmd: python3 src/lean.py king free 25 - float64 cw
+# exit=0 wall=929.8s user=897.6s maxrss=4386MiB

@@ -1,0 +1,2 @@
+# cmd: python3 src/lean.py king free 15 - longdouble
+# exit=0 wall=0.9s user=1.1s maxrss=38MiB

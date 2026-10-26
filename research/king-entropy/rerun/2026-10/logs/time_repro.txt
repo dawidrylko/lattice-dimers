@@ -1,0 +1,2 @@
+# cmd: python3 src/repro.py
+# exit=0 wall=820.7s user=767.3s maxrss=3223MiB

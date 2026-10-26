@@ -1,0 +1,72 @@
+s = 0.5655119110413253  (out_errbar.txt)
+2s (per dimer) = 1.131023822082651
+exp(s) = 1.760348694041978,  exp(2s) = 3.098827524615297
+s - ds, s + ds = 0.5655119110413247, 0.5655119110413259 (digits shared by both ends are the ones quoted in release/oeis-draft.txt)
+exp(s - ds), exp(s + ds) = 1.7603486940419768, 1.7603486940419789
+
+(L-infinity): second differences a(2q+2) - 2 a(2q) + a(2q-2) of a_k = log lambda_k, free strips
+  2q= 4: 0.0354   sources bounds.json float64 | bounds.json float64
+  2q= 6: 0.00488   sources bounds.json float64 | bounds.json float64
+  2q= 8: 0.00026   sources bounds.json float64 | bounds.json float64
+  2q=10: 4.69e-5   sources bounds.json float64 | bounds.json float64
+  2q=12: 3.99e-6   sources bounds.json float64 | lean_king_free_w14_p-_longdouble.json @95ea0a2
+  2q=14: 5.53e-7   sources bounds.json float64 | lean_king_free_w16_p-_longdouble.json @1f92e31
+  2q=16: 5.63e-8   sources lean_king_free_w14_p-_longdouble.json @95ea0a2 | lean_king_free_w18_p-_longdouble.json @45b6bd0
+  2q=18: 6.96e-9   sources lean_king_free_w16_p-_longdouble.json @1f92e31 | lean_king_free_w20_p-_longdouble.json @783dacf
+  2q=20: 7.62e-10   sources lean_king_free_w18_p-_longdouble.json @45b6bd0 | lean_king_free_w22_p-_longdouble.json @21804ca
+  2q=22: 9.0e-11   sources lean_king_free_w20_p-_longdouble.json @783dacf | lean_king_free_w24_p-_longdouble.json @29b344c
+  2q=24: 1.01e-11   sources lean_king_free_w22_p-_longdouble.json @21804ca | lean_king_free_w26_p-_float64.json @0fc08a2
+
+(L-infinity) for all q, with a_0 = 0: even second differences at 2q = 2..24 all positive: True
+odd second differences a(k+2) - 2 a(k) + a(k-2), k = 3..23: all negative: True ; k=3: -0.0629, k=5: -0.00761, k=7: -0.000954, k=9: -0.000113, k=11: -1.31e-5, k=13: -1.51e-6, k=15: -1.74e-7, k=17: -2.0e-8, k=19: -2.29e-9, k=21: -2.63e-10, k=23: -3.01e-11
+increments a(k+1) - a(k) - s alternate in sign for k = 0..25: True ; (O) at k = 23: a(24) - a(23) - s = 5.911e-12
+step-1 ratios (a(k+2) - a(k+1) - s) / (a(k+1) - a(k) - s), k = 16..24: -0.3327, -0.3366, -0.3425, -0.34, -0.3363, -0.3378, -0.3402, -0.3392, -0.3374
+free-strip parity splitting D(k) = log lambda^(0)_k - log lambda^(1)_k (sec_king_free_1_18.json): k=4: 0.002685, k=6: -0.0001654, k=8: 1.261e-5, k=10: -9.008e-7, k=12: 6.528e-8, k=14: -4.713e-9, k=16: 3.406e-10, k=18: -2.46e-11
+  ratios D(k) / D(k+2): -16.229, -13.121, -13.998, -13.799, -13.851, -13.838, -13.842
+
+f(k) = log lambda_k - s k, free strips (surface.json)
+  k=18: -0.4840358705545159
+  k=19: -0.4840358718678495
+  k=20: -0.4840358714180326
+  k=21: -0.4840358715709653
+  k=22: -0.4840358715195378
+  k=23: -0.4840358715369125
+  k=24: -0.4840358715310018
+  k=25: -0.4840358715330068
+  k=26: -0.4840358715323304
+
+certified w=24: lower 0.5453437497275, upper 0.5862166054033
+  s - lower = 0.02017,  upper - s = 0.0207
+  w=12: w*(s - lower_w) = 0.484, w*(upper_w - s) = 0.4969
+  w=16: w*(s - lower_w) = 0.484, w*(upper_w - s) = 0.4969
+  w=20: w*(s - lower_w) = 0.484, w*(upper_w - s) = 0.4969
+  w=24: w*(s - lower_w) = 0.484, w*(upper_w - s) = 0.4969
+Kahn-Lovasz log(8!)/16 = 0.6627876814216
+run-weighted upper bounds (runweight_3state.json): w=12: w*(upper_w - s) = 0.4141, w=16: w*(upper_w - s) = 0.4141, w=20: w*(upper_w - s) = 0.4141, w=22: w*(upper_w - s) = 0.4141, w=23: w*(upper_w - s) = 0.4141, w=24: w*(upper_w - s) = 0.4141
+12 w u at w=24: 3.197e-14
+-4 sigma = -0.9680717431
+tri free m=5: Z(6), Z(8), Z(10) = 6475, 210560, 6842465; Z(8)^2 - Z(6) Z(10) = 30552725
+king 3x3: V = 9, E = 20, 3V - 6 = 21
+king 4x4: V = 16, E = 42, 3V - 6 = 42
+king 5x5: V = 25, E = 72, 3V - 6 = 69
+
+lattice context: degree d, s, Bethe value, ratio s / Bethe, Kahn-Lovasz bound log(d!)/(2d)
+  square     d=4: s = 0.291560904030819, Bethe 0.2616240719, s/Bethe 1.1144, KL 0.3972567288
+  triangular d=6: s = 0.428594537464959, Bethe 0.4400758426, s/Bethe 0.97391, KL 0.5482709343
+  king       d=8: s = 0.565511911041325, Bethe 0.5723608967, s/Bethe 0.98803, KL 0.6627876814
+
+king cylinders, log(lambda_w)/w (eig_*.json, float64; sector 1 for odd w)
+  w=20: p0 0.5655119118867462  p1 0.5655119102001318
+  w=21: p0 0.5655119110406597  p1 0.5655119110406597
+  w=22: p0 0.5655119111867463  p1 0.5655119108963251
+  w=23: p1 0.5655119110412586
+  w=24: p0 0.5655119110666571  p1 0.5655119110160359
+  w=25: p1 0.5655119110413186
+
+widths per decimal digit log(10)/m = 2.127, memory factor 2^(log(10)/m) = 4.37
+L1 at W = 27 minus L1 at W = 25 = 1.1e-18
+odd cylinders, s - f_w: w=3: 0.00249, w=5: 0.000166, w=7: 1.25e-5, w=9: 1.01e-6, w=11: 8.73e-8, w=13: 7.84e-9, w=15: 7.28e-10, w=17: 6.93e-11, w=19: 6.74e-12, w=21: 6.66e-13, w=23: 6.67e-14, w=25: 6.71e-15; all positive: True
+even cylinders w = 4..24: sector 0 above s at every w: True, sector 1 below s at every w: True
+resolution of d_28: 1.11e-17 / 1.93518e-15 = 0.0057; digits of a 7.8e-20 agreement per site: 19.1
+x = 3/2: |Q/P| = 1.34 at 2q = 14, 1.26 at 2q = 16, 1.19 at 2q = 18, 1.12 at 2q = 20, 1.06 at 2q = 22, 0.995 at 2q = 24, 0.937 at 2q = 26
+x = 3/2: ratio below which d_q > 0 at 2q = 24, (P/Q)^(1/5) = 0.943; |Q/P| at 2q = 24 with the ratios of the earlier windows: 0.945: 1.01, 0.946: 1.02, 0.971: 1.16
