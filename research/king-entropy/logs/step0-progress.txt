@@ -94,3 +94,4 @@ ok zex_ctrl_sq_free_m8
 ok zex_ctrl_sq_free_m9
 ok zex_ctrl_sq_free_m10
 ok zex_ctrl_sq_free_m11
+ok zex_ctrl_sq_free_m12
