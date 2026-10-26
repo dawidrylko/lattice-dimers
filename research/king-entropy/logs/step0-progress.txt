@@ -78,3 +78,4 @@ ok zex_ctrl_sq_cyl_m3
 ok zex_ctrl_sq_cyl_m4
 ok zex_ctrl_sq_cyl_m5
 ok zex_ctrl_sq_cyl_m6
+ok zex_ctrl_sq_cyl_m7
