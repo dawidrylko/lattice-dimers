@@ -131,3 +131,4 @@ ok fitsq
 ok errbar
 ok hidden_oos
 ok estimate
+ok cw
