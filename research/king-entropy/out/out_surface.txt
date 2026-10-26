@@ -5,19 +5,19 @@ s = 0.5655119110413253 +- 6.0e-16;  f(k) = log lambda_k - s k  (error from s: k 
   k=11  f =  -0.4840378051578315   bounds.json float64
   k=12  f =  -0.4840351817234448   bounds.json float64
   k=13  f =  -0.4840360936169695   bounds.json float64
-  k=14  f =  -0.4840357985815601   lean_king_free_w14_p-_longdouble.json @b96c1aa
-  k=15  f =  -0.4840358970174728   lean_king_free_w15_p-_longdouble.json @b96c1aa
-  k=16  f =  -0.4840358627273627   lean_king_free_w16_p-_longdouble.json @b96c1aa
-  k=17  f =  -0.4840358744560786   lean_king_free_w17_p-_longdouble.json @b96c1aa
-  k=18  f =  -0.4840358705545159   lean_king_free_w18_p-_longdouble.json @cccfc9e
-  k=19  f =  -0.4840358718678495   lean_king_free_w19_p-_longdouble.json @cccfc9e
-  k=20  f =  -0.4840358714180326   lean_king_free_w20_p-_longdouble.json @f410768
-  k=21  f =  -0.4840358715709653   lean_king_free_w21_p-_longdouble.json @167f49a
-  k=22  f =  -0.4840358715195378   lean_king_free_w22_p-_longdouble.json @dc2c22a
-  k=23  f =  -0.4840358715369125   lean_king_free_w23_p-_longdouble.json @a045f8f
-  k=24  f =  -0.4840358715310018   lean_king_free_w24_p-_longdouble.json @b6266b5
-  k=25  f =  -0.4840358715330068   lean_king_free_w25_p-_float64.json @9f88f22
-  k=26  f =  -0.4840358715323304   lean_king_free_w26_p-_float64.json @2f3664b
+  k=14  f =  -0.4840357985815601   lean_king_free_w14_p-_longdouble.json @95ea0a2
+  k=15  f =  -0.4840358970174728   lean_king_free_w15_p-_longdouble.json @7bd2368
+  k=16  f =  -0.4840358627273627   lean_king_free_w16_p-_longdouble.json @1f92e31
+  k=17  f =  -0.4840358744560786   lean_king_free_w17_p-_longdouble.json @60de172
+  k=18  f =  -0.4840358705545159   lean_king_free_w18_p-_longdouble.json @45b6bd0
+  k=19  f =  -0.4840358718678495   lean_king_free_w19_p-_longdouble.json @a19601f
+  k=20  f =  -0.4840358714180326   lean_king_free_w20_p-_longdouble.json @783dacf
+  k=21  f =  -0.4840358715709653   lean_king_free_w21_p-_longdouble.json @46a210a
+  k=22  f =  -0.4840358715195378   lean_king_free_w22_p-_longdouble.json @21804ca
+  k=23  f =  -0.4840358715369125   lean_king_free_w23_p-_longdouble.json @3df7c5b
+  k=24  f =  -0.4840358715310018   lean_king_free_w24_p-_longdouble.json @29b344c
+  k=25  f =  -0.4840358715330068   lean_king_free_w25_p-_float64.json @0a0c18a
+  k=26  f =  -0.4840358715323304   lean_king_free_w26_p-_float64.json @0fc08a2
 
   bracket from the last values: f(25) = -0.484035871533007 < -2 sigma < f(26) = -0.48403587153233  (width 6.76e-13)
 
