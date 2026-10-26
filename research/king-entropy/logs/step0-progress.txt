@@ -85,3 +85,4 @@ ok zex_ctrl_sq_cyl_m10
 ok zex_ctrl_sq_cyl_m11
 ok zex_ctrl_sq_cyl_m12
 ok zex_ctrl_sq_free_m2
+ok zex_ctrl_sq_free_m3
