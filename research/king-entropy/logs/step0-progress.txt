@@ -120,3 +120,4 @@ ok lcert_m25
 ok lcert_m26
 ok lweight
 ok lweight_big
+ok validate

@@ -1,2 +1,2 @@
-# cmd: python3 -u validate.py
-# exit=0 wall=213.0s user=200.0s maxrss=129MiB
+# cmd: python3 src/validate.py
+# exit=0 wall=547.8s user=532.3s maxrss=134MiB
