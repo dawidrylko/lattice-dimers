@@ -32,16 +32,14 @@
   "9.613702486524456032602",
   "9.613702486524456032602"
  ],
- "sec_per_iteration": 0.45845794677734375,
+ "sec_per_iteration": 0.2653944492340088,
  "cw_log_lambda": [
   "9.613702486524456032602",
   "9.613702486524456032602"
  ],
  "support_closed": true,
- "machine": "x86_64",
- "nmant": 63,
- "wall": 10.639334201812744,
- "maxrss_mib": 105.11328125,
- "commit": "05da054",
- "cmd": "python3 src/lean.py king cyl 17 1 longdouble cw"
+ "wall": 6.251412630081177,
+ "maxrss_mib": 101.9609375,
+ "commit": "54a78ac",
+ "cmd": "python3 lean.py king cyl 17 1 longdouble cw"
 }

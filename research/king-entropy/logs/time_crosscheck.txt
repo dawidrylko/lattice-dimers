@@ -1,2 +1,2 @@
-# cmd: python3 src/crosscheck.py
-# exit=0 wall=189.3s user=239.8s maxrss=572MiB
+# cmd: python3 -u crosscheck.py
+# exit=0 wall=116.1s user=142.6s maxrss=565MiB

@@ -1,2 +1,2 @@
 # cmd: python3 src/audit_bounds.py
-# exit=0 wall=34.6s user=37.3s maxrss=105MiB
+# exit=0 wall=61.8s user=63.1s maxrss=101MiB

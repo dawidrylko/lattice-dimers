@@ -1,0 +1,8 @@
+HEAD a9d775c; recorded code commits missing from the repository: 0 of 11: none
+[SAME] python3 estimate.py  vs out_estimate.txt  (sha1 ec0221dac100)
+[SAME] python3 cw.py        vs out_cw.txt  (sha1 df2274ad034f)
+[SAME] python3 bounds.py 16 vs out_bounds.txt, section "Fekete", w <= 16  (sha1 a225e6ffb89a)
+[SAME] python3 bounds.py 16 vs out_bounds.txt, section "open-strip", w <= 16  (sha1 ec2d14ad544e)
+[SAME] python3 cylw.py king cyl 20 0 vs eig_king_cyl_w20_p0.json: all 19 iterates bit-identical, log lambda = 11.310238237734925
+
+all reproduced: True

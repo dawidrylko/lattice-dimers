@@ -1,0 +1,2 @@
+# cmd: python3 log-convexity/linf.py 16
+# exit=0 wall=21.4s user=21.3s maxrss=47MiB

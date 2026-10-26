@@ -42,4 +42,4 @@
   m=25 2q= 24  computed margin log R =   3.79843e-9   certified R - 1 >=    3.798e-9   (L) holds
   m=25 2q= 26  computed margin log R =  6.81369e-10   certified R - 1 >=   6.814e-10   (L) holds
   m=25 2q= 28  computed margin log R =   1.2373e-10   certified R - 1 >=   1.237e-10   (L) holds
-  m=25: (L) certified for all 2 <= 2q <= 28: True   (1259s, commit ca57b88)
+  m=25: (L) certified for all 2 <= 2q <= 28: True   (1272s, commit c034c29)
