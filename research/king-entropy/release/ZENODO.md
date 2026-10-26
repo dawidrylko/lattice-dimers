@@ -124,8 +124,10 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      originals, and the originals stay the sources of the paper. An output also counts as fresh when
      its rerun under the current code reproduced it there: byte-identical, or differing only in commit
      SHAs, command paths, run times, peak memory, the `machine` and `nmant` fields, or the order of log
-     lines. A byte-identical rerun leaves no commit, so the loop still lists such an output, and its
-     row in `COMPARISON.md` is the check. The rerun of October 2026 is `rerun/2026-10/`. Its one numeric
+     lines. A byte-identical rerun leaves no commit, so the loop may still list such an output, and its
+     row in `COMPARISON.md` is the check. The commit that restores an original becomes its anchor, so
+     the loop passes every output the rerun changed; for those too, the row in `COMPARISON.md` is the
+     check. The rerun of October 2026 is `rerun/2026-10/`. Its one numeric
      difference is in 24 fitted fields of `data/errbar.json`, at relative 1.4e-11 or less. `s`, `err`
      and `out/out_errbar.txt` are unchanged and no file quotes those fields, so `data/errbar.json`
      counts as reproduced too.
