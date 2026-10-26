@@ -16,12 +16,12 @@ king cylinder, log(lambda)/w per sector (source)
   w=17  p0 0.5655119109720268  p1 0.5655119109720268   sec_king_cyl_14_19.json
   w=18  p0 0.5655119160322841  p1 0.5655119060934878   sec_king_cyl_14_19.json
   w=19  p0 0.5655119110345892  p1 0.5655119110345892   sec_king_cyl_14_19.json
-  w=20  p0 0.5655119118867463  p1 0.5655119102001319   eig_king_cyl_w20_p0.json @106661e
-  w=21  p0 0.5655119110406597  p1 0.5655119110406597   eig_king_cyl_w21_p0.json @b08b04a
-  w=22  p0 0.5655119111867462  p1 0.5655119108963251   eig_king_cyl_w22_p0.json @b08b04a
-  w=23  p0 0.5655119110412587  p1 0.5655119110412587   eig_king_cyl_w23_p1.json @8dc1359
-  w=24  p0 0.5655119110666571  p1 0.5655119110160359   eig_king_cyl_w24_p0.json @8dc1359
-  w=25  p0 0.5655119110413186  p1 0.5655119110413186   eig_king_cyl_w25_p1.json @76fc5e1
+  w=20  p0 0.5655119118867463  p1 0.5655119102001319   eig_king_cyl_w20_p0.json @960b07c
+  w=21  p0 0.5655119110406597  p1 0.5655119110406597   eig_king_cyl_w21_p0.json @3b4afe1
+  w=22  p0 0.5655119111867462  p1 0.5655119108963251   eig_king_cyl_w22_p0.json @4fc6b07
+  w=23  p0 0.5655119110412587  p1 0.5655119110412587   eig_king_cyl_w23_p1.json @57fe401
+  w=24  p0 0.5655119110666571  p1 0.5655119110160359   eig_king_cyl_w24_p0.json @1245cc0
+  w=25  p0 0.5655119110413186  p1 0.5655119110413186   eig_king_cyl_w25_p1.json @c5eee65
 
 odd widths: f_w, d_w = f_w - f_(w-2), r_w = d_(w-2)/d_w, s_w = f_w + d_w/(r_w - 1)
   w= 5  f=0.5653455410878808
@@ -73,16 +73,16 @@ Z2 splitting on even cylinders: Delta_w = log lambda_p0 - log lambda_p1
 
 cost per width (cylw.py runs; up to three ran concurrently on 4 cores)
    w  p  iters  s/iter   wall s  peak RSS MiB  commit
-  20  0     19    1.26     26.6           310  106661e
-  20  1     19    1.32     26.8           310  106661e
-  21  0     19    3.39     67.8           587  b08b04a
-  21  1     19    3.15     66.2           587  b08b04a
-  22  0     19    6.73    137.4          1113  b08b04a
-  22  1     19    6.86    140.6          1113  b08b04a
-  23  1     19   15.78    320.3          2193  8dc1359
-  24  0     19   32.27    660.2          4353  8dc1359
-  24  1     19   30.77    621.5          4353  a32a0fe
-  25  1     19   67.04   1351.3          8642  76fc5e1
+  20  0     19    2.47     51.4           310  960b07c
+  20  1     19    2.50     50.7           310  0f6bd1f
+  21  0     19    5.01    103.3           583  3b4afe1
+  21  1     19    5.06    101.7           583  6d6636e
+  22  0     19   10.65    220.8          1117  4fc6b07
+  22  1     19   10.83    217.6          1117  e749272
+  23  1     19   21.77    439.9          2197  57fe401
+  24  0     19   45.66    930.5          4357  1245cc0
+  24  1     19   46.51    936.4          4357  9a9caab
+  25  1     19   99.76   2038.4          8645  c5eee65
 tm2.py runs (both sectors per width; peak RSS is per process, i.e. of its widest w):
-  king_cyl_3_13: w=3 0.0s, w=4 0.0s, w=5 0.0s, w=6 0.0s, w=7 0.0s, w=8 0.0s, w=9 0.1s, w=10 0.1s, w=11 0.2s, w=12 0.5s, w=13 1.1s; peak RSS 35 MiB
-  king_cyl_14_19: w=14 3.0s, w=15 6.1s, w=16 14.4s, w=17 29.1s, w=18 66.7s, w=19 199.7s; peak RSS 200 MiB
+  king_cyl_3_13: w=3 0.1s, w=4 0.0s, w=5 0.0s, w=6 0.0s, w=7 0.1s, w=8 0.1s, w=9 0.1s, w=10 0.2s, w=11 0.4s, w=12 0.9s, w=13 1.9s; peak RSS 40 MiB
+  king_cyl_14_19: w=14 4.3s, w=15 11.8s, w=16 28.4s, w=17 57.8s, w=18 127.8s, w=19 334.4s; peak RSS 207 MiB
