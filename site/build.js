@@ -27,8 +27,16 @@ const ASSETS = {
 };
 const RESEARCH_DATA = 'research/king-entropy/data';
 const PAPERS = [
-  { title: "The dimer entropy of the king's graph", file: 'papers/king-entropy.pdf' },
-  { title: "Log-convexity of strip dimer counts on the king's graph", file: 'papers/king-entropy-log-convexity.pdf' },
+  {
+    title: "The dimer entropy of the king's graph",
+    file: 'papers/king-entropy.pdf',
+    identifier: 'https://doi.org/10.5281/zenodo.23686056',
+  },
+  {
+    title: "Log-convexity of strip dimer counts on the king's graph",
+    file: 'papers/king-entropy-log-convexity.pdf',
+    identifier: 'https://doi.org/10.5281/zenodo.23686087',
+  },
 ];
 const AUTHOR = {
   '@type': 'Person',

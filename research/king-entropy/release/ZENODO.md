@@ -1,9 +1,12 @@
 # Zenodo records for king-entropy
 
-Three records: the software archive, minted by the Zenodo GitHub integration from the release
-`king-entropy-v1.0.0` with the metadata in the root [`.zenodo.json`](../../../.zenodo.json), and two
-preprints uploaded by hand with the metadata below. Nothing here is published yet: the integration
-toggle is off and the tag does not exist.
+Three published records: the software archive
+[10.5281/zenodo.23686293](https://doi.org/10.5281/zenodo.23686293), minted by the Zenodo GitHub
+integration from the release `king-entropy-v1.0.0` with the metadata in the root
+[`.zenodo.json`](../../../.zenodo.json), and two preprints with the metadata below, the paper
+[10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056) and the companion note
+[10.5281/zenodo.23686087](https://doi.org/10.5281/zenodo.23686087). The concept DOI of the software
+record, which its later versions share, is 10.5281/zenodo.23686292.
 
 `.zenodo.json` sits on master, and Zenodo applies it to every release of the repository while the
 toggle is on, ahead of `CITATION.cff`. The toggle stays on after this release. Zenodo files every

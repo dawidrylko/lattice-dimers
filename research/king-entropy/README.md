@@ -3,11 +3,12 @@
 Perfect matchings of the king's graph (square lattice plus both diagonals),
 i.e. domicule tilings. Goal: the entropy per site
 `s = lim log Z / N` to many digits, with rigorous bounds.
-Results are written up in a paper draft. The PDF is [`paper/king-entropy.pdf`](paper/king-entropy.pdf), the
+Results are written up in a preprint, archived on Zenodo with its companion note
+([`release/ZENODO.md`](release/ZENODO.md)). The PDF is [`paper/king-entropy.pdf`](paper/king-entropy.pdf), the
 source `paper/king-entropy.tex`. Every number in it is mapped to its output file and the script that wrote
 it in [`paper/NUMBERS.md`](paper/NUMBERS.md). The commit SHAs recorded in the outputs refer to the
-history under the tag `king-entropy-v0.1.0` for the outputs of the first version, and to the branch
-that becomes `king-entropy-v1.0.0` for the outputs added or regenerated since (`paper/NUMBERS.md`).
+history under the tag `king-entropy-v0.1.0` for the outputs of the first version, and to the tag
+`king-entropy-v1.0.0` for the outputs added or regenerated since (`paper/NUMBERS.md`).
 Full proofs of the rigorous bounds are in [`proofs/upper-bound.md`](proofs/upper-bound.md) (the
 run-weighted upper bound in its §9) and [`proofs/lower-bound.md`](proofs/lower-bound.md); the Calkin-Wilf
 question in [`notes/calkin-wilf.md`](notes/calkin-wilf.md); hypothesis (L) and the experiments on it in

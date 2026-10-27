@@ -7,7 +7,7 @@ The research part of this repository is a paper and a companion note on the perf
 - *The dimer entropy of the king's graph.* Dawid Ryłko, preprint, October 2026. [PDF](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf), [LaTeX source](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/king-entropy.tex).
 - *Log-convexity of strip dimer counts on the king's graph.* Dawid Ryłko, companion note, October 2026. [PDF](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy-log-convexity.pdf), [LaTeX source](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/king-entropy-log-convexity.tex).
 
-Both are archived with the code and data on Zenodo when the tag `king-entropy-v1.0.0` is released; the DOIs are pending until then. The steps are in [ZENODO.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/release/ZENODO.md).
+Both are archived on Zenodo with the code and data: the paper as [10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056), the companion note as [10.5281/zenodo.23686087](https://doi.org/10.5281/zenodo.23686087), and the code and data of the tag `king-entropy-v1.0.0` as [10.5281/zenodo.23686293](https://doi.org/10.5281/zenodo.23686293). The steps are in [ZENODO.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/release/ZENODO.md).
 
 ## Abstract
 
@@ -137,11 +137,11 @@ Every number of the paper is mapped to the committed file it is read from and th
 
 ## How to cite
 
-Until the Zenodo DOIs are assigned, cite the preprint with the repository:
+Cite the paper by its DOI:
 
 ```text
-D. Ryłko. The dimer entropy of the king's graph. Preprint, October 2026.
-https://github.com/dawidrylko/lattice-dimers/tree/master/research/king-entropy
+D. Ryłko. The dimer entropy of the king's graph. Preprint, Zenodo, October 2026.
+https://doi.org/10.5281/zenodo.23686056
 ```
 
-The software is described in [CITATION.cff](https://github.com/dawidrylko/lattice-dimers/blob/master/CITATION.cff), which GitHub also offers as BibTeX. Scripts are MIT; the paper, notes, data and outputs are CC BY 4.0.
+The code and data of the tag `king-entropy-v1.0.0` are archived as [10.5281/zenodo.23686293](https://doi.org/10.5281/zenodo.23686293). The software is described in [CITATION.cff](https://github.com/dawidrylko/lattice-dimers/blob/master/CITATION.cff), which GitHub also offers as BibTeX. Scripts are MIT; the paper, notes, data and outputs are CC BY 4.0.
