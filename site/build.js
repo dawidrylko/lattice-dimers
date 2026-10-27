@@ -42,6 +42,7 @@ const AUTHOR = {
   '@type': 'Person',
   name: 'Dawid Ryłko',
   url: 'https://dawidrylko.com',
+  sameAs: 'https://orcid.org/0009-0008-6307-9015',
 };
 const GALLERY_BOARDS = [
   { rowCount: 2, colCount: 2 },

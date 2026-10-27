@@ -200,6 +200,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
          authors:
            - family-names: Ryłko
              given-names: Dawid
+             orcid: https://orcid.org/0009-0008-6307-9015
          title: "The dimer entropy of the king's graph"
          year: 2026
          doi: <DOI_PAPER>
@@ -207,6 +208,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
          authors:
            - family-names: Ryłko
              given-names: Dawid
+             orcid: https://orcid.org/0009-0008-6307-9015
          title: "The dimer entropy of the king's graph: transfer-matrix scripts, data and outputs"
          version: king-entropy-v1.0.0
          doi: <DOI_SOFT>
