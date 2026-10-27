@@ -3,7 +3,7 @@
 [![Continuous Integration](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/ci.yml)
 [![Pages](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml/badge.svg)](https://github.com/dawidrylko/lattice-dimers/actions/workflows/pages.yml)
 [![Paper](https://img.shields.io/badge/Paper-PDF-ab3415?style=flat)](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf)
-[![Zenodo DOI](https://img.shields.io/badge/Zenodo_DOI-pending-9ca3af?style=flat)](https://dawidrylko.github.io/lattice-dimers/notes/research.html#how-to-cite)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23686293.svg)](https://doi.org/10.5281/zenodo.23686293)
 [![Site](https://img.shields.io/badge/Site_%26_notebooks-dawidrylko.github.io-044cb6?style=flat)](https://dawidrylko.github.io/lattice-dimers/)
 
 Research code, data and papers on dimer coverings of two lattices: the square lattice, whose perfect matchings are domino tilings, and the king's graph, the square lattice with both diagonals, whose perfect matchings are domicule tilings. The repository holds a paper on the entropy per site of the king's graph dimers with its companion note, exact solvers for both kinds of tilings up to $20 \times 20$, and a site that recounts the exact terms on each deploy and checks the research results against the committed data.
@@ -27,7 +27,7 @@ The free energies give the asymptotics of [A239273](https://oeis.org/A239273), $
 - [Research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html): the results above read from the committed data on every build.
 - [`research/king-entropy`](research/king-entropy): scripts, data, outputs, proofs of the bounds, and [`replication/`](research/king-entropy/replication/REPORT.md), an independent recomputation written from scratch. [`paper/NUMBERS.md`](research/king-entropy/paper/NUMBERS.md) maps every number of the paper to its output file and script.
 
-The code, data and both preprints are archived on Zenodo when the tag `king-entropy-v1.0.0` is released; until then the DOIs are pending ([`ZENODO.md`](research/king-entropy/release/ZENODO.md)).
+The code, data and both preprints are archived on Zenodo: the paper as [10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056), the companion note as [10.5281/zenodo.23686087](https://doi.org/10.5281/zenodo.23686087), and the code and data of the tag `king-entropy-v1.0.0` as [10.5281/zenodo.23686293](https://doi.org/10.5281/zenodo.23686293) ([`ZENODO.md`](research/king-entropy/release/ZENODO.md)).
 
 ## Exact counts: OEIS A004003 and A239273
 
@@ -185,7 +185,7 @@ The gallery draws a tiling in three styles. Below are the same four 8×8 domicul
 
 ## Citation
 
-If you use the code or the counts, cite the repository; [`CITATION.cff`](CITATION.cff) holds the metadata, and GitHub offers it as BibTeX under "Cite this repository". For the entropy of the king's graph, cite the paper as given on the [research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html#how-to-cite); the Zenodo DOIs replace that reference when the release is out.
+If you use the code or the counts, cite the repository; [`CITATION.cff`](CITATION.cff) holds the metadata, and GitHub offers it as BibTeX under "Cite this repository". For the entropy of the king's graph, cite the paper as given on the [research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html#how-to-cite); the DOIs are `10.5281/zenodo.23686056` for the paper and `10.5281/zenodo.23686293` for the code and data behind it.
 
 ## License
 

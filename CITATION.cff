@@ -98,3 +98,17 @@ references:
       - name: OEIS Foundation Inc.
     title: The On-Line Encyclopedia of Integer Sequences
     url: https://oeis.org
+  - type: unpublished
+    authors:
+      - family-names: Ryłko
+        given-names: Dawid
+    title: "The dimer entropy of the king's graph"
+    year: 2026
+    doi: 10.5281/zenodo.23686056
+  - type: software
+    authors:
+      - family-names: Ryłko
+        given-names: Dawid
+    title: "The dimer entropy of the king's graph: transfer-matrix scripts, data and outputs"
+    version: king-entropy-v1.0.0
+    doi: 10.5281/zenodo.23686293

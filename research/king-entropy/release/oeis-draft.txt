@@ -5,8 +5,8 @@ non-rigorous error bar (+-6e-16); the rigorous bounds only fix the first digit.
 OEIS editors may want rigorous digits before accepting a constant; decide that
 before submitting. Every number below is in paper/NUMBERS.md.
 The author's name is written with the HTML entity &#322; (l with stroke), which OEIS renders.
-Before submitting: create the tag king-entropy-v1.0.0 (the %H links point at it), fill in both
-Zenodo DOIs marked "DOI to be added", and check that A239264 has its extended b-file approved.
+Before submitting: check that A239264 has its extended b-file approved. The tag king-entropy-v1.0.0
+and the Zenodo DOIs that the %H links point at exist.
 The %C lines below are a list of facts, not submission text: the author rewrites them in his own
 words before submitting. Every number in them is in paper/NUMBERS.md. In %A, the date is the
 day of submission, in the OEIS form "Oct 23 2026".
@@ -24,8 +24,8 @@ day of submission, in the OEIS form "Oct 23 2026".
 %F A000000 s = lim_{w->oo} log(lambda_w)/w, where lambda_w is the growth rate of the number of domicule tilings of a strip of width w (lambda_w^2 = lim_{j->oo} A239264(2*j,w)^(1/j)).
 %e A000000 0.56551191104132...
 %H A000000 Dawid Ry&#322;ko, <a href="https://github.com/dawidrylko/lattice-dimers/tree/king-entropy-v1.0.0/research/king-entropy">Transfer-matrix scripts, outputs and paper draft</a> (directory research/king-entropy).
-%H A000000 Dawid Ry&#322;ko, <a href="https://github.com/dawidrylko/lattice-dimers/blob/king-entropy-v1.0.0/research/king-entropy/paper/king-entropy.pdf">The dimer entropy of the king's graph</a>, draft, 2026.
-%H A000000 Dawid Ry&#322;ko, The dimer entropy of the king's graph, Zenodo preprint, 2026, DOI to be added; code and data archive king-entropy-v1.0.0, DOI to be added.
+%H A000000 Dawid Ry&#322;ko, <a href="https://doi.org/10.5281/zenodo.23686056">The dimer entropy of the king's graph</a>, Zenodo preprint, 2026.
+%H A000000 Dawid Ry&#322;ko, <a href="https://doi.org/10.5281/zenodo.23686293">The dimer entropy of the king's graph: transfer-matrix scripts, data and outputs</a>, Zenodo, 2026.
 %H A000000 Anders W. Sandvik and R. Moessner, <a href="https://doi.org/10.1103/PhysRevB.73.144504">Correlations and confinement in nonplanar two-dimensional dimer models</a>, Phys. Rev. B 73 (2006), 144504 (Monte Carlo for dimers on the square lattice with diagonal dimers of small fugacity, e^-6 to e^-3; the equal-weight case and the entropy are not treated).
 %Y A000000 Cf. A239264, A239273.
 %Y A000000 Cf. A004003 (domino tilings of the 2n X 2n square), A099390 (domino tilings of the m X n grid).
