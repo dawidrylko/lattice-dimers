@@ -3,7 +3,8 @@
 Perfect matchings of the king's graph (square lattice plus both diagonals),
 i.e. domicule tilings. Goal: the entropy per site
 `s = lim log Z / N` to many digits, with rigorous bounds.
-Results are written up in a paper draft. The PDF is [`paper/king-entropy.pdf`](paper/king-entropy.pdf), the
+Results are written up in a preprint, archived on Zenodo with its companion note
+([`release/ZENODO.md`](release/ZENODO.md)). The PDF is [`paper/king-entropy.pdf`](paper/king-entropy.pdf), the
 source `paper/king-entropy.tex`. Every number in it is mapped to its output file and the script that wrote
 it in [`paper/NUMBERS.md`](paper/NUMBERS.md). The commit SHAs recorded in the outputs refer to the
 history under the tag `king-entropy-v0.1.0` for the outputs of the first version, and to the tag

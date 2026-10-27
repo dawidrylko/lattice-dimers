@@ -144,4 +144,4 @@ D. Ryłko. The dimer entropy of the king's graph. Preprint, Zenodo, October 2026
 https://doi.org/10.5281/zenodo.23686056
 ```
 
-The code and data behind it are archived as [10.5281/zenodo.23686293](https://doi.org/10.5281/zenodo.23686293), the tag `king-entropy-v1.0.0`. The software is described in [CITATION.cff](https://github.com/dawidrylko/lattice-dimers/blob/master/CITATION.cff), which GitHub also offers as BibTeX. Scripts are MIT; the paper, notes, data and outputs are CC BY 4.0.
+The code and data of the tag `king-entropy-v1.0.0` are archived as [10.5281/zenodo.23686293](https://doi.org/10.5281/zenodo.23686293). The software is described in [CITATION.cff](https://github.com/dawidrylko/lattice-dimers/blob/master/CITATION.cff), which GitHub also offers as BibTeX. Scripts are MIT; the paper, notes, data and outputs are CC BY 4.0.
