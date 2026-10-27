@@ -22,12 +22,13 @@ of step 6, which a later version does not change.
 | --- | --- |
 | Resource type | Publication / Preprint |
 | Title | The dimer entropy of the king's graph |
-| Creator | Ryłko, Dawid (personal; leave the affiliation empty) |
+| Creator | Ryłko, Dawid (personal, ORCID 0009-0008-6307-9015; leave the affiliation empty) |
 | Files | `king-entropy.pdf` |
 | DOI | "Get a DOI now!" (reserve; the draft stays unpublished) |
 | License | Creative Commons Attribution 4.0 International (`cc-by-4.0`) |
 | Language | English |
 | Keywords | king's graph; domicule tilings; perfect matchings; dimer model; entropy; transfer matrix; MSC2020 05C70; MSC2020 82B20; MSC2020 82B80; MSC2020 05A16 |
+| Subjects | EuroSciVoc: Combinatorics (`euroscivoc:82355983`); Graph theory (`euroscivoc:1629`); Statistical mechanics (`euroscivoc:805`) |
 | Related | is supplemented by `<DOI_SOFT>` (software); references `<DOI_LNOTE>` (preprint) |
 
 Description:
@@ -52,12 +53,13 @@ Description:
 | --- | --- |
 | Resource type | Publication / Preprint |
 | Title | Log-convexity of strip dimer counts on the king's graph |
-| Creator | Ryłko, Dawid (personal; leave the affiliation empty) |
+| Creator | Ryłko, Dawid (personal, ORCID 0009-0008-6307-9015; leave the affiliation empty) |
 | Files | `king-entropy-log-convexity.pdf` |
 | DOI | "Get a DOI now!" (reserve; the draft stays unpublished) |
 | License | Creative Commons Attribution 4.0 International (`cc-by-4.0`) |
 | Language | English |
 | Keywords | king's graph; domicule tilings; perfect matchings; log-convexity; transfer matrix; Krein signature; MSC2020 05C70; MSC2020 82B20; MSC2020 15B48 |
+| Subjects | EuroSciVoc: Combinatorics (`euroscivoc:82355983`); Graph theory (`euroscivoc:1629`); Statistical mechanics (`euroscivoc:805`) |
 | Related | is supplemented by `<DOI_SOFT>` (software); references `<DOI_PAPER>` (preprint) |
 
 Description:
@@ -198,6 +200,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
          authors:
            - family-names: Ryłko
              given-names: Dawid
+             orcid: https://orcid.org/0009-0008-6307-9015
          title: "The dimer entropy of the king's graph"
          year: 2026
          doi: <DOI_PAPER>
@@ -205,6 +208,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
          authors:
            - family-names: Ryłko
              given-names: Dawid
+             orcid: https://orcid.org/0009-0008-6307-9015
          title: "The dimer entropy of the king's graph: transfer-matrix scripts, data and outputs"
          version: king-entropy-v1.0.0
          doi: <DOI_SOFT>

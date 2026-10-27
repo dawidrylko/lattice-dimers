@@ -3,7 +3,8 @@
   "title": "The dimer entropy of the king's graph: transfer-matrix scripts, data and outputs",
   "creators": [
     {
-      "name": "Ryłko, Dawid"
+      "name": "Ryłko, Dawid",
+      "orcid": "0009-0008-6307-9015"
     }
   ],
   "description": "<p>Code, data and outputs behind the paper <em>The dimer entropy of the king's graph</em> and its companion note <em>Log-convexity of strip dimer counts on the king's graph</em>, in the directory <code>research/king-entropy/</code>. The king's graph is the square lattice with both diagonals; its perfect matchings are the domicule tilings counted in OEIS A239264 and A239273.</p><p>The graph is not planar, and its boards with both sides at least 3 admit no Pfaffian orientation; the snapshot contains the script that checks this theorem. Row transfer matrices on cylinders of circumference up to 25, split by a conserved parity of the dimers crossing a loop, with a Lüscher-type extrapolation, predictive backtests and an error budget, give the non-rigorous estimate s = 0.5655119110413253 ± 6e-16 for the entropy per site. Computer-assisted Collatz-Wielandt certificates with a bound for the matchings across a cut that depends on the runs of crossing cells prove 0.545343749727 ≤ s ≤ 0.582767477484. The snapshot also gives the surface free energy of a free edge, σ = 0.242017935766251 ± 9e-15, the corner free energy and the asymptotics of A239273, and the log-convexity tests of the companion note.</p><p>Every number of the paper is mapped to its output file and producing script in <code>research/king-entropy/paper/NUMBERS.md</code>. Scripts are MIT; the paper, notes, data and outputs are CC BY 4.0 (see the License section of the README). The rest of the repository holds the domino and domicule tiling solvers, released under their own tags.</p>",

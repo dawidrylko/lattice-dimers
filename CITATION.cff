@@ -12,6 +12,7 @@ type: software
 authors:
   - family-names: Ryłko
     given-names: Dawid
+    orcid: https://orcid.org/0009-0008-6307-9015
     website: https://dawidrylko.com
 repository-code: https://github.com/dawidrylko/lattice-dimers
 url: https://dawidrylko.github.io/lattice-dimers/
@@ -102,6 +103,7 @@ references:
     authors:
       - family-names: Ryłko
         given-names: Dawid
+        orcid: https://orcid.org/0009-0008-6307-9015
     title: "The dimer entropy of the king's graph"
     year: 2026
     doi: 10.5281/zenodo.23686056
@@ -109,6 +111,7 @@ references:
     authors:
       - family-names: Ryłko
         given-names: Dawid
+        orcid: https://orcid.org/0009-0008-6307-9015
     title: "The dimer entropy of the king's graph: transfer-matrix scripts, data and outputs"
     version: king-entropy-v1.0.0
     doi: 10.5281/zenodo.23686293
