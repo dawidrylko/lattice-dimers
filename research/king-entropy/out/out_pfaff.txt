@@ -43,3 +43,8 @@ B(4,4): V=16 E=42 = 4KL-3K-3L+2; g >= 0.000 -> ceil 0
 B(8,8): V=64 E=210 = 4KL-3K-3L+2; g >= 4.000 -> ceil 4
 B(24,24): V=576 E=2162 = 4KL-3K-3L+2; g >= 73.333 -> ceil 74
 B(24,100): V=2400 E=9230 = 4KL-3K-3L+2; g >= 339.333 -> ceil 340
+== brick check (Norine-Thomas, Lemma 3.5): 3-connected and bicritical
+Petersen: V=10 E=15 3-connected: True  bicritical: True  brick: True
+cube Q3: V=8 E=12 3-connected: True  bicritical: False  brick: False
+B(3,4): V=12 E=29 3-connected: True  bicritical: True  brick: True
+B(4,4): V=16 E=42 3-connected: True  bicritical: True  brick: True
