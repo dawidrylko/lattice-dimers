@@ -25,7 +25,7 @@ column), which cancels the surface and corner terms. sigma and kappa from log Z 
 
 Output: 1. encoding check against src/tm.py counts, 2. s by chi for king, tri, sq, 3. convergence in
 cycles, 4. float64 floor at chi = 64, 5. finite king boards against the exact counts of
-zex_king_free_*.json, 6. sigma and kappa by chi against surface.json and corner.json. About 2 to 4 minutes,
+zex_king_free_*.json, 6. sigma and kappa by chi against surface.json and corner.json. About 2 to 5 minutes,
 peak RSS under 1 GiB.
 """
 import itertools, json, time
@@ -229,4 +229,4 @@ if __name__ == '__main__':
         sv, kv = [sig[L] for L in Ls], [kap[L] for L in Ls]
         print(f'  chi={chi:3d}: sigma = {mp.nstr(sv[-1], 16)} (spread over L {float(max(sv) - min(sv)):.0e}),'
               f' sigma - paper = {float(sv[-1] - SIG):+.1e};  kappa = {mp.nstr(kv[-1], 12)} (spread {float(max(kv) - min(kv)):.0e}),'
-              f' kappa - paper = {float(kv[-1] - KAP):+.1e}')
+              f' kappa - paper = {float(kv[-1] - KAP):+.1e};  discarded {err:.1e}')

@@ -452,8 +452,7 @@ extended-precision inputs agree with the independent code below to $7.8\cdot10^{
 $19$ digits, which is where the $64$-bit mantissa of the x87 \texttt{long double} ends. Restricting the full row transfer to zero momentum and to states even under reflection would
 divide the state space by about $2w$, but the cell steps used here break the rotation symmetry of the
 intermediate states, so this needs a different implementation. Beyond a few more digits the natural
-tools are the corner transfer matrices and their renormalization-group variant mentioned in the
-introduction, with the parity sector built into the encoding.
+tools are the corner transfer matrices of the introduction, in extended precision.
 
 \emph{Cross-checks of the float64 eigenvalues.} Exact integer ratios
 $Z_{\mathrm{cyl}}(K+2, w)/Z_{\mathrm{cyl}}(K, w)$ for $w = 9, 11, 12, 13$ agree with the power
@@ -1084,7 +1083,7 @@ The outputs were produced on two x86-64 machines with four cores and about $16$\
 each: the first version on one, the runs added in this version (extended precision, run weights,
 the corner counts, the Pfaffian certificate and the two-mode fits) on the other. The cylinder levels
 of \S\ref{sec:z2} and \S\ref{sec:conj} (\file{log-convexity/levels.py}, $2.4$\,GiB, $13$ min) and the
-corner transfer matrix check of \S\ref{sec:value} (\file{src/ctmrg.py}, $0.9$\,GiB, $2.4$ min), both
+corner transfer matrix check of \S\ref{sec:value} (\file{src/ctmrg.py}, $0.6$\,GiB, $5$ min), both
 float64 only, ran later on an arm64 machine. The extended-precision
 runs use the 64-bit mantissa of the x87 \texttt{long double}, which \file{src/lean.py} asserts. The
 algorithms are those of \S\ref{sec:model}; the implementation applies each cell step to reshaped

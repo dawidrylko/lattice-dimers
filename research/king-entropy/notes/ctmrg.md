@@ -5,7 +5,7 @@ extrapolation with the row transfer matrices of the paper, reproduce
 `s = 0.5655119110413253 +- 6e-16` (`data/errbar.json`), `sigma = 0.242017935766251 +- 9e-15`
 (`data/surface.json`) and `kappa = 0.36319625605 +- 3e-10` (`data/corner.json`)?
 Everything below comes from `python3 src/ctmrg.py > out/out_ctmrg.txt` (float64 on an arm64 Mac,
-144 s, peak RSS 936 MiB; `logs/time_ctmrg.txt`).
+277 s on a loaded machine, peak RSS 647 MiB; `logs/time_ctmrg.txt`).
 
 **Verdict: s is reproduced at the float64 floor, with no extrapolation.** sigma and kappa agree
 with the paper within the CTMRG's chi dependence (`|bias| <= 2e-8` for sigma and `<= 3e-6` for
@@ -71,7 +71,7 @@ The triangular reference has 15 digits, so its `chi = 32` row only shows agreeme
 the `chi = 24` row, `-4.1e-15`, is a real truncation error.
 
 Convergence in cycles (section 3) is geometric for the gapped lattices: at `chi = 32` the king error
-falls by a factor of about 60 to 80 per cycle from the second cycle on (`-2e-4, -4e-5, -6e-7, -8e-9, -1e-10, -1.3e-12,
+falls by a factor of about 60 to 80 per cycle from the third cycle on (`-2e-4, -4e-5, -6e-7, -8e-9, -1e-10, -1.3e-12,
 -1.8e-14`, then the floor from cycle 8, a 34-site board). The triangular error reaches the `1e-16`
 level by cycle 10, but not monotonically (its sign changes). The critical square lattice converges
 slowly in both chi and the number of cycles (`-2.3e-4` after 10 cycles, `-8.9e-6` after 50, `-2.3e-6`
@@ -98,9 +98,11 @@ but they move with chi:
 | 96 | -9.0e-9 | -1.6e-6 |
 
 From `chi = 64` on the differences are at most `2e-8` for sigma and `3e-6` for kappa, with one
-sign change between `chi = 64` and `80`; from 80 to 96 they hardly shrink (kappa `-2.0e-6`,
-`-1.6e-6`), although the discarded weight falls by a factor of about 25. So the run does not converge
-on the paper's values: it neither confirms nor contradicts them below those levels, far above the
+sign change between `chi = 64` and `80`. They do not shrink in step with the truncation: from
+`chi = 64` to `96` the discarded weight of the last cycle falls from `2.5e-9` to `9.9e-11` (section 6),
+while kappa moves from `+2.9e-6` to `-2.0e-6` and `-1.6e-6`. So the run does not converge on the
+paper's values, and "agree" above means no contradiction within this chi dependence, not
+convergence: it neither confirms nor contradicts them below those levels, far above the
 paper's error bars (`9e-15`, `3e-10`). The finite boards show the same floor (section 5): against
 the exact counts of `data/zex/` (21 boards up to `24 x 24`) the CTMRG `log Z` is off by up to
 `3.8e-5` at `chi = 32` and stays at `1.5e-6` from `chi = 64` to `96`.
