@@ -56,7 +56,7 @@ const rejectionTestCases = [
   { args: ['src/solvers/periodicTilingSolver-Modular.js', '-r', '4', '-c', '1'], message: 'Usage' },
   { args: ['src/solvers/periodicTilingSolver-Modular.js', '-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
   { args: ['src/solvers/domiculeDiagonalSolver-BigInt.js', '-r', '13', '-c', '13'], message: 'at most 12' },
-  { args: ['src/solvers/domiculeDiagonalSolver-Modular.js', '-r', '19', '-c', '19'], message: 'at most 18' },
+  { args: ['src/solvers/domiculeDiagonalSolver-Modular.js', '-r', '21', '-c', '21'], message: 'at most 20' },
   { args: ['src/solvers/domiculeDiagonalSolver-Modular.js', '-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
   {
     args: ['--require', './tests/fixtures/exitingWorker.js', 'src/solvers/periodicTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],

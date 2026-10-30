@@ -3,23 +3,31 @@ const { isMainThread, parentPort, workerData } = require('worker_threads');
 const { parseArgs } = require('../helpers');
 const { listPrimes, calculateLog2Bound, combineCheckedResidues, runWorkers } = require('../helpers/modular');
 
-const MAX_SHORTER_SIDE = 18;
+const MAX_SHORTER_SIDE = 20;
+const UNREACHED = 2;
 
 /**
  * Counts the domicule tilings by the number of diagonal pieces modulo a prime, with the
- * transfer of domiculeDiagonalSolver-BigInt.js. The polynomial of state s occupies the
- * entries s * (degree + 1) to s * (degree + 1) + degree of one Uint32Array. Each cell places
+ * transfer of domiculeDiagonalSolver-BigInt.js. A domino covers a black and a white cell of
+ * the chessboard and a diagonal piece two cells of one colour, so the covered cells of a state
+ * fix the difference between the diagonal pieces on black and on white cells, and with it the
+ * parity of their number. Every state therefore keeps only the coefficients of x^k with k of
+ * its parity: entry j of its block is the coefficient of x^(2j + parity). The parity of a state
+ * is set when it is first reached, and reaching it with the other one throws. Each cell places
  * at most one piece, so before cell p only the coefficients up to x^p are visited.
  * @param {Object} board The board and the prime.
- * @returns {number[]} The coefficients modulo the prime.
+ * @returns {number[]} The coefficients modulo the prime, from x^0 to x^(rows * cols / 2).
  */
 function countModulo({ rows, cols, prime }) {
   const degree = Math.floor((rows * cols) / 2);
-  const width = degree + 1;
+  const width = Math.floor(degree / 2) + 1;
   const stateCount = 2 ** (cols + 2);
   let current = new Uint32Array(stateCount * width);
   let next = new Uint32Array(stateCount * width);
+  let parity = new Uint8Array(stateCount).fill(UNREACHED);
+  let nextParity = new Uint8Array(stateCount);
   current[0] = 1 % prime;
+  parity[0] = 0;
 
   for (let cell = 0; cell < rows * cols; cell++) {
     const rowIndex = Math.floor(cell / cols);
@@ -32,15 +40,25 @@ function countModulo({ rows, cols, prime }) {
       ...(hasBelow ? [[cols, 0]] : []),
       ...(hasBelow && hasRight ? [[cols + 1, 1]] : []),
     ].map(([offset, diagonal]) => [2 ** offset, diagonal]);
-    const placed = Math.min(degree, cell);
+    const placed = Math.min(width - 1, Math.floor(cell / 2));
 
     next.fill(0);
+    nextParity.fill(UNREACHED);
 
     const add = (source, target, diagonal) => {
-      const from = source * width;
-      const to = target * width + diagonal;
+      const own = parity[source];
+      const shift = own & diagonal;
 
-      for (let k = 0; k <= placed && k + diagonal <= degree; k++) {
+      if (nextParity[target] === UNREACHED) {
+        nextParity[target] = own ^ diagonal;
+      } else if (nextParity[target] !== (own ^ diagonal)) {
+        throw new Error('A state was reached with both parities of the number of diagonal pieces.');
+      }
+
+      const from = source * width;
+      const to = target * width + shift;
+
+      for (let k = 0; k <= placed && k + shift < width; k++) {
         const count = current[from + k];
 
         if (count !== 0) {
@@ -51,13 +69,7 @@ function countModulo({ rows, cols, prime }) {
     };
 
     for (let state = 0; state < stateCount; state++) {
-      let empty = true;
-
-      for (let k = 0; k <= placed && empty; k++) {
-        empty = current[state * width + k] === 0;
-      }
-
-      if (empty) {
+      if (parity[state] === UNREACHED) {
         continue;
       }
 
@@ -76,9 +88,18 @@ function countModulo({ rows, cols, prime }) {
     }
 
     [current, next] = [next, current];
+    [parity, nextParity] = [nextParity, parity];
   }
 
-  return Array.from(current.subarray(0, width));
+  const coefficients = new Array(degree + 1).fill(0);
+
+  if (parity[0] !== UNREACHED) {
+    for (let j = 0; 2 * j + parity[0] <= degree; j++) {
+      coefficients[2 * j + parity[0]] = current[j];
+    }
+  }
+
+  return coefficients;
 }
 
 /**
@@ -125,7 +146,7 @@ async function __main__() {
 
   if (Math.min(options.rowCount, options.colCount) > MAX_SHORTER_SIDE) {
     console.error(
-      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}, because every worker thread keeps the polynomial of every state in memory (about 1.4 GB at 18 x 18; -j sets the number of threads).`,
+      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}, because every worker thread keeps half the polynomial of every state in memory (about 3.4 GB at 20 x 20; -j sets the number of threads).`,
     );
     process.exit(1);
   }
