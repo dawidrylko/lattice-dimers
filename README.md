@@ -18,7 +18,7 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | bounds on $s$ | 0.545343749727 ≤ s ≤ 0.582767477484 | proved, computer-assisted |
 | surface free energy $\sigma$ of a free edge | 0.242017935766251 ± 9·10⁻¹⁵ | estimate |
 | corner free energy $\kappa$ | 0.36319625605 ± 3·10⁻¹⁰ | estimate |
-| decay length $\xi$ of the parity splitting | 1.235 ± 0.004 | estimate |
+| decay length $\xi$ of the parity splitting | 1.236091 ± 10⁻⁶ | estimate |
 
 The free energies give the asymptotics of [A239273](https://oeis.org/A239273), $a(n) \sim e^{\kappa}\, e^{4sn^2} e^{-8\sigma n}$, with relative error $6 \cdot 10^{-8}$ at $n = 10$.
 

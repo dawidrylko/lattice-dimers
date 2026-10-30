@@ -42,7 +42,7 @@ Description:
 > estimate. Computer-assisted Collatz-Wielandt certificates, combined with a bound for the matchings
 > across a cut that depends on the runs of crossing cells, prove 0.545343749727 ≤ s ≤ 0.582767477484.
 > We also estimate the surface free energy of a free edge, σ = 0.242017935766251 ± 9·10⁻¹⁵, the corner
-> free energy, which gives the asymptotics of A239273, and the decay length ξ = 1.235 ± 0.004 of the
+> free energy, which gives the asymptotics of A239273, and the decay length ξ = 1.236091 ± 10⁻⁶ of the
 > splitting between the two parity sectors. Two sign properties of the strip growth rates, convexity
 > in the even width and a one-sided bound on the odd increments, hold numerically and would give
 > 0.565511911035 ≤ s ≤ 0.565511911049.
