@@ -142,6 +142,13 @@
       "torus": true,
       "twisted": true,
       "expectedResult": "98431102825533810179525030992672171665425028"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "1493818604384654177402428232647033968399591852459255168583663616"
     }
   ]
 }

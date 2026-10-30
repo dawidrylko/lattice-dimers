@@ -64,10 +64,11 @@ Two more families of counts. The OEIS has no entry for the king's graph or trian
 | 5 | 10×10 | 7259829482503772231361024 |
 | 6 | 12×12 | 464778919849879305868191391185324176 |
 | 7 | 14×14 | 2743949253453878323721620757393919402021091285528 |
+| 8 | 16×16 | 1493818604384654177402428232647033968399591852459255168583663616 |
 
 Up to $10 \times 10$ both solvers agree on these terms; the larger ones come from the modular solver alone, checked against one more prime.
 
-A torus has no boundary, so the count has no surface or corner term. Divided by $e^{sL^2}$ it tends to 2 on the king's graph and on the triangular lattice, but not on the square lattice, which is critical, and $\log(Z/2)/L^2$ agrees with the entropy per site of the king's graph to $5 \cdot 10^{-9}$ at $L = 14$, with no extrapolation model ([notebook](notes/04-torus.md)).
+A torus has no boundary, so the count has no surface or corner term. Divided by $e^{sL^2}$ it tends to 2 on the king's graph and on the triangular lattice, but not on the square lattice, which is critical, and $\log(Z/2)/L^2$ agrees with the entropy per site of the king's graph to $5 \cdot 10^{-10}$ at $L = 16$, with no extrapolation model ([notebook](notes/04-torus.md)).
 
 **Diagonal pieces.** [`domiculeDiagonalSolver-BigInt.js`](src/solvers/domiculeDiagonalSolver-BigInt.js) and [`domiculeDiagonalSolver-Modular.js`](src/solvers/domiculeDiagonalSolver-Modular.js) count the domicule tilings by the number of pieces that join two cells sharing only a corner. On the $2n \times 2n$ board that number is even, and the triangle of the tilings with $0, 2, \dots, 2n^2$ diagonal pieces begins 1; 2, 1; 36, 126, 105, 12, 1; 6728, 84132, 413932, 934213, 1000638, 491689, 99554, 6638, 36, 1. Its first column is A004003, its row sums are A239273, and it is counted up to $18 \times 18$ ([notebook](notes/05-diagonals.md)).
 
