@@ -5,7 +5,7 @@ extrapolation with the row transfer matrices of the paper, reproduce
 `s = 0.5655119110413253 +- 6e-16` (`data/errbar.json`), `sigma = 0.242017935766251 +- 9e-15`
 (`data/surface.json`) and `kappa = 0.36319625605 +- 3e-10` (`data/corner.json`)?
 Everything below comes from `python3 src/ctmrg.py > out/out_ctmrg.txt` (float64 on an arm64 Mac,
-166 s, peak RSS about 0.9 GiB; `logs/time_ctmrg.txt`, whose `maxrss` reads macOS bytes as KiB).
+199 s, peak RSS 709 MiB; `logs/time_ctmrg.txt`).
 
 **Verdict: s is reproduced at the float64 floor, with no extrapolation. sigma and kappa are
 consistent with the paper, but this CTMRG resolves them only to about `2e-8` and `3e-6`, far above

@@ -25,8 +25,8 @@ column), which cancels the surface and corner terms. sigma and kappa from log Z 
 
 Output: 1. encoding check against src/tm.py counts, 2. s by chi for king, tri, sq, 3. convergence in
 cycles, 4. float64 floor at chi = 64, 5. finite king boards against the exact counts of
-zex_king_free_*.json, 6. sigma and kappa by chi against surface.json and corner.json. About 3 minutes,
-peak RSS under 1 GiB (chi = 96).
+zex_king_free_*.json, 6. sigma and kappa by chi against surface.json and corner.json. About 3 to 4 minutes,
+peak RSS about 0.7 GiB (chi = 96).
 """
 import itertools, json, sys, time
 import numpy as np

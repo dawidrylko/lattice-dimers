@@ -67,10 +67,10 @@ python3 -m pip install -r src/requirements.txt
 | `src/corner.py` | corner free energy kappa from the exact square counts, asymptotics of A239273, s from exact counts alone |
 | `src/pfaff_rigor.py` | GF(2) certificate that king boards with both sides >= 3 have no Pfaffian orientation, with planar controls |
 | `src/surface.py` | surface free energy sigma from free strips |
-| `src/ctmrg.py` | independent float64 CTMRG check of s, sigma and kappa with triangular and square controls (`python3 src/timed.py python3 src/ctmrg.py > out/out_ctmrg.txt 2> logs/time_ctmrg.txt`, about 3 min; see `notes/ctmrg.md`) |
 | `src/lcert.py` | certified log-convexity tests of (L) at m = 25, 26 in extended precision with a rigorous error bound |
 | `log-convexity/` | why (L) is not structural: J-symmetry and Krein signature (`log-convexity/symmetry.py`), partial sign-reversing involution (`log-convexity/involution.py`), (L_inf) tests at other weights (`log-convexity/linf.py`), the two modes and their crossing along equal diagonal weights (`log-convexity/modes.py`), with their outputs |
 | `log-convexity/levels.py` | the two finite-size modes and the parity splitting as levels of the cylinder transfer, plain and with a sign on the seam edges: rates, amplitudes, the gap m_v and xi = 1/m_v, the crossing x*; controls against `src/tm.py` counts, brute force and dense eigendecompositions |
+| `src/ctmrg.py` | independent float64 CTMRG check of s, sigma and kappa with triangular and square controls (`python3 src/timed.py python3 src/ctmrg.py > out/out_ctmrg.txt 2> logs/time_ctmrg.txt`, about 3 to 4 min; see `notes/ctmrg.md`) |
 | `src/ltest.py` | exact (L) tests and Hankel (moment) tests on all `data/zex/zex_*.json` |
 | `src/lparity.py`, `src/lspec.py`, `src/lweight.py` | path-parity form of (L), spectral obstructions, (L) under diagonal weights |
 | `src/repro.py` | re-runs `src/estimate.py`, `src/cw.py`, `src/bounds.py 16` and `src/cylw.py king cyl 20 0` from a clean export of HEAD and compares outputs |

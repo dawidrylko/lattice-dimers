@@ -1,2 +1,2 @@
 # cmd: python3 src/ctmrg.py
-# exit=0 wall=165.8s user=168.9s maxrss=947168MiB
+# exit=0 wall=199.4s user=201.8s maxrss=709MiB
