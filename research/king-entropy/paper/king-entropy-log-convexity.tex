@@ -266,12 +266,15 @@ $\rho_- = -0.072$ agree with the two rates read off the unit-weight data above. 
 drift downwards with the window at every $x$, by $0.03$ to $0.08$ from the first to the last window,
 so the fits alone decide neither the sign of $d_q$ at $x = 3/2$ for large $q$ nor where the rates cross.
 
-\emph{The two modes are levels of the cylinder transfer.} Turn the free strip of width $k$ and length
-$L$ by $90^\circ$: it becomes a cylinder of circumference $L$ with $k$ rows and free ends, so
+\emph{The two modes are levels of the cylinder transfer.} Close the free strip of width $k$
+periodically along its length $L$ and turn it by $90^\circ$: it becomes a cylinder of circumference
+$L$ with $k$ rows whose first and last rows are free, so
 $e_0^{\mathsf T} T_L^k e_0 = \sum_j c_j \theta_j^k$ contains only the levels $\theta_j$ of the
 cylinder transfer $T_L$ that $e_0$ sees, and $e_0^{\mathsf T} \tilde T_L^k e_0$, where $\tilde T_L$
 gives weight $-1$ to the edges that cross one seam along the axis, is the difference of the two
-parity sectors of the strip \cite[\S6]{rylko2026entropy}. The bulk mode is the leading level below
+parity sectors of the strip \cite[\S6]{rylko2026entropy}. Read per unit length while $L$ times the
+sector difference is small, the first gives the mean of the two sectors and the second their
+difference. The bulk mode is the leading level below
 $\lambda_1$ that $e_0$ sees, $\theta = -r_+\lambda_1$, with weight $C = c_\theta/(c_1 L)$ per unit
 length; the alternating mode is the leading pair $\pm i r_-\lambda_1$ of $\tilde T_L$ that $e_0$
 sees, with weight $\tilde C$ per unit length each. Then $a_{2q} - 2qs + 2\sigma \approx C r_+^{2q} +
@@ -284,9 +287,10 @@ with nothing fitted (\file{log-convexity/levels.py}, Arnoldi from $e_0$ and ARPA
 Table~\ref{tab:levels} lists these numbers at $L = 20$; finite $L$ oscillate with $L \bmod 4$, and
 from $L = 18$ to $20$ the rates change by at most $4\cdot10^{-4}$ and $C$ by at most $0.8\%$ (at
 $x = 3$). At $x = 1$ the same four numbers reproduce the unit-weight data of
-\cite[\S8]{rylko2026entropy}: the growth rates of the free strips to $3\cdot10^{-4}$ in
-$a_k - sk + 2\sigma$ for $k \le 24$, the difference of their two sectors to $6\cdot10^{-4}$, and
-$d_q$ at $2q = 20, 22, 24$ to $7\cdot10^{-5}$. Along $x$ the cylinder rates agree with the last
+\cite[\S8]{rylko2026entropy}: the growth rates of the free strips to $2\cdot10^{-4}$ in
+$a_k - sk + 2\sigma$ for $k = 16, \dots, 20$ and within the error of $-2\sigma$ for
+$k = 21, \dots, 26$, the difference of their two sectors to $6\cdot10^{-4}$ ($k = 12, \dots, 18$),
+and $d_q$ at $2q = 20, 22, 24$ to $8\cdot10^{-5}$. Along $x$ the cylinder rates agree with the last
 windows of Table~\ref{tab:modes} to $0.5\%$ ($\rho_-$ at $x = 1$: $0.6\%$), and the drift of the
 fits is their bias by faster levels. All of this is numerical: we do not prove that the levels
 and weights converge as $L \to \infty$.
@@ -311,30 +315,30 @@ $3$     & $0.30416$ & $-0.30817$ & $1.0132$ & $0.39813$ & $0.15833$ & $0.5960$ &
 \end{tabular}
 \end{table}
 
-\emph{At $x = 3/2$ the strips are convex from $2q = 22$ on.} The second differences are negative at
+\emph{At $x = 3/2$ the levels predict convex strips from $2q = 22$ on.} The second differences are negative at
 $2q = 8, 12, 16, 20$ (the last value is $-3.6\cdot10^{-9}$ at $2q = 20$) and positive in between. With
 $|\rho_-|/\rho_+ = 0.9419$ and $C = 0.344 > 0$ the bulk mode wins for large $q$. The model with the
 amplitudes of Table~\ref{tab:levels} matches $d_q$ at $2q = 18, 20$ to $6\cdot10^{-4}$ and
-$6\cdot10^{-5}$ of the larger term, and predicts $d_q > 0$ for every $2q \ge 22$. The closest case is
+$7\cdot10^{-5}$ of the larger term ($L = 20$), and predicts $d_q > 0$ for every $2q \ge 22$. The closest case is
 $2q = 24$, where the alternating term is $-0.9960$ times the bulk term, so $d_{12} = 3.5\cdot10^{-12}$
 with a margin of $0.4\%$ of either term; the margin is the same at $L = 20$ and $22$. The model
-neglects the faster levels, which at $2q = 20$ already contribute less than $10^{-4}$ of the larger
-term and decay faster than both modes. This is a
+neglects the faster levels, which decay faster than both modes; its whole error at $2q = 20$ is
+$6.2\cdot10^{-5}$ of the larger term at $L = 20$ and $1.0\cdot10^{-4}$ at $L = 22$. This is a
 prediction from the levels, not a computation of $a_{26}$; what is exact at $x = 3/2$ are the
 finite-strip failures of Section~\ref{sec:equal}.
 
 \emph{At $x = 2$ and $x = 3$ the alternating mode wins.} The ratios $|\rho_-|/\rho_+$ are $1.0009$ and
-$1.0132$, above $1$ at $L = 16, 18, 20$ at both weights, and $Q \ne 0$, so the second differences
+$1.0132$, and $r_-/r_+ > 1$ at $L = 16, 18, 20$ at both weights (at $L = 14$ and $x = 2$ it is
+$0.99896$), and $Q \ne 0$, so the second differences
 change sign infinitely often and (L$_\infty$) fails for large $q$ (numerically).
 
 \emph{The crossing.} Solving $r_-(x) = r_+(x)$ at each circumference gives $x^*_L = 2.0542$, $1.9880$,
 $1.9830$ at $L = 14, 18, 22$ and $1.9819$, $1.9824$ at $L = 16, 20$: the two classes $L \bmod 4$
-approach from opposite sides. If they keep bracketing the limit, $x^* \in (1.9824, 1.9830)$, inside the
+approach from opposite sides. If they keep bracketing the limit, $x^* \in (1.9823, 1.9830)$, inside the
 interval $(7/4, 2)$ of the fits and above their estimate $1.96$. The gaps do not close there
-(Table~\ref{tab:levels}): $\lambda_1$ stays isolated, and both the in-sector gap and $m_v$ decrease
-smoothly in $x$ through $x^*$. So $x^*$ is a crossing of two subleading levels in different flux
-sectors, a crossover in the subleading spectrum, and not a phase transition, as far as the
-computed circumferences show.
+(Table~\ref{tab:levels}, $L = 16$): the in-sector gap and $m_v$ stay open and decrease smoothly in $x$
+through $x^*$. So $x^*$ is a crossing of two subleading levels in different flux sectors, a crossover
+in the subleading spectrum, and not a phase transition, as far as the circumference $L = 16$ shows.
 
 The large-$x$ limit is suggestive. Diagonal steps preserve the colour of the checkerboard, so at
 $x = \infty$ the model decouples into two square-lattice dimer models, one on each colour class
@@ -425,7 +429,8 @@ $r_-^2 = 0.0723 < \rho^2$; a proof needs the limit of these weights as the circu
 \end{problem}
 
 \begin{problem}
-The levels of \S\ref{sec:modes} locate $x^*$ in $(1.9824, 1.9830)$, predict that $q \mapsto a_{2q}$
+The levels of \S\ref{sec:modes} locate $x^*$ in $(1.9823, 1.9830)$, if the two classes $L \bmod 4$
+keep bracketing it, predict that $q \mapsto a_{2q}$
 is convex from $2q = 22$ on at $x = \frac32$, and that the second differences change sign
 infinitely often at $x = 2$ and $x = 3$. Make these statements rigorous, for instance by bounding the
 levels and their weights on cylinders uniformly in the circumference; at $x = \frac32$ the growth

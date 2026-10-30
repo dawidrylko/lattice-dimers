@@ -122,12 +122,14 @@ python3 src/pfaff_rigor.py > out/out_pfaff.txt
 python3 src/surface.py > out/out_surface.txt
 python3 src/corner.py > out/out_corner.txt       # needs data/errbar.json, data/surface.json and the zex counts to 24 x 24
 python3 log-convexity/modes.py > log-convexity/out_modes.txt
+python3 src/timed.py python3 log-convexity/levels.py > log-convexity/out_levels.txt 2> log-convexity/time_levels.txt
 python3 src/ltest.py > out/out_ltest.txt
 python3 src/lparity.py > out/out_lparity.txt
 python3 src/lspec.py > out/out_lspec.txt
 python3 src/lweight.py > out/out_lweight.txt; python3 src/lweight.py big > out/out_lweight_big.txt
 python3 src/repro.py > out/out_repro.txt
 python3 src/test_paths.py
+python3 src/test_timed.py
 ```
 
 Paper (needs a TeX distribution with `latexmk`, e.g. TeX Live with

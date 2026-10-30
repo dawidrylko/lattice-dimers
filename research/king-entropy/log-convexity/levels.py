@@ -7,10 +7,11 @@ orthogonal edges weight 1, both diagonals weight x. The twisted transfer T~_w(x)
 three edge types that cross the seam between column w-1 and column 0: (r, w-1)-(r, 0),
 (r, 0)-(r+1, w-1) and (r, w-1)-(r+1, 0).
 
-Rotating the board turns the free strip of width k and length L into L columns of a cylinder of
-circumference L with k rows and free ends, so e0^T T_L^k e0 = sum_j c_j theta_j^k sees only the
+Closing the free strip of width k periodically along its length L and turning it by 90 degrees gives
+the cylinder of circumference L with k rows whose first and last rows are free, so e0^T T_L^k e0 = sum_j c_j theta_j^k sees only the
 e0-visible levels theta_j of T_L, and e0^T T~_L^k e0 = sum_j c~_j nu_j^k is the difference of the two
-parity sectors of the strip. Read per unit length (L -> infinity):
+parity sectors of the strip. Read per unit length (L -> infinity, while L times the sector difference
+is small, the first is the mean of the two sectors):
   r_+ = |theta_neg / theta_1|  leading subleading e0-visible level of T (negative at x = 1): the bulk
                                mode C (-r_+)^k of a_k - s k, with C = c_neg / (c_1 L);
   r_- = |nu_1 / theta_1|       leading e0-visible level of T~ (purely imaginary at x = 1): the mode of
@@ -27,7 +28,7 @@ e0-visible levels come from Arnoldi started at e0 (the Krylov space of e0 lies i
 subspace). Rounding leaks larger e0-invisible levels into it (the twisted +-0.445 theta_1 at x = 1), so Ritz
 values whose e0-weight is below 1e-6 of the largest are dropped. Finite-w values oscillate with w mod 4.
 """
-import itertools, json, os, re, sys, time
+import json, os, re, sys, time
 from fractions import Fraction
 import numpy as np
 from scipy.optimize import brentq

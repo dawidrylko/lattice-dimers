@@ -415,7 +415,8 @@ the largest predicted remaining error, each model's backtest change scaled by th
 $|d_W/d_{W-2}|$ of the last two corrections ($6.0\cdot10^{-17}$);
 \item a hidden slow mode, $3.4\cdot10^{-17}$: we add a term $B x^{(w-25)/2}$ with
 $x = e^{-2/1.2351}$, the slowest decay seen anywhere in the data (the parity splitting of
-\S\ref{sec:z2}), and fit it together with L1 ($C$, $c_1$ and $B$) by relative least squares on
+\S\ref{sec:z2}, with the fitted $\xi_\infty = 1.2351$; the spectral $\xi = 1.236091$ would change
+$x$ by $0.13\%$), and fit it together with L1 ($C$, $c_1$ and $B$) by relative least squares on
 $w = w_0, \dots, 25$ for $w_0 = 11, 13, 15, 17$. The fitted $B$ depends on the window, between
 $0.9\cdot10^{-3}\,d_{25}$ ($w_0 = 11$) and $1.95\cdot10^{-3}\,d_{25}$ ($w_0 = 13$). We allow every $B$ within three
 standard errors of a fitted value, over all windows and widened to include $B = 0$:
@@ -825,8 +826,10 @@ make $b_w$ drift by about $\delta w$. So $\Delta_w \approx A\, e^{-w/\xi} w^{-1/
 to Table~\ref{tab:z2}, a pure exponential ($\xi = 1.1931$, rms $1.5\cdot10^{-2}$), a power prefactor
 ($\xi = 1.2323$, $b = -0.433$, rms $9.3\cdot10^{-4}$), the extrapolation of $1/\xi_w$ linearly in
 $1/w$ ($\xi_\infty = 1.2351$, $b = -0.467$) and $b$ fixed at $-1/2$ ($\xi = 1.2387$, rms
-$2.6\cdot10^{-3}$), span $[1.2323, 1.2387]$, which contains the spectral value; their spread comes
-from the prefactor.
+$2.6\cdot10^{-3}$): the three with a prefactor span $[1.2323, 1.2387]$, which contains the spectral
+value, and the pure exponential misses it because it has no prefactor. The error bar of $\xi$ covers
+only the convergence in $L$; the direct check through $b_w$ confirms the rate only to a
+few units of $10^{-4}$.
 
 \begin{table}[ht]
 \caption{Splitting of the parity sectors on even cylinders.}\label{tab:z2}
@@ -976,25 +979,27 @@ $a_{2q}$ the two modes are $0.1147^q = \rho^{2q}$ and $(-0.072)^q$, and at $2q =
 $0.007$ of the first, shrinking by a factor $0.63$ per step.
 
 Both modes are levels of the cylinder transfer, read as in \S\ref{sec:z2} with the board turned by
-$90^\circ$: the free strip of width $k$ and length $L$ is a cylinder of circumference $L$ with $k$ rows
-and free ends, so $e_0^{\top} T_L^k e_0 = \sum_j c_j \theta_j^k$ contains only the levels $\theta_j$
-of $T_L$ that $e_0$ sees, and $e_0^{\top} \tilde T_L^k e_0$ with the flux of \S\ref{sec:z2} is the
-difference of the two sectors of the strip. At $L = 22$ (\file{log-convexity/levels.py}) the leading
+$90^\circ$: the free strip of width $k$, closed periodically along its length $L$, is the cylinder of
+circumference $L$ with $k$ rows whose first and last rows are free, so
+$e_0^{\top} T_L^k e_0 = \sum_j c_j \theta_j^k$ contains only the levels $\theta_j$ of $T_L$ that
+$e_0$ sees, and $e_0^{\top} \tilde T_L^k e_0$ with the flux of \S\ref{sec:z2} is the difference of
+the two sectors of the strip. Read per unit length while $L$ times the sector difference is small,
+the first gives the mean of the two sectors and the second their difference. At $L = 22$ (\file{log-convexity/levels.py}) the leading
 level that $e_0$ sees below $\lambda_1$ is $\theta = -0.3386706\,\lambda_1$, the in-sector gap, with
 weight $C = c_\theta/(c_1 L) = 0.28823$ per unit length, and the leading level of $\tilde T_L$ that
 $e_0$ sees is the pair $\pm 0.2687942\,i\,\lambda_1$, with weight $\tilde C = 0.11466$ per unit length
 for each of the two. Then $-1/0.2687942^2 = -13.841$ is the factor per two columns, and
 \[
-  g(k) + 2\sigma \approx C(-\rho)^k + 2\tilde C \cos(\pi k/2)\, \rho_-^{k/2}, \qquad
-  \rho = 0.3386706, \quad \rho_- = 0.2687942^2,
+  g(k) + 2\sigma \approx C(-\rho)^k + 2\tilde C \cos(\pi k/2)\, r_-^k, \qquad
+  \rho = 0.3386706, \quad r_- = 0.2687942,
 \]
-with no fitted parameter, agrees with $g(k)$ for $k = 16, \dots, 24$ (Table~\ref{tab:surface} and
-\file{data/surface.json}) to $3\cdot10^{-4}$ (beyond that the error of $-2\sigma$ dominates) and with the second
-differences at $2q = 20, 22, 24$ to $7\cdot10^{-5}$; its second term alone gives the sector
+with no fitted parameter, agrees with $g(k)$ (Table~\ref{tab:surface} and \file{data/surface.json})
+to $2\cdot10^{-4}$ for $k = 16, \dots, 20$ and within the error $1.8\cdot10^{-14}$ of $-2\sigma$ for
+$k = 21, \dots, 26$, and with the second differences at $2q = 20, 22, 24$ to $8\cdot10^{-5}$; its second term alone gives the sector
 difference of the free strips at $k = 12, \dots, 18$ to $6\cdot10^{-4}$. The amplitude read off the odd
 strips, $(g(19) + 2\sigma)/(-\rho)^{19} = 0.28822 \pm 1.6\cdot10^{-5}$, is the weight $C$ of the
 cylinder level. For large $k$, (L$_\infty$) and (O) thus come down to the sign of the weight of one
-isolated level, $C > 0$, and to $\rho_- < \rho^2$; both hold at every circumference we computed
+isolated level, $C > 0$, and to $r_- < \rho$; both hold at every circumference we computed
 ($L \le 22$). These identifications are numerical: we have no bound on the remainder and no proof
 that the weights per unit length converge.
 
@@ -1002,9 +1007,11 @@ The convexity is a quantitative property of unit weights, not a structural one. 
 $Z(2q, m)^2 \le Z(2q-2, m)Z(2q+2, m)$ holds in all $1453$ cases we tested on the king's graph, but it
 fails on the triangular lattice, for every unequal pair of diagonal weights we tried, and for equal
 diagonal weights $x = \tfrac32, 2, 3$ on wide strips. Along equal weights $x$ on both diagonals the
-two levels above cross at $x^* \in (1.9824, 1.9830)$, a crossing of subleading levels with both gaps
-open, not a phase transition (numerically); below $x^*$, at $x = \tfrac32$ included, the strips are
-convex for large widths, above it the second differences change sign infinitely often. The companion note \cite{rylko2026lnote} collects these tests
+two levels above cross at $x^* \in (1.9823, 1.9830)$, if the circumferences $L \equiv 0$ and
+$2 \pmod 4$, which approach it from opposite sides, keep bracketing it. Both gaps stay open there, so
+this is a crossing of subleading levels, not a phase transition (numerically). At $x = \tfrac32$ the
+levels predict convex strips from width $22$ on; at $x = 2$ and $3$, above $x^*$, the second
+differences change sign infinitely often. The companion note \cite{rylko2026lnote} collects these tests
 and the counterexamples, explains the onsets for nearly equal diagonal weights at $m = 4$ and $8$ by
 the Krein signature of the left--right reflection, and lists the obstructions to the standard proof
 techniques.
