@@ -91,7 +91,6 @@ function modularInverse(value, modulus) {
   return ((x % modulus) + modulus) % modulus;
 }
 
-
 /**
  * Rebuilds an integer from its residues and checks it: all primes but the last one give
  * the integer, the last prime is the check.
@@ -104,7 +103,7 @@ function modularInverse(value, modulus) {
 function combineCheckedResidues(residues, primes, signed = false) {
   const modulus = primes.slice(0, -1).reduce((product, prime) => product * BigInt(prime), BigInt(1));
   const unsigned = combineResidues(residues.slice(0, -1), primes.slice(0, -1));
-  const result = signed && 2n * unsigned > modulus ? unsigned - modulus : unsigned;
+  const result = signed && BigInt(2) * unsigned > modulus ? unsigned - modulus : unsigned;
   const checkPrime = BigInt(primes.at(-1));
 
   if (((result % checkPrime) + checkPrime) % checkPrime !== BigInt(residues.at(-1))) {

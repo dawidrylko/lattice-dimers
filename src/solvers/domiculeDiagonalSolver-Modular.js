@@ -125,7 +125,7 @@ async function __main__() {
 
   if (Math.min(options.rowCount, options.colCount) > MAX_SHORTER_SIDE) {
     console.error(
-      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}, because the polynomial of every state is kept in memory.`,
+      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}, because every worker thread keeps the polynomial of every state in memory (about 1.4 GB at 18 x 18; -j sets the number of threads).`,
     );
     process.exit(1);
   }

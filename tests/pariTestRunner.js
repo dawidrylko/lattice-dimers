@@ -47,7 +47,7 @@ const PROGRAMS = [
     testCases: testCasesDiagonal
       .filter(({ rowCount, colCount }) => Math.max(rowCount, colCount) <= MAX_DIAGONAL_SIDE)
       .map(({ rowCount, colCount, expectedResult }) => ({
-        call: `vector(${rowCount * colCount}\\2 + 1, k, polcoef(P(${rowCount}, ${colCount}), k-1))`,
+        call: `(q -> vector(${rowCount * colCount}\\2 + 1, k, polcoef(q, k-1)))(P(${rowCount}, ${colCount}))`,
         expectedResult: `[${expectedResult.split(',').join(', ')}]`,
       }))
       .concat({ call: 'row(2)', expectedResult: '[36, 126, 105, 12, 1]' }),

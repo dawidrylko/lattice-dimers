@@ -2,12 +2,46 @@
   "files": ["periodicTilingSolver-BigInt.js", "periodicTilingSolver-Modular.js"],
   "testCases": [
     {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "17552"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "1024"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "387"
+    },
+    {
       "rowCount": 2,
       "colCount": 2,
-      "lattice": "square",
+      "lattice": "king",
       "torus": true,
-      "expectedResult": "8",
-      "oeis": "A335586"
+      "expectedResult": "24"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 3,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "1746"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1920"
     },
     {
       "rowCount": 4,
@@ -15,6 +49,14 @@
       "lattice": "square",
       "torus": true,
       "expectedResult": "272",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "8",
       "oeis": "A335586"
     },
     {
@@ -138,13 +180,6 @@
       "expectedResult": "12"
     },
     {
-      "rowCount": 4,
-      "colCount": 4,
-      "lattice": "triangular",
-      "torus": true,
-      "expectedResult": "1920"
-    },
-    {
       "rowCount": 6,
       "colCount": 6,
       "lattice": "triangular",
@@ -265,20 +300,6 @@
       "expectedResult": "1304"
     },
     {
-      "rowCount": 2,
-      "colCount": 2,
-      "lattice": "king",
-      "torus": true,
-      "expectedResult": "24"
-    },
-    {
-      "rowCount": 4,
-      "colCount": 4,
-      "lattice": "king",
-      "torus": true,
-      "expectedResult": "17552"
-    },
-    {
       "rowCount": 6,
       "colCount": 6,
       "lattice": "king",
@@ -299,14 +320,6 @@
       "torus": true,
       "twisted": true,
       "expectedResult": "4"
-    },
-    {
-      "rowCount": 4,
-      "colCount": 4,
-      "lattice": "king",
-      "torus": true,
-      "twisted": true,
-      "expectedResult": "1024"
     },
     {
       "rowCount": 6,
@@ -330,13 +343,6 @@
       "lattice": "king",
       "torus": true,
       "expectedResult": "1746"
-    },
-    {
-      "rowCount": 4,
-      "colCount": 4,
-      "lattice": "king",
-      "torus": true,
-      "expectedResult": "17552"
     },
     {
       "rowCount": 5,
@@ -367,13 +373,6 @@
       "expectedResult": "149134096"
     },
     {
-      "rowCount": 4,
-      "colCount": 3,
-      "lattice": "king",
-      "torus": true,
-      "expectedResult": "1746"
-    },
-    {
       "rowCount": 3,
       "colCount": 4,
       "lattice": "king",
@@ -396,13 +395,6 @@
       "torus": true,
       "twisted": true,
       "expectedResult": "0"
-    },
-    {
-      "rowCount": 2,
-      "colCount": 2,
-      "lattice": "king",
-      "torus": true,
-      "expectedResult": "24"
     },
     {
       "rowCount": 3,
@@ -491,12 +483,6 @@
       "colCount": 3,
       "lattice": "king",
       "expectedResult": "0"
-    },
-    {
-      "rowCount": 4,
-      "colCount": 3,
-      "lattice": "king",
-      "expectedResult": "387"
     },
     {
       "rowCount": 5,

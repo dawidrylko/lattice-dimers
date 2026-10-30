@@ -74,6 +74,10 @@ function listRowTransitions(cols, lattice) {
  * @returns {BigInt} The number (or the signed sum) of tilings.
  */
 function calculateTotalTilingCombinations({ rowCount, colCount, lattice = 'king', torus = false, twisted = false }) {
+  if (!isValidBoard({ rowCount, colCount }, torus) || !Object.hasOwn(LATTICES, lattice)) {
+    throw new Error('The circumference must be at least 2, a torus needs at least 2 rows, and the lattice is square, triangular or king.');
+  }
+
   const transitions = listRowTransitions(colCount, lattice);
   const sign = crossings => (twisted && crossings % 2 ? BigInt(-1) : BigInt(1));
   const advance = vector => {

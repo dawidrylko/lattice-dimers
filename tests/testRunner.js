@@ -3,6 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { exec, parseArgs, verifyInt, verifyBigInt } = require('../src/helpers');
+const { listPrimes, combineCheckedResidues } = require('../src/helpers/modular');
 const {
   filesInt,
   testCasesInt,
@@ -57,6 +58,14 @@ const rejectionTestCases = [
   { args: ['src/solvers/domiculeDiagonalSolver-BigInt.js', '-r', '13', '-c', '13'], message: 'at most 12' },
   { args: ['src/solvers/domiculeDiagonalSolver-Modular.js', '-r', '19', '-c', '19'], message: 'at most 18' },
   { args: ['src/solvers/domiculeDiagonalSolver-Modular.js', '-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
+  {
+    args: ['--require', './tests/fixtures/exitingWorker.js', 'src/solvers/periodicTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
+    message: 'before it sent a result',
+  },
+  {
+    args: ['--require', './tests/fixtures/exitingWorker.js', 'src/solvers/domiculeDiagonalSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
+    message: 'before it sent a result',
+  },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--only', 'missing.js'], message: 'Usage' },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '-o', '99'], message: 'No test cases' },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--domicule', '--only', 'dominoTilingSolver.js'], message: 'Usage' },
@@ -84,6 +93,75 @@ function executeReadmeResultsTest() {
   console.log('Passed!');
 
   return true;
+}
+
+function executeCheckPrimeTests() {
+  const primes = listPrimes(3);
+  const residuesOf = value => primes.map(prime => Number(((BigInt(value) % BigInt(prime)) + BigInt(prime)) % BigInt(prime)));
+  const wrong = [...residuesOf(12345).slice(0, -1), (residuesOf(12345).at(-1) + 1) % primes.at(-1)];
+  const cases = [
+    { name: 'a positive count', run: () => combineCheckedResidues(residuesOf(12345), primes), expected: BigInt(12345) },
+    { name: 'a negative signed sum', run: () => combineCheckedResidues(residuesOf(-12345), primes, true), expected: BigInt(-12345) },
+    { name: 'a wrong check residue', run: () => combineCheckedResidues(wrong, primes), expected: 'check prime' },
+  ];
+
+  return cases.every(({ name, run, expected }, index) => {
+    process.stdout.write(`Executing check prime test ${index + 1} of ${cases.length} for ${name}... `);
+
+    let actual;
+
+    try {
+      actual = run();
+    } catch (error) {
+      actual = error.message.includes(expected) ? expected : error.message;
+    }
+
+    if (actual !== expected) {
+      console.error(`Failed! Expected: ${expected}, Actual: ${actual}`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
+function executeDiagonalAnchorTests() {
+  const find = (testCases, rowCount, colCount) =>
+    testCases.find(t => (t.rowCount === rowCount && t.colCount === colCount) || (t.rowCount === colCount && t.colCount === rowCount));
+  const anchored = [...testCasesDiagonal, ...testCasesDiagonalModular]
+    .map(({ rowCount, colCount, expectedResult }) => ({
+      rowCount,
+      colCount,
+      coefficients: expectedResult.split(',').map(BigInt),
+      domicule: find([...testCasesDomicule, ...testCasesDomiculeRectangles], rowCount, colCount),
+      domino: find([...testCasesBigInt, ...testCasesRectangles], rowCount, colCount),
+    }))
+    .filter(({ domicule, domino }) => domicule && domino);
+
+  if (anchored.length < 10) {
+    console.error(`Failed! Only ${anchored.length} diagonal rows have both a domicule and a domino count in data/.`);
+
+    return false;
+  }
+
+  return anchored.every(({ rowCount, colCount, coefficients, domicule, domino }, index) => {
+    process.stdout.write(`Executing diagonal anchor test ${index + 1} of ${anchored.length} for ${rowCount}x${colCount}... `);
+
+    const total = coefficients.reduce((sum, c) => sum + c, BigInt(0));
+
+    if (total !== BigInt(domicule.expectedResult) || coefficients[0] !== BigInt(domino.expectedResult)) {
+      console.error(`Failed! Sum ${total} against ${domicule.expectedResult}, x^0 ${coefficients[0]} against ${domino.expectedResult}`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
 }
 
 function executeExecutorTest() {
@@ -291,12 +369,15 @@ function __main__() {
     const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;
     const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt);
     const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, verifyBigInt);
-    const allPeriodicTestsPassed = executeTests(filesPeriodic, testCasesPeriodic, verifyBigInt);
+    const testCasesToRunPeriodic = maxSize ? testCasesPeriodic.slice(0, maxSize) : testCasesPeriodic;
+    const allPeriodicTestsPassed = executeTests(filesPeriodic, testCasesToRunPeriodic, verifyBigInt);
     const testCasesToRunPeriodicModular = maxSize ? testCasesPeriodicModular.slice(0, maxSize) : testCasesPeriodicModular;
     const allPeriodicModularTestsPassed = executeTests(filesPeriodicModular, testCasesToRunPeriodicModular, verifyBigInt);
     const allDiagonalTestsPassed = executeTests(filesDiagonal, testCasesDiagonal, verifyList);
     const testCasesToRunDiagonalModular = maxSize ? testCasesDiagonalModular.slice(0, maxSize) : testCasesDiagonalModular;
     const allDiagonalModularTestsPassed = executeTests(filesDiagonalModular, testCasesToRunDiagonalModular, verifyList);
+    const checkPrimeTestsPassed = executeCheckPrimeTests();
+    const diagonalAnchorTestsPassed = executeDiagonalAnchorTests();
     const allParserTestsPassed = executeParserTests();
     const allRejectionTestsPassed = executeRejectionTests();
     const executorTestPassed = executeExecutorTest();
@@ -314,6 +395,8 @@ function __main__() {
       allPeriodicModularTestsPassed &&
       allDiagonalTestsPassed &&
       allDiagonalModularTestsPassed &&
+      checkPrimeTestsPassed &&
+      diagonalAnchorTestsPassed &&
       allParserTestsPassed &&
       allRejectionTestsPassed &&
       executorTestPassed &&

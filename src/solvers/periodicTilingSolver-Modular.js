@@ -171,8 +171,10 @@ function countModulo({ rows, cols, lattice, torus, twisted, prime }) {
 }
 
 /**
- * Bounds log2 of the number of tilings: each piece is chosen by its first cell in row-major
- * order among at most m later cells, so a board of N cells has at most m^(N/2) tilings.
+ * Bounds log2 of the number of tilings: the transfer places every piece from one cell, which
+ * picks one of its at most m moves (listMoves), so a tiling is a sequence of N/2 such choices
+ * and a board of N cells has at most m^(N/2) tilings. On a torus the pieces between the last
+ * and the first row are placed from the last row.
  * @param {Object} board The board.
  * @returns {number} The bound.
  */
@@ -198,6 +200,10 @@ async function calculateTotalTilingCombinations({
   twisted = false,
   jobs = os.availableParallelism(),
 }) {
+  if (!isValidBoard({ rowCount, colCount }, torus) || !Object.hasOwn(LATTICES, lattice)) {
+    throw new Error('The circumference must be at least 2, a torus needs at least 2 rows, and the lattice is square, triangular or king.');
+  }
+
   const transpose = torus && !twisted && rowCount < colCount;
   const rows = transpose ? colCount : rowCount;
   const cols = transpose ? rowCount : colCount;
@@ -236,7 +242,7 @@ async function __main__() {
   }
 
   if (Math.min(options.colCount, torus && !twisted ? options.rowCount : Infinity) > MAX_CIRCUMFERENCE) {
-    console.error(`The circumference can be at most ${MAX_CIRCUMFERENCE}, because the states are indexed with 32-bit integers.`);
+    console.error(`The circumference can be at most ${MAX_CIRCUMFERENCE}, because every worker thread keeps two tables of 2^(circumference + 3) states.`);
     process.exit(1);
   }
 
