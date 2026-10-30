@@ -26,6 +26,7 @@ SHAs of the tag `king-entropy-v1.0.0`.
 | `log-convexity/out_modes.txt` | `python3 log-convexity/modes.py` |
 | `log-convexity/out_levels.txt`, `log-convexity/time_levels.txt` | `python3 src/timed.py python3 log-convexity/levels.py > log-convexity/out_levels.txt 2> log-convexity/time_levels.txt` |
 | `out/out_surface.txt`, `data/surface.json` | `python3 src/surface.py` |
+| `out/out_ctmrg.txt`, `logs/time_ctmrg.txt` | `python3 src/timed.py python3 src/ctmrg.py > out/out_ctmrg.txt 2> logs/time_ctmrg.txt` |
 | `out/out_cw.txt`, `data/cw.json` | `python3 src/cw.py` |
 | `out/out_validate.txt` | `python3 src/validate.py` |
 | `out/out_crosscheck.txt` | `python3 src/crosscheck.py` |
@@ -64,6 +65,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | e⁻⁶ ... e⁻³ | diagonal fugacities of Sandvik and Moessner | literature (`sandvikmoessner2006`) | - |
 | 2s = 1.13102382208265, eˢ = 1.76034869404198 | per dimer, per site | `out/out_derived.txt` (rounded to 14 decimals; both ends of s ± 6·10⁻¹⁶ round to the same) | `src/derived.py` |
 | 3 | tilings of the 2×2 board | `out/out_validate.txt` (`2x2 = 3`) | `src/validate.py` |
+| 2 × 2 sites | CTMRG block | `src/ctmrg.py` (`site`); exactness on the 4×4 ... 6×6 boards in `out/out_ctmrg.txt` section 1 | `src/ctmrg.py` |
 
 ### Section 2 (model)
 
@@ -110,6 +112,9 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | independent code: 7.8·10⁻²⁰ (extended), 6.2·10⁻¹⁷ (float64) per site | `replication/out/compare_eig.txt` (max \|diff\| per site by source: lean longdouble 7.8e-20; sec float64 6.2e-17, eig float64 3.9e-17, lean float64 3.1e-17) | `replication/compare_eig.py` |
 | w = 26 (both sectors) and 27 extended, w = 28 (both sectors) float64; 1.9·10⁻⁴, 1.5·10⁻⁴, 5.4·10⁻⁴ | `replication/out/analyze_eig.txt` (section 6: ratios 1.00019, 1.00015, 1.00054 of measured to predicted d_w) | `replication/analyze_eig.py` |
 | d₂₈ resolved to about 6·10⁻³ | `out/out_derived.txt` (resolution of d_28: 0.0057), from `replication/out/analyze_eig.txt` (section 8: float64 vs long double ≤ 1.11e-17 per site) and \|d₂₈\| = 1.93518e-15 | `src/derived.py` |
+| CTMRG: χ = 32, 6·10⁻¹⁷ | `out/out_ctmrg.txt` section 2 (king chi = 32: s − ref = −6.3e-17; rounded) | `src/ctmrg.py` |
+| CTMRG: χ = 64, 30 cycles, 6.2·10⁻¹⁶ | `out/out_ctmrg.txt` section 4 (cycles 11..40, largest \|s − ref\| = 6.2e-16) | `src/ctmrg.py` |
+| CTMRG: triangular entropy to its 15 digits | `out/out_ctmrg.txt` section 2 (tri chi = 32: s − ref = +1.8e-16 against the 15-digit Kasteleyn value of `out/out_validate.txt` section 4) | `src/ctmrg.py` |
 | 0.5655119110413253187; 1.1·10⁻¹⁸ | `replication/out/analyze_eig.txt` (section 5, odd W = 27, L1); `out/out_derived.txt` (difference from the centre) | `replication/analyze_eig.py`, `src/derived.py` |
 
 ### Section 4 (bounds)
@@ -206,6 +211,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | 1.5 GiB, 52 min | `logs/time_zex_king_free_m24_K24.txt` (maxrss 1562 MiB, wall 3116.4 s) | `src/timed.py python3 src/zexact.py king free 24 24` |
 | 8.0 GiB, 43 min | `logs/time_lcert_m26.txt` (maxrss 8223 MiB, wall 2557.3 s) | `src/timed.py python3 src/lcert.py 26 30` |
 | 2.4 GiB, 13 min (arm64) | `log-convexity/time_levels.txt` (maxrss 2408 MiB, wall 772.9 s) | `src/timed.py python3 log-convexity/levels.py` |
+| 0.9 GiB, 2.4 min (arm64) | `logs/time_ctmrg.txt` (maxrss 936 MiB, wall 144.1 s) | `src/timed.py python3 src/ctmrg.py` |
 
 Note on the machines. The runs of the first version used one machine with four cores and 15.7 GiB of
 memory. The runs added in this version (`data/lean/*longdouble*` of the cylinders, `runweight.py`,
@@ -214,7 +220,7 @@ memory. The runs added in this version (`data/lean/*longdouble*` of the cylinder
 cores and 15.7 GiB; the `lean.py` outputs record `machine` and `nmant` = 63. From the
 measured memory of `src/cylw.py` (`out/out_estimate.txt`, cost table: 8.4 GiB at w = 25, about doubling
 per width), the cylinder w = 26 needs about 17 GiB, more than the machine has, so `src/` stops at
-w = 25. `log-convexity/levels.py` (float64 only) and the brick check appended to `out/out_pfaff.txt` ran in October 2026 on an
+w = 25. `log-convexity/levels.py`, `src/ctmrg.py` (both float64 only) and the brick check appended to `out/out_pfaff.txt` ran in October 2026 on an
 arm64 Mac (Python 3.14, the pinned numpy, scipy and mpmath); the earlier lines of `out/out_pfaff.txt` are unchanged. The independent code of `replication/` needs less memory and ran w = 26, 27 and 28 (12.0 GiB at
 w = 27 and 28, `replication/REPORT.md`); those widths enter only the check of Section 3, not the estimate. `/usr/bin/time` was not available; `src/timed.py` records wall time and peak RSS instead.
 

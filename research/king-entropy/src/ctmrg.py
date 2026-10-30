@@ -25,15 +25,15 @@ column), which cancels the surface and corner terms. sigma and kappa from log Z 
 
 Output: 1. encoding check against src/tm.py counts, 2. s by chi for king, tri, sq, 3. convergence in
 cycles, 4. float64 floor at chi = 64, 5. finite king boards against the exact counts of
-zex_king_free_*.json, 6. sigma and kappa by chi against surface.json and corner.json. About 3 to 4 minutes,
-peak RSS about 0.7 GiB (chi = 96).
+zex_king_free_*.json, 6. sigma and kappa by chi against surface.json and corner.json. About 2 to 4 minutes,
+peak RSS under 1 GiB.
 """
-import itertools, json, sys, time
+import itertools, json, time
 import numpy as np
 from mpmath import catalan, pi, mp, mpf, log
 from paths import P, G
 
-mp.dps = 30                                   # the log scales of the tensors are summed exactly
+mp.dps = 30                                   # the log scales of the tensors are summed in 30 digits
 CUT = 1e-14
 
 
@@ -97,7 +97,7 @@ class CTM:
                                  (nC4, self.lc[3] + self.lt[2], ('C', 3))):
             m = np.abs(X).max()
             getattr(self, lst)[i] = X / m
-            (self.lc if lst == "C" else self.lt)[i] = ell + mpf(np.log(m))
+            (self.lc if lst == "C" else self.lt)[i] = ell + log(mpf(m))
         self.depth[3] += 1
         return err
 
@@ -222,7 +222,7 @@ if __name__ == '__main__':
         worst = max(d, key=lambda x: abs(x[0]))
         print(f'  chi={chi:3d}: {len(d)} boards, max |log Z - log(exact)| = {abs(worst[0]):.1e} ({worst[1]}x{worst[2]}), {t:.0f}s', flush=True)
 
-    print('\n== 6. sigma and kappa from the squares L = 30..58 (14 cycles), CTMRG s of the same run')
+    print('\n== 6. sigma and kappa from the squares L = 30..56 (boards up to 58, 14 cycles), CTMRG s of the same run')
     for chi, (hist, F, err, t) in big.items():
         sig, kap = surface(F, hist[-1])
         Ls = [L for L in sig if L >= 30]

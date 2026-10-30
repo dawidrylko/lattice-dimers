@@ -5,11 +5,12 @@ extrapolation with the row transfer matrices of the paper, reproduce
 `s = 0.5655119110413253 +- 6e-16` (`data/errbar.json`), `sigma = 0.242017935766251 +- 9e-15`
 (`data/surface.json`) and `kappa = 0.36319625605 +- 3e-10` (`data/corner.json`)?
 Everything below comes from `python3 src/ctmrg.py > out/out_ctmrg.txt` (float64 on an arm64 Mac,
-199 s, peak RSS 709 MiB; `logs/time_ctmrg.txt`).
+144 s, peak RSS 936 MiB; `logs/time_ctmrg.txt`).
 
-**Verdict: s is reproduced at the float64 floor, with no extrapolation. sigma and kappa are
-consistent with the paper, but this CTMRG resolves them only to about `2e-8` and `3e-6`, far above
-the paper's error bars, so it checks s and does not check sigma or kappa at the paper's precision.**
+**Verdict: s is reproduced at the float64 floor, with no extrapolation.** sigma and kappa agree
+with the paper within the CTMRG's chi dependence (`|bias| <= 2e-8` for sigma and `<= 3e-6` for
+kappa from `chi = 64` on, one sign change), far above the paper's error bars: this CTMRG does not
+test sigma or kappa at the paper's precision, and s is the real check.
 
 ## 1. Encoding
 
@@ -44,7 +45,7 @@ two left quadrants; singular values below `1e-14` of the largest are dropped.
 The growth starts from the empty boundary, so after `c` cycles (four moves) the closed network is a
 free board of `(4c+2) x (4c+2)` sites, and dropping the centre block, row or column gives the
 `4c x 4c`, `(4c+2) x 4c` and `4c x (4c+2)` boards. Output section 1: one cycle without truncation
-reproduces the exact counts of `src/tm.py` on all four boards of each lattice (`|d log Z| <= 8e-16`).
+reproduces the exact counts of `src/tm.py` on all four boards of each lattice (`|d log Z| < 1e-15`).
 
 ## 2. s
 
@@ -54,8 +55,7 @@ With `Z1` (all tensors), `Zc` (corners only), `Zh` (no middle row) and `Zv` (no 
 
 because `log Z(W, H) = s W H - 2 sigma (W + H) + kappa + o(1)` and the surface and corner terms
 cancel exactly. The log scales of the normalized tensors cancel too, so `s` comes from four O(1)
-contractions. An earlier draft summed the scales in float64 and showed `+-1e-13` noise from the
-`s L^2`-sized sums; the cancelling form removed it.
+contractions; summing the scales instead would add rounding of the size of `s L^2` times `1e-16`.
 
 | chi | king `s - ref` | discarded | tri `s - ref` | sq `s - G/pi` (200 cycles) |
 | --- | --- | --- | --- | --- |
@@ -66,17 +66,16 @@ contractions. An earlier draft summed the scales in float64 and showed `+-1e-13`
 | 48 | +4.8e-17 | 2.1e-8 | | |
 | 64 | +4.8e-17 | 2.5e-9 | | -6.1e-7 |
 
-"discarded" is the relative weight of the dropped singular values of `Q1^T Q4`, a square-root scale
-of the Schmidt spectrum: the Schmidt probe that picked CTMRG (discarded Schmidt weight `6.7e-11` at
-`chi = 16`, `8e-15` at 32) predicts the `5.5e-12` and `~1e-16` errors seen here. The triangular
-reference has 15 digits, so its last two rows only show agreement to that many.
+"discarded" is the relative weight of the dropped singular values of `Q1^T Q4` in the last cycle.
+The triangular reference has 15 digits, so its `chi = 32` row only shows agreement to that many;
+the `chi = 24` row, `-4.1e-15`, is a real truncation error.
 
 Convergence in cycles (section 3) is geometric for the gapped lattices: at `chi = 32` the king error
 falls by a factor of about 60 to 80 per cycle from the second cycle on (`-2e-4, -4e-5, -6e-7, -8e-9, -1e-10, -1.3e-12,
--1.8e-14`, then the floor from cycle 8, a 34-site board), the triangular one likewise. The critical
-square lattice drifts as a power law in both chi and the number of cycles (`-2.3e-4` after 10 cycles,
-`-8.9e-6` after 50, `-2.3e-6` after 200 at `chi = 32`), so the method does not converge fast when
-the system has long correlations, and the fast convergence for the king lattice is not an artefact.
+-1.8e-14`, then the floor from cycle 8, a 34-site board). The triangular error reaches the `1e-16`
+level by cycle 10, but not monotonically (its sign changes). The critical square lattice converges
+slowly in both chi and the number of cycles (`-2.3e-4` after 10 cycles, `-8.9e-6` after 50, `-2.3e-6`
+after 200 at `chi = 32`), as a lattice with long correlations should.
 
 The float64 floor (section 4): 30 further cycles at `chi = 64` scatter with spread `1.2e-15` around
 a mean `s - ref = -9.6e-17`; the largest deviation is `6.2e-16`. So CTMRG gives
@@ -87,7 +86,7 @@ a mean `s - ref = -9.6e-17`; the largest deviation is `6.2e-16`. So CTMRG gives
 
 On the squares, `sigma_L = (s (4L + 4) - log Z(L+2, L+2) + log Z(L, L)) / 8` and
 `kappa_L = log Z(L, L) - s L^2 + 4 sigma L`, with the CTMRG `s` of the same run (section 6, squares
-`L = 30..58`). Both are flat in `L` (spread `1e-13` for sigma and `5e-12` for kappa at `chi = 64`),
+`L = 30..56`, boards up to `58 x 58`). Both are flat in `L` (spread `1e-13` for sigma and `5e-12` for kappa at `chi = 64`),
 but they move with chi:
 
 | chi | sigma - paper | kappa - paper |
@@ -98,23 +97,23 @@ but they move with chi:
 | 80 | -1.2e-8 | -2.0e-6 |
 | 96 | -9.0e-9 | -1.6e-6 |
 
-From `chi = 64` on the values straddle the paper's, so they agree with it within the CTMRG's own
-chi dependence. That dependence is far larger than the paper's error bars (`9e-15`, `3e-10`), so
-it is no test of those bars. The finite boards show the same limit (section 5): against the exact
-counts of `data/zex/` (21 boards up to `24 x 24`) the CTMRG `log Z` is off by up to `3.8e-5` at
-`chi = 32` and stays at `1.5e-6` from `chi = 64` to `96`.
+From `chi = 64` on the differences are at most `2e-8` for sigma and `3e-6` for kappa, with one
+sign change between `chi = 64` and `80`; from 80 to 96 they hardly shrink (kappa `-2.0e-6`,
+`-1.6e-6`), although the discarded weight falls by a factor of about 25. So the run does not converge
+on the paper's values: it neither confirms nor contradicts them below those levels, far above the
+paper's error bars (`9e-15`, `3e-10`). The finite boards show the same floor (section 5): against
+the exact counts of `data/zex/` (21 boards up to `24 x 24`) the CTMRG `log Z` is off by up to
+`3.8e-5` at `chi = 32` and stays at `1.5e-6` from `chi = 64` to `96`.
 
 ## 4. What limits the precision
 
 - s: float64 rounding in the four contractions, about `6e-16` (section 4). Truncation stops being
   visible at `chi >= 32`. More digits would need extended or arbitrary precision, which is not
   attempted here.
-- sigma and kappa: the free boundary. The projectors are built from the two left quadrants as if the
-  lattice were translation invariant, and the same pair truncates every bond of a new column,
-  including the bonds next to the boundary and the outer corners, whose environment is not the bulk.
-  The early cycles do most of the damage: on a test (not in the output), three warm-up cycles at
-  `chi = 80` followed by `chi = 48` cut the sigma error at `chi = 48` from `1.0e-7` to `2.4e-8`.
-  A corner and edge treatment that keeps the boundary exact (projectors fitted to each bond of the
-  finite board, or a boundary-MPS computation of the edge free energy) would be needed to test
-  sigma and kappa at the paper's precision. `chi = 128` did not finish 14 cycles in 12 minutes on
-  this machine.
+- sigma and kappa: a floor near `1e-8` and `1e-6` that more chi does not remove (section 3). The
+  likely cause, not tested here, is the free boundary: the projectors are built from the two left
+  quadrants as if the lattice were translation invariant, and the same pair truncates every bond of
+  a new column, including the bonds next to the boundary and the outer corners, whose environment
+  is not the bulk. A corner and edge treatment that keeps the boundary exact (projectors fitted to
+  each bond of the finite board, or a boundary-MPS computation of the edge free energy) would be
+  needed to test sigma and kappa at the paper's precision.

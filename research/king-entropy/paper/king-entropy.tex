@@ -134,8 +134,10 @@ For perfect matchings, the parity of the number of dimers crossing a closed curv
 fixed by the number of sites it encloses, a non-local constraint that these arguments do not
 handle as they stand. Without rigour, corner transfer matrices gave the hard-square entropy to
 $43$ decimals \cite{baxter1999}, and their renormalization-group variant
-\cite{nishinookunishi1996} is a natural route to more digits here; the crossing diagonals and the
-parity sector of \S\ref{sec:model} need a dedicated encoding, which we leave open. We use row
+\cite{nishinookunishi1996} is a natural route to more digits here. The crossing diagonals need a
+dedicated encoding: routing each diagonal along two sides of its square, in blocks of $2 \times 2$
+sites so that every board has an even number of sites, gives a square-lattice tensor network, and
+a float64 version reproduces $s$ (\S\ref{sec:value}; \file{notes/ctmrg.md}). We use row
 transfer matrices because they are exact, easy to check against brute force, and give the
 estimate and the certificates from the same code.
 
@@ -470,6 +472,15 @@ $1.5\cdot10^{-4}$ relative, and $d_{28}$, whose float64 inputs resolve it only t
 $6\cdot10^{-3}$, to $5.4\cdot10^{-4}$; L1 on the odd widths up to
 $W = 27$ gives $0.5655119110413253187$, $1.1\cdot10^{-18}$ from the centre above. These widths test the
 extrapolation outside its sample; they are not used in the estimate.
+
+\emph{Corner transfer matrices.} A directional corner transfer matrix renormalization group in
+float64 with the encoding of the introduction (\file{src/ctmrg.py}, \file{notes/ctmrg.md}) gives $s$
+from four contractions of the converged environment, with no extrapolation in the width. At bond
+dimension $\chi = 32$ it differs from the value above by $6\cdot10^{-17}$; at $\chi = 64$, over $30$
+cycles after convergence, it stays within $6.2\cdot10^{-16}$ of it, which is float64 rounding.
+The same code reproduces the triangular entropy to the $15$ digits of its exact value and converges
+only slowly on the critical square lattice. It does not resolve $\sigma$ or $\kappa$ to the precision
+of \S\ref{sec:surface}.
 
 \section{Rigorous bounds}\label{sec:bounds}
 
@@ -1063,6 +1074,7 @@ script & output \\
 \texttt{log-convexity/involution.py} & \file{log-convexity/out\_involution.txt} \\
 \texttt{log-convexity/modes.py} & \file{log-convexity/out\_modes.txt} \\
 \texttt{log-convexity/levels.py} & \file{log-convexity/out\_levels.txt} \\
+\texttt{src/ctmrg.py} & \file{out/out\_ctmrg.txt} \\
 \texttt{src/validate.py}; \texttt{src/crosscheck.py} & \file{out/out\_validate.txt}, \dots \\
 \texttt{src/derived.py} & \file{out/out\_derived.txt} \\
 \bottomrule
@@ -1071,8 +1083,9 @@ script & output \\
 The outputs were produced on two x86-64 machines with four cores and about $16$\,GiB of memory
 each: the first version on one, the runs added in this version (extended precision, run weights,
 the corner counts, the Pfaffian certificate and the two-mode fits) on the other. The cylinder levels
-of \S\ref{sec:z2} and \S\ref{sec:conj} (\file{log-convexity/levels.py}, float64 only) ran later on an
-arm64 machine ($2.4$\,GiB, $13$ min). The extended-precision
+of \S\ref{sec:z2} and \S\ref{sec:conj} (\file{log-convexity/levels.py}, $2.4$\,GiB, $13$ min) and the
+corner transfer matrix check of \S\ref{sec:value} (\file{src/ctmrg.py}, $0.9$\,GiB, $2.4$ min), both
+float64 only, ran later on an arm64 machine. The extended-precision
 runs use the 64-bit mantissa of the x87 \texttt{long double}, which \file{src/lean.py} asserts. The
 algorithms are those of \S\ref{sec:model}; the implementation applies each cell step to reshaped
 views of the state vector, without forming the transfer matrix. The widest
