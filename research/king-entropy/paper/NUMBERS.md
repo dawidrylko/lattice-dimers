@@ -24,6 +24,7 @@ SHAs of the tag `king-entropy-v1.0.0`.
 | `out/out_pfaff.txt` | `python3 src/pfaff_rigor.py` |
 | `out/out_corner.txt`, `data/corner.json` | `python3 src/corner.py` (after `errbar.py` and `surface.py`) |
 | `log-convexity/out_modes.txt` | `python3 log-convexity/modes.py` |
+| `log-convexity/out_levels.txt`, `log-convexity/time_levels.txt` | `python3 src/timed.py python3 log-convexity/levels.py > log-convexity/out_levels.txt 2> log-convexity/time_levels.txt` |
 | `out/out_surface.txt`, `data/surface.json` | `python3 src/surface.py` |
 | `out/out_cw.txt`, `data/cw.json` | `python3 src/cw.py` |
 | `out/out_validate.txt` | `python3 src/validate.py` |
@@ -52,7 +53,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | 0.545343749727, 0.586216605404 | certified bounds, w = 24 (lower; upper with weight √φ) | `out/out_bounds.txt` (BEST CERTIFIED) | `src/bounds.py 24` |
 | 0.582767477484 | run-weighted upper bound, w = 24 | `out/out_runweight_3state.txt` | `src/runweight.py 3state 24 --disk <dir>` |
 | 0.242017935766251 ± 9·10⁻¹⁵ | σ | `out/out_surface.txt` (RESULT; 9.2e-15 rounded) | `src/surface.py` |
-| ξ = 1.235 ± 0.004 | splitting length | `out/out_estimate.txt` (fits 1.2323, 1.2351, 1.2387; centre and half-range) | `src/estimate.py` |
+| ξ = 1.236091 ± 10⁻⁶ | splitting length, 1/m_v | `log-convexity/out_levels.txt` (section B: RESULT line, ξ = 1.2360912 at w = 22; changes 1.8·10⁻⁷ and 8.9·10⁻⁹ over the last two widths; the error is the larger change times five, rounded up) | `log-convexity/levels.py` |
 | 0.565511911035, 0.565511911049 | conditional bounds given (L∞), (O) | `out/out_cw.txt` (section E, CONDITIONAL INTERVAL) | `src/cw.py` |
 | κ = 0.36319625605 ± 3·10⁻¹⁰ | corner free energy | `out/out_corner.txt` (RESULT) | `src/corner.py` |
 | 1453 | (L) cases checked on the king's graph | 875 + 550 (`out/out_ltest.txt` totals) + 14 + 14 (`out/out_lcert_m25.txt`, `out/out_lcert_m26.txt`, 2q = 2...28) | `src/ltest.py`, `src/lcert.py` |
@@ -79,6 +80,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | 29 edges, 43 perfect matchings, 23 equations | Theorem 2.1, B(3, 4) | `out/out_pfaff.txt` | `src/pfaff_rigor.py` |
 | B(2, L), L ≤ 12; B(3, 6), B(4, 4), B(4, 5), B(4, 6); eleven boards up to B(11, 12) | Pfaffian checks | `out/out_pfaff.txt` | `src/pfaff_rigor.py` |
 | E = 4KL − 3K − 3L + 2, g ≥ 74 at 24 × 24 | genus bound | `out/out_pfaff.txt` (edge count and Euler genus bound) | `src/pfaff_rigor.py` |
+| B(3, 4) 3-connected and bicritical (a brick), 12 vertices | remark on complex weights; Lemma 3.5 of Norine-Thomas (`paper/refs.bib`, `norinethomas2008`) | `out/out_pfaff.txt` (brick check; Petersen and cube controls) | `src/pfaff_rigor.py` |
 
 ### Section 3 (value of s)
 
@@ -148,6 +150,11 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | number | file | script |
 | --- | --- | --- |
 | Table 5; ξ = 1.1931, rms 1.5·10⁻²; ξ = 1.2323, b = −0.433, rms 9.3·10⁻⁴; ξ_∞ = 1.2351, b = −0.467; ξ = 1.2387, rms 2.6·10⁻³ (b = −1/2) | `out/out_estimate.txt` (Z2 block) | `src/estimate.py` |
+| m_v = 0.8090018253 (L = 22); changes of ξ_L 1.8·10⁻⁷ (L = 18 → 20), 8.9·10⁻⁹ (20 → 22); ξ = 1.236091 ± 10⁻⁶ | `log-convexity/out_levels.txt` (section B: table column m_v, line \|xi_w − xi_{w−2}\|, RESULT) | `log-convexity/levels.py` |
+| b_w = −0.478, −0.481, −0.482 at w = 20, 22, 24; −0.495 | `log-convexity/out_levels.txt` (section B4: b_w −0.4780, −0.4809, −0.4821; b_inf −0.4947; Δ_w from `data/lean/lean_king_cyl_w*_p*_longdouble.json`) | `log-convexity/levels.py` |
+| drift of b_w by about δw | arithmetic: an error δ in the rate changes the numerator by 2δ and log(w/(w−2)) ≈ 2/w | - |
+| ξ error covers only the convergence in L; b_w confirms the rate to a few units of 10⁻⁴ | arithmetic: b_w moves by 0.004 from w = 20 to 24 (section B4), and a rate error δ moves it by about 4δ there, so δ of a few 10⁻⁴ is not excluded beyond the 1/w trend | - |
+| 0.13 % (hidden mode, Section 3) | arithmetic: x = e^(−2/ξ), relative change 2(1.236091 − 1.2351)/1.2351² = 1.3·10⁻³ | - |
 | 1.082727, negative λ₃ | `out/out_crosscheck.txt` (in-sector gap; eigenvalue −2.765e4) | `src/crosscheck.py` |
 | same gap at w = 20...25 | `out/out_errbar.txt` (gap block) | `src/errbar.py` |
 | 0.92 | arithmetic: 1/1.0827 | - |
@@ -179,7 +186,12 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | −13.84 | `out/out_derived.txt` (ratios D(k)/D(k+2)) | `src/derived.py` |
 | 0.1147, −0.072, 0.007, 0.63 | `log-convexity/out_linf.txt` | `log-convexity/linf.py 16` |
 | 1453 | as in the introduction | `src/ltest.py`, `src/lcert.py` |
-| x = 7/4 ... 2 | `log-convexity/out_modes.txt` (crossing) | `log-convexity/modes.py` |
+| θ = −0.3386706 λ₁, C = 0.28823, ±0.2687942 i λ₁, C̃ = 0.11466, L = 22 | `log-convexity/out_levels.txt` (section B, w = 22 row: −0.3386706092, 0.288230, 0.268794172, 0.114661) | `log-convexity/levels.py` |
+| −13.841 | `log-convexity/out_levels.txt` (section B, w = 22: 1/r_-^2 = 13.84077) | `log-convexity/levels.py` |
+| 2·10⁻⁴ for k = 16...20; within 1.8·10⁻¹⁴ for k = 21...26; 8·10⁻⁵ at 2q = 20, 22, 24; 6·10⁻⁴ for D(k), k = 12...18 | `log-convexity/out_levels.txt` (section B3: ratios 1.00017 ... 0.99996 for k = 16...20, largest deviation 1.7·10⁻⁴; for k = 21...26 the absolute differences of the printed pairs are at most 8.4·10⁻¹⁶ (k = 21), below the error 1.8·10⁻¹⁴ of −2σ in `data/surface.json`; d_q 7.3·10⁻⁵, 2.5·10⁻⁵, 6.4·10⁻⁵ by arithmetic on the printed pairs; D(k) ratios 0.99758 ... 1.00058 for k = 10...18, 5.8·10⁻⁴ for k ≥ 12) | `log-convexity/levels.py` |
+| 0.28822 ± 1.6·10⁻⁵ | `log-convexity/out_levels.txt` (section B2: k = 19, C_k = 0.288220 +- 1.6e-05) | `log-convexity/levels.py` |
+| r_- < ρ, L ≤ 22 | `log-convexity/out_levels.txt` (section B: ν₁/θ₁ about 0.2688 i against θ_neg/θ₁ about −0.3387 at every w = 8...22) | `log-convexity/levels.py` |
+| x* ∈ (1.9823, 1.9830), bracketing by L mod 4; x = 3/2 convex from width 22 (prediction); sign changes at x = 2, 3; gaps open | `log-convexity/out_levels.txt` (section D: RESULT (1.9824, 1.9830) from x*_20 = 1.98237, x*_22 = 1.98297, the lower end rounded down; sections C, E, F) | `log-convexity/levels.py` |
 | 5.06·10⁻¹¹ at w = 24 | `out/out_derived.txt` (king cylinders w = 24: p0 − p1) | `src/derived.py` |
 
 ### Section 9 (reproducibility)
@@ -193,6 +205,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | 13.3 GiB, 63 min | `logs/time_runweight_3state_w24.txt` (maxrss 13581 MiB incl. the memory-mapped vector, wall 3787.2 s) | `src/timed.py python3 src/runweight.py 3state 24 --disk <dir>` |
 | 1.5 GiB, 52 min | `logs/time_zex_king_free_m24_K24.txt` (maxrss 1562 MiB, wall 3116.4 s) | `src/timed.py python3 src/zexact.py king free 24 24` |
 | 8.0 GiB, 43 min | `logs/time_lcert_m26.txt` (maxrss 8223 MiB, wall 2557.3 s) | `src/timed.py python3 src/lcert.py 26 30` |
+| 2.4 GiB, 13 min (arm64) | `log-convexity/time_levels.txt` (maxrss 2408 MiB, wall 772.9 s) | `src/timed.py python3 log-convexity/levels.py` |
 
 Note on the machines. The runs of the first version used one machine with four cores and 15.7 GiB of
 memory. The runs added in this version (`data/lean/*longdouble*` of the cylinders, `runweight.py`,
@@ -201,7 +214,8 @@ memory. The runs added in this version (`data/lean/*longdouble*` of the cylinder
 cores and 15.7 GiB; the `lean.py` outputs record `machine` and `nmant` = 63. From the
 measured memory of `src/cylw.py` (`out/out_estimate.txt`, cost table: 8.4 GiB at w = 25, about doubling
 per width), the cylinder w = 26 needs about 17 GiB, more than the machine has, so `src/` stops at
-w = 25. The independent code of `replication/` needs less memory and ran w = 26, 27 and 28 (12.0 GiB at
+w = 25. `log-convexity/levels.py` (float64 only) and the brick check appended to `out/out_pfaff.txt` ran in October 2026 on an
+arm64 Mac (Python 3.14, the pinned numpy, scipy and mpmath); the earlier lines of `out/out_pfaff.txt` are unchanged. The independent code of `replication/` needs less memory and ran w = 26, 27 and 28 (12.0 GiB at
 w = 27 and 28, `replication/REPORT.md`); those widths enter only the check of Section 3, not the estimate. `/usr/bin/time` was not available; `src/timed.py` records wall time and peak RSS instead.
 
 ## Companion note `paper/king-entropy-log-convexity.tex`
@@ -216,10 +230,18 @@ have the same sources.
 | triangular, weights, onsets, Krein signature, J-orbits | `out/out_lweight*.txt`, `log-convexity/out_symmetry.txt`, `log-convexity/out_linf.txt` | as in Section 8 above |
 | Z(8, m)² > Z(6, m)Z(10, m): 35 ≤ m (x = 3/2), 21 ≤ m (x = 2), 19 ≤ m (x = 3), m ≤ 60 | `log-convexity/out_linf.txt` (last block) | `log-convexity/linf.py 16` |
 | Table 2 (two modes): ρ₊, ρ₋, first and last ratios, negative 2q | `log-convexity/out_modes.txt` | `log-convexity/modes.py` |
-| −3.6·10⁻⁹ at 2q = 20 (x = 3/2); 0.942; drift 0.971 → 0.942 | `log-convexity/out_modes.txt` (x = 1.5; its lines "convex from about 2q = ..." are the point value of the last window's model, not a conclusion of the note) | `log-convexity/modes.py` |
-| 1.34 at 2q = 14, 0.995 at 2q = 24 (x = 3/2); below 0.943; earlier windows 0.945 to 0.971 | `out/out_derived.txt` (x = 3/2 lines, from P = 5.95e-6, Q = 7.98e-6 of the last window in `log-convexity/out_modes.txt`: threshold 0.943, and 1.01, 1.02, 1.16 at 2q = 24 for 0.945, 0.946, 0.971); windows in `log-convexity/out_modes.txt` (x = 1.5: 0.971, 0.946, 0.945, 0.942) | `src/derived.py`, `log-convexity/modes.py` |
-| 1.002, 1.018 (x = 2, 3); drift 0.03-0.08 | `log-convexity/out_modes.txt` | `log-convexity/modes.py` |
-| x* ∈ (7/4, 2), x* ≈ 1.96 | `log-convexity/out_modes.txt` (crossing) | `log-convexity/modes.py` |
+| −3.6·10⁻⁹ at 2q = 20 (x = 3/2) | `log-convexity/out_modes.txt` (x = 1.5; its lines "convex from about 2q = ..." are the point value of the last window's model, not a conclusion of the note) | `log-convexity/modes.py` |
+| drift 0.03-0.08 | `log-convexity/out_modes.txt` (first and last window ratios) | `log-convexity/modes.py` |
+| (7/4, 2), 1.96 (the interval and estimate of the fits) | `log-convexity/out_modes.txt` (crossing) | `log-convexity/modes.py` |
+| Table 3: ρ₊, ρ₋, \|ρ₋\|/ρ₊, C, C̃ (L = 20); in-sector gap, m_v (L = 16) | `log-convexity/out_levels.txt` (section C: the per-x summary lines "w = 20 rho_+ ..." and the w = 20 rows for C, C~; the gap lines at w = 16) | `log-convexity/levels.py` |
+| rates change by at most 4·10⁻⁴ and C by at most 0.8 % from L = 18 to 20 | `log-convexity/out_levels.txt` (section C rows w = 18, 20; largest at x = 3) | `log-convexity/levels.py` |
+| 2·10⁻⁴, 6·10⁻⁴, 8·10⁻⁵ at x = 1 | as in Section 8 of the paper | `log-convexity/levels.py` |
+| cylinder rates within 0.5 % of Table 2 (ρ₋ at x = 1: 0.6 %) | `log-convexity/out_levels.txt` (section C: relative differences, largest +0.0048 at x = 3, +0.0063 for ρ₋ at x = 1) | `log-convexity/levels.py` |
+| x = 3/2: 0.9419, C = 0.344; 6·10⁻⁴ and 7·10⁻⁵ at 2q = 18, 20 (5.8e-04, 6.2e-05); 6.2·10⁻⁵ and 1.0·10⁻⁴ at L = 20, 22; −0.9960, 3.5·10⁻¹², 0.4 %, same at L = 20, 22 | `log-convexity/out_levels.txt` (section E: w = 20 and 22 blocks, margin line 0.0040, 0.0040) | `log-convexity/levels.py` |
+| x = 2, 3: 1.0009, 1.0132; r₋/r₊ > 1 at L = 16, 18, 20; 0.99896 at L = 14, x = 2 | `log-convexity/out_levels.txt` (section F) | `log-convexity/levels.py` |
+| x*_L = 2.0542, 1.9880, 1.9830 (L = 14, 18, 22), 1.9819, 1.9824 (L = 16, 20); x* ∈ (1.9823, 1.9830), lower end rounded down from 1.98237 | `log-convexity/out_levels.txt` (section D) | `log-convexity/levels.py` |
+| in-sector gap 0.7532, m_v 0.6612 at x = 2 (lab note) | `log-convexity/out_levels.txt` (section C, gap lines) | `log-convexity/levels.py` |
+| C = 0.2882, r₋² = 0.0723 (Open problem 5.1) | `log-convexity/out_levels.txt` (section B, w = 22: 0.288230, 0.268794172² = 0.07225) | `log-convexity/levels.py` |
 | 7.6·10⁻¹⁰ (smallest d_q at x = 1) | `log-convexity/out_modes.txt` (x = 1, 2q = 20) | `log-convexity/modes.py` |
 | 1 − √2, (1, −√2, 1) | `out/out_cw.txt` (section A) | `src/cw.py` |
 | 0.047; 3.4·10⁶ pairs; 1847660, 912656, 32616 | `out/out_lspec.txt`, `out/out_lparity.txt` | `src/lspec.py`, `src/lparity.py` |

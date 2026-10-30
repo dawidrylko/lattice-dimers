@@ -61,8 +61,8 @@ a non-rigorous estimate. Computer-assisted Collatz--Wielandt certificates, combi
 for the matchings across a cut that depends on the runs of crossing cells, prove
 $0.545343749727 \le s \le 0.582767477484$. We also estimate the surface free energy of a free edge,
 $\sigma = 0.242017935766251 \pm 9\cdot 10^{-15}$, the corner free energy, which gives the asymptotics of
-A239273, and the decay length $\xi = 1.235 \pm 0.004$ of the splitting between the two parity
-sectors. Two sign properties of the strip growth rates, convexity in the even width and a
+A239273, and the decay length $\xi = 1.236091 \pm 10^{-6}$ of the splitting between the two parity
+sectors, the inverse of a gap of the cylinder transfer with a $\Z_2$ flux. Two sign properties of the strip growth rates, convexity in the even width and a
 one-sided bound on the odd increments, hold numerically and would give
 $0.565511911035 \le s \le 0.565511911049$.
 \end{abstract}
@@ -152,7 +152,7 @@ estimate and the certificates from the same code.
   the corner free energy is $\kappa = 0.36319625605 \pm 3\cdot10^{-10}$, which gives the
   asymptotics of A239273 (\S\ref{sec:surface}).
 \item On even cylinders the two parity sectors split by $\Delta_w \approx e^{-w/\xi}$ with
-  $\xi = 1.235 \pm 0.004$, and all finite-size corrections we see are exponentially small
+  $\xi = 1.236091 \pm 10^{-6}$, the inverse of a gap of the cylinder transfer with a $\Z_2$ flux, and all finite-size corrections we see are exponentially small
   (\S\ref{sec:z2}), in contrast with the critical square lattice.
 \item Convexity of $q \mapsto \log\lambda_{2q}$ (L$_\infty$) and a bound on the odd increments (O)
   of the strip growth rates hold wherever we can compute and would give
@@ -299,6 +299,21 @@ $g \ge (E - 3V + 6)/6 = ((K-3)(L-3) - 1)/6$, that is $g \ge 74$ for the $24 \tim
 board, the signed sum of \cite{wildeboerseidel2020} is, up to sign, a single Pfaffian.
 \end{remark}
 
+\begin{remark}
+Complex edge weights do not give a single Pfaffian either. Let $\min(K, L) \ge 3$ and suppose that
+nonzero complex weights $w_e$ make all terms $(-1)^{\epsilon(M)} \prod_{e \in M} w_e$ of the
+Pfaffian of $B(K, L)$ equal to one constant $c$. Every perfect matching has exactly one edge at a
+given vertex, so dividing the weights at one vertex by $c$ gives a Pfaffian labeling of $B(K, L)$
+over the multiplicative group $\mathbb{C}^{\times}$, whose element $-1$ has order two, in the sense of
+Norine and Thomas \cite{norinethomas2008}. Fixing a perfect matching of the complement of the
+conformal corner, as in the proof above, and rescaling once more at one vertex restricts it to a
+Pfaffian labeling of $B(3, 4)$. The board $B(3, 4)$ is $3$-connected and bicritical, i.e.\ a brick
+(checked by \file{src/pfaff\_rigor.py}), and with $12$ vertices it is not the Petersen graph. By
+\cite[Lemma~3.5]{norinethomas2008} a brick other than the Petersen graph that has a Pfaffian
+labeling over some Abelian group is Pfaffian, which contradicts Theorem~\ref{thm:pfaff}. The same
+holds for the cylinders and tori of the previous remark.
+\end{remark}
+
 \section{The value of \texorpdfstring{$s$}{s}}\label{sec:value}
 
 \subsection{Data}
@@ -400,7 +415,8 @@ the largest predicted remaining error, each model's backtest change scaled by th
 $|d_W/d_{W-2}|$ of the last two corrections ($6.0\cdot10^{-17}$);
 \item a hidden slow mode, $3.4\cdot10^{-17}$: we add a term $B x^{(w-25)/2}$ with
 $x = e^{-2/1.2351}$, the slowest decay seen anywhere in the data (the parity splitting of
-\S\ref{sec:z2}), and fit it together with L1 ($C$, $c_1$ and $B$) by relative least squares on
+\S\ref{sec:z2}, with the fitted $\xi_\infty = 1.2351$; the spectral $\xi = 1.236091$ would change
+$x$ by $0.13\%$), and fit it together with L1 ($C$, $c_1$ and $B$) by relative least squares on
 $w = w_0, \dots, 25$ for $w_0 = 11, 13, 15, 17$. The fitted $B$ depends on the window, between
 $0.9\cdot10^{-3}\,d_{25}$ ($w_0 = 11$) and $1.95\cdot10^{-3}\,d_{25}$ ($w_0 = 13$). We allow every $B$ within three
 standard errors of a fitted value, over all windows and widened to include $B = 0$:
@@ -786,12 +802,34 @@ the repository, an independent code base, agree with these counts where both exi
 
 \section{Parity splitting and its decay length}\label{sec:z2}
 For even $w$ let $\Delta_w = \log\lambda^{(0)}_w - \log\lambda^{(1)}_w$ and
-$\xi_w = 2/\log(\Delta_{w-2}/\Delta_w)$ (Table~\ref{tab:z2}). A pure exponential
-$\log\Delta_w = a - w/\xi$ fits $w = 10, \dots, 24$ poorly ($\xi = 1.1931$, rms $1.5\cdot10^{-2}$);
-with a power prefactor, $\log\Delta_w = a - w/\xi + b\log w$ gives $\xi = 1.2323$, $b = -0.433$,
-rms $9.3\cdot10^{-4}$, and extrapolating $1/\xi_w$ linearly in $1/w$ gives $\xi_\infty = 1.2351$
-(prefactor exponent $b = -0.467$). With $b$ fixed at $-1/2$, $\xi = 1.2387$ (rms $2.6\cdot10^{-3}$).
-The three estimates span $\xi \in [1.2323, 1.2387]$; we quote $\xi = 1.235 \pm 0.004$.
+$\xi_w = 2/\log(\Delta_{w-2}/\Delta_w)$ (Table~\ref{tab:z2}). The local lengths $\xi_w$ still drift
+at $w = 24$, but the decay rate is a gap of the transfer matrix in the other direction. On a torus
+of circumference $w$ and length $L$, $\operatorname{tr}((-1)^{|A|} T_w^L)$ is the difference of the
+two sectors. Turned by $90^\circ$, the same sum is $\operatorname{tr}(\tilde T_L^{\,w})$, where
+$\tilde T_L$ is the transfer of the cylinder of circumference $L$ in which the edges crossing one seam
+along the axis, between columns $L - 1$ and $0$, have weight $-1$ (a $\Z_2$ flux through the
+cylinder). The splitting therefore decays with the rate
+\[
+  m_v = \lim_{L\to\infty} \log\bigl(\lambda_1(T_L)/|\nu_{\max}(\tilde T_L)|\bigr),
+\]
+where $\nu_{\max}$ is the eigenvalue of $\tilde T_L$ of largest modulus. We compute it with ARPACK
+(\file{log-convexity/levels.py}): $m_v = 0.8090018253$ at $L = 22$, and $\xi_L = 1/m_v$ changes by
+$1.8\cdot10^{-7}$ from $L = 18$ to $20$ and by $8.9\cdot10^{-9}$ from $L = 20$ to $22$, so
+\[
+  \xi = 1/m_v = 1.236091 \pm 10^{-6}.
+\]
+This is a numerical estimate: neither the limit nor the identification of the decay rate of
+$\Delta_w$ with $m_v$ is proved. The data support it. With $m_v$ fixed, the local prefactor exponent
+$b_w = [\log(\Delta_w/\Delta_{w-2}) + 2m_v]/\log(w/(w-2))$ is $-0.478$, $-0.481$, $-0.482$ at
+$w = 20, 22, 24$ and extrapolates linearly in $1/w$ to $-0.495$; an error $\delta$ in the rate would
+make $b_w$ drift by about $\delta w$. So $\Delta_w \approx A\, e^{-w/\xi} w^{-1/2}$. The direct fits
+to Table~\ref{tab:z2}, a pure exponential ($\xi = 1.1931$, rms $1.5\cdot10^{-2}$), a power prefactor
+($\xi = 1.2323$, $b = -0.433$, rms $9.3\cdot10^{-4}$), the extrapolation of $1/\xi_w$ linearly in
+$1/w$ ($\xi_\infty = 1.2351$, $b = -0.467$) and $b$ fixed at $-1/2$ ($\xi = 1.2387$, rms
+$2.6\cdot10^{-3}$): the three with a prefactor span $[1.2323, 1.2387]$, which contains the spectral
+value, and the pure exponential misses it because it has no prefactor. The error bar of $\xi$ covers
+only the convergence in $L$; the direct check through $b_w$ confirms the rate only to a
+few units of $10^{-4}$.
 
 \begin{table}[ht]
 \caption{Splitting of the parity sectors on even cylinders.}\label{tab:z2}
@@ -814,12 +852,11 @@ eigenvalue $\lambda_3$ (\file{out/out\_crosscheck.txt}), and the convergence of 
 gives the same gap at every $w = 20, \dots, 25$. The bulk correlation length along the cylinder is
 therefore $1/1.0827 = 0.92$, and the odd-width corrections, which behave like
 $e^{-w/\xi_{\mathrm{odd}}} w^b$ with $1/\xi_{\mathrm{odd}} \approx 1.07$, are governed by the same
-gap. The power prefactor $w^b$ of $\Delta_w$ is our fitting ansatz: Ioselevich, Ivanov and
+gap. The power prefactor $w^{-1/2}$ of $\Delta_w$ is a numerical observation: Ioselevich, Ivanov and
 Feigelman \cite{ioselevich2002} estimate the splitting of the topological sectors only to
 exponential accuracy, and the power prefactors in \cite{ioselevich2002, yaokivelson2012} belong
-to other quantities (correlation functions, the columnar order at odd circumference). The
-exponent $-1/2$ of those prefactors serves only as one trial value of $b$ in the fits above, and
-we take no value of $\xi$ from there, since theirs belong to other models. All finite-size
+to other quantities (correlation functions, the columnar order at odd circumference). We take no
+value of $\xi$ or $b$ from there, since theirs belong to other models. All finite-size
 corrections we see are exponentially small, as expected for a non-critical (gapped) dimer liquid.
 On the square lattice, which is critical, the corrections are algebraic,
 $(f_w - G/\pi)w^2 \to \pi/6$, and a polynomial fit in $1/w^2$ to the transfer-matrix values for
@@ -941,18 +978,47 @@ decays by a factor $-13.84$ per two columns (\S\ref{sec:model}). In the second d
 $a_{2q}$ the two modes are $0.1147^q = \rho^{2q}$ and $(-0.072)^q$, and at $2q = 24$ the second is
 $0.007$ of the first, shrinking by a factor $0.63$ per step.
 
+Both modes are levels of the cylinder transfer, read as in \S\ref{sec:z2} with the board turned by
+$90^\circ$: the free strip of width $k$, closed periodically along its length $L$, is the cylinder of
+circumference $L$ with $k$ rows whose first and last rows are free, so
+$e_0^{\top} T_L^k e_0 = \sum_j c_j \theta_j^k$ contains only the levels $\theta_j$ of $T_L$ that
+$e_0$ sees, and $e_0^{\top} \tilde T_L^k e_0$ with the flux of \S\ref{sec:z2} is the difference of
+the two sectors of the strip. Read per unit length while $L$ times the sector difference is small,
+the first gives the mean of the two sectors and the second their difference. At $L = 22$ (\file{log-convexity/levels.py}) the leading
+level that $e_0$ sees below $\lambda_1$ is $\theta = -0.3386706\,\lambda_1$, the in-sector gap, with
+weight $C = c_\theta/(c_1 L) = 0.28823$ per unit length, and the leading level of $\tilde T_L$ that
+$e_0$ sees is the pair $\pm 0.2687942\,i\,\lambda_1$, with weight $\tilde C = 0.11466$ per unit length
+for each of the two. Then $-1/0.2687942^2 = -13.841$ is the factor per two columns, and
+\[
+  g(k) + 2\sigma \approx C(-\rho)^k + 2\tilde C \cos(\pi k/2)\, r_-^k, \qquad
+  \rho = 0.3386706, \quad r_- = 0.2687942,
+\]
+with no fitted parameter, agrees with $g(k)$ (Table~\ref{tab:surface} and \file{data/surface.json})
+to $2\cdot10^{-4}$ for $k = 16, \dots, 20$ and within the error $1.8\cdot10^{-14}$ of $-2\sigma$ for
+$k = 21, \dots, 26$, and with the second differences at $2q = 20, 22, 24$ to $8\cdot10^{-5}$; its second term alone gives the sector
+difference of the free strips at $k = 12, \dots, 18$ to $6\cdot10^{-4}$. The amplitude read off the odd
+strips, $(g(19) + 2\sigma)/(-\rho)^{19} = 0.28822 \pm 1.6\cdot10^{-5}$, is the weight $C$ of the
+cylinder level. For large $k$, (L$_\infty$) and (O) thus come down to the sign of the weight of one
+isolated level, $C > 0$, and to $r_- < \rho$; both hold at every circumference we computed
+($L \le 22$). These identifications are numerical: we have no bound on the remainder and no proof
+that the weights per unit length converge.
+
 The convexity is a quantitative property of unit weights, not a structural one. Its finite form
 $Z(2q, m)^2 \le Z(2q-2, m)Z(2q+2, m)$ holds in all $1453$ cases we tested on the king's graph, but it
 fails on the triangular lattice, for every unequal pair of diagonal weights we tried, and for equal
-diagonal weights $x = \tfrac32, 2, 3$ on wide strips; along equal weights the two rates above cross,
-on our data, between $x = \tfrac74$ and $x = 2$. The companion note \cite{rylko2026lnote} collects these tests
+diagonal weights $x = \tfrac32, 2, 3$ on wide strips. Along equal weights $x$ on both diagonals the
+two levels above cross at $x^* \in (1.9823, 1.9830)$, if the circumferences $L \equiv 0$ and
+$2 \pmod 4$, which approach it from opposite sides, keep bracketing it. Both gaps stay open there, so
+this is a crossing of subleading levels, not a phase transition (numerically). At $x = \tfrac32$ the
+levels predict convex strips from width $22$ on; at $x = 2$ and $3$, above $x^*$, the second
+differences change sign infinitely often. The companion note \cite{rylko2026lnote} collects these tests
 and the counterexamples, explains the onsets for nearly equal diagonal weights at $m = 4$ and $8$ by
 the Krein signature of the left--right reflection, and lists the obstructions to the standard proof
 techniques.
 
 \begin{problem}
 Prove (L$_\infty$) and (O) at unit weights, i.e.\ the sign $C > 0$ with a bound on the remainder
-for every $k \ge 22$; Proposition~\ref{prop:cond} would then give ten rigorous digits. Another
+for every $k \ge 22$, where $C$ is the weight per unit length of one level of the cylinder transfer; Proposition~\ref{prop:cond} would then give ten rigorous digits. Another
 route to ten digits is the sector bracket $f^{(1)}_w \le s \le f^{(0)}_w$ on even cylinders, which
 holds in all our data (\S\ref{sec:model}) and has width $5.06\cdot10^{-11}$ at $w = 24$.
 \end{problem}
@@ -996,6 +1062,7 @@ script & output \\
 \texttt{log-convexity/linf.py 16} & \file{log-convexity/out\_linf.txt} \\
 \texttt{log-convexity/involution.py} & \file{log-convexity/out\_involution.txt} \\
 \texttt{log-convexity/modes.py} & \file{log-convexity/out\_modes.txt} \\
+\texttt{log-convexity/levels.py} & \file{log-convexity/out\_levels.txt} \\
 \texttt{src/validate.py}; \texttt{src/crosscheck.py} & \file{out/out\_validate.txt}, \dots \\
 \texttt{src/derived.py} & \file{out/out\_derived.txt} \\
 \bottomrule
@@ -1003,7 +1070,9 @@ script & output \\
 \end{center}
 The outputs were produced on two x86-64 machines with four cores and about $16$\,GiB of memory
 each: the first version on one, the runs added in this version (extended precision, run weights,
-the corner counts, the Pfaffian certificate and the two-mode fits) on the other. The extended-precision
+the corner counts, the Pfaffian certificate and the two-mode fits) on the other. The cylinder levels
+of \S\ref{sec:z2} and \S\ref{sec:conj} (\file{log-convexity/levels.py}, float64 only) ran later on an
+arm64 machine ($2.4$\,GiB, $13$ min). The extended-precision
 runs use the 64-bit mantissa of the x87 \texttt{long double}, which \file{src/lean.py} asserts. The
 algorithms are those of \S\ref{sec:model}; the implementation applies each cell step to reshaped
 views of the state vector, without forming the transfer matrix. The widest

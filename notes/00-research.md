@@ -31,7 +31,8 @@ const bounds = read('bounds.json');
 const runweight = read('runweight_3state.json');
 const surface = read('surface.json');
 const corner = read('corner.json');
-const z2 = read('z2.json');
+const levels = fs.readFileSync(path.join(nb.context.root, 'research/king-entropy/log-convexity/out_levels.txt'), 'utf-8');
+const [, xi, xiChange] = levels.match(/RESULT xi = 1\/m_v = ([0-9.]+) \(w = \d+; change from w = \d+: ([0-9.e+-]+)\)/);
 const widest = Object.keys(runweight).map(Number).sort((a, b) => b - a)[0];
 
 nb.results = {
@@ -55,8 +56,8 @@ for (const [key, [quoted, value]] of Object.entries(errors)) {
   }
 }
 
-if (z2.xi_inf_local.toFixed(3) !== '1.235') {
-  throw new Error(`xi: the page says 1.235, the data says ${z2.xi_inf_local}`);
+if (nearest(xi, 6) !== '1.236091' || 5 * Number(xiChange) > 1e-6) {
+  throw new Error(`xi: the page says 1.236091 ± 1e-6, the data says ${xi} (last change ${xiChange})`);
 }
 
 const found = {
@@ -79,7 +80,7 @@ table(['quantity', 'value', 'status', 'source'], [
   ['upper bound on s', nb.results.upper, `proved (run-weighted, w = ${widest})`, 'data/runweight_3state.json'],
   ['surface free energy σ', `${nb.results.sigma} ± ${Number(surface.sigma_err).toExponential(0)}`, 'estimate', 'data/surface.json'],
   ['corner free energy κ', `${nb.results.kappa} ± ${errors.kappa[0]}`, 'estimate', 'data/corner.json'],
-  ['parity splitting length ξ', '1.235 ± 0.004', 'estimate', 'data/z2.json'],
+  ['parity splitting length ξ', '1.236091 ± 1e-6', 'estimate', 'log-convexity/out_levels.txt'],
 ]);
 ```
 

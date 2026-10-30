@@ -55,7 +55,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/bounds.py` | certified Fekete lower bounds, open-strip upper bounds, Kahn-Lovasz, Calkin-Wilf hypothesis checks |
 | `src/cw.py` | Calkin-Wilf hypothesis: RP obstruction, spectral measure, exact log-convexity tests, limit form, conditional bounds (see `notes/calkin-wilf.md`) |
 | `src/estimate.py` | first-pass estimate of s from all cylinders, the final value read from `data/errbar.json`, Z2 splitting table and decay length; writes `data/z2.json` |
-| `src/timed.py` | runs a command and appends wall time and peak RSS to stderr |
+| `src/timed.py` | runs a command and appends wall time and peak RSS (MiB on Linux and macOS) to stderr; `src/test_timed.py` checks the unit |
 | `src/paths.py` | the directory of each file by its name, so the scripts read and write the right place from any working directory |
 | `src/test_paths.py` | smoke test: `src/tm2.py`, `src/cylw.py`, `src/lean.py`, `src/zexact.py` on tiny inputs from another directory write where `src/paths.py` says and record the commit |
 | `src/zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `data/zex/zex_*.json` |
@@ -69,6 +69,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/surface.py` | surface free energy sigma from free strips |
 | `src/lcert.py` | certified log-convexity tests of (L) at m = 25, 26 in extended precision with a rigorous error bound |
 | `log-convexity/` | why (L) is not structural: J-symmetry and Krein signature (`log-convexity/symmetry.py`), partial sign-reversing involution (`log-convexity/involution.py`), (L_inf) tests at other weights (`log-convexity/linf.py`), the two modes and their crossing along equal diagonal weights (`log-convexity/modes.py`), with their outputs |
+| `log-convexity/levels.py` | the two finite-size modes and the parity splitting as levels of the cylinder transfer, plain and with a sign on the seam edges: rates, amplitudes, the gap m_v and xi = 1/m_v, the crossing x*; controls against `src/tm.py` counts, brute force and dense eigendecompositions |
 | `src/ltest.py` | exact (L) tests and Hankel (moment) tests on all `data/zex/zex_*.json` |
 | `src/lparity.py`, `src/lspec.py`, `src/lweight.py` | path-parity form of (L), spectral obstructions, (L) under diagonal weights |
 | `src/repro.py` | re-runs `src/estimate.py`, `src/cw.py`, `src/bounds.py 16` and `src/cylw.py king cyl 20 0` from a clean export of HEAD and compares outputs |
@@ -121,12 +122,14 @@ python3 src/pfaff_rigor.py > out/out_pfaff.txt
 python3 src/surface.py > out/out_surface.txt
 python3 src/corner.py > out/out_corner.txt       # needs data/errbar.json, data/surface.json and the zex counts to 24 x 24
 python3 log-convexity/modes.py > log-convexity/out_modes.txt
+python3 src/timed.py python3 log-convexity/levels.py > log-convexity/out_levels.txt 2> log-convexity/time_levels.txt
 python3 src/ltest.py > out/out_ltest.txt
 python3 src/lparity.py > out/out_lparity.txt
 python3 src/lspec.py > out/out_lspec.txt
 python3 src/lweight.py > out/out_lweight.txt; python3 src/lweight.py big > out/out_lweight_big.txt
 python3 src/repro.py > out/out_repro.txt
 python3 src/test_paths.py
+python3 src/test_timed.py
 ```
 
 Paper (needs a TeX distribution with `latexmk`, e.g. TeX Live with

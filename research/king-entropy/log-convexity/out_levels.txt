@@ -1,0 +1,158 @@
+Levels of the king-cylinder transfer T_w(x) and of the twisted transfer T~_w(x); float64.
+r_+ = |theta_neg/theta_1|, C = c_neg/(c_1 w); r_- = |nu_1/theta_1|, C~ = c(nu_1)/(c_1 w), e0-visible;
+m_v = log(theta_1/|nu_max|) over all levels of T~; rho_+ = r_+^2, rho_- = -r_-^2.
+
+== A. controls with known answers
+A1. e0^T T^K e0 against exact counts (x = 1: tm.count) and brute force over perfect matchings,
+    twisted transfer against the brute-force sum of x^(#diagonals) (-1)^(#seam crossings)
+  K=4 w=4 x=1  : Z = 2649.000000 (brute 2649.000000, tm.count 2649), twisted 13.000000 (brute 13.000000)
+  K=4 w=4 x=3/2: Z = 13518.062500 (brute 13518.062500), twisted 285.500000 (brute 285.500000)
+  K=5 w=4 x=1  : Z = 25314.000000 (brute 25314.000000, tm.count 25314), twisted 0.000000 (brute 0.000000)
+  K=5 w=4 x=3/2: Z = 200208.375000 (brute 200208.375000), twisted 0.000000 (brute 0.000000)
+  K=6 w=4 x=1  : Z = 249097.000000 (brute 249097.000000, tm.count 249097), twisted -11.000000 (brute -11.000000)
+  K=6 w=4 x=3/2: Z = 3204038.640625 (brute 3204038.640625), twisted -7407.875000 (brute -7407.875000)
+  K=4 w=5 x=1  : Z = 14604.000000 (brute 14604.000000, tm.count 14604), twisted 156.000000 (brute 156.000000)
+  K=4 w=5 x=3/2: Z = 108173.187500 (brute 108173.187500), twisted 6491.890625 (brute 6491.890625)
+  K=3 w=6 x=1  : Z = 2740.000000 (brute 2740.000000, tm.count 2740), twisted 0.000000 (brute 0.000000)
+  K=3 w=6 x=3/2: Z = 13905.000000 (brute 13905.000000), twisted 0.000000 (brute 0.000000)
+  K=4 w=6 x=1  : Z = 88997.000000 (brute 88997.000000, tm.count 88997), twisted 625.000000 (brute 625.000000)
+  K=4 w=6 x=3/2: Z = 1014456.453125 (brute 1014456.453125), twisted 42842.441406 (brute 42842.441406)
+  largest relative deviation 0.0e+00
+A2. Arnoldi from e0 against the dense e0-spectrum (tmfast.e0_spectrum), leading three levels and weights
+  w= 8 x=1 untwisted: levels 4.6e-15, weights 6.1e-15
+  w= 8 x=1 twisted  : levels 4.4e-16, weights 9.2e-15
+  w= 8 x=2 untwisted: levels 2.4e-15, weights 7.6e-15
+  w= 8 x=2 twisted  : levels 1.2e-15, weights 1.4e-14
+  w=12 x=1 untwisted: levels 3.6e-15, weights 2.8e-14
+  w=12 x=1 twisted  : levels 1.4e-15, weights 3.2e-14
+  w=12 x=2 untwisted: levels 3.1e-15, weights 7.1e-14
+  w=12 x=2 twisted  : levels 3.8e-14, weights 1.2e-12
+A3. x = 1, w = 20 against the committed ARPACK run (out/out_crosscheck.txt) and power iteration
+  log theta_1 = 11.310238237734923  (data/eig/eig_king_cyl_w20_p0.json 11.310238237734925)
+  theta_neg/theta_1 = -0.3386705627, in-sector gap -log r_+ = 1.082727  (committed 1.082727)
+
+== B. unit weights x = 1 (w = 22 with a Krylov space of 30, else 36)
+  w  theta_neg/theta_1   -log r_+         C     nu_1/theta_1   1/r_-^2        C~          m_v   xi = 1/m_v
+  8      -0.3375775194  1.0859601  0.295557 +9e-17+0.265636905i  14.17174  0.115256 0.8094207445 1.2354514099
+ 10      -0.3389974762  1.0817626  0.285935 -4e-17+0.268092132i  13.91335  0.114809 0.8091325557 1.2358914407
+ 12      -0.3386333736  1.0828373  0.288617 -7e-17+0.268630033i  13.85769  0.114725 0.8090110934 1.2360769934
+ 14      -0.3386854658  1.0826834  0.288093 +2e-17+0.268757558i  13.84454  0.114679 0.8090056380 1.2360853287
+ 16      -0.3386695513  1.0827304  0.288248 -8e-18+0.268786009i  13.84161  0.114666 0.8090021104 1.2360907186
+ 18      -0.3386712852  1.0827253  0.288223 -4e-17+0.268792425i  13.84095  0.114662 0.8090019477 1.2360909672
+ 20      -0.3386705627  1.0827274  0.288231 -8e-17+0.268793855i  13.84080  0.114661 0.8090018311 1.2360911454
+ 22      -0.3386706092  1.0827273  0.288230 -6e-17+0.268794172i  13.84077  0.114661 0.8090018253 1.2360911543
+  largest twisted levels at w = 22 (/theta_1): -0.445302, +0.445302, +0.440994, -0.440994
+  |xi_w - xi_{w-2}|, w = 12..22: 1.9e-04, 8.3e-06, 5.4e-06, 2.5e-07, 1.8e-07, 8.9e-09
+  RESULT xi = 1/m_v = 1.2360912 (w = 22; change from w = 20: 8.9e-09)
+B2. amplitude C against the free strips: C_k = (g(k) + 2 sigma)/(-r_+)^k for odd k (Table 4, surface.json),
+    with the error of -2 sigma (+-1.8e-14) divided by r_+^k; r_+, C from w = 22
+  k=17: C_k = 0.288202 +- 1.8e-06
+  k=19: C_k = 0.288220 +- 1.6e-05
+  k=21: C_k = 0.288224 +- 1.4e-04
+  k=23: C_k = 0.288204 +- 1.2e-03
+  C (cylinder, w = 18, 20, 22) = 0.288223, 0.288231, 0.288230
+B3. two-level formula g(k) + 2 sigma = C (-r_+)^k + 2 C~ cos(pi k/2) r_-^k, all four numbers from w = 22,
+    against Table 4 (surface.json; its error +-1.8e-14 from -2 sigma), and the sector difference of the
+    free strip D(k) = log lambda^(0)_k - log lambda^(1)_k = 4 C~ cos(pi k/2) r_-^k (sec_king_free_1_18.json)
+  k=16: g + 2 sigma = +8.805138e-09, formula +8.803637e-09, ratio 1.00017
+  k=17: g + 2 sigma = -2.923578e-09, formula -2.923864e-09, ratio 0.99990
+  k=18: g + 2 sigma = +9.779851e-10, formula +9.779242e-10, ratio 1.00006
+  k=19: g + 2 sigma = -3.353485e-10, formula -3.353608e-10, ratio 0.99996
+  k=20: g + 2 sigma = +1.144685e-10, formula +1.144657e-10, ratio 1.00002
+  k=21: g + 2 sigma = -3.846429e-11, formula -3.846513e-11, ratio 0.99998
+  k=22: g + 2 sigma = +1.296324e-11, formula +1.296279e-11, ratio 1.00003
+  k=23: g + 2 sigma = -4.411471e-12, formula -4.411866e-12, ratio 0.99991
+  k=24: g + 2 sigma = +1.499190e-12, formula +1.498809e-12, ratio 1.00025
+  k=25: g + 2 sigma = -5.057066e-13, formula -5.060312e-13, ratio 0.99936
+  k=26: g + 2 sigma = +1.706968e-13, formula +1.710427e-13, ratio 0.99798
+  d_q at 2q=20: 7.620114e-10 (Table 4), formula P rho_+^q + Q rho_-^q = 7.619555e-10
+  d_q at 2q=22: 9.004120e-11 (Table 4), formula P rho_+^q + Q rho_-^q = 9.003894e-11
+  d_q at 2q=24: 1.013556e-11 (Table 4), formula P rho_+^q + Q rho_-^q = 1.013621e-11
+  D(10) = -9.007819e-07, 4 C~ cos(pi k/2) r_-^k = -9.029702e-07, ratio 0.99758
+  D(12) = +6.527755e-08, 4 C~ cos(pi k/2) r_-^k = +6.523988e-08, ratio 1.00058
+  D(14) = -4.712930e-09, 4 C~ cos(pi k/2) r_-^k = -4.713601e-09, ratio 0.99986
+  D(16) = +3.405720e-10, 4 C~ cos(pi k/2) r_-^k = +3.405591e-10, ratio 1.00004
+  D(18) = -2.460432e-11, 4 C~ cos(pi k/2) r_-^k = -2.460550e-11, ratio 0.99995
+B4. parity splitting Delta_w of the even cylinders (data/lean/*longdouble*) against m_v of w = 22:
+    local prefactor exponent b_w = [log(Delta_w/Delta_{w-2}) + 2 m_v] / log(w/(w-2))
+  w=12: Delta = 2.782917e-05, b_w = -0.4416
+  w=14: Delta = 5.124578e-06, b_w = -0.4803
+  w=16: Delta = 9.544544e-07, b_w = -0.4693
+  w=18: Delta = 1.788983e-07, b_w = -0.4782
+  w=20: Delta = 3.373229e-08, b_w = -0.4780
+  w=22: Delta = 6.389264e-09, b_w = -0.4809
+  w=24: Delta = 1.214909e-09, b_w = -0.4821
+  b_w linear in 1/w through w = 18..24: b_inf = -0.4947
+
+== C. equal diagonal weights x: the two rates against Table 2 of the companion note (Prony fits of
+   strips 2q <= 22, last window), and the gaps that a phase transition would have to close
+  x=1.00 w=14: theta_neg/theta_1 = -0.3386855, nu_1/theta_1 = +2e-17+0.2687576i, r_-/r_+ = 0.79353, C = 0.28809, C~ = 0.11468
+  x=1.00 w=16: theta_neg/theta_1 = -0.3386696, nu_1/theta_1 = -8e-18+0.2687860i, r_-/r_+ = 0.79365, C = 0.28825, C~ = 0.11467
+  x=1.00 w=18: theta_neg/theta_1 = -0.3386713, nu_1/theta_1 = -4e-17+0.2687924i, r_-/r_+ = 0.79367, C = 0.28822, C~ = 0.11466
+  x=1.00 w=20: theta_neg/theta_1 = -0.3386706, nu_1/theta_1 = -8e-17+0.2687939i, r_-/r_+ = 0.79367, C = 0.28823, C~ = 0.11466
+  x=1.00: w = 20 rho_+ = 0.11470, rho_- = -0.07225, |rho_-|/rho_+ = 0.6299; Table 2 0.1147, -0.0718 (relative difference -0.0000, +0.0063)
+  x=1.25 w=14: theta_neg/theta_1 = -0.3787241, nu_1/theta_1 = -2e-17+0.3489078i, r_-/r_+ = 0.92127, C = 0.31968, C~ = 0.15508
+  x=1.25 w=16: theta_neg/theta_1 = -0.3786691, nu_1/theta_1 = -2e-16+0.3489556i, r_-/r_+ = 0.92153, C = 0.32017, C~ = 0.15505
+  x=1.25 w=18: theta_neg/theta_1 = -0.3786799, nu_1/theta_1 = -2e-17+0.3489673i, r_-/r_+ = 0.92154, C = 0.32006, C~ = 0.15504
+  x=1.25 w=20: theta_neg/theta_1 = -0.3786767, nu_1/theta_1 = -6e-17+0.3489701i, r_-/r_+ = 0.92155, C = 0.32010, C~ = 0.15504
+  x=1.25: w = 20 rho_+ = 0.14340, rho_- = -0.12178, |rho_-|/rho_+ = 0.8493; Table 2 0.1433, -0.1217 (relative difference +0.0007, +0.0007)
+  x=1.50 w=14: theta_neg/theta_1 = -0.4137881, nu_1/theta_1 = +7e-17+0.4013670i, r_-/r_+ = 0.96998, C = 0.34315, C~ = 0.16872
+  x=1.50 w=16: theta_neg/theta_1 = -0.4136541, nu_1/theta_1 = +6e-17+0.4014516i, r_-/r_+ = 0.97050, C = 0.34427, C~ = 0.16867
+  x=1.50 w=18: theta_neg/theta_1 = -0.4136868, nu_1/theta_1 = -4e-17+0.4014740i, r_-/r_+ = 0.97048, C = 0.34397, C~ = 0.16865
+  x=1.50 w=20: theta_neg/theta_1 = -0.4136772, nu_1/theta_1 = -1e-16+0.4014799i, r_-/r_+ = 0.97051, C = 0.34407, C~ = 0.16865
+  x=1.50: w = 20 rho_+ = 0.17113, rho_- = -0.16119, |rho_-|/rho_+ = 0.9419; Table 2 0.171, -0.1611 (relative difference +0.0008, +0.0005)
+  x=1.75 w=14: theta_neg/theta_1 = -0.4444199, nu_1/theta_1 = -4e-17+0.4401167i, r_-/r_+ = 0.99032, C = 0.35987, C~ = 0.17285
+  x=1.75 w=16: theta_neg/theta_1 = -0.4441510, nu_1/theta_1 = -2e-16+0.4402599i, r_-/r_+ = 0.99124, C = 0.36200, C~ = 0.17277
+  x=1.75 w=18: theta_neg/theta_1 = -0.4442256, nu_1/theta_1 = -1e-16+0.4403006i, r_-/r_+ = 0.99116, C = 0.36137, C~ = 0.17274
+  x=1.75 w=20: theta_neg/theta_1 = -0.4442026, nu_1/theta_1 = +6e-16+0.4403124i, r_-/r_+ = 0.99124, C = 0.36159, C~ = 0.17274
+  x=1.75: w = 20 rho_+ = 0.19732, rho_- = -0.19388, |rho_-|/rho_+ = 0.9826; Table 2 0.1971, -0.1938 (relative difference +0.0011, +0.0004)
+  x=2.00 w=14: theta_neg/theta_1 = -0.4713409, nu_1/theta_1 = -7e-17+0.4708485i, r_-/r_+ = 0.99896, C = 0.37143, C~ = 0.17268
+  x=2.00 w=16: theta_neg/theta_1 = -0.4708660, nu_1/theta_1 = +2e-16+0.4710759i, r_-/r_+ = 1.00045, C = 0.37507, C~ = 0.17256
+  x=2.00 w=18: theta_neg/theta_1 = -0.4710096, nu_1/theta_1 = -1e-16+0.4711452i, r_-/r_+ = 1.00029, C = 0.37389, C~ = 0.17253
+  x=2.00 w=20: theta_neg/theta_1 = -0.4709627, nu_1/theta_1 = -8e-16+0.4711670i, r_-/r_+ = 1.00043, C = 0.37432, C~ = 0.17252
+  x=2.00: w = 20 rho_+ = 0.22181, rho_- = -0.22200, |rho_-|/rho_+ = 1.0009; Table 2 0.2214, -0.2219 (relative difference +0.0018, +0.0004)
+  x=3.00 w=14: theta_neg/theta_1 = -0.5532545, nu_1/theta_1 = +5e-17+0.5538239i, r_-/r_+ = 1.00103, C = 0.38567, C~ = 0.15873
+  x=3.00 w=16: theta_neg/theta_1 = -0.5510069, nu_1/theta_1 = -3e-16+0.5546760i, r_-/r_+ = 1.00666, C = 0.40187, C~ = 0.15845
+  x=3.00 w=18: theta_neg/theta_1 = -0.5518477, nu_1/theta_1 = -1e-15+0.5549999i, r_-/r_+ = 1.00571, C = 0.39523, C~ = 0.15837
+  x=3.00 w=20: theta_neg/theta_1 = -0.5515075, nu_1/theta_1 = +2e-16+0.5551289i, r_-/r_+ = 1.00657, C = 0.39813, C~ = 0.15833
+  x=3.00: w = 20 rho_+ = 0.30416, rho_- = -0.30817, |rho_-|/rho_+ = 1.0132; Table 2 0.3027, -0.3082 (relative difference +0.0048, -0.0001)
+  gaps at w = 16 (ARPACK): in-sector gap log(theta_1/|theta_2|) of sector 0 of T over all levels, and m_v
+  x=1.00: in-sector gap 1.0827, m_v 0.8090
+  x=1.25: in-sector gap 0.9711, m_v 0.7702
+  x=1.50: in-sector gap 0.8827, m_v 0.7316
+  x=1.75: in-sector gap 0.8116, m_v 0.6951
+  x=1.90: in-sector gap 0.7752, m_v 0.6744
+  x=2.00: in-sector gap 0.7532, m_v 0.6612
+  x=2.10: in-sector gap 0.7326, m_v 0.6485
+  x=2.25: in-sector gap 0.7043, m_v 0.6303
+  x=2.50: in-sector gap 0.6628, m_v 0.6022
+  x=3.00: in-sector gap 0.5960, m_v 0.5534
+
+== D. the crossing x*: r_-(x) = r_+(x) at each width (brentq on log(r_-/r_+), xtol 1e-5)
+  w=14 (w mod 4 = 2): x*_w = 2.05422
+  w=16 (w mod 4 = 0): x*_w = 1.98194
+  w=18 (w mod 4 = 2): x*_w = 1.98803
+  w=20 (w mod 4 = 0): x*_w = 1.98237
+  w=22 (w mod 4 = 2, Krylov space 30): x*_w = 1.98297
+  w = 2 (mod 4): 2.05422, 1.98803, 1.98297 (decreasing)
+  w = 0 (mod 4): 1.98194, 1.98237 (increasing)
+  RESULT x* in (1.9824, 1.9830) if the two subsequences keep bracketing the limit
+
+== E. x = 3/2: d_q = P rho_+^q + Q rho_-^q with rates and amplitudes from the cylinder (no fit),
+   P = C (1 - rho_+)^2 / rho_+, Q = 2 C~ (1 - rho_-)^2 / rho_-, against d_q of out_modes.txt (2q <= 20)
+  w=18: rho_+ = 0.171137, rho_- = -0.161181, |rho_-|/rho_+ = 0.94183, C = 0.34397, C~ = 0.16865, P = 1.3808, Q = -2.8216
+    model error / size of the larger term, 2q = 12..20: 12: +6.2e-03, 14: +2.4e-03, 16: +5.9e-04, 18: +7.4e-04, 20: -2.8e-04
+    predicted 2q = 22..32: 22: +1.047e-08 (Q/P term +1.0569), 24: +3.969e-12 (Q/P term -0.9954), 26: +2.890e-10 (Q/P term +0.9375), 28: +2.986e-12 (Q/P term -0.8830), 30: +8.001e-12 (Q/P term +0.8316), 32: +1.620e-13 (Q/P term -0.7833)
+  w=20: rho_+ = 0.171129, rho_- = -0.161186, |rho_-|/rho_+ = 0.94190, C = 0.34407, C~ = 0.16865, P = 1.3813, Q = -2.8215
+    model error / size of the larger term, 2q = 12..20: 12: +6.3e-03, 14: +2.2e-03, 16: +7.9e-04, 18: +5.8e-04, 20: +6.2e-05
+    predicted 2q = 22..32: 22: +1.048e-08 (Q/P term +1.0574), 24: +3.526e-12 (Q/P term -0.9960), 26: +2.890e-10 (Q/P term +0.9381), 28: +2.971e-12 (Q/P term -0.8836), 30: +8.001e-12 (Q/P term +0.8322), 32: +1.615e-13 (Q/P term -0.7839)
+  w=22: rho_+ = 0.171131, rho_- = -0.161187, |rho_-|/rho_+ = 0.94190, C = 0.34404, C~ = 0.16864, P = 1.3812, Q = -2.8215
+    model error / size of the larger term, 2q = 12..20: 12: +6.3e-03, 14: +2.1e-03, 16: +8.4e-04, 18: +5.1e-04, 20: +1.0e-04
+    predicted 2q = 22..32: 22: +1.048e-08 (Q/P term +1.0574), 24: +3.497e-12 (Q/P term -0.9960), 26: +2.890e-10 (Q/P term +0.9381), 28: +2.970e-12 (Q/P term -0.8836), 30: +8.001e-12 (Q/P term +0.8323), 32: +1.615e-13 (Q/P term -0.7839)
+  margin at 2q = 24, d_q / P-term (w = 18, 20, 22): 0.0046, 0.0040, 0.0040
+
+== F. x = 2 and 3: r_-/r_+ by width (both w mod 4 subsequences)
+  x=2: w=14: 0.99896, w=16: 1.00045, w=18: 1.00029, w=20: 1.00043; |rho_-|/rho_+ at w = 20: 1.0009
+  x=3: w=14: 1.00103, w=16: 1.00666, w=18: 1.00571, w=20: 1.00657; |rho_-|/rho_+ at w = 20: 1.0132
+
+total time 773 s

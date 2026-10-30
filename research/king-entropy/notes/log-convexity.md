@@ -212,3 +212,52 @@ and x = 3 (1.018), and even there the ratio drifts downwards with the window, so
 at x = 2, 3 is plausible but an extrapolation. x* is defined as the crossing of the two rates,
 rho_+(x*) = |rho_-(x*)|; on the present data x* is in (7/4, 2), interpolated x* ~ 1.96, a lower
 estimate because of the drift. The companion note `paper/king-entropy-log-convexity.tex` states this version.
+Superseded in part by §6: the cylinder levels decide x = 3/2 (convex from 2q = 22 on), x = 2, 3
+(sign changes) and locate x* in (1.9823, 1.9830), numerically.
+
+## 6. The two modes as cylinder levels (October 2026, `log-convexity/levels.py`)
+
+Close the free strip of width k periodically along its length L and turn it by 90 degrees: a cylinder
+of circumference L with k rows whose first and last rows are free. Per unit length, while L times the
+sector difference is small, the untwisted sum gives the mean of the two sectors. Then e0^T T_L^k e0 = sum_j c_j theta_j^k sees only the e0-visible levels of the cylinder transfer
+T_L, and e0^T T~_L^k e0, with weight -1 on the edges crossing one seam along the axis (a Z2 flux), is
+the difference of the two parity sectors of the strip. Per unit length:
+
+- bulk mode = the leading e0-visible level below theta_1, theta = -r_+ theta_1, weight C = c/(c_1 L);
+- alternating mode = the leading e0-visible pair of T~_L, +-i r_- theta_1, weight C~ per unit length each;
+- g(k) + 2 sigma = C (-r_+)^k + 2 C~ cos(pi k/2) r_-^k, so rho_+ = r_+^2, rho_- = -r_-^2 and the Prony
+  amplitudes are P = C (1 - rho_+)^2 / rho_+, Q = 2 C~ (1 - rho_-)^2 / rho_-. Nothing is fitted.
+- the parity splitting of the even cylinders, Delta_w, decays with m_v = log(theta_1 / |nu_max(T~_L)|)
+  (all levels of T~, e0-invisible at x = 1): xi = 1/m_v.
+
+Unit weights, L = 22: r_+ = 0.3386706 (gap 1.082727), C = 0.28823 (odd strips give 0.288220 +- 1.6e-5
+at k = 19), r_- = 0.2687942 (1/r_-^2 = 13.841), C~ = 0.11466, m_v = 0.8090018253, xi = 1.236091 +- 1e-6
+(changes 1.8e-7, 8.9e-9 over the last two widths). The four numbers reproduce Table 4 of the paper
+to 2e-4 for k = 16 to 20 and within the error of -2 sigma for k = 21 to 26 (k < 16 not
+tested), the free-strip sector differences D(k) = 4 C~ cos(pi k/2) r_-^k to 6e-4 (k = 12 to 18) and
+d_q at 2q = 20, 22, 24 to 8e-5. With m_v fixed, the local prefactor exponent of Delta_w is
+-0.478, -0.481, -0.482 (w = 20, 22, 24), linear in 1/w -> -0.495: Delta_w ~ A e^{-w/xi} w^{-1/2}.
+So (L-infinity) and (O) for large k are the sign of one level weight, C > 0, plus r_- < r_+
+(0.79367); the open part is the limit L -> infinity of the weights, not a fit.
+
+Along equal weights (rates at L = 20, gaps at L = 16): the cylinder rates agree with the last Prony
+windows of `out_modes.txt` to 0.5% (rho_- at x = 1: 0.6%); the window drift is the bias of the
+four-point fits. x*: r_-(x) = r_+(x) at x*_L = 2.0542, 1.9880, 1.9830 (L = 14, 18, 22, falling) and
+1.9819, 1.9824 (L = 16, 20, rising), so x* in (1.9823, 1.9830) if the classes L mod 4 keep bracketing it.
+The in-sector gap and m_v stay open and smooth through x* (0.7532 and 0.6612 at x = 2): a crossover of
+two subleading levels in different flux sectors, not a phase transition. This corrects the
+"transition x*" of the conclusion of §5.
+
+x = 3/2: |rho_-|/rho_+ = 0.9419, C = 0.344 > 0. The parameter-free model matches d_q at 2q = 18, 20
+to 6e-4 and 7e-5 of the larger term (L = 20) and predicts d_q > 0 for every 2q >= 22; the closest case
+is 2q = 24, alternating/bulk = -0.9960, d = 3.5e-12, margin 0.4%, the same at L = 20 and 22.
+The model neglects the faster levels; its whole error at 2q = 20 is 6.2e-5 of the larger term at L = 20
+and 1.0e-4 at L = 22.
+a_26 at x = 3/2 would test it. x = 2, 3: |rho_-|/rho_+ = 1.0009, 1.0132 (r_-/r_+ > 1 at L = 16, 18, 20),
+so the second differences change sign infinitely often.
+
+Pitfalls: Arnoldi from e0 sees only e0-visible levels, but rounding leaks the larger e0-invisible
+twisted levels (+-0.445 theta_1 at x = 1) into the Krylov space; Ritz values with e0-weight below
+1e-6 of the largest are dropped (Arnoldi agrees with the dense e0-spectrum at w = 8, 12). Finite L
+oscillate with L mod 4.
+
