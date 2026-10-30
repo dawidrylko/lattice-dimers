@@ -51,7 +51,7 @@ Both sequences up to $20 \times 20$. The site recounts the $20 \times 20$ domicu
 
 ## Tori, cylinders and diagonal pieces
 
-Two more families of counts, neither of which has an OEIS entry; the OEIS was searched by terms and by name on 30 October 2026.
+Two more families of counts. The OEIS has no entry for the king's graph or triangular tori, or for the diagonal triangle below; it was searched by terms and by name on 30 October 2026.
 
 **Cylinders and tori.** [`periodicTilingSolver-BigInt.js`](src/solvers/periodicTilingSolver-BigInt.js) (transfer by rows) and [`periodicTilingSolver-Modular.js`](src/solvers/periodicTilingSolver-Modular.js) (transfer by cells modulo primes) count the tilings of cylinders and tori on the square lattice, the triangular lattice and the king's graph. On the square lattice they reproduce [A335586](https://oeis.org/A335586), [A253678](https://oeis.org/A253678), [A281679](https://oeis.org/A281679) and [A006253](https://oeis.org/A006253). The domicule tilings of the $2n \times 2n$ torus, with the multiple edges of the $2 \times 2$ torus counted as separate pieces, as in A335586:
 
@@ -65,9 +65,11 @@ Two more families of counts, neither of which has an OEIS entry; the OEIS was se
 | 6 | 12×12 | 464778919849879305868191391185324176 |
 | 7 | 14×14 | 2743949253453878323721620757393919402021091285528 |
 
-A torus has no boundary, so the count has no surface or corner term. Divided by $e^{sL^2}$ it tends to 2 on the king's graph and on the triangular lattice, but not on the square lattice, which is critical, and $\log(Z/2)/L^2$ gives the entropy per site of the king's graph to within $5 \cdot 10^{-9}$ at $L = 14$ without an extrapolation model ([notebook](notes/04-torus.md)).
+Up to $10 \times 10$ both solvers agree on these terms; the larger ones come from the modular solver alone, checked against one more prime.
 
-**Diagonal pieces.** [`domiculeDiagonalSolver-BigInt.js`](src/solvers/domiculeDiagonalSolver-BigInt.js) and [`domiculeDiagonalSolver-Modular.js`](src/solvers/domiculeDiagonalSolver-Modular.js) count the domicule tilings by the number of pieces that join two cells sharing only a corner. On the $2n \times 2n$ board that number is even, and the triangle of the tilings with $0, 2, \dots, 2n^2$ diagonal pieces begins 1; 2, 1; 36, 126, 105, 12, 1; 6728, 84132, 413932, 934213, 1000638, 491689, 99554, 6638, 36, 1. Its first column is A004003, its row sums are A239273, and it is counted up to $16 \times 16$ ([notebook](notes/05-diagonals.md)).
+A torus has no boundary, so the count has no surface or corner term. Divided by $e^{sL^2}$ it tends to 2 on the king's graph and on the triangular lattice, but not on the square lattice, which is critical, and $\log(Z/2)/L^2$ agrees with the entropy per site of the king's graph to $5 \cdot 10^{-9}$ at $L = 14$, with no extrapolation model ([notebook](notes/04-torus.md)).
+
+**Diagonal pieces.** [`domiculeDiagonalSolver-BigInt.js`](src/solvers/domiculeDiagonalSolver-BigInt.js) and [`domiculeDiagonalSolver-Modular.js`](src/solvers/domiculeDiagonalSolver-Modular.js) count the domicule tilings by the number of pieces that join two cells sharing only a corner. On the $2n \times 2n$ board that number is even, and the triangle of the tilings with $0, 2, \dots, 2n^2$ diagonal pieces begins 1; 2, 1; 36, 126, 105, 12, 1; 6728, 84132, 413932, 934213, 1000638, 491689, 99554, 6638, 36, 1. Its first column is A004003, its row sums are A239273, and it is counted up to $18 \times 18$ ([notebook](notes/05-diagonals.md)).
 
 The PARI/GP programs, both run in CI: [`pari/king-torus.gp`](pari/king-torus.gp), where `T(h, w)` is the $h \times w$ torus and `a(n)` the $2n \times 2n$ one, and [`pari/king-diagonals.gp`](pari/king-diagonals.gp), where `P(h, w)` is the polynomial in $x$ and `row(n)` a row of the triangle.
 
@@ -123,7 +125,7 @@ The notes are Markdown files with code cells. The site build runs every cell and
 - [Method](notes/01-method.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/method.html)): the closed form and the resultant, transfer by rows and by cells, numbering, coupling from the past, counting modulo primes, the Markov chain for domicules, and how every number is verified.
 - [A004003 notebook](notes/02-a004003.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/a004003.html)): three methods side by side, the floating-point error of the product, the polynomial behind the resultant, running times.
 - [A239273 notebook](notes/03-a239273.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/a239273.html)): the sequence up to $20 \times 20$, the A239264 table, the Kahn-Lovász bound, the Chinese remainder theorem at work, a uniformity test of the Markov chain.
-- [Tori and cylinders](notes/04-torus.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/torus.html)): both periodic solvers checked against each other and the OEIS, the king's graph on the $2n \times 2n$ torus, the torus count over $e^{sN}$ on three lattices, the seam sign, cylinders.
+- [Tori and cylinders](notes/04-torus.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/torus.html)): both periodic solvers checked against each other and the OEIS, the king's graph on the $2n \times 2n$ torus, the torus count over $e^{sL^2}$ on three lattices, the seam sign, cylinders.
 - [Diagonal pieces](notes/05-diagonals.md) ([rendered](https://dawidrylko.github.io/lattice-dimers/notes/diagonals.html)): the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, their share and the weighted counts.
 
 ## Method in brief

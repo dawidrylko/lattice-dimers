@@ -71,7 +71,7 @@ Every row the cell lists passes the same checks, and the cell stops the build wh
 
 ## How many pieces are diagonal
 
-The mean share of diagonal pieces among the $2n^2$ pieces of a uniformly random tiling, and the variance of their number per cell. A free board has a boundary, which corrects the share by a term that falls only like $1/n$, so the last rows are not yet the value of the infinite lattice, the derivative $\partial s / \partial \log x$ of the entropy per site at $x = 1$ times 2.
+The cell prints the mean share of diagonal pieces among the $2n^2$ pieces of a uniformly random tiling, and the variance of their number per cell. A free board has a boundary. In the table its correction to the share shrinks roughly like $1/n$, so the last rows are not yet the value of the infinite lattice. That value is $2\,\partial s / \partial \log x$ at $x = 1$.
 
 ```js run
 const rows = Object.entries(nb.rows)
@@ -91,7 +91,7 @@ table(['n', 'board', 'share of diagonal pieces', 'variance per cell'], rows);
 
 ## Weighted counts
 
-The polynomial gives the weighted count for any $x$. The cell prints $\log P(x) / (4n^2)$, the free energy per cell of the weighted board, for the fugacities of the companion note. These are finite boards with a free boundary, so they lie below the entropy per site of the infinite lattice, which is $0.5655\ldots$ at $x = 1$.
+The polynomial gives the weighted count for any $x$. The cell prints $\log P(x) / (4n^2)$, the free energy per cell of the weighted board. The columns are $x = 0$ (dominoes), $1/2$, $1$ (domicules) and the weights $3/2$, $2$ and $3$ of the companion note. A free boundary keeps every value below the free energy per site of the infinite lattice at the same $x$, which is $G/\pi = 0.2916\ldots$ at $x = 0$ and $s = 0.5655\ldots$ at $x = 1$.
 
 ```js run
 const weights = [[0, 1], [1, 2], [1, 1], [3, 2], [2, 1], [3, 1]];
