@@ -14,6 +14,14 @@ const {
   testCasesDomicule,
   filesDomiculeRectangles,
   testCasesDomiculeRectangles,
+  filesPeriodic,
+  testCasesPeriodic,
+  filesPeriodicModular,
+  testCasesPeriodicModular,
+  filesDiagonal,
+  testCasesDiagonal,
+  filesDiagonalModular,
+  testCasesDiagonalModular,
 } = require('../data');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
@@ -41,6 +49,14 @@ const rejectionTestCases = [
     args: ['--require', './tests/fixtures/exitingWorker.js', 'src/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
   },
+  { args: ['src/solvers/periodicTilingSolver-BigInt.js', '-r', '4', '-c', '13'], message: 'at most 12' },
+  { args: ['src/solvers/periodicTilingSolver-BigInt.js', '-r', '1', '-c', '4', '--torus'], message: 'Usage' },
+  { args: ['src/solvers/periodicTilingSolver-Modular.js', '-r', '4', '-c', '25'], message: 'at most 24' },
+  { args: ['src/solvers/periodicTilingSolver-Modular.js', '-r', '4', '-c', '1'], message: 'Usage' },
+  { args: ['src/solvers/periodicTilingSolver-Modular.js', '-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
+  { args: ['src/solvers/domiculeDiagonalSolver-BigInt.js', '-r', '13', '-c', '13'], message: 'at most 12' },
+  { args: ['src/solvers/domiculeDiagonalSolver-Modular.js', '-r', '19', '-c', '19'], message: 'at most 18' },
+  { args: ['src/solvers/domiculeDiagonalSolver-Modular.js', '-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--only', 'missing.js'], message: 'Usage' },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '-o', '99'], message: 'No test cases' },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--domicule', '--only', 'dominoTilingSolver.js'], message: 'Usage' },
@@ -210,12 +226,15 @@ function executeRejectionTests() {
   });
 }
 
-function runTest(testCase, useBigInt) {
+function verifyList(expected, actual) {
+  return expected === actual;
+}
+
+function runTest(testCase, verifyResult) {
   const { fileName, expectedResult } = testCase;
 
   try {
     const result = exec(fileName, testCase);
-    const verifyResult = useBigInt ? verifyBigInt : verifyInt;
 
     if (verifyResult(expectedResult, result)) {
       console.log('Passed!');
@@ -233,7 +252,7 @@ function runTest(testCase, useBigInt) {
   return true;
 }
 
-function executeTests(files, testCases, useBigInt) {
+function executeTests(files, testCases, verifyResult) {
   const pairs = files.flatMap(fileName =>
     testCases.map((testCase, index) => ({ index, fileName, ...testCase })),
   );
@@ -244,7 +263,7 @@ function executeTests(files, testCases, useBigInt) {
       }... `,
     );
 
-    return runTest(testCase, useBigInt);
+    return runTest(testCase, verifyResult);
   });
 
   return allPassed;
@@ -266,12 +285,18 @@ function __main__() {
     const testCasesToRunInt = maxSize ? testCasesInt.slice(0, maxSize) : testCasesInt;
     const testCasesToRunBigInt = maxSize ? testCasesBigInt.slice(0, maxSize) : testCasesBigInt;
 
-    const allIntTestsPassed = executeTests(filesInt, testCasesToRunInt, false);
-    const allBigIntTestsPassed = executeTests(filesBigInt, testCasesToRunBigInt, true);
-    const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, true);
+    const allIntTestsPassed = executeTests(filesInt, testCasesToRunInt, verifyInt);
+    const allBigIntTestsPassed = executeTests(filesBigInt, testCasesToRunBigInt, verifyBigInt);
+    const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, verifyBigInt);
     const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;
-    const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, true);
-    const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, true);
+    const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt);
+    const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, verifyBigInt);
+    const allPeriodicTestsPassed = executeTests(filesPeriodic, testCasesPeriodic, verifyBigInt);
+    const testCasesToRunPeriodicModular = maxSize ? testCasesPeriodicModular.slice(0, maxSize) : testCasesPeriodicModular;
+    const allPeriodicModularTestsPassed = executeTests(filesPeriodicModular, testCasesToRunPeriodicModular, verifyBigInt);
+    const allDiagonalTestsPassed = executeTests(filesDiagonal, testCasesDiagonal, verifyList);
+    const testCasesToRunDiagonalModular = maxSize ? testCasesDiagonalModular.slice(0, maxSize) : testCasesDiagonalModular;
+    const allDiagonalModularTestsPassed = executeTests(filesDiagonalModular, testCasesToRunDiagonalModular, verifyList);
     const allParserTestsPassed = executeParserTests();
     const allRejectionTestsPassed = executeRejectionTests();
     const executorTestPassed = executeExecutorTest();
@@ -285,6 +310,10 @@ function __main__() {
       allRectangleTestsPassed &&
       allDomiculeTestsPassed &&
       allDomiculeRectangleTestsPassed &&
+      allPeriodicTestsPassed &&
+      allPeriodicModularTestsPassed &&
+      allDiagonalTestsPassed &&
+      allDiagonalModularTestsPassed &&
       allParserTestsPassed &&
       allRejectionTestsPassed &&
       executorTestPassed &&

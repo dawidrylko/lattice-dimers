@@ -1,0 +1,622 @@
+{
+  "files": ["periodicTilingSolver-BigInt.js", "periodicTilingSolver-Modular.js"],
+  "testCases": [
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "8",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "272",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "90176",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "311853312",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "1",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "2",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "9",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "32",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "121",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "450",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "1681",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "1058",
+      "oeis": "A253678"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "39952",
+      "oeis": "A253678"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "155682",
+      "oeis": "A253678"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "3113860",
+      "oeis": "A253678"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "square",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "128"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "square",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "40000"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "12"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1920"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "10045824"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1635885514752"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 4,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "344"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 3,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "344"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "triangular",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "10624"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "2"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "14"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "72"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "412"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "2312"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "13064"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "8"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "100"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "1304"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "24"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "17552"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "1393836408"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "10460530355843328"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "4"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "1024"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "20037604"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "35965075001344"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "1746"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "17552"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "165538"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "1605348"
+    },
+    {
+      "rowCount": 7,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "15446722"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "149134096"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 3,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "1746"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 6,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "24"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 2,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "66"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 2,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "228"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 2,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "726"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 2,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "2424"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 2,
+      "lattice": "king",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 2,
+      "lattice": "king",
+      "expectedResult": "2"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "king",
+      "expectedResult": "9"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 2,
+      "lattice": "king",
+      "expectedResult": "28"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 2,
+      "lattice": "king",
+      "expectedResult": "101"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 2,
+      "lattice": "king",
+      "expectedResult": "342"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "15"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "387"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "11151"
+    },
+    {
+      "rowCount": 7,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 3,
+      "lattice": "king",
+      "expectedResult": "326187"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "2"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "33"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "256"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "2649"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "25314"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "249097"
+    },
+    {
+      "rowCount": 7,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "2431168"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "23796145"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 6,
+      "lattice": "king",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 6,
+      "lattice": "king",
+      "expectedResult": "2"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 6,
+      "lattice": "king",
+      "expectedResult": "129"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 6,
+      "lattice": "king",
+      "expectedResult": "2740"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 6,
+      "lattice": "king",
+      "expectedResult": "88997"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 6,
+      "lattice": "king",
+      "expectedResult": "2570406"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "king",
+      "expectedResult": "77481277"
+    }
+  ]
+}
