@@ -1,0 +1,55 @@
+references: s_king = 0.56551191104132532 +- 6e-16 (errbar.json), s_tri = 0.428594537464959 (Kasteleyn, out_validate.txt), s_sq = G/pi = 0.29156090403081878
+            sigma = 0.2420179357662505 +- 9.2e-15 (surface.json), kappa = 0.363196256048 +- 2.9e-10 (corner.json)
+float64 (numpy 2.5.3), CUT = 1e-14; sizes in sites, columns x rows
+
+== 1. encoding: one cycle without truncation against exact counts (tm.count)
+[PASS] king 6x6: log Z - log(exact) = +9.4e-17
+[PASS] king 4x4: log Z - log(exact) = +1.8e-16
+[PASS] king 6x4: log Z - log(exact) = -3.1e-16
+[PASS] king 4x6: log Z - log(exact) = -3.1e-16
+[PASS] tri  6x6: log Z - log(exact) = +2.3e-16
+[PASS] tri  4x4: log Z - log(exact) = +6.1e-17
+[PASS] tri  6x4: log Z - log(exact) = +1.1e-16
+[PASS] tri  4x6: log Z - log(exact) = +1.1e-16
+[PASS] sq   6x6: log Z - log(exact) = -2.1e-16
+[PASS] sq   4x4: log Z - log(exact) = +5.8e-18
+[PASS] sq   6x4: log Z - log(exact) = +2.0e-18
+[PASS] sq   4x6: log Z - log(exact) = +2.0e-18
+
+== 2. s per site by chi (cycles until s changes by < 1e-15 twice in a row, at most 40; sq: 200 cycles)
+  king chi=  8: s = 0.56551189898625698 s - ref = -1.2e-08  cycles  13  last change +1.1e-16  discarded 2.0e-03  0.3s
+  king chi= 16: s = 0.56551191103584242 s - ref = -5.5e-12  cycles  11  last change -1.1e-16  discarded 5.5e-05  0.4s
+  king chi= 24: s = 0.56551191104131715 s - ref = -8.2e-15  cycles  10  last change +0.0e+00  discarded 4.4e-06  0.6s
+  king chi= 32: s = 0.56551191104132525 s - ref = -6.3e-17  cycles  10  last change +3.3e-16  discarded 5.9e-07  1.2s
+  king chi= 48: s = 0.56551191104132537 s - ref = +4.8e-17  cycles  10  last change +1.1e-16  discarded 2.1e-08  2.6s
+  king chi= 64: s = 0.56551191104132537 s - ref = +4.8e-17  cycles  10  last change -1.1e-16  discarded 2.5e-09  11.7s
+  tri  chi=  8: s = 0.4285945536474709  s - ref = +1.6e-08  cycles  11  last change +0.0e+00  discarded 6.5e-04  0.0s
+  tri  chi= 16: s = 0.4285945374655904  s - ref = +6.3e-13  cycles  12  last change +5.6e-17  discarded 5.9e-06  0.1s
+  tri  chi= 24: s = 0.42859453746495491 s - ref = -4.1e-15  cycles  12  last change +5.6e-17  discarded 2.6e-07  0.1s
+  tri  chi= 32: s = 0.42859453746495918 s - ref = +1.8e-16  cycles  12  last change +1.1e-16  discarded 3.5e-08  0.3s
+  sq   chi=  8: s = 0.2914595263933743  s - ref = -1.0e-04  cycles 200  last change +1.2e-08  discarded 1.5e-02  0.2s
+  sq   chi= 16: s = 0.29154770961224291 s - ref = -1.3e-05  cycles 200  last change +1.0e-09  discarded 6.5e-03  0.6s
+  sq   chi= 32: s = 0.29155860571073955 s - ref = -2.3e-06  cycles 200  last change +6.9e-10  discarded 3.1e-03  1.6s
+  sq   chi= 64: s = 0.29156029590512922 s - ref = -6.1e-07  cycles 200  last change +4.2e-09  discarded 1.1e-03  6.7s
+
+== 3. convergence in iterations: s - ref after each cycle (board 4c+2 sites wide after c cycles)
+  king chi=32: 1:-2.0e-04  2:-3.9e-05  3:-6.1e-07  4:-7.9e-09  5:-1.0e-10  6:-1.3e-12  7:-1.8e-14  8:-6.2e-16  9:-4.0e-16  10:-6.3e-17
+  tri  chi=32: 1:+4.2e-03  2:-5.2e-05  3:-3.6e-06  4:+3.1e-08  5:+3.8e-09  6:-3.2e-12  7:-4.1e-12  8:-3.7e-14  9:+3.9e-15  10:+1.8e-16  11:+6.9e-17  12:+1.8e-16
+  sq   chi=32: 1:-1.1e-02  2:-4.0e-03  5:-8.3e-04  10:-2.3e-04  20:-5.8e-05  50:-8.9e-06  100:-3.0e-06  200:-2.3e-06
+
+== 4. float64 floor: king chi=64, 30 more cycles at the fixed point
+  cycles 11..40: mean s - ref = -9.6e-17, spread (max - min) = 1.2e-15, largest |s - ref| = 6.2e-16
+
+== 5. finite king boards: log Z of the closed networks against the exact counts (L <= 24)
+  chi= 32: 21 boards, max |log Z - log(exact)| = 3.8e-05 (16x16), 7s
+  chi= 48: 21 boards, max |log Z - log(exact)| = 8.4e-06 (16x18), 16s
+  chi= 64: 21 boards, max |log Z - log(exact)| = 1.5e-06 (14x14), 22s
+  chi= 80: 21 boards, max |log Z - log(exact)| = 1.6e-06 (16x18), 34s
+  chi= 96: 21 boards, max |log Z - log(exact)| = 1.5e-06 (12x14), 82s
+
+== 6. sigma and kappa from the squares L = 30..56 (boards up to 58, 14 cycles), CTMRG s of the same run
+  chi= 32: sigma = 0.2420184052103351 (spread over L 2e-10), sigma - paper = +4.7e-07;  kappa = 0.363266289235 (spread 8e-09), kappa - paper = +7.0e-05;  discarded 5.9e-07
+  chi= 48: sigma = 0.2420180393202363 (spread over L 2e-11), sigma - paper = +1.0e-07;  kappa = 0.363212110308 (spread 6e-10), kappa - paper = +1.6e-05;  discarded 2.1e-08
+  chi= 64: sigma = 0.2420179552894034 (spread over L 1e-13), sigma - paper = +2.0e-08;  kappa = 0.363199153306 (spread 5e-12), kappa - paper = +2.9e-06;  discarded 2.5e-09
+  chi= 80: sigma = 0.2420179242354282 (spread over L 4e-13), sigma - paper = -1.2e-08;  kappa = 0.36319428963 (spread 1e-11), kappa - paper = -2.0e-06;  discarded 4.6e-10
+  chi= 96: sigma = 0.2420179267334268 (spread over L 5e-14), sigma - paper = -9.0e-09;  kappa = 0.363194682747 (spread 8e-13), kappa - paper = -1.6e-06;  discarded 9.9e-11
