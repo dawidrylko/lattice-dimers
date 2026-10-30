@@ -67,7 +67,7 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 ## Three lattices on the torus
 
-A torus has no boundary. So $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site. The cell divides the torus count by $e^{sL^2}$ on all three lattices. For the square lattice $s = G/\pi$ ([A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
+A torus has no boundary. So $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site. The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
 
 ```js run
 const fs = require('fs');
@@ -114,6 +114,26 @@ if (gaps.some((gap, i) => !(gap > 0) || (i > 0 && !(gap < gaps[i - 1])))) {
 }
 
 table(['torus', 'square', 'triangular', 'king'], rows);
+
+const lattices = [
+  ['square', 'square lattice', 'var(--series-1)'],
+  ['triangular', 'triangular', 'var(--series-2)'],
+  ['king', "king's graph", 'var(--series-3)'],
+];
+const sides = Object.keys(nb.ratio).map(Number);
+
+chart({
+  title: 'The torus count divided by e^(sL²) against the side L, for three lattices',
+  x: { label: 'side L of the L × L torus', min: 2, max: Math.max(...sides), ticks: sides },
+  y: { label: 'Z / e^(sL²)', min: 1.9, max: 2.65, ticks: [2, 2.2, 2.4, 2.6] },
+  reference: { y: 2 },
+  series: lattices.map(([lattice, name, color]) => ({
+    name,
+    color,
+    points: sides.filter(side => nb.ratio[side][lattice] !== null).map(side => [side, nb.ratio[side][lattice]]),
+  })),
+  describe: ([side, ratio]) => `${side}×${side} torus, Z/e^(sL²) = ${ratio.toFixed(10)}`,
+});
 ```
 
 The square lattice is critical. Its ratio drifts with $L$ and does not settle at 2. On the triangular lattice and on the king's graph the ratio tends to 2. The paper splits the cylinder transfer matrix of even circumference $w$ by the parity of the dimers crossing a loop around the axis. The two sector values $f^{(0)}_w > s > f^{(1)}_w$ approach $s$ exponentially fast. A torus of even side $L$ is the trace of the $L$-th power of that matrix, so each sector contributes about $e^{sL^2}$ and $Z \approx 2 e^{sL^2}$. The sectors explain the constant 2, not the speed. On the king's graph the distance to 2 shrinks by a factor of about 8 per step of 2 in $L$. This is an observation on the boards of the table, not a proof.

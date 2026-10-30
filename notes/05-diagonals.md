@@ -91,7 +91,7 @@ table(['n', 'board', 'share of diagonal pieces', 'variance per cell'], rows);
 
 ## Weighted counts
 
-The polynomial gives the weighted count for any $x$. The cell prints $\log P(x) / (4n^2)$, the free energy per cell of the weighted board. The columns are $x = 0$ (dominoes), $1/2$, $1$ (domicules) and the weights $3/2$, $2$ and $3$ of the companion note. A free boundary keeps every value below the free energy per site of the infinite lattice at the same $x$, which is $G/\pi = 0.2916\ldots$ at $x = 0$ and $s = 0.5655\ldots$ at $x = 1$.
+The polynomial gives the weighted count for any $x$. The cell prints $\log P(x) / (4n^2)$, the free energy per cell of the weighted board. The chart draws it for every $x$ from 0 to 3 on four boards, with dots at the six weights of the table. The columns are $x = 0$ (dominoes), $1/2$, $1$ (domicules) and the weights $3/2$, $2$ and $3$ of the companion note. A free boundary keeps every value below the free energy per site of the infinite lattice at the same $x$, which is $G/\pi = 0.2916\ldots$ at $x = 0$ and $s = 0.5655\ldots$ at $x = 1$.
 
 ```js run
 const weights = [[0, 1], [1, 2], [1, 1], [3, 2], [2, 1], [3, 1]];
@@ -121,4 +121,26 @@ table(
       ];
     }),
 );
+
+const freeEnergy = (row, x) => {
+  const terms = row.map((c, j) => (c === 0n ? -Infinity : log(c) + (j === 0 ? 0 : 2 * j * Math.log(x))));
+  const top = Math.max(...terms);
+
+  return top + Math.log(terms.reduce((sum, t) => sum + Math.exp(t - top), 0));
+};
+const shown = [4, 6, 8, 10].filter(n => nb.rows[n]);
+const xs = Array.from({ length: 61 }, (_, i) => i / 20);
+
+chart({
+  title: 'log P(x) / (4n²) against the weight x of a diagonal piece, for boards 2n × 2n',
+  x: { label: 'weight x of a diagonal piece', min: 0, max: 3, ticks: [0, 0.5, 1, 1.5, 2, 2.5, 3] },
+  y: { label: 'log P(x) / (4n²)', min: 0.2, max: 0.9, ticks: [0.2, 0.4, 0.6, 0.8] },
+  series: shown.map((n, i) => ({
+    name: `${2 * n}×${2 * n}`,
+    color: `var(--ordinal-${i + 1})`,
+    points: xs.map(x => [x, freeEnergy(nb.rows[n], x) / (4 * n * n)]),
+    markers: weights.map(([p, q]) => p / q).map(x => [x, freeEnergy(nb.rows[n], x) / (4 * n * n)]),
+  })),
+  describe: ([x, value]) => `x = ${x}, log P(x)/(4n²) = ${value.toFixed(6)}`,
+});
 ```
