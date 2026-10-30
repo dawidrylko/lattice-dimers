@@ -1,7 +1,14 @@
 const { escapeHtml } = require('./notes');
 
 const REPOSITORY_URL = 'https://github.com/dawidrylko/lattice-dimers';
-const NOTE_LABELS = { research: 'Research', method: 'Method', a004003: 'A004003', a239273: 'A239273' };
+const NOTE_LABELS = {
+  research: 'Research',
+  method: 'Method',
+  a004003: 'A004003',
+  a239273: 'A239273',
+  torus: 'Tori',
+  diagonals: 'Diagonals',
+};
 
 const CHROME_CSS = `
 .site-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 20px; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }

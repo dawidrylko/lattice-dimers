@@ -48,6 +48,8 @@ const NOTES = [
   { slug: 'method', cells: 0 },
   { slug: 'a004003', cells: 6 },
   { slug: 'a239273', cells: 8 },
+  { slug: 'torus', cells: 5 },
+  { slug: 'diagonals', cells: 3 },
 ];
 const NOTE_FAILURES = ['NO', 'DIFFERS FROM OEIS'];
 const PAGE_CONTROLS = '#page-controls button, #page-controls input';
