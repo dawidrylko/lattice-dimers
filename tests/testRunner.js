@@ -66,6 +66,14 @@ const rejectionTestCases = [
     args: ['--require', './tests/fixtures/exitingWorker.js', 'src/solvers/domiculeDiagonalSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
   },
+  {
+    args: ['-e', "require('./src/solvers/periodicTilingSolver-BigInt.js').calculateTotalTilingCombinations({ rowCount: 1, colCount: 4, torus: true })"],
+    message: 'a torus needs at least 2 rows',
+  },
+  {
+    args: ['-e', "require('./src/solvers/periodicTilingSolver-Modular.js').calculateTotalTilingCombinations({ rowCount: 4, colCount: 1 }).catch(error => { console.error(error.message); process.exit(1); })"],
+    message: 'circumference must be at least 2',
+  },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--only', 'missing.js'], message: 'Usage' },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '-o', '99'], message: 'No test cases' },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--domicule', '--only', 'dominoTilingSolver.js'], message: 'Usage' },

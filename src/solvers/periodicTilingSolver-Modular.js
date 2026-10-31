@@ -172,9 +172,9 @@ function countModulo({ rows, cols, lattice, torus, twisted, prime }) {
 
 /**
  * Bounds log2 of the number of tilings: the transfer places every piece from one cell, which
- * picks one of its at most m moves (listMoves), so a tiling is a sequence of N/2 such choices
- * and a board of N cells has at most m^(N/2) tilings. On a torus the pieces between the last
- * and the first row are placed from the last row.
+ * picks one of its at most m moves (listMoves), so given the cells covered when the run starts
+ * a tiling is a sequence of N/2 such choices. A cylinder starts empty and has at most m^(N/2)
+ * tilings; a torus starts from one of the 2^cols sets S, so it has at most 2^cols m^(N/2).
  * @param {Object} board The board.
  * @returns {number} The bound.
  */
@@ -182,7 +182,7 @@ function calculateLog2Bound({ rows, cols, lattice, torus }) {
   const wrapBit = 2 ** (cols + 2);
   const most = Math.max(...Array.from({ length: cols }, (_, c) => listMoves(cols, c, rows > 1 || torus, LATTICES[lattice], wrapBit).length));
 
-  return ((rows * cols) / 2) * Math.log2(most);
+  return ((rows * cols) / 2) * Math.log2(most) + (torus ? cols : 0);
 }
 
 /**

@@ -603,6 +603,13 @@
       "colCount": 6,
       "lattice": "king",
       "expectedResult": "77481277"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "7259829482503772231361024"
     }
   ]
 }

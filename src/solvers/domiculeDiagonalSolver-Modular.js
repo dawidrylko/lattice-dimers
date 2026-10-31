@@ -105,7 +105,8 @@ function countModulo({ rows, cols, prime }) {
 /**
  * Counts the tilings by the number of diagonal pieces exactly: every coefficient is at most
  * the number of tilings, so the Kahn-Lovasz bound of domiculeTilingSolver-Modular.js sets the
- * number of primes, and one more prime checks every coefficient.
+ * number of primes, and one more prime checks every coefficient. The number of worker threads
+ * is capped so that their tables fit in half the memory of the machine.
  * @param {Object} options The board and the number of worker threads.
  * @returns {Promise<BigInt[]>} The coefficients, from x^0 to x^(rowCount * colCount / 2).
  */
@@ -120,7 +121,9 @@ async function calculateDiagonalPolynomial({ rowCount, colCount, jobs = os.avail
 
   const primeCount = Math.ceil((calculateLog2Bound(rows, cols) + 1) / 30) + 1;
   const primes = listPrimes(primeCount);
-  const residues = await runWorkers(__filename, primes.map(prime => ({ rows, cols, prime })), jobs);
+  const bytesPerWorker = 2 ** (cols + 2) * (2 * 4 * (Math.floor(degree / 2) + 1) + 2);
+  const threads = Math.max(1, Math.min(jobs, Math.floor(os.totalmem() / 2 / bytesPerWorker)));
+  const residues = await runWorkers(__filename, primes.map(prime => ({ rows, cols, prime })), threads);
 
   return Array.from({ length: degree + 1 }, (_, k) =>
     combineCheckedResidues(
