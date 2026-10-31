@@ -103,6 +103,21 @@ function countModulo({ rows, cols, prime }) {
 }
 
 /**
+ * Caps the number of worker threads so that their tables fit in half the memory: each keeps
+ * two Uint32Array tables of half a polynomial per state and two Uint8Array parity tables.
+ * @param {number} jobs The number of threads asked for.
+ * @param {number} cols The shorter side.
+ * @param {number} degree The largest number of pieces, rows * cols / 2.
+ * @param {number} [memory] The memory of the machine in bytes.
+ * @returns {number} The number of threads to run, at least 1.
+ */
+function capThreads(jobs, cols, degree, memory = os.totalmem()) {
+  const bytesPerWorker = 2 ** (cols + 2) * (2 * 4 * (Math.floor(degree / 2) + 1) + 2);
+
+  return Math.max(1, Math.min(jobs, Math.floor(memory / 2 / bytesPerWorker)));
+}
+
+/**
  * Counts the tilings by the number of diagonal pieces exactly: every coefficient is at most
  * the number of tilings, so the Kahn-Lovasz bound of domiculeTilingSolver-Modular.js sets the
  * number of primes, and one more prime checks every coefficient. The number of worker threads
@@ -121,9 +136,7 @@ async function calculateDiagonalPolynomial({ rowCount, colCount, jobs = os.avail
 
   const primeCount = Math.ceil((calculateLog2Bound(rows, cols) + 1) / 30) + 1;
   const primes = listPrimes(primeCount);
-  const bytesPerWorker = 2 ** (cols + 2) * (2 * 4 * (Math.floor(degree / 2) + 1) + 2);
-  const threads = Math.max(1, Math.min(jobs, Math.floor(os.totalmem() / 2 / bytesPerWorker)));
-  const residues = await runWorkers(__filename, primes.map(prime => ({ rows, cols, prime })), threads);
+  const residues = await runWorkers(__filename, primes.map(prime => ({ rows, cols, prime })), capThreads(jobs, cols, degree));
 
   return Array.from({ length: degree + 1 }, (_, k) =>
     combineCheckedResidues(
@@ -154,6 +167,13 @@ async function __main__() {
     process.exit(1);
   }
 
+  const cols = Math.min(options.rowCount, options.colCount);
+  const threads = capThreads(jobs, cols, Math.floor((options.rowCount * options.colCount) / 2));
+
+  if (threads < jobs) {
+    console.error(`Running ${threads} worker threads instead of ${jobs}, so that their tables fit in half the memory.`);
+  }
+
   const coefficients = await calculateDiagonalPolynomial({ ...options, jobs });
   console.log(coefficients.join(','));
 }
@@ -167,4 +187,4 @@ if (!isMainThread) {
   });
 }
 
-module.exports = { calculateDiagonalPolynomial, countModulo };
+module.exports = { calculateDiagonalPolynomial, countModulo, capThreads };

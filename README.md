@@ -66,7 +66,7 @@ Two more families of counts. The OEIS has no entry for the king's graph or trian
 | 7 | 14×14 | 2743949253453878323721620757393919402021091285528 |
 | 8 | 16×16 | 1493818604384654177402428232647033968399591852459255168583663616 |
 
-The full test run compares both solvers up to $10 \times 10$, and at $12 \times 12$ they were compared once (88 minutes for the row-by-row solver). From $14 \times 14$ on the terms come from the modular solver alone, checked against one more prime.
+The full test run compares both solvers up to $10 \times 10$. From $12 \times 12$ on the terms in `data/` come from the modular solver, checked against one more prime.
 
 A torus has no boundary, so the count has no surface or corner term. Divided by $e^{sL^2}$ it tends to 2 on the king's graph and on the triangular lattice, but not on the square lattice, which is critical, and $\log(Z/2)/L^2$ agrees with the entropy per site of the king's graph to $5 \cdot 10^{-10}$ at $L = 16$, with no extrapolation model ([notebook](notes/04-torus.md)).
 

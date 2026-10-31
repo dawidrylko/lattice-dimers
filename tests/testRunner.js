@@ -4,6 +4,8 @@ const os = require('os');
 const path = require('path');
 const { exec, parseArgs, verifyInt, verifyBigInt } = require('../src/helpers');
 const { listPrimes, combineCheckedResidues } = require('../src/helpers/modular');
+const periodicModular = require('../src/solvers/periodicTilingSolver-Modular.js');
+const { capThreads } = require('../src/solvers/domiculeDiagonalSolver-Modular.js');
 const {
   filesInt,
   testCasesInt,
@@ -123,6 +125,35 @@ function executeCheckPrimeTests() {
     } catch (error) {
       actual = error.message.includes(expected) ? expected : error.message;
     }
+
+    if (actual !== expected) {
+      console.error(`Failed! Expected: ${expected}, Actual: ${actual}`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
+function executeLimitTests() {
+  const gigabytes = 2 ** 30;
+  const board = { rows: 6, cols: 4, lattice: 'king' };
+  const cases = [
+    {
+      name: 'the torus bound adds the start set',
+      actual: periodicModular.calculateLog2Bound({ ...board, torus: true }) - periodicModular.calculateLog2Bound({ ...board, torus: false }),
+      expected: board.cols,
+    },
+    { name: 'threads for 20x20 on 16 GB', actual: capThreads(10, 20, 200, 16 * gigabytes), expected: 2 },
+    { name: 'threads for 6x6 on 16 GB', actual: capThreads(4, 6, 18, 16 * gigabytes), expected: 4 },
+    { name: 'threads for 20x20 on 1 GB', actual: capThreads(3, 20, 200, gigabytes), expected: 1 },
+  ];
+
+  return cases.every(({ name, actual, expected }, index) => {
+    process.stdout.write(`Executing limit test ${index + 1} of ${cases.length} for ${name}... `);
 
     if (actual !== expected) {
       console.error(`Failed! Expected: ${expected}, Actual: ${actual}`);
@@ -386,6 +417,7 @@ function __main__() {
     const allDiagonalModularTestsPassed = executeTests(filesDiagonalModular, testCasesToRunDiagonalModular, verifyList);
     const checkPrimeTestsPassed = executeCheckPrimeTests();
     const diagonalAnchorTestsPassed = executeDiagonalAnchorTests();
+    const limitTestsPassed = executeLimitTests();
     const allParserTestsPassed = executeParserTests();
     const allRejectionTestsPassed = executeRejectionTests();
     const executorTestPassed = executeExecutorTest();
@@ -405,6 +437,7 @@ function __main__() {
       allDiagonalModularTestsPassed &&
       checkPrimeTestsPassed &&
       diagonalAnchorTestsPassed &&
+      limitTestsPassed &&
       allParserTestsPassed &&
       allRejectionTestsPassed &&
       executorTestPassed &&

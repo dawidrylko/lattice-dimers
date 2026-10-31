@@ -604,6 +604,7 @@ async function checkNotes(page, baseUrl, width) {
       unresolved: /undefined|\\u0000/.test(document.querySelector('article').textContent),
       math: document.querySelectorAll('.math').length,
       katex: document.querySelectorAll('.katex').length,
+      charts: [...document.querySelectorAll('figure.chart')].map(figure => [...figure.querySelectorAll('svg')].filter(svg => getComputedStyle(svg).display !== 'none').length),
     }))()`);
 
     if (state.cells !== cells) {
@@ -624,6 +625,10 @@ async function checkNotes(page, baseUrl, width) {
 
     if (state.sideways > 0) {
       problems.push(`${slug} scrolls ${state.sideways} px sideways`);
+    }
+
+    if (state.charts.some(count => count !== 1)) {
+      problems.push(`${slug} shows ${state.charts.join(', ')} drawings per chart instead of 1`);
     }
   }
 
