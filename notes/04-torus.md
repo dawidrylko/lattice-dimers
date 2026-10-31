@@ -4,7 +4,9 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## How the counts are made
 
-Two solvers count the same boards by different methods. `periodicTilingSolver-BigInt.js` goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix. `periodicTilingSolver-Modular.js` goes cell by cell, like the solver of the [A239273 notebook](03-a239273.md). Its state holds the next $w + 2$ cells and one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
+Two solvers count the same boards by different methods. `periodicTilingSolver-BigInt.js` goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix.
+
+`periodicTilingSolver-Modular.js` goes cell by cell, like the solver of the [A239273 notebook](03-a239273.md). Its state holds the next $w + 2$ cells and one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
 
 A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The modular solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
@@ -67,7 +69,9 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 ## Three lattices on the torus
 
-A torus has no boundary. So $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site. The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
+A torus has no boundary. So $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site.
+
+The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
 
 ```js run
 const fs = require('fs');
@@ -136,9 +140,11 @@ chart({
 });
 ```
 
-The square lattice is critical. Its ratio drifts with $L$ and does not settle at 2. On the triangular lattice and on the king's graph the ratio tends to 2. The paper splits the cylinder transfer matrix of even circumference $w$ by the parity of the dimers crossing a loop around the axis. The two sector values $f^{(0)}_w > s > f^{(1)}_w$ approach $s$ exponentially fast. A torus of even side $L$ is the trace of the $L$-th power of that matrix, so each sector contributes about $e^{sL^2}$ and $Z \approx 2 e^{sL^2}$. The sectors explain the constant 2, not the speed. On the king's graph the distance to 2 shrinks by a factor of about 8 per step of 2 in $L$. This is an observation on the boards of the table, not a proof.
+The square lattice is critical, and its ratio drifts with $L$ well above 2. On the triangular lattice and on the king's graph the ratio tends to 2.
 
-With no surface term, $\log(Z/2)/L^2$ can be compared with $s$ directly. The difference shrinks exponentially in $L$, with no fit and no extrapolation model. It checks the value of $s$ from the paper. It does not replace it: the constant 2 was itself read off against $s$.
+The reason is in the paper. It splits the cylinder transfer matrix of even circumference $w$ by the parity of the dimers crossing a loop around the axis, and the two sector values $f^{(0)}_w > s > f^{(1)}_w$ approach $s$ exponentially fast. A torus of even side $L$ is the trace of the $L$-th power of that matrix, so each sector contributes about $e^{sL^2}$ and $Z \approx 2 e^{sL^2}$. That accounts for the constant 2. How fast the ratio gets there is a separate matter: on the king's graph the distance to 2 shrinks by a factor of about 8 per step of 2 in $L$. All of this is observed on the boards of the table and is not proved.
+
+With no surface term, $\log(Z/2)/L^2$ can be compared with $s$ directly. The difference shrinks exponentially in $L$, with no fit and no extrapolation model. It is a check on the value of $s$ from the paper, because the constant 2 was itself read off against $s$.
 
 ```js run
 const s = nb.entropy.king;
@@ -157,7 +163,7 @@ table(['torus', 'log(Z/2)/L² − s', 'ratio to the previous size'], rows);
 
 ## The seam sign
 
-The signed sum counts every tiling of the torus with $(-1)^k$. Here $k$ is the number of pieces that cross the seam between the last and the first column. The sum is the difference between the two parities of the pieces crossing a vertical loop. On the king's graph its share of $Z$ falls by a factor per step of 2 in $L$. In the table that factor grows with $L$ and stays below $e^{2/\xi} \approx 5.04$. Here $\xi$ is the decay length of the parity splitting, read from `research/king-entropy/log-convexity/out_levels.txt`. With an odd number of rows the signed sum is 0. Moving every piece one column to the right then changes the parity of the seam crossings.
+The signed sum counts every tiling of the torus with $(-1)^k$, where $k$ is the number of pieces that cross the seam between the last and the first column. The sum is the difference between the two parities of the pieces crossing a vertical loop. On the king's graph its share of $Z$ falls by a factor per step of 2 in $L$. In the table that factor grows with $L$ and stays below $e^{2/\xi} \approx 5.04$, where $\xi$ is the decay length of the parity splitting from `research/king-entropy/log-convexity/out_levels.txt`. With an odd number of rows the signed sum is 0, because moving every piece one column to the right then changes the parity of the seam crossings.
 
 ```js run
 const fs = require('fs');
@@ -181,7 +187,7 @@ print(`e^(2/xi) = ${Math.exp(2 / Number(xi)).toFixed(3)} with xi = ${xi}`);
 
 ## Cylinders
 
-The king's graph on a cylinder of circumference $w$ and height $h$, open at the top and the bottom. For fixed $w$ the counts grow like $\lambda_w^h$. Here $\lambda_w$ is the leading eigenvalue of the cylinder transfer matrix that the paper extrapolates in $w$. Rows of odd circumference vanish at odd heights. Circumference 2 has the multiple edges of the $2 \times 2$ torus, so one row of two cells has 2 tilings.
+The king's graph on a cylinder of circumference $w$ and height $h$, open at the top and the bottom. For fixed $w$ the counts grow like $\lambda_w^h$, with $\lambda_w$ the leading eigenvalue of the cylinder transfer matrix that the paper extrapolates in $w$. Rows of odd circumference vanish at odd heights. Circumference 2 has the multiple edges of the $2 \times 2$ torus, so one row of two cells has 2 tilings.
 
 ```js run
 const { calculateTotalTilingCombinations } = require('./src/solvers/periodicTilingSolver-BigInt.js');

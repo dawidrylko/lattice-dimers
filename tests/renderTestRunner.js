@@ -17,6 +17,7 @@ const crypto = require('crypto');
 const { createRandom } = require('../src/renderer/cftp');
 const fs = require('fs');
 const { buildReadmeImages } = require('../site/readme-images');
+const { renderChart } = require('../site/notes');
 const { testCasesBigInt, testCasesDomicule, testCasesDomiculeRectangles } = require('../data');
 
 const MAX_CELLS = 36;
@@ -622,6 +623,55 @@ function runReadmeImagesTest() {
   return true;
 }
 
+const CHART = {
+  title: 'test chart',
+  x: { label: 'x', min: 0, max: 4, ticks: [0, 2, 4] },
+  y: { label: 'y', min: 0, max: 1, ticks: [0, 1] },
+  series: [
+    { name: 'a <b>', color: 'var(--series-1)', points: [[0, 0.1], [4, 0.5]] },
+    { name: 'c', color: 'var(--series-2)', points: [[0, 0.2], [4, 0.51]] },
+  ],
+};
+const chartTestCases = [
+  { name: 'a valid chart', series: CHART.series, expected: 'drawn' },
+  { name: 'a value that is not a number', series: [{ ...CHART.series[0], points: [[0, NaN]] }], expected: 'outside its axes' },
+  { name: 'a value above the axis', series: [{ ...CHART.series[0], points: [[0, 2]] }], expected: 'outside its axes' },
+];
+
+function runChartTests() {
+  return chartTestCases.every(({ name, series, expected }, index) => {
+    process.stdout.write(`Executing chart test ${index + 1} of ${chartTestCases.length} for ${name}... `);
+
+    let actual;
+
+    try {
+      const html = renderChart({ ...CHART, series });
+      const wide = html.match(/<svg class="wide".*?<\/svg>/s)[0];
+      const narrow = html.match(/<svg class="narrow".*?<\/svg>/s)[0];
+      const labels = svg => (svg.match(/fill="var\(--fg\)"/g) || []).length;
+      const escaped = !html.includes('a <b>') && html.includes('a &lt;b&gt;');
+      const apart = [...wide.matchAll(/<text x="\d+(?:\.\d)?" y="([\d.]+)" fill="var\(--fg\)"/g)].map(match => Number(match[1]));
+
+      actual =
+        labels(wide) === 2 && labels(narrow) === 0 && escaped && Math.abs(apart[0] - apart[1]) >= 16
+          ? 'drawn'
+          : `labels ${labels(wide)}/${labels(narrow)}, escaped ${escaped}, label rows ${apart.join(', ')}`;
+    } catch (error) {
+      actual = error.message.includes(expected) ? expected : error.message;
+    }
+
+    if (actual !== expected) {
+      console.error(`Failed! Expected: ${expected}, Actual: ${actual}`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
 function runDomiculeReachTest(testCase) {
   const random = createRandom(RANDOM_SEED);
   const seen = new Set();
@@ -697,6 +747,7 @@ function __main__() {
     engravingContainmentTestCases,
     labelWidthTestCases,
     cliTestCases,
+    chartTestCases,
   ].reduce(
     (sum, suite) => sum + suite.length,
     0,
@@ -720,6 +771,7 @@ function __main__() {
     runSuite('label width', labelWidthTestCases, runLabelWidthTest),
     runSuite('readme images', [{ rowCount: 8, colCount: 8 }], runReadmeImagesTest),
     runSuite('command line', cliTestCases, runCliTest),
+    runChartTests(),
   ];
 
   if (results.every(Boolean)) {

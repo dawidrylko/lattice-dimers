@@ -23,7 +23,7 @@ const domino = side => data.testCasesBigInt.find(t => t.rowCount === side && t.c
 nb.rows = {};
 const rows = [];
 
-for (let n = 0; n <= 9; n++) {
+for (let n = 0; n <= 10; n++) {
   const side = 2 * n;
   const board = { rowCount: side, colCount: side };
   let coefficients;

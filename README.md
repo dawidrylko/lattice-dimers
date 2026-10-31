@@ -66,11 +66,11 @@ Two more families of counts. The OEIS has no entry for the king's graph or trian
 | 7 | 14×14 | 2743949253453878323721620757393919402021091285528 |
 | 8 | 16×16 | 1493818604384654177402428232647033968399591852459255168583663616 |
 
-Up to $10 \times 10$ both solvers agree on these terms; the larger ones come from the modular solver alone, checked against one more prime.
+The full test run compares both solvers up to $10 \times 10$, and at $12 \times 12$ they were compared once (88 minutes for the row-by-row solver). From $14 \times 14$ on the terms come from the modular solver alone, checked against one more prime.
 
 A torus has no boundary, so the count has no surface or corner term. Divided by $e^{sL^2}$ it tends to 2 on the king's graph and on the triangular lattice, but not on the square lattice, which is critical, and $\log(Z/2)/L^2$ agrees with the entropy per site of the king's graph to $5 \cdot 10^{-10}$ at $L = 16$, with no extrapolation model ([notebook](notes/04-torus.md)).
 
-**Diagonal pieces.** [`domiculeDiagonalSolver-BigInt.js`](src/solvers/domiculeDiagonalSolver-BigInt.js) and [`domiculeDiagonalSolver-Modular.js`](src/solvers/domiculeDiagonalSolver-Modular.js) count the domicule tilings by the number of pieces that join two cells sharing only a corner. On the $2n \times 2n$ board that number is even, and the triangle of the tilings with $0, 2, \dots, 2n^2$ diagonal pieces begins 1; 2, 1; 36, 126, 105, 12, 1; 6728, 84132, 413932, 934213, 1000638, 491689, 99554, 6638, 36, 1. Its first column is A004003, its row sums are A239273, and it is counted up to $18 \times 18$ ([notebook](notes/05-diagonals.md)).
+**Diagonal pieces.** [`domiculeDiagonalSolver-BigInt.js`](src/solvers/domiculeDiagonalSolver-BigInt.js) and [`domiculeDiagonalSolver-Modular.js`](src/solvers/domiculeDiagonalSolver-Modular.js) count the domicule tilings by the number of pieces that join two cells sharing only a corner. On the $2n \times 2n$ board that number is even, and the triangle of the tilings with $0, 2, \dots, 2n^2$ diagonal pieces begins 1; 2, 1; 36, 126, 105, 12, 1; 6728, 84132, 413932, 934213, 1000638, 491689, 99554, 6638, 36, 1. Its first column is A004003, its row sums are A239273, and it is counted up to $20 \times 20$ ([notebook](notes/05-diagonals.md)).
 
 The PARI/GP programs, both run in CI: [`pari/king-torus.gp`](pari/king-torus.gp), where `T(h, w)` is the $h \times w$ torus and `a(n)` the $2n \times 2n$ one, and [`pari/king-diagonals.gp`](pari/king-diagonals.gp), where `P(h, w)` is the polynomial in $x$ and `row(n)` a row of the triangle.
 
@@ -211,13 +211,13 @@ node src/solvers/dominoTilingSolver-Formula.js -r 20 -c 20
 node src/solvers/domiculeTilingSolver-Modular.js -r 20 -c 20    # -j <jobs> sets the number of worker threads
 node src/solvers/periodicTilingSolver-Modular.js -r 12 -c 12 --torus             # the king's graph on the 12×12 torus
 node src/solvers/periodicTilingSolver-Modular.js -r 8 -c 6 --lattice triangular  # a triangular cylinder, circumference 6
-node src/solvers/domiculeDiagonalSolver-Modular.js -r 16 -c 16                    # coefficients by the number of diagonal pieces
+node src/solvers/domiculeDiagonalSolver-Modular.js -r 16 -c 16                    # by the number of diagonal pieces; 20×20 needs 3.4 GB per thread
 ```
 
 Verification:
 
 ```sh
-pnpm test           # solvers against data/, up to 12×12 (node tests/testRunner.js runs every known term)
+pnpm test           # solvers against data/, up to 12×12 (node tests/testRunner.js runs every known term and takes hours: the 16×16 torus alone about 75 minutes)
 pnpm test:render    # numbering, sampling and drawing
 pnpm test:pari      # both PARI/GP programs and their copies in this README
 pnpm site:build     # runs the notebooks and builds dist/site

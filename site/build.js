@@ -81,7 +81,7 @@ const NOTE_SUMMARIES = {
   a004003: 'Notebook: domino tilings by three methods, the resultant and the running time.',
   a239273: 'Notebook: domicule tilings up to 20 × 20, the modular solver and the Markov chain.',
   torus: "Notebook: tilings of cylinders and tori on three lattices; the king's graph torus count over e^(sL²) tends to 2.",
-  diagonals: 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces, up to 18 × 18.',
+  diagonals: 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces, up to 20 × 20.',
 };
 
 function listBenchmarkRuns() {
