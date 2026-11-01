@@ -674,9 +674,9 @@ async function checkSurfaces(page, baseUrl, width) {
   ]) {
     const filtered = await showBoard(page, hash, `the ${hash} sheet`);
 
-    const torus = hash.includes('torus');
+    const onTorus = hash.includes('torus');
 
-    if (!filtered.meta.startsWith(meta) || !filtered.picker || !filtered.filter.shown || !filtered.tip.includes(`${hash.split('=')[1]} diagonal pieces`) || filtered.seamEnds !== torus || (filtered.ends > 0) !== torus) {
+    if (!filtered.meta.startsWith(meta) || !filtered.picker || !filtered.filter.shown || !filtered.tip.includes(`${hash.split('=')[1]} diagonal pieces`) || filtered.seamEnds !== onTorus || (filtered.ends > 0) !== onTorus) {
       problems.push(`${hash}: ${JSON.stringify(filtered)}`);
     }
   }

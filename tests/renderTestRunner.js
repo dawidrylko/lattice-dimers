@@ -179,6 +179,12 @@ const periodicSheetTestCases = [
     edges: 2,
   },
 ];
+const SEAM_PATHS = {
+  s: 'M12 12V44M76 12V44',
+  m: 'M9 28H15M73 28H79',
+  t: 'M12 12H76M12 44H76',
+  u: 'M42.5 9V15M42.5 41V47M45.5 9V15M45.5 41V47',
+};
 const sublabelTestCases = [
   { rowCount: 4, colCount: 4, choices: ['4 diagonal', '4 diag.', '4'], shown: '4 diagonal' },
   { rowCount: 2, colCount: 2, choices: ['2 diagonal', '2 diag.', '2'], shown: '2' },
@@ -947,6 +953,21 @@ function runPeriodicUnrankTest(testCase) {
   return true;
 }
 
+function runSeamGeometryTest() {
+  const sheet = renderSheet([[]], 1, { rowCount: 2, colCount: 4, surface: 'torus' });
+  const wrong = Object.entries(SEAM_PATHS).filter(([className, d]) => !sheet.includes(`<path class="${className}" d="${d}"/>`));
+
+  if (wrong.length) {
+    console.error(`Failed! Glued edge marks differ for ${wrong.map(([className]) => className).join(', ')}.`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function runPeriodicSheetTest({ tiling, copies, edges, ...options }) {
   const sheet = renderSheet([tiling], 1, { ...options, sublabels: ['2'] });
   const nested = sheet.match(/<svg x="(\d+)" y="(\d+)" width="(\d+)" height="(\d+)" viewBox="([^"]+)">/);
@@ -1121,6 +1142,7 @@ function __main__() {
     runSuite('periodic unrank', periodicUnrankTestCases, runPeriodicUnrankTest),
     runSuite('periodic diagonal pieces', periodicDiagonalTestCases, runPeriodicDiagonalTest),
     runSuite('periodic sheet', periodicSheetTestCases, runPeriodicSheetTest),
+    runSuite('glued edge marks', [{ rowCount: 2, colCount: 4 }], runSeamGeometryTest),
     runSuite('second label line', sublabelTestCases, runSublabelTest),
     runSuite('diagonal unrank', diagonalUnrankTestCases, runDiagonalUnrankTest),
     runSuite('sheet style', styleTestCases, runStyleTest),
