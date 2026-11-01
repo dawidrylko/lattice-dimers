@@ -1,4 +1,4 @@
-# The dimer entropy of the king's graph
+# Research: the dimer entropy of the king's graph
 
 The research part of this repository is a paper and a companion note on the perfect matchings of the king's graph, the square lattice with both diagonals. A perfect matching of the $m \times n$ king board is a domicule tiling of the $m \times n$ board, counted in [OEIS A239264](https://oeis.org/A239264), with the squares in [OEIS A239273](https://oeis.org/A239273). The code cells on this page read the committed results of `research/king-entropy/` and stop the site build when a value in the results table no longer matches them.
 
@@ -86,7 +86,7 @@ table(['quantity', 'value', 'status', 'source'], [
 ]);
 ```
 
-Two sign properties of the strip growth rates, convexity in the even width and a one-sided bound on the odd increments, hold numerically and would give $0.565511911035 \le s \le 0.565511911049$. The companion note tests the finite form of the first of them, log-convexity of $q \mapsto Z(2q, m)$, in 1453 cases. The property is not structural: it fails on free strips of the triangular lattice, for every unequal pair of diagonal weights tried, and on wide strips for the equal weights $x = 3/2, 2, 3$.
+Two sign properties of the strip growth rates, convexity in the even width and a one-sided bound on the odd increments, hold numerically and would give $0.565511911035 \le s \le 0.565511911049$. The companion note tests the finite form of the first of them, log-convexity of $q \mapsto Z(2q, m)$, in 1453 cases. The property is not structural: it fails on free strips of the triangular lattice, for every unequal pair of diagonal weights tried, and on wide strips for the equal weights $x = 3/2, 2, 3$. The [diagonal pieces notebook](06-diagonals.md) evaluates the same weights on the $2n \times 2n$ boards.
 
 ## Asymptotics of A239273
 
@@ -100,12 +100,7 @@ The cell below compares the formula with the exact terms counted by the solvers 
 
 ```js run
 const { s, sigma, kappa } = nb.results;
-const log = count => {
-  const digits = String(count);
-  const head = digits.slice(0, 17);
-
-  return Math.log(Number(head)) + (digits.length - head.length) * Math.LN10;
-};
+const { logCount } = nb.context;
 const rows = [];
 let previous = null;
 
@@ -113,7 +108,7 @@ for (let n = 1; n <= 10; n++) {
   const side = 2 * n;
   const count = await nb.context.countDomicule({ rowCount: side, colCount: side });
   const predicted = Number(kappa) + 4 * Number(s) * n * n - 8 * Number(sigma) * n;
-  const error = Math.expm1(predicted - log(count));
+  const error = Math.expm1(predicted - logCount(count));
 
   rows.push([n, `${side}×${side}`, String(count).length, error.toExponential(2), previous ? (previous / error).toFixed(2) : '']);
   previous = error;
@@ -123,12 +118,12 @@ if (Math.abs(previous) > 1e-7) {
   throw new Error(`the asymptotic formula is off by ${previous} at n = 10`);
 }
 
-table(['n', 'board', 'digits of a(n)', 'relative error of C d^(n²) f^(-n)', 'ratio to the previous error'], rows);
+table(['n', 'board', 'digits of a(n)', 'relative error of C d^(n²) f^(-n)', 'factor per step'], rows);
 ```
 
 ## Method in brief
 
-The matchings of a strip of width $w$ are counted row by row with a transfer matrix on $2^w$ states. On cylinders, the parity of the dimers that cross a fixed loop is conserved by the transfer matrix for even circumference and by its square for odd circumference. That splits the matrix into two sectors and makes the leading eigenvalues converge exponentially in $w$. The growth rates of cylinders up to $w = 25$ are extrapolated with several finite-size models; the spread of the models, predictive backtests on smaller widths and a check for a hidden mode make up the error budget of $6 \cdot 10^{-16}$.
+The matchings of a strip of width $w$ are counted row by row with a transfer matrix on $2^w$ states. On cylinders, the parity of the dimers that cross a fixed loop is conserved by the transfer matrix for even circumference and by its square for odd circumference. That splits the matrix into two sectors and makes the leading eigenvalues converge exponentially in $w$. The growth rates of cylinders up to $w = 25$ are extrapolated with several finite-size models; the spread of the models, predictive backtests on smaller widths and a check for a hidden mode make up the error budget of $6 \cdot 10^{-16}$. A torus has no boundary, so on the king's graph tori $\log(Z/2)/L^2$ approaches $s$ with no fit; the [tori notebook](05-tori.md) compares the two up to $16 \times 16$.
 
 Superadditivity of strips and a lower Collatz-Wielandt certificate on the free strip of width 24 give the lower bound. An upper certificate for a transfer matrix that weights the open side of a strip by the runs of crossing cells gives the upper bound. The certificates are evaluated in IEEE binary64 arithmetic with a rounding analysis that makes them rigorous; the cut identity and the strip inequalities behind them are proved in the paper and, in addition, audited in exact arithmetic on small boards. A separate script checks that no king board with both sides at least 3 has a Pfaffian orientation.
 

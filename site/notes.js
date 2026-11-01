@@ -350,6 +350,33 @@ async function renderNote(markdown, { resolveLink, context }) {
 }
 
 /**
+ * The natural logarithm of an exact count, from its first 17 digits and its length.
+ * @param {bigint|string} count The count.
+ * @returns {number} log(count).
+ */
+function logCount(count) {
+  const digits = String(count);
+  const head = digits.slice(0, 17);
+
+  return Math.log(Number(head)) + (digits.length - head.length) * Math.LN10;
+}
+
+/**
+ * Formats the average time of a benchmark result for a notebook table.
+ * @param {{ average: number, runs: number }|null} result The result of readAverageTime in site/build.js.
+ * @returns {string} The time in ms or s, marked when it was measured once.
+ */
+function formatTime(result) {
+  if (result === null) {
+    return '-';
+  }
+
+  const time = result.average >= 1000 ? `${(result.average / 1000).toFixed(2)} s` : `${result.average.toFixed(2)} ms`;
+
+  return result.runs === 1 ? `${time} (one run)` : time;
+}
+
+/**
  * Lists the notes in reading order: notes/NN-name.md is published as notes/name.html.
  * @returns {{ file: string, slug: string }[]} The notes.
  */
@@ -361,4 +388,4 @@ function listNotes() {
     .map(file => ({ file, slug: file.replace(/^\d+-/, '').replace(/\.md$/, '') }));
 }
 
-module.exports = { renderNote, renderChart, listNotes, escapeHtml, NOTES_DIRECTORY };
+module.exports = { renderNote, renderChart, listNotes, escapeHtml, formatTime, logCount, NOTES_DIRECTORY };

@@ -1,6 +1,6 @@
-# Diagonal pieces
+# Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/diagonals.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673).
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/diagonals.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673). The method is described in the [method note](01-method.md).
 
 ## The polynomial
 
@@ -10,9 +10,9 @@ Give every diagonal piece the weight $x$. The weighted count of the $h \times w$
 P_{h,w}(x) = \sum_k T(h, w, k)\, x^k,
 ```
 
-where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the domicule count ([OEIS A239273](https://oeis.org/A239273)). This is the dimer model of [Sandvik and Moessner (2006)](https://doi.org/10.1103/PhysRevB.73.144504) with diagonal dimers of fugacity $x$, and the weights $x = 3/2, 2, 3$ of the companion note on log-convexity are values of the same polynomial.
+where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the domicule count ([OEIS A239273](https://oeis.org/A239273)). This is the dimer model of [Sandvik and Moessner (2006)](https://doi.org/10.1103/PhysRevB.73.144504) with diagonal dimers of fugacity $x$, and the weights $x = 3/2, 2, 3$ of the [companion note on log-convexity](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy-log-convexity.pdf) are values of the same polynomial.
 
-`domiculeDiagonalSolver-BigInt.js` runs the transfer of the A239273 notebook with a polynomial in every state, and `domiculeDiagonalSolver-Modular.js` does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. When the OEIS was searched by terms and by name on 30 October 2026, it had no such triangle.
+[`domiculeDiagonalSolver-BigInt.js`](../src/solvers/domiculeDiagonalSolver-BigInt.js) runs the transfer of the [domicules notebook](03-domicules.md) with a polynomial in every state, and [`domiculeDiagonalSolver-Modular.js`](../src/solvers/domiculeDiagonalSolver-Modular.js) does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. When the OEIS was searched by terms and by name on 30 October 2026, before A401673 was drafted, it had no such triangle.
 
 ```js run
 const reference = require('./src/solvers/domiculeDiagonalSolver-BigInt.js');
@@ -72,7 +72,7 @@ Every row the cell lists passes the same checks, and the cell stops the build wh
 
 ## How many pieces are diagonal
 
-The cell prints the mean share of diagonal pieces among the $2n^2$ pieces of a uniformly random tiling, and the variance of their number per cell. A free board has a boundary. In the table its correction to the share shrinks roughly like $1/n$, so the last rows are not yet the value of the infinite lattice. That value is $2\,\partial s / \partial \log x$ at $x = 1$.
+The cell prints the mean share of diagonal pieces among the $2n^2$ pieces of a uniformly random tiling, and the variance of their number per site. A free board has a boundary. In the table its correction to the share shrinks roughly like $1/n$, so the last rows are not yet the value of the infinite lattice. That value is $2\,\partial s / \partial \log x$ at $x = 1$.
 
 ```js run
 const rows = Object.entries(nb.rows)
@@ -87,21 +87,16 @@ const rows = Object.entries(nb.rows)
     return [n, `${2 * n}×${2 * n}`, (mean / pieces).toFixed(6), ((square - mean * mean) / (2 * pieces)).toFixed(6)];
   });
 
-table(['n', 'board', 'share of diagonal pieces', 'variance per cell'], rows);
+table(['n', 'board', 'share of diagonal pieces', 'variance per site'], rows);
 ```
 
 ## Weighted counts
 
-The polynomial gives the weighted count for any $x$. The cell prints $\log P(x) / (4n^2)$, the free energy per cell of the weighted board. The chart draws it for every $x$ from 0 to 3 on four boards, with dots at the six weights of the table. The columns are $x = 0$ (dominoes), $1/2$, $1$ (domicules) and the weights $3/2$, $2$ and $3$ of the companion note. A free boundary keeps every value below the free energy per site of the infinite lattice at the same $x$, which is $G/\pi = 0.2916\ldots$ at $x = 0$ and $s = 0.5655\ldots$ at $x = 1$.
+The polynomial gives the weighted count for any $x$. The cell prints $\log P(x) / (4n^2)$, the free energy per site of the weighted board. The chart draws it for every $x$ from 0 to 3 on four boards, with dots at the six weights of the table. The columns are $x = 0$ (dominoes), $1/2$, $1$ (domicules) and the weights $3/2$, $2$ and $3$ of the companion note. A free boundary keeps every value below the free energy per site of the infinite lattice at the same $x$, which is $G/\pi = 0.2915\ldots$ at $x = 0$ and $s = 0.5655\ldots$ at $x = 1$.
 
 ```js run
 const weights = [[0, 1], [1, 2], [1, 1], [3, 2], [2, 1], [3, 1]];
-const log = count => {
-  const digits = String(count);
-  const head = digits.slice(0, 17);
-
-  return Math.log(Number(head)) + (digits.length - head.length) * Math.LN10;
-};
+const { logCount } = nb.context;
 const evaluate = (row, [p, q]) => {
   const degree = row.length - 1;
 
@@ -118,13 +113,13 @@ table(
       return [
         n,
         `${2 * n}×${2 * n}`,
-        ...weights.map(([p, q]) => ((log(evaluate(row, [p, q])) - 2 * (row.length - 1) * Math.log(q)) / cells).toFixed(6)),
+        ...weights.map(([p, q]) => ((logCount(evaluate(row, [p, q])) - 2 * (row.length - 1) * Math.log(q)) / cells).toFixed(6)),
       ];
     }),
 );
 
 const freeEnergy = (row, x) => {
-  const terms = row.map((c, j) => (c === 0n ? -Infinity : log(c) + (j === 0 ? 0 : 2 * j * Math.log(x))));
+  const terms = row.map((c, j) => (c === 0n ? -Infinity : logCount(c) + (j === 0 ? 0 : 2 * j * Math.log(x))));
   const top = Math.max(...terms);
 
   return top + Math.log(terms.reduce((sum, t) => sum + Math.exp(t - top), 0));
@@ -144,4 +139,26 @@ chart({
   })),
   describe: ([x, value]) => `x = ${x}, log P(x)/(4n²) = ${value.toFixed(6)}`,
 });
+```
+
+## Running time
+
+Average wall-clock time of a full solver process, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
+
+```js run
+const { formatTime } = nb.context;
+
+table(
+  ['board', 'BigInt', 'modular'],
+  nb.context.diagonalBenchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.bigint), formatTime(r.modular)]),
+);
+print(`Run: ${nb.context.benchmarkRun}`);
+```
+
+## PARI/GP
+
+The polynomial $P_{h,w}(x)$ and the rows of the triangle in [`oeis/A401673/A401673.gp`](../oeis/A401673/A401673.gp), checked in CI against the test data up to $8 \times 8$.
+
+```js run
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A401673/A401673.gp'), 'utf-8').trim());
 ```
