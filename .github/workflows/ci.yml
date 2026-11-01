@@ -31,6 +31,7 @@ jobs:
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
+      - run: pnpm test:oeis
       - run: pnpm test:render
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends pari-gp
       - run: pnpm test:pari

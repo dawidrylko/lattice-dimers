@@ -61,6 +61,7 @@
     "render": "node src/dominoTilingRenderer.js",
     "test:render": "node tests/renderTestRunner.js",
     "test:pari": "node tests/pariTestRunner.js",
+    "test:oeis": "node oeis/buildBFiles.js --check",
     "test:site": "node tests/siteTestRunner.js",
     "site:build": "node site/build.js",
     "readme:images": "node site/readme-images.js"
