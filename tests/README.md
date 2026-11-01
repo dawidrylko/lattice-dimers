@@ -14,6 +14,8 @@ Every command below runs in CI on each pull request, in the order listed, except
 | `pnpm site:build` | [`../site/build.js`](../site/build.js) | runs every notebook cell in [`notes/`](../notes/README.md); a cell that checks a result against the data stops the build when they disagree. CI starts it from another directory |
 | `pnpm test:site` | [`siteTestRunner.js`](siteTestRunner.js) | the built site in headless Chrome at 1440, 786 and 375 px (`CHROME_PATH` if Chrome is not found), the contrast of the highlight and the colours of glued edges in both themes, and in the built pages every link into the repository, the integrity hash of every CDN file and the description of the older benchmark runs |
 
+[REGRESSIONS.md](REGRESSIONS.md) lists every defect fixed so far, the check that fails if it comes back, and how that was shown.
+
 `node tests/testRunner.js` without `-m` runs every known term through every solver. It takes hours, the 16 × 16 torus alone about 75 minutes, and runs outside CI.
 
 The CI job `Research` runs the Python checks of [`research/king-entropy`](../research/king-entropy/README.md): `src/test_paths.py`, `src/test_timed.py`, `src/test_regressions.py`, reruns of `src/derived.py`, `src/errbar.py`, `src/hidden_oos.py`, `src/lspec.py` and `src/ltest.py` against their files in `out/` and of `replication/analyze_eig.py` and `replication/compare_eig.py` against theirs in `replication/out/`, and the syntax of `.zenodo.json`.

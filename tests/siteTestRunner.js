@@ -102,6 +102,7 @@ const siteTestCases = [
   { width: 375, check: 'landing' },
   { width: 375, check: 'notes' },
   { width: 375, check: 'chrome' },
+  { width: 1440, check: 'cells' },
   { width: 1440, check: 'palette' },
   { width: 1440, check: 'links' },
   { width: 1440, check: 'integrity' },
@@ -1061,6 +1062,25 @@ async function checkBenchmark(page, baseUrl, width) {
   return problems;
 }
 
+async function checkBenchmarkCells(page, baseUrl, width) {
+  const problems = [];
+
+  for (const hash of ['benchmark', 'benchmark/domicules', 'benchmark/tori', 'benchmark/diagonals']) {
+    await loadSite(page, baseUrl, width, hash);
+    await page.waitFor("document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0", `the #${hash} rows`);
+    const times = await page.evaluate(
+      "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr')].flatMap(row => [...row.cells].slice(2, -1).map(cell => cell.textContent))",
+    );
+    const odd = [...new Set(times.filter(time => !/^(-|\d+\.\d{2} m?s)$/.test(time)))];
+
+    if (odd.length) {
+      problems.push(`#${hash} shows the times ${odd.join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing one -`);
+    }
+  }
+
+  return problems;
+}
+
 const READ_PALETTE = `(() => {
   const probe = document.body.appendChild(document.createElement('i'));
   const read = name => {
@@ -1189,6 +1209,7 @@ const CHECKS = {
   notes: { label: 'notes', run: checkNotes },
   chrome: { label: 'shared header and footer', run: checkChrome },
   benchmark: { label: 'benchmark table', run: checkBenchmark },
+  cells: { label: 'benchmark times', run: checkBenchmarkCells },
   palette: { label: 'highlight contrast and glued-edge colours', run: checkPalette },
   links: { label: 'links into the repository', run: checkRepositoryLinks },
   integrity: { label: 'subresource integrity', run: checkIntegrity },
