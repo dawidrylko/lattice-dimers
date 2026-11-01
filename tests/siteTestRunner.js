@@ -1003,12 +1003,14 @@ async function checkBenchmark(page, baseUrl, width) {
     "location.hash === '#benchmark/cylinders' && !document.querySelector('.bench-group[data-group=cylinders]').hidden",
     'the switch to cylinders',
   );
-  const cylinders = await page.evaluate(
-    "({ rows: document.querySelectorAll('#cylinder-benchmark-rows tr').length, tori: !document.querySelector('.bench-group[data-group=tori]').hidden })",
-  );
+  const cylinders = await page.evaluate(`({
+    rows: document.querySelectorAll('.bench-group[data-group=cylinders] #cylinder-benchmark-rows tr').length,
+    inTori: Boolean(document.querySelector('.bench-group[data-group=tori] #cylinder-benchmark-rows')),
+    tori: !document.querySelector('.bench-group[data-group=tori]').hidden,
+  })`);
 
-  if (!cylinders.rows || cylinders.tori) {
-    problems.push(`the cylinders group shows ${cylinders.rows} cylinder rows and ${cylinders.tori ? 'also' : 'not'} the tori`);
+  if (!cylinders.rows || cylinders.inTori || cylinders.tori) {
+    problems.push(`the cylinders group shows ${cylinders.rows} cylinder rows, the tori group ${cylinders.inTori ? 'also holds' : 'does not hold'} the cylinder table and is ${cylinders.tori ? 'shown' : 'hidden'}`);
   }
 
   await page.evaluate("document.querySelector('#benchmark-groups button[data-group=tori]').click()");
@@ -1035,7 +1037,7 @@ const CHECKS = {
   sheets: { label: 'tiling sheets', run: checkSheets },
   picker: { label: 'board picker', run: checkPicker },
   confirmation: { label: '18x18 and 16x16 domicule confirmation', run: checkConfirmation },
-  pieces: { label: 'straight and diagonal switch', run: checkPieces },
+  pieces: { label: 'dominoes and domicules switch', run: checkPieces },
   styles: { label: 'sheet style switch', run: checkStyles },
   labels: { label: 'long tiling numbers', run: checkLongLabels },
   history: { label: 'random jump and back', run: checkHistory },
