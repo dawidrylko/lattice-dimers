@@ -265,17 +265,23 @@ function countDiagonalTilings({ rowCount, colCount }, total) {
 
 /**
  * Counts the domicule tilings of a cylinder or a torus by the number of diagonal pieces with the
- * gallery's transfer, and checks that they add up to the number of tilings.
+ * gallery's transfer, and checks them against the number of tilings and, for no diagonal piece, the domino count.
  * @param {Object} board The board, as for countPeriodicTilings.
  * @param {string} total The number of tilings.
- * @returns {string[]} The coefficients, from 0 diagonal pieces up.
+ * @returns {Promise<string[]>} The coefficients, from 0 diagonal pieces up.
  */
-function countPeriodicDiagonalTilings(board, total) {
+async function countPeriodicDiagonalTilings(board, total) {
   const coefficients = countPeriodicDiagonals(board);
   const sum = coefficients.reduce((acc, count) => acc + count, BigInt(0));
+  const surface = `${board.rowCount}x${board.colCount} ${board.torus ? 'torus' : 'cylinder'}`;
+  const dominoes = await countPeriodicTilings({ ...board, lattice: 'square' });
 
   if (String(sum) !== total) {
-    throw new Error(`The diagonal counts of the ${board.rowCount}x${board.colCount} ${board.torus ? 'torus' : 'cylinder'} add up to ${sum}, not ${total}.`);
+    throw new Error(`The diagonal counts of the ${surface} add up to ${sum}, not ${total}.`);
+  }
+
+  if (String(coefficients[0]) !== dominoes) {
+    throw new Error(`The ${surface} has ${coefficients[0]} tilings without diagonal pieces, not the ${dominoes} domino tilings.`);
   }
 
   return coefficients.map(String);
@@ -625,16 +631,17 @@ async function __main__() {
       for (const side of PERIODIC_SIDES) {
         const board = { rowCount: side, colCount: side, lattice, torus: surface === 'torus' };
         const total = await countPeriodicTilings(board);
+        const id = `${side}x${side}${suffix}-${surface}`;
         periodicBoards.push({
-          id: `${side}x${side}${suffix}-${surface}`,
+          id,
           pieces,
           surface,
           mode: 'pages',
           rowCount: side,
           colCount: side,
           total,
-          ...(pieces === 'domicule' && { diagonals: countPeriodicDiagonalTilings(board, total) }),
-          ...(PERIODIC_FILTER_MEMORY[`${side}x${side}${suffix}-${surface}`] && { filterMemory: PERIODIC_FILTER_MEMORY[`${side}x${side}${suffix}-${surface}`] }),
+          ...(pieces === 'domicule' && { diagonals: await countPeriodicDiagonalTilings(board, total) }),
+          ...(PERIODIC_FILTER_MEMORY[id] && { filterMemory: PERIODIC_FILTER_MEMORY[id] }),
         });
       }
     }

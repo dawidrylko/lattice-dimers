@@ -212,7 +212,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       <div class="boards" id="boards" role="group" aria-labelledby="boards-label"></div>
     </div>
     <div class="picker" id="diagonal-picker">
-      <span class="label" id="diagonals-label">Diagonal pieces</span>
+      <span class="label" id="diagonals-label" title="Show only the tilings with this many diagonal pieces">Diagonal pieces</span>
       <div class="filter">
         <select class="field" id="diagonals" aria-labelledby="diagonals-label"></select>
         <label class="toggle"><input type="checkbox" id="highlight">Highlight diagonals</label>
@@ -644,10 +644,11 @@ function highlightTiling(number) {
 
 function showDiagonalFilter(board, diagonals) {
   const select = $('diagonals');
-  const options = [['', `Any number · ${fmt(board.total)}`]];
+  const tilings = count => `${fmt(count)} ${BigInt(count) === ONE ? 'tiling' : 'tilings'}`;
+  const options = [['', `Any number (all ${tilings(board.total)})`]];
 
   (board.diagonals || []).forEach((count, k) => {
-    if (BigInt(count) > ZERO) options.push([String(k), `${k} · ${fmt(count)}`]);
+    if (BigInt(count) > ZERO) options.push([String(k), `Exactly ${k} (${tilings(count)})`]);
   });
   select.innerHTML = options.map(([value, text]) => `<option value="${value}">${text}</option>`).join('');
   select.value = diagonals === null ? '' : String(diagonals);

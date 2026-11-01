@@ -62,7 +62,7 @@ Domicule tilings have no lattice structure like the domino rotations, so couplin
 
 The gallery can also number only the tilings with $k$ diagonal pieces. Every entry of the table then becomes a list, `table[i][state][r]`, of the completions with exactly $r \le k$ diagonal pieces, and unranking keeps the order of the full numbering. The gallery offers this up to $10 \times 10$.
 
-A straight piece covers a black and a white cell of the chessboard, a diagonal piece two cells of one colour. So on the $2n \times 2n$ board the number of diagonal pieces is even. On a rectangle the count for every $k$ comes from [`domiculeDiagonalSolver-BigInt.js`](../src/solvers/domiculeDiagonalSolver-BigInt.js) or `data/`. On a cylinder or torus the gallery's own scan carries the same lists, one per rotation class, and its count for $k = 0$ is checked against the square lattice count of the same surface. The build checks that the counts add up to the number of tilings.
+A straight piece covers a black and a white cell of the chessboard, a diagonal piece two cells of one colour. So on the $2n \times 2n$ board the number of diagonal pieces is even. On a rectangle the count for every $k$ comes from [`domiculeDiagonalSolver-BigInt.js`](../src/solvers/domiculeDiagonalSolver-BigInt.js) or `data/`. On a cylinder or torus the gallery's own scan carries the same lists, one per rotation class, and the build checks its count for $k = 0$ against the domino count of the same surface. It also checks that the counts add up to the number of tilings.
 
 ## Cylinders and tori
 
