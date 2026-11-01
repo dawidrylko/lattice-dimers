@@ -946,6 +946,7 @@ async function checkBenchmark(page, baseUrl, width) {
     ['benchmark', 'dominoes', 'benchmark-rows', null],
     ['benchmark/domicules', 'domicules', 'domicule-benchmark-rows', 'every'],
     ['benchmark-domicule', 'domicules', 'domicule-benchmark-rows', 'every'],
+    ['benchmark/cylinders', 'cylinders', 'cylinder-benchmark-rows', 'some'],
     ['benchmark/tori', 'tori', 'torus-benchmark-rows', 'some'],
     ['benchmark/diagonals', 'diagonals', 'diagonal-benchmark-rows', 'some'],
   ]) {
@@ -997,16 +998,24 @@ async function checkBenchmark(page, baseUrl, width) {
   }
 
   await loadSite(page, baseUrl, width, 'benchmark');
+  await page.evaluate("document.querySelector('#benchmark-groups button[data-group=cylinders]').click()");
+  await page.waitFor(
+    "location.hash === '#benchmark/cylinders' && !document.querySelector('.bench-group[data-group=cylinders]').hidden",
+    'the switch to cylinders',
+  );
+  const cylinders = await page.evaluate(
+    "({ rows: document.querySelectorAll('#cylinder-benchmark-rows tr').length, tori: !document.querySelector('.bench-group[data-group=tori]').hidden })",
+  );
+
+  if (!cylinders.rows || cylinders.tori) {
+    problems.push(`the cylinders group shows ${cylinders.rows} cylinder rows and ${cylinders.tori ? 'also' : 'not'} the tori`);
+  }
+
   await page.evaluate("document.querySelector('#benchmark-groups button[data-group=tori]').click()");
   await page.waitFor(
     "location.hash === '#benchmark/tori' && !document.querySelector('.bench-group[data-group=tori]').hidden",
-    'the switch to tori and cylinders',
+    'the switch to tori',
   );
-  const cylinders = await page.evaluate("document.querySelectorAll('#cylinder-benchmark-rows tr').length");
-
-  if (!cylinders) {
-    problems.push('the tori and cylinders group has no cylinder rows');
-  }
 
   const length = await page.evaluate('history.length');
   await page.evaluate(
