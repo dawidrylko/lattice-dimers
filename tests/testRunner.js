@@ -6,6 +6,7 @@ const { exec, parseArgs, verifyInt, verifyBigInt } = require('../src/helpers');
 const { listPrimes, combineCheckedResidues } = require('../src/helpers/modular');
 const periodicModular = require('../src/solvers/periodicTilingSolver-Modular.js');
 const { capThreads } = require('../src/solvers/domiculeDiagonalSolver-Modular.js');
+const { readBenchmarkRuns } = require('../site/benchmarkRuns.js');
 const {
   filesInt,
   testCasesInt,
@@ -347,10 +348,9 @@ function executeBenchmarkRunTest() {
   };
 
   try {
-    const { listBenchmarkRuns, findLatestCompleteRun } = require('../site/build.js');
-    touch('2000-01', fs.readdirSync(path.join(ROOT_DIRECTORY, 'benchmarks', 'results', findLatestCompleteRun())));
+    touch('2000-01', fs.readdirSync(path.join(ROOT_DIRECTORY, 'benchmarks', 'results', readBenchmarkRuns().latest)));
     touch('2000-02', ['environment.json', 'dominoTilingSolver-Formula.js_0x0.txt']);
-    const chosen = findLatestCompleteRun(listBenchmarkRuns(benchmarkRoot), benchmarkRoot);
+    const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {
       console.error(`Failed! The site would show ${chosen} instead of the complete run 2000-01.`);
@@ -423,7 +423,8 @@ function executeExitTests() {
     const name = path.relative(ROOT_DIRECTORY, file);
     process.stdout.write(`Executing exit test ${index + 1} of ${scripts.length} for ${name}... `);
 
-    const exits = fs.readFileSync(file, 'utf-8').match(/process\.exit\(0?\)/g) || [];
+    const pattern = name === path.join('src', 'dominoTilingRenderer.js') ? /process\.exit\([^)]*\)/g : /process\.exit\(0?\)/g;
+    const exits = fs.readFileSync(file, 'utf-8').match(pattern) || [];
 
     if (exits.length) {
       console.error(`Failed! ${exits.join(', ')} ends the process before a pipe has taken the whole output.`);

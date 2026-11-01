@@ -24,7 +24,7 @@ function readProse(file) {
 
 function listDefinitions(prose) {
   return new Map(
-    [...prose.matchAll(/^ {0,3}\[([^\]\n]+)\]:[ \t]*<?([^\s>]+)>?/gm)].map(([, label, target]) => [label.toLowerCase(), target]),
+    [...prose.matchAll(/^ {0,3}\[(?!\^)([^\]\n]+)\]:[ \t]*<?([^\s>]+)>?/gm)].map(([, label, target]) => [label.toLowerCase(), target]),
   );
 }
 

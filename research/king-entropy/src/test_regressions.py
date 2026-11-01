@@ -58,9 +58,11 @@ def bfile_check():
     pos = [(n, d - n) for d in range(37) for n in range(d + 1)]
     with open(os.path.join(tmp, 'b239264_2.txt'), 'w') as f:
         f.write(''.join(f'{i} {A(own, n, k)}\n' for i, (n, k) in enumerate(pos)) + '\n' * 58)
+    terms = sum(1 for line in open(os.path.join(tmp, 'b239264.txt')) if line.strip())
+    diagonals = next(d for d in range(terms + 2) if d * (d + 1) // 2 >= terms)
     r = subprocess.run([sys.executable, os.path.join(REPLICATION, 'bfile_check.py'), tmp], capture_output=True, text=True)
     shutil.rmtree(tmp)
-    ok = r.returncode == 0 and 'antidiagonals 0..46' in r.stdout and 'TOTAL MISMATCHES: 0' in r.stdout
+    ok = r.returncode == 0 and f'antidiagonals 0..{diagonals - 1}' in r.stdout and 'TOTAL MISMATCHES: 0' in r.stdout
     return ok, 'bfile_check.py on oeis/A239264/b239264.txt' + ('' if ok else f' (exit {r.returncode}): {r.stderr[-300:]}')
 
 

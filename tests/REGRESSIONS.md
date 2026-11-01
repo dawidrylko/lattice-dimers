@@ -1,6 +1,6 @@
 # Regressions
 
-Every defect fixed in this repository, the check that fails if it comes back, and how that was shown. Each fix was undone in a scratch copy of the repository, either by restoring the file from the fix's parent commit (`<commit>^`) or by putting the old lines back, and the check was run on that copy: it failed. The same check passes on the repository. Checked on 1 November 2026; the runners and CI jobs are described in [README.md](README.md).
+Every defect fixed in this repository, the check that fails if it comes back, and how that was shown. Each fix was undone in a scratch copy of the repository and the check was run on that copy: it failed, and it passes on the repository. "Undone as" names what was put back: the old lines, or the file from the fix's parent commit (`<commit>^`) where the fix replaced the file or its content. Checked on 1 November 2026; the runners and CI jobs are described in [README.md](README.md).
 
 A new fix adds its row here with the check that guards it.
 
@@ -33,7 +33,7 @@ A new fix adds its row here with the check that guards it.
 | the solver path resolved from the working directory | `3d9cb08` | `test`, executor test and directory test (new) | `path.join('src', 'solvers')` |
 | the enumerator recursed once per domino and overflowed on 2 × 20000 | `0fd7e3d` | `test:render`, `2x20000` | `renderer/enumerator.js` from `0fd7e3d^` |
 | counting 5 × 100000 crashed V8 | `0fd7e3d` | `test:render`, `2x100000` at 128 MB | the `try` around the count removed |
-| `process.exit` after printing cut a piped result on macOS | `0fd7e3d` | `test`, exit test (new); job `macOS`, `test:render` `2x20000` | `process.exit(0)` after the last line |
+| `process.exit` after printing cut a piped result on macOS | `0fd7e3d` | `test`, exit test (new); job `macOS`, `test:render` `2x20000` | `process.exit(0)` after the last line; `process.exit(1)` for `process.exitCode = 1` in the renderer |
 | a worker that exited without a result left exit code 0 and no output | `93f74fe` | `test`, rejection with `fixtures/exitingWorker.js` | the `exit` listener removed |
 | the domicule BigInt solver accepted a shorter side of 30 | `93f74fe` | `test`, rejection of 30 × 30 | the cap raised to 30 |
 | domicule styles changed the domino SVG | `106a9df` | `test:render`, domino output hash | diagonal styles in every sheet |
@@ -57,14 +57,14 @@ A new fix adds its row here with the check that guards it.
 | Random froze Safari by assigning `location.hash` | `08ebc4b` | `test:site`, random jump and back | `location.hash` in `go()` and in the tab links |
 | an invalid page entry stayed in the field | `08ebc4b` | `test:site`, random jump and back | `go()` returns without updating the controls |
 | the highlight did not find a shortened long number | `08ebc4b` | `test:site`, long tiling numbers | `textContent` instead of `data-label` |
-| a label with `<&>` broke the SVG and long labels overlapped | `08ebc4b` | `test:render`, label width | (added with the fix) |
+| a label with `<&>` broke the SVG | `08ebc4b` | `test:render`, short label (new) and label width | `escapeXml` removed from the short and from the long label |
 | code or math in a link label left an unresolved token | `4a11337` | `site:build` stops | the label rendered with its own tokens |
 | KaTeX loaded without subresource integrity | `4a11337` | `test:site`, subresource integrity (new) | `integrity` removed |
 | the noscript link pointed at a path that no longer exists | `4a11337` | `test:site`, links into the repository (new) | `tree/master/benchmark` |
 | the site build read its files from the working directory | `3d9cb08` | CI builds the site from `$RUNNER_TEMP` (new) | scripts read by relative path |
 | note pages were narrower than the main page | `4a11337` | `test:site`, shared header and footer | `max-width: 760px` |
 | the chain length on the page was a literal | `106a9df` | `test:site`, text read from the code and the data (new) | "5,000" in the template with 4,000 sweeps in the code |
-| a partial newer benchmark month replaced the full table | `96ece59` | `test`, benchmark run test (new) | `runs[0]` instead of the newest complete run |
+| a partial newer benchmark month replaced the full table | `96ece59` | `test`, benchmark run test (new) of `site/benchmarkRuns.js`, the only place the build gets its run from | the newest run instead of the newest complete one |
 | the older runs were described with 100,000 runs on an i7-8700 each | `8298d43` | `test:site`, text read from the code and the data (new) | one hand-written sentence for both |
 | the glued edge had the colour of the blue pieces | `a2f03dd` | `test:site`, glued-edge colours (new) | `--seam: #4f7cac`, the colour before the fix |
 | the front-page tilings were not square | `f3b5023` | `test:render`, sheet without labels and readme images | `svg.js` and `readme-images.js` from `f3b5023^` |
@@ -91,17 +91,17 @@ A new fix adds its row here with the check that guards it.
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
-| certified bounds lost their trailing zeros | `214b4b6` | `src/test_regressions.py` (new) | `bounds.py` from `214b4b6^` |
-| `lean.py` ran with a 52-bit `np.longdouble` | `6ef3190` | `src/test_regressions.py` (new); also `lcert.py` | `lean.py` from `6ef3190^`; the assert of `lcert.py` removed |
-| `bfile_check.py` assumed 1035 terms | `7b728c5` (#67) | `src/test_regressions.py` (new) | the script from `7b728c5^` |
+| certified bounds lost their trailing zeros | `214b4b6` | `src/test_regressions.py` (new) | `mp.nstr` in `down` and `up` |
+| `lean.py` ran with a 52-bit `np.longdouble` | `6ef3190` | `src/test_regressions.py` (new); also `lcert.py` | the assert of `lean.py` removed; the same for `lcert.py` |
+| `bfile_check.py` assumed 1035 terms | `7b728c5` (#67) | `src/test_regressions.py` (new), which reads the expected length from the b-file | 45 antidiagonals instead of the length of the file |
 | a local `P` shadowed `paths.P` in `zexact.py` | `9ddb2fb` (#33) | `src/test_paths.py` | `Z, P = zexact(...)` |
 | `zexact.py` read the commit from the working directory | `9ddb2fb` (#33) | `src/test_paths.py` | `cwd=ROOT` removed |
 | `e0_spectrum` inverted a singular eigenbasis | `9ddb2fb` (#33) | rerun of `src/lspec.py` in `Research` and `macOS` (new) | the restriction to the reachable states removed |
-| `timed.py` printed KiB as MiB on macOS | `db0e7c8` (#59) | job `macOS`, `src/test_timed.py` (new) | the file from `db0e7c8^` |
-| the hidden-mode term excluded B = 0 | `c4d74c2` | rerun of `src/errbar.py` (new) | the file from `c4d74c2^` |
-| the hidden-mode term came from one fit window | `29efdc1` | rerun of `src/errbar.py` (new) | the file from `29efdc1^` |
+| `timed.py` printed KiB as MiB on macOS | `db0e7c8` (#59) | job `macOS`, `src/test_timed.py` (new) | `ru_maxrss / 1024` |
+| the hidden-mode amplitudes were those whose rms stayed within 3 times the best fit, which left out B = 0 | `c4d74c2` | rerun of `src/errbar.py` (new) | the allowed range from that rule; the widening of today's range to B = 0 changes nothing while every 3-standard-error range contains 0, so that line alone is not guarded |
+| the hidden-mode term came from one fit window | `29efdc1` | rerun of `src/errbar.py` (new) | the range from the window w = 13..25 alone |
 | `out/out_ltest.txt` predated the 24 × 24 counts | `f3deaa6` | rerun of `src/ltest.py` (new) | the output from `f3deaa6^` |
-| float64 values compared through their decimal repr; median m printed with 6 digits | `9f9e989` | reruns of `replication/compare_eig.py` and `analyze_eig.py` (new) | both scripts from `9f9e989^` |
+| float64 values compared through their decimal repr; median m printed with 6 digits | `9f9e989` | reruns of `replication/compare_eig.py` and `analyze_eig.py` (new) | `mpf(repr(val))` and the string of `log_lambda`; `nstr(m_gap, 6)` |
 
 ## Limits of the checks, fixed here
 

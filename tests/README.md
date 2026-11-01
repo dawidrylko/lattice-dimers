@@ -12,7 +12,7 @@ Every command below runs in CI on each pull request, in the order listed, except
 | `pnpm test:render` | [`renderTestRunner.js`](renderTestRunner.js) | numbering, sampling and drawing, and the README images against the renderer |
 | `pnpm test:pari` | [`pariTestRunner.js`](pariTestRunner.js) | every `A<n>.gp` in `oeis/` against `data/`, and the PARI program of every entry text against its b-file; needs [PARI/GP](https://pari.math.u-bordeaux.fr/) (`apt install pari-gp`, `brew install pari`, or `GP_PATH`) |
 | `pnpm site:build` | [`../site/build.js`](../site/build.js) | runs every notebook cell in [`notes/`](../notes/README.md); a cell that checks a result against the data stops the build when they disagree. CI starts it from another directory |
-| `pnpm test:site` | [`siteTestRunner.js`](siteTestRunner.js) | the built site in headless Chrome at 1440, 786 and 375 px (`CHROME_PATH` if Chrome is not found), the contrast of the highlight and the colours of glued edges in both themes, and in the built pages every link into the repository, the integrity hash of every CDN file and the description of the older benchmark runs |
+| `pnpm test:site` | [`siteTestRunner.js`](siteTestRunner.js) | the built site in headless Chrome at 1440, 786 and 375 px (`CHROME_PATH` if Chrome is not found), the contrast of the highlight and the colours of glued edges in both themes, and in the built pages every link into the repository, an integrity attribute on every CDN file and the description of the older benchmark runs |
 
 [REGRESSIONS.md](REGRESSIONS.md) lists every defect fixed so far, the check that fails if it comes back, and how that was shown.
 
@@ -20,4 +20,4 @@ Every command below runs in CI on each pull request, in the order listed, except
 
 The CI job `Research` runs the Python checks of [`research/king-entropy`](../research/king-entropy/README.md): `src/test_paths.py`, `src/test_timed.py`, `src/test_regressions.py`, reruns of `src/derived.py`, `src/errbar.py`, `src/hidden_oos.py`, `src/lspec.py` and `src/ltest.py` against their files in `out/` and of `replication/analyze_eig.py` and `replication/compare_eig.py` against theirs in `replication/out/`, and the syntax of `.zenodo.json`.
 
-The CI job `macOS` runs what fails only there: `renderTestRunner.js` (a pipe takes output asynchronously), `src/test_timed.py` (`ru_maxrss` is in bytes) and the rerun of `src/lspec.py`.
+The CI job `macOS` runs `renderTestRunner.js`, `src/test_timed.py` and the rerun of `src/lspec.py` again on macOS, where a pipe takes output asynchronously, `ru_maxrss` is in bytes and LAPACK is another build.

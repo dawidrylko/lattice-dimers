@@ -106,17 +106,18 @@ function readConstants() {
 
 function checkSummaryCopies(constants) {
   const errors = [];
-  const copies = Object.values(constants).flatMap(constant => constant.values.map(value => ({ constant, value: Number(value) })));
+  const copies = Object.entries(constants).flatMap(([name, { values }]) => values.map(value => ({ name, value })));
 
   for (const file of SUMMARY_FILES) {
     const content = fs.readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8');
 
     for (const [number] of content.matchAll(/\d+\.\d{6,}/g)) {
-      const distance = ({ value }) => Math.abs(value - Number(number));
-      const nearest = copies.reduce((best, copy) => (distance(copy) < distance(best) ? copy : best));
+      const near = copies.filter(({ value }) => Math.abs(Number(value) - Number(number)) <= COPY_WINDOW * Number(value));
 
-      if (distance(nearest) <= COPY_WINDOW * nearest.value && !nearest.constant.values.includes(number)) {
-        errors.push(`${file} has ${number}, where research/king-entropy gives ${nearest.constant.values.join(' or ')}.`);
+      if (near.length > 0 && !near.some(({ value }) => value === number)) {
+        const allowed = near.map(({ name, value }) => `${name} = ${value}`).join(', ');
+
+        errors.push(`${file} has ${number}, which is none of the constants of research/king-entropy within ${COPY_WINDOW * 100}% of it: ${allowed}.`);
       }
     }
   }

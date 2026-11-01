@@ -8,7 +8,7 @@ const { DOMICULE_SWEEPS } = require('../src/renderer');
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const SITE_DIRECTORY = path.resolve(process.env.SITE_DIRECTORY || path.join(ROOT_DIRECTORY, 'dist', 'site'));
 const REPOSITORY_LINK = /https:\/\/github\.com\/dawidrylko\/lattice-dimers\/(?:tree|blob)\/master\/([^"'#?\s<>)]+)/g;
-const EXTERNAL_RESOURCE = /<(?:script\b[^>]*\bsrc|link\b[^>]*\brel="stylesheet"[^>]*\bhref)="https?:[^>]*>/g;
+const EXTERNAL_RESOURCE = /<script\b[^>]*\bsrc="https?:[^>]*>|<link\b(?=[^>]*\brel="stylesheet")[^>]*\bhref="https?:[^>]*>/g;
 const MIN_HIT_CONTRAST = 4.5;
 const MIN_SEAM_DISTANCE = 40;
 const ARCHIVES = [
@@ -1071,10 +1071,13 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     const times = await page.evaluate(
       "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr')].flatMap(row => [...row.cells].slice(2, -1).map(cell => cell.textContent))",
     );
+    const dashes = await page.evaluate(
+      "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody td')].map(cell => cell.textContent).filter(text => /[\\u2013\\u2014]/.test(text))",
+    );
     const odd = [...new Set(times.filter(time => !/^(-|\d+\.\d{2} m?s)$/.test(time)))];
 
-    if (odd.length) {
-      problems.push(`#${hash} shows the times ${odd.join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing one -`);
+    if (odd.length || dashes.length) {
+      problems.push(`#${hash} shows ${[...odd, ...dashes].join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing value -`);
     }
   }
 
@@ -1166,13 +1169,19 @@ function listSitePages(directory = SITE_DIRECTORY) {
 }
 
 async function checkRepositoryLinks() {
-  return listSitePages().flatMap(file => {
-    const html = fs.readFileSync(file, 'utf-8');
+  const links = listSitePages().flatMap(file =>
+    [...new Set([...fs.readFileSync(file, 'utf-8').matchAll(REPOSITORY_LINK)].map(match => decodeURIComponent(match[1]).replace(/\/$/, '')))].map(
+      target => ({ file, target }),
+    ),
+  );
 
-    return [...new Set([...html.matchAll(REPOSITORY_LINK)].map(match => decodeURIComponent(match[1]).replace(/\/$/, '')))]
-      .filter(target => !fs.existsSync(path.join(ROOT_DIRECTORY, target)))
-      .map(target => `${path.relative(SITE_DIRECTORY, file)} links to ${target}, which is not in the repository`);
-  });
+  if (!links.length) {
+    return ['no page links into github.com/dawidrylko/lattice-dimers/tree/master or blob/master'];
+  }
+
+  return links
+    .filter(({ target }) => !fs.existsSync(path.join(ROOT_DIRECTORY, target)))
+    .map(({ file, target }) => `${path.relative(SITE_DIRECTORY, file)} links to ${target}, which is not in the repository`);
 }
 
 async function checkIntegrity() {

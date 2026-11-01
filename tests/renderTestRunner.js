@@ -42,6 +42,7 @@ const labelWidthTestCases = [
   { rowCount: 14, colCount: 14, first: BigInt('8212337965975290675433764125340416032951') },
   { rowCount: 4, colCount: 4, label: 'tiling "a" <&> of a long sample' },
 ];
+const shortLabelTestCases = [{ rowCount: 4, colCount: 4, label: '"a" <&>' }];
 const randomTestCases = [
   { rowCount: 2, colCount: 2, expectedResult: 2, criticalValue: 10.83 },
   { rowCount: 4, colCount: 4, expectedResult: 36, criticalValue: 66.62 },
@@ -715,6 +716,22 @@ function runLabelWidthTest({ first, label: custom, ...options }) {
   return true;
 }
 
+function runShortLabelTest({ label, ...options }) {
+  const escaped = label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const sheet = renderSheet([[]], 1, { ...options, labels: [label] });
+  const shown = (sheet.match(/<text [^>]*>([^<]*)<\/text>/) || [])[1];
+
+  if (shown !== escaped || sheet.includes('<title>')) {
+    console.error(`Failed! Label ${label} renders as ${JSON.stringify(shown)}.`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function runReadmeImagesTest() {
   const stale = Object.entries(buildReadmeImages()).filter(([file, svg]) => {
     const target = path.join(__dirname, '..', file);
@@ -1166,6 +1183,7 @@ function __main__() {
     styleTestCases,
     engravingContainmentTestCases,
     labelWidthTestCases,
+    shortLabelTestCases,
     cliTestCases,
     chartTestCases,
   ].reduce(
@@ -1196,6 +1214,7 @@ function __main__() {
     runSuite('engraving containment', engravingContainmentTestCases, runEngravingContainmentTest),
     runSuite('domino output', [{ rowCount: 4, colCount: 4 }], runDominoOutputTest),
     runSuite('label width', labelWidthTestCases, runLabelWidthTest),
+    runSuite('short label', shortLabelTestCases, runShortLabelTest),
     runSuite('readme images', [{ rowCount: 8, colCount: 8 }], runReadmeImagesTest),
     runSuite('command line', cliTestCases, runCliTest),
     runChartTests(),
