@@ -1012,6 +1012,16 @@ async function checkBenchmark(page, baseUrl, width) {
   }
 
   await loadSite(page, baseUrl, width, 'benchmark');
+  const dominoColumns = await page.evaluate(`({
+    headers: [...document.querySelectorAll('#domino-benchmark thead th')].map(th => th.textContent).join(),
+    cells: [...document.querySelectorAll('#benchmark-rows tr')].map(row => row.cells.length).filter(count => count !== 5).length,
+  })`);
+
+  if (dominoColumns.headers !== 'Board,Tilings,BigInt,Formula,Runs' || dominoColumns.cells) {
+    problems.push(`the domino benchmark has the columns ${dominoColumns.headers} and ${dominoColumns.cells} rows without five cells`);
+  }
+
+  await loadSite(page, baseUrl, width, 'benchmark');
   await page.evaluate("document.querySelector('#benchmark-groups button[data-group=cylinders]').click()");
   await page.waitFor(
     "location.hash === '#benchmark/cylinders' && !document.querySelector('.bench-group[data-group=cylinders]').hidden",
