@@ -45,7 +45,7 @@ const SHEET_BOARDS = [
   '10x10-diagonal-cylinder',
   '10x10-diagonal-torus',
 ];
-const CONFIRMATION_BOARDS = ['18x18', '16x16-diagonal'];
+const CONFIRMATION_BOARDS = ['18x18', '16x16-diagonal', '10x10-diagonal-torus?diagonals=20'];
 const NOTES = [
   { slug: 'research', cells: 2 },
   { slug: 'method', cells: 0 },
@@ -353,7 +353,7 @@ async function checkConfirmation(page, baseUrl, width) {
 }
 
 async function checkBoardConfirmation(page, baseUrl, width, board) {
-  await loadSite(page, baseUrl, width, `gallery/${board}/1`);
+  await loadSite(page, baseUrl, width, `gallery/${board.includes('?') ? board.replace('?', '/1?') : `${board}/1`}`);
   await page.waitFor("!document.getElementById('notice').hidden", `the ${board} notice`);
   const state = await page.evaluate(`(async () => {
     const enabled = () => [...document.querySelectorAll('${PAGE_CONTROLS}')].filter(control => !control.disabled);

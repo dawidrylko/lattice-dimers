@@ -98,6 +98,7 @@ const DOMICULE_BOARDS = [
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
 const PERIODIC_SIDES = [2, 4, 6, 8, 10];
+const PERIODIC_FILTER_MEMORY = { '10x10-diagonal-torus': '800 MB' };
 const PERIODIC_PIECES = [
   { pieces: 'domino', lattice: 'square', suffix: '' },
   { pieces: 'domicule', lattice: 'king', suffix: '-diagonal' },
@@ -633,6 +634,7 @@ async function __main__() {
           colCount: side,
           total,
           ...(pieces === 'domicule' && { diagonals: countPeriodicDiagonalTilings(board, total) }),
+          ...(PERIODIC_FILTER_MEMORY[`${side}x${side}${suffix}-${surface}`] && { filterMemory: PERIODIC_FILTER_MEMORY[`${side}x${side}${suffix}-${surface}`] }),
         });
       }
     }

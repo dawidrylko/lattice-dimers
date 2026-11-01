@@ -440,7 +440,7 @@ function getWorker() {
 }
 
 function requestTilings(message, onProgress = () => {}) {
-  if (needsConfirmation(message.board)) {
+  if (needsConfirmation(message.board, message.diagonals ?? null)) {
     return Promise.reject(new Error('Build the counting table first.'));
   }
 
@@ -451,8 +451,17 @@ function requestTilings(message, onProgress = () => {}) {
   });
 }
 
-function needsConfirmation(board) {
-  return Boolean(board.confirm) && !confirmedBoards.has(board.id);
+function confirmationKey(board, diagonals) {
+  return diagonals === null ? board.id : `${board.id}?diagonals`;
+}
+
+function tableMemory(board, diagonals) {
+  return diagonals === null ? board.memory : board.filterMemory;
+}
+
+function needsConfirmation(board, diagonals = null) {
+  const confirm = diagonals === null ? board.confirm : board.filterMemory;
+  return Boolean(confirm) && !confirmedBoards.has(confirmationKey(board, diagonals));
 }
 
 function pageCount(total) {
@@ -664,7 +673,7 @@ function updateControls({ board, page, diagonals, total }) {
   $('sample-controls').hidden = pages;
 
   if (pages) {
-    const locked = needsConfirmation(board);
+    const locked = needsConfirmation(board, diagonals);
     $('page-controls').querySelectorAll('button, input').forEach(control => (control.disabled = locked));
     $('page').value = fmt(page);
     $('page').style.width = `${Math.max(fmt(page).length + 3, 6)}ch`;
@@ -704,7 +713,7 @@ async function renderGallery(state) {
 
   const first = (page - ONE) * PAGE_SIZE;
   const end = first + PAGE_SIZE < total ? first + PAGE_SIZE : total;
-  const locked = needsConfirmation(board);
+  const locked = needsConfirmation(board, diagonals);
 
   $('gallery-meta').innerHTML =
     `${name} · ${num(total)} ${total === ONE ? 'tiling' : 'tilings'}` +
@@ -715,8 +724,11 @@ async function renderGallery(state) {
   if (locked) {
     $('sheet').innerHTML = '';
     $('notice-text').textContent =
-      `Numbering the tilings of the ${board.rowCount}×${board.colCount} board needs a counting table of about ${board.memory} ` +
-      'in your browser, and building it takes a few seconds. Devices with little memory may not manage it.';
+      diagonals === null
+        ? `Numbering the tilings of the ${board.rowCount}×${board.colCount} board needs a counting table of about ${board.memory} ` +
+          'in your browser, and building it takes a few seconds. Devices with little memory may not manage it.'
+        : `Numbering the tilings of the ${board.rowCount}×${board.colCount} ${board.surface} by their diagonal pieces needs counting tables of up to ` +
+          `${board.filterMemory} in your browser, and building them takes up to half a minute. Devices with little memory may not manage it.`;
     $('notice').hidden = false;
     return;
   }
@@ -726,7 +738,8 @@ async function renderGallery(state) {
       { type: 'page', board, diagonals, first: String(first), count: Number(PAGE_SIZE) },
       progress => {
         if (isCurrent()) {
-          $('status').textContent = `Building the counting table${board.memory ? ` (about ${board.memory})` : ''}... ${Math.round(progress * 100)}%`;
+          const memory = tableMemory(board, diagonals);
+          $('status').textContent = `Building the counting table${memory ? ` (about ${memory})` : ''}... ${Math.round(progress * 100)}%`;
         }
       },
     );
@@ -807,7 +820,8 @@ $('random').addEventListener('click', () => {
 });
 $('resample').addEventListener('click', render);
 $('load-table').addEventListener('click', () => {
-  confirmedBoards.add(parseHash().board.id);
+  const { board, diagonals } = parseHash();
+  confirmedBoards.add(confirmationKey(board, diagonals));
   render();
 });
 
