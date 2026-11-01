@@ -1,40 +1,31 @@
-# King-graph dimer entropy
+# The dimer entropy of the king's graph
 
-Perfect matchings of the king's graph (square lattice plus both diagonals),
-i.e. domicule tilings. Goal: the entropy per site
-`s = lim log Z / N` to many digits, with rigorous bounds.
-Results are written up in a preprint, archived on Zenodo with its companion note
-([`release/ZENODO.md`](release/ZENODO.md)). The PDF is [`paper/king-entropy.pdf`](paper/king-entropy.pdf), the
-source `paper/king-entropy.tex`. Every number in it is mapped to its output file and the script that wrote
-it in [`paper/NUMBERS.md`](paper/NUMBERS.md). The commit SHAs recorded in the outputs refer to the
-history under the tag `king-entropy-v0.1.0` for the outputs of the first version, and to the tag
-`king-entropy-v1.0.0` for the outputs added or regenerated since (`paper/NUMBERS.md`).
-Full proofs of the rigorous bounds are in [`proofs/upper-bound.md`](proofs/upper-bound.md) (the
-run-weighted upper bound in its §9) and [`proofs/lower-bound.md`](proofs/lower-bound.md); the Calkin-Wilf
-question in [`notes/calkin-wilf.md`](notes/calkin-wilf.md); hypothesis (L) and the experiments on it in
-[`notes/log-convexity.md`](notes/log-convexity.md) and the directory [`log-convexity/`](log-convexity/).
+Scripts, data, outputs, proofs and papers behind the estimate and the rigorous bounds of the entropy per site $s = \lim \log Z / N$ of the perfect matchings of the king's graph. The results are summarised in the [root README](../../README.md#results) and on the [research page](https://dawidrylko.github.io/lattice-dimers/notes/research.html).
 
-License: the scripts are MIT ([`LICENSE`](../../LICENSE)); the paper, the proofs, the notes, the release documents, the data and the outputs in
-this directory are CC BY 4.0 ([`LICENSES/CC-BY-4.0.txt`](../../LICENSES/CC-BY-4.0.txt)); the exact split is in
-the License section of the [root README](../../README.md#license).
+- Paper: [`paper/king-entropy.pdf`](paper/king-entropy.pdf), source [`paper/king-entropy.tex`](paper/king-entropy.tex); companion note [`paper/king-entropy-log-convexity.pdf`](paper/king-entropy-log-convexity.pdf).
+- [`paper/NUMBERS.md`](paper/NUMBERS.md) maps every number of both papers to the output file and the script that wrote it.
+- Proofs of the bounds: [`proofs/lower-bound.md`](proofs/lower-bound.md) and [`proofs/upper-bound.md`](proofs/upper-bound.md).
+- Release on Zenodo: [`release/ZENODO.md`](release/ZENODO.md).
 
-All commands below are run from this directory (`research/king-entropy/`)
-with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to it too.
+All commands below run from this directory with Python 3.13, and paths in the notes and in `paper/NUMBERS.md` are relative to it. The license of each part is in the [root README](../../README.md#license).
+
+## Layout
 
 | directory | contents |
 | --- | --- |
-| `src/` | the scripts and `src/requirements.txt`; `src/paths.py` maps every file name to its directory |
-| `data/` | JSON results: `data/eig/`, `data/sec/`, `data/zex/`, `data/lean/` by file prefix, the rest at the top |
-| `out/` | `out/out_*.txt`, the printed output of each script |
-| `logs/` | `logs/log_*.txt` progress logs and `logs/time_*.txt` wall time and peak RSS |
-| `proofs/` | the proofs of the rigorous bounds: `proofs/lower-bound.md`, `proofs/upper-bound.md` |
-| `notes/` | the laboratory notes on Calkin-Wilf (`notes/calkin-wilf.md`) and on hypothesis (L) (`notes/log-convexity.md`) |
-| `log-convexity/` | the experiments on (L), scripts with their outputs |
-| `paper/` | the paper and the companion note (sources and PDFs), the bibliography and the number map `paper/NUMBERS.md` |
-| `release/` | the Zenodo runbook `release/ZENODO.md` and the OEIS draft `release/oeis-draft.txt`, submitted as A401669 (the submitted text is `oeis/A401669/A401669.txt` at the repository root) |
-| `replication/` | an independent recomputation written from scratch, with its own outputs; verdicts and commands in `replication/REPORT.md` |
+| [`src/`](src) | the scripts and `src/requirements.txt`; `src/paths.py` maps every file name to its directory |
+| [`data/`](data) | JSON results: `data/eig/`, `data/sec/`, `data/zex/` and `data/lean/` by file prefix, the rest at the top |
+| [`out/`](out) | `out/out_*.txt`, the printed output of each script |
+| [`logs/`](logs) | `logs/log_*.txt` progress logs and `logs/time_*.txt` wall time and peak RSS |
+| [`proofs/`](proofs) | the proofs of the rigorous bounds |
+| [`notes/`](notes) | laboratory notes on the Calkin-Wilf question ([`calkin-wilf.md`](notes/calkin-wilf.md)), on hypothesis (L) ([`log-convexity.md`](notes/log-convexity.md)) and on CTMRG ([`ctmrg.md`](notes/ctmrg.md)) |
+| [`log-convexity/`](log-convexity) | the experiments on (L), scripts with their outputs |
+| [`paper/`](paper) | both papers, sources and PDFs, the bibliography and `paper/NUMBERS.md` |
+| [`release/`](release) | the Zenodo runbook and the OEIS draft as it stood before submission; the submitted text is [`oeis/A401669`](../../oeis/A401669/README.md) |
+| [`replication/`](replication) | an independent recomputation written from scratch, with its own outputs; verdicts and commands in [`replication/REPORT.md`](replication/REPORT.md) |
+| [`rerun/`](rerun) | the outputs of the step 0 rerun before the release, compared with the originals in [`rerun/2026-10/COMPARISON.md`](rerun/2026-10/COMPARISON.md) |
 
-The tag `king-entropy-v0.1.0` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
+The tag `king-entropy-v0.1.0` predates this layout: there everything except `L/` and `paper/` sits directly in this directory. The commit SHAs in the outputs of that version point at code under the old names, and two outputs still print one: `log-convexity/time_modes.txt` (`L/modes.py`) and `log-convexity/out_involution.txt` (`L-NOTE §3`, now `notes/log-convexity.md` §3).
 
 ```sh
 python3 -m pip install -r src/requirements.txt
@@ -141,17 +132,3 @@ python3 src/derived.py > out/out_derived.txt
 cd paper && latexmk -pdf king-entropy.tex && latexmk -pdf king-entropy-log-convexity.tex
 ```
 
-## Renamed before king-entropy-v1.0.0
-
-These files and directories were renamed in October 2026, before the release. The commit SHAs recorded in the outputs point at code under the old paths. Two committed outputs still print an old name: `log-convexity/time_modes.txt` (`python3 L/modes.py 22`) and `log-convexity/out_involution.txt` (`L-NOTE §3`, now `notes/log-convexity.md` §3).
-
-| old name | new name |
-| --- | --- |
-| `L/` | `log-convexity/` |
-| `xcheck/` | `replication/` |
-| `paper/main.tex`, `paper/main.pdf` | `paper/king-entropy.tex`, `paper/king-entropy.pdf` |
-| `paper/L-note.tex`, `paper/L-note.pdf` | `paper/king-entropy-log-convexity.tex`, `paper/king-entropy-log-convexity.pdf` |
-| `paper/derived.py`, `paper/out_derived.txt` | `src/derived.py`, `out/out_derived.txt` |
-| `notes/PROOF-lower.md`, `notes/PROOF-upper.md` | `proofs/lower-bound.md`, `proofs/upper-bound.md` |
-| `paper/ZENODO.md`, `paper/oeis-draft.txt` | `release/ZENODO.md`, `release/oeis-draft.txt` |
-| `notes/CW-NOTE.md`, `notes/L-NOTE.md` | `notes/calkin-wilf.md`, `notes/log-convexity.md` |

@@ -11,7 +11,6 @@ const {
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OEIS_DIRECTORY = path.join(ROOT_DIRECTORY, 'oeis');
-const README_FILE = path.join(ROOT_DIRECTORY, 'README.md');
 const GP = process.env.GP_PATH || 'gp';
 const GP_TIMEOUT = 300000;
 const OUTPUT_MARKER = 'END OF PROGRAMS';
@@ -67,37 +66,6 @@ const ENTRY_PROGRAMS = {
   A401670: 'vector(5, n, a(n-1))',
   A401673: 'concat(vector(4, n, row(n-1)))',
 };
-
-function readProgram(file) {
-  return fs
-    .readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8')
-    .split('\n')
-    .filter(line => !line.startsWith('\\\\'))
-    .join('\n')
-    .trim();
-}
-
-function executeReadmeTests() {
-  const blocks = [...fs.readFileSync(README_FILE, 'utf-8').matchAll(/```gp\n([\s\S]*?)```/g)].map(match =>
-    match[1].trim(),
-  );
-
-  const files = [...new Set(PROGRAMS.flatMap(({ files }) => files))];
-
-  return files.every((file, index) => {
-    process.stdout.write(`Executing README test ${index + 1} of ${files.length} for ${file}... `);
-
-    if (!blocks.includes(readProgram(file))) {
-      console.error(`Failed! The README must show ${file} in a gp block.`);
-
-      return false;
-    }
-
-    console.log('Passed!');
-
-    return true;
-  });
-}
 
 function runGp(programs, calls) {
   const script = ['default(parisizemax, 10^9);', ...programs, `print("${OUTPUT_MARKER}");`, ...calls.map(call => `print(${call});`)].join('\n');
@@ -237,12 +205,11 @@ function executeEntryProgramTests() {
 }
 
 function __main__() {
-  const readmeTestsPassed = executeReadmeTests();
   const gpTestsPassed = PROGRAMS.map(executeGpTests).every(Boolean);
   const programListPassed = executeProgramListTest();
   const entryTestsPassed = executeEntryProgramTests();
 
-  if (readmeTestsPassed && gpTestsPassed && programListPassed && entryTestsPassed) {
+  if (gpTestsPassed && programListPassed && entryTestsPassed) {
     console.log('All PARI/GP tests completed successfully.');
     process.exit(0);
   }

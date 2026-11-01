@@ -469,6 +469,17 @@ function roundDecimal(value, digits) {
 }
 
 /**
+ * Formats the 8×8 count of a test data file for the main page.
+ * @param {Object[]} testCases The test cases of one data file.
+ * @returns {string} The count with thousands separators.
+ */
+function chessboard(testCases) {
+  const { expectedResult } = testCases.find(({ rowCount, colCount }) => rowCount === 8 && colCount === 8);
+
+  return BigInt(expectedResult).toLocaleString('en-US');
+}
+
+/**
  * Reads the headline results of research/king-entropy from its committed data, so the main page
  * quotes the same numbers as the paper and the research note.
  * @returns {{ s: string, ds: string, lower: string, upper: string }} The estimate of s, its error bar and the proved bounds.
@@ -690,6 +701,8 @@ async function __main__() {
     .replaceAll('__RESEARCH_DS__', research.ds)
     .replaceAll('__RESEARCH_LOWER__', research.lower)
     .replaceAll('__RESEARCH_UPPER__', research.upper)
+    .replaceAll('__CHESSBOARD_DOMINOES__', chessboard(testCasesBigInt))
+    .replaceAll('__CHESSBOARD_DOMICULES__', chessboard(testCasesDomicule))
     .replace('__SCRIPTS__', () => scripts)
     .replace('__DATA__', () => JSON.stringify(data))
     .replace('__WORKER__', () => JSON.stringify(workerSource).replace(/</g, '\\u003c'))

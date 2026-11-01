@@ -184,9 +184,12 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
   </p>
   <p class="intro">
     How many tilings does a 2n&nbsp;×&nbsp;2n board have? With dominoes, which join cells that share a side, the count is
-    <a href="https://oeis.org/A004003">OEIS&nbsp;A004003</a> (a chessboard has 12,988,816); with domicules it is
-    <a href="https://oeis.org/A239273">OEIS&nbsp;A239273</a> (3,263,262,629,905). Both sequences are counted here exactly up
-    to 20&nbsp;×&nbsp;20, and the gallery below draws any single tiling.
+    <a href="https://oeis.org/A004003">OEIS&nbsp;A004003</a> (a chessboard has __CHESSBOARD_DOMINOES__); with domicules it is
+    <a href="https://oeis.org/A239273">OEIS&nbsp;A239273</a> (__CHESSBOARD_DOMICULES__). Both are counted here exactly up to
+    20&nbsp;×&nbsp;20, together with tilings of cylinders and tori and the domicule tilings sorted by their number of
+    diagonal pieces. The gallery below numbers every tiling of a board, cylinder or torus and draws any single one; larger
+    boards are sampled. The repository's contributions to the OEIS are listed in
+    <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/oeis">oeis/</a>.
   </p>
   <noscript><p class="intro">The gallery needs JavaScript. The benchmark results are also available in the
     <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/benchmarks/results">repository</a>.</p></noscript>

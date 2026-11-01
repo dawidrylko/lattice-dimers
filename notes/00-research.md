@@ -21,7 +21,7 @@ The entropy per site is defined through the number $Z(m, n)$ of perfect matching
 s = \lim_{m, n \to \infty} \frac{\log Z(m, n)}{mn}.
 ```
 
-The 14 digits of $s$ shared by both ends of its error bar were proposed to the OEIS as [A401669](https://oeis.org/draft/A401669) on 1 November 2026.
+The 14 digits of $s$ shared by both ends of its error bar are the data of OEIS [A401669](../oeis/A401669/README.md).
 
 ```js run
 const fs = require('fs');
