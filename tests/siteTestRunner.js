@@ -574,6 +574,7 @@ const READ_SHEET = `(() => ({
   labels: document.querySelectorAll('#sheet text:not(.n)').length,
   sublabels: [...new Set([...document.querySelectorAll('#sheet text.n')].map(text => text.textContent))],
   clipped: document.querySelectorAll('#sheet svg svg').length,
+  clip: (svg => svg && [svg.getAttribute('width'), svg.getAttribute('height')].join('x'))(document.querySelector('#sheet svg svg')),
   edges: document.querySelectorAll('#sheet path.s').length,
 }))()`;
 
@@ -602,7 +603,7 @@ async function checkSurfaces(page, baseUrl, width) {
     problems.push(`torus picker shows ${torus.boards.join(', ')} with ${torus.surface} pressed`);
   }
 
-  if (!torus.seam || torus.clipped !== 100 || torus.edges !== 100 || !torus.meta.startsWith('4×4 torus · 17,552 tilings')) {
+  if (!torus.seam || torus.clipped !== 100 || torus.clip !== '64x64' || torus.edges !== 100 || !torus.meta.startsWith('4×4 torus · 17,552 tilings')) {
     problems.push(`4x4 torus sheet: ${JSON.stringify({ ...torus, boards: undefined })}`);
   }
 
@@ -656,6 +657,19 @@ async function checkDiagonals(page, baseUrl, width) {
     filtered.sublabels.join() !== '4 diagonal'
   ) {
     problems.push(`6x6 with 4 diagonal pieces: ${JSON.stringify(filtered)}`);
+  }
+
+  await page.evaluate("document.getElementById('next').click()");
+  await page.waitFor("location.hash === '#gallery/6x6-diagonal/2?diagonals=4' && document.querySelector('#sheet text:not(.n)')?.textContent === '#101'", 'the next 6x6 page with 4 diagonal pieces');
+  await page.evaluate("document.querySelector('#boards [data-id=\"8x8-diagonal\"]').click()");
+  await page.waitFor("location.hash === '#gallery/8x8-diagonal/1?diagonals=4' && document.getElementById('gallery-meta').textContent.includes('with 4 diagonal pieces')", 'the 8x8 board keeping the filter');
+
+  for (const query of ['1', 'abc', '']) {
+    const ignored = await showBoard(page, `gallery/6x6-diagonal/1?diagonals=${query}`, `the 6x6 sheet with ?diagonals=${query}`);
+
+    if (!ignored.meta.startsWith('6×6 · 3,037,561 tilings · showing') || ignored.filter.value !== '') {
+      problems.push(`?diagonals=${query} reads "${ignored.meta}" with the filter at "${ignored.filter.value}"`);
+    }
   }
 
   const last = await showBoard(page, 'gallery/6x6-diagonal/4140?diagonals=4', 'the last 6x6 page with 4 diagonal pieces');

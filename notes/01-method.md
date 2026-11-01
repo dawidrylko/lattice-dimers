@@ -60,11 +60,15 @@ Domicule tilings have no lattice structure like the domino rotations, so couplin
 
 ### Numbering by diagonal pieces
 
-The gallery can also number only the tilings with $k$ diagonal pieces. Every entry of the table then becomes a list, `table[i][state][r]`, of the completions with exactly $r \le k$ diagonal pieces, and unranking keeps the order of the full numbering. A straight piece covers a black and a white cell of the chessboard and a diagonal piece two cells of one colour, so on the $2n \times 2n$ board the number of diagonal pieces is even. The count for every $k$ comes from [`domiculeDiagonalSolver-BigInt.js`](../src/solvers/domiculeDiagonalSolver-BigInt.js) or `data/`, and the build checks that the counts add up to the number of tilings. The gallery offers this up to $10 \times 10$.
+The gallery can also number only the tilings with $k$ diagonal pieces. Every entry of the table then becomes a list, `table[i][state][r]`, of the completions with exactly $r \le k$ diagonal pieces, and unranking keeps the order of the full numbering. The gallery offers this up to $10 \times 10$.
+
+A straight piece covers a black and a white cell of the chessboard, a diagonal piece two cells of one colour. So on the $2n \times 2n$ board the number of diagonal pieces is even. The count for every $k$ comes from [`domiculeDiagonalSolver-BigInt.js`](../src/solvers/domiculeDiagonalSolver-BigInt.js) or `data/`, and the build checks that the counts add up to the number of tilings.
 
 ## Cylinders and tori
 
-A cylinder has its left and right edges glued, a torus both pairs of opposite edges. The gallery numbers their tilings up to $10 \times 10$ with the cell-by-cell scan of [`periodicTilingSolver-Modular.js`](../src/solvers/periodicTilingSolver-Modular.js): a state has $w + 2$ bits and, on the king's graph, one more bit for the piece from the first column to the last column of the next row. A torus tiling covers a set $S$ of first-row cells from the last row, and its scan starts from $S$ and must end with $S$. The tilings are ordered by $S$ and then by the scan. The tilings of $S$ and of its rotations are equally many, so one table per rotation class gives every count, and the table of a single $S$ is rebuilt when a page needs it. Random draws a uniformly random number, so the sample is exact. As in the solvers, each edge of a circumference 2 is a separate piece. A piece that crosses a glued edge is drawn cut there, half on each side of the board.
+A cylinder has its left and right edges glued, a torus both pairs of opposite edges. The gallery numbers their tilings up to $10 \times 10$ with the cell-by-cell scan of [`periodicTilingSolver-Modular.js`](../src/solvers/periodicTilingSolver-Modular.js). A state has $w + 2$ bits. On the king's graph with $w \ge 3$ it has one more bit, for the piece from the first column to the last column of the next row. As in the solvers, each edge of a circumference 2 is a separate piece.
+
+A torus tiling covers a set $S$ of first-row cells from the last row, and its scan starts from $S$ and must end with $S$. The tilings are ordered by $S$ and then by the scan. The tilings of $S$ and of its rotations are equally many, so one table per rotation class gives every count. The table of a single $S$ is rebuilt when a page needs it. Random draws a uniformly random number, so the sample is exact. A piece that crosses a glued edge is drawn cut there, half on each side of the board.
 
 ## Verification
 

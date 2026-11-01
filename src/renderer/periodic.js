@@ -140,7 +140,7 @@ function smallestRotation(set, colCount) {
 
 /**
  * Checks whether the counting table of a cylinder or a torus fits in memory. A state has
- * colCount + 2 window bits and, on the king's graph, one more bit.
+ * colCount + 2 window bits and, on the king's graph with colCount >= 3, one more bit.
  * @param {Object} options The board.
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The circumference.

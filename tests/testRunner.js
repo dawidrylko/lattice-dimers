@@ -290,7 +290,7 @@ function executeBenchmarkSurfaceTests() {
         timeout: REJECTION_TIMEOUT,
         env: { ...process.env, BENCHMARK_ROOT: benchmarkRoot },
       });
-      const written = fs.readdirSync(path.join(benchmarkRoot, new Date().toISOString().slice(0, 7)));
+      const written = fs.readdirSync(benchmarkRoot).flatMap(month => fs.readdirSync(path.join(benchmarkRoot, month)));
 
       if (status !== 0 || !written.includes(file)) {
         console.error(`Failed! Exit code ${status}, files ${written.join(', ')}: ${stderr.trim()}`);

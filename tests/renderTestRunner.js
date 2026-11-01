@@ -151,6 +151,27 @@ const periodicSheetTestCases = [
     copies: { d: 6 },
     edges: 4,
   },
+  {
+    rowCount: 2,
+    colCount: 2,
+    surface: 'torus',
+    tiling: [{ row: 1, col: 0, dr: 1, dc: -1 }, { row: 1, col: 1, dr: 1, dc: -1 }],
+    copies: { a: 6 },
+    edges: 4,
+  },
+  {
+    rowCount: 2,
+    colCount: 4,
+    surface: 'cylinder',
+    tiling: [{ row: 0, col: 0, dr: 1, dc: -1 }, { row: 0, col: 1, dr: 0, dc: 1 }, { row: 0, col: 3, dr: 1, dc: -1 }, { row: 1, col: 0, dr: 0, dc: 1 }],
+    copies: { a: 3, h: 2 },
+    edges: 2,
+  },
+];
+const sublabelTestCases = [
+  { rowCount: 4, colCount: 4, choices: ['4 diagonal', '4 diag.', '4'], shown: '4 diagonal' },
+  { rowCount: 2, colCount: 2, choices: ['2 diagonal', '2 diag.', '2'], shown: '2' },
+  { rowCount: 1, colCount: 2, choices: ['wider than the board'], shown: 'wider than the board' },
 ];
 const diagonalUnrankTestCases = [
   { rowCount: 2, colCount: 2 },
@@ -886,6 +907,22 @@ function runPeriodicSheetTest({ tiling, copies, edges, ...options }) {
   return true;
 }
 
+function runSublabelTest({ choices, shown, ...options }) {
+  const sheet = renderSheet([[]], 1, { ...options, sublabels: [choices] });
+  const sublabel = sheet.match(/<text class="n"[^>]*>([^<]*)<\/text>/);
+  const title = sheet.match(/<title>([^<]*)<\/title><text class="n"/);
+
+  if (!sublabel || (title ? title[1] : sublabel[1]) !== shown) {
+    console.error(`Failed! The second label line reads ${sublabel ? sublabel[1] : 'nothing'}, expected ${shown}.`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function runDiagonalUnrankTest({ expectedResult, order, ...board }) {
   const coefficients = expectedResult.split(',').map(BigInt);
   const totals = coefficients.map((_, diagonals) => createDiagonalUnranker({ ...board, diagonals }).total);
@@ -970,6 +1007,7 @@ function __main__() {
     domiculeShapeTestCases,
     periodicUnrankTestCases,
     periodicSheetTestCases,
+    sublabelTestCases,
     diagonalUnrankTestCases,
     styleTestCases,
     engravingContainmentTestCases,
@@ -995,6 +1033,7 @@ function __main__() {
     runSuite('domicule shape', domiculeShapeTestCases, runDomiculeShapeTest),
     runSuite('periodic unrank', periodicUnrankTestCases, runPeriodicUnrankTest),
     runSuite('periodic sheet', periodicSheetTestCases, runPeriodicSheetTest),
+    runSuite('second label line', sublabelTestCases, runSublabelTest),
     runSuite('diagonal unrank', diagonalUnrankTestCases, runDiagonalUnrankTest),
     runSuite('sheet style', styleTestCases, runStyleTest),
     runSuite('engraving containment', engravingContainmentTestCases, runEngravingContainmentTest),

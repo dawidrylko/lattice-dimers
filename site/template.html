@@ -131,7 +131,7 @@ nav.tabs a[aria-current="page"] { color: var(--fg); border-color: var(--accent);
 #gallery[data-highlight] .legend i.h, #gallery[data-highlight] .legend i.v { --k: var(--mute); }
 #gallery[data-highlight][data-style="engraving"] .legend i.h, #gallery[data-highlight][data-style="engraving"] .legend i.v { background: var(--sheet); border-color: var(--mute); }
 .legend i.s, [data-style] .legend i.s { height: 0; border: 0; border-top: 1.5px dashed var(--accent); border-radius: 0; background: none; vertical-align: 3px; }
-.filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; min-width: 0; padding: 2px; }
+.filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; min-width: 0; min-height: 38px; padding: 2px; }
 #diagonals { max-width: 100%; }
 .toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
 .toggle input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
@@ -209,9 +209,9 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       <div class="boards" id="boards" role="group" aria-labelledby="boards-label"></div>
     </div>
     <div class="picker" id="diagonal-picker">
-      <label class="label" for="diagonals">Diagonal pieces</label>
+      <span class="label" id="diagonals-label">Diagonal pieces</span>
       <div class="filter">
-        <select class="field" id="diagonals"></select>
+        <select class="field" id="diagonals" aria-labelledby="diagonals-label"></select>
         <label class="toggle"><input type="checkbox" id="highlight">Highlight diagonals</label>
       </div>
     </div>
@@ -312,7 +312,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       </table>
     </div>
     <p class="note">
-      The transfer of the domicule solvers with a polynomial in the number of diagonal pieces in every state. Modular
+      Both solvers run the domicule transfer with a polynomial in the number of diagonal pieces in every state. Modular
       keeps only the coefficients of the parity a state fixes, counts modulo primes below 2<sup>31</sup> and rebuilds
       every coefficient with the Chinese remainder theorem.
       Re-run with <code>pnpm benchmark:diagonal</code>.
@@ -519,15 +519,14 @@ function sheetColumns(board) {
   return Math.max(2, Math.min(10, Math.floor(($('gallery').clientWidth - 14) / (board.colCount * 16 + 12))));
 }
 
-function diagonalLabel(tiling, width) {
+function diagonalLabels(tiling) {
   const count = tiling.filter(piece => piece.dr && piece.dc).length;
 
-  return [`${count} diagonal`, `${count} diag.`].find(text => text.length * renderSheet.LABEL_CHAR_WIDTH <= width) || String(count);
+  return [`${count} diagonal`, `${count} diag.`, String(count)];
 }
 
 function showSheet(board, tilings, first, labels) {
-  const width = board.colCount * renderSheet.CELL_SIZE;
-  const sublabels = board.pieces === 'domicule' ? tilings.map(tiling => diagonalLabel(tiling, width)) : undefined;
+  const sublabels = board.pieces === 'domicule' ? tilings.map(diagonalLabels) : undefined;
   shownSheet = { board, tilings, first, labels, columns: sheetColumns(board) };
   $('sheet').innerHTML = renderSheet(tilings, first, { ...board, columns: shownSheet.columns, labels, sublabels, style: sheetStyle });
   const svg = $('sheet').querySelector('svg');

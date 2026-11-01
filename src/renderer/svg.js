@@ -165,6 +165,12 @@ function renderLabel(label, x, y, width, className) {
   return `<g><title>${escapeXml(label)}</title><text${attributes} data-label="${escapeXml(label)}">${escapeXml(shown)}</text></g>`;
 }
 
+function fitSublabel(sublabel, width) {
+  const choices = [].concat(sublabel);
+
+  return choices.find(text => text.length * LABEL_CHAR_WIDTH <= width) ?? choices[choices.length - 1];
+}
+
 function wrapPiece(piece, rowCount, colCount, surface) {
   const endRow = piece.row + piece.dr;
   const endCol = piece.col + piece.dc;
@@ -207,7 +213,7 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
         ]
       : drawn),
     renderLabel(label, offsetX + boardWidth / 2, labelY, boardWidth),
-    ...(sublabel === undefined ? [] : [renderLabel(sublabel, offsetX + boardWidth / 2, labelY + LABEL_HEIGHT, boardWidth, 'n')]),
+    ...(sublabel === undefined ? [] : [renderLabel(fitSublabel(sublabel, boardWidth + PADDING / 2), offsetX + boardWidth / 2, labelY + LABEL_HEIGHT, boardWidth + PADDING / 2, 'n')]),
   ].join('');
 }
 
@@ -220,7 +226,8 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
  * @property {number} options.colCount The number of columns.
  * @property {number} [options.columns] The number of tilings per sheet row (default: 10).
  * @property {string[]} [options.labels] Labels shown under the tilings instead of their numbers.
- * @property {string[]} [options.sublabels] A second line under every label, such as the number of diagonal pieces.
+ * @property {Array<string|string[]>} [options.sublabels] A second line under every label, such as the number of
+ * diagonal pieces; given a list of wordings, the first that fits under the board is shown.
  * @property {string} [options.style] How pieces are drawn: blocks (default), dimer or engraving.
  * @property {string} [options.surface] cylinder (left and right edges glued) or torus (opposite edges glued);
  * a piece that crosses a glued edge is cut there and drawn on both sides of the board.
