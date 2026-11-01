@@ -182,7 +182,7 @@ function buildPeriodicPolynomialTable({ cellCount, colCount, stateCount, moves, 
 
 let cachedPolynomials = { key: null, classes: null };
 
-function readClassPolynomials({ rowCount, colCount, lattice, torus }, scan) {
+function readClassPolynomials({ rowCount, colCount, lattice, torus }) {
   const key = `${rowCount}x${colCount}-${lattice}-${torus ? 'torus' : 'cylinder'}`;
 
   if (cachedPolynomials.key !== key) {
@@ -253,7 +253,7 @@ function createPeriodicUnranker({ rowCount, colCount, lattice = 'king', torus = 
   const startCount = torus ? 2 ** colCount : 1;
   const classTotals = new Map();
   const totals = [];
-  const polynomials = diagonals === null ? null : readClassPolynomials({ rowCount, colCount, lattice, torus }, scan);
+  const polynomials = diagonals === null ? null : readClassPolynomials({ rowCount, colCount, lattice, torus });
   const countClass = start =>
     polynomials === null ? buildPeriodicTable(scan, start, false)[start] : readClassPolynomial(polynomials, scan, start)[diagonals] ?? BigInt(0);
 
@@ -290,7 +290,7 @@ function createPeriodicUnranker({ rowCount, colCount, lattice = 'king', torus = 
  */
 function countPeriodicDiagonals({ rowCount, colCount, lattice = 'king', torus = false }) {
   const scan = createPeriodicScan(rowCount, colCount, lattice, torus);
-  const polynomials = readClassPolynomials({ rowCount, colCount, lattice, torus }, scan);
+  const polynomials = readClassPolynomials({ rowCount, colCount, lattice, torus });
   const startCount = torus ? 2 ** colCount : 1;
   const counts = [];
 

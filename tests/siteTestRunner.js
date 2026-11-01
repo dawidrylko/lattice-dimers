@@ -617,6 +617,22 @@ async function checkSurfaces(page, baseUrl, width) {
     problems.push(`4x4 torus sheet: ${JSON.stringify({ ...torus, boards: undefined })}`);
   }
 
+  const touch = await page.evaluate(`(() => {
+    const box = document.querySelectorAll('#sheet rect.b')[13].getBoundingClientRect();
+    const sheet = document.getElementById('sheet');
+    const tip = document.getElementById('tile-tip');
+    const at = { bubbles: true, pointerType: 'touch', clientX: box.left + box.width / 2, clientY: box.top + box.height / 2 };
+    sheet.dispatchEvent(new PointerEvent('pointerdown', at));
+    sheet.dispatchEvent(new PointerEvent('pointerleave', at));
+    const pinned = !tip.hidden && tip.querySelector('b').textContent;
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    return { pinned, closed: tip.hidden };
+  })()`);
+
+  if (touch.pinned !== '#14' || !touch.closed) {
+    problems.push(`a tapped tile: ${JSON.stringify(touch)}`);
+  }
+
   await page.evaluate("document.querySelector('#pieces [data-pieces=domino]').click()");
   await page.waitFor("location.hash === '#gallery/4x4-torus/1' && document.querySelector('#sheet svg')?.getAttribute('aria-label').startsWith('Domino')", 'the 4x4 domino torus');
   const straight = await page.evaluate(READ_SHEET);

@@ -563,17 +563,31 @@ function tileAt(event) {
   return index;
 }
 
+let tipIndex = null;
+let tipPinned = false;
+
+function hideTileTip() {
+  $('tile-tip').hidden = true;
+  tipIndex = null;
+  tipPinned = false;
+}
+
 function showTileTip(event) {
+  if (tipPinned && event.type === 'pointermove') return;
   const tip = $('tile-tip');
   const index = tileAt(event);
   if (index === null) {
-    tip.hidden = true;
+    hideTileTip();
     return;
   }
-  const { board, tilings, first, labels } = shownSheet;
-  const title = labels ? labels[index] : `#${BigInt(first) + BigInt(index)}`;
-  tip.innerHTML = `<b>${title}</b>${describeTiling(board, tilings[index]).map(line => `<span>${line}</span>`).join('<br>')}`;
-  tip.hidden = false;
+  if (index !== tipIndex || tip.hidden) {
+    const { board, tilings, first, labels } = shownSheet;
+    const title = labels ? labels[index] : `#${BigInt(first) + BigInt(index)}`;
+    tip.innerHTML = `<b>${title}</b>${describeTiling(board, tilings[index]).map(line => `<span>${line}</span>`).join('<br>')}`;
+    tip.hidden = false;
+    tipIndex = index;
+  }
+  tipPinned = event.type === 'pointerdown' && event.pointerType !== 'mouse';
   const margin = 12;
   const left = Math.min(event.clientX + margin, window.innerWidth - tip.offsetWidth - 4);
   const top = event.clientY + margin + tip.offsetHeight > window.innerHeight ? event.clientY - margin - tip.offsetHeight : event.clientY + margin;
@@ -583,12 +597,14 @@ function showTileTip(event) {
 
 $('sheet').addEventListener('pointermove', showTileTip);
 $('sheet').addEventListener('pointerdown', showTileTip);
-$('sheet').addEventListener('pointerleave', () => ($('tile-tip').hidden = true));
-window.addEventListener('scroll', () => ($('tile-tip').hidden = true), { passive: true });
+$('sheet').addEventListener('pointerleave', () => tipPinned || hideTileTip());
+document.addEventListener('pointerdown', event => tipPinned && !$('sheet').contains(event.target) && hideTileTip());
+document.addEventListener('keydown', event => event.key === 'Escape' && hideTileTip());
+window.addEventListener('scroll', hideTileTip, { passive: true });
 
 function showSheet(board, tilings, first, labels) {
   shownSheet = { board, tilings, first, labels, columns: sheetColumns(board) };
-  $('tile-tip').hidden = true;
+  hideTileTip();
   $('sheet').innerHTML = renderSheet(tilings, first, { ...board, columns: shownSheet.columns, labels, style: sheetStyle });
   const svg = $('sheet').querySelector('svg');
   svg.setAttribute('role', 'img');

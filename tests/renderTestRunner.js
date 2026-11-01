@@ -847,6 +847,13 @@ function runPeriodicDiagonalTest(testCase) {
   }
 
   const expected = Array.from(histogram, count => String(count ?? BigInt(0))).join();
+  const squareCount = periodicReference.calculateTotalTilingCombinations({ ...testCase, lattice: 'square' });
+
+  if (coefficients[0] !== squareCount) {
+    console.error(`Failed! ${surface}: ${coefficients[0]} tilings without diagonal pieces, ${squareCount} on the square lattice`);
+
+    return false;
+  }
 
   if (coefficients.map(String).join() !== expected) {
     console.error(`Failed! ${surface}: counted ${coefficients.join()}, enumerated ${expected}`);
