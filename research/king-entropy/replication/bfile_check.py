@@ -2,16 +2,15 @@
 
 The b-file was extended to antidiagonals 0..44 and approved on 2026-10-31. oeis.org now
 serves the extension as b239264.txt and the former file (antidiagonals 0..36, whose LFS
-pointer out/oeis_check.txt records) as b239264_2.txt. Both are fetched from oeis.org:
-  curl -sSfO https://oeis.org/A239264/b239264.txt
-  curl -sSfO https://oeis.org/A239264/b239264_2.txt
+pointer out/oeis_check.txt records) as b239264_2.txt. Both are fetched into one directory with
+curl -sSfO https://oeis.org/A239264/<name> and checked as follows:
   - b239264_2.txt is rebuilt from out/counts_free.json together with its trailing empty
     lines, and the rebuild compared byte for byte with the file and with the pointer;
   - b239264.txt is compared term by term with out/counts_free.json (antidiagonals 0..36)
     and with data/zex/zex_king_free_*.json (antidiagonals 0..44), which
     compare_counts.py checks against kd.c.
 
-Run: python3 bfile_check.py <dir> > out/bfile_check.txt
+Run (after counts.py and oeis_check.py): python3 bfile_check.py <dir> > out/bfile_check.txt
 """
 import glob
 import hashlib
@@ -67,14 +66,16 @@ def main():
                     open(os.path.join(HERE, "out", "oeis_check.txt")).read())
     same = rebuilt == raw
     hit = oid.startswith(ptr.group(1)) and len(rebuilt) == int(ptr.group(2))
-    print(f"{len(old)} terms and {blank} empty lines at the end, {len(raw)} bytes")
-    print(f"own rebuild with {blank} empty lines: sha256 {oid[:16]}... size {len(rebuilt)}; "
+    print(f"{len(old)} terms and {blank} empty lines at the end, {len(raw)} bytes, sha256 {hashlib.sha256(raw).hexdigest()}")
+    print(f"own rebuild with {blank} empty lines: sha256 {oid}, size {len(rebuilt)}; "
           f"byte-identical to the file: {same}; pointer of out/oeis_check.txt "
           f"{ptr.group(1)}... size {ptr.group(2)}: {'MATCH' if hit else 'no match'}")
 
     print("\n== b239264.txt (antidiagonals 0..44) ==")
+    raw = open(os.path.join(src, "b239264.txt"), "rb").read()
     new = read_bfile(os.path.join(src, "b239264.txt"))
     assert len(new) == len(pos)
+    print(f"{len(raw)} bytes, sha256 {hashlib.sha256(raw).hexdigest()}")
     bad_own = sum(new[i] != A(own, n, k) for i, (n, k) in enumerate(pos[:n_old]))
     bad_zex = sum(new[i] != A_zex(zex, n, k) for i, (n, k) in enumerate(pos))
     print(f"{len(new)} terms, up to {max(len(str(t)) for t in new)} digits")

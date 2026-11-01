@@ -6,7 +6,7 @@ OEIS editors may want rigorous digits before accepting a constant; decide that
 before submitting. Every number below is in paper/NUMBERS.md.
 The author's name is written with the HTML entity &#322; (l with stroke), which OEIS renders.
 Preconditions met: the extended b-file of A239264 (antidiagonals 0..44) was approved on 2026-10-31,
-and the three Zenodo DOIs in the %H lines resolved on 2026-11-01.
+and the two Zenodo DOIs in the %H lines resolved on 2026-11-01.
 The %C lines below are a list of facts, not submission text: the author rewrites them in his own
 words before submitting. Every number in them is in paper/NUMBERS.md. In %A, the date is the
 day of submission, in the OEIS form "Oct 23 2026".

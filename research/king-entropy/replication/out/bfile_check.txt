@@ -1,8 +1,9 @@
 == b239264_2.txt (antidiagonals 0..36) ==
-703 terms and 58 empty lines at the end, 14988 bytes
-own rebuild with 58 empty lines: sha256 21ecae3e787d1a9a... size 14988; byte-identical to the file: True; pointer of out/oeis_check.txt 21ecae3e787d1a9a... size 14988: MATCH
+703 terms and 58 empty lines at the end, 14988 bytes, sha256 21ecae3e787d1a9a1e622d6a7b17b8a41a97a2b09911c857d84d36468fc113ae
+own rebuild with 58 empty lines: sha256 21ecae3e787d1a9a1e622d6a7b17b8a41a97a2b09911c857d84d36468fc113ae, size 14988; byte-identical to the file: True; pointer of out/oeis_check.txt 21ecae3e787d1a9a... size 14988: MATCH
 
 == b239264.txt (antidiagonals 0..44) ==
+31139 bytes, sha256 b4586f9b4363a600be8bba3807a14d70a33b80e1e61da099643680438002b35b
 1035 terms, up to 110 digits
 antidiagonals 0..36 vs out/counts_free.json: 703 terms, mismatches 0
 antidiagonals 0..44 vs data/zex: 1035 terms, mismatches 0
