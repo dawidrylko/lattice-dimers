@@ -42,11 +42,23 @@ function checkMathRanges(file) {
     .map(([, math]) => `${file} writes a range as ".." in the math "${math}", which GitHub renders with a gap; use \\dots.`);
 }
 
+function decodeTarget(target) {
+  try {
+    return decodeURIComponent(target.split('#')[0]);
+  } catch {
+    return null;
+  }
+}
+
 function checkRelativeLinks(file) {
   return [...readProse(file).matchAll(/\]\(([^)\s]+)\)/g)]
     .map(([, target]) => target)
     .filter(target => !/^([a-z]+:|#)/i.test(target))
-    .filter(target => !fs.existsSync(path.join(ROOT_DIRECTORY, path.dirname(file), decodeURIComponent(target.split('#')[0]))))
+    .filter(target => {
+      const decoded = decodeTarget(target);
+
+      return decoded === null || !fs.existsSync(path.join(ROOT_DIRECTORY, path.dirname(file), decoded));
+    })
     .map(target => `${file} links to ${target}, which does not exist.`);
 }
 
