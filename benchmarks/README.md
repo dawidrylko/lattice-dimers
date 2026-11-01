@@ -6,7 +6,7 @@
 pnpm benchmark            # domino solvers
 pnpm benchmark:domicule   # domicule solvers, 10 runs up to 16 × 16 and one run of 18 × 18 and 20 × 20
 pnpm benchmark:periodic   # king's graph tori up to 14 × 14 and cylinders up to 16 × 16
-pnpm benchmark:diagonal   # domicules by the number of diagonal pieces, 10 runs up to 16 × 16 and one run of 18 × 18 and 20 × 20
+pnpm benchmark:diagonal   # domicules by the number of diagonal pieces: BigInt 10 runs up to 12 × 12, Modular 10 runs up to 16 × 16 and one run of 18 × 18 and 20 × 20
 ```
 
 A run writes `environment.json` (date, Node.js version, platform, CPU, cores, memory) next to the timings and refuses to mix machines or Node.js versions in one month directory unless given `--force`. The [site](https://dawidrylko.github.io/lattice-dimers/#benchmark) shows the newest directory that holds the largest board of every solver.

@@ -7,7 +7,7 @@ Scripts, data, outputs, proofs and papers behind the estimate and the rigorous b
 - Proofs of the bounds: [`proofs/lower-bound.md`](proofs/lower-bound.md) and [`proofs/upper-bound.md`](proofs/upper-bound.md).
 - Release on Zenodo: [`release/ZENODO.md`](release/ZENODO.md).
 
-All commands below run from this directory with Python 3.13, and paths in the notes and in `paper/NUMBERS.md` are relative to it. The licence of each part is in the [root README](../../README.md#license).
+All commands below run from this directory with Python 3.13, and paths in the notes and in `paper/NUMBERS.md` are relative to it. The license of each part is in the [root README](../../README.md#license).
 
 ## Layout
 

@@ -4,7 +4,7 @@ The [method note](../notes/01-method.md) explains how each count is made; this p
 
 ## Solvers
 
-Each solver is a command-line program that prints the number of tilings of one board.
+Each solver is a command-line program that prints the number of tilings of one board; the diagonal solvers print one count for each number of diagonal pieces.
 
 | file | what it counts | method |
 | --- | --- | --- |

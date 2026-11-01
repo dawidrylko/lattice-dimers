@@ -469,11 +469,6 @@ function roundDecimal(value, digits) {
 }
 
 /**
- * Reads the headline results of research/king-entropy from its committed data, so the main page
- * quotes the same numbers as the paper and the research note.
- * @returns {{ s: string, ds: string, lower: string, upper: string }} The estimate of s, its error bar and the proved bounds.
- */
-/**
  * Formats the 8×8 count of a test data file for the main page.
  * @param {Object[]} testCases The test cases of one data file.
  * @returns {string} The count with thousands separators.
@@ -484,6 +479,11 @@ function chessboard(testCases) {
   return BigInt(expectedResult).toLocaleString('en-US');
 }
 
+/**
+ * Reads the headline results of research/king-entropy from its committed data, so the main page
+ * quotes the same numbers as the paper and the research note.
+ * @returns {{ s: string, ds: string, lower: string, upper: string }} The estimate of s, its error bar and the proved bounds.
+ */
 function readResearchResults() {
   const read = file => JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, RESEARCH_DATA, file), 'utf-8'));
   const { s, err } = read('errbar.json').recommended;
