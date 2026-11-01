@@ -79,6 +79,8 @@ const rejectionTestCases = [
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--only', 'missing.js'], message: 'Usage' },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '-o', '99'], message: 'No test cases' },
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--domicule', '--only', 'dominoTilingSolver.js'], message: 'Usage' },
+  { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--torus', '--only', 'domiculeTilingSolver-BigInt.js'], message: 'Usage' },
+  { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--torus', '--diagonal'], message: 'Usage' },
 ];
 
 function executeReadmeResultsTest() {
@@ -269,6 +271,42 @@ function executeBenchmarkGuardTest() {
   return true;
 }
 
+function executeBenchmarkSurfaceTests() {
+  const cases = [
+    { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: 'periodicTilingSolver-Modular.js_2x2-king-torus.txt' },
+    { args: ['--cylinder', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-king-cylinder.txt' },
+    { args: ['--diagonal', '--only', 'domiculeDiagonalSolver-BigInt.js'], file: 'domiculeDiagonalSolver-BigInt.js_0x0.txt' },
+  ];
+
+  return cases.every(({ args, file }, index) => {
+    process.stdout.write(`Executing benchmark surface test ${index + 1} of ${cases.length} for ${args[0]}... `);
+
+    const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
+
+    try {
+      const { status, stderr } = spawnSync(process.execPath, ['benchmarks/benchmarkRunner.js', '-n', '1', '-m', '1', ...args], {
+        cwd: ROOT_DIRECTORY,
+        encoding: 'utf-8',
+        timeout: REJECTION_TIMEOUT,
+        env: { ...process.env, BENCHMARK_ROOT: benchmarkRoot },
+      });
+      const written = fs.readdirSync(path.join(benchmarkRoot, new Date().toISOString().slice(0, 7)));
+
+      if (status !== 0 || !written.includes(file)) {
+        console.error(`Failed! Exit code ${status}, files ${written.join(', ')}: ${stderr.trim()}`);
+
+        return false;
+      }
+    } finally {
+      fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
 function executePrecisionWarningTests() {
   const cases = [
     { rowCount: 10, warns: false },
@@ -423,6 +461,7 @@ function __main__() {
     const executorTestPassed = executeExecutorTest();
     const readmeResultsTestPassed = executeReadmeResultsTest();
     const benchmarkGuardTestPassed = executeBenchmarkGuardTest();
+    const benchmarkSurfaceTestsPassed = executeBenchmarkSurfaceTests();
     const precisionWarningTestsPassed = executePrecisionWarningTests();
 
     if (
@@ -443,6 +482,7 @@ function __main__() {
       executorTestPassed &&
       readmeResultsTestPassed &&
       benchmarkGuardTestPassed &&
+      benchmarkSurfaceTestsPassed &&
       precisionWarningTestsPassed
     ) {
       console.log('All tests completed successfully.');
