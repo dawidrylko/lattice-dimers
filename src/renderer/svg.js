@@ -5,6 +5,7 @@ const LABEL_FONT_SIZE = 11;
 const LABEL_CHAR_WIDTH = 0.6 * LABEL_FONT_SIZE;
 const SHEET_COLUMNS = 10;
 const STYLES = ['blocks', 'dimer', 'engraving'];
+const SURFACES = ['cylinder', 'torus'];
 const COLORS = { h: '#044cb6', v: '#5eaceb', d: '#ab3415', a: '#f09c17' };
 const BOARD_COLOR = '#f3f4f6';
 const INK = '#334155';
@@ -12,7 +13,11 @@ const EDGE = '#1f2937';
 const ENGRAVING_OUTLINE = 1;
 const ENGRAVING_HATCH_WIDTH = 1;
 const ENGRAVING_AXIS_WIDTH = 2.4;
+const SEAM = '#4f7cac';
+const SEAM_CHEVRON = 2.5;
 const COMMON_STYLE = [`.b{fill:${BOARD_COLOR}}`, `text{font:${LABEL_FONT_SIZE}px monospace;fill:#4b5563;text-anchor:middle}`].join('');
+const SUBLABEL_STYLE = '.n{fill:#6b7280}';
+const SEAM_STYLE = [`.s{fill:none;stroke:${SEAM};stroke-width:1.5;stroke-dasharray:3 2}`, `.m{fill:none;stroke:${SEAM};stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}`].join('');
 const SHEET_STYLES = {
   blocks: {
     straight: ['.h,.v{stroke:#1f2937;stroke-width:1}', `.h{fill:${COLORS.h}}`, `.v{fill:${COLORS.v}}`].join(''),
@@ -146,31 +151,63 @@ function escapeXml(text) {
   return text.replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char]);
 }
 
-function renderLabel(label, x, y, width) {
+function renderLabel(label, x, y, width, className) {
   const fit = Math.floor(width / LABEL_CHAR_WIDTH);
+  const attributes = `${className ? ` class="${className}"` : ''} x="${x}" y="${y}"`;
 
   if (label.length <= fit || fit < 3) {
-    return `<text x="${x}" y="${y}">${escapeXml(label)}</text>`;
+    return `<text${attributes}>${escapeXml(label)}</text>`;
   }
 
   const tail = Math.floor((fit - 1) / 2);
   const shown = `${label.slice(0, fit - 1 - tail)}…${label.slice(-tail)}`;
 
-  return `<g><title>${escapeXml(label)}</title><text x="${x}" y="${y}" data-label="${escapeXml(label)}">${escapeXml(shown)}</text></g>`;
+  return `<g><title>${escapeXml(label)}</title><text${attributes} data-label="${escapeXml(label)}">${escapeXml(shown)}</text></g>`;
 }
 
-function renderTiling(tiling, label, offsetX, offsetY, options) {
-  const { rowCount, colCount, style } = options;
+function wrapPiece(piece, rowCount, colCount, surface) {
+  const endRow = piece.row + piece.dr;
+  const endCol = piece.col + piece.dc;
+  const rowShifts = [0, ...(surface === 'torus' && endRow >= rowCount ? [-rowCount] : [])];
+  const colShifts = [0, ...(endCol >= colCount ? [-colCount] : endCol < 0 ? [colCount] : [])];
+
+  return rowShifts.flatMap(dRow => colShifts.map(dCol => ({ ...piece, row: piece.row + dRow, col: piece.col + dCol })));
+}
+
+function renderSeams(x, y, width, height, surface) {
+  const c = SEAM_CHEVRON;
+  const up = cx => `M${cx - c} ${y + height / 2 + c / 2}L${cx} ${y + height / 2 - c / 2}L${cx + c} ${y + height / 2 + c / 2}`;
+  const right = (cx, cy) => `M${cx - c / 2} ${cy - c}L${cx + c / 2} ${cy}L${cx - c / 2} ${cy + c}`;
+  const torus = surface === 'torus';
+  const edges = [`M${x} ${y}V${y + height}M${x + width} ${y}V${y + height}`, ...(torus ? [`M${x} ${y}H${x + width}M${x} ${y + height}H${x + width}`] : [])];
+  const chevrons = [up(x), up(x + width), ...(torus ? [y, y + height].flatMap(cy => [right(x + width / 2 - c, cy), right(x + width / 2 + c, cy)]) : [])];
+
+  return `<path class="s" d="${edges.join('')}"/><path class="m" d="${chevrons.join('')}"/>`;
+}
+
+function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
+  const { rowCount, colCount, style, surface } = options;
   const boardWidth = colCount * CELL_SIZE;
   const boardHeight = rowCount * CELL_SIZE;
-  const pieces = tiling.map(normalize);
+  const periodic = SURFACES.includes(surface);
+  const pieces = tiling.map(normalize).flatMap(piece => (periodic ? wrapPiece(piece, rowCount, colCount, surface) : [piece]));
   const renderers = RENDERERS[style];
+  const drawn = [
+    ...pieces.filter(piece => !isDiagonal(piece)).map(piece => renderers.straight(piece, offsetX, offsetY)),
+    ...pieces.filter(isDiagonal).map(piece => renderers.diagonal(piece, offsetX, offsetY)),
+  ];
+  const labelY = offsetY + boardHeight + LABEL_HEIGHT - 2;
 
   return [
     `<rect class="b" x="${offsetX}" y="${offsetY}" width="${boardWidth}" height="${boardHeight}"/>`,
-    ...pieces.filter(piece => !isDiagonal(piece)).map(piece => renderers.straight(piece, offsetX, offsetY)),
-    ...pieces.filter(isDiagonal).map(piece => renderers.diagonal(piece, offsetX, offsetY)),
-    renderLabel(label, offsetX + boardWidth / 2, offsetY + boardHeight + LABEL_HEIGHT - 2, boardWidth),
+    ...(periodic
+      ? [
+          `<svg x="${offsetX}" y="${offsetY}" width="${boardWidth}" height="${boardHeight}" viewBox="${offsetX} ${offsetY} ${boardWidth} ${boardHeight}">${drawn.join('')}</svg>`,
+          renderSeams(offsetX, offsetY, boardWidth, boardHeight, surface),
+        ]
+      : drawn),
+    renderLabel(label, offsetX + boardWidth / 2, labelY, boardWidth),
+    ...(sublabel === undefined ? [] : [renderLabel(sublabel, offsetX + boardWidth / 2, labelY + LABEL_HEIGHT, boardWidth, 'n')]),
   ].join('');
 }
 
@@ -183,7 +220,10 @@ function renderTiling(tiling, label, offsetX, offsetY, options) {
  * @property {number} options.colCount The number of columns.
  * @property {number} [options.columns] The number of tilings per sheet row (default: 10).
  * @property {string[]} [options.labels] Labels shown under the tilings instead of their numbers.
+ * @property {string[]} [options.sublabels] A second line under every label, such as the number of diagonal pieces.
  * @property {string} [options.style] How pieces are drawn: blocks (default), dimer or engraving.
+ * @property {string} [options.surface] cylinder (left and right edges glued) or torus (opposite edges glued);
+ * a piece that crosses a glued edge is cut there and drawn on both sides of the board.
  * @returns {string} The SVG document.
  */
 function renderSheet(tilings, firstNumber, options) {
@@ -195,7 +235,7 @@ function renderSheet(tilings, firstNumber, options) {
   }
 
   const tileWidth = colCount * CELL_SIZE + PADDING;
-  const tileHeight = rowCount * CELL_SIZE + LABEL_HEIGHT + PADDING;
+  const tileHeight = rowCount * CELL_SIZE + LABEL_HEIGHT * (options.sublabels ? 2 : 1) + PADDING;
   const sheetColumns = options.columns || SHEET_COLUMNS;
   const columns = Math.min(sheetColumns, tilings.length);
   const rows = Math.ceil(tilings.length / sheetColumns);
@@ -207,6 +247,7 @@ function renderSheet(tilings, firstNumber, options) {
     renderTiling(
       tiling,
       options.labels ? options.labels[i] : `#${BigInt(firstNumber) + BigInt(i)}`,
+      options.sublabels ? options.sublabels[i] : undefined,
       PADDING + (i % sheetColumns) * tileWidth,
       PADDING + Math.floor(i / sheetColumns) * tileHeight,
       { ...options, style },
@@ -215,7 +256,7 @@ function renderSheet(tilings, firstNumber, options) {
 
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" class="${style}" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`,
-    `<style>${COMMON_STYLE}${SHEET_STYLES[style].straight}${hasDiagonal ? SHEET_STYLES[style].diagonal : ''}</style>`,
+    `<style>${COMMON_STYLE}${SHEET_STYLES[style].straight}${hasDiagonal ? SHEET_STYLES[style].diagonal : ''}${options.sublabels ? SUBLABEL_STYLE : ''}${SURFACES.includes(options.surface) ? SEAM_STYLE : ''}</style>`,
     '<rect class="bg" width="100%" height="100%" fill="#fff"/>',
     ...body,
     '</svg>',
@@ -224,6 +265,7 @@ function renderSheet(tilings, firstNumber, options) {
 }
 
 renderSheet.STYLES = STYLES;
+renderSheet.SURFACES = SURFACES;
 renderSheet.CELL_SIZE = CELL_SIZE;
 renderSheet.LABEL_CHAR_WIDTH = LABEL_CHAR_WIDTH;
 

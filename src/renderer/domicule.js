@@ -41,6 +41,12 @@ function toDomicule(index, offset, colCount) {
   return { row, col, dr: Math.floor(mate / colCount) - row, dc: (mate % colCount) - col };
 }
 
+function isDiagonalOffset(index, offset, colCount) {
+  const { dr, dc } = toDomicule(index, offset, colCount);
+
+  return dr !== 0 && dc !== 0 ? 1 : 0;
+}
+
 /**
  * Checks whether the domicule unranking table for a board fits in memory.
  * A state remembers colCount + 2 cells, so the table is four times wider than the domino one.
@@ -146,6 +152,126 @@ function unrankDomiculeTiling({ rowCount, colCount, table, total }, rank) {
   return domicules;
 }
 
+/**
+ * Builds the counting table of the domicule tilings with a given number of diagonal pieces.
+ * table[i][state][r] is the number of ways to finish the tiling with exactly r diagonal pieces
+ * when the cells before i are covered as in createDomiculeUnranker; a state that cannot be
+ * finished holds null, and r stops at the requested number. Fewer than r = diagonals - i
+ * diagonal pieces can never remain at cell i, so those entries stay 0.
+ * @param {Object} options The board and the number of diagonal pieces.
+ * @property {number} options.rowCount The number of rows.
+ * @property {number} options.colCount The number of columns.
+ * @property {number} options.diagonals The number of diagonal pieces.
+ * @param {function(number): void} [onProgress] Called with the completed fraction after every board row.
+ * @returns {{ rowCount: number, colCount: number, diagonals: number, table: Array<Array<BigInt[]|null>>, total: BigInt }} The unranker.
+ */
+function createDiagonalUnranker({ rowCount, colCount, diagonals }, onProgress) {
+  const cellCount = rowCount * colCount;
+  const stateCount = 2 ** (colCount + 2);
+  const zero = BigInt(0);
+  const table = new Array(cellCount + 1);
+
+  table[cellCount] = new Array(stateCount).fill(null);
+  table[cellCount][0] = [BigInt(1)];
+
+  for (let index = cellCount - 1; index >= 0; index--) {
+    const next = table[index + 1];
+    const current = new Array(stateCount).fill(null);
+    const moves = listOffsets(index, rowCount, colCount).map(offset => ({
+      bit: 2 ** offset,
+      diagonal: isDiagonalOffset(index, offset, colCount),
+    }));
+    const lowest = Math.max(0, diagonals - index);
+
+    for (let state = 0; state < stateCount; state++) {
+      if (state & 1) {
+        current[state] = next[state >>> 1];
+        continue;
+      }
+
+      let counts = null;
+
+      for (let i = 0; i < moves.length; i++) {
+        const following = state & moves[i].bit ? null : next[(state + moves[i].bit) >>> 1];
+
+        if (!following) {
+          continue;
+        }
+
+        counts ??= new Array(diagonals + 1).fill(zero);
+
+        for (let r = Math.max(0, lowest - moves[i].diagonal); r < following.length && r + moves[i].diagonal <= diagonals; r++) {
+          counts[r + moves[i].diagonal] += following[r];
+        }
+      }
+
+      if (counts) {
+        let length = counts.length;
+
+        while (length > 0 && counts[length - 1] === zero) {
+          length--;
+        }
+
+        current[state] = length ? counts.slice(0, length) : null;
+      }
+    }
+
+    table[index] = current;
+
+    if (onProgress && index % colCount === 0) {
+      onProgress((cellCount - index) / cellCount);
+    }
+  }
+
+  return { rowCount, colCount, diagonals, table, total: table[0][0]?.[diagonals] ?? zero };
+}
+
+/**
+ * Returns the domicule tiling with the given 0-based rank among those with the unranker's
+ * number of diagonal pieces, in the order of unrankDomiculeTiling.
+ * @param {Object} unranker The result of createDiagonalUnranker.
+ * @param {BigInt} rank The 0-based rank, lower than unranker.total.
+ * @returns {{ row: number, col: number, dr: number, dc: number }[]} The tiling.
+ */
+function unrankDiagonalTiling({ rowCount, colCount, diagonals, table, total }, rank) {
+  if (rank < BigInt(0) || rank >= total) {
+    throw new RangeError(`Rank must be between 0 and ${total - BigInt(1)}.`);
+  }
+
+  const cellCount = table.length - 1;
+  const domicules = [];
+  let remaining = rank;
+  let left = diagonals;
+  let state = 0;
+
+  for (let index = 0; index < cellCount; index++) {
+    if (state & 1) {
+      state >>>= 1;
+      continue;
+    }
+
+    const next = table[index + 1];
+    const offsets = listOffsets(index, rowCount, colCount).filter(offset => !(state & 2 ** offset));
+
+    for (let i = 0; i < offsets.length; i++) {
+      const target = (state + 2 ** offsets[i]) >>> 1;
+      const diagonal = isDiagonalOffset(index, offsets[i], colCount);
+      const count = left >= diagonal ? next[target]?.[left - diagonal] ?? BigInt(0) : BigInt(0);
+
+      if (remaining < count) {
+        domicules.push(toDomicule(index, offsets[i], colCount));
+        state = target;
+        left -= diagonal;
+        break;
+      }
+
+      remaining -= count;
+    }
+  }
+
+  return domicules;
+}
+
 function createStartPartners(rowCount, colCount) {
   const partner = new Int32Array(rowCount * colCount);
   const step = colCount % 2 === 0 ? 1 : colCount;
@@ -226,6 +352,8 @@ if (typeof module !== 'undefined') {
     canUnrankDomicule,
     createDomiculeUnranker,
     unrankDomiculeTiling,
+    createDiagonalUnranker,
+    unrankDiagonalTiling,
     sampleDomiculeTiling,
     DEFAULT_SWEEPS,
   };
