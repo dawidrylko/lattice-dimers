@@ -36,6 +36,12 @@ function checkMathInLinks(file) {
   );
 }
 
+function checkMathRanges(file) {
+  return [...readProse(file).matchAll(/\$([^$\n]+)\$/g)]
+    .filter(([, math]) => math.includes('..'))
+    .map(([, math]) => `${file} writes a range as ".." in the math "${math}", which GitHub renders with a gap ("0. .44"); use \\dots.`);
+}
+
 function runCheck(name, files, check) {
   process.stdout.write(`Checking ${files.length} Markdown files for ${name}... `);
   const errors = files.flatMap(check);
@@ -56,6 +62,7 @@ function __main__() {
   const passed = [
     runCheck('math macros GitHub does not render', files, checkMathMacros),
     runCheck('math in link text', files, checkMathInLinks),
+    runCheck('ranges written as .. in math', files, checkMathRanges),
   ].every(Boolean);
 
   if (passed) {
