@@ -1,0 +1,12 @@
+Average Execution Time: 371.5 ms
+---
+1. Execution Time: 362 ms
+2. Execution Time: 361 ms
+3. Execution Time: 371 ms
+4. Execution Time: 367 ms
+5. Execution Time: 371 ms
+6. Execution Time: 378 ms
+7. Execution Time: 402 ms
+8. Execution Time: 377 ms
+9. Execution Time: 354 ms
+10. Execution Time: 372 ms

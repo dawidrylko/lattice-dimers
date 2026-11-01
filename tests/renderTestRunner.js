@@ -11,14 +11,26 @@ const {
   canUnrankDomicule,
   createDomiculeUnranker,
   unrankDomiculeTiling,
+  createDiagonalUnranker,
+  unrankDiagonalTiling,
   sampleDomiculeTiling,
+  createPeriodicUnranker,
+  unrankPeriodicTiling,
 } = require('../src/renderer');
+const { PERIODIC_LATTICES } = require('../src/renderer/periodic');
+const periodicReference = require('../src/solvers/periodicTilingSolver-BigInt.js');
 const crypto = require('crypto');
 const { createRandom } = require('../src/renderer/cftp');
 const fs = require('fs');
 const { buildReadmeImages } = require('../site/readme-images');
 const { renderChart } = require('../site/notes');
-const { testCasesBigInt, testCasesDomicule, testCasesDomiculeRectangles } = require('../data');
+const {
+  testCasesBigInt,
+  testCasesDomicule,
+  testCasesDomiculeRectangles,
+  testCasesDiagonal,
+  testCasesDiagonalModular,
+} = require('../data');
 
 const MAX_CELLS = 36;
 const UNRANK_SAMPLE_SIZE = 1000;
@@ -100,6 +112,80 @@ const STYLE_TEST_TILING = [
   { row: 0, col: 3, dr: 1, dc: -1 },
 ];
 const DOMICULE_TEST_SWEEPS = 200;
+const PERIODIC_FULL_CHECK_LIMIT = BigInt(20000);
+const periodicUnrankTestCases = ['square', 'triangular', 'king'].flatMap(lattice =>
+  [false, true].flatMap(torus =>
+    [
+      { rowCount: 2, colCount: 2 },
+      { rowCount: 3, colCount: 2 },
+      { rowCount: 2, colCount: 3 },
+      { rowCount: 3, colCount: 4 },
+      { rowCount: 4, colCount: 3 },
+      { rowCount: 4, colCount: 4 },
+      { rowCount: 6, colCount: 6 },
+    ].map(board => ({ ...board, lattice, torus })),
+  ),
+);
+const periodicSheetTestCases = [
+  {
+    rowCount: 2,
+    colCount: 4,
+    surface: 'cylinder',
+    tiling: [{ row: 0, col: 3, dr: 0, dc: 1 }, { row: 0, col: 1, dr: 0, dc: 1 }, { row: 1, col: 0, dr: 0, dc: 1 }, { row: 1, col: 2, dr: 0, dc: 1 }],
+    copies: { h: 5, v: 0 },
+    edges: 2,
+  },
+  {
+    rowCount: 2,
+    colCount: 2,
+    surface: 'torus',
+    tiling: [{ row: 1, col: 0, dr: 1, dc: 0 }, { row: 1, col: 1, dr: 1, dc: 0 }],
+    copies: { h: 0, v: 4 },
+    edges: 4,
+  },
+  {
+    rowCount: 2,
+    colCount: 2,
+    surface: 'torus',
+    tiling: [{ row: 1, col: 1, dr: 1, dc: 1 }, { row: 1, col: 0, dr: 1, dc: 1 }],
+    copies: { d: 6 },
+    edges: 4,
+  },
+  {
+    rowCount: 2,
+    colCount: 2,
+    surface: 'torus',
+    tiling: [{ row: 1, col: 0, dr: 1, dc: -1 }, { row: 1, col: 1, dr: 1, dc: -1 }],
+    copies: { a: 6 },
+    edges: 4,
+  },
+  {
+    rowCount: 2,
+    colCount: 4,
+    surface: 'cylinder',
+    tiling: [{ row: 0, col: 0, dr: 1, dc: -1 }, { row: 0, col: 1, dr: 0, dc: 1 }, { row: 0, col: 3, dr: 1, dc: -1 }, { row: 1, col: 0, dr: 0, dc: 1 }],
+    copies: { a: 3, h: 2 },
+    edges: 2,
+  },
+];
+const sublabelTestCases = [
+  { rowCount: 4, colCount: 4, choices: ['4 diagonal', '4 diag.', '4'], shown: '4 diagonal' },
+  { rowCount: 2, colCount: 2, choices: ['2 diagonal', '2 diag.', '2'], shown: '2' },
+  { rowCount: 1, colCount: 2, choices: ['wider than the board'], shown: 'wider than the board' },
+];
+const diagonalUnrankTestCases = [
+  { rowCount: 2, colCount: 2 },
+  { rowCount: 3, colCount: 4 },
+  { rowCount: 4, colCount: 3 },
+  { rowCount: 2, colCount: 7 },
+  { rowCount: 4, colCount: 4, order: true },
+  { rowCount: 6, colCount: 6 },
+].map(board => ({
+  ...board,
+  expectedResult: [...testCasesDiagonal, ...testCasesDiagonalModular].find(
+    t => t.rowCount === board.rowCount && t.colCount === board.colCount,
+  ).expectedResult,
+}));
 const domiculeRandomTestCases = [
   { rowCount: 2, colCount: 2, expectedResult: 3, criticalValue: 13.82 },
   { rowCount: 4, colCount: 4, expectedResult: 280, criticalValue: 357.8 },
@@ -710,6 +796,182 @@ function runCliTest({ rowCount, colCount, args, env = {}, status, output }) {
   return true;
 }
 
+function findPeriodicCoverageError(tiling, { rowCount, colCount, lattice, torus }) {
+  const covered = new Array(rowCount * colCount).fill(0);
+  const shifts = [0, ...[-1, 1].filter(dc => (dc < 0 ? PERIODIC_LATTICES[lattice].downLeft : PERIODIC_LATTICES[lattice].downRight))];
+
+  for (const { row, col, dr, dc } of tiling) {
+    if (!(dr === 0 && dc === 1) && !(dr === 1 && shifts.includes(dc))) {
+      return `piece (${row}, ${col}) goes by (${dr}, ${dc})`;
+    }
+
+    if (!torus && row + dr >= rowCount) {
+      return `piece (${row}, ${col}) leaves the cylinder`;
+    }
+
+    [
+      [row, col],
+      [(row + dr) % rowCount, (col + dc + colCount) % colCount],
+    ].forEach(([r, c]) => covered[r * colCount + c]++);
+  }
+
+  const wrong = covered.findIndex(count => count !== 1);
+
+  return wrong === -1 ? null : `cell ${wrong} covered ${covered[wrong]} times`;
+}
+
+function runPeriodicUnrankTest(testCase) {
+  const unranker = createPeriodicUnranker(testCase);
+  const expected = periodicReference.calculateTotalTilingCombinations(testCase);
+
+  if (unranker.total !== expected) {
+    console.error(`Failed! ${testCase.lattice} ${testCase.torus ? 'torus' : 'cylinder'}: expected ${expected}, actual ${unranker.total}`);
+
+    return false;
+  }
+
+  const ranks =
+    unranker.total <= PERIODIC_FULL_CHECK_LIMIT
+      ? Array.from({ length: Number(unranker.total) }, (_, i) => BigInt(i))
+      : [...Array.from({ length: UNRANK_SAMPLE_SIZE }, (_, i) => (unranker.total * BigInt(i)) / BigInt(UNRANK_SAMPLE_SIZE)), unranker.total - BigInt(1)];
+  const seen = new Set();
+
+  for (const rank of ranks) {
+    const tiling = unrankPeriodicTiling(unranker, rank);
+    const error = findPeriodicCoverageError(tiling, testCase);
+
+    if (error) {
+      console.error(`Failed! Invalid tiling #${rank + BigInt(1)}: ${error}`);
+
+      return false;
+    }
+
+    seen.add(JSON.stringify(tiling));
+  }
+
+  if (seen.size !== new Set(ranks).size) {
+    console.error(`Failed! ${seen.size} distinct tilings for ${new Set(ranks).size} ranks.`);
+
+    return false;
+  }
+
+  try {
+    unrankPeriodicTiling(unranker, unranker.total);
+    console.error('Failed! A rank past the last tiling was accepted.');
+
+    return false;
+  } catch (error) {
+    if (!(error instanceof RangeError)) {
+      throw error;
+    }
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function runPeriodicSheetTest({ tiling, copies, edges, ...options }) {
+  const sheet = renderSheet([tiling], 1, { ...options, sublabels: ['2'] });
+  const nested = sheet.match(/<svg x="(\d+)" y="(\d+)" width="(\d+)" height="(\d+)" viewBox="([^"]+)">/);
+  const counts = Object.fromEntries(Object.keys(copies).map(kind => [kind, (sheet.match(new RegExp(`<rect class="${kind}"`, 'g')) || []).length]));
+  const seams = sheet.match(/<path class="s" d="([^"]+)"/);
+  const plain = renderSheet([tiling], 1, { rowCount: options.rowCount, colCount: options.colCount });
+
+  if (!nested || nested[5] !== `${nested[1]} ${nested[2]} ${nested[3]} ${nested[4]}`) {
+    console.error('Failed! The pieces are not clipped to the board.');
+
+    return false;
+  }
+
+  if (Object.keys(copies).some(kind => counts[kind] !== copies[kind])) {
+    console.error(`Failed! Pieces drawn: ${JSON.stringify(counts)}, expected ${JSON.stringify(copies)}.`);
+
+    return false;
+  }
+
+  if (!seams || seams[1].split('M').length - 1 !== edges || !sheet.includes('<path class="m"') || !sheet.includes('.s{fill:none')) {
+    console.error(`Failed! Glued edges drawn: ${seams ? seams[1] : 'none'}, expected ${edges}.`);
+
+    return false;
+  }
+
+  if (!/<text class="n" x="[\d.]+" y="[\d.]+">2<\/text>/.test(sheet) || plain.includes('class="s"') || plain.includes('<svg x=')) {
+    console.error('Failed! The second label line or the free board drawing is wrong.');
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function runSublabelTest({ choices, shown, ...options }) {
+  const sheet = renderSheet([[]], 1, { ...options, sublabels: [choices] });
+  const sublabel = sheet.match(/<text class="n"[^>]*>([^<]*)<\/text>/);
+  const title = sheet.match(/<title>([^<]*)<\/title><text class="n"/);
+
+  if (!sublabel || (title ? title[1] : sublabel[1]) !== shown) {
+    console.error(`Failed! The second label line reads ${sublabel ? sublabel[1] : 'nothing'}, expected ${shown}.`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function runDiagonalUnrankTest({ expectedResult, order, ...board }) {
+  const coefficients = expectedResult.split(',').map(BigInt);
+  const totals = coefficients.map((_, diagonals) => createDiagonalUnranker({ ...board, diagonals }).total);
+
+  if (totals.join(',') !== coefficients.join(',')) {
+    console.error(`Failed! Expected ${expectedResult}, actual ${totals.join(',')}`);
+
+    return false;
+  }
+
+  for (let diagonals = 0; diagonals < coefficients.length; diagonals++) {
+    const unranker = createDiagonalUnranker({ ...board, diagonals });
+
+    for (const rank of unranker.total ? [BigInt(0), unranker.total - BigInt(1)] : []) {
+      const tiling = unrankDiagonalTiling(unranker, rank);
+      const count = tiling.filter(piece => piece.dr && piece.dc).length;
+      const error = findDomiculeCoverageError(tiling, board);
+
+      if (error || count !== diagonals) {
+        console.error(`Failed! Tiling #${rank + BigInt(1)} with ${diagonals} diagonal pieces: ${error || `${count} diagonal pieces`}`);
+
+        return false;
+      }
+    }
+  }
+
+  if (order) {
+    const unranker = createDomiculeUnranker(board);
+    const all = Array.from({ length: Number(unranker.total) }, (_, i) => JSON.stringify(unrankDomiculeTiling(unranker, BigInt(i))));
+    const filtered = coefficients.flatMap((total, diagonals) => {
+      const unrankerByCount = createDiagonalUnranker({ ...board, diagonals });
+      return Array.from({ length: Number(total) }, (_, i) => JSON.stringify(unrankDiagonalTiling(unrankerByCount, BigInt(i))));
+    });
+    const byCount = coefficients.flatMap((_, diagonals) =>
+      all.filter(tiling => JSON.parse(tiling).filter(piece => piece.dr && piece.dc).length === diagonals),
+    );
+
+    if (filtered.join('\n') !== byCount.join('\n')) {
+      console.error('Failed! The numbering by diagonal pieces does not keep the order of the full numbering.');
+
+      return false;
+    }
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function runSuite(name, testCases, run) {
   return testCases.every((testCase, index) => {
     const { rowCount, colCount } = testCase;
@@ -743,6 +1005,10 @@ function __main__() {
     domiculeRandomValidityTestCases,
     domiculeReachTestCases,
     domiculeShapeTestCases,
+    periodicUnrankTestCases,
+    periodicSheetTestCases,
+    sublabelTestCases,
+    diagonalUnrankTestCases,
     styleTestCases,
     engravingContainmentTestCases,
     labelWidthTestCases,
@@ -765,6 +1031,10 @@ function __main__() {
     runSuite('domicule random validity', domiculeRandomValidityTestCases, runDomiculeValidityTest),
     runSuite('domicule chain reach', domiculeReachTestCases, runDomiculeReachTest),
     runSuite('domicule shape', domiculeShapeTestCases, runDomiculeShapeTest),
+    runSuite('periodic unrank', periodicUnrankTestCases, runPeriodicUnrankTest),
+    runSuite('periodic sheet', periodicSheetTestCases, runPeriodicSheetTest),
+    runSuite('second label line', sublabelTestCases, runSublabelTest),
+    runSuite('diagonal unrank', diagonalUnrankTestCases, runDiagonalUnrankTest),
     runSuite('sheet style', styleTestCases, runStyleTest),
     runSuite('engraving containment', engravingContainmentTestCases, runEngravingContainmentTest),
     runSuite('domino output', [{ rowCount: 4, colCount: 4 }], runDominoOutputTest),

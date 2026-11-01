@@ -10,9 +10,12 @@ const {
   canUnrankDomicule,
   createDomiculeUnranker,
   unrankDomiculeTiling,
+  createDiagonalUnranker,
+  unrankDiagonalTiling,
   sampleDomiculeTiling,
   DEFAULT_SWEEPS: DOMICULE_SWEEPS,
 } = require('./domicule');
+const { canUnrankPeriodic, createPeriodicUnranker, unrankPeriodicTiling } = require('./periodic');
 
 module.exports = {
   enumerateTilings,
@@ -29,6 +32,11 @@ module.exports = {
   canUnrankDomicule,
   createDomiculeUnranker,
   unrankDomiculeTiling,
+  createDiagonalUnranker,
+  unrankDiagonalTiling,
   sampleDomiculeTiling,
   DOMICULE_SWEEPS,
+  canUnrankPeriodic,
+  createPeriodicUnranker,
+  unrankPeriodicTiling,
 };

@@ -1,9 +1,22 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { filesInt, testCasesInt, filesBigInt, testCasesBigInt, filesDomicule, testCasesDomicule } = require('../data');
+const {
+  filesInt,
+  testCasesInt,
+  filesBigInt,
+  testCasesBigInt,
+  filesDomicule,
+  testCasesDomicule,
+  testCasesPeriodic,
+  testCasesPeriodicModular,
+  testCasesDiagonal,
+  testCasesDiagonalModular,
+} = require('../data');
 const { DOMICULE_SWEEPS } = require('../src/renderer');
 const domiculeModular = require('../src/solvers/domiculeTilingSolver-Modular.js');
+const periodicModular = require('../src/solvers/periodicTilingSolver-Modular.js');
+const diagonalReference = require('../src/solvers/domiculeDiagonalSolver-BigInt.js');
 const { renderNote, listNotes, NOTES_DIRECTORY } = require('./notes');
 const { CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
 
@@ -13,11 +26,26 @@ const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OUTPUT_DIRECTORY = path.join(ROOT_DIRECTORY, 'dist', 'site');
 const BENCHMARK_ROOT = 'benchmarks/results';
 const RESULT_FILE = /_(\d+)x(\d+)\.txt$/;
+const PERIODIC_RESULT_FILE = /_(\d+)x(\d+)-king-(torus|cylinder)\.txt$/;
+const LARGEST_PERIODIC_RESULTS = [
+  'periodicTilingSolver-BigInt.js_10x10-king-torus.txt',
+  'periodicTilingSolver-Modular.js_14x14-king-torus.txt',
+  'periodicTilingSolver-BigInt.js_12x12-king-cylinder.txt',
+  'periodicTilingSolver-Modular.js_16x16-king-cylinder.txt',
+  'domiculeDiagonalSolver-BigInt.js_12x12.txt',
+  'domiculeDiagonalSolver-Modular.js_20x20.txt',
+];
 const BENCHMARK_RUNS = listBenchmarkRuns();
 const BENCHMARK_RUN = findLatestCompleteRun();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
 const BROWSER_SCRIPTS = ['src/renderer/svg.js'];
-const WORKER_SCRIPTS = ['src/renderer/unrank.js', 'src/renderer/cftp.js', 'src/renderer/domicule.js', 'site/worker.js'];
+const WORKER_SCRIPTS = [
+  'src/renderer/unrank.js',
+  'src/renderer/cftp.js',
+  'src/renderer/domicule.js',
+  'src/renderer/periodic.js',
+  'site/worker.js',
+];
 const ASSETS = {
   'dimer.svg': '.github/assets/dimer.svg',
   'apple-touch-icon.png': '.github/assets/apple-touch-icon.png',
@@ -68,6 +96,12 @@ const DOMICULE_BOARDS = [
   { rowCount: 18, colCount: 18, mode: 'random' },
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
+const PERIODIC_SIDES = [2, 4, 6, 8, 10];
+const PERIODIC_PIECES = [
+  { pieces: 'domino', lattice: 'square', suffix: '' },
+  { pieces: 'domicule', lattice: 'king', suffix: '-diagonal' },
+];
+const DIAGONAL_FILTER_MAX_SIDE = 10;
 const DEFAULT_BOARD = '4x4';
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const NOTE_PROVENANCE = {
@@ -105,6 +139,7 @@ function isCompleteRun(run) {
     ...filesBigInt.map(fileName => resultFileName(fileName, lastBigInt)),
     ...filesDomicule.map(fileName => resultFileName(fileName, { rowCount: 16, colCount: 16 })),
     ...filesDomicule.map(fileName => resultFileName(fileName, { rowCount: 20, colCount: 20 })),
+    ...LARGEST_PERIODIC_RESULTS,
   ];
 
   return requiredFiles.every(file => fs.existsSync(path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, run, file)));
@@ -127,7 +162,7 @@ function describeRun(run) {
   const environment = readEnvironment(directory) || {};
   const runs = fs
     .readdirSync(directory)
-    .filter(fileName => RESULT_FILE.test(fileName))
+    .filter(fileName => RESULT_FILE.test(fileName) || PERIODIC_RESULT_FILE.test(fileName))
     .map(fileName => readAverageTime(directory, fileName).runs);
   const most = Math.max(...runs);
   const month = new Date(`${run}-01T00:00:00Z`).toLocaleString('en-US', {
@@ -170,6 +205,60 @@ function countTilings(board) {
   }
 
   return testCase.expectedResult;
+}
+
+const periodicCounts = new Map();
+
+/**
+ * Counts the tilings of a king's graph or square lattice cylinder or torus once per build:
+ * from data/ when the board is known there, otherwise with the modular solver.
+ * @param {Object} board The board.
+ * @property {number} board.rowCount The number of rows.
+ * @property {number} board.colCount The circumference.
+ * @property {string} board.lattice square or king.
+ * @property {boolean} board.torus Whether the rows are periodic too.
+ * @returns {Promise<string>} The number of tilings.
+ */
+function countPeriodicTilings({ rowCount, colCount, lattice, torus }) {
+  const key = `${rowCount}x${colCount}-${lattice}-${torus ? 'torus' : 'cylinder'}`;
+
+  if (!periodicCounts.has(key)) {
+    const known = [...testCasesPeriodic, ...testCasesPeriodicModular].find(
+      t => t.rowCount === rowCount && t.colCount === colCount && t.lattice === lattice && !t.torus === !torus && !t.twisted,
+    );
+
+    periodicCounts.set(
+      key,
+      known
+        ? Promise.resolve(known.expectedResult)
+        : periodicModular
+            .calculateTotalTilingCombinations({ rowCount, colCount, lattice, torus, jobs: os.availableParallelism() })
+            .then(String),
+    );
+  }
+
+  return periodicCounts.get(key);
+}
+
+/**
+ * Reads the domicule tilings of a board by the number of diagonal pieces from data/, or counts
+ * them with the reference solver, and checks that they add up to the number of tilings.
+ * @param {Object} board The board.
+ * @param {string} total The number of tilings.
+ * @returns {string[]} The coefficients, from 0 diagonal pieces up.
+ */
+function countDiagonalTilings({ rowCount, colCount }, total) {
+  const known = [...testCasesDiagonal, ...testCasesDiagonalModular].find(t => t.rowCount === rowCount && t.colCount === colCount);
+  const coefficients = known
+    ? known.expectedResult.split(',')
+    : diagonalReference.calculateDiagonalPolynomial({ rowCount, colCount }).map(String);
+  const sum = coefficients.reduce((acc, count) => acc + BigInt(count), BigInt(0));
+
+  if (String(sum) !== total) {
+    throw new Error(`The diagonal counts of ${rowCount}x${colCount} add up to ${sum}, not ${total}.`);
+  }
+
+  return coefficients;
 }
 
 const domiculeCounts = new Map();
@@ -225,6 +314,7 @@ function buildBenchmark() {
   );
   const sizes = fs
     .readdirSync(BENCHMARK_DIRECTORY)
+    .filter(fileName => fileName.startsWith('dominoTilingSolver'))
     .map(fileName => fileName.match(RESULT_FILE))
     .filter(Boolean)
     .map(([, rowCount, colCount]) => ({
@@ -254,6 +344,62 @@ function buildBenchmark() {
 
 function buildDomiculeBenchmark(totals) {
   const prefix = 'domiculeTilingSolver-';
+
+  return fs
+    .readdirSync(BENCHMARK_DIRECTORY)
+    .filter(fileName => fileName.startsWith(prefix))
+    .map(fileName => fileName.match(RESULT_FILE))
+    .filter(Boolean)
+    .map(([, rowCount, colCount]) => `${rowCount}x${colCount}`)
+    .filter((size, index, all) => all.indexOf(size) === index)
+    .map(size => size.split('x').map(Number))
+    .sort(([a], [b]) => a - b)
+    .map(([rowCount, colCount]) => {
+      const suffix = `_${rowCount}x${colCount}.txt`;
+      return {
+        rowCount,
+        colCount,
+        tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
+        bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
+        modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
+      };
+    });
+}
+
+async function buildPeriodicBenchmark() {
+  const prefix = 'periodicTilingSolver-';
+  const boards = fs
+    .readdirSync(BENCHMARK_DIRECTORY)
+    .filter(fileName => fileName.startsWith(prefix))
+    .map(fileName => fileName.match(PERIODIC_RESULT_FILE))
+    .filter(Boolean)
+    .map(([, rowCount, colCount, surface]) => `${surface}/${rowCount}x${colCount}`)
+    .filter((board, index, all) => all.indexOf(board) === index)
+    .map(board => {
+      const [surface, size] = board.split('/');
+      const [rowCount, colCount] = size.split('x').map(Number);
+      return { surface, rowCount, colCount };
+    })
+    .sort((a, b) => b.surface.localeCompare(a.surface) || a.rowCount - b.rowCount);
+  const rows = [];
+
+  for (const { surface, rowCount, colCount } of boards) {
+    const suffix = `_${rowCount}x${colCount}-king-${surface}.txt`;
+    rows.push({
+      rowCount,
+      colCount,
+      surface,
+      tilings: await countPeriodicTilings({ rowCount, colCount, lattice: 'king', torus: surface === 'torus' }),
+      bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
+      modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
+    });
+  }
+
+  return rows;
+}
+
+function buildDiagonalBenchmark(totals) {
+  const prefix = 'domiculeDiagonalSolver-';
 
   return fs
     .readdirSync(BENCHMARK_DIRECTORY)
@@ -438,13 +584,36 @@ async function __main__() {
   const domiculeBoards = [];
 
   for (const board of DOMICULE_BOARDS) {
+    const total = await countDomiculeTilings(board);
+    const filtered = !board.mode && Math.max(board.rowCount, board.colCount) <= DIAGONAL_FILTER_MAX_SIDE;
+
     domiculeBoards.push({
       id: `${board.rowCount}x${board.colCount}-diagonal`,
       pieces: 'domicule',
+      surface: 'rectangle',
       mode: 'pages',
       ...board,
-      total: await countDomiculeTilings(board),
+      total,
+      ...(filtered && { diagonals: countDiagonalTilings(board, total) }),
     });
+  }
+
+  const periodicBoards = [];
+
+  for (const { pieces, lattice, suffix } of PERIODIC_PIECES) {
+    for (const surface of ['cylinder', 'torus']) {
+      for (const side of PERIODIC_SIDES) {
+        const board = { rowCount: side, colCount: side };
+        periodicBoards.push({
+          id: `${side}x${side}${suffix}-${surface}`,
+          pieces,
+          surface,
+          mode: 'pages',
+          ...board,
+          total: await countPeriodicTilings({ ...board, lattice, torus: surface === 'torus' }),
+        });
+      }
+    }
   }
 
   const domiculeTotals = new Map([
@@ -457,14 +626,18 @@ async function __main__() {
       ...GALLERY_BOARDS.map(board => ({
         id: `${board.rowCount}x${board.colCount}`,
         pieces: 'domino',
+        surface: 'rectangle',
         mode: 'pages',
         ...board,
         total: countTilings(board),
       })),
       ...domiculeBoards,
+      ...periodicBoards,
     ],
     benchmark: buildBenchmark(),
     domiculeBenchmark: buildDomiculeBenchmark(domiculeTotals),
+    periodicBenchmark: await buildPeriodicBenchmark(),
+    diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
     environment: readEnvironment(BENCHMARK_DIRECTORY),
   };
   const notes = listNotes();

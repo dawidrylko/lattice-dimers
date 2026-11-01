@@ -229,9 +229,11 @@ Benchmarks:
 ```sh
 pnpm benchmark            # domino solvers, results in benchmarks/results/<year-month>
 pnpm benchmark:domicule   # domicule solvers, 10 runs up to 16×16 and one run of 18×18 and 20×20
+pnpm benchmark:periodic   # king's graph tori up to 14×14 and cylinders up to 16×16
+pnpm benchmark:diagonal   # domicules by the number of diagonal pieces, 10 runs up to 16×16 and one run of 18×18 and 20×20
 ```
 
-A run writes `environment.json` next to the timings and refuses to mix machines or Node.js versions in one month directory unless given `--force`. The site shows the newest directory that holds the largest board of every solver. Older runs stay in [`benchmarks/results`](benchmarks/results): March 2024 (machine not recorded) and April 2024 (100,000 runs per board on an Intel Core i7-8700).
+A run writes `environment.json` next to the timings and refuses to mix machines or Node.js versions in one month directory unless given `--force`. The site shows the newest directory that holds the largest board of every solver. Older runs stay in [`benchmarks/results`](benchmarks/results): March 2024 (machine not recorded), April 2024 (100,000 runs per board on an Intel Core i7-8700) and October 2026 (Apple M4, before the periodic and diagonal solvers).
 
 ## Drawing tilings
 
@@ -259,7 +261,7 @@ The gallery draws a tiling in three styles. Below are the same four 8×8 domicul
 
 ![The same four tilings drawn as an engraving](.github/assets/gallery-engraving.svg)
 
-`-l` limits the number of tilings (default 1000), `-o` skips tilings, `-i` draws one tiling by its 1-based number, `--random` samples, `--all` lifts the limit on boards with at most 100,000 tilings, `--ascii` prints instead of writing SVG. The command line numbers boards whose table has at most 4 million entries: dominoes up to 14×14, domicules up to 12×12. The [gallery](https://dawidrylko.github.io/lattice-dimers/) does the same in the browser, up to 18×18 for dominoes and 16×16 for domicules, with sampling above that.
+`-l` limits the number of tilings (default 1000), `-o` skips tilings, `-i` draws one tiling by its 1-based number, `--random` samples, `--all` lifts the limit on boards with at most 100,000 tilings, `--ascii` prints instead of writing SVG. The command line numbers boards whose table has at most 4 million entries: dominoes up to 14×14, domicules up to 12×12. The [gallery](https://dawidrylko.github.io/lattice-dimers/) does the same in the browser, up to 18×18 for dominoes and 16×16 for domicules, with sampling above that. It also numbers the tilings of cylinders and tori up to 10×10, and the domicule tilings with a given number of diagonal pieces up to 10×10.
 
 ## Citation
 

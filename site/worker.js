@@ -1,62 +1,90 @@
 const unrankers = new Map();
 
-const PIECES = {
-  domino: {
-    canUnrank,
-    createUnranker,
-    unrankTiling,
-    sample: board => sampleRandomTiling(board),
-  },
-  domicule: {
-    canUnrank: canUnrankDomicule,
-    createUnranker: createDomiculeUnranker,
-    unrankTiling: unrankDomiculeTiling,
-    sample: board => sampleDomiculeTiling(board),
-  },
+const PIECE_LATTICES = { domino: 'square', domicule: 'king' };
+
+const SAMPLERS = {
+  domino: board => sampleRandomTiling(board),
+  domicule: board => sampleDomiculeTiling(board),
 };
 
-function getUnranker(board, id) {
-  const pieces = PIECES[board.pieces];
-  const key = board.id;
+function selectNumbering(board, diagonals) {
+  if (board.surface !== 'rectangle') {
+    const options = {
+      rowCount: board.rowCount,
+      colCount: board.colCount,
+      lattice: PIECE_LATTICES[board.pieces],
+      torus: board.surface === 'torus',
+    };
+
+    return {
+      key: board.id,
+      large: !canUnrankPeriodic(options),
+      create: onProgress => createPeriodicUnranker(options, onProgress),
+      unrank: unrankPeriodicTiling,
+    };
+  }
+
+  if (diagonals !== null) {
+    return {
+      key: `${board.id}/${diagonals}`,
+      large: true,
+      create: onProgress => createDiagonalUnranker({ ...board, diagonals }, onProgress),
+      unrank: unrankDiagonalTiling,
+    };
+  }
+
+  if (board.pieces === 'domicule') {
+    return {
+      key: board.id,
+      large: !canUnrankDomicule(board),
+      create: onProgress => createDomiculeUnranker(board, onProgress),
+      unrank: unrankDomiculeTiling,
+    };
+  }
+
+  return {
+    key: board.id,
+    large: !canUnrank(board),
+    create: onProgress => createUnranker(board, onProgress),
+    unrank: unrankTiling,
+  };
+}
+
+function getUnranker(numbering, id) {
+  const { key } = numbering;
 
   if (!unrankers.has(key)) {
-    if (!pieces.canUnrank(board)) {
-      [...unrankers.keys()]
-        .filter(other => {
-          const { board: otherBoard } = unrankers.get(other);
-          return !PIECES[otherBoard.pieces].canUnrank(otherBoard);
-        })
-        .forEach(other => unrankers.delete(other));
+    if (numbering.large) {
+      [...unrankers.keys()].filter(other => unrankers.get(other).large).forEach(other => unrankers.delete(other));
     }
 
-    const unranker = pieces.createUnranker(board, progress =>
-      postMessage({ id, type: 'progress', progress }),
-    );
+    const unranker = numbering.create(progress => postMessage({ id, type: 'progress', progress }));
 
-    unrankers.set(key, { board, unranker });
+    unrankers.set(key, { large: numbering.large, unranker });
   }
 
   return unrankers.get(key).unranker;
 }
 
 onmessage = ({ data }) => {
-  const { id, type, board } = data;
+  const { id, type, board, diagonals = null } = data;
 
   try {
     const tilings = [];
 
     if (type === 'page') {
-      const unranker = getUnranker(board, id);
+      const numbering = selectNumbering(board, diagonals);
+      const unranker = getUnranker(numbering, id);
       const first = BigInt(data.first);
       const end = first + BigInt(data.count);
       const last = end < unranker.total ? end : unranker.total;
 
       for (let rank = first; rank < last; rank++) {
-        tilings.push(PIECES[board.pieces].unrankTiling(unranker, rank));
+        tilings.push(numbering.unrank(unranker, rank));
       }
     } else if (type === 'random') {
       for (let i = 0; i < data.count; i++) {
-        tilings.push(PIECES[board.pieces].sample(board));
+        tilings.push(SAMPLERS[board.pieces](board));
       }
     }
 

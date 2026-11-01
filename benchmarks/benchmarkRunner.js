@@ -9,6 +9,8 @@ const {
   testCasesBigInt,
   filesDomicule,
   testCasesDomicule,
+  filesPeriodic,
+  filesDiagonal,
 } = require('../data');
 
 const RUN_DATE = new Date().toISOString().slice(0, 10);
@@ -19,13 +21,27 @@ const DOMICULE_BOARDS = [
   ...testCasesDomicule.map(({ rowCount, colCount }) => ({ rowCount, colCount })),
   { rowCount: 20, colCount: 20 },
 ];
+const GROUPS = {
+  '--domicule': [{ files: filesDomicule, testCases: DOMICULE_BOARDS }],
+  '--torus': [{ files: filesPeriodic, testCases: listSquareBoards(2, 14, { lattice: 'king', torus: true }) }],
+  '--cylinder': [{ files: filesPeriodic, testCases: listSquareBoards(2, 16, { lattice: 'king' }) }],
+  '--diagonal': [{ files: filesDiagonal, testCases: listSquareBoards(0, 20) }],
+};
 const USAGE =
-  'Usage: node benchmarks/benchmarkRunner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule] [--force]';
+  'Usage: node benchmarks/benchmarkRunner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal] [--force]';
 
 function displayPath(file) {
   const relative = path.relative(path.join(__dirname, '..'), file);
 
   return relative.startsWith('..') ? file : relative;
+}
+
+function listSquareBoards(minSide, maxSide, options = {}) {
+  return Array.from({ length: (maxSide - minSide) / 2 + 1 }, (_, i) => ({
+    rowCount: minSide + 2 * i,
+    colCount: minSide + 2 * i,
+    ...options,
+  }));
 }
 
 function readOnlyArg(argv) {
@@ -53,9 +69,10 @@ function ensureDirectoryExists(directory) {
 }
 
 function generateFileName(options) {
-  const { directory, fileName, rowCount, colCount } = options;
+  const { directory, fileName, rowCount, colCount, lattice, torus } = options;
+  const surface = lattice ? `-${lattice}-${torus ? 'torus' : 'cylinder'}` : '';
 
-  return path.join(directory, `${fileName}_${rowCount}x${colCount}.txt`);
+  return path.join(directory, `${fileName}_${rowCount}x${colCount}${surface}.txt`);
 }
 
 function generateContent(averageTime, executionTimes) {
@@ -180,15 +197,16 @@ function __main__() {
       offset = 0,
     } = parseArgs(argv, argsSchema);
     const only = readOnlyArg(argv);
-    const domicule = argv.includes('--domicule');
-    const groups = domicule
-      ? [{ files: filesDomicule, testCases: DOMICULE_BOARDS }]
+    const flags = Object.keys(GROUPS).filter(flag => argv.includes(flag));
+    const groups = flags.length
+      ? GROUPS[flags[0]]
       : [
           { files: filesInt, testCases: testCasesInt },
           { files: filesBigInt, testCases: testCasesBigInt },
         ];
 
     if (
+      flags.length > 1 ||
       !(numberOfExecutions > 0) ||
       (maxSize !== undefined && !(maxSize > 0)) ||
       !(offset >= 0) ||
