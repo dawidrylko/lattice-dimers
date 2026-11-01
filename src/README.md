@@ -38,7 +38,7 @@ pnpm render -r 4 -c 4 --domicule --all            # all 280 domicule tilings of 
 pnpm render -r 20 -c 20 --domicule --random -l 6  # six approximately uniform domicule tilings
 ```
 
-`-l` limits the number of tilings (default 1000), `-o` skips tilings, `-i` draws one tiling by its 1-based number, `--random` samples, `--all` lifts the limit on boards with at most 100,000 tilings, and `--ascii` prints instead of writing SVG. The command line numbers boards whose table has at most 4 million entries: dominoes up to 14 × 14 and domicules up to 12 × 12. The [gallery](https://dawidrylko.github.io/lattice-dimers/) numbers dominoes up to 18 × 18, domicules up to 16 × 16, cylinders and tori up to 10 × 10, and domicule tilings with a given number of diagonal pieces up to 10 × 10, and samples larger boards.
+`-l` limits the number of tilings (default 1000), `-o` skips tilings, `-i` draws one tiling by its 1-based number, `--random` samples, `--all` lifts the limit on boards with at most 100,000 tilings, and `--ascii` prints instead of writing SVG. The command line numbers boards whose table has at most 4 million entries: dominoes up to 14 × 14 and domicules up to 12 × 12. The [gallery](https://dawidrylko.github.io/lattice-dimers/) numbers dominoes up to 16 × 16, domicules up to 14 × 14, cylinders and tori up to 10 × 10, and domicule tilings with a given number of diagonal pieces up to 10 × 10. It samples larger boards and finds the number of every sample with `rank.js`, which keeps one row of completion counts instead of the table.
 
 A tiling is drawn in one of three styles. The same four 8 × 8 domicule tilings:
 
