@@ -50,6 +50,7 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | [`notes`](notes/README.md) | notebooks on the method and the sequences, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
 | [`src`](src/README.md) | solvers for boards, cylinders and tori, and the renderer that numbers, samples and draws tilings |
 | [`data`](data/README.md) | the known counts every solver and program is checked against |
+| [`docs`](docs/glossary.md) | the glossary of the words the repository uses for pieces and surfaces |
 | [`tests`](tests/README.md) | the test runners and what each one checks |
 | [`benchmarks`](benchmarks/README.md) | the benchmark runner and its results |
 | `site` | the build of the [site](https://dawidrylko.github.io/lattice-dimers/): the gallery, the benchmark tables and the notebooks |
