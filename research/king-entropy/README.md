@@ -31,7 +31,7 @@ with Python 3.13. Paths in the notes and in `paper/NUMBERS.md` are relative to i
 | `notes/` | the laboratory notes on Calkin-Wilf (`notes/calkin-wilf.md`) and on hypothesis (L) (`notes/log-convexity.md`) |
 | `log-convexity/` | the experiments on (L), scripts with their outputs |
 | `paper/` | the paper and the companion note (sources and PDFs), the bibliography and the number map `paper/NUMBERS.md` |
-| `release/` | the Zenodo runbook `release/ZENODO.md` and the OEIS draft `release/oeis-draft.txt` |
+| `release/` | the Zenodo runbook `release/ZENODO.md` and the OEIS draft `release/oeis-draft.txt`, submitted as A401669 (the submitted text is `oeis/A401669.txt` at the repository root) |
 | `replication/` | an independent recomputation written from scratch, with its own outputs; verdicts and commands in `replication/REPORT.md` |
 
 The tag `king-entropy-v0.1.0` predates this layout: there everything except `L/` and `paper/` sits directly in this directory.
