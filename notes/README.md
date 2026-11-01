@@ -9,5 +9,5 @@ The renderer in `site/notes.js` covers a subset of Markdown: headings, paragraph
 2. [Dominoes](02-dominoes.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes.html)): domino tilings of the 2n × 2n board, A004003, by three methods, the resultant and the running time.
 3. [Domicules](03-domicules.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules.html)): domicule tilings of the 2n × 2n board, A239273, up to 20 × 20, the modular solver and the Markov chain.
 4. [Cylinders](04-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/cylinders.html)): the square lattice, the triangular lattice and the king's graph on cylinders, and the recurrences of circumference 2.
-5. [Tori](05-torus.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/torus.html)): the same three lattices on tori, A401670, and the torus count over $e^{sL^2}$.
+5. [Tori](05-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/tori.html)): the same three lattices on tori, A401670, and the torus count over $e^{sL^2}$.
 6. [Diagonal pieces](06-diagonals.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/diagonals.html)): domicule tilings of the 2n × 2n board by the number of diagonal pieces, A401673.

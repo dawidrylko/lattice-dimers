@@ -7,7 +7,7 @@ const NOTE_LABELS = {
   dominoes: 'Dominoes',
   domicules: 'Domicules',
   cylinders: 'Cylinders',
-  torus: 'Tori',
+  tori: 'Tori',
   diagonals: 'Diagonal pieces',
 };
 

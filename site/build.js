@@ -39,13 +39,12 @@ const LARGEST_PERIODIC_RESULTS = [
 const BENCHMARK_RUNS = listBenchmarkRuns();
 const BENCHMARK_RUN = findLatestCompleteRun();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
-const BROWSER_SCRIPTS = ['src/renderer/svg.js', 'src/renderer/rank.js'];
+const BROWSER_SCRIPTS = ['src/renderer/svg.js'];
 const WORKER_SCRIPTS = [
   'src/renderer/unrank.js',
   'src/renderer/cftp.js',
   'src/renderer/domicule.js',
   'src/renderer/periodic.js',
-  'src/renderer/rank.js',
   'site/worker.js',
 ];
 const ASSETS = {
@@ -83,7 +82,7 @@ const GALLERY_BOARDS = [
   { rowCount: 12, colCount: 12 },
   { rowCount: 14, colCount: 14, memory: '60 MB' },
   { rowCount: 16, colCount: 16, memory: '250 MB' },
-  { rowCount: 18, colCount: 18, mode: 'random' },
+  { rowCount: 18, colCount: 18, memory: '1.1 GB', confirm: true },
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
 const DOMICULE_BOARDS = [
@@ -94,7 +93,7 @@ const DOMICULE_BOARDS = [
   { rowCount: 10, colCount: 10 },
   { rowCount: 12, colCount: 12 },
   { rowCount: 14, colCount: 14, memory: '200 MB' },
-  { rowCount: 16, colCount: 16, mode: 'random' },
+  { rowCount: 16, colCount: 16, memory: '1 GB', confirm: true },
   { rowCount: 18, colCount: 18, mode: 'random' },
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
@@ -105,14 +104,14 @@ const PERIODIC_PIECES = [
   { pieces: 'domicule', lattice: 'king', suffix: '-diagonal' },
 ];
 const DIAGONAL_FILTER_MAX_SIDE = 10;
-const DEFAULT_BOARD = '8x8';
+const DEFAULT_BOARD = '4x4';
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const NOTE_PROVENANCE = {
   research: 'every output on this page was read from the committed research data, checked or computed during that build.',
   dominoes: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
   domicules: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
   cylinders: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
-  torus: 'every output on this page was produced during that build from the files of this repository; the boards the solver column marks as data/ are stored counts, the entropies and the decay length ξ come from research/king-entropy/, and the running times from the benchmark run the page names.',
+  tori: 'every output on this page was produced during that build from the files of this repository; the boards the solver column marks as data/ are stored counts, the entropies and the decay length ξ come from research/king-entropy/, and the running times from the benchmark run the page names.',
   diagonals: 'every output on this page was produced during that build from the files of this repository; the rows the solver column marks as data/ are stored counts, which the build checked, and the running times come from the benchmark run the page names.',
 };
 const NOTE_SUMMARIES = {
@@ -121,10 +120,10 @@ const NOTE_SUMMARIES = {
   dominoes: 'Notebook: domino tilings of the 2n × 2n board (A004003) by three methods, the resultant and the running time.',
   domicules: 'Notebook: domicule tilings of the 2n × 2n board (A239273) up to 20 × 20, the modular solver and the Markov chain.',
   cylinders: "Notebook: tilings of cylinders on the square lattice, the triangular lattice and the king's graph, and the recurrences of circumference 2.",
-  torus: "Notebook: tilings of tori on three lattices (A401670 on the king's graph); the king's graph torus count over e^(sL²) tends to 2.",
+  tori: "Notebook: tilings of tori on three lattices (A401670 on the king's graph); the king's graph torus count over e^(sL²) tends to 2.",
   diagonals: 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces (A401673), up to 20 × 20.',
 };
-const NOTE_REDIRECTS = { a004003: 'dominoes', a239273: 'domicules' };
+const NOTE_REDIRECTS = { a004003: 'dominoes', a239273: 'domicules', torus: 'tori' };
 
 function listBenchmarkRuns() {
   return fs

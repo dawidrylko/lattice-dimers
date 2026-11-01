@@ -52,12 +52,13 @@ const NOTES = [
   { slug: 'dominoes', cells: 6 },
   { slug: 'domicules', cells: 8 },
   { slug: 'cylinders', cells: 5 },
-  { slug: 'torus', cells: 6 },
+  { slug: 'tori', cells: 6 },
   { slug: 'diagonals', cells: 5 },
 ];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes'],
   ['a239273', 'domicules'],
+  ['torus', 'tori'],
 ];
 const NOTE_FAILURES = ['DIFFERS FROM OEIS'];
 const PAGE_CONTROLS = '#page-controls button, #page-controls input';
