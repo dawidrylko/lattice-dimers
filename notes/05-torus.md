@@ -10,7 +10,7 @@ Two solvers count the same boards by different methods. [`periodicTilingSolver-B
 
 A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The modular solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
-The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [OEIS A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [OEIS A281679](https://oeis.org/A281679), of the cylinder $C_4 \times P_n$ [OEIS A006253](https://oeis.org/A006253). `node tests/testRunner.js` runs these boards and the king's graph and triangular boards of `data/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
+The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [OEIS A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [OEIS A281679](https://oeis.org/A281679). `node tests/testRunner.js` runs these boards and the king's graph and triangular boards of `data/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
 
 The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670). The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph or triangular tori.
 
