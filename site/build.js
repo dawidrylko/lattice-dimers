@@ -504,7 +504,7 @@ function buildJsonLd() {
         '@type': 'SoftwareSourceCode',
         name: 'Lattice Dimers',
         description:
-          "Code and data on dimers of the square lattice and the king's graph: transfer-matrix scripts, certificates and data for the entropy per site of the king's graph dimers, and exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, A239273): a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.",
+          "Code and data on dimers of the square lattice and the king's graph: transfer-matrix scripts, certificates and data for the entropy per site of the king's graph dimers, and exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, OEIS A239273): a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.",
         codeRepository: 'https://github.com/dawidrylko/lattice-dimers',
         programmingLanguage: ['JavaScript', 'Python'],
         runtimePlatform: 'Node.js',

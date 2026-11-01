@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: If you use this software or its results, please cite it as below.
 title: "Lattice Dimers: exact counts, numbering and sampling of domino and domicule tilings"
 abstract: >-
-  Exact counts of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, A239273)
+  Exact counts of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, OEIS A239273)
   of rectangular boards, of cylinders and tori on the square lattice, the triangular lattice
   and the king's graph, and of domicule tilings by the number of diagonal pieces: the domino
   product formula evaluated as a resultant of integer polynomials, transfer-matrix dynamic
