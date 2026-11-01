@@ -158,6 +158,18 @@ function renderChart({ title, x, y, series, reference, describe = ([px, py]) => 
   ].join('');
 }
 
+let figureCount = 0;
+
+/**
+ * Prefixes every selector of a stylesheet, so the style of one drawing does not reach the rest of the page.
+ * @param {string} css Rules without nesting, such as the renderer writes.
+ * @param {string} scope The selector to put in front.
+ * @returns {string} The scoped rules.
+ */
+function scopeStyle(css, scope) {
+  return css.replace(/([^{}]+)\{/g, (_, selectors) => `${selectors.split(',').map(selector => `${scope} ${selector.trim()}`).join(',')}{`);
+}
+
 function createCellHelpers() {
   const outputs = [];
   const text = [];
@@ -191,11 +203,13 @@ function createCellHelpers() {
         throw new Error('figure() takes an SVG drawing.');
       }
 
+      const id = `figure-${++figureCount}`;
+      const scoped = drawing.replace(/<style>([\s\S]*?)<\/style>/g, (_, css) => `<style>${scopeStyle(css, `#${id}`)}</style>`);
       const width = Number((drawing.match(/^<svg[^>]*\swidth="(\d+(?:\.\d+)?)"/) || [])[1]) || 0;
 
       flush();
       outputs.push(
-        `<figure class="tiling output${highlight ? ' highlight' : ''}"${width ? ` style="--width: ${width}px"` : ''}>${drawing}${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''}</figure>`,
+        `<figure id="${id}" class="tiling output${highlight ? ' highlight' : ''}"${width ? ` style="--width: ${width}px"` : ''}>${scoped}${highlight ? `<style>#${id} .h,#${id} .v{fill:#d1d5db;stroke:#d1d5db}</style>` : ''}${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''}</figure>`,
       );
     },
   };
@@ -371,28 +385,28 @@ async function renderNote(markdown, { resolveLink, context }) {
  * @property {number} options.colCount The width or circumference.
  * @property {string} [options.pieces] 'domino' or 'domicule'.
  * @property {string} [options.surface] 'rectangle', 'cylinder' or 'torus'.
- * @property {number|null} [options.diagonals] Only the domicule tilings with this many diagonal pieces.
  * @property {number[]|'all'} options.ranks The 0-based numbers of the tilings to draw.
  * @property {number} [options.columns] Tilings per row of the drawing.
  * @returns {{ svg: string, total: bigint }} The drawing and the number of tilings it chooses from.
  */
-function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectangle', diagonals = null, ranks, columns }) {
+function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectangle', ranks, columns }) {
+  if (!['domino', 'domicule'].includes(pieces) || !['rectangle', 'cylinder', 'torus'].includes(surface)) {
+    throw new Error(`drawTilings() takes pieces domino or domicule and surface rectangle, cylinder or torus, not ${pieces} on a ${surface}.`);
+  }
+
   const renderer = repositoryRequire('./src/renderer');
   let unranker;
   let unrank;
 
   if (surface !== 'rectangle') {
-    unranker = renderer.createPeriodicUnranker({ rowCount, colCount, lattice: pieces === 'domino' ? 'square' : 'king', torus: surface === 'torus', diagonals });
+    unranker = renderer.createPeriodicUnranker({ rowCount, colCount, lattice: pieces === 'domino' ? 'square' : 'king', torus: surface === 'torus' });
     unrank = renderer.unrankPeriodicTiling;
   } else if (pieces === 'domino') {
     unranker = renderer.createUnranker({ rowCount, colCount });
     unrank = renderer.unrankTiling;
-  } else if (diagonals === null) {
+  } else {
     unranker = renderer.createDomiculeUnranker({ rowCount, colCount });
     unrank = renderer.unrankDomiculeTiling;
-  } else {
-    unranker = renderer.createDiagonalUnranker({ rowCount, colCount, diagonals });
-    unrank = renderer.unrankDiagonalTiling;
   }
 
   const chosen = ranks === 'all' ? Array.from({ length: Number(unranker.total) }, (_, i) => i) : ranks;

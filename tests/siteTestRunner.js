@@ -834,12 +834,17 @@ async function checkNotes(page, baseUrl, width) {
       unresolved: /undefined|\\u0000/.test(document.querySelector('article').textContent),
       math: document.querySelectorAll('.math').length,
       katex: document.querySelectorAll('.katex').length,
+      chartFont: [...document.querySelectorAll('figure.chart svg text')].map(text => getComputedStyle(text).fontFamily).filter(font => /monospace/.test(font)).length,
       figures: [...document.querySelectorAll('figure.tiling > svg')].filter(svg => svg.getBoundingClientRect().width > 0 && svg.getBoundingClientRect().right <= document.documentElement.clientWidth + 0.5).length,
       charts: [...document.querySelectorAll('figure.chart')].map(figure => [...figure.querySelectorAll('svg')].filter(svg => getComputedStyle(svg).display !== 'none').length),
     }))()`);
 
     if (state.cells !== cells) {
       problems.push(`${slug} has ${state.cells} cells instead of ${cells}`);
+    }
+
+    if (state.chartFont) {
+      problems.push(`${slug} draws ${state.chartFont} chart labels in the monospace of a tiling drawing`);
     }
 
     if (state.figures !== figures) {

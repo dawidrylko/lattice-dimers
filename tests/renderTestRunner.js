@@ -791,11 +791,32 @@ const figureCell = code => renderNote(['# Figure', '', '```js run', code, '```',
 const figureTestCases = [
   {
     name: 'a drawing with a caption',
-    run: () => figureCell("figure('<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"20\"></svg>', 'a <b>', { highlight: true });").then(({ html }) => html.includes('<figure class="tiling output highlight" style="--width: 40px"><svg') && html.includes('<figcaption>a &lt;b&gt;</figcaption>')),
+    run: () => figureCell("figure('<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"20\"></svg>', 'a <b>', { highlight: true });").then(({ html }) => /<figure id="figure-\d+" class="tiling output highlight" style="--width: 40px"><svg/.test(html) && html.includes('<figcaption>a &lt;b&gt;</figcaption>')),
   },
   {
     name: 'something that is not a drawing',
     run: () => figureCell("figure('<script>alert(1)</script>');").then(() => false, error => error.message.includes('takes an SVG drawing')),
+  },
+  {
+    name: 'a drawing whose style stays inside it',
+    run: () =>
+      figureCell("figure('<svg xmlns=\"http://www.w3.org/2000/svg\"><style>text{fill:red}.h,.v{stroke:blue}</style></svg>');").then(({ html }) => {
+        const id = html.match(/<figure id="(figure-\d+)"/)[1];
+
+        return html.includes(`<style>#${id} text{fill:red}#${id} .h,#${id} .v{stroke:blue}</style>`);
+      }),
+  },
+  {
+    name: 'the counts of every board drawTilings draws',
+    run: async () =>
+      [
+        [{ pieces: 'domino', surface: 'rectangle' }, 36n],
+        [{ pieces: 'domicule', surface: 'rectangle' }, 280n],
+        [{ pieces: 'domino', surface: 'cylinder' }, 121n],
+        [{ pieces: 'domicule', surface: 'cylinder' }, 2649n],
+        [{ pieces: 'domino', surface: 'torus' }, 272n],
+        [{ pieces: 'domicule', surface: 'torus' }, 17552n],
+      ].every(([options, expected]) => drawTilings({ rowCount: 4, colCount: 4, ranks: [0], ...options }).total === expected),
   },
   {
     name: 'every domino tiling of the 4 x 4 board',
