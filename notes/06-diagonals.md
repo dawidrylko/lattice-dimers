@@ -2,6 +2,19 @@
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/diagonals.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673). The method is described in the [method note](01-method.md).
 
+## The problem
+
+A diagonal piece covers two cells that share only a corner. On the $2n \times 2n$ board a tiling has an even number of them, from 0 to $2n^2$. The drawing shows the first tiling of the $4 \times 4$ board, in the gallery's numbering, for each possible number of diagonal pieces, with the straight pieces greyed out.
+
+```js run
+const renderer = require('./src/renderer');
+const counts = [0, 2, 4, 6, 8];
+const tilings = counts.map(k => renderer.unrankDiagonalTiling(renderer.createDiagonalUnranker({ rowCount: 4, colCount: 4, diagonals: k }), 0n));
+const svg = renderer.renderSheet(tilings, 1, { rowCount: 4, colCount: 4, style: 'dimer', labels: counts.map(k => `k = ${k}`) });
+
+figure(svg, 'Tilings of the 4 × 4 board with k = 0, 2, 4, 6 and 8 diagonal pieces.', { highlight: true });
+```
+
 ## The polynomial
 
 Give every diagonal piece the weight $x$. The weighted count of the $h \times w$ board is a polynomial,
