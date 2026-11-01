@@ -16,6 +16,7 @@ const {
   DEFAULT_SWEEPS: DOMICULE_SWEEPS,
 } = require('./domicule');
 const { canUnrankPeriodic, createPeriodicUnranker, unrankPeriodicTiling } = require('./periodic');
+const { listRankPrimes, rankTilingsModulo, combineRanks } = require('./rank');
 
 module.exports = {
   enumerateTilings,
@@ -39,4 +40,7 @@ module.exports = {
   canUnrankPeriodic,
   createPeriodicUnranker,
   unrankPeriodicTiling,
+  listRankPrimes,
+  rankTilingsModulo,
+  combineRanks,
 };

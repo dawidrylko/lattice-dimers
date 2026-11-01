@@ -83,7 +83,7 @@ for (let n = 1; n <= 5; n++) {
 
 ## Numbering tilings
 
-The completion-count table numbers every tiling. Here are tiling 1 and the last tiling of a $4 \times 4$ board, and the size of the table on the gallery boards. The gallery numbers the tilings up to $18 \times 18$; at $20 \times 20$ it samples them instead.
+The completion-count table numbers every tiling. Here are tiling 1 and the last tiling of a $4 \times 4$ board, and the size of the table on the gallery boards. The gallery pages through the tilings up to $16 \times 16$; at $18 \times 18$ and $20 \times 20$ it samples them and finds the number of each sample without the table.
 
 ```js run
 const { createUnranker, unrankTiling, renderAscii } = require('./src/renderer');

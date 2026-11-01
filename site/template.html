@@ -229,8 +229,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="picker">
       <span class="label" id="styles-label">Style</span>
       <div class="pieces" id="styles" role="group" aria-labelledby="styles-label">
-        <button type="button" data-style="blocks">Blocks</button>
         <button type="button" data-style="dimer">Dimer graph</button>
+        <button type="button" data-style="blocks">Blocks</button>
         <button type="button" data-style="engraving">Engraving</button>
       </div>
     </div>
@@ -249,11 +249,6 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
         <button class="btn" type="submit">Go</button>
         <button class="btn primary" type="button" id="random" title="Jump to a random tiling"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h2.5c3 0 4 8 7 8H14M2 12h2.5c1.2 0 2-1.2 2.7-2.6M9 6.6C9.6 5.2 10.4 4 11.5 4H14M12 2l2 2-2 2M12 10l2 2-2 2"/></svg>Random</button>
       </form>
-    </div>
-    <div class="toolbar" id="sample-controls" hidden>
-      <div class="group">
-        <button class="btn primary" type="button" id="resample"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h2.5c3 0 4 8 7 8H14M2 12h2.5c1.2 0 2-1.2 2.7-2.6M9 6.6C9.6 5.2 10.4 4 11.5 4H14M12 2l2 2-2 2M12 10l2 2-2 2"/></svg>New random sample</button>
-      </div>
     </div>
     <div class="summary">
       <p class="meta" id="gallery-meta"></p>
@@ -367,7 +362,8 @@ __SCRIPTS__
 const DATA = __DATA__;
 const WORKER_SOURCE = __WORKER__;
 const PAGE_SIZE = BigInt(100);
-const RANDOM_SAMPLE_SIZE = 6;
+const RANDOM_SAMPLE_SIZE = 10;
+const DEFAULT_STYLE = 'dimer';
 const ZERO = BigInt(0);
 const ONE = BigInt(1);
 
@@ -396,6 +392,8 @@ const ms = result =>
 const confirmedBoards = new Set();
 const pending = new Map();
 let worker = null;
+let workerUrl = null;
+let rankers = [];
 let requestId = 0;
 let renderId = 0;
 let shownBoardId = null;
@@ -406,9 +404,9 @@ let highlightDiagonals = readHighlight();
 function readStyle() {
   try {
     const saved = localStorage.getItem('lattice-dimers-style');
-    return renderSheet.STYLES.includes(saved) ? saved : renderSheet.STYLES[0];
+    return renderSheet.STYLES.includes(saved) ? saved : DEFAULT_STYLE;
   } catch {
-    return renderSheet.STYLES[0];
+    return DEFAULT_STYLE;
   }
 }
 
@@ -452,9 +450,14 @@ function showHighlight(board) {
   $('highlight').checked = highlightDiagonals;
 }
 
+function workerSource() {
+  workerUrl ??= URL.createObjectURL(new Blob([WORKER_SOURCE], { type: 'text/javascript' }));
+  return workerUrl;
+}
+
 function getWorker() {
   if (!worker) {
-    worker = new Worker(URL.createObjectURL(new Blob([WORKER_SOURCE], { type: 'text/javascript' })));
+    worker = new Worker(workerSource());
     worker.onmessage = ({ data }) => {
       const request = pending.get(data.id);
       if (!request) return;
@@ -473,6 +476,53 @@ function getWorker() {
   }
 
   return worker;
+}
+
+function stopRanking() {
+  rankers.forEach(ranker => ranker.terminate());
+  rankers = [];
+}
+
+function rankSamples(board, tilings, onProgress) {
+  stopRanking();
+  const primes = listRankPrimes(board.total);
+  const count = Math.min(primes.length, Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 1)));
+  const progress = new Array(count).fill(0);
+  const shares = Array.from({ length: count }, (_, w) => primes.filter((_, j) => j % count === w));
+  const own = [];
+  rankers = own;
+  const stop = () => {
+    own.forEach(ranker => ranker.terminate());
+    if (rankers === own) rankers = [];
+  };
+  const runs = shares.map(
+    (share, w) =>
+      new Promise((resolve, reject) => {
+        const ranker = new Worker(workerSource());
+        own.push(ranker);
+        ranker.onmessage = ({ data }) => {
+          if (data.type === 'progress') {
+            progress[w] = data.progress;
+            return onProgress(progress.reduce((sum, value) => sum + value, 0) / count);
+          }
+          if (data.type === 'result') resolve(data.residues);
+          else reject(new Error(data.message));
+        };
+        ranker.onerror = event => {
+          event.preventDefault();
+          reject(new Error('The browser could not number these tilings.'));
+        };
+        ranker.postMessage({ id: w, type: 'rank', board, tilings, primes: share });
+      }),
+  );
+
+  return Promise.all(runs).finally(stop).then(results => {
+    const residues = primes.map((_, j) => results[j % count][Math.floor(j / count)]);
+    if (residues.some(({ total }, j) => BigInt(total) !== BigInt(board.total) % BigInt(primes[j]))) {
+      throw new Error('The numbers of these tilings did not check out.');
+    }
+    return combineRanks(residues.map(({ ranks }) => ranks), primes);
+  });
 }
 
 function requestTilings(message, onProgress = () => {}) {
@@ -496,8 +546,7 @@ function tableMemory(board, diagonals) {
 }
 
 function needsConfirmation(board, diagonals = null) {
-  const confirm = diagonals === null ? board.confirm : board.filterMemory;
-  return Boolean(confirm) && !confirmedBoards.has(confirmationKey(board, diagonals));
+  return diagonals !== null && Boolean(board.filterMemory) && !confirmedBoards.has(confirmationKey(board, diagonals));
 }
 
 function pageCount(total) {
@@ -709,18 +758,16 @@ function updateControls({ board, page, diagonals, total }) {
   $('diagonal-picker').hidden = board.pieces !== 'domicule';
   showDiagonalFilter(board, diagonals);
   showHighlight(board);
-  $('page-controls').hidden = !pages;
-  $('sample-controls').hidden = pages;
-
-  if (pages) {
-    const locked = needsConfirmation(board, diagonals);
-    $('page-controls').querySelectorAll('button, input').forEach(control => (control.disabled = locked));
-    $('page').value = fmt(page);
-    $('page').style.width = `${Math.max(fmt(page).length + 3, 6)}ch`;
-    $('pages').innerHTML = num(pageCount(total));
-    $('first').disabled = $('prev').disabled = locked || page === ONE;
-    $('last').disabled = $('next').disabled = locked || page === pageCount(total);
-  }
+  const locked = !pages || needsConfirmation(board, diagonals);
+  $('page-controls').querySelectorAll('button, input').forEach(control => (control.disabled = locked));
+  $('random').disabled = pages && locked;
+  $('random').title = pages ? 'Jump to a random tiling' : 'Draw new random tilings';
+  $('page').value = pages ? fmt(page) : '';
+  $('page').placeholder = pages ? '' : '-';
+  $('page').style.width = `${Math.max(fmt(page).length + 3, 6)}ch`;
+  $('pages').innerHTML = num(pageCount(total));
+  $('first').disabled = $('prev').disabled = locked || page === ONE;
+  $('last').disabled = $('next').disabled = locked || page === pageCount(total);
 }
 
 async function renderGallery(state) {
@@ -730,6 +777,7 @@ async function renderGallery(state) {
   const name = `<strong>${board.rowCount}×${board.colCount}${board.surface === 'rectangle' ? '' : ` ${board.surface}`}</strong>`;
 
   updateControls(state);
+  stopRanking();
   $('notice').hidden = true;
   $('status').textContent = '';
 
@@ -740,15 +788,30 @@ async function renderGallery(state) {
 
   if (board.mode === 'random') {
     $('gallery-meta').innerHTML =
-      `${name} · ${num(board.total)} tilings · too many to number in a browser, ` +
+      `${name} · ${num(board.total)} tilings · too many to page through in a browser, ` +
       (board.pieces === 'domicule'
         ? `so these are ${RANDOM_SAMPLE_SIZE} approximately uniform random ones (a Markov chain of __DOMICULE_SWEEPS__ steps per cell)`
-        : `so these are ${RANDOM_SAMPLE_SIZE} uniformly random ones (coupling from the past)`);
+        : `so these are ${RANDOM_SAMPLE_SIZE} uniformly random ones (coupling from the past)`) +
+      ', each with its number';
     $('status').textContent = 'Sampling random tilings...';
-    const tilings = await requestTilings({ type: 'random', board, count: RANDOM_SAMPLE_SIZE });
-    if (!isCurrent()) return;
-    $('status').textContent = '';
-    return showSheet(board, tilings, ONE, tilings.map((_, i) => `random ${i + 1}`));
+    let tilings = null;
+    try {
+      tilings = await requestTilings({ type: 'random', board, count: RANDOM_SAMPLE_SIZE });
+      if (!isCurrent()) return;
+      $('status').textContent = 'Numbering the tilings...';
+      showSheet(board, tilings, ONE, tilings.map(() => 'numbering...'));
+      const ranks = await rankSamples(board, tilings, progress => {
+        if (isCurrent()) $('status').textContent = `Numbering the tilings... ${Math.round(progress * 100)}%`;
+      });
+      if (!isCurrent()) return;
+      $('status').textContent = '';
+      return showSheet(board, tilings, ONE, ranks.map(rank => `#${rank + ONE}`));
+    } catch (error) {
+      if (!isCurrent()) return;
+      $('status').textContent = error.message;
+      if (tilings) showSheet(board, tilings, ONE, tilings.map((_, i) => `random ${i + 1}`));
+      return;
+    }
   }
 
   const first = (page - ONE) * PAGE_SIZE;
@@ -764,10 +827,7 @@ async function renderGallery(state) {
   if (locked) {
     $('sheet').innerHTML = '';
     $('notice-text').textContent =
-      diagonals === null
-        ? `Numbering the tilings of the ${board.rowCount}×${board.colCount} board needs a counting table of about ${board.memory} ` +
-          'in your browser, and building it takes a few seconds. Devices with little memory may not manage it.'
-        : `Numbering the tilings of the ${board.rowCount}×${board.colCount} ${board.surface} by their diagonal pieces needs counting tables of up to ` +
+      `Numbering the tilings of the ${board.rowCount}×${board.colCount} ${board.surface} by their diagonal pieces needs counting tables of up to ` +
           `${board.filterMemory} in your browser, and building them takes up to half a minute. Devices with little memory may not manage it.`;
     $('notice').hidden = false;
     return;
@@ -808,6 +868,9 @@ function render() {
 
   if (state.tab === 'gallery') {
     renderGallery(state);
+  } else {
+    renderId++;
+    stopRanking();
   }
 }
 
@@ -857,9 +920,9 @@ $('goto').addEventListener('submit', e => {
 });
 $('random').addEventListener('click', () => {
   const s = parseHash();
+  if (s.board.mode === 'random') return render();
   goToTiling(s.board, randomBelow(s.total) + ONE, s.diagonals);
 });
-$('resample').addEventListener('click', render);
 $('load-table').addEventListener('click', () => {
   const { board, diagonals } = parseHash();
   confirmedBoards.add(confirmationKey(board, diagonals));
