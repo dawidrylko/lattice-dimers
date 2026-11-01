@@ -1,6 +1,6 @@
 # Method
 
-This note describes how the project counts, numbers and samples two kinds of tilings of a board: domino tilings ([OEIS A004003](https://oeis.org/A004003)) and domicule tilings ([OEIS A239264](https://oeis.org/A239264), [A239273](https://oeis.org/A239273)) [6]. The computations behind every number are in the notebooks for [A004003](02-a004003.md), [A239273](03-a239273.md), [tori and cylinders](04-torus.md) and [diagonal pieces](05-diagonals.md).
+This note describes how the project counts, numbers and samples two kinds of tilings of a board: domino tilings ([OEIS A004003](https://oeis.org/A004003)) and domicule tilings ([OEIS A239264](https://oeis.org/A239264), [OEIS A239273](https://oeis.org/A239273)) [6]. The computations behind every number are in the notebooks for [A004003](02-a004003.md), [A239273](03-a239273.md), [tori and cylinders](04-torus.md) and [diagonal pieces](05-diagonals.md).
 
 ## Problem
 
@@ -90,4 +90,4 @@ The tests are in [`tests/`](../tests), the known values in [`data/`](../data).
 3. E. H. Bareiss. Sylvester's identity and multistep integer-preserving Gaussian elimination. *Mathematics of Computation* 22(103):565-578, 1968. [doi:10.1090/S0025-5718-1968-0226829-0](https://doi.org/10.1090/S0025-5718-1968-0226829-0)
 4. J. G. Propp and D. B. Wilson. Exact sampling with coupled Markov chains and applications to statistical mechanics. *Random Structures and Algorithms* 9(1-2):223-252, 1996. [doi:10.1002/(SICI)1098-2418(199608/09)9:1/2<223::AID-RSA14>3.0.CO;2-O](https://doi.org/10.1002/%28SICI%291098-2418%28199608/09%299:1/2%3C223::AID-RSA14%3E3.0.CO;2-O)
 5. N. Alon and S. Friedland. The maximum number of perfect matchings in graphs with a given degree sequence. *Electronic Journal of Combinatorics* 15:N13, 2008. [doi:10.37236/888](https://doi.org/10.37236/888)
-6. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [A004003](https://oeis.org/A004003), [A239264](https://oeis.org/A239264) and [A239273](https://oeis.org/A239273). [oeis.org](https://oeis.org)
+6. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A004003](https://oeis.org/A004003), [OEIS A239264](https://oeis.org/A239264) and [OEIS A239273](https://oeis.org/A239273). [oeis.org](https://oeis.org)

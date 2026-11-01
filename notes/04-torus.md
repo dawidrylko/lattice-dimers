@@ -10,9 +10,9 @@ Two solvers count the same boards by different methods. `periodicTilingSolver-Bi
 
 A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The modular solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
-The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [A281679](https://oeis.org/A281679), of the cylinder $C_4 \times P_n$ [A006253](https://oeis.org/A006253). `node tests/testRunner.js` runs these boards and the king's graph and triangular boards of `data/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
+The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [OEIS A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [OEIS A281679](https://oeis.org/A281679), of the cylinder $C_4 \times P_n$ [OEIS A006253](https://oeis.org/A006253). `node tests/testRunner.js` runs these boards and the king's graph and triangular boards of `data/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
 
-The OEIS was searched by terms and by name on 30 October 2026. It has no entry for the king's graph or triangular tori, for the king's graph cylinders of circumference 3 to 6 or for the triangular ones of circumference 3 and 4. The cylinders of circumference 2 are linear recurrences it already lists: [A002532](https://oeis.org/A002532) on the king's graph, [A002605](https://oeis.org/A002605) on the triangular lattice. So are the king's graph cylinders of height 2, [A062510](https://oeis.org/A062510).
+The OEIS was searched by terms and by name on 30 October 2026. It has no entry for the king's graph or triangular tori, for the king's graph cylinders of circumference 3 to 6 or for the triangular ones of circumference 3 and 4. The cylinders of circumference 2 are linear recurrences it already lists: [OEIS A002532](https://oeis.org/A002532) on the king's graph, [OEIS A002605](https://oeis.org/A002605) on the triangular lattice. So are the king's graph cylinders of height 2, [OEIS A062510](https://oeis.org/A062510).
 
 ## The king's graph on the 2n × 2n torus
 
@@ -71,7 +71,7 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 Since a torus has no boundary, $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site.
 
-The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
+The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([OEIS A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
 
 ```js run
 const fs = require('fs');

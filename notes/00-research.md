@@ -1,6 +1,6 @@
 # The dimer entropy of the king's graph
 
-The research part of this repository is a paper and a companion note on the perfect matchings of the king's graph, the square lattice with both diagonals. A perfect matching of the $m \times n$ king board is a domicule tiling of the $m \times n$ board, counted in [OEIS A239264](https://oeis.org/A239264), with the squares in [A239273](https://oeis.org/A239273). The code cells on this page read the committed results of `research/king-entropy/` and stop the site build when a value in the results table no longer matches them.
+The research part of this repository is a paper and a companion note on the perfect matchings of the king's graph, the square lattice with both diagonals. A perfect matching of the $m \times n$ king board is a domicule tiling of the $m \times n$ board, counted in [OEIS A239264](https://oeis.org/A239264), with the squares in [OEIS A239273](https://oeis.org/A239273). The code cells on this page read the committed results of `research/king-entropy/` and stop the site build when a value in the results table no longer matches them.
 
 ## Papers
 
