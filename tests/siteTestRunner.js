@@ -51,10 +51,10 @@ const NOTES = [
   { slug: 'method', cells: 0 },
   { slug: 'a004003', cells: 6 },
   { slug: 'a239273', cells: 8 },
-  { slug: 'torus', cells: 5 },
-  { slug: 'diagonals', cells: 3 },
+  { slug: 'torus', cells: 7 },
+  { slug: 'diagonals', cells: 5 },
 ];
-const NOTE_FAILURES = ['NO', 'DIFFERS FROM OEIS'];
+const NOTE_FAILURES = ['DIFFERS FROM OEIS'];
 const PAGE_CONTROLS = '#page-controls button, #page-controls input';
 const siteTestCases = [
   { width: 1440, check: 'sheets' },

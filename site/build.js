@@ -108,15 +108,17 @@ const DEFAULT_BOARD = '4x4';
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const NOTE_PROVENANCE = {
   research: 'every output on this page was read from the committed research data, checked or computed during that build.',
-  torus: 'every output on this page was computed during that build, except the boards the solver column marks as data/ and the entropies read from research/king-entropy/.',
-  diagonals: 'every output on this page was computed during that build, except the rows the solver column marks as data/, which the build checked.',
+  a004003: 'every output on this page was computed during that build, except the running times, read from the benchmark run the page names.',
+  a239273: 'every output on this page was computed during that build, except the running times, read from the benchmark run the page names.',
+  torus: 'every output on this page was computed during that build, except the boards the solver column marks as data/, the entropies and the decay length ξ read from research/king-entropy/, and the running times, read from the benchmark run the page names.',
+  diagonals: 'every output on this page was computed during that build, except the rows the solver column marks as data/, which the build checked, and the running times, read from the benchmark run the page names.',
 };
 const NOTE_SUMMARIES = {
   research: "The entropy per site of the king's graph dimers: an estimate with error bar 6·10⁻¹⁶, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
   method: 'How the tilings are counted, numbered and sampled, and how every number is checked.',
   a004003: 'Notebook: domino tilings by three methods, the resultant and the running time.',
   a239273: 'Notebook: domicule tilings up to 20 × 20, the modular solver and the Markov chain.',
-  torus: "Notebook: tilings of cylinders and tori on three lattices; the king's graph torus count over e^(sL²) tends to 2.",
+  torus: "Notebook: tilings of tori on three lattices and of the king's graph on cylinders; the king's graph torus count over e^(sL²) tends to 2.",
   diagonals: 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces, up to 20 × 20.',
 };
 
@@ -469,6 +471,33 @@ function roundDecimal(value, digits) {
 }
 
 /**
+ * The natural logarithm of an exact count, from its first 17 digits and its length.
+ * @param {bigint|string} count The count.
+ * @returns {number} log(count).
+ */
+function logCount(count) {
+  const digits = String(count);
+  const head = digits.slice(0, 17);
+
+  return Math.log(Number(head)) + (digits.length - head.length) * Math.LN10;
+}
+
+/**
+ * Formats an average time of a benchmark result for a notebook table.
+ * @param {{ average: number, runs: number }|null} result The result of readAverageTime.
+ * @returns {string} The time in ms or s, marked when it was measured once.
+ */
+function formatTime(result) {
+  if (result === null) {
+    return '-';
+  }
+
+  const time = result.average >= 1000 ? `${(result.average / 1000).toFixed(2)} s` : `${result.average.toFixed(2)} ms`;
+
+  return result.runs === 1 ? `${time} (one run)` : time;
+}
+
+/**
  * Formats the 8×8 count of a test data file for the main page.
  * @param {Object[]} testCases The test cases of one data file.
  * @returns {string} The count with thousands separators.
@@ -603,7 +632,7 @@ async function buildNotes(notes, context) {
       .replace('__SITE_HEADER__', () => renderHeader({ root: '../', current: note.slug, notes }))
       .replace('__SITE_FOOTER__', () =>
         renderFooter([
-          `Built from <a href="${REPOSITORY_BLOB_URL}/notes/${note.file}">notes/${note.file}</a> on ${today}; ${NOTE_PROVENANCE[note.slug] || 'every output on this page was computed during that build.'}`,
+          `Built from <a href="${REPOSITORY_BLOB_URL}/notes/${note.file}">notes/${note.file}</a> on ${today}${cells ? `; ${NOTE_PROVENANCE[note.slug] || 'every output on this page was computed during that build.'}` : '.'}`,
         ]),
       );
 
@@ -688,8 +717,12 @@ async function __main__() {
     benchmark: data.benchmark,
     benchmarkRun: `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`,
     domiculeBenchmark: data.domiculeBenchmark,
+    periodicBenchmark: data.periodicBenchmark,
+    diagonalBenchmark: data.diagonalBenchmark,
     countDomicule: board => countDomiculeTilings(board).then(BigInt),
     roundDecimal,
+    logCount,
+    formatTime,
   });
   const readScripts = files => files.map(file => fs.readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8')).join('\n');
   const scripts = readScripts(BROWSER_SCRIPTS);
