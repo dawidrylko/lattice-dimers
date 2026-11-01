@@ -63,7 +63,7 @@ const ENTRY_PROGRAMS = {
   A004003: 'vector(11, n, a(n-1))',
   A239264: 'concat(vector(11, d, vector(d, n, T(n-1, d-n))))',
   A239273: 'vector(5, n, a(n-1))',
-  A401670: 'vector(4, n, a(n-1))',
+  A401670: 'vector(5, n, a(n-1))',
   A401673: 'concat(vector(4, n, row(n-1)))',
 };
 
@@ -162,6 +162,27 @@ function readEntryProgram(entry) {
   return program;
 }
 
+function executeProgramListTest() {
+  const tested = new Set(PROGRAMS.flatMap(({ files }) => files));
+  const untested = fs
+    .readdirSync(OEIS_DIRECTORY)
+    .filter(name => /^A\d{6}$/.test(name))
+    .map(entry => `oeis/${entry}/${entry}.gp`)
+    .filter(file => fs.existsSync(path.join(ROOT_DIRECTORY, file)) && !tested.has(file));
+
+  process.stdout.write('Executing the test that every program in oeis/ is run... ');
+
+  if (untested.length > 0) {
+    console.error(`Failed! No test in tests/pariTestRunner.js runs ${untested.join(', ')}.`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function executeEntryProgramTests() {
   const entries = fs.readdirSync(OEIS_DIRECTORY).filter(name => /^A\d{6}$/.test(name)).sort();
 
@@ -174,6 +195,12 @@ function executeEntryProgramTests() {
       }
 
       process.stdout.write(`Executing the PARI program of ${entry}.txt against b${entry.slice(1)}.txt... `);
+
+      if (!fs.existsSync(path.join(OEIS_DIRECTORY, entry, `b${entry.slice(1)}.txt`))) {
+        console.error(`Failed! ${entry}.txt has a PARI program and oeis/${entry} has no b-file to check it against.`);
+
+        return false;
+      }
 
       if (!ENTRY_PROGRAMS[entry]) {
         console.error(`Failed! ${entry}.txt has a PARI program with no test in tests/pariTestRunner.js.`);
@@ -211,9 +238,10 @@ function executeEntryProgramTests() {
 function __main__() {
   const readmeTestsPassed = executeReadmeTests();
   const gpTestsPassed = PROGRAMS.map(executeGpTests).every(Boolean);
+  const programListPassed = executeProgramListTest();
   const entryTestsPassed = executeEntryProgramTests();
 
-  if (readmeTestsPassed && gpTestsPassed && entryTestsPassed) {
+  if (readmeTestsPassed && gpTestsPassed && programListPassed && entryTestsPassed) {
     console.log('All PARI/GP tests completed successfully.');
     process.exit(0);
   }
