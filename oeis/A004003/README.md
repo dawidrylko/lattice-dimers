@@ -4,7 +4,7 @@
 
 ## Contribution
 
-- The formula $a(n) = (-1)^n \operatorname{Res}(P(x), P(-x))$, where $P(x^2) = U_{2n}(x/2)$, and its PARI program, submitted 15 October 2026.
+- The formula $a(n) = (-1)^n \mathrm{Res}(P(x), P(-x))$, where $P(x^2) = U_{2n}(x/2)$, and its PARI program, submitted 15 October 2026.
 
 ## Status
 
