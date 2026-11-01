@@ -1,14 +1,17 @@
 """Claim 1, the A239264 b-file that oeis_check.py could only compare by its Git LFS pointer.
 
-The b-file was extended to antidiagonals 0..44 and approved on 2026-10-31. oeis.org now
-serves the extension as b239264.txt and the former file (antidiagonals 0..36, whose LFS
-pointer out/oeis_check.txt records) as b239264_2.txt. Both are fetched into one directory with
+The b-file was extended to antidiagonals 0..44 (approved on 2026-10-31) and then to 0..46
+(approved on 2026-11-01). oeis.org serves the newest file as b239264.txt, the 0..44 file as
+b239264_3.txt and the former file (antidiagonals 0..36, whose LFS pointer out/oeis_check.txt
+records) as b239264_2.txt. The files are fetched into one directory with
 curl -sSfO https://oeis.org/A239264/<name> and checked as follows:
   - b239264_2.txt is rebuilt from out/counts_free.json together with its trailing empty
     lines, and the rebuild compared byte for byte with the file and with the pointer;
   - b239264.txt is compared term by term with out/counts_free.json (antidiagonals 0..36)
-    and with data/zex/zex_king_free_*.json (antidiagonals 0..44), which
-    compare_counts.py checks against kd.c.
+    and with data/zex/zex_king_free_*.json (all its antidiagonals, their number read from the
+    length of the file), which compare_counts.py checks against kd.c; a board with an odd
+    number of cells has no tiling, so its term is compared with 0;
+  - b239264_3.txt, when fetched too, is compared with the leading terms of b239264.txt.
 
 Run (after counts.py and oeis_check.py): python3 bfile_check.py <dir> > out/bfile_check.txt
 """
@@ -44,8 +47,10 @@ def A_zex(Z, n, k):
     a, b = min(n, k), max(n, k)
     if a == 0:
         return 1
+    if (n * k) % 2:
+        return 0
     if a == 1:
-        return 1 - b % 2
+        return 1
     return Z[a][b]
 
 
@@ -53,7 +58,10 @@ def main():
     src = sys.argv[1]
     own = load_counts()
     zex = load_zex()
-    pos = [(n, d - n) for d in range(45) for n in range(d + 1)]
+    new = read_bfile(os.path.join(src, "b239264.txt"))
+    diagonals = next(d for d in range(len(new) + 2) if d * (d + 1) // 2 >= len(new))
+    assert diagonals * (diagonals + 1) // 2 == len(new)
+    pos = [(n, d - n) for d in range(diagonals) for n in range(d + 1)]
     n_old = 37 * 38 // 2
 
     print("== b239264_2.txt (antidiagonals 0..36) ==")
@@ -71,18 +79,21 @@ def main():
           f"byte-identical to the file: {same}; pointer of out/oeis_check.txt "
           f"{ptr.group(1)}... size {ptr.group(2)}: {'MATCH' if hit else 'no match'}")
 
-    print("\n== b239264.txt (antidiagonals 0..44) ==")
+    print(f"\n== b239264.txt (antidiagonals 0..{diagonals - 1}) ==")
     raw = open(os.path.join(src, "b239264.txt"), "rb").read()
-    new = read_bfile(os.path.join(src, "b239264.txt"))
-    assert len(new) == len(pos)
     print(f"{len(raw)} bytes, sha256 {hashlib.sha256(raw).hexdigest()}")
     bad_own = sum(new[i] != A(own, n, k) for i, (n, k) in enumerate(pos[:n_old]))
     bad_zex = sum(new[i] != A_zex(zex, n, k) for i, (n, k) in enumerate(pos))
     print(f"{len(new)} terms, up to {max(len(str(t)) for t in new)} digits")
     print(f"antidiagonals 0..36 vs out/counts_free.json: {n_old} terms, mismatches {bad_own}")
-    print(f"antidiagonals 0..44 vs data/zex: {len(new)} terms, mismatches {bad_zex}")
+    print(f"antidiagonals 0..{diagonals - 1} vs data/zex: {len(new)} terms, mismatches {bad_zex}")
     print(f"first {n_old} terms equal to b239264_2.txt: {new[:n_old] == old}")
-    print("\nTOTAL MISMATCHES:", (not same) + (not hit) + bad_own + bad_zex + (new[:n_old] != old))
+    bad_prev = 0
+    if os.path.exists(os.path.join(src, "b239264_3.txt")):
+        prev = read_bfile(os.path.join(src, "b239264_3.txt"))
+        bad_prev = new[:len(prev)] != prev
+        print(f"first {len(prev)} terms equal to b239264_3.txt: {not bad_prev}")
+    print("\nTOTAL MISMATCHES:", (not same) + (not hit) + bad_own + bad_zex + (new[:n_old] != old) + bad_prev)
 
 
 if __name__ == "__main__":
