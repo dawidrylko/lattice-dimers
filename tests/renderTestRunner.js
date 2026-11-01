@@ -16,6 +16,9 @@ const {
   sampleDomiculeTiling,
   createPeriodicUnranker,
   unrankPeriodicTiling,
+  listRankPrimes,
+  rankTilingsModulo,
+  combineRanks,
 } = require('../src/renderer');
 const { PERIODIC_LATTICES, countPeriodicDiagonals } = require('../src/renderer/periodic');
 const periodicReference = require('../src/solvers/periodicTilingSolver-BigInt.js');
@@ -41,6 +44,18 @@ const labelWidthTestCases = [
   { rowCount: 16, colCount: 16, first: BigInt('125468628332598003063877133633598664929040628978461090301') },
   { rowCount: 14, colCount: 14, first: BigInt('8212337965975290675433764125340416032951') },
   { rowCount: 4, colCount: 4, label: 'tiling "a" <&> of a long sample' },
+];
+const rankTestCases = [
+  { pieces: 'domino', rowCount: 6, colCount: 8 },
+  { pieces: 'domino', rowCount: 7, colCount: 4 },
+  { pieces: 'domino', rowCount: 3, colCount: 5 },
+  { pieces: 'domicule', rowCount: 5, colCount: 4 },
+  { pieces: 'domicule', rowCount: 6, colCount: 6 },
+  { pieces: 'domicule', rowCount: 3, colCount: 5 },
+  { pieces: 'domino', rowCount: 10, colCount: 10 },
+  { pieces: 'domino', rowCount: 9, colCount: 12 },
+  { pieces: 'domicule', rowCount: 8, colCount: 8 },
+  { pieces: 'domicule', rowCount: 10, colCount: 10 },
 ];
 const randomTestCases = [
   { rowCount: 2, colCount: 2, expectedResult: 2, criticalValue: 10.83 },
@@ -396,6 +411,36 @@ function runUnrankTest(testCase) {
 
   if (error) {
     console.error(`Failed! Invalid last tiling: ${error}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function runRankTest(testCase) {
+  const domino = testCase.pieces === 'domino';
+  const unranker = domino ? createUnranker(testCase) : createDomiculeUnranker(testCase);
+  const unrank = domino ? unrankTiling : unrankDomiculeTiling;
+
+  if (unranker.total === BigInt(0)) {
+    const passed = listRankPrimes(unranker.total).length === 0;
+    console.log(passed ? 'Passed!' : 'Failed! Primes listed for a board without tilings.');
+
+    return passed;
+  }
+
+  const ranks = [...new Set([0, 1, 2, 3, 5, 7].map(i => (unranker.total * BigInt(i)) / BigInt(8)).concat(unranker.total - BigInt(1)))];
+  const tilings = ranks.map(rank => unrank(unranker, rank));
+  const primes = listRankPrimes(unranker.total);
+  const results = primes.map(prime => rankTilingsModulo(testCase, tilings, prime));
+  const totals = results.every(({ total }, j) => BigInt(total) === unranker.total % BigInt(primes[j]));
+  const found = combineRanks(results.map(({ ranks: residues }) => residues), primes);
+
+  if (!totals || found.some((rank, i) => rank !== ranks[i])) {
+    console.error(`Failed! Ranks ${ranks.join(', ')} came back as ${found.join(', ')}${totals ? '' : ', and the totals differ'}.`);
 
     return false;
   }
@@ -1214,6 +1259,7 @@ async function __main__() {
     domiculeRandomValidityTestCases,
     domiculeReachTestCases,
     domiculeShapeTestCases,
+    rankTestCases,
     periodicUnrankTestCases,
     periodicDiagonalTestCases,
     periodicSheetTestCases,
@@ -1234,6 +1280,7 @@ async function __main__() {
   const results = [
     runSuite('renderer', testCases, runTest),
     runSuite('unrank', unrankTestCases, runUnrankTest),
+    runSuite('rank', rankTestCases, runRankTest),
     runSuite('random uniformity', randomTestCases, runRandomUniformityTest),
     runSuite('random validity', randomValidityTestCases, runRandomValidityTest),
     runSuite('domicule unrank', domiculeTestCases, runDomiculeUnrankTest),

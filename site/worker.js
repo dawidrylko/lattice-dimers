@@ -71,6 +71,17 @@ onmessage = ({ data }) => {
   const { id, type, board, diagonals = null } = data;
 
   try {
+    if (type === 'rank') {
+      const residues = data.primes.map((prime, j) =>
+        rankTilingsModulo(board, data.tilings, prime, progress =>
+          postMessage({ id, type: 'progress', progress: (j + progress) / data.primes.length }),
+        ),
+      );
+
+      postMessage({ id, type: 'result', residues });
+      return;
+    }
+
     const tilings = [];
 
     if (type === 'page') {
