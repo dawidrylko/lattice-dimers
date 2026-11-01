@@ -804,7 +804,7 @@ async function checkLanding(page, baseUrl, width) {
     problems.push(`main page still has ${state.leftovers.join(', ')}`);
   }
 
-  if (state.tabs.join() !== 'gallery,benchmark,benchmark-domicule') {
+  if (state.tabs.join() !== 'gallery,benchmark') {
     problems.push(`tabs are ${state.tabs.join(', ')}`);
   }
 
@@ -942,19 +942,24 @@ async function checkChrome(page, baseUrl, width) {
 async function checkBenchmark(page, baseUrl, width) {
   const problems = [];
 
-  for (const [tab, rows, otherTab] of [
-    ['benchmark', 'benchmark-rows', 'benchmark-domicule'],
-    ['benchmark-domicule', 'domicule-benchmark-rows', 'benchmark'],
+  for (const [hash, group, rows, complete] of [
+    ['benchmark', 'dominoes', 'benchmark-rows', null],
+    ['benchmark/domicules', 'domicules', 'domicule-benchmark-rows', 'every'],
+    ['benchmark-domicule', 'domicules', 'domicule-benchmark-rows', 'every'],
+    ['benchmark/tori', 'tori', 'torus-benchmark-rows', 'some'],
+    ['benchmark/diagonals', 'diagonals', 'diagonal-benchmark-rows', 'some'],
   ]) {
-    await loadSite(page, baseUrl, width, tab);
-    await page.waitFor(`document.querySelectorAll('#${rows} tr').length > 0`, `the ${tab} rows`);
+    await loadSite(page, baseUrl, width, hash);
+    await page.waitFor(`document.querySelectorAll('#${rows} tr').length > 0`, `the ${group} rows`);
     await page.settle();
     const state = await page.evaluate(`(() => {
-      const section = document.getElementById('${tab}');
-      const wraps = [...section.querySelectorAll('.table-wrap')];
+      const section = document.getElementById('benchmark');
+      const shownGroups = [...section.querySelectorAll('.bench-group')].filter(group => !group.hidden).map(group => group.dataset.group);
+      const wraps = [...section.querySelectorAll('.bench-group:not([hidden]) .table-wrap')];
       const times = row => [...row.cells].slice(2, -1).map(cell => cell.textContent);
       return {
-        shown: !section.hidden && document.getElementById('${otherTab}').hidden && document.getElementById('gallery').hidden,
+        shown: !section.hidden && document.getElementById('gallery').hidden && shownGroups.join() === '${group}',
+        pressed: [...document.querySelectorAll('#benchmark-groups button[aria-pressed="true"]')].map(button => button.dataset.group).join(),
         overflow: Math.max(...wraps.map(wrap => wrap.scrollWidth - wrap.clientWidth)),
         hidden: wraps.flatMap(wrap => {
           const box = wrap.getBoundingClientRect();
@@ -964,31 +969,43 @@ async function checkBenchmark(page, baseUrl, width) {
           });
         }).length,
         empty: wraps.filter(wrap => !wrap.querySelectorAll('tbody tr').length).map(wrap => wrap.querySelector('table').id),
-        missing: wraps.flatMap((wrap, index) =>
+        missing: wraps.flatMap(wrap =>
           [...wrap.querySelectorAll('tbody tr')]
             .filter(row => row.cells[0].textContent !== '0×0')
-            .filter(row => (index ? times(row).every(time => time === '-') : times(row).includes('-')))
+            .filter(row => ('${complete}' === 'every' ? times(row).includes('-') : times(row).every(time => time === '-')))
             .map(row => row.cells[0].textContent),
         ),
         environment: section.querySelector('.environment').textContent,
       };
     })()`);
 
-    if (!state.shown) {
-      problems.push(`${tab} tab does not show only its own table`);
+    if (!state.shown || state.pressed !== group) {
+      problems.push(`#${hash} does not show only the ${group} tables (pressed: ${state.pressed})`);
     }
 
     if (state.overflow > 0 || state.hidden) {
-      problems.push(`${tab} scrolls ${state.overflow} px sideways with ${state.hidden} cells off screen`);
+      problems.push(`#${hash} scrolls ${state.overflow} px sideways with ${state.hidden} cells off screen`);
     }
 
-    if (tab === 'benchmark-domicule' && (state.missing.length || state.empty.length)) {
-      problems.push(`${tab} has no time for ${state.missing.join(', ')} and no rows in ${state.empty.join(', ')}`);
+    if (complete && (state.missing.length || state.empty.length)) {
+      problems.push(`#${hash} has no time for ${state.missing.join(', ')} and no rows in ${state.empty.join(', ')}`);
     }
 
     if (!state.environment.startsWith('Measured with Node.js')) {
-      problems.push(`${tab} caption has no environment`);
+      problems.push(`#${hash} has no environment`);
     }
+  }
+
+  await loadSite(page, baseUrl, width, 'benchmark');
+  await page.evaluate("document.querySelector('#benchmark-groups button[data-group=tori]').click()");
+  await page.waitFor(
+    "location.hash === '#benchmark/tori' && !document.querySelector('.bench-group[data-group=tori]').hidden",
+    'the switch to tori and cylinders',
+  );
+  const cylinders = await page.evaluate("document.querySelectorAll('#cylinder-benchmark-rows tr').length");
+
+  if (!cylinders) {
+    problems.push('the tori and cylinders group has no cylinder rows');
   }
 
   return problems;
