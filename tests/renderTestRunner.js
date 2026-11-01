@@ -23,7 +23,7 @@ const crypto = require('crypto');
 const { createRandom } = require('../src/renderer/cftp');
 const fs = require('fs');
 const { buildReadmeImages } = require('../site/readme-images');
-const { renderChart } = require('../site/notes');
+const { renderChart, formatTime, logCount } = require('../site/notes');
 const {
   testCasesBigInt,
   testCasesDomicule,
@@ -780,6 +780,31 @@ function runChartTests() {
   });
 }
 
+const notebookHelperTestCases = [
+  { name: 'a missing time', actual: () => formatTime(null), expected: '-' },
+  { name: 'a time in ms', actual: () => formatTime({ average: 26.4, runs: 10 }), expected: '26.40 ms' },
+  { name: 'a single run in s', actual: () => formatTime({ average: 236580, runs: 1 }), expected: '236.58 s (one run)' },
+  { name: 'the log of a 49-digit count', actual: () => Math.abs(logCount(`1${'0'.repeat(48)}`) / (48 * Math.LN10) - 1) < 1e-15, expected: true },
+];
+
+function runNotebookHelperTests() {
+  return notebookHelperTestCases.every(({ name, actual, expected }, index) => {
+    process.stdout.write(`Executing notebook helper test ${index + 1} of ${notebookHelperTestCases.length} for ${name}... `);
+
+    const value = actual();
+
+    if (value !== expected) {
+      console.error(`Failed! Expected: ${expected}, Actual: ${value}`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
 function runDomiculeReachTest(testCase) {
   const random = createRandom(RANDOM_SEED);
   const seen = new Set();
@@ -1173,6 +1198,7 @@ function __main__() {
     runSuite('readme images', [{ rowCount: 8, colCount: 8 }], runReadmeImagesTest),
     runSuite('command line', cliTestCases, runCliTest),
     runChartTests(),
+    runNotebookHelperTests(),
   ];
 
   if (results.every(Boolean)) {

@@ -18,7 +18,7 @@ const domiculeModular = require('../src/solvers/domiculeTilingSolver-Modular.js'
 const periodicModular = require('../src/solvers/periodicTilingSolver-Modular.js');
 const diagonalReference = require('../src/solvers/domiculeDiagonalSolver-BigInt.js');
 const { countPeriodicDiagonals } = require('../src/renderer/periodic');
-const { renderNote, listNotes, NOTES_DIRECTORY } = require('./notes');
+const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -108,10 +108,10 @@ const DEFAULT_BOARD = '4x4';
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const NOTE_PROVENANCE = {
   research: 'every output on this page was read from the committed research data, checked or computed during that build.',
-  a004003: 'every output on this page was computed during that build, except the running times, read from the benchmark run the page names.',
-  a239273: 'every output on this page was computed during that build, except the running times, read from the benchmark run the page names.',
-  torus: 'every output on this page was computed during that build, except the boards the solver column marks as data/, the entropies and the decay length ξ read from research/king-entropy/, and the running times, read from the benchmark run the page names.',
-  diagonals: 'every output on this page was computed during that build, except the rows the solver column marks as data/, which the build checked, and the running times, read from the benchmark run the page names.',
+  a004003: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
+  a239273: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
+  torus: 'every output on this page was produced during that build from the files of this repository; the boards the solver column marks as data/ are stored counts, the entropies and the decay length ξ come from research/king-entropy/, and the running times from the benchmark run the page names.',
+  diagonals: 'every output on this page was produced during that build from the files of this repository; the rows the solver column marks as data/ are stored counts, which the build checked, and the running times come from the benchmark run the page names.',
 };
 const NOTE_SUMMARIES = {
   research: "The entropy per site of the king's graph dimers: an estimate with error bar 6·10⁻¹⁶, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
@@ -468,33 +468,6 @@ function roundDecimal(value, digits) {
   const rounded = String((scaled + BigInt(5)) / BigInt(10)).padStart(digits + 1, '0');
 
   return `${rounded.slice(0, -digits)}.${rounded.slice(-digits)}`;
-}
-
-/**
- * The natural logarithm of an exact count, from its first 17 digits and its length.
- * @param {bigint|string} count The count.
- * @returns {number} log(count).
- */
-function logCount(count) {
-  const digits = String(count);
-  const head = digits.slice(0, 17);
-
-  return Math.log(Number(head)) + (digits.length - head.length) * Math.LN10;
-}
-
-/**
- * Formats an average time of a benchmark result for a notebook table.
- * @param {{ average: number, runs: number }|null} result The result of readAverageTime.
- * @returns {string} The time in ms or s, marked when it was measured once.
- */
-function formatTime(result) {
-  if (result === null) {
-    return '-';
-  }
-
-  const time = result.average >= 1000 ? `${(result.average / 1000).toFixed(2)} s` : `${result.average.toFixed(2)} ms`;
-
-  return result.runs === 1 ? `${time} (one run)` : time;
 }
 
 /**
