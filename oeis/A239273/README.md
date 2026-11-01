@@ -1,6 +1,6 @@
 # A239273
 
-[A239273](https://oeis.org/A239273): number of domicule tilings of the $2n \times 2n$ square.
+[OEIS A239273](https://oeis.org/A239273): number of domicule tilings of the $2n \times 2n$ square.
 
 ## Contribution
 

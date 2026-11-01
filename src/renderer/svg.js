@@ -206,8 +206,10 @@ function renderSeams(x, y, width, height, surface) {
   return [...sides, `<path class="t" d="M${x} ${y}H${x + width}M${x} ${y + height}H${x + width}"/>`, `<path class="u" d="${ticks.join('')}"/>`].join('');
 }
 
-function tileSize({ rowCount, colCount, sublabels }) {
-  return { width: colCount * CELL_SIZE + PADDING, height: rowCount * CELL_SIZE + LABEL_GAP + LABEL_HEIGHT * (sublabels ? 2 : 1) + PADDING };
+function tileSize({ rowCount, colCount, labels, sublabels }) {
+  const labelHeight = labels === false ? 0 : LABEL_GAP + LABEL_HEIGHT * (sublabels ? 2 : 1);
+
+  return { width: colCount * CELL_SIZE + PADDING, height: rowCount * CELL_SIZE + labelHeight + PADDING };
 }
 
 function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
@@ -231,8 +233,8 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
           renderSeams(offsetX, offsetY, boardWidth, boardHeight, surface),
         ]
       : drawn),
-    renderLabel(label, offsetX + boardWidth / 2, labelY, boardWidth),
-    ...(sublabel === undefined ? [] : [renderLabel(fitSublabel(sublabel, boardWidth + PADDING / 2), offsetX + boardWidth / 2, labelY + LABEL_HEIGHT, boardWidth + PADDING / 2, 'n')]),
+    ...(label === null ? [] : [renderLabel(label, offsetX + boardWidth / 2, labelY, boardWidth)]),
+    ...(label === null || sublabel === undefined ? [] : [renderLabel(fitSublabel(sublabel, boardWidth + PADDING / 2), offsetX + boardWidth / 2, labelY + LABEL_HEIGHT, boardWidth + PADDING / 2, 'n')]),
   ].join('');
 }
 
@@ -244,7 +246,8 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
  * @property {number} [options.columns] The number of tilings per sheet row (default: 10).
- * @property {string[]} [options.labels] Labels shown under the tilings instead of their numbers.
+ * @property {string[]|false} [options.labels] Labels shown under the tilings instead of their numbers; false shows
+ * no label and leaves no room for one.
  * @property {Array<string|string[]>} [options.sublabels] A second line under every label, such as the number of
  * diagonal pieces; given a list of wordings, the first that fits under the board is shown.
  * @property {string} [options.style] How pieces are drawn: blocks (default), dimer or engraving.
@@ -272,7 +275,7 @@ function renderSheet(tilings, firstNumber, options) {
   const body = tilings.map((tiling, i) =>
     renderTiling(
       tiling,
-      options.labels ? options.labels[i] : `#${BigInt(firstNumber) + BigInt(i)}`,
+      options.labels === false ? null : options.labels ? options.labels[i] : `#${BigInt(firstNumber) + BigInt(i)}`,
       options.sublabels ? options.sublabels[i] : undefined,
       PADDING + (i % sheetColumns) * tileWidth,
       PADDING + Math.floor(i / sheetColumns) * tileHeight,

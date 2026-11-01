@@ -1,6 +1,6 @@
 # A004003
 
-[A004003](https://oeis.org/A004003): number of domino tilings of the $2n \times 2n$ square.
+[OEIS A004003](https://oeis.org/A004003): number of domino tilings of the $2n \times 2n$ square.
 
 ## Contribution
 
