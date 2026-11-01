@@ -14,11 +14,12 @@ function selectNumbering(board, diagonals) {
       colCount: board.colCount,
       lattice: PIECE_LATTICES[board.pieces],
       torus: board.surface === 'torus',
+      diagonals,
     };
 
     return {
-      key: board.id,
-      large: !canUnrankPeriodic(options),
+      key: diagonals === null ? board.id : `${board.id}/${diagonals}`,
+      large: diagonals !== null || !canUnrankPeriodic(options),
       create: onProgress => createPeriodicUnranker(options, onProgress),
       unrank: unrankPeriodicTiling,
     };

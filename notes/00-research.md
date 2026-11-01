@@ -84,7 +84,7 @@ table(['quantity', 'value', 'status', 'source'], [
 ]);
 ```
 
-Two sign properties of the strip growth rates, convexity in the even width and a one-sided bound on the odd increments, hold numerically and would give $0.565511911035 \le s \le 0.565511911049$. The companion note tests the finite form of the first of them, log-convexity of $q \mapsto Z(2q, m)$, in 1453 cases. The property is not structural. It fails on free strips of the triangular lattice, for every unequal pair of diagonal weights tried, and on wide strips for the equal weights $x = 3/2, 2, 3$.
+Two sign properties of the strip growth rates, convexity in the even width and a one-sided bound on the odd increments, hold numerically and would give $0.565511911035 \le s \le 0.565511911049$. The companion note tests the finite form of the first of them, log-convexity of $q \mapsto Z(2q, m)$, in 1453 cases. The property is not structural: it fails on free strips of the triangular lattice, for every unequal pair of diagonal weights tried, and on wide strips for the equal weights $x = 3/2, 2, 3$.
 
 ## Asymptotics of A239273
 

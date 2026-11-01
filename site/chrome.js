@@ -6,8 +6,8 @@ const NOTE_LABELS = {
   method: 'Method',
   a004003: 'A004003',
   a239273: 'A239273',
-  torus: 'Tori',
-  diagonals: 'Diagonals',
+  torus: 'Tori and cylinders',
+  diagonals: 'Diagonal pieces',
 };
 
 const CHROME_CSS = `
@@ -63,7 +63,7 @@ function renderFooter(lines = []) {
     '© <a href="https://dawidrylko.com" rel="author">Dawid Ryłko</a>',
     `<a href="${REPOSITORY_URL}/blob/master/LICENSE">MIT License</a>`,
     `<a href="${REPOSITORY_URL}">GitHub</a>`,
-    '<a href="https://dawidrylko.com/domino-tiling/" hreflang="pl">Blog post (PL)</a>',
+    'Blog posts (PL): <a href="https://dawidrylko.com/domino-tiling/" hreflang="pl">Domino Tiling</a>, <a href="https://dawidrylko.com/domino-tiling-library/" hreflang="pl">Domino tiling library</a>',
   ];
 
   return [

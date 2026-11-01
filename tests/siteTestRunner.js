@@ -572,7 +572,17 @@ const READ_SHEET = `(() => ({
   picker: !document.getElementById('diagonal-picker').hidden,
   filter: { value: document.getElementById('diagonals').value, shown: !document.getElementById('diagonals').hidden, options: document.getElementById('diagonals').options.length },
   labels: document.querySelectorAll('#sheet text:not(.n)').length,
-  sublabels: [...new Set([...document.querySelectorAll('#sheet text.n')].map(text => text.textContent))],
+  sublabels: document.querySelectorAll('#sheet text.n').length,
+  tip: (board => {
+    if (!board) return '';
+    const box = board.getBoundingClientRect();
+    const tip = document.getElementById('tile-tip');
+    document.getElementById('sheet').dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: box.left + box.width / 2, clientY: box.top + box.height / 2 }));
+    const text = tip.hidden ? '' : tip.innerText.replace(/\\s+/g, ' ');
+    tip.hidden = true;
+    return text;
+  })(document.querySelector('#sheet rect.b')),
+  seamColor: (seam => seam && getComputedStyle(seam).stroke)(document.querySelector('#sheet path.s')),
   clipped: document.querySelectorAll('#sheet svg svg').length,
   clip: (svg => svg && [svg.getAttribute('width'), svg.getAttribute('height')].join('x'))(document.querySelector('#sheet svg svg')),
   edges: document.querySelectorAll('#sheet path.s').length,
@@ -603,7 +613,7 @@ async function checkSurfaces(page, baseUrl, width) {
     problems.push(`torus picker shows ${torus.boards.join(', ')} with ${torus.surface} pressed`);
   }
 
-  if (!torus.seam || torus.clipped !== 100 || torus.clip !== '64x64' || torus.edges !== 100 || !torus.meta.startsWith('4×4 torus · 17,552 tilings')) {
+  if (!torus.seam || torus.sublabels || !/^#1 \d+ horizontal, \d+ vertical \d+ diagonal pieces?: \d+ ↘, \d+ ↙ \d+ pieces? across a glued edge$/.test(torus.tip) || torus.clipped !== 100 || torus.clip !== '64x64' || torus.edges !== 100 || !torus.meta.startsWith('4×4 torus · 17,552 tilings')) {
     problems.push(`4x4 torus sheet: ${JSON.stringify({ ...torus, boards: undefined })}`);
   }
 
@@ -611,8 +621,20 @@ async function checkSurfaces(page, baseUrl, width) {
   await page.waitFor("location.hash === '#gallery/4x4-torus/1' && document.querySelector('#sheet svg')?.getAttribute('aria-label').startsWith('Domino')", 'the 4x4 domino torus');
   const straight = await page.evaluate(READ_SHEET);
 
-  if (straight.picker || straight.sublabels.length || straight.surface !== 'torus') {
-    problems.push(`domino torus shows the diagonal filter or counts: ${JSON.stringify(straight.sublabels)}`);
+  if (straight.picker || straight.tip.includes('diagonal') || !straight.tip.includes('across a glued edge') || straight.surface !== 'torus') {
+    problems.push(`domino torus shows the diagonal filter or counts: ${straight.tip}`);
+  }
+
+  const seamColor = await page.evaluate(`(() => {
+    const probe = document.body.appendChild(document.createElement('i'));
+    probe.style.color = 'var(--seam)';
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  })()`);
+
+  if (straight.seamColor !== seamColor) {
+    problems.push(`the glued edges are drawn in ${straight.seamColor}, not --seam ${seamColor}`);
   }
 
   await page.evaluate("document.querySelector('#surfaces [data-surface=rectangle]').click()");
@@ -621,6 +643,17 @@ async function checkSurfaces(page, baseUrl, width) {
 
   if (rectangle.seam || rectangle.clipped || rectangle.edges) {
     problems.push('the rectangle keeps the glued edges');
+  }
+
+  for (const [hash, meta] of [
+    ['gallery/4x4-diagonal-torus/1?diagonals=4', '4×4 torus · 8,384 tilings with 4 diagonal pieces (of 17,552)'],
+    ['gallery/4x4-diagonal-cylinder/1?diagonals=8', '4×4 cylinder · 16 tilings with 8 diagonal pieces (of 2,649)'],
+  ]) {
+    const filtered = await showBoard(page, hash, `the ${hash} sheet`);
+
+    if (!filtered.meta.startsWith(meta) || !filtered.picker || !filtered.filter.shown || !filtered.tip.includes(`${hash.split('=')[1]} diagonal pieces`)) {
+      problems.push(`${hash}: ${JSON.stringify(filtered)}`);
+    }
   }
 
   if (width < 1440) {
@@ -654,7 +687,7 @@ async function checkDiagonals(page, baseUrl, width) {
     filtered.filter.value !== '4' ||
     filtered.filter.options !== 11 ||
     filtered.labels !== 100 ||
-    filtered.sublabels.join() !== '4 diagonal'
+    !filtered.tip.includes('4 diagonal pieces')
   ) {
     problems.push(`6x6 with 4 diagonal pieces: ${JSON.stringify(filtered)}`);
   }
@@ -674,8 +707,8 @@ async function checkDiagonals(page, baseUrl, width) {
 
   const last = await showBoard(page, 'gallery/6x6-diagonal/4140?diagonals=4', 'the last 6x6 page with 4 diagonal pieces');
 
-  if (last.labels !== 32 || last.sublabels.join() !== '4 diagonal') {
-    problems.push(`the last page with 4 diagonal pieces shows ${last.labels} tilings with ${last.sublabels.join(', ')}`);
+  if (last.labels !== 32 || !last.tip.includes('4 diagonal pieces')) {
+    problems.push(`the last page with 4 diagonal pieces shows ${last.labels} tilings with ${last.tip}`);
   }
 
   const single = await showBoard(page, 'gallery/4x4-diagonal/1?diagonals=8', 'the only 4x4 tiling with 8 diagonal pieces');
@@ -708,11 +741,11 @@ async function checkDiagonals(page, baseUrl, width) {
 
   await page.evaluate("document.getElementById('highlight').click()");
 
-  for (const [board, filtered] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', false], ['2x2-diagonal', true]]) {
+  for (const [board, filtered] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', true], ['10x10-diagonal-torus', true], ['2x2-diagonal', true]]) {
     const state = await showBoard(page, `gallery/${board}/1`, `the ${board} sheet`);
 
-    if (!state.picker || state.filter.shown !== filtered || !state.sublabels.length) {
-      problems.push(`${board} filter: ${JSON.stringify(state.filter)}, counts ${state.sublabels.join(', ')}`);
+    if (!state.picker || state.filter.shown !== filtered || !/diagonal pieces?:/.test(state.tip)) {
+      problems.push(`${board} filter: ${JSON.stringify(state.filter)}, tooltip ${state.tip}`);
     }
   }
 

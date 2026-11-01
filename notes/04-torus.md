@@ -16,7 +16,7 @@ The OEIS was searched by terms and by name on 30 October 2026. It has no entry f
 
 ## The king's graph on the 2n × 2n torus
 
-For $n = 1$ the torus has multiple edges. On a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate piece, as in A335586. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `data/periodicTilingTests-Modular.json`, where it wrote them once.
+For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in A335586. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `data/periodicTilingTests-Modular.json`, where it wrote them once.
 
 ```js run
 const reference = require('./src/solvers/periodicTilingSolver-BigInt.js');
@@ -69,7 +69,7 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 ## Three lattices on the torus
 
-A torus has no boundary. So $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site.
+Since a torus has no boundary, $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site.
 
 The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
 
@@ -142,7 +142,7 @@ chart({
 
 The square lattice is critical, and its ratio drifts with $L$ well above 2. On the triangular lattice and on the king's graph the ratio tends to 2.
 
-The reason is in the paper. It splits the cylinder transfer matrix of even circumference $w$ by the parity of the dimers crossing a loop around the axis, and the two sector values $f^{(0)}_w > s > f^{(1)}_w$ approach $s$ exponentially fast. A torus of even side $L$ is the trace of the $L$-th power of that matrix, so each sector contributes about $e^{sL^2}$ and $Z \approx 2 e^{sL^2}$. That accounts for the constant 2. How fast the ratio gets there is a separate matter: on the king's graph the distance to 2 shrinks by a factor of about 8 per step of 2 in $L$. The approach to 2 and the factor 8 are observations on the boards of the table, not proofs.
+The paper explains the constant: it splits the cylinder transfer matrix of even circumference $w$ by the parity of the dimers crossing a loop around the axis, and the two sector values $f^{(0)}_w > s > f^{(1)}_w$ approach $s$ exponentially fast. A torus of even side $L$ is the trace of the $L$-th power of that matrix, so each sector contributes about $e^{sL^2}$ and $Z \approx 2 e^{sL^2}$. How fast the ratio gets there is a separate question: on the king's graph the distance to 2 shrinks by a factor of about 8 per step of 2 in $L$. The approach to 2 and the factor 8 are observations on the boards of the table, not proofs.
 
 With no surface term, $\log(Z/2)/L^2$ can be compared with $s$ directly. The difference shrinks exponentially in $L$, with no fit and no extrapolation model. It is a check on the value of $s$ from the paper, because the constant 2 was itself read off against $s$.
 

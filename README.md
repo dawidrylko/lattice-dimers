@@ -31,9 +31,9 @@ The code, data and both preprints are archived on Zenodo: the paper as [10.5281/
 
 ## Exact counts: OEIS A004003 and A239273
 
-How many ways are there to cover a $2n \times 2n$ board with pieces that each cover two neighbouring cells, and what does any one of those coverings look like? For dominoes, which join cells that share a side, the count is [OEIS A004003](https://oeis.org/A004003) and has a closed form found by [Kasteleyn](https://doi.org/10.1016/0031-8914%2861%2990063-5) and [Fisher](https://doi.org/10.1103/PhysRev.124.1664) in 1961. For domicules, which may also join cells that share only a corner, the count is [OEIS A239273](https://oeis.org/A239273) on squares and [A239264](https://oeis.org/A239264) on rectangles, and no closed form is used here. This repository counts both exactly, numbers every tiling so that any single one can be drawn from its number, and samples tilings of boards too large to number. It evaluates the domino product formula exactly as a resultant of two integer polynomials, counts domicule tilings with a cell-by-cell transfer that runs modulo primes in parallel and is rebuilt with the Chinese remainder theorem, and checks the solvers against each other, against the OEIS and against two PARI/GP programs run in CI.
+How many ways are there to cover a $2n \times 2n$ board with pieces that each cover two neighbouring cells, and what does any one of those coverings look like? For dominoes, which join cells that share a side, the count is [OEIS A004003](https://oeis.org/A004003) and has a closed form found by [Kasteleyn](https://doi.org/10.1016/0031-8914%2861%2990063-5) and [Fisher](https://doi.org/10.1103/PhysRev.124.1664) in 1961. For domicules, which may also join cells that share only a corner, the count is [OEIS A239273](https://oeis.org/A239273) on squares and [A239264](https://oeis.org/A239264) on rectangles, and no closed form is used here. This repository counts both exactly, numbers every tiling so that any single one can be drawn from its number, and samples tilings of boards too large to number. It evaluates the domino product formula exactly as a resultant of two integer polynomials, counts domicule tilings with a cell-by-cell transfer that runs modulo primes in parallel and is rebuilt with the Chinese remainder theorem, and checks the solvers against each other, against the OEIS and against four PARI/GP programs run in CI. The OEIS b-files of [A239273](https://oeis.org/A239273/b239273.txt) and [A239264](https://oeis.org/A239264/b239264.txt) were extended from this work.
 
-Both sequences up to $20 \times 20$. The site recounts the $20 \times 20$ domicule term on every build and the modular solver checks it against an extra prime.
+The table lists both sequences up to $20 \times 20$. The site recounts the $20 \times 20$ domicule term on every build and the modular solver checks it against an extra prime.
 
 | n | board | A004003 (dominoes) | A239273 (domicules) |
 | --: | --- | --: | --: |
@@ -51,7 +51,7 @@ Both sequences up to $20 \times 20$. The site recounts the $20 \times 20$ domicu
 
 ## Tori, cylinders and diagonal pieces
 
-Two more families of counts. The OEIS has no entry for the king's graph or triangular tori, or for the diagonal triangle below; it was searched by terms and by name on 30 October 2026.
+The solvers also count tilings of cylinders and tori and sort domicule tilings by their number of diagonal pieces. The OEIS has no entry for the king's graph or triangular tori, or for the diagonal triangle below; it was searched by terms and by name on 30 October 2026.
 
 **Cylinders and tori.** [`periodicTilingSolver-BigInt.js`](src/solvers/periodicTilingSolver-BigInt.js) (transfer by rows) and [`periodicTilingSolver-Modular.js`](src/solvers/periodicTilingSolver-Modular.js) (transfer by cells modulo primes) count the tilings of cylinders and tori on the square lattice, the triangular lattice and the king's graph. On the square lattice they reproduce [A335586](https://oeis.org/A335586), [A253678](https://oeis.org/A253678), [A281679](https://oeis.org/A281679) and [A006253](https://oeis.org/A006253). The domicule tilings of the $2n \times 2n$ torus, with the multiple edges of the $2 \times 2$ torus counted as separate pieces, as in A335586:
 
@@ -219,7 +219,7 @@ Verification:
 ```sh
 pnpm test           # solvers against data/, up to 12×12 (node tests/testRunner.js runs every known term and takes hours: the 16×16 torus alone about 75 minutes)
 pnpm test:render    # numbering, sampling and drawing
-pnpm test:pari      # both PARI/GP programs and their copies in this README
+pnpm test:pari      # the four PARI/GP programs and their copies in this README
 pnpm site:build     # runs the notebooks and builds dist/site
 pnpm test:site      # the built site in headless Chrome at 1440, 786 and 375 px (set CHROME_PATH if needed)
 ```
