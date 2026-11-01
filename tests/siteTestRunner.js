@@ -49,11 +49,11 @@ const CONFIRMATION_BOARDS = ['18x18', '16x16-diagonal', '10x10-diagonal-torus?di
 const NOTES = [
   { slug: 'research', cells: 2 },
   { slug: 'method', cells: 0 },
-  { slug: 'dominoes', cells: 6 },
-  { slug: 'domicules', cells: 8 },
-  { slug: 'cylinders', cells: 5 },
-  { slug: 'tori', cells: 6 },
-  { slug: 'diagonals', cells: 5 },
+  { slug: 'dominoes', cells: 7, figures: 1 },
+  { slug: 'domicules', cells: 9, figures: 2 },
+  { slug: 'cylinders', cells: 6, figures: 2 },
+  { slug: 'tori', cells: 7, figures: 2 },
+  { slug: 'diagonals', cells: 6, figures: 1 },
 ];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes'],
@@ -820,7 +820,7 @@ async function checkLanding(page, baseUrl, width) {
 async function checkNotes(page, baseUrl, width) {
   const problems = [];
 
-  for (const { slug, cells } of NOTES) {
+  for (const { slug, cells, figures = 0 } of NOTES) {
     const run = `run=${Date.now()}`;
 
     await page.send('Emulation.setDeviceMetricsOverride', { width, height: VIEWPORT_HEIGHT, deviceScaleFactor: 1, mobile: width < 640 });
@@ -834,11 +834,16 @@ async function checkNotes(page, baseUrl, width) {
       unresolved: /undefined|\\u0000/.test(document.querySelector('article').textContent),
       math: document.querySelectorAll('.math').length,
       katex: document.querySelectorAll('.katex').length,
+      figures: [...document.querySelectorAll('figure.tiling > svg')].filter(svg => svg.getBoundingClientRect().width > 0 && svg.getBoundingClientRect().right <= document.documentElement.clientWidth + 0.5).length,
       charts: [...document.querySelectorAll('figure.chart')].map(figure => [...figure.querySelectorAll('svg')].filter(svg => getComputedStyle(svg).display !== 'none').length),
     }))()`);
 
     if (state.cells !== cells) {
       problems.push(`${slug} has ${state.cells} cells instead of ${cells}`);
+    }
+
+    if (state.figures !== figures) {
+      problems.push(`${slug} shows ${state.figures} tiling drawings within the page instead of ${figures}`);
     }
 
     if (state.unresolved) {

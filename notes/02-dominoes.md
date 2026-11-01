@@ -2,6 +2,17 @@
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes.html) has the results. It counts the domino tilings of the $2n \times 2n$ board, [OEIS A004003](https://oeis.org/A004003). The method is described in the [method note](01-method.md).
 
+## The problem
+
+A domino covers two cells that share a side, and a tiling covers every cell exactly once. In the dimer drawing each cell is a vertex and each domino an edge between two of them, so a tiling is a perfect matching of the grid graph. The $4 \times 4$ board has 36 tilings, $a(2)$ in the table below.
+
+```js run
+const { drawTilings } = require('./site/notes.js');
+const { svg, total } = drawTilings({ rowCount: 4, colCount: 4, ranks: 'all', columns: 9 });
+
+figure(svg, `All ${total} domino tilings of the 4 × 4 board, numbered as in the gallery.`);
+```
+
 ## Three ways to the same numbers
 
 The formula solver evaluates the resultant, the two transfer solvers scan the board. The `Number` solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `data/`.

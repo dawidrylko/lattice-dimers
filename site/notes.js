@@ -184,6 +184,20 @@ function createCellHelpers() {
       flush();
       outputs.push(renderChart(spec));
     },
+    figure: (svg, caption, { highlight = false } = {}) => {
+      const drawing = String(svg).trim();
+
+      if (!/^<svg[\s>]/.test(drawing)) {
+        throw new Error('figure() takes an SVG drawing.');
+      }
+
+      const width = Number((drawing.match(/^<svg[^>]*\swidth="(\d+(?:\.\d+)?)"/) || [])[1]) || 0;
+
+      flush();
+      outputs.push(
+        `<figure class="tiling output${highlight ? ' highlight' : ''}"${width ? ` style="--width: ${width}px"` : ''}>${drawing}${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''}</figure>`,
+      );
+    },
   };
 
   return { outputs, helpers, flush };
@@ -193,11 +207,12 @@ async function runCell(code, notebook) {
   const { outputs, helpers, flush } = createCellHelpers();
   const started = Date.now();
 
-  await new AsyncFunction('require', 'print', 'table', 'chart', 'nb', code)(
+  await new AsyncFunction('require', 'print', 'table', 'chart', 'figure', 'nb', code)(
     repositoryRequire,
     helpers.print,
     helpers.table,
     helpers.chart,
+    helpers.figure,
     notebook,
   );
   flush();
@@ -350,6 +365,54 @@ async function renderNote(markdown, { resolveLink, context }) {
 }
 
 /**
+ * Draws tilings of one board, as the gallery numbers them, in the dimer style.
+ * @param {Object} options
+ * @property {number} options.rowCount The height.
+ * @property {number} options.colCount The width or circumference.
+ * @property {string} [options.pieces] 'domino' or 'domicule'.
+ * @property {string} [options.surface] 'rectangle', 'cylinder' or 'torus'.
+ * @property {number|null} [options.diagonals] Only the domicule tilings with this many diagonal pieces.
+ * @property {number[]|'all'} options.ranks The 0-based numbers of the tilings to draw.
+ * @property {number} [options.columns] Tilings per row of the drawing.
+ * @returns {{ svg: string, total: bigint }} The drawing and the number of tilings it chooses from.
+ */
+function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectangle', diagonals = null, ranks, columns }) {
+  const renderer = repositoryRequire('./src/renderer');
+  let unranker;
+  let unrank;
+
+  if (surface !== 'rectangle') {
+    unranker = renderer.createPeriodicUnranker({ rowCount, colCount, lattice: pieces === 'domino' ? 'square' : 'king', torus: surface === 'torus', diagonals });
+    unrank = renderer.unrankPeriodicTiling;
+  } else if (pieces === 'domino') {
+    unranker = renderer.createUnranker({ rowCount, colCount });
+    unrank = renderer.unrankTiling;
+  } else if (diagonals === null) {
+    unranker = renderer.createDomiculeUnranker({ rowCount, colCount });
+    unrank = renderer.unrankDomiculeTiling;
+  } else {
+    unranker = renderer.createDiagonalUnranker({ rowCount, colCount, diagonals });
+    unrank = renderer.unrankDiagonalTiling;
+  }
+
+  const chosen = ranks === 'all' ? Array.from({ length: Number(unranker.total) }, (_, i) => i) : ranks;
+  const svg = renderer.renderSheet(
+    chosen.map(rank => unrank(unranker, BigInt(rank))),
+    1,
+    {
+      rowCount,
+      colCount,
+      style: 'dimer',
+      labels: chosen.map(rank => `#${rank + 1}`),
+      columns,
+      ...(surface !== 'rectangle' && { surface }),
+    },
+  );
+
+  return { svg, total: unranker.total };
+}
+
+/**
  * The natural logarithm of an exact count, from its first 17 digits and its length.
  * @param {bigint|string} count The count.
  * @returns {number} log(count).
@@ -388,4 +451,4 @@ function listNotes() {
     .map(file => ({ file, slug: file.replace(/^\d+-/, '').replace(/\.md$/, '') }));
 }
 
-module.exports = { renderNote, renderChart, listNotes, escapeHtml, formatTime, logCount, NOTES_DIRECTORY };
+module.exports = { renderNote, renderChart, listNotes, escapeHtml, drawTilings, formatTime, logCount, NOTES_DIRECTORY };

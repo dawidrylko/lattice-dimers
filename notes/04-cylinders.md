@@ -2,6 +2,22 @@
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/cylinders.html) has the results. It counts the tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom. There are three lattices: the square lattice (dominoes), the triangular lattice (the square lattice with one diagonal) and the king's graph (domicules). The method is described in the [method note](01-method.md).
 
+## The problem
+
+On a cylinder the left and right edges of the board are glued, so a piece may cross the seam between the last and the first column. Such a piece is drawn cut, half on each side, and the glued edges are marked. The drawings show tilings of the cylinder of circumference 4 and height 4, with dominoes and with domicules, spread over the numbering.
+
+```js run
+const { drawTilings } = require('./site/notes.js');
+
+for (const pieces of ['domino', 'domicule']) {
+  const { total } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'cylinder', ranks: [0] });
+  const ranks = [0, 1, 2, 3].map(i => Math.floor((Number(total) * i) / 4));
+  const { svg } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'cylinder', ranks });
+
+  figure(svg, `4 of the ${total} ${pieces} tilings of the cylinder of circumference 4 and height 4.`);
+}
+```
+
 ## How the counts are made
 
 Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../src/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. [`periodicTilingSolver-Modular.js`](../src/solvers/periodicTilingSolver-Modular.js) goes cell by cell, from the empty state to the empty state; the [tori notebook](05-tori.md) describes its state. Every table below checks its last column, $h = 8$, against the modular solver.
