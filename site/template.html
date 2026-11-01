@@ -928,9 +928,8 @@ new ResizeObserver(() => {
 $('benchmark-groups').addEventListener('click', e => {
   const button = e.target.closest('button');
   if (!button) return;
-  const hash = `#benchmark/${button.dataset.group}`;
-  if (hash === location.hash) return;
-  history.pushState(null, '', hash);
+  if (button.dataset.group === parseHash().group) return;
+  history.pushState(null, '', `#benchmark/${button.dataset.group}`);
   render();
 });
 
@@ -938,7 +937,7 @@ document.querySelector('nav.tabs').addEventListener('click', e => {
   const link = e.target.closest('a');
   if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
-  if (link.hash === location.hash) return;
+  if (link.hash === location.hash || link.dataset.tab === parseHash().tab) return;
   history.pushState(null, '', link.hash);
   render();
 });

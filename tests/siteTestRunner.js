@@ -1008,6 +1008,17 @@ async function checkBenchmark(page, baseUrl, width) {
     problems.push('the tori and cylinders group has no cylinder rows');
   }
 
+  const length = await page.evaluate('history.length');
+  await page.evaluate(
+    "document.querySelector('#benchmark-groups button[data-group=tori]').click(); document.querySelector('nav.tabs a[data-tab=benchmark]').click()",
+  );
+  await page.settle();
+  const kept = await page.evaluate('({ hash: location.hash, added: history.length - ' + length + ' })');
+
+  if (kept.hash !== '#benchmark/tori' || kept.added) {
+    problems.push(`clicking the open group and the Benchmarks tab moved to ${kept.hash} and added ${kept.added} history entries`);
+  }
+
   return problems;
 }
 
