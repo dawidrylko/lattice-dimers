@@ -49,12 +49,18 @@ const CONFIRMATION_BOARDS = ['18x18', '16x16-diagonal', '10x10-diagonal-torus?di
 const NOTES = [
   { slug: 'research', cells: 2 },
   { slug: 'method', cells: 0 },
-  { slug: 'a004003', cells: 6 },
-  { slug: 'a239273', cells: 8 },
-  { slug: 'torus', cells: 5 },
-  { slug: 'diagonals', cells: 3 },
+  { slug: 'dominoes', cells: 6 },
+  { slug: 'domicules', cells: 8 },
+  { slug: 'cylinders', cells: 5 },
+  { slug: 'tori', cells: 6 },
+  { slug: 'diagonals', cells: 5 },
 ];
-const NOTE_FAILURES = ['NO', 'DIFFERS FROM OEIS'];
+const NOTE_REDIRECTS = [
+  ['a004003', 'dominoes'],
+  ['a239273', 'domicules'],
+  ['torus', 'tori'],
+];
+const NOTE_FAILURES = ['DIFFERS FROM OEIS'];
 const PAGE_CONTROLS = '#page-controls button, #page-controls input';
 const siteTestCases = [
   { width: 1440, check: 'sheets' },
@@ -854,6 +860,14 @@ async function checkNotes(page, baseUrl, width) {
     if (state.charts.some(count => count !== 1)) {
       problems.push(`${slug} shows ${state.charts.join(', ')} drawings per chart instead of 1`);
     }
+  }
+
+  for (const [from, to] of NOTE_REDIRECTS) {
+    await page.send('Page.navigate', { url: `${baseUrl}/notes/${from}.html#running-time` });
+    await page.waitFor(
+      `location.pathname.endsWith('/notes/${to}.html') && location.hash === '#running-time' && document.readyState === 'complete'`,
+      `the move from ${from}.html to ${to}.html`,
+    );
   }
 
   return problems;

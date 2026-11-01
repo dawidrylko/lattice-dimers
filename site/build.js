@@ -18,7 +18,7 @@ const domiculeModular = require('../src/solvers/domiculeTilingSolver-Modular.js'
 const periodicModular = require('../src/solvers/periodicTilingSolver-Modular.js');
 const diagonalReference = require('../src/solvers/domiculeDiagonalSolver-BigInt.js');
 const { countPeriodicDiagonals } = require('../src/renderer/periodic');
-const { renderNote, listNotes, NOTES_DIRECTORY } = require('./notes');
+const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -108,17 +108,22 @@ const DEFAULT_BOARD = '4x4';
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const NOTE_PROVENANCE = {
   research: 'every output on this page was read from the committed research data, checked or computed during that build.',
-  torus: 'every output on this page was computed during that build, except the boards the solver column marks as data/ and the entropies read from research/king-entropy/.',
-  diagonals: 'every output on this page was computed during that build, except the rows the solver column marks as data/, which the build checked.',
+  dominoes: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
+  domicules: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
+  cylinders: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
+  tori: 'every output on this page was produced during that build from the files of this repository; the boards the solver column marks as data/ are stored counts, the entropies and the decay length ξ come from research/king-entropy/, and the running times from the benchmark run the page names.',
+  diagonals: 'every output on this page was produced during that build from the files of this repository; the rows the solver column marks as data/ are stored counts, which the build checked, and the running times come from the benchmark run the page names.',
 };
 const NOTE_SUMMARIES = {
   research: "The entropy per site of the king's graph dimers: an estimate with error bar 6·10⁻¹⁶, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
   method: 'How the tilings are counted, numbered and sampled, and how every number is checked.',
-  a004003: 'Notebook: domino tilings by three methods, the resultant and the running time.',
-  a239273: 'Notebook: domicule tilings up to 20 × 20, the modular solver and the Markov chain.',
-  torus: "Notebook: tilings of cylinders and tori on three lattices; the king's graph torus count over e^(sL²) tends to 2.",
-  diagonals: 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces, up to 20 × 20.',
+  dominoes: 'Notebook: domino tilings of the 2n × 2n board (A004003) by three methods, the resultant and the running time.',
+  domicules: 'Notebook: domicule tilings of the 2n × 2n board (A239273) up to 20 × 20, the modular solver and the Markov chain.',
+  cylinders: "Notebook: tilings of cylinders on the square lattice, the triangular lattice and the king's graph, and the recurrences of circumference 2.",
+  tori: "Notebook: tilings of tori on three lattices (A401670 on the king's graph); the king's graph torus count over e^(sL²) tends to 2.",
+  diagonals: 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces (A401673), up to 20 × 20.',
 };
+const NOTE_REDIRECTS = { a004003: 'dominoes', a239273: 'domicules', torus: 'tori' };
 
 function listBenchmarkRuns() {
   return fs
@@ -547,6 +552,35 @@ function buildJsonLd() {
   };
 }
 
+/**
+ * Writes a page at the old address of every renamed note that sends the reader to the new one,
+ * keeping the fragment. GitHub Pages has no server-side redirects.
+ */
+function writeNoteRedirects() {
+  Object.entries(NOTE_REDIRECTS).forEach(([from, to]) => {
+    const url = `${SITE_URL}notes/${to}.html`;
+
+    fs.writeFileSync(
+      path.join(OUTPUT_DIRECTORY, 'notes', `${from}.html`),
+      [
+        '<!doctype html>',
+        '<html lang="en">',
+        '<head>',
+        '<meta charset="utf-8">',
+        `<title>Moved to ${to}.html</title>`,
+        `<link rel="canonical" href="${url}">`,
+        '<meta name="robots" content="noindex">',
+        `<meta http-equiv="refresh" content="0; url=${to}.html">`,
+        `<script>location.replace('${to}.html' + location.hash);</script>`,
+        '</head>',
+        `<body><p>This page moved to <a href="${to}.html">${url}</a>.</p></body>`,
+        '</html>',
+        '',
+      ].join('\n'),
+    );
+  });
+}
+
 function buildSitemap(notes) {
   const today = new Date().toISOString().slice(0, 10);
 
@@ -603,7 +637,7 @@ async function buildNotes(notes, context) {
       .replace('__SITE_HEADER__', () => renderHeader({ root: '../', current: note.slug, notes }))
       .replace('__SITE_FOOTER__', () =>
         renderFooter([
-          `Built from <a href="${REPOSITORY_BLOB_URL}/notes/${note.file}">notes/${note.file}</a> on ${today}; ${NOTE_PROVENANCE[note.slug] || 'every output on this page was computed during that build.'}`,
+          `Built from <a href="${REPOSITORY_BLOB_URL}/notes/${note.file}">notes/${note.file}</a> on ${today}${cells ? `; ${NOTE_PROVENANCE[note.slug] || 'every output on this page was computed during that build.'}` : '.'}`,
         ]),
       );
 
@@ -688,9 +722,14 @@ async function __main__() {
     benchmark: data.benchmark,
     benchmarkRun: `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`,
     domiculeBenchmark: data.domiculeBenchmark,
+    periodicBenchmark: data.periodicBenchmark,
+    diagonalBenchmark: data.diagonalBenchmark,
     countDomicule: board => countDomiculeTilings(board).then(BigInt),
     roundDecimal,
+    logCount,
+    formatTime,
   });
+  writeNoteRedirects();
   const readScripts = files => files.map(file => fs.readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8')).join('\n');
   const scripts = readScripts(BROWSER_SCRIPTS);
   const workerSource = readScripts(WORKER_SCRIPTS);

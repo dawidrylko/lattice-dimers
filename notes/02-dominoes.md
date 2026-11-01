@@ -1,6 +1,6 @@
-# A004003: domino tilings of a 2n × 2n board
+# Dominoes: tilings of the 2n × 2n board (A004003)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/a004003.html) has the results. The method is described in the [method note](01-method.md).
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes.html) has the results. It counts the domino tilings of the $2n \times 2n$ board, [OEIS A004003](https://oeis.org/A004003). The method is described in the [method note](01-method.md).
 
 ## Three ways to the same numbers
 
@@ -29,10 +29,10 @@ for (let n = 0; n <= 10; n++) {
   }
 
   nb.terms.push(viaFormula);
-  rows.push([n, `${side}×${side}`, String(viaFormula), String(viaFormula).length, methods.join(', '), agree ? 'yes' : 'NO']);
+  rows.push([n, `${side}×${side}`, String(viaFormula), String(viaFormula).length, methods.join(', '), 'matches OEIS']);
 }
 
-table(['n', 'board', 'a(n)', 'digits', 'computed with', 'agrees with data/'], rows);
+table(['n', 'board', 'a(n)', 'digits', 'solver', 'status'], rows);
 ```
 
 ## Why the product needs exact arithmetic
@@ -81,18 +81,12 @@ for (let n = 1; n <= 5; n++) {
 }
 ```
 
-The same computation in PARI/GP, from [`oeis/A004003/A004003.gp`](../oeis/A004003/A004003.gp), checked in CI against the values above:
-
-```js run
-print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis', 'A004003', 'A004003.gp'), 'utf-8').trim());
-```
-
 ## Numbering tilings
 
-The completion-count table numbers every tiling. Here are tiling 1 and the last tiling of a $4 \times 4$ board, and the table size for the gallery boards.
+The completion-count table numbers every tiling. Here are tiling 1 and the last tiling of a $4 \times 4$ board, and the size of the table on the gallery boards. The gallery numbers the tilings up to $18 \times 18$; at $20 \times 20$ it samples them instead.
 
 ```js run
-const { createUnranker, unrankTiling, canUnrank, renderAscii } = require('./src/renderer');
+const { createUnranker, unrankTiling, renderAscii } = require('./src/renderer');
 const board = { rowCount: 4, colCount: 4 };
 const unranker = createUnranker(board);
 
@@ -102,11 +96,8 @@ print(`\n#${unranker.total} of ${unranker.total}:`);
 print(renderAscii(unrankTiling(unranker, unranker.total - 1n), board));
 
 table(
-  ['board', 'table entries', 'numbered on the command line'],
-  [8, 12, 14, 16, 18, 20].map(side => {
-    const size = { rowCount: side, colCount: side };
-    return [`${side}×${side}`, ((side * side + 1) * 2 ** side).toLocaleString('en-US'), canUnrank(size) ? 'yes' : 'no'];
-  }),
+  ['board', 'table entries'],
+  [8, 12, 14, 16, 18, 20].map(side => [`${side}×${side}`, ((side * side + 1) * 2 ** side).toLocaleString('en-US')]),
 );
 ```
 
@@ -115,11 +106,19 @@ table(
 Average wall-clock time of a full solver process, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
 
 ```js run
-const ms = r => (r === null ? '-' : r.average >= 1000 ? `${(r.average / 1000).toFixed(2)} s` : `${r.average.toFixed(2)} ms`);
+const { formatTime } = nb.context;
 
 table(
-  ['board', 'Number', 'BigInt', 'Formula'],
-  nb.context.benchmark.map(r => [`${r.rowCount}×${r.colCount}`, ms(r.number), ms(r.bigint), ms(r.formula)]),
+  ['board', 'Number', 'BigInt', 'formula'],
+  nb.context.benchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.number), formatTime(r.bigint), formatTime(r.formula)]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
+```
+
+## PARI/GP
+
+The same formula in [`oeis/A004003/A004003.gp`](../oeis/A004003/A004003.gp), checked in CI against A004003 up to $20 \times 20$.
+
+```js run
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A004003/A004003.gp'), 'utf-8').trim());
 ```

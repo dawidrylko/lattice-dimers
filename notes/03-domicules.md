@@ -1,6 +1,6 @@
-# A239273: domicule tilings of a 2n × 2n board
+# Domicules: tilings of the 2n × 2n board (A239273)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/a239273.html) has the results. The method is described in the [method note](01-method.md).
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules.html) has the results. It counts the domicule tilings of the $2n \times 2n$ board, [OEIS A239273](https://oeis.org/A239273), and of the $h \times w$ rectangles, [OEIS A239264](https://oeis.org/A239264). The method is described in the [method note](01-method.md).
 
 ## The sequence up to 20 × 20
 
@@ -81,7 +81,7 @@ print(`check: ${combined} mod ${primes[2]} = ${combined % BigInt(primes[2])}, re
 print(`exact a(4) = ${nb.terms[4]}`);
 
 if (combined !== nb.terms[4] || combined % BigInt(primes[2]) !== BigInt(residues[2])) {
-  throw new Error('The CRT does not reproduce a(4).');
+  throw new Error('the CRT does not reproduce a(4)');
 }
 ```
 
@@ -124,21 +124,22 @@ print(`distinct tilings seen: ${counts.size} of 280`);
 print(`chi-squared: ${chiSquared.toFixed(1)} (limit 357.8)`);
 
 if (counts.size !== 280 || chiSquared > 357.8) {
-  throw new Error('The chain fails the uniformity test.');
+  throw new Error('the chain fails the uniformity test');
 }
 ```
 
 ## Running time
 
-From the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results). $18 \times 18$ and $20 \times 20$ were measured once.
+Average wall-clock time of a full solver process, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
 
 ```js run
-const ms = r => (r === null ? '-' : r.average >= 1000 ? `${(r.average / 1000).toFixed(2)} s` : `${r.average.toFixed(2)} ms`);
+const { formatTime } = nb.context;
 
 table(
   ['board', 'BigInt', 'modular'],
-  nb.context.domiculeBenchmark.map(r => [`${r.rowCount}×${r.colCount}`, ms(r.bigint), ms(r.modular)]),
+  nb.context.domiculeBenchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.bigint), formatTime(r.modular)]),
 );
+print(`Run: ${nb.context.benchmarkRun}`);
 ```
 
 ## PARI/GP
@@ -146,5 +147,5 @@ table(
 The same transfer in [`oeis/A239264/A239264.gp`](../oeis/A239264/A239264.gp), with $a(n) = T(2n, 2n)$ in [`oeis/A239273/A239273.gp`](../oeis/A239273/A239273.gp), checked in CI against A239273 up to $12 \times 12$ and the A239264 rectangles of the test data.
 
 ```js run
-print(['A239264', 'A239273'].map(a => require('fs').readFileSync(require('path').join(nb.context.root, 'oeis', a, `${a}.gp`), 'utf-8').trim()).join('\n\n'));
+print(['A239264', 'A239273'].map(a => require('fs').readFileSync(require('path').join(nb.context.root, `oeis/${a}/${a}.gp`), 'utf-8').trim()).join('\n\n'));
 ```

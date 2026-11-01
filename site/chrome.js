@@ -4,9 +4,10 @@ const REPOSITORY_URL = 'https://github.com/dawidrylko/lattice-dimers';
 const NOTE_LABELS = {
   research: 'Research',
   method: 'Method',
-  a004003: 'A004003',
-  a239273: 'A239273',
-  torus: 'Tori and cylinders',
+  dominoes: 'Dominoes',
+  domicules: 'Domicules',
+  cylinders: 'Cylinders',
+  tori: 'Tori',
   diagonals: 'Diagonal pieces',
 };
 

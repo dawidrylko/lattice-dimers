@@ -1,10 +1,10 @@
-# Method
+# Method: how the tilings are counted, numbered and sampled
 
-This note describes how the project counts, numbers and samples two kinds of tilings of a board: domino tilings ([OEIS A004003](https://oeis.org/A004003)) and domicule tilings ([OEIS A239264](https://oeis.org/A239264), [OEIS A239273](https://oeis.org/A239273)) [6]. The computations behind every number are in the notebooks for [A004003](02-a004003.md), [A239273](03-a239273.md), [tori and cylinders](04-torus.md) and [diagonal pieces](05-diagonals.md).
+This note describes how the project counts, numbers and samples two kinds of tilings of a board: domino tilings ([OEIS A004003](https://oeis.org/A004003)) and domicule tilings ([OEIS A239264](https://oeis.org/A239264), [OEIS A239273](https://oeis.org/A239273)) [6]. The computations behind every number are in the notebooks on [dominoes](02-dominoes.md), [domicules](03-domicules.md), [cylinders](04-cylinders.md), [tori](05-tori.md) and [diagonal pieces](06-diagonals.md).
 
 ## Problem
 
-A domino covers two cells of the board that share a side. A tiling covers every cell exactly once, so it is a perfect matching of the grid graph whose vertices are the cells and whose edges join cells that share a side. A domicule may also cover two cells that share only a corner; its tilings are the perfect matchings of the king's graph, where every cell is joined to its eight neighbours.
+A domino covers two cells of the board that share a side. A tiling covers every cell exactly once, so it is a perfect matching of the grid graph whose vertices are the cells and whose edges join cells that share a side. A domicule may also cover two cells that share only a corner; its tilings are the perfect matchings of the king's graph, where every cell is joined to its eight neighbours. On cylinders and tori the project also counts the perfect matchings of the triangular lattice, the square lattice with one diagonal, for comparison.
 
 The questions are the same for both pieces: how many tilings a board of $h \times w$ cells has, what the tiling with a given number looks like, and how to draw a tiling uniformly at random when there are too many to number.
 
@@ -75,7 +75,7 @@ A torus tiling covers a set $S$ of first-row cells from the last row, and its sc
 Every count is checked in more than one independent way:
 
 - the formula and BigInt domino solvers agree with each other and with A004003 up to $20 \times 20$, the Number solver up to $10 \times 10$, and the two domicule solvers with A239273 and the data section of A239264;
-- the two periodic solvers agree with each other and with A335586, A253678, A281679 and A006253, and the two diagonal solvers with each other, with A004003 at $x = 0$ and with A239273 at $x = 1$;
+- the two periodic solvers agree with each other and with [OEIS A335586](https://oeis.org/A335586), [OEIS A253678](https://oeis.org/A253678), [OEIS A281679](https://oeis.org/A281679) and [OEIS A006253](https://oeis.org/A006253), and the two diagonal solvers with each other, with A004003 at $k = 0$ and with A239273 summed over $k$;
 - the PARI/GP programs in `oeis/` run in CI against the same data;
 - unranking is checked against an enumeration of every tiling of the small boards, and every unranked tiling is checked for coverage;
 - coupling from the past and the domicule chain are checked with chi-squared tests on $2 \times 2$ and $4 \times 4$;
