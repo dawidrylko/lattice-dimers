@@ -14,6 +14,7 @@ const SUMMARY_FILES = [
 const SUPERSCRIPTS = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
 const XI_DIGITS = 6;
 const XI_ERROR = 1e-6;
+const COPY_WINDOW = 0.1;
 
 function readResearch(file) {
   return fs.readFileSync(path.join(RESEARCH_DIRECTORY, file), 'utf-8');
@@ -105,19 +106,17 @@ function readConstants() {
 
 function checkSummaryCopies(constants) {
   const errors = [];
+  const copies = Object.values(constants).flatMap(constant => constant.values.map(value => ({ constant, value: Number(value) })));
 
   for (const file of SUMMARY_FILES) {
     const content = fs.readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8');
 
     for (const [number] of content.matchAll(/\d+\.\d{6,}/g)) {
-      const owners = Object.values(constants).filter(({ values }) =>
-        values.some(value => value.slice(0, 5) === number.slice(0, 5)),
-      );
+      const distance = ({ value }) => Math.abs(value - Number(number));
+      const nearest = copies.reduce((best, copy) => (distance(copy) < distance(best) ? copy : best));
 
-      if (owners.length > 0 && !owners.some(({ values }) => values.includes(number))) {
-        const allowed = owners.flatMap(({ values }) => values).join(' or ');
-
-        errors.push(`${file} has ${number}, where research/king-entropy gives ${allowed}.`);
+      if (distance(nearest) <= COPY_WINDOW * nearest.value && !nearest.constant.values.includes(number)) {
+        errors.push(`${file} has ${number}, where research/king-entropy gives ${nearest.constant.values.join(' or ')}.`);
       }
     }
   }

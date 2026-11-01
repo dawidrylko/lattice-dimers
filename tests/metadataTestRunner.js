@@ -67,6 +67,10 @@ function checkPackage() {
   return description.startsWith(expected) ? [] : [`The description in package.json must start with "${expected}", the title of CITATION.cff.`];
 }
 
+function checkPrivate() {
+  return JSON.parse(read('package.json')).private === true ? [] : ['package.json must stay private, so pnpm publish cannot release it to npm.'];
+}
+
 function checkKeywords() {
   const entries = listEntries();
   const citation = readCitation()
@@ -108,6 +112,7 @@ function __main__() {
   const passed = [
     runCheck('the title and abstract of CITATION.cff against README.md', checkCitation),
     runCheck('the description of package.json against CITATION.cff', checkPackage),
+    runCheck('that package.json is private', checkPrivate),
     runCheck('the OEIS keywords against oeis/', checkKeywords),
   ].every(Boolean);
 

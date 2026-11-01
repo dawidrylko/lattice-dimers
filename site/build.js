@@ -125,9 +125,9 @@ const NOTE_SUMMARIES = {
 };
 const NOTE_REDIRECTS = { a004003: 'dominoes', a239273: 'domicules', torus: 'tori' };
 
-function listBenchmarkRuns() {
+function listBenchmarkRuns(root = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT)) {
   return fs
-    .readdirSync(path.join(ROOT_DIRECTORY, BENCHMARK_ROOT))
+    .readdirSync(root)
     .filter(name => /^\d{4}-\d{2}$/.test(name))
     .sort()
     .reverse();
@@ -137,7 +137,7 @@ function resultFileName(fileName, { rowCount, colCount }) {
   return `${fileName}_${rowCount}x${colCount}.txt`;
 }
 
-function isCompleteRun(run) {
+function isCompleteRun(run, root = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT)) {
   const lastInt = testCasesInt[testCasesInt.length - 1];
   const lastBigInt = testCasesBigInt[testCasesBigInt.length - 1];
   const requiredFiles = [
@@ -149,11 +149,11 @@ function isCompleteRun(run) {
     ...LARGEST_PERIODIC_RESULTS,
   ];
 
-  return requiredFiles.every(file => fs.existsSync(path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, run, file)));
+  return requiredFiles.every(file => fs.existsSync(path.join(root, run, file)));
 }
 
-function findLatestCompleteRun() {
-  const run = BENCHMARK_RUNS.find(isCompleteRun);
+function findLatestCompleteRun(runs = BENCHMARK_RUNS, root = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT)) {
+  const run = runs.find(candidate => isCompleteRun(candidate, root));
 
   if (!run) {
     throw new Error(
@@ -763,7 +763,11 @@ async function __main__() {
   console.log(`Site saved: ${path.relative(ROOT_DIRECTORY, path.join(OUTPUT_DIRECTORY, 'index.html'))}`);
 }
 
-__main__().catch(error => {
-  console.error(error);
-  process.exit(1);
-});
+if (require.main === module) {
+  __main__().catch(error => {
+    console.error(error);
+    process.exit(1);
+  });
+}
+
+module.exports = { listBenchmarkRuns, findLatestCompleteRun };

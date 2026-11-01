@@ -223,6 +223,7 @@ const cliTestCases = [
   { rowCount: 3, colCount: 3, args: ['--random', '--ascii'], status: 0, output: 'Nothing to render.' },
   { rowCount: 3, colCount: 3, args: ['-i', '1', '--ascii'], status: 0, output: 'Nothing to render.' },
   { rowCount: 11, colCount: 15, args: ['--ascii'], status: 0, output: 'Nothing to render.' },
+  { rowCount: 21, colCount: 23, args: ['--ascii'], status: 0, output: 'Nothing to render.' },
   { rowCount: 3, colCount: 3, args: ['-o', 'abc', '--ascii'], status: 1, output: '-o expects' },
   { rowCount: 2, colCount: 2, args: ['-l', '0', '--ascii'], status: 1, output: 'Usage' },
   { rowCount: 8, colCount: 8, args: ['--all', '--ascii'], status: 1, output: '--all is only allowed' },

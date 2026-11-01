@@ -41,6 +41,8 @@ const parserTestCases = [
 const rejectionTestCases = [
   { args: ['src/solvers/dominoTilingSolver.js', '-r', '31', '-c', '31'], message: 'at most 30' },
   { args: ['src/solvers/dominoTilingSolver-BigInt.js', '-r', '31', '-c', '31'], message: 'at most 30' },
+  { args: ['src/solvers/dominoTilingSolver.js', '-r', '31', '-c', '31'], message: 'the rows are indexed with 32-bit integers' },
+  { args: ['src/solvers/dominoTilingSolver-BigInt.js', '-r', '31', '-c', '31'], message: 'the rows are indexed with 32-bit integers' },
   { args: ['src/solvers/dominoTilingSolver.js', '-r', '2abc', '-c', '2'], message: 'Usage' },
   { args: ['tests/testRunner.js', '-m', 'abc'], message: 'Usage' },
   { args: ['tests/testRunner.js', '-m'], message: 'Usage' },
@@ -312,6 +314,209 @@ function executePrecisionWarningTests() {
   });
 }
 
+function executeBenchmarkEmptySelectionTest() {
+  process.stdout.write('Executing benchmark empty selection test 1 of 1 for -o 99... ');
+
+  const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
+
+  try {
+    const { status, stderr } = runBenchmark(benchmarkRoot, ['-o', '99']);
+    const written = fs.readdirSync(benchmarkRoot);
+
+    if (status === 0 || !stderr.includes('No test cases') || written.length) {
+      console.error(`Failed! Exit code ${status}, wrote ${written.join(', ') || 'nothing'}: ${stderr.trim()}`);
+
+      return false;
+    }
+  } finally {
+    fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function executeBenchmarkRunTest() {
+  process.stdout.write('Executing benchmark run test 1 of 1 for a partial newer month... ');
+
+  const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
+  const touch = (run, files) => {
+    fs.mkdirSync(path.join(benchmarkRoot, run));
+    files.forEach(file => fs.writeFileSync(path.join(benchmarkRoot, run, file), ''));
+  };
+
+  try {
+    const { listBenchmarkRuns, findLatestCompleteRun } = require('../site/build.js');
+    touch('2000-01', fs.readdirSync(path.join(ROOT_DIRECTORY, 'benchmarks', 'results', findLatestCompleteRun())));
+    touch('2000-02', ['environment.json', 'dominoTilingSolver-Formula.js_0x0.txt']);
+    const chosen = findLatestCompleteRun(listBenchmarkRuns(benchmarkRoot), benchmarkRoot);
+
+    if (chosen !== '2000-01') {
+      console.error(`Failed! The site would show ${chosen} instead of the complete run 2000-01.`);
+
+      return false;
+    }
+  } catch (error) {
+    console.error(`Failed! ${error.message}`);
+
+    return false;
+  } finally {
+    fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function executeDataTests() {
+  const exact = new Map(testCasesBigInt.map(({ rowCount, colCount, expectedResult }) => [`${rowCount}x${colCount}`, expectedResult]));
+  const cases = [
+    ...testCasesInt.map(({ rowCount, colCount, expectedResult }) => ({
+      name: `the Number count of ${rowCount}x${colCount}`,
+      passed: Number.isSafeInteger(expectedResult) && String(expectedResult) === exact.get(`${rowCount}x${colCount}`),
+      detail: `${expectedResult} against the BigInt count ${exact.get(`${rowCount}x${colCount}`)}`,
+    })),
+    ...[
+      ['Number', testCasesInt],
+      ['BigInt', testCasesBigInt],
+      ['domicule', testCasesDomicule],
+    ].map(([group, testCases]) => ({
+      name: `a(0) of the ${group} squares`,
+      passed: testCases[0].rowCount === 0 && testCases[0].colCount === 0 && String(testCases[0].expectedResult) === '1',
+      detail: `the first case is ${testCases[0].rowCount}x${testCases[0].colCount} with ${testCases[0].expectedResult}`,
+    })),
+  ];
+
+  return cases.every(({ name, passed, detail }, index) => {
+    process.stdout.write(`Executing data test ${index + 1} of ${cases.length} for ${name}... `);
+
+    if (!passed) {
+      console.error(`Failed! ${detail}`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
+function listScripts(directory) {
+  return fs
+    .readdirSync(directory, { withFileTypes: true })
+    .flatMap(entry =>
+      entry.isDirectory()
+        ? listScripts(path.join(directory, entry.name))
+        : entry.name.endsWith('.js')
+          ? [path.join(directory, entry.name)]
+          : [],
+    );
+}
+
+function executeExitTests() {
+  const scripts = listScripts(path.join(ROOT_DIRECTORY, 'src'));
+
+  return scripts.every((file, index) => {
+    const name = path.relative(ROOT_DIRECTORY, file);
+    process.stdout.write(`Executing exit test ${index + 1} of ${scripts.length} for ${name}... `);
+
+    const exits = fs.readFileSync(file, 'utf-8').match(/process\.exit\(0?\)/g) || [];
+
+    if (exits.length) {
+      console.error(`Failed! ${exits.join(', ')} ends the process before a pipe has taken the whole output.`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
+function executeDirectoryTest() {
+  process.stdout.write('Executing directory test 1 of 1 for the renderer started elsewhere... ');
+
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-directory-'));
+
+  try {
+    const { status, stdout, stderr } = spawnSync(
+      process.execPath,
+      [path.join(ROOT_DIRECTORY, 'src', 'dominoTilingRenderer.js'), '-r', '2', '-c', '100', '-l', '1', '--ascii'],
+      { cwd, encoding: 'utf-8', timeout: REJECTION_TIMEOUT },
+    );
+
+    if (status !== 0 || !stdout.includes('Board 2x100: 573147844013817084101 tilings.')) {
+      console.error(`Failed! Exit code ${status}: ${(stderr || stdout).trim().split('\n')[0]}`);
+
+      return false;
+    }
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function executeUsageTests() {
+  const scripts = [
+    ...listScripts(path.join(ROOT_DIRECTORY, 'src', 'solvers')),
+    path.join(ROOT_DIRECTORY, 'src', 'dominoTilingRenderer.js'),
+    path.join(ROOT_DIRECTORY, 'benchmarks', 'benchmarkRunner.js'),
+  ];
+
+  return scripts.every((file, index) => {
+    const name = path.relative(ROOT_DIRECTORY, file);
+    process.stdout.write(`Executing usage test ${index + 1} of ${scripts.length} for ${name}... `);
+
+    const { stderr } = spawnSync(process.execPath, [file, '-r', 'x'], { cwd: ROOT_DIRECTORY, encoding: 'utf-8', timeout: REJECTION_TIMEOUT });
+    const named = (stderr.match(/Usage: node (\S+)/) || [])[1];
+
+    if (named !== name) {
+      console.error(`Failed! The usage line names ${named || 'no script'}: ${stderr.trim().split('\n')[0]}`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
+async function executeModuleTests() {
+  const fourByFour = testCases => testCases.find(({ rowCount, colCount }) => rowCount === 4 && colCount === 4);
+  const modules = [
+    ['domiculeTilingSolver-Modular.js', 'calculateTotalTilingCombinations', fourByFour(testCasesDomicule)],
+    ['periodicTilingSolver-Modular.js', 'calculateTotalTilingCombinations', fourByFour(testCasesPeriodic)],
+    ['domiculeDiagonalSolver-Modular.js', 'calculateDiagonalPolynomial', fourByFour(testCasesDiagonal)],
+  ];
+  let passed = true;
+
+  for (const [index, [fileName, method, { expectedResult, ...board }]] of modules.entries()) {
+    process.stdout.write(`Executing module test ${index + 1} of ${modules.length} for ${fileName} without a worker count... `);
+
+    const actual = await Promise.resolve()
+      .then(() => require(`../src/solvers/${fileName}`)[method](board))
+      .then(result => [].concat(result).map(String).join(), error => `an error: ${error.message}`);
+
+    if (actual !== expectedResult) {
+      console.error(`Failed! Expected: ${expectedResult}, Actual: ${actual}`);
+      passed = false;
+      break;
+    }
+
+    console.log('Passed!');
+  }
+
+  return passed;
+}
+
 function executeParserTests() {
   return parserTestCases.every(({ value, expectedResult }, index) => {
     process.stdout.write(
@@ -400,7 +605,7 @@ function executeTests(files, testCases, verifyResult) {
   return allPassed;
 }
 
-function __main__() {
+async function __main__() {
   try {
     const argsSchema = { '-m': 'maxSize' };
     const { maxSize } = parseArgs(process.argv.slice(2), argsSchema);
@@ -438,6 +643,13 @@ function __main__() {
     const benchmarkGuardTestPassed = executeBenchmarkGuardTest();
     const benchmarkSurfaceTestsPassed = executeBenchmarkSurfaceTests();
     const precisionWarningTestsPassed = executePrecisionWarningTests();
+    const benchmarkEmptySelectionTestPassed = executeBenchmarkEmptySelectionTest();
+    const benchmarkRunTestPassed = executeBenchmarkRunTest();
+    const dataTestsPassed = executeDataTests();
+    const exitTestsPassed = executeExitTests();
+    const directoryTestPassed = executeDirectoryTest();
+    const usageTestsPassed = executeUsageTests();
+    const moduleTestsPassed = await executeModuleTests();
 
     if (
       allIntTestsPassed &&
@@ -457,7 +669,14 @@ function __main__() {
       executorTestPassed &&
       benchmarkGuardTestPassed &&
       benchmarkSurfaceTestsPassed &&
-      precisionWarningTestsPassed
+      precisionWarningTestsPassed &&
+      benchmarkEmptySelectionTestPassed &&
+      benchmarkRunTestPassed &&
+      dataTestsPassed &&
+      exitTestsPassed &&
+      directoryTestPassed &&
+      usageTestsPassed &&
+      moduleTestsPassed
     ) {
       console.log('All tests completed successfully.');
       process.exit(0);
