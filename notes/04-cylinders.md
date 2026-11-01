@@ -1,4 +1,4 @@
-# Cylinders
+# Cylinders: tilings on three lattices
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/cylinders.html) has the results. It counts the tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom. There are three lattices: the square lattice (dominoes), the triangular lattice (the square lattice with one diagonal) and the king's graph (domicules). The method is described in the [method note](01-method.md).
 

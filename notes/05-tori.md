@@ -1,4 +1,4 @@
-# Tori
+# Tori: tilings on three lattices (A401670 on the king's graph)
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/tori.html) has the results. It counts the tilings of tori, boards whose opposite edges are glued in both directions. There are three lattices: the square lattice (dominoes), the triangular lattice (the square lattice with one diagonal) and the king's graph (domicules). The [cylinders notebook](04-cylinders.md) counts the same lattices with only the left and right edges glued. The method is described in the [method note](01-method.md).
 

@@ -1,4 +1,4 @@
-# A004003: domino tilings of a 2n × 2n board
+# Dominoes: tilings of the 2n × 2n board (A004003)
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes.html) has the results. It counts the domino tilings of the $2n \times 2n$ board, [OEIS A004003](https://oeis.org/A004003). The method is described in the [method note](01-method.md).
 

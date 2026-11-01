@@ -1,4 +1,4 @@
-# Method
+# Method: how the tilings are counted, numbered and sampled
 
 This note describes how the project counts, numbers and samples two kinds of tilings of a board: domino tilings ([OEIS A004003](https://oeis.org/A004003)) and domicule tilings ([OEIS A239264](https://oeis.org/A239264), [OEIS A239273](https://oeis.org/A239273)) [6]. The computations behind every number are in the notebooks on [dominoes](02-dominoes.md), [domicules](03-domicules.md), [cylinders](04-cylinders.md), [tori](05-tori.md) and [diagonal pieces](06-diagonals.md).
 
