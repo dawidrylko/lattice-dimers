@@ -199,19 +199,20 @@ branches already did; the five added rows differ by at most 5.7e-20 per site, an
 7.8e-20 above is unchanged.
 
 The A239264 b-file was reached on 2026-11-01 from a machine with access to oeis.org, after its
-extension to antidiagonals 0..44 (1035 terms) was approved on 2026-10-31. oeis.org serves the extension
-as `b239264.txt` and the file this report could not reach as `b239264_2.txt`. That file holds the 703
+extension to antidiagonals 0..44 (1035 terms) was approved on 2026-10-31. oeis.org then served the extension
+as `b239264.txt` (now `b239264_3.txt`) and the file this report could not reach as `b239264_2.txt`. That file holds the 703
 terms followed by 58 empty lines: the own rebuild plus those lines is byte-identical to it, and its
 SHA-256 starts with the 16 hex digits and its size equals the size that `out/oeis_check.txt` records for
 the LFS pointer above, so the 58 missing bytes were format, not content. The extension matches the own
 counts on antidiagonals 0..36, and on all 1035 terms the files `data/zex/zex_king_free_*.json`, which
-`compare_counts.py` checks against `kd.c`: 0 mismatches. The check is `bfile_check.py`, its output
-`out/bfile_check.txt` with the SHA-256 of both files.
+`compare_counts.py` checks against `kd.c`: 0 mismatches. The check is `bfile_check.py`, whose output
+`out/bfile_check.txt` with the SHA-256 of the files now records the rerun below.
 
 On 2026-11-01 the extension to antidiagonals 0..46 (1128 terms) was approved as well. oeis.org serves
 it as `b239264.txt` and the 0..44 file as `b239264_3.txt`. `bfile_check.py` now reads the number of
-antidiagonals from the length of the file, and `out/bfile_check.txt`, rerun on that day, records 0
-mismatches on all 1128 terms.
+antidiagonals from the length of the file and compares the terms of boards with an odd number of
+cells with 0. Rerun on that day, `out/bfile_check.txt` records 0 mismatches on all 1128 terms, and
+the first 1035 of them equal `b239264_3.txt`.
 
 ## Commands
 
@@ -226,7 +227,7 @@ Machine: x86-64, 4 cores, 15 GiB.
 | `out/counts_free.json`, `out/counts_cyl.json`, `out/counts_log.txt` | `python3 counts.py` | 7 min |
 | `out/oeis_fetch.txt`, `out/oeis_check.txt` | `sh fetch_oeis.sh DIR > out/oeis_fetch.txt; python3 oeis_check.py DIR` | seconds |
 | `out/compare_counts.txt` | `python3 compare_counts.py` | minutes |
-| `out/bfile_check.txt` | `python3 bfile_check.py DIR` (after `counts.py` and `oeis_check.py`; DIR holds the two b-files from oeis.org) | seconds |
+| `out/bfile_check.txt` | `python3 bfile_check.py DIR` (after `counts.py` and `oeis_check.py`; DIR holds `b239264.txt`, `b239264_2.txt` and, optionally, `b239264_3.txt` from oeis.org) | seconds |
 | `out/pfaff.txt` | `python3 pfaff.py` | 10 s |
 | `out/bounds_exact.txt` | `python3 bounds_exact.py 4 8 12` | minutes |
 | `out/cert.txt` | `python3 cert.py 16 20 22 23 24` | about 30 min |

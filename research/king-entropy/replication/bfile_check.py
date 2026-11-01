@@ -3,13 +3,15 @@
 The b-file was extended to antidiagonals 0..44 (approved on 2026-10-31) and then to 0..46
 (approved on 2026-11-01). oeis.org serves the newest file as b239264.txt, the 0..44 file as
 b239264_3.txt and the former file (antidiagonals 0..36, whose LFS pointer out/oeis_check.txt
-records) as b239264_2.txt. Both are fetched into one directory with
+records) as b239264_2.txt. The files are fetched into one directory with
 curl -sSfO https://oeis.org/A239264/<name> and checked as follows:
   - b239264_2.txt is rebuilt from out/counts_free.json together with its trailing empty
     lines, and the rebuild compared byte for byte with the file and with the pointer;
   - b239264.txt is compared term by term with out/counts_free.json (antidiagonals 0..36)
     and with data/zex/zex_king_free_*.json (all its antidiagonals, their number read from the
-    length of the file), which compare_counts.py checks against kd.c.
+    length of the file), which compare_counts.py checks against kd.c; a board with an odd
+    number of cells has no tiling, so its term is compared with 0;
+  - b239264_3.txt, when fetched too, is compared with the leading terms of b239264.txt.
 
 Run (after counts.py and oeis_check.py): python3 bfile_check.py <dir> > out/bfile_check.txt
 """
@@ -86,7 +88,12 @@ def main():
     print(f"antidiagonals 0..36 vs out/counts_free.json: {n_old} terms, mismatches {bad_own}")
     print(f"antidiagonals 0..{diagonals - 1} vs data/zex: {len(new)} terms, mismatches {bad_zex}")
     print(f"first {n_old} terms equal to b239264_2.txt: {new[:n_old] == old}")
-    print("\nTOTAL MISMATCHES:", (not same) + (not hit) + bad_own + bad_zex + (new[:n_old] != old))
+    bad_prev = 0
+    if os.path.exists(os.path.join(src, "b239264_3.txt")):
+        prev = read_bfile(os.path.join(src, "b239264_3.txt"))
+        bad_prev = new[:len(prev)] != prev
+        print(f"first {len(prev)} terms equal to b239264_3.txt: {not bad_prev}")
+    print("\nTOTAL MISMATCHES:", (not same) + (not hit) + bad_own + bad_zex + (new[:n_old] != old) + bad_prev)
 
 
 if __name__ == "__main__":
