@@ -76,7 +76,7 @@ Every count is checked in more than one independent way:
 
 - the formula and BigInt domino solvers agree with each other and with A004003 up to $20 \times 20$, the Number solver up to $10 \times 10$, and the two domicule solvers with A239273 and the data section of A239264;
 - the two periodic solvers agree with each other and with A335586, A253678, A281679 and A006253, and the two diagonal solvers with each other, with A004003 at $x = 0$ and with A239273 at $x = 1$;
-- the four PARI/GP programs in `pari/` run in CI against the same data;
+- the PARI/GP programs in `oeis/` run in CI against the same data;
 - unranking is checked against an enumeration of every tiling of the small boards, and every unranked tiling is checked for coverage;
 - coupling from the past and the domicule chain are checked with chi-squared tests on $2 \times 2$ and $4 \times 4$;
 - the modular solver checks every result against an extra prime.

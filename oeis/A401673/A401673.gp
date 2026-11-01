@@ -1,6 +1,6 @@
-\\ Domicule tilings of an h X w board by the number of diagonal pieces: P(h, w) is a polynomial
+\\ Domicule tilings of an h X w board by the number of diagonal pieces (OEIS A401673): P(h, w) is a polynomial
 \\ in x, whose coefficient of x^k counts the tilings with k pieces joining cells that share only a corner.
-\\ The dynamic programming of A239273.gp, with a piece to the down-left or down-right neighbour weighted by x.
+\\ The dynamic programming of A239264.gp, with a piece to the down-left or down-right neighbour weighted by x.
 \\ The number of diagonal pieces is even, so row(n) lists the tilings of the 2n X 2n board with 0, 2, ..., 2n^2 of them.
 P(h, w) = {
   my(S = 2^(w+2), v = vector(S), u);

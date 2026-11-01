@@ -1,16 +1,22 @@
 const fs = require('fs');
 const path = require('path');
+const { calculateTotalTilingCombinations } = require('../src/solvers/dominoTilingSolver-Formula');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const ZEX_DIRECTORY = path.join(ROOT_DIRECTORY, 'research', 'king-entropy', 'data', 'zex');
+const LAST_DOMINO_SQUARE = 44;
 const LAST_ANTIDIAGONAL = 46;
 const LAST_SQUARE = 12;
+const LAST_TORUS = 8;
 const LAST_DIAGONAL_ROW = 10;
+const TORUS_FILES = ['periodicTilingTests.json', 'periodicTilingTests-Modular.json'];
 const DIAGONAL_FILES = ['domiculeDiagonalTests.json', 'domiculeDiagonalTests-Modular.json'];
 const SOURCES = {
-  'b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
-  'b239273.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
-  'b401673.txt': DIAGONAL_FILES.map(name => `data/${name}`).join(' and '),
+  'A004003/b004003.txt': 'src/solvers/dominoTilingSolver-Formula.js',
+  'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
+  'A239273/b239273.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
+  'A401670/b401670.txt': TORUS_FILES.map(name => `data/${name}`).join(' and '),
+  'A401673/b401673.txt': DIAGONAL_FILES.map(name => `data/${name}`).join(' and '),
 };
 
 function readStrips() {
@@ -63,6 +69,36 @@ function countTilings(strips, rows, columns) {
   }
 
   return counts[length];
+}
+
+function readTori() {
+  const tori = new Map([[0, '1']]);
+
+  for (const name of TORUS_FILES) {
+    const { testCases } = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'data', name), 'utf-8'));
+
+    for (const { rowCount, colCount, lattice, torus, twisted, expectedResult } of testCases) {
+      if (lattice !== 'king' || !torus || twisted || rowCount !== colCount || rowCount % 2 === 1) {
+        continue;
+      }
+
+      const known = tori.get(rowCount / 2);
+
+      if (known && known !== expectedResult) {
+        throw new Error(`The ${rowCount} X ${rowCount} torus counts disagree between the files in data/.`);
+      }
+
+      tori.set(rowCount / 2, expectedResult);
+    }
+  }
+
+  return Array.from({ length: LAST_TORUS + 1 }, (_, n) => {
+    if (!tori.has(n)) {
+      throw new Error(`No count for the ${2 * n} X ${2 * n} torus in data/.`);
+    }
+
+    return tori.get(n);
+  });
 }
 
 function readDiagonalRows() {
@@ -123,12 +159,17 @@ function buildBFiles() {
 
   const squares = Array.from({ length: LAST_SQUARE + 1 }, (_, n) => countTilings(strips, 2 * n, 2 * n));
 
+  const dominoes = Array.from({ length: LAST_DOMINO_SQUARE + 1 }, (_, n) =>
+    String(calculateTotalTilingCombinations({ rowCount: 2 * n })),
+  );
   const triangle = readDiagonalRows().flat();
 
   return {
-    'b239264.txt': formatBFile(array),
-    'b239273.txt': formatBFile(squares),
-    'b401673.txt': formatBFile(triangle),
+    'A004003/b004003.txt': formatBFile(dominoes),
+    'A239264/b239264.txt': formatBFile(array),
+    'A239273/b239273.txt': formatBFile(squares),
+    'A401670/b401670.txt': formatBFile(readTori()),
+    'A401673/b401673.txt': formatBFile(triangle),
   };
 }
 
