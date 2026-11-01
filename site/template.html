@@ -37,7 +37,7 @@
   --h: #044cb6; --v: #5eaceb; --d: #ab3415; --a: #f09c17;
   --paper-h: #ffffff; --paper-v: #e8eef6; --ink: #334155;
   --sheet: #ffffff; --board: #f3f4f6; --edge: #1f2937; --label: #4b5563; --hit: #dc2626;
-  --mute: #d1d5db; --seam: #c026d3;
+  --mute: #d1d5db; --seam: #c026d3; --seam-ends: #16a34a;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -47,7 +47,7 @@
     --h: #5590f3; --v: #3b5d96; --d: #f0a53a; --a: #d9601e;
     --paper-h: #1f2530; --paper-v: #283142; --ink: #8b95a5;
     --sheet: #161a21; --board: #232833; --edge: #0b0d11; --label: #9ca3af; --hit: #f87171;
-    --mute: #3a404c; --seam: #f0abfc;
+    --mute: #3a404c; --seam: #f0abfc; --seam-ends: #4ade80;
   }
 }
 * { box-sizing: border-box; }
@@ -124,13 +124,18 @@ nav.tabs a[aria-current="page"] { color: var(--fg); border-color: var(--accent);
 .sheet .engraving .d { stroke: var(--ed); } .sheet .engraving .a { stroke: var(--ea); }
 .sheet svg { display: block; max-width: 100%; height: auto; }
 .sheet .s, .sheet .m { stroke: var(--seam); }
+.sheet .t, .sheet .u { stroke: var(--seam-ends); }
 .sheet text.n { fill: var(--muted); }
 #gallery[data-highlight] .sheet .blocks .h, #gallery[data-highlight] .sheet .blocks .v { fill: var(--mute); }
 #gallery[data-highlight] .sheet .dimer .h, #gallery[data-highlight] .sheet .dimer .v { fill: var(--mute); stroke: var(--mute); }
 #gallery[data-highlight] .sheet .engraving .h, #gallery[data-highlight] .sheet .engraving .v { fill: var(--sheet); stroke: var(--mute); }
 #gallery[data-highlight] .legend i.h, #gallery[data-highlight] .legend i.v { --k: var(--mute); }
 #gallery[data-highlight][data-style="engraving"] .legend i.h, #gallery[data-highlight][data-style="engraving"] .legend i.v { background: var(--sheet); border-color: var(--mute); }
-.legend i.s, [data-style] .legend i.s { height: 0; border: 0; border-top: 1.5px dashed var(--seam); border-radius: 0; background: none; vertical-align: 3px; }
+.legend i.s, [data-style] .legend i.s, .legend i.t, [data-style] .legend i.t { position: relative; height: 0; border: 0; border-top: 1.5px dashed var(--k); border-radius: 0; background: none; vertical-align: 3px; }
+.legend i.s { --k: var(--seam); } .legend i.t { --k: var(--seam-ends); }
+.legend i.s::after, .legend i.t::after { content: ''; position: absolute; left: 50%; top: -4.75px; width: 1.5px; height: 8px; background: var(--k); }
+.legend i.s::after { transform: translateX(-50%); }
+.legend i.t::after { width: 4.5px; transform: translateX(-50%); background: linear-gradient(90deg, var(--k) 0 1.5px, transparent 1.5px 3px, var(--k) 3px); }
 .filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; min-width: 0; min-height: 38px; padding: 2px; }
 #diagonals { max-width: 100%; }
 .toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
@@ -249,7 +254,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     </div>
     <div class="summary">
       <p class="meta" id="gallery-meta"></p>
-      <span class="legend"><span><i class="h"></i>horizontal</span><span><i class="v"></i>vertical</span><span class="diagonal"><i class="d"></i>diagonal ↘</span><span class="diagonal"><i class="a"></i>diagonal ↙</span><span class="seam"><i class="s"></i>glued edge</span></span>
+      <span class="legend"><span><i class="h"></i>horizontal</span><span><i class="v"></i>vertical</span><span class="diagonal"><i class="d"></i>diagonal ↘</span><span class="diagonal"><i class="a"></i>diagonal ↙</span><span class="seam"><i class="s"></i>left and right edges glued</span><span class="seam-ends"><i class="t"></i>top and bottom edges glued</span></span>
     </div>
     <div class="notice" id="notice" hidden>
       <p id="notice-text"></p>
@@ -557,10 +562,8 @@ function tileAt(event) {
   const svg = $('sheet').querySelector('svg');
   if (!shownSheet || !svg) return null;
   const { board, tilings, columns } = shownSheet;
-  const cell = renderSheet.CELL_SIZE;
   const padding = renderSheet.PADDING;
-  const tileWidth = board.colCount * cell + padding;
-  const tileHeight = board.rowCount * cell + renderSheet.LABEL_HEIGHT + padding;
+  const { width: tileWidth, height: tileHeight } = renderSheet.tileSize(board);
   const rect = svg.getBoundingClientRect();
   const scale = rect.width / svg.viewBox.baseVal.width;
   const x = (event.clientX - rect.left) / scale - padding;
@@ -667,6 +670,7 @@ function updateControls({ board, page, diagonals, total }) {
   });
   document.querySelectorAll('.legend .diagonal').forEach(item => (item.hidden = board.pieces !== 'domicule'));
   document.querySelectorAll('.legend .seam').forEach(item => (item.hidden = board.surface === 'rectangle'));
+  document.querySelectorAll('.legend .seam-ends').forEach(item => (item.hidden = board.surface !== 'torus'));
   $('diagonal-picker').hidden = board.pieces !== 'domicule';
   showDiagonalFilter(board, diagonals);
   showHighlight(board);

@@ -51,7 +51,7 @@ const randomValidityTestCases = [
   { rowCount: 30, colCount: 30 },
 ];
 const DOMINO_OUTPUT_HASHES = {
-  svg: '03747e1b113b2eead3aaba260a1da9773169027c21346ad1dcdf77d707a83f50',
+  svg: '28291e2e1e9229d062c1864667bb9941b9b27eca17fac94e2577a4e4d22f1005',
   ascii: '3bbf6c1dc91ec1980e1b71fa58ff4796d0f87123a57ca282b46d71dd9677afc7',
 };
 const DOMICULE_FULL_CHECK_LIMIT = BigInt(5000);
@@ -951,7 +951,9 @@ function runPeriodicSheetTest({ tiling, copies, edges, ...options }) {
   const sheet = renderSheet([tiling], 1, { ...options, sublabels: ['2'] });
   const nested = sheet.match(/<svg x="(\d+)" y="(\d+)" width="(\d+)" height="(\d+)" viewBox="([^"]+)">/);
   const counts = Object.fromEntries(Object.keys(copies).map(kind => [kind, (sheet.match(new RegExp(`<rect class="${kind}"`, 'g')) || []).length]));
-  const seams = sheet.match(/<path class="s" d="([^"]+)"/);
+  const segments = className => ((sheet.match(new RegExp(`<path class="${className}" d="([^"]+)"`)) || [])[1] || '').split('M').length - 1;
+  const seams = { sides: segments('s'), ends: segments('t'), sideTicks: segments('m'), endTicks: segments('u') };
+  const torus = options.surface === 'torus';
   const plain = renderSheet([tiling], 1, { rowCount: options.rowCount, colCount: options.colCount });
 
   if (!nested || nested[5] !== `${nested[1]} ${nested[2]} ${nested[3]} ${nested[4]}`) {
@@ -966,8 +968,16 @@ function runPeriodicSheetTest({ tiling, copies, edges, ...options }) {
     return false;
   }
 
-  if (!seams || seams[1].split('M').length - 1 !== edges || !sheet.includes('<path class="m"') || !sheet.includes('.s{fill:none')) {
-    console.error(`Failed! Glued edges drawn: ${seams ? seams[1] : 'none'}, expected ${edges}.`);
+  if (
+    seams.sides + seams.ends !== edges ||
+    seams.sides !== 2 ||
+    seams.ends !== (torus ? 2 : 0) ||
+    seams.sideTicks !== 2 ||
+    seams.endTicks !== (torus ? 4 : 0) ||
+    !sheet.includes('.s,.t{fill:none') ||
+    !sheet.includes('.t,.u{stroke:')
+  ) {
+    console.error(`Failed! Glued edges drawn: ${JSON.stringify(seams)}, expected ${edges} edges with one tick on each side and two on each end.`);
 
     return false;
   }
