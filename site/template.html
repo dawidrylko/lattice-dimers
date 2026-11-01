@@ -278,12 +278,11 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       <h2 class="table-title">Dominoes (A004003)</h2>
       <div class="table-wrap">
         <table role="table" id="domino-benchmark">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">Number</th><th role="columnheader">BigInt</th><th role="columnheader">Formula</th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Formula</th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
       <p class="note">
-        Number keeps the count in a JavaScript number and stops at 10×10, beyond which the count exceeds 2<sup>53</sup>.
         BigInt counts exactly. Formula evaluates the product formula of Kasteleyn and Fisher as an exact resultant.
         Re-run with <code>pnpm benchmark</code>.
       </p>
@@ -930,18 +929,18 @@ $('load-table').addEventListener('click', () => {
 });
 
 function runsLabel(row) {
-  const runs = [row.number, row.bigint, row.formula].map(result => (result ? result.runs : null));
+  const runs = [row.bigint, row.formula].map(result => (result ? result.runs : null));
   const measured = runs.filter(count => count !== null);
 
   return measured.every(count => count === measured[0])
     ? fmt(measured[0])
-    : `<span title="Number / BigInt / Formula">${runs.map(count => (count === null ? '-' : fmt(count))).join(' / ')}</span>`;
+    : `<span title="BigInt / Formula">${runs.map(count => (count === null ? '-' : fmt(count))).join(' / ')}</span>`;
 }
 
 const benchmarkColumns = [...document.querySelectorAll('#domino-benchmark thead th')].map(th => th.textContent);
 
 $('benchmark-rows').innerHTML = DATA.benchmark
-  .map(r => [`${r.rowCount}×${r.colCount}`, r.tilings === null ? '-' : num(r.tilings), ms(r.number), ms(r.bigint), ms(r.formula), runsLabel(r)])
+  .map(r => [`${r.rowCount}×${r.colCount}`, r.tilings === null ? '-' : num(r.tilings), ms(r.bigint), ms(r.formula), runsLabel(r)])
   .map(cells => `<tr role="row">${cells.map((cell, i) => `<td role="cell" data-label="${benchmarkColumns[i]}">${cell}</td>`).join('')}</tr>`)
   .join('');
 

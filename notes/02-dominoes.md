@@ -109,8 +109,8 @@ Average wall-clock time of a full solver process, from the newest complete bench
 const { formatTime } = nb.context;
 
 table(
-  ['board', 'Number', 'BigInt', 'formula'],
-  nb.context.benchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.number), formatTime(r.bigint), formatTime(r.formula)]),
+  ['board', 'BigInt', 'formula'],
+  nb.context.benchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.bigint), formatTime(r.formula)]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 ```

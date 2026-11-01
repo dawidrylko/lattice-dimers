@@ -367,7 +367,6 @@ function buildBenchmark() {
       rowCount,
       colCount,
       tilings: tilingsBySize.get(`${rowCount}x${colCount}`) ?? null,
-      number: readAverageTime(BENCHMARK_DIRECTORY, `dominoTilingSolver.js${suffix}`),
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `dominoTilingSolver-BigInt.js${suffix}`),
       formula: readAverageTime(BENCHMARK_DIRECTORY, `dominoTilingSolver-Formula.js${suffix}`),
     };
