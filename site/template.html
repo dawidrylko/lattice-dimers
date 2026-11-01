@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lattice Dimers: the dimer entropy of the king's graph and every tiling of a 2n × 2n board | Dawid Ryłko</title>
-<meta name="description" content="Research on lattice dimers: the entropy per site of the king's graph dimers with rigorous bounds, and domino (OEIS A004003) and domicule (A239273) tilings counted exactly up to 20×20, with a paper, notebooks and a gallery.">
+<meta name="description" content="Research on lattice dimers: the entropy per site of the king's graph dimers with rigorous bounds, and domino (OEIS A004003) and domicule (OEIS A239273) tilings counted exactly up to 20×20, with a paper, notebooks and a gallery.">
 <meta name="author" content="Dawid Ryłko">
 <meta name="keywords" content="dimer model, king's graph, perfect matchings, entropy per site, transfer matrix, Collatz-Wielandt bounds, Pfaffian orientation, domicule tiling, domino tiling, OEIS A004003, OEIS A239264, OEIS A239273, PARI/GP, combinatorics, statistical mechanics">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -37,7 +37,7 @@
   --h: #044cb6; --v: #5eaceb; --d: #ab3415; --a: #f09c17;
   --paper-h: #ffffff; --paper-v: #e8eef6; --ink: #334155;
   --sheet: #ffffff; --board: #f3f4f6; --edge: #1f2937; --label: #4b5563; --hit: #dc2626;
-  --mute: #d1d5db;
+  --mute: #d1d5db; --seam: #c026d3;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -47,7 +47,7 @@
     --h: #5590f3; --v: #3b5d96; --d: #f0a53a; --a: #d9601e;
     --paper-h: #1f2530; --paper-v: #283142; --ink: #8b95a5;
     --sheet: #161a21; --board: #232833; --edge: #0b0d11; --label: #9ca3af; --hit: #f87171;
-    --mute: #3a404c;
+    --mute: #3a404c; --seam: #f0abfc;
   }
 }
 * { box-sizing: border-box; }
@@ -123,14 +123,14 @@ nav.tabs a[aria-current="page"] { color: var(--fg); border-color: var(--accent);
 .sheet .engraving .ca { fill: color-mix(in srgb, var(--ea) 9%, var(--paper-h)); }
 .sheet .engraving .d { stroke: var(--ed); } .sheet .engraving .a { stroke: var(--ea); }
 .sheet svg { display: block; max-width: 100%; height: auto; }
-.sheet .s, .sheet .m { stroke: var(--accent); }
+.sheet .s, .sheet .m { stroke: var(--seam); }
 .sheet text.n { fill: var(--muted); }
 #gallery[data-highlight] .sheet .blocks .h, #gallery[data-highlight] .sheet .blocks .v { fill: var(--mute); }
 #gallery[data-highlight] .sheet .dimer .h, #gallery[data-highlight] .sheet .dimer .v { fill: var(--mute); stroke: var(--mute); }
 #gallery[data-highlight] .sheet .engraving .h, #gallery[data-highlight] .sheet .engraving .v { fill: var(--sheet); stroke: var(--mute); }
 #gallery[data-highlight] .legend i.h, #gallery[data-highlight] .legend i.v { --k: var(--mute); }
 #gallery[data-highlight][data-style="engraving"] .legend i.h, #gallery[data-highlight][data-style="engraving"] .legend i.v { background: var(--sheet); border-color: var(--mute); }
-.legend i.s, [data-style] .legend i.s { height: 0; border: 0; border-top: 1.5px dashed var(--accent); border-radius: 0; background: none; vertical-align: 3px; }
+.legend i.s, [data-style] .legend i.s { height: 0; border: 0; border-top: 1.5px dashed var(--seam); border-radius: 0; background: none; vertical-align: 3px; }
 .filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; min-width: 0; min-height: 38px; padding: 2px; }
 #diagonals { max-width: 100%; }
 .toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
@@ -161,6 +161,9 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
 .notice p { margin: 0 0 10px; }
 .notice button { font: inherit; padding: 6px 14px; border: 1px solid var(--accent); border-radius: 6px; background: var(--accent); color: var(--accent-fg); cursor: pointer; }
 .sheet:empty { display: none; }
+.tile-tip { position: fixed; z-index: 10; pointer-events: none; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--fg); font-size: 13px; line-height: 1.45; box-shadow: 0 4px 14px rgb(0 0 0 / 18%); white-space: nowrap; }
+.tile-tip b { display: block; }
+.tile-tip span { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -178,14 +181,14 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     How many tilings does a 2n&nbsp;×&nbsp;2n board have? With dominoes, which join cells that share a side, the count is
     <a href="https://oeis.org/A004003">OEIS&nbsp;A004003</a> (a chessboard has 12,988,816); with domicules it is
     <a href="https://oeis.org/A239273">OEIS&nbsp;A239273</a> (3,263,262,629,905). Both sequences are counted here exactly up
-    to 20&nbsp;×&nbsp;20, including a domicule term that is not in the OEIS yet, and the gallery below draws any single tiling.
+    to 20&nbsp;×&nbsp;20, and the gallery below draws any single tiling.
   </p>
   <noscript><p class="intro">The gallery needs JavaScript. The benchmark results are also available in the
     <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/benchmarks/results">repository</a>.</p></noscript>
   <nav class="tabs">
     <a href="#gallery" data-tab="gallery">Gallery</a>
     <a href="#benchmark" data-tab="benchmark">Benchmark: dominoes</a>
-    <a href="#benchmark-domicule" data-tab="benchmark-domicule">Benchmark: domicules</a>
+    <a href="#benchmark-domicule" data-tab="benchmark-domicule">Benchmark: king's graph</a>
   </nav>
 
   <section id="gallery">
@@ -209,7 +212,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       <div class="boards" id="boards" role="group" aria-labelledby="boards-label"></div>
     </div>
     <div class="picker" id="diagonal-picker">
-      <span class="label" id="diagonals-label">Diagonal pieces</span>
+      <span class="label" id="diagonals-label" title="Show only the tilings with this many diagonal pieces">Diagonal pieces</span>
       <div class="filter">
         <select class="field" id="diagonals" aria-labelledby="diagonals-label"></select>
         <label class="toggle"><input type="checkbox" id="highlight">Highlight diagonals</label>
@@ -254,6 +257,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     </div>
     <p class="status" id="status" role="status" aria-live="polite"></p>
     <div class="sheet" id="sheet"></div>
+    <div class="tile-tip" id="tile-tip" role="tooltip" hidden></div>
   </section>
 
   <section id="benchmark" class="bench" hidden>
@@ -436,7 +440,7 @@ function getWorker() {
 }
 
 function requestTilings(message, onProgress = () => {}) {
-  if (needsConfirmation(message.board)) {
+  if (needsConfirmation(message.board, message.diagonals ?? null)) {
     return Promise.reject(new Error('Build the counting table first.'));
   }
 
@@ -447,8 +451,17 @@ function requestTilings(message, onProgress = () => {}) {
   });
 }
 
-function needsConfirmation(board) {
-  return Boolean(board.confirm) && !confirmedBoards.has(board.id);
+function confirmationKey(board, diagonals) {
+  return diagonals === null ? board.id : `${board.id}?diagonals`;
+}
+
+function tableMemory(board, diagonals) {
+  return diagonals === null ? board.memory : board.filterMemory;
+}
+
+function needsConfirmation(board, diagonals = null) {
+  const confirm = diagonals === null ? board.confirm : board.filterMemory;
+  return Boolean(confirm) && !confirmedBoards.has(confirmationKey(board, diagonals));
 }
 
 function pageCount(total) {
@@ -519,16 +532,89 @@ function sheetColumns(board) {
   return Math.max(2, Math.min(10, Math.floor(($('gallery').clientWidth - 14) / (board.colCount * 16 + 12))));
 }
 
-function diagonalLabels(tiling) {
-  const count = tiling.filter(piece => piece.dr && piece.dc).length;
+const plural = (count, word) => `${fmt(count)} ${word}${count === 1 ? '' : 's'}`;
 
-  return [`${count} diagonal`, `${count} diag.`, String(count)];
+function describeTiling(board, tiling) {
+  const kinds = { h: 0, v: 0, d: 0, a: 0 };
+  let glued = 0;
+
+  for (const piece of tiling) {
+    const dr = piece.dr ?? (piece.horizontal ? 0 : 1);
+    const dc = piece.dc ?? (piece.horizontal ? 1 : 0);
+    kinds[dr === 0 ? 'h' : dc === 0 ? 'v' : dc > 0 ? 'd' : 'a']++;
+    const endCol = piece.col + dc;
+    if (piece.row + dr >= board.rowCount || endCol < 0 || endCol >= board.colCount) glued++;
+  }
+
+  return [
+    `${fmt(kinds.h)} horizontal, ${fmt(kinds.v)} vertical`,
+    ...(board.pieces === 'domicule' ? [`${plural(kinds.d + kinds.a, 'diagonal piece')}: ${fmt(kinds.d)} ↘, ${fmt(kinds.a)} ↙`] : []),
+    ...(board.surface === 'rectangle' ? [] : [`${plural(glued, 'piece')} across a glued edge`]),
+  ];
 }
 
+function tileAt(event) {
+  const svg = $('sheet').querySelector('svg');
+  if (!shownSheet || !svg) return null;
+  const { board, tilings, columns } = shownSheet;
+  const cell = renderSheet.CELL_SIZE;
+  const padding = renderSheet.PADDING;
+  const tileWidth = board.colCount * cell + padding;
+  const tileHeight = board.rowCount * cell + renderSheet.LABEL_HEIGHT + padding;
+  const rect = svg.getBoundingClientRect();
+  const scale = rect.width / svg.viewBox.baseVal.width;
+  const x = (event.clientX - rect.left) / scale - padding;
+  const y = (event.clientY - rect.top) / scale - padding;
+  const col = Math.floor(x / tileWidth);
+  const row = Math.floor(y / tileHeight);
+  const index = row * columns + col;
+  if (x < 0 || y < 0 || col >= columns || x - col * tileWidth > tileWidth - padding || y - row * tileHeight > tileHeight - padding || index >= tilings.length) return null;
+  return index;
+}
+
+let tipIndex = null;
+let tipPinned = false;
+
+function hideTileTip() {
+  $('tile-tip').hidden = true;
+  tipIndex = null;
+  tipPinned = false;
+}
+
+function showTileTip(event) {
+  if (tipPinned && event.type === 'pointermove') return;
+  const tip = $('tile-tip');
+  const index = tileAt(event);
+  if (index === null) {
+    hideTileTip();
+    return;
+  }
+  if (index !== tipIndex || tip.hidden) {
+    const { board, tilings, first, labels } = shownSheet;
+    const title = labels ? labels[index] : `#${BigInt(first) + BigInt(index)}`;
+    tip.innerHTML = `<b>${title}</b>${describeTiling(board, tilings[index]).map(line => `<span>${line}</span>`).join('<br>')}`;
+    tip.hidden = false;
+    tipIndex = index;
+  }
+  tipPinned = event.type === 'pointerdown' && event.pointerType !== 'mouse';
+  const margin = 12;
+  const left = Math.min(event.clientX + margin, window.innerWidth - tip.offsetWidth - 4);
+  const top = event.clientY + margin + tip.offsetHeight > window.innerHeight ? event.clientY - margin - tip.offsetHeight : event.clientY + margin;
+  tip.style.left = `${Math.max(4, left)}px`;
+  tip.style.top = `${Math.max(4, top)}px`;
+}
+
+$('sheet').addEventListener('pointermove', showTileTip);
+$('sheet').addEventListener('pointerdown', showTileTip);
+$('sheet').addEventListener('pointerleave', () => tipPinned || hideTileTip());
+document.addEventListener('pointerdown', event => tipPinned && !$('sheet').contains(event.target) && hideTileTip());
+document.addEventListener('keydown', event => event.key === 'Escape' && hideTileTip());
+window.addEventListener('scroll', hideTileTip, { passive: true });
+
 function showSheet(board, tilings, first, labels) {
-  const sublabels = board.pieces === 'domicule' ? tilings.map(diagonalLabels) : undefined;
   shownSheet = { board, tilings, first, labels, columns: sheetColumns(board) };
-  $('sheet').innerHTML = renderSheet(tilings, first, { ...board, columns: shownSheet.columns, labels, sublabels, style: sheetStyle });
+  hideTileTip();
+  $('sheet').innerHTML = renderSheet(tilings, first, { ...board, columns: shownSheet.columns, labels, style: sheetStyle });
   const svg = $('sheet').querySelector('svg');
   svg.setAttribute('role', 'img');
   svg.setAttribute(
@@ -558,10 +644,11 @@ function highlightTiling(number) {
 
 function showDiagonalFilter(board, diagonals) {
   const select = $('diagonals');
-  const options = [['', `Any number · ${fmt(board.total)}`]];
+  const tilings = count => `${fmt(count)} ${BigInt(count) === ONE ? 'tiling' : 'tilings'}`;
+  const options = [['', `Any number (all ${tilings(board.total)})`]];
 
   (board.diagonals || []).forEach((count, k) => {
-    if (BigInt(count) > ZERO) options.push([String(k), `${k} · ${fmt(count)}`]);
+    if (BigInt(count) > ZERO) options.push([String(k), `Exactly ${k} (${tilings(count)})`]);
   });
   select.innerHTML = options.map(([value, text]) => `<option value="${value}">${text}</option>`).join('');
   select.value = diagonals === null ? '' : String(diagonals);
@@ -587,7 +674,7 @@ function updateControls({ board, page, diagonals, total }) {
   $('sample-controls').hidden = pages;
 
   if (pages) {
-    const locked = needsConfirmation(board);
+    const locked = needsConfirmation(board, diagonals);
     $('page-controls').querySelectorAll('button, input').forEach(control => (control.disabled = locked));
     $('page').value = fmt(page);
     $('page').style.width = `${Math.max(fmt(page).length + 3, 6)}ch`;
@@ -627,7 +714,7 @@ async function renderGallery(state) {
 
   const first = (page - ONE) * PAGE_SIZE;
   const end = first + PAGE_SIZE < total ? first + PAGE_SIZE : total;
-  const locked = needsConfirmation(board);
+  const locked = needsConfirmation(board, diagonals);
 
   $('gallery-meta').innerHTML =
     `${name} · ${num(total)} ${total === ONE ? 'tiling' : 'tilings'}` +
@@ -638,8 +725,11 @@ async function renderGallery(state) {
   if (locked) {
     $('sheet').innerHTML = '';
     $('notice-text').textContent =
-      `Numbering the tilings of the ${board.rowCount}×${board.colCount} board needs a counting table of about ${board.memory} ` +
-      'in your browser, and building it takes a few seconds. Devices with little memory may not manage it.';
+      diagonals === null
+        ? `Numbering the tilings of the ${board.rowCount}×${board.colCount} board needs a counting table of about ${board.memory} ` +
+          'in your browser, and building it takes a few seconds. Devices with little memory may not manage it.'
+        : `Numbering the tilings of the ${board.rowCount}×${board.colCount} ${board.surface} by their diagonal pieces needs counting tables of up to ` +
+          `${board.filterMemory} in your browser, and building them takes up to half a minute. Devices with little memory may not manage it.`;
     $('notice').hidden = false;
     return;
   }
@@ -649,7 +739,8 @@ async function renderGallery(state) {
       { type: 'page', board, diagonals, first: String(first), count: Number(PAGE_SIZE) },
       progress => {
         if (isCurrent()) {
-          $('status').textContent = `Building the counting table${board.memory ? ` (about ${board.memory})` : ''}... ${Math.round(progress * 100)}%`;
+          const memory = tableMemory(board, diagonals);
+          $('status').textContent = `Building the counting table${memory ? ` (about ${memory})` : ''}... ${Math.round(progress * 100)}%`;
         }
       },
     );
@@ -730,7 +821,8 @@ $('random').addEventListener('click', () => {
 });
 $('resample').addEventListener('click', render);
 $('load-table').addEventListener('click', () => {
-  confirmedBoards.add(parseHash().board.id);
+  const { board, diagonals } = parseHash();
+  confirmedBoards.add(confirmationKey(board, diagonals));
   render();
 });
 

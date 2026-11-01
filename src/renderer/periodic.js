@@ -125,6 +125,81 @@ function buildPeriodicTable({ cellCount, colCount, stateCount, moves, shift }, s
   return table || next;
 }
 
+function isDiagonalMove({ dr, dc }) {
+  return dr !== 0 && dc !== 0;
+}
+
+function addShifted(counts, following, shift) {
+  for (let r = 0; r < following.length; r++) {
+    counts[r + shift] = (counts[r + shift] ?? BigInt(0)) + following[r];
+  }
+}
+
+function buildPeriodicPolynomialTable({ cellCount, colCount, stateCount, moves, shift }, start, keepRows) {
+  let next = new Array(stateCount).fill(null);
+  const table = keepRows ? new Array(cellCount + 1) : null;
+
+  next[start] = [BigInt(1)];
+
+  if (table) {
+    table[cellCount] = next;
+  }
+
+  for (let index = cellCount - 1; index >= 0; index--) {
+    const col = index % colCount;
+    const cellMoves = moves[index];
+    const current = new Array(stateCount).fill(null);
+
+    for (let state = 0; state < stateCount; state++) {
+      if (state & 1) {
+        current[state] = next[shift(state, col)];
+        continue;
+      }
+
+      let counts = null;
+
+      for (let i = 0; i < cellMoves.length; i++) {
+        const following = state & cellMoves[i].bit ? null : next[shift(state + cellMoves[i].bit, col)];
+
+        if (following) {
+          counts ??= [];
+          addShifted(counts, following, isDiagonalMove(cellMoves[i]) ? 1 : 0);
+        }
+      }
+
+      current[state] = counts && Array.from(counts, count => count ?? BigInt(0));
+    }
+
+    if (table) {
+      table[index] = current;
+    }
+
+    next = current;
+  }
+
+  return table || next;
+}
+
+let cachedPolynomials = { key: null, classes: null };
+
+function readClassPolynomials({ rowCount, colCount, lattice, torus }) {
+  const key = `${rowCount}x${colCount}-${lattice}-${torus ? 'torus' : 'cylinder'}`;
+
+  if (cachedPolynomials.key !== key) {
+    cachedPolynomials = { key, classes: new Map() };
+  }
+
+  return cachedPolynomials.classes;
+}
+
+function readClassPolynomial(classes, scan, start) {
+  if (!classes.has(start)) {
+    classes.set(start, buildPeriodicPolynomialTable(scan, start, false)[start] ?? []);
+  }
+
+  return classes.get(start);
+}
+
 function smallestRotation(set, colCount) {
   const mask = 2 ** colCount - 1;
   let smallest = set;
@@ -165,10 +240,11 @@ function canUnrankPeriodic({ rowCount, colCount, lattice = 'king' }) {
  * @property {number} options.colCount The circumference, at least 2.
  * @property {string} [options.lattice] One of square, triangular, king.
  * @property {boolean} [options.torus] Whether the rows are periodic too.
+ * @property {number|null} [options.diagonals] Number only the tilings with this many diagonal pieces.
  * @param {function(number): void} [onProgress] Called with the completed fraction after every rotation class.
  * @returns {{ rowCount: number, colCount: number, totals: BigInt[], total: BigInt }} The unranker.
  */
-function createPeriodicUnranker({ rowCount, colCount, lattice = 'king', torus = false }, onProgress) {
+function createPeriodicUnranker({ rowCount, colCount, lattice = 'king', torus = false, diagonals = null }, onProgress) {
   if (!Object.hasOwn(PERIODIC_LATTICES, lattice) || colCount < 2 || rowCount < (torus ? 2 : 1)) {
     throw new RangeError('The circumference must be at least 2 and a torus needs at least 2 rows.');
   }
@@ -177,12 +253,15 @@ function createPeriodicUnranker({ rowCount, colCount, lattice = 'king', torus = 
   const startCount = torus ? 2 ** colCount : 1;
   const classTotals = new Map();
   const totals = [];
+  const polynomials = diagonals === null ? null : readClassPolynomials({ rowCount, colCount, lattice, torus });
+  const countClass = start =>
+    polynomials === null ? buildPeriodicTable(scan, start, false)[start] : readClassPolynomial(polynomials, scan, start)[diagonals] ?? BigInt(0);
 
   for (let start = 0; start < startCount; start++) {
     const smallest = smallestRotation(start, colCount);
 
     if (!classTotals.has(smallest)) {
-      classTotals.set(smallest, buildPeriodicTable(scan, smallest, false)[smallest]);
+      classTotals.set(smallest, countClass(smallest));
 
       if (onProgress) {
         onProgress((start + 1) / startCount);
@@ -195,6 +274,7 @@ function createPeriodicUnranker({ rowCount, colCount, lattice = 'king', torus = 
   return {
     rowCount,
     colCount,
+    diagonals,
     scan,
     tables: new Map(),
     totals,
@@ -202,13 +282,32 @@ function createPeriodicUnranker({ rowCount, colCount, lattice = 'king', torus = 
   };
 }
 
-function readPeriodicTable({ scan, tables }, start) {
+/**
+ * Counts the domicule tilings of a cylinder or a torus by the number of diagonal pieces, with the
+ * scan of createPeriodicUnranker; the coefficients add up to the number of tilings.
+ * @param {Object} options The board, as for createPeriodicUnranker.
+ * @returns {BigInt[]} The coefficients, from 0 diagonal pieces up.
+ */
+function countPeriodicDiagonals({ rowCount, colCount, lattice = 'king', torus = false }) {
+  const scan = createPeriodicScan(rowCount, colCount, lattice, torus);
+  const polynomials = readClassPolynomials({ rowCount, colCount, lattice, torus });
+  const startCount = torus ? 2 ** colCount : 1;
+  const counts = [];
+
+  for (let start = 0; start < startCount; start++) {
+    addShifted(counts, readClassPolynomial(polynomials, scan, smallestRotation(start, colCount)), 0);
+  }
+
+  return Array.from(counts, count => count ?? BigInt(0));
+}
+
+function readPeriodicTable({ scan, tables, diagonals }, start) {
   if (!tables.has(start)) {
     if (tables.size >= PERIODIC_CACHED_TABLES) {
       tables.delete(tables.keys().next().value);
     }
 
-    tables.set(start, buildPeriodicTable(scan, start, true));
+    tables.set(start, diagonals === null ? buildPeriodicTable(scan, start, true) : buildPeriodicPolynomialTable(scan, start, true));
   }
 
   return tables.get(start);
@@ -237,7 +336,9 @@ function unrankPeriodicTiling(unranker, rank) {
   }
 
   const table = readPeriodicTable(unranker, start);
+  const filtered = unranker.diagonals !== null;
   const pieces = [];
+  let left = unranker.diagonals;
   let state = start;
 
   for (let index = 0; index < scan.cellCount; index++) {
@@ -257,14 +358,17 @@ function unrankPeriodicTiling(unranker, rank) {
       }
 
       const target = scan.shift(state + moves[i].bit, col);
+      const diagonal = isDiagonalMove(moves[i]) ? 1 : 0;
+      const count = filtered ? (left >= diagonal ? next[target]?.[left - diagonal] ?? BigInt(0) : BigInt(0)) : next[target];
 
-      if (remaining < next[target]) {
+      if (remaining < count) {
         pieces.push({ row: Math.floor(index / scan.colCount), col: moves[i].col, dr: moves[i].dr, dc: moves[i].dc });
         state = target;
+        left -= diagonal;
         break;
       }
 
-      remaining -= next[target];
+      remaining -= count;
     }
   }
 
@@ -272,5 +376,5 @@ function unrankPeriodicTiling(unranker, rank) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { canUnrankPeriodic, createPeriodicUnranker, unrankPeriodicTiling, PERIODIC_LATTICES };
+  module.exports = { canUnrankPeriodic, createPeriodicUnranker, unrankPeriodicTiling, countPeriodicDiagonals, PERIODIC_LATTICES };
 }

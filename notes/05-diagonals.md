@@ -10,9 +10,9 @@ Give every diagonal piece the weight $x$. The weighted count of the $h \times w$
 P_{h,w}(x) = \sum_k T(h, w, k)\, x^k,
 ```
 
-where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the domicule count ([A239273](https://oeis.org/A239273)). This is the dimer model of Sandvik and Moessner with diagonal dimers of fugacity $x$, and the weights $x = 3/2, 2, 3$ of the companion note on log-convexity are values of the same polynomial.
+where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the domicule count ([OEIS A239273](https://oeis.org/A239273)). This is the dimer model of [Sandvik and Moessner (2006)](https://doi.org/10.1103/PhysRevB.73.144504) with diagonal dimers of fugacity $x$, and the weights $x = 3/2, 2, 3$ of the companion note on log-convexity are values of the same polynomial.
 
-`domiculeDiagonalSolver-BigInt.js` runs the transfer of the A239273 notebook with a polynomial in every state, and `domiculeDiagonalSolver-Modular.js` does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. The OEIS has no such triangle; it was searched by terms on 30 October 2026.
+`domiculeDiagonalSolver-BigInt.js` runs the transfer of the A239273 notebook with a polynomial in every state, and `domiculeDiagonalSolver-Modular.js` does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. The OEIS has no such triangle; it was searched by terms and by name on 30 October 2026.
 
 ```js run
 const reference = require('./src/solvers/domiculeDiagonalSolver-BigInt.js');
@@ -67,7 +67,7 @@ for (let n = 0; n <= 3; n++) {
 }
 ```
 
-Every row the cell lists passes the same checks, and the cell stops the build when one fails: the sum is A239273, $T(n, 0)$ is A004003, every odd number of diagonal pieces has no tiling, exactly one tiling uses only diagonal pieces, and $T(n, n^2 - 1) = n^2(n + 1)$ ([A011379](https://oeis.org/A011379)). The last two are observations on these rows, not proofs.
+Every row the cell lists passes the same checks, and the cell stops the build when one fails: the sum is A239273, $T(n, 0)$ is A004003, every odd number of diagonal pieces has no tiling, exactly one tiling uses only diagonal pieces, and $T(n, n^2 - 1) = n^2(n + 1)$ ([OEIS A011379](https://oeis.org/A011379)). The last two are observations on these rows, not proofs.
 
 ## How many pieces are diagonal
 

@@ -17,7 +17,7 @@ const {
   createPeriodicUnranker,
   unrankPeriodicTiling,
 } = require('../src/renderer');
-const { PERIODIC_LATTICES } = require('../src/renderer/periodic');
+const { PERIODIC_LATTICES, countPeriodicDiagonals } = require('../src/renderer/periodic');
 const periodicReference = require('../src/solvers/periodicTilingSolver-BigInt.js');
 const crypto = require('crypto');
 const { createRandom } = require('../src/renderer/cftp');
@@ -125,6 +125,17 @@ const periodicUnrankTestCases = ['square', 'triangular', 'king'].flatMap(lattice
       { rowCount: 6, colCount: 6 },
     ].map(board => ({ ...board, lattice, torus })),
   ),
+);
+const periodicDiagonalTestCases = [false, true].flatMap(torus =>
+  [
+    { rowCount: 2, colCount: 2 },
+    { rowCount: 3, colCount: 2 },
+    { rowCount: 2, colCount: 3 },
+    { rowCount: 2, colCount: 4 },
+    { rowCount: 3, colCount: 4 },
+    { rowCount: 4, colCount: 3 },
+    { rowCount: 4, colCount: 4 },
+  ].map(board => ({ ...board, lattice: 'king', torus })),
 );
 const periodicSheetTestCases = [
   {
@@ -820,6 +831,71 @@ function findPeriodicCoverageError(tiling, { rowCount, colCount, lattice, torus 
   return wrong === -1 ? null : `cell ${wrong} covered ${covered[wrong]} times`;
 }
 
+function countDiagonalPieces(tiling) {
+  return tiling.filter(piece => piece.dr !== 0 && piece.dc !== 0).length;
+}
+
+function runPeriodicDiagonalTest(testCase) {
+  const surface = `${testCase.rowCount}x${testCase.colCount} ${testCase.torus ? 'torus' : 'cylinder'}`;
+  const coefficients = countPeriodicDiagonals(testCase);
+  const unranker = createPeriodicUnranker(testCase);
+  const histogram = [];
+
+  for (let rank = BigInt(0); rank < unranker.total; rank++) {
+    const k = countDiagonalPieces(unrankPeriodicTiling(unranker, rank));
+    histogram[k] = (histogram[k] ?? BigInt(0)) + BigInt(1);
+  }
+
+  const expected = Array.from(histogram, count => String(count ?? BigInt(0))).join();
+  const squareCount = periodicReference.calculateTotalTilingCombinations({ ...testCase, lattice: 'square' });
+
+  if (coefficients[0] !== squareCount) {
+    console.error(`Failed! ${surface}: ${coefficients[0]} tilings without diagonal pieces, ${squareCount} on the square lattice`);
+
+    return false;
+  }
+
+  if (coefficients.map(String).join() !== expected) {
+    console.error(`Failed! ${surface}: counted ${coefficients.join()}, enumerated ${expected}`);
+
+    return false;
+  }
+
+  for (let k = 0; k < coefficients.length; k++) {
+    const filtered = createPeriodicUnranker({ ...testCase, diagonals: k });
+    const all = new Set();
+
+    if (filtered.total !== coefficients[k]) {
+      console.error(`Failed! ${surface} with ${k} diagonal pieces: ${filtered.total} tilings, not ${coefficients[k]}`);
+
+      return false;
+    }
+
+    for (let rank = BigInt(0); rank < filtered.total; rank++) {
+      const tiling = unrankPeriodicTiling(filtered, rank);
+      const error = findPeriodicCoverageError(tiling, testCase);
+
+      if (error || countDiagonalPieces(tiling) !== k) {
+        console.error(`Failed! ${surface} #${rank + BigInt(1)} with ${k} diagonal pieces: ${error || `${countDiagonalPieces(tiling)} diagonal pieces`}`);
+
+        return false;
+      }
+
+      all.add(JSON.stringify(tiling));
+    }
+
+    if (BigInt(all.size) !== filtered.total) {
+      console.error(`Failed! ${surface} with ${k} diagonal pieces: ${all.size} distinct tilings of ${filtered.total}`);
+
+      return false;
+    }
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function runPeriodicUnrankTest(testCase) {
   const unranker = createPeriodicUnranker(testCase);
   const expected = periodicReference.calculateTotalTilingCombinations(testCase);
@@ -1006,6 +1082,7 @@ function __main__() {
     domiculeReachTestCases,
     domiculeShapeTestCases,
     periodicUnrankTestCases,
+    periodicDiagonalTestCases,
     periodicSheetTestCases,
     sublabelTestCases,
     diagonalUnrankTestCases,
@@ -1032,6 +1109,7 @@ function __main__() {
     runSuite('domicule chain reach', domiculeReachTestCases, runDomiculeReachTest),
     runSuite('domicule shape', domiculeShapeTestCases, runDomiculeShapeTest),
     runSuite('periodic unrank', periodicUnrankTestCases, runPeriodicUnrankTest),
+    runSuite('periodic diagonal pieces', periodicDiagonalTestCases, runPeriodicDiagonalTest),
     runSuite('periodic sheet', periodicSheetTestCases, runPeriodicSheetTest),
     runSuite('second label line', sublabelTestCases, runSublabelTest),
     runSuite('diagonal unrank', diagonalUnrankTestCases, runDiagonalUnrankTest),

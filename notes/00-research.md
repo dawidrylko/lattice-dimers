@@ -1,6 +1,6 @@
 # The dimer entropy of the king's graph
 
-The research part of this repository is a paper and a companion note on the perfect matchings of the king's graph, the square lattice with both diagonals. A perfect matching of the $m \times n$ king board is a domicule tiling of the $m \times n$ board, counted in [OEIS A239264](https://oeis.org/A239264), with the squares in [A239273](https://oeis.org/A239273). The code cells on this page read the committed results of `research/king-entropy/` and stop the site build when a value in the results table no longer matches them.
+The research part of this repository is a paper and a companion note on the perfect matchings of the king's graph, the square lattice with both diagonals. A perfect matching of the $m \times n$ king board is a domicule tiling of the $m \times n$ board, counted in [OEIS A239264](https://oeis.org/A239264), with the squares in [OEIS A239273](https://oeis.org/A239273). The code cells on this page read the committed results of `research/king-entropy/` and stop the site build when a value in the results table no longer matches them.
 
 ## Papers
 
@@ -84,7 +84,7 @@ table(['quantity', 'value', 'status', 'source'], [
 ]);
 ```
 
-Two sign properties of the strip growth rates, convexity in the even width and a one-sided bound on the odd increments, hold numerically and would give $0.565511911035 \le s \le 0.565511911049$. The companion note tests the finite form of the first of them, log-convexity of $q \mapsto Z(2q, m)$, in 1453 cases. The property is not structural. It fails on free strips of the triangular lattice, for every unequal pair of diagonal weights tried, and on wide strips for the equal weights $x = 3/2, 2, 3$.
+Two sign properties of the strip growth rates, convexity in the even width and a one-sided bound on the odd increments, hold numerically and would give $0.565511911035 \le s \le 0.565511911049$. The companion note tests the finite form of the first of them, log-convexity of $q \mapsto Z(2q, m)$, in 1453 cases. The property is not structural: it fails on free strips of the triangular lattice, for every unequal pair of diagonal weights tried, and on wide strips for the equal weights $x = 3/2, 2, 3$.
 
 ## Asymptotics of A239273
 

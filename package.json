@@ -2,7 +2,7 @@
   "name": "lattice-dimers",
   "version": "1.1.0",
   "private": true,
-  "description": "Dimer coverings of the square lattice and the king's graph: the entropy per site of king's graph dimers with rigorous bounds, and exact counts, numbering and sampling of domino (OEIS A004003) and domicule (OEIS A239264, A239273) tilings.",
+  "description": "Dimer coverings of the square lattice and the king's graph: the entropy per site of king's graph dimers with rigorous bounds, and exact counts, numbering and sampling of domino (OEIS A004003) and domicule (OEIS A239264, OEIS A239273) tilings.",
   "keywords": [
     "a004003",
     "a239264",

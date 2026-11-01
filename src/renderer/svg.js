@@ -13,7 +13,7 @@ const EDGE = '#1f2937';
 const ENGRAVING_OUTLINE = 1;
 const ENGRAVING_HATCH_WIDTH = 1;
 const ENGRAVING_AXIS_WIDTH = 2.4;
-const SEAM = '#4f7cac';
+const SEAM = '#c026d3';
 const SEAM_CHEVRON = 2.5;
 const COMMON_STYLE = [`.b{fill:${BOARD_COLOR}}`, `text{font:${LABEL_FONT_SIZE}px monospace;fill:#4b5563;text-anchor:middle}`].join('');
 const SUBLABEL_STYLE = '.n{fill:#6b7280}';
@@ -274,6 +274,8 @@ function renderSheet(tilings, firstNumber, options) {
 renderSheet.STYLES = STYLES;
 renderSheet.SURFACES = SURFACES;
 renderSheet.CELL_SIZE = CELL_SIZE;
+renderSheet.PADDING = PADDING;
+renderSheet.LABEL_HEIGHT = LABEL_HEIGHT;
 renderSheet.LABEL_CHAR_WIDTH = LABEL_CHAR_WIDTH;
 
 if (typeof module !== 'undefined') {

@@ -17,6 +17,7 @@ const { DOMICULE_SWEEPS } = require('../src/renderer');
 const domiculeModular = require('../src/solvers/domiculeTilingSolver-Modular.js');
 const periodicModular = require('../src/solvers/periodicTilingSolver-Modular.js');
 const diagonalReference = require('../src/solvers/domiculeDiagonalSolver-BigInt.js');
+const { countPeriodicDiagonals } = require('../src/renderer/periodic');
 const { renderNote, listNotes, NOTES_DIRECTORY } = require('./notes');
 const { CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
 
@@ -97,6 +98,7 @@ const DOMICULE_BOARDS = [
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
 const PERIODIC_SIDES = [2, 4, 6, 8, 10];
+const PERIODIC_FILTER_MEMORY = { '10x10-diagonal-torus': '800 MB' };
 const PERIODIC_PIECES = [
   { pieces: 'domino', lattice: 'square', suffix: '' },
   { pieces: 'domicule', lattice: 'king', suffix: '-diagonal' },
@@ -259,6 +261,30 @@ function countDiagonalTilings({ rowCount, colCount }, total) {
   }
 
   return coefficients;
+}
+
+/**
+ * Counts the domicule tilings of a cylinder or a torus by the number of diagonal pieces with the
+ * gallery's transfer, and checks them against the number of tilings and, for no diagonal piece, the domino count.
+ * @param {Object} board The board, as for countPeriodicTilings.
+ * @param {string} total The number of tilings.
+ * @returns {Promise<string[]>} The coefficients, from 0 diagonal pieces up.
+ */
+async function countPeriodicDiagonalTilings(board, total) {
+  const coefficients = countPeriodicDiagonals(board);
+  const sum = coefficients.reduce((acc, count) => acc + count, BigInt(0));
+  const surface = `${board.rowCount}x${board.colCount} ${board.torus ? 'torus' : 'cylinder'}`;
+  const dominoes = await countPeriodicTilings({ ...board, lattice: 'square' });
+
+  if (String(sum) !== total) {
+    throw new Error(`The diagonal counts of the ${surface} add up to ${sum}, not ${total}.`);
+  }
+
+  if (String(coefficients[0]) !== dominoes) {
+    throw new Error(`The ${surface} has ${coefficients[0]} tilings without diagonal pieces, not the ${dominoes} domino tilings.`);
+  }
+
+  return coefficients.map(String);
 }
 
 const domiculeCounts = new Map();
@@ -478,7 +504,7 @@ function buildJsonLd() {
         '@type': 'SoftwareSourceCode',
         name: 'Lattice Dimers',
         description:
-          "Code and data on dimers of the square lattice and the king's graph: transfer-matrix scripts, certificates and data for the entropy per site of the king's graph dimers, and exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, A239273): a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.",
+          "Code and data on dimers of the square lattice and the king's graph: transfer-matrix scripts, certificates and data for the entropy per site of the king's graph dimers, and exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, OEIS A239273): a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.",
         codeRepository: 'https://github.com/dawidrylko/lattice-dimers',
         programmingLanguage: ['JavaScript', 'Python'],
         runtimePlatform: 'Node.js',
@@ -603,14 +629,19 @@ async function __main__() {
   for (const { pieces, lattice, suffix } of PERIODIC_PIECES) {
     for (const surface of ['cylinder', 'torus']) {
       for (const side of PERIODIC_SIDES) {
-        const board = { rowCount: side, colCount: side };
+        const board = { rowCount: side, colCount: side, lattice, torus: surface === 'torus' };
+        const total = await countPeriodicTilings(board);
+        const id = `${side}x${side}${suffix}-${surface}`;
         periodicBoards.push({
-          id: `${side}x${side}${suffix}-${surface}`,
+          id,
           pieces,
           surface,
           mode: 'pages',
-          ...board,
-          total: await countPeriodicTilings({ ...board, lattice, torus: surface === 'torus' }),
+          rowCount: side,
+          colCount: side,
+          total,
+          ...(pieces === 'domicule' && { diagonals: await countPeriodicDiagonalTilings(board, total) }),
+          ...(PERIODIC_FILTER_MEMORY[id] && { filterMemory: PERIODIC_FILTER_MEMORY[id] }),
         });
       }
     }

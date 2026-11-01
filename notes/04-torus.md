@@ -10,13 +10,13 @@ Two solvers count the same boards by different methods. `periodicTilingSolver-Bi
 
 A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The modular solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
-The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [A281679](https://oeis.org/A281679), of the cylinder $C_4 \times P_n$ [A006253](https://oeis.org/A006253). `node tests/testRunner.js` runs these boards and the king's graph and triangular boards of `data/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
+The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [OEIS A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [OEIS A281679](https://oeis.org/A281679), of the cylinder $C_4 \times P_n$ [OEIS A006253](https://oeis.org/A006253). `node tests/testRunner.js` runs these boards and the king's graph and triangular boards of `data/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
 
-The OEIS was searched by terms and by name on 30 October 2026. It has no entry for the king's graph or triangular tori, for the king's graph cylinders of circumference 3 to 6 or for the triangular ones of circumference 3 and 4. The cylinders of circumference 2 are linear recurrences it already lists: [A002532](https://oeis.org/A002532) on the king's graph, [A002605](https://oeis.org/A002605) on the triangular lattice. So are the king's graph cylinders of height 2, [A062510](https://oeis.org/A062510).
+The OEIS was searched by terms and by name on 30 October 2026. It has no entry for the king's graph or triangular tori, for the king's graph cylinders of circumference 3 to 6 or for the triangular ones of circumference 3 and 4. The cylinders of circumference 2 are linear recurrences it already lists: [OEIS A002532](https://oeis.org/A002532) on the king's graph, [OEIS A002605](https://oeis.org/A002605) on the triangular lattice. So are the king's graph cylinders of height 2, [OEIS A062510](https://oeis.org/A062510).
 
 ## The king's graph on the 2n × 2n torus
 
-For $n = 1$ the torus has multiple edges. On a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate piece, as in A335586. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `data/periodicTilingTests-Modular.json`, where it wrote them once.
+For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in A335586. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `data/periodicTilingTests-Modular.json`, where it wrote them once.
 
 ```js run
 const reference = require('./src/solvers/periodicTilingSolver-BigInt.js');
@@ -69,9 +69,9 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 ## Three lattices on the torus
 
-A torus has no boundary. So $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site.
+Since a torus has no boundary, $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site.
 
-The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
+The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([OEIS A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
 
 ```js run
 const fs = require('fs');
@@ -142,7 +142,7 @@ chart({
 
 The square lattice is critical, and its ratio drifts with $L$ well above 2. On the triangular lattice and on the king's graph the ratio tends to 2.
 
-The reason is in the paper. It splits the cylinder transfer matrix of even circumference $w$ by the parity of the dimers crossing a loop around the axis, and the two sector values $f^{(0)}_w > s > f^{(1)}_w$ approach $s$ exponentially fast. A torus of even side $L$ is the trace of the $L$-th power of that matrix, so each sector contributes about $e^{sL^2}$ and $Z \approx 2 e^{sL^2}$. That accounts for the constant 2. How fast the ratio gets there is a separate matter: on the king's graph the distance to 2 shrinks by a factor of about 8 per step of 2 in $L$. The approach to 2 and the factor 8 are observations on the boards of the table, not proofs.
+The paper explains the constant: it splits the cylinder transfer matrix of even circumference $w$ by the parity of the dimers crossing a loop around the axis, and the two sector values $f^{(0)}_w > s > f^{(1)}_w$ approach $s$ exponentially fast. A torus of even side $L$ is the trace of the $L$-th power of that matrix, so each sector contributes about $e^{sL^2}$ and $Z \approx 2 e^{sL^2}$. How fast the ratio gets there is a separate question: on the king's graph the distance to 2 shrinks by a factor of about 8 per step of 2 in $L$. The approach to 2 and the factor 8 are observations on the boards of the table, not proofs.
 
 With no surface term, $\log(Z/2)/L^2$ can be compared with $s$ directly. The difference shrinks exponentially in $L$, with no fit and no extrapolation model. It is a check on the value of $s$ from the paper, because the constant 2 was itself read off against $s$.
 
