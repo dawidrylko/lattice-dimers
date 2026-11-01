@@ -84,7 +84,7 @@ A new fix adds its row here with the check that guards it.
 | `A401670.gp` defined a(n) differently from the entry | `eb30025` | `test:oeis`, `A401670.gp` | the file from `eb30025^` |
 | `CITATION.cff` and `package.json` described an older repository | `310a1a2` | `test:metadata` | both files from `310a1a2^` |
 | `package.json` could be published to npm | `1a1445b` | `test:metadata`, private (new) | `"private": true` removed |
-| links to OEIS entries came in three forms | `f3b5023` | `test:markdown`, links to OEIS entries; `test:oeis`, the table | `notes/04-torus.md` and `oeis/README.md` from `f3b5023^` |
+| links to OEIS entries came in three forms | `f3b5023` | `test:markdown`, links to OEIS entries; `test:oeis`, the table | the old form `OEIS [A401670](../oeis/A401670/README.md)` in a note; `oeis/README.md` from `f3b5023^` |
 
 ## Research scripts
 
