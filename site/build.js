@@ -72,12 +72,16 @@ const DEFAULT_BOARD = '4x4';
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const NOTE_PROVENANCE = {
   research: 'every output on this page was read from the committed research data, checked or computed during that build.',
+  torus: 'every output on this page was computed during that build, except the boards the solver column marks as data/ and the entropies read from research/king-entropy/.',
+  diagonals: 'every output on this page was computed during that build, except the rows the solver column marks as data/, which the build checked.',
 };
 const NOTE_SUMMARIES = {
   research: "The entropy per site of the king's graph dimers: an estimate with error bar 6·10⁻¹⁶, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
   method: 'How the tilings are counted, numbered and sampled, and how every number is checked.',
   a004003: 'Notebook: domino tilings by three methods, the resultant and the running time.',
   a239273: 'Notebook: domicule tilings up to 20 × 20, the modular solver and the Markov chain.',
+  torus: "Notebook: tilings of cylinders and tori on three lattices; the king's graph torus count over e^(sL²) tends to 2.",
+  diagonals: 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces, up to 20 × 20.',
 };
 
 function listBenchmarkRuns() {

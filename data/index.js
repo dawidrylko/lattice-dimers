@@ -6,6 +6,10 @@ const {
   files: filesDomiculeRectangles,
   testCases: testCasesDomiculeRectangles,
 } = require('./domiculeTilingTests-Rectangles.json');
+const { files: filesPeriodic, testCases: testCasesPeriodic } = require('./periodicTilingTests.json');
+const { files: filesPeriodicModular, testCases: testCasesPeriodicModular } = require('./periodicTilingTests-Modular.json');
+const { files: filesDiagonal, testCases: testCasesDiagonal } = require('./domiculeDiagonalTests.json');
+const { files: filesDiagonalModular, testCases: testCasesDiagonalModular } = require('./domiculeDiagonalTests-Modular.json');
 
 module.exports = {
   filesInt,
@@ -18,4 +22,12 @@ module.exports = {
   testCasesDomicule,
   filesDomiculeRectangles,
   testCasesDomiculeRectangles,
+  filesPeriodic,
+  testCasesPeriodic,
+  filesPeriodicModular,
+  testCasesPeriodicModular,
+  filesDiagonal,
+  testCasesDiagonal,
+  filesDiagonalModular,
+  testCasesDiagonalModular,
 };

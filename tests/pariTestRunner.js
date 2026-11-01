@@ -1,13 +1,21 @@
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { testCasesBigInt, testCasesDomicule, testCasesDomiculeRectangles } = require('../data');
+const {
+  testCasesBigInt,
+  testCasesDomicule,
+  testCasesDomiculeRectangles,
+  testCasesPeriodic,
+  testCasesDiagonal,
+} = require('../data');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const README_FILE = path.join(ROOT_DIRECTORY, 'README.md');
 const GP = process.env.GP_PATH || 'gp';
 const GP_TIMEOUT = 300000;
 const MAX_DOMICULE_SQUARE_SIDE = 12;
+const MAX_TORUS_CIRCUMFERENCE = 8;
+const MAX_DIAGONAL_SIDE = 8;
 const PROGRAMS = [
   {
     file: 'pari/A004003.gp',
@@ -26,6 +34,23 @@ const PROGRAMS = [
         expectedResult,
       }))
       .concat({ call: 'a(2)', expectedResult: '280' }),
+  },
+  {
+    file: 'pari/king-torus.gp',
+    testCases: testCasesPeriodic
+      .filter(({ lattice, torus, twisted, colCount }) => lattice === 'king' && torus && !twisted && colCount <= MAX_TORUS_CIRCUMFERENCE)
+      .map(({ rowCount, colCount, expectedResult }) => ({ call: `T(${rowCount}, ${colCount})`, expectedResult }))
+      .concat({ call: 'a(2)', expectedResult: '17552' }),
+  },
+  {
+    file: 'pari/king-diagonals.gp',
+    testCases: testCasesDiagonal
+      .filter(({ rowCount, colCount }) => Math.max(rowCount, colCount) <= MAX_DIAGONAL_SIDE)
+      .map(({ rowCount, colCount, expectedResult }) => ({
+        call: `(q -> vector(${rowCount * colCount}\\2 + 1, k, polcoef(q, k-1)))(P(${rowCount}, ${colCount}))`,
+        expectedResult: `[${expectedResult.split(',').join(', ')}]`,
+      }))
+      .concat({ call: 'row(2)', expectedResult: '[36, 126, 105, 12, 1]' }),
   },
 ];
 

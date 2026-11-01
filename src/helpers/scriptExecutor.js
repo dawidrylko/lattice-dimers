@@ -9,10 +9,15 @@ const SOLVER_DIRECTORY = path.join(__dirname, '..', 'solvers');
  * @param {Object} options Options including row and column counts.
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
+ * @property {string} [options.lattice] The lattice of the periodic solvers.
+ * @property {boolean} [options.torus] Whether a periodic board is a torus.
+ * @property {boolean} [options.twisted] Whether a periodic board is counted with the seam sign.
  * @returns {string} The generated command string.
  */
-function generateNodeCommand(fileName, { rowCount, colCount }) {
-  return `"${process.execPath}" "${path.join(SOLVER_DIRECTORY, fileName)}" -r ${rowCount} -c ${colCount}`;
+function generateNodeCommand(fileName, { rowCount, colCount, lattice, torus, twisted }) {
+  const flags = [lattice ? ` --lattice ${lattice}` : '', torus ? ' --torus' : '', twisted ? ' --twisted' : ''].join('');
+
+  return `"${process.execPath}" "${path.join(SOLVER_DIRECTORY, fileName)}" -r ${rowCount} -c ${colCount}${flags}`;
 }
 
 /**
