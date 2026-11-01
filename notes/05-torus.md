@@ -1,18 +1,18 @@
-# Tori and cylinders
+# Tori
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/torus.html) has the results. It counts the tilings of boards whose sides are glued. A cylinder is periodic across its width, a torus in both directions. There are three lattices: the square lattice (dominoes), the triangular lattice (the square lattice with one diagonal) and the king's graph (domicules). The method is described in the [method note](01-method.md).
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/torus.html) has the results. It counts the tilings of tori, boards whose opposite edges are glued in both directions. There are three lattices: the square lattice (dominoes), the triangular lattice (the square lattice with one diagonal) and the king's graph (domicules). The [cylinders notebook](04-cylinders.md) counts the same lattices with only the left and right edges glued. The method is described in the [method note](01-method.md).
 
 ## How the counts are made
 
 Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../src/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix.
 
-[`periodicTilingSolver-Modular.js`](../src/solvers/periodicTilingSolver-Modular.js) goes cell by cell, like the solver of the [A239273 notebook](03-a239273.md). Its state holds the next $w + 2$ cells and, on the king's graph with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
+[`periodicTilingSolver-Modular.js`](../src/solvers/periodicTilingSolver-Modular.js) goes cell by cell, like the solver of the [domicules notebook](03-domicules.md). Its state holds the next $w + 2$ cells and, on the king's graph with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
 
 A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The modular solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
 The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [OEIS A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [OEIS A281679](https://oeis.org/A281679), of the cylinder $C_4 \times P_n$ [OEIS A006253](https://oeis.org/A006253). `node tests/testRunner.js` runs these boards and the king's graph and triangular boards of `data/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
 
-The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670). The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph or triangular tori, for the king's graph cylinders of circumference 3 to 6 or for the triangular ones of circumference 3 and 4. The cylinders of circumference 2 are linear recurrences it already lists: [OEIS A002532](https://oeis.org/A002532) on the king's graph, [OEIS A002605](https://oeis.org/A002605) on the triangular lattice. So are the king's graph cylinders of height 2, [OEIS A062510](https://oeis.org/A062510).
+The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670). The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph or triangular tori.
 
 ## The king's graph on the 2n × 2n torus: A401670
 
@@ -180,20 +180,6 @@ table(
 print(`e^(2/ξ) = ${Math.exp(2 / Number(xi)).toFixed(2)} with ξ = ${nb.context.roundDecimal(xi, 6)}`);
 ```
 
-## Cylinders
-
-The king's graph on a cylinder of circumference $w$ and height $h$, open at the top and the bottom. For fixed $w$ the counts grow like $\lambda_w^h$, with $\lambda_w$ the leading eigenvalue of the cylinder transfer matrix that the paper extrapolates in $w$. Rows of odd circumference vanish at odd heights. Circumference 2 has the multiple edges of the $2 \times 2$ torus, so one row of two cells has 2 tilings.
-
-```js run
-const { calculateTotalTilingCombinations } = require('./src/solvers/periodicTilingSolver-BigInt.js');
-const heights = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-
-table(
-  ['w \\ h', ...heights.map(String)],
-  [2, 3, 4, 5, 6, 7, 8].map(w => [String(w), ...heights.map(h => String(calculateTotalTilingCombinations({ rowCount: h, colCount: w })))]),
-);
-```
-
 ## Running time
 
 Average wall-clock time of a full solver process on the king's graph, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
@@ -202,8 +188,8 @@ Average wall-clock time of a full solver process on the king's graph, from the n
 const { formatTime } = nb.context;
 
 table(
-  ['surface', 'board', 'BigInt', 'modular'],
-  nb.context.periodicBenchmark.map(r => [r.surface, `${r.rowCount}×${r.colCount}`, formatTime(r.bigint), formatTime(r.modular)]),
+  ['board', 'BigInt', 'modular'],
+  nb.context.periodicBenchmark.filter(r => r.surface === 'torus').map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.bigint), formatTime(r.modular)]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 ```

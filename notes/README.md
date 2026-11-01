@@ -6,7 +6,8 @@ The renderer in `site/notes.js` covers a subset of Markdown: headings, paragraph
 
 0. [Research](00-research.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/research.html)): the king's graph paper in brief, with its results read from `research/king-entropy/data/` and the asymptotics of A239273 checked against the exact terms.
 1. [Method](01-method.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/method.html)): how the tilings are counted, numbered and sampled, and how every number is checked.
-2. [A004003 notebook](02-a004003.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/a004003.html)): domino tilings by three methods, the resultant and the running time.
-3. [A239273 notebook](03-a239273.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/a239273.html)): domicule tilings up to 20 × 20, the modular solver and the Markov chain.
-4. [Tori and cylinders notebook](04-torus.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/torus.html)): the king's graph, the triangular and the square lattice on tori, the king's graph on cylinders, and the torus count over $e^{sL^2}$.
-5. [A401673 notebook](05-diagonals.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/diagonals.html)): domicule tilings of the 2n × 2n board by the number of diagonal pieces.
+2. [Dominoes](02-dominoes.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes.html)): domino tilings of the 2n × 2n board, A004003, by three methods, the resultant and the running time.
+3. [Domicules](03-domicules.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules.html)): domicule tilings of the 2n × 2n board, A239273, up to 20 × 20, the modular solver and the Markov chain.
+4. [Cylinders](04-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/cylinders.html)): the square lattice, the triangular lattice and the king's graph on cylinders, and the recurrences of circumference 2.
+5. [Tori](05-torus.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/torus.html)): the same three lattices on tori, A401670, and the torus count over $e^{sL^2}$.
+6. [Diagonal pieces](06-diagonals.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/diagonals.html)): domicule tilings of the 2n × 2n board by the number of diagonal pieces, A401673.

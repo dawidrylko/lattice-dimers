@@ -2,7 +2,7 @@
 
 The test runners, the PARI/GP programs and the site check every solver against these files. [`index.js`](index.js) loads them for the JavaScript code.
 
-Each file names the solvers it checks in `files` and lists its boards in `testCases`. A case gives `rowCount`, `colCount` and the exact count `expectedResult` as a decimal string; the periodic files add `lattice` (`square`, `triangular` or `king`), `torus` for a torus (without it the board is a cylinder of circumference `colCount`), `twisted` for the [signed sum](../notes/04-torus.md#the-seam-sign) over the pieces crossing the seam, and `oeis` where the count is a term of an OEIS entry. The diagonal files give `expectedResult` as the comma-separated counts with 0, 1, 2 and more diagonal pieces.
+Each file names the solvers it checks in `files` and lists its boards in `testCases`. A case gives `rowCount`, `colCount` and the exact count `expectedResult` as a decimal string; the periodic files add `lattice` (`square`, `triangular` or `king`), `torus` for a torus (without it the board is a cylinder of circumference `colCount`), `twisted` for the [signed sum](../notes/05-torus.md#the-seam-sign) over the pieces crossing the seam, and `oeis` where the count is a term of an OEIS entry. The diagonal files give `expectedResult` as the comma-separated counts with 0, 1, 2 and more diagonal pieces.
 
 | file | boards | checks |
 | --- | --- | --- |

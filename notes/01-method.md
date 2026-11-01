@@ -1,6 +1,6 @@
 # Method
 
-This note describes how the project counts, numbers and samples two kinds of tilings of a board: domino tilings ([OEIS A004003](https://oeis.org/A004003)) and domicule tilings ([OEIS A239264](https://oeis.org/A239264), [OEIS A239273](https://oeis.org/A239273)) [6]. The computations behind every number are in the notebooks for [A004003](02-a004003.md), [A239273](03-a239273.md), [tori and cylinders](04-torus.md) and [diagonal pieces](05-diagonals.md).
+This note describes how the project counts, numbers and samples two kinds of tilings of a board: domino tilings ([OEIS A004003](https://oeis.org/A004003)) and domicule tilings ([OEIS A239264](https://oeis.org/A239264), [OEIS A239273](https://oeis.org/A239273)) [6]. The computations behind every number are in the notebooks on [dominoes](02-dominoes.md), [domicules](03-domicules.md), [cylinders](04-cylinders.md), [tori](05-torus.md) and [diagonal pieces](06-diagonals.md).
 
 ## Problem
 
