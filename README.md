@@ -90,7 +90,7 @@ M(w) = {
   A
 };
 T(h, w) = trace(M(w)^h);
-a(n) = T(2*n, 2*n);
+a(n) = trace(M(2*n)^(2*n));
 ```
 
 ```gp
@@ -223,8 +223,9 @@ Verification:
 pnpm test           # solvers against data/, up to 12×12 (node tests/testRunner.js runs every known term and takes hours: the 16×16 torus alone about 75 minutes)
 pnpm test:render    # numbering, sampling and drawing
 pnpm test:pari      # the PARI/GP programs in oeis/, their copies in this README and the programs in the entry texts
-pnpm test:oeis      # the b-files in oeis/ against a rebuild, and the layout and format of every entry
-pnpm test:markdown  # the math in every Markdown file renders on GitHub
+pnpm test:oeis      # the b-files in oeis/ against a rebuild, the layout and format of every entry, its README against its files, and its PARI program against A<n>.gp
+pnpm test:markdown  # the math in every Markdown file renders on GitHub, and every inline relative link resolves
+pnpm test:numbers   # the constants in README.md, the release texts and A401669 against the outputs in research/king-entropy
 pnpm site:build     # runs the notebooks and builds dist/site
 pnpm test:site      # the built site in headless Chrome at 1440, 786 and 375 px (set CHROME_PATH if needed)
 ```

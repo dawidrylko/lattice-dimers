@@ -33,6 +33,7 @@ jobs:
       - run: pnpm test
       - run: pnpm test:oeis
       - run: pnpm test:markdown
+      - run: pnpm test:numbers
       - run: pnpm test:render
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends pari-gp
       - run: pnpm test:pari

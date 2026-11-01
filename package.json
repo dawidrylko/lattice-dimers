@@ -63,6 +63,7 @@
     "test:pari": "node tests/pariTestRunner.js",
     "test:oeis": "node oeis/buildBFiles.js --check && node tests/oeisTestRunner.js",
     "test:markdown": "node tests/markdownTestRunner.js",
+    "test:numbers": "node tests/numbersTestRunner.js",
     "test:site": "node tests/siteTestRunner.js",
     "site:build": "node site/build.js",
     "readme:images": "node site/readme-images.js"

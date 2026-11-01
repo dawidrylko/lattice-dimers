@@ -19,4 +19,4 @@ M(w) = {
   A
 };
 T(h, w) = trace(M(w)^h);
-a(n) = T(2*n, 2*n);
+a(n) = trace(M(2*n)^(2*n));
