@@ -14,9 +14,7 @@ const ROOT_DIRECTORY = path.join(__dirname, '..');
 const BOARD = { rowCount: 8, colCount: 8 };
 const SAMPLES = 4;
 const SHOWCASE_SEED = 2024;
-const SHOWCASE_DOMINO = { rowCount: 16, colCount: 16 };
-const SHOWCASE_DOMICULE = { rowCount: 12, colCount: 12 };
-const SHOWCASE_TORUS = { rowCount: 8, colCount: 8 };
+const SHOWCASE = { rowCount: 10, colCount: 10 };
 
 function sampleRanks(total) {
   const step = total / BigInt(SAMPLES + 1);
@@ -29,23 +27,15 @@ function formatRank(rank) {
 }
 
 function buildShowcase() {
-  const domino = sampleRandomTiling(SHOWCASE_DOMINO, createRandom(SHOWCASE_SEED));
-  const domicules = createDomiculeUnranker(SHOWCASE_DOMICULE);
-  const domiculeRank = domicules.total / BigInt(3);
-  const torus = createPeriodicUnranker({ ...SHOWCASE_TORUS, lattice: 'king', torus: true });
-  const torusRank = torus.total / BigInt(3);
+  const domicules = createDomiculeUnranker(SHOWCASE);
+  const torus = createPeriodicUnranker({ ...SHOWCASE, lattice: 'king', torus: true });
+  const options = { ...SHOWCASE, labels: false, columns: 1 };
 
   return {
-    '.github/assets/showcase-domino.svg': renderSheet([domino], 1, { ...SHOWCASE_DOMINO, labels: [''], columns: 1 }),
-    '.github/assets/showcase-domicule.svg': renderSheet([unrankDomiculeTiling(domicules, domiculeRank)], 1, {
-      ...SHOWCASE_DOMICULE,
-      labels: [''],
-      columns: 1,
-    }),
-    '.github/assets/showcase-torus.svg': renderSheet([unrankPeriodicTiling(torus, torusRank)], 1, {
-      ...SHOWCASE_TORUS,
-      labels: [''],
-      columns: 1,
+    '.github/assets/showcase-domino.svg': renderSheet([sampleRandomTiling(SHOWCASE, createRandom(SHOWCASE_SEED))], 1, options),
+    '.github/assets/showcase-domicule.svg': renderSheet([unrankDomiculeTiling(domicules, domicules.total / BigInt(3))], 1, options),
+    '.github/assets/showcase-torus.svg': renderSheet([unrankPeriodicTiling(torus, torus.total / BigInt(3))], 1, {
+      ...options,
       surface: 'torus',
     }),
   };

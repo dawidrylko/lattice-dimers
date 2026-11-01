@@ -128,14 +128,14 @@ function checkTable() {
 
   const errors = [];
   const entries = listEntries();
-  const listed = rows.map(([cell]) => (cell.match(/^\[(A\d{6})\]/) ?? [])[1]);
+  const listed = rows.map(([cell]) => (cell.match(/^\[OEIS (A\d{6})\]/) ?? [])[1]);
 
   if (listed.join(',') !== entries.join(',')) {
     errors.push(`The table lists ${listed.join(', ')} instead of the directories ${entries.join(', ')}, in that order.`);
   }
 
   for (const [entryCell, sequenceCell, textCell, bFileCell, programCell, ...rest] of rows) {
-    const entry = (entryCell.match(/^\[(A\d{6})\]/) ?? [])[1];
+    const entry = (entryCell.match(/^\[OEIS (A\d{6})\]/) ?? [])[1];
 
     if (!entries.includes(entry)) {
       continue;
@@ -149,7 +149,7 @@ function checkTable() {
     const status = readStatus(entry);
     const { text, bFile, program } = entryFiles(entry);
     const expected = [
-      `[${entry}](${entryUrl(entry, status?.[1] === 'Proposed')})`,
+      `[OEIS ${entry}](${entryUrl(entry, status?.[1] === 'Proposed')})`,
       null,
       `[${text}](${entry}/${text})`,
       exists(entry, bFile) ? `[${bFile}](${entry}/${bFile})` : NO_FILE,
@@ -193,8 +193,8 @@ function checkEntryReadme(entry) {
     errors.push(`oeis/${entry}/README.md must start with the heading # ${entry}.`);
   }
 
-  if (!lines[2]?.startsWith(`[${entry}](${entryUrl(entry, proposed)}): `)) {
-    errors.push(`oeis/${entry}/README.md must open with [${entry}](${entryUrl(entry, proposed)}): and the name.`);
+  if (!lines[2]?.startsWith(`[OEIS ${entry}](${entryUrl(entry, proposed)}): `)) {
+    errors.push(`oeis/${entry}/README.md must open with [OEIS ${entry}](${entryUrl(entry, proposed)}): and the name.`);
   }
 
   if (sections.join(',') !== expectedSections.join(',')) {
@@ -486,6 +486,7 @@ function checkBFileFacts(entry) {
 
 function checkDraftLinks() {
   const approved = listEntries().filter(entry => readStatus(entry)?.[1] === 'Approved');
+  const proposed = listEntries().filter(entry => readStatus(entry)?.[1] === 'Proposed');
   const { stdout, error } = spawnSync('git', ['ls-files'], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
 
   if (error) {
@@ -505,6 +506,12 @@ function checkDraftLinks() {
     for (const entry of approved) {
       if (content.includes(`oeis.org/draft/${entry}`)) {
         errors.push(`${file} links to the draft of ${entry}, which is approved.`);
+      }
+    }
+
+    for (const entry of proposed) {
+      if (content.includes(`oeis.org/${entry}`)) {
+        errors.push(`${file} links to the page of ${entry}, which is still a draft at oeis.org/draft/${entry}.`);
       }
     }
   }
@@ -541,7 +548,7 @@ function __main__() {
         ...(exists(entry, program) ? [[`oeis/${entry}/${program}`, () => checkProgram(entry)]] : []),
       ];
     }),
-    ['links to the drafts of approved entries', checkDraftLinks],
+    ['links to approved entries and drafts', checkDraftLinks],
   ];
   const passed = checks.map(([name, check]) => runCheck(name, check)).every(Boolean);
 

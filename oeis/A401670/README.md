@@ -1,6 +1,6 @@
 # A401670
 
-[A401670](https://oeis.org/draft/A401670): number of domicule tilings of the $2n \times 2n$ torus.
+[OEIS A401670](https://oeis.org/draft/A401670): number of domicule tilings of the $2n \times 2n$ torus.
 
 ## Contribution
 

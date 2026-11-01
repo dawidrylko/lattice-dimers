@@ -1,6 +1,6 @@
 # A401673
 
-[A401673](https://oeis.org/draft/A401673): triangle of the domicule tilings of the $2n \times 2n$ square by the number of diagonal domicules.
+[OEIS A401673](https://oeis.org/draft/A401673): triangle of the domicule tilings of the $2n \times 2n$ square by the number of diagonal domicules.
 
 ## Contribution
 
