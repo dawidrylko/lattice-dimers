@@ -37,6 +37,7 @@
   --h: #044cb6; --v: #5eaceb; --d: #ab3415; --a: #f09c17;
   --paper-h: #ffffff; --paper-v: #e8eef6; --ink: #334155;
   --sheet: #ffffff; --board: #f3f4f6; --edge: #1f2937; --label: #4b5563; --hit: #dc2626;
+  --mute: #d1d5db;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -46,6 +47,7 @@
     --h: #5590f3; --v: #3b5d96; --d: #f0a53a; --a: #d9601e;
     --paper-h: #1f2530; --paper-v: #283142; --ink: #8b95a5;
     --sheet: #161a21; --board: #232833; --edge: #0b0d11; --label: #9ca3af; --hit: #f87171;
+    --mute: #3a404c;
   }
 }
 * { box-sizing: border-box; }
@@ -121,6 +123,19 @@ nav.tabs a[aria-current="page"] { color: var(--fg); border-color: var(--accent);
 .sheet .engraving .ca { fill: color-mix(in srgb, var(--ea) 9%, var(--paper-h)); }
 .sheet .engraving .d { stroke: var(--ed); } .sheet .engraving .a { stroke: var(--ea); }
 .sheet svg { display: block; max-width: 100%; height: auto; }
+.sheet .s, .sheet .m { stroke: var(--accent); }
+.sheet text.n { fill: var(--muted); }
+#gallery[data-highlight] .sheet .blocks .h, #gallery[data-highlight] .sheet .blocks .v { fill: var(--mute); }
+#gallery[data-highlight] .sheet .dimer .h, #gallery[data-highlight] .sheet .dimer .v { fill: var(--mute); stroke: var(--mute); }
+#gallery[data-highlight] .sheet .engraving .h, #gallery[data-highlight] .sheet .engraving .v { fill: var(--sheet); stroke: var(--mute); }
+#gallery[data-highlight] .legend i.h, #gallery[data-highlight] .legend i.v { --k: var(--mute); }
+#gallery[data-highlight][data-style="engraving"] .legend i.h, #gallery[data-highlight][data-style="engraving"] .legend i.v { background: var(--sheet); border-color: var(--mute); }
+.legend i.s, [data-style] .legend i.s { height: 0; border: 0; border-top: 1.5px dashed var(--accent); border-radius: 0; background: none; vertical-align: 3px; }
+.filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; min-width: 0; padding: 2px; }
+#diagonals { max-width: 100%; }
+.toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.toggle input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
+.bench .note + .table-title { margin-top: 28px; }
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
 th, td { text-align: right; padding: 8px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; }
@@ -182,8 +197,23 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       </div>
     </div>
     <div class="picker">
+      <span class="label" id="surfaces-label">Surface</span>
+      <div class="pieces" id="surfaces" role="group" aria-labelledby="surfaces-label">
+        <button type="button" data-surface="rectangle">Rectangle</button>
+        <button type="button" data-surface="cylinder">Cylinder</button>
+        <button type="button" data-surface="torus">Torus</button>
+      </div>
+    </div>
+    <div class="picker">
       <span class="label" id="boards-label">Board</span>
       <div class="boards" id="boards" role="group" aria-labelledby="boards-label"></div>
+    </div>
+    <div class="picker" id="diagonal-picker">
+      <label class="label" for="diagonals">Diagonal pieces</label>
+      <div class="filter">
+        <select class="field" id="diagonals"></select>
+        <label class="toggle"><input type="checkbox" id="highlight">Highlight diagonals</label>
+      </div>
     </div>
     <div class="picker">
       <span class="label" id="styles-label">Style</span>
@@ -216,7 +246,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     </div>
     <div class="summary">
       <p class="meta" id="gallery-meta"></p>
-      <span class="legend"><span><i class="h"></i>horizontal</span><span><i class="v"></i>vertical</span><span class="diagonal"><i class="d"></i>diagonal ↘</span><span class="diagonal"><i class="a"></i>diagonal ↙</span></span>
+      <span class="legend"><span><i class="h"></i>horizontal</span><span><i class="v"></i>vertical</span><span class="diagonal"><i class="d"></i>diagonal ↘</span><span class="diagonal"><i class="a"></i>diagonal ↙</span><span class="seam"><i class="s"></i>glued edge</span></span>
     </div>
     <div class="notice" id="notice" hidden>
       <p id="notice-text"></p>
@@ -260,6 +290,33 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
       Re-run with <code>pnpm benchmark:domicule</code>.
     </p>
+    <h2 class="table-title">Tori and cylinders (king's graph)</h2>
+    <div class="table-wrap">
+      <table role="table" id="periodic-benchmark">
+        <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Modular</th><th role="columnheader">Runs</th></tr></thead>
+        <tbody id="periodic-benchmark-rows" role="rowgroup"></tbody>
+      </table>
+    </div>
+    <p class="note">
+      <code>node &lt;solver&gt; -r R -c C --torus</code> for a torus, without <code>--torus</code> for a cylinder of
+      circumference C. BigInt multiplies by the row transfer matrix and runs the torus once for every set of first-row
+      cells covered from the last row. Modular goes cell by cell modulo primes below 2<sup>31</sup> and runs one set per
+      rotation class.
+      Re-run with <code>pnpm benchmark:periodic</code>.
+    </p>
+    <h2 class="table-title">Domicules by the number of diagonal pieces</h2>
+    <div class="table-wrap">
+      <table role="table" id="diagonal-benchmark">
+        <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Modular</th><th role="columnheader">Runs</th></tr></thead>
+        <tbody id="diagonal-benchmark-rows" role="rowgroup"></tbody>
+      </table>
+    </div>
+    <p class="note">
+      The transfer of the domicule solvers with a polynomial in the number of diagonal pieces in every state. Modular
+      keeps only the coefficients of the parity a state fixes, counts modulo primes below 2<sup>31</sup> and rebuilds
+      every coefficient with the Chinese remainder theorem.
+      Re-run with <code>pnpm benchmark:diagonal</code>.
+    </p>
   </section>
   __SITE_FOOTER__
 </main>
@@ -271,6 +328,7 @@ const DATA = __DATA__;
 const WORKER_SOURCE = __WORKER__;
 const PAGE_SIZE = BigInt(100);
 const RANDOM_SAMPLE_SIZE = 6;
+const ZERO = BigInt(0);
 const ONE = BigInt(1);
 
 const $ = id => document.getElementById(id);
@@ -303,6 +361,7 @@ let renderId = 0;
 let shownBoardId = null;
 let shownSheet = null;
 let sheetStyle = readStyle();
+let highlightDiagonals = readHighlight();
 
 function readStyle() {
   try {
@@ -329,6 +388,28 @@ function setStyle(style) {
 function showStyle() {
   $('gallery').dataset.style = sheetStyle;
   $('styles').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.style === sheetStyle));
+}
+
+function readHighlight() {
+  try {
+    return localStorage.getItem('lattice-dimers-highlight') === 'diagonal';
+  } catch {
+    return false;
+  }
+}
+
+function setHighlight(on) {
+  highlightDiagonals = on;
+  try {
+    localStorage.setItem('lattice-dimers-highlight', on ? 'diagonal' : '');
+  } catch {}
+  showHighlight(parseHash().board);
+}
+
+function showHighlight(board) {
+  if (highlightDiagonals && board.pieces === 'domicule') $('gallery').dataset.highlight = '';
+  else delete $('gallery').dataset.highlight;
+  $('highlight').checked = highlightDiagonals;
 }
 
 function getWorker() {
@@ -370,8 +451,18 @@ function needsConfirmation(board) {
   return Boolean(board.confirm) && !confirmedBoards.has(board.id);
 }
 
-function pageCount(board) {
-  return (BigInt(board.total) + PAGE_SIZE - ONE) / PAGE_SIZE;
+function pageCount(total) {
+  return (total + PAGE_SIZE - ONE) / PAGE_SIZE;
+}
+
+function readDiagonals(board, value) {
+  const count = /^\d+$/.test(value ?? '') ? Number(value) : null;
+
+  return count !== null && board.diagonals && BigInt(board.diagonals[count] ?? 0) > ZERO ? count : null;
+}
+
+function countOf(board, diagonals) {
+  return BigInt(diagonals === null ? board.total : board.diagonals[diagonals]);
 }
 
 function parseBigInt(value) {
@@ -385,26 +476,32 @@ function clamp(value, min, max) {
 }
 
 function parseHash() {
-  const [tab = 'gallery', boardId, page, highlight] = location.hash.slice(1).split('/');
+  const [path, query = ''] = location.hash.slice(1).split('?');
+  const [tab = 'gallery', boardId, page, highlight] = path.split('/');
   const board = DATA.boards.find(b => b.id === boardId) || DATA.boards.find(b => b.id === DATA.defaultBoard);
+  const diagonals = readDiagonals(board, new URLSearchParams(query).get('diagonals'));
+  const total = countOf(board, diagonals);
 
   return {
     tab: ['benchmark', 'benchmark-domicule'].includes(tab) ? tab : 'gallery',
     board,
-    page: board.mode === 'pages' ? clamp(parseBigInt(page) || ONE, ONE, pageCount(board)) : ONE,
+    diagonals,
+    total,
+    page: board.mode === 'pages' ? clamp(parseBigInt(page) || ONE, ONE, pageCount(total)) : ONE,
     highlight: parseBigInt(highlight),
   };
 }
 
-function go(board, page, highlight) {
-  const hash = `#gallery/${board.id}/${page}${highlight ? `/${highlight}` : ''}`;
+function go(board, page, highlight, diagonals = null) {
+  const filter = readDiagonals(board, diagonals === null ? null : String(diagonals));
+  const hash = `#gallery/${board.id}/${page}${highlight ? `/${highlight}` : ''}${filter === null ? '' : `?diagonals=${filter}`}`;
   if (hash === location.hash) return updateControls(parseHash());
   history.pushState(null, '', hash);
   render();
 }
 
-function goToTiling(board, number) {
-  go(board, (number - ONE) / PAGE_SIZE + ONE, number);
+function goToTiling(board, number, diagonals) {
+  go(board, (number - ONE) / PAGE_SIZE + ONE, number, diagonals);
 }
 
 function randomBelow(limit) {
@@ -422,20 +519,35 @@ function sheetColumns(board) {
   return Math.max(2, Math.min(10, Math.floor(($('gallery').clientWidth - 14) / (board.colCount * 16 + 12))));
 }
 
+function diagonalLabel(tiling, width) {
+  const count = tiling.filter(piece => piece.dr && piece.dc).length;
+
+  return [`${count} diagonal`, `${count} diag.`].find(text => text.length * renderSheet.LABEL_CHAR_WIDTH <= width) || String(count);
+}
+
 function showSheet(board, tilings, first, labels) {
+  const width = board.colCount * renderSheet.CELL_SIZE;
+  const sublabels = board.pieces === 'domicule' ? tilings.map(tiling => diagonalLabel(tiling, width)) : undefined;
   shownSheet = { board, tilings, first, labels, columns: sheetColumns(board) };
-  $('sheet').innerHTML = renderSheet(tilings, first, { ...board, columns: shownSheet.columns, labels, style: sheetStyle });
+  $('sheet').innerHTML = renderSheet(tilings, first, { ...board, columns: shownSheet.columns, labels, sublabels, style: sheetStyle });
   const svg = $('sheet').querySelector('svg');
   svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', `${board.pieces === 'domicule' ? 'Domicule' : 'Domino'} tilings of a ${board.rowCount} by ${board.colCount} board`);
+  svg.setAttribute(
+    'aria-label',
+    `${board.pieces === 'domicule' ? 'Domicule' : 'Domino'} tilings of a ${board.rowCount} by ${board.colCount} ${board.surface === 'rectangle' ? 'board' : board.surface}`,
+  );
 }
 
 function labelOf(text) {
   return text.dataset.label || text.textContent;
 }
 
+function sheetLabels() {
+  return [...$('sheet').querySelectorAll('text:not(.n)')];
+}
+
 function highlightTiling(number) {
-  const label = [...$('sheet').querySelectorAll('text')].find(t => labelOf(t) === `#${number}`);
+  const label = sheetLabels().find(t => labelOf(t) === `#${number}`);
 
   if (label) {
     label.style.fill = 'var(--hit)';
@@ -445,15 +557,34 @@ function highlightTiling(number) {
   return label;
 }
 
-function updateControls({ board, page }) {
+function showDiagonalFilter(board, diagonals) {
+  const select = $('diagonals');
+  const options = [['', `Any number · ${fmt(board.total)}`]];
+
+  (board.diagonals || []).forEach((count, k) => {
+    if (BigInt(count) > ZERO) options.push([String(k), `${k} · ${fmt(count)}`]);
+  });
+  select.innerHTML = options.map(([value, text]) => `<option value="${value}">${text}</option>`).join('');
+  select.value = diagonals === null ? '' : String(diagonals);
+  select.disabled = !board.diagonals || needsConfirmation(board);
+  select.title = board.diagonals ? '' : 'Tilings are counted by diagonal pieces on rectangles up to 10×10.';
+}
+
+function updateControls({ board, page, diagonals, total }) {
   const pages = board.mode === 'pages';
 
   $('pieces').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.pieces === board.pieces));
+  $('surfaces').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.surface === board.surface));
   $('boards').querySelectorAll('button').forEach(b => {
-    b.hidden = DATA.boards.find(other => other.id === b.dataset.id).pieces !== board.pieces;
+    const other = DATA.boards.find(candidate => candidate.id === b.dataset.id);
+    b.hidden = other.pieces !== board.pieces || other.surface !== board.surface;
     b.setAttribute('aria-pressed', b.dataset.id === board.id);
   });
   document.querySelectorAll('.legend .diagonal').forEach(item => (item.hidden = board.pieces !== 'domicule'));
+  document.querySelectorAll('.legend .seam').forEach(item => (item.hidden = board.surface === 'rectangle'));
+  $('diagonal-picker').hidden = board.pieces !== 'domicule';
+  showDiagonalFilter(board, diagonals);
+  showHighlight(board);
   $('page-controls').hidden = !pages;
   $('sample-controls').hidden = pages;
 
@@ -462,16 +593,17 @@ function updateControls({ board, page }) {
     $('page-controls').querySelectorAll('button, input').forEach(control => (control.disabled = locked));
     $('page').value = fmt(page);
     $('page').style.width = `${Math.max(fmt(page).length + 3, 6)}ch`;
-    $('pages').innerHTML = num(pageCount(board));
+    $('pages').innerHTML = num(pageCount(total));
     $('first').disabled = $('prev').disabled = locked || page === ONE;
-    $('last').disabled = $('next').disabled = locked || page === pageCount(board);
+    $('last').disabled = $('next').disabled = locked || page === pageCount(total);
   }
 }
 
 async function renderGallery(state) {
-  const { board, page, highlight } = state;
+  const { board, page, highlight, diagonals, total } = state;
   const id = ++renderId;
   const isCurrent = () => id === renderId;
+  const name = `<strong>${board.rowCount}×${board.colCount}${board.surface === 'rectangle' ? '' : ` ${board.surface}`}</strong>`;
 
   updateControls(state);
   $('notice').hidden = true;
@@ -484,7 +616,7 @@ async function renderGallery(state) {
 
   if (board.mode === 'random') {
     $('gallery-meta').innerHTML =
-      `<strong>${board.rowCount}×${board.colCount}</strong> · ${num(board.total)} tilings · too many to number in a browser, ` +
+      `${name} · ${num(board.total)} tilings · too many to number in a browser, ` +
       (board.pieces === 'domicule'
         ? `so these are ${RANDOM_SAMPLE_SIZE} approximately uniform random ones (a Markov chain of __DOMICULE_SWEEPS__ steps per cell)`
         : `so these are ${RANDOM_SAMPLE_SIZE} uniformly random ones (coupling from the past)`);
@@ -496,11 +628,12 @@ async function renderGallery(state) {
   }
 
   const first = (page - ONE) * PAGE_SIZE;
-  const end = first + PAGE_SIZE < BigInt(board.total) ? first + PAGE_SIZE : BigInt(board.total);
+  const end = first + PAGE_SIZE < total ? first + PAGE_SIZE : total;
   const locked = needsConfirmation(board);
 
   $('gallery-meta').innerHTML =
-    `<strong>${board.rowCount}×${board.colCount}</strong> · ${num(board.total)} tilings` +
+    `${name} · ${num(total)} tilings` +
+    (diagonals === null ? '' : ` with ${diagonals} diagonal pieces (of ${num(board.total)})`) +
     (locked ? '' : ' · showing ' +
       (isLong(end) ? `<span class="range">#${fmt(first + ONE)} to #${fmt(end)}</span>` : `${fmt(first + ONE)}-${fmt(end)}`));
 
@@ -515,7 +648,7 @@ async function renderGallery(state) {
 
   try {
     const tilings = await requestTilings(
-      { type: 'page', board, first: String(first), count: Number(PAGE_SIZE) },
+      { type: 'page', board, diagonals, first: String(first), count: Number(PAGE_SIZE) },
       progress => {
         if (isCurrent()) {
           $('status').textContent = `Building the counting table${board.memory ? ` (about ${board.memory})` : ''}... ${Math.round(progress * 100)}%`;
@@ -552,39 +685,50 @@ function render() {
 $('boards').innerHTML = DATA.boards
   .map(b => `<button type="button" data-id="${b.id}">${b.rowCount}×${b.colCount}</button>`)
   .join('');
+function switchBoard(pieces, surface) {
+  const { board, diagonals } = parseHash();
+  const boards = DATA.boards.filter(b => b.pieces === pieces && b.surface === surface);
+  go(boards.find(b => b.rowCount === board.rowCount && b.colCount === board.colCount) || boards[0], ONE, null, diagonals);
+}
+
 $('pieces').addEventListener('click', e => {
   const button = e.target.closest('button');
-  if (!button) return;
-  const { board } = parseHash();
-  const boards = DATA.boards.filter(b => b.pieces === button.dataset.pieces);
-  go(boards.find(b => b.rowCount === board.rowCount && b.colCount === board.colCount) || boards[0], ONE);
+  if (button) switchBoard(button.dataset.pieces, parseHash().board.surface);
+});
+$('surfaces').addEventListener('click', e => {
+  const button = e.target.closest('button');
+  if (button) switchBoard(parseHash().board.pieces, button.dataset.surface);
 });
 $('boards').addEventListener('click', e => {
   const button = e.target.closest('button');
-  if (button) go(DATA.boards.find(b => b.id === button.dataset.id), ONE);
+  if (button) go(DATA.boards.find(b => b.id === button.dataset.id), ONE, null, parseHash().diagonals);
 });
+$('diagonals').addEventListener('change', () => {
+  go(parseHash().board, ONE, null, $('diagonals').value === '' ? null : Number($('diagonals').value));
+});
+$('highlight').addEventListener('change', () => setHighlight($('highlight').checked));
 $('styles').addEventListener('click', e => {
   const button = e.target.closest('button');
   if (button) setStyle(button.dataset.style);
 });
 showStyle();
-$('first').addEventListener('click', () => go(parseHash().board, ONE));
-$('prev').addEventListener('click', () => { const s = parseHash(); go(s.board, s.page - ONE); });
-$('next').addEventListener('click', () => { const s = parseHash(); go(s.board, s.page + ONE); });
-$('last').addEventListener('click', () => { const s = parseHash(); go(s.board, pageCount(s.board)); });
+$('first').addEventListener('click', () => { const s = parseHash(); go(s.board, ONE, null, s.diagonals); });
+$('prev').addEventListener('click', () => { const s = parseHash(); go(s.board, s.page - ONE, null, s.diagonals); });
+$('next').addEventListener('click', () => { const s = parseHash(); go(s.board, s.page + ONE, null, s.diagonals); });
+$('last').addEventListener('click', () => { const s = parseHash(); go(s.board, pageCount(s.total), null, s.diagonals); });
 $('page').addEventListener('change', () => {
   const s = parseHash();
-  go(s.board, clamp(parseBigInt($('page').value) || ONE, ONE, pageCount(s.board)));
+  go(s.board, clamp(parseBigInt($('page').value) || ONE, ONE, pageCount(s.total)), null, s.diagonals);
 });
 $('goto').addEventListener('submit', e => {
   e.preventDefault();
   const s = parseHash();
   const number = parseBigInt($('tiling').value);
-  if (number) goToTiling(s.board, clamp(number, ONE, BigInt(s.board.total)));
+  if (number) goToTiling(s.board, clamp(number, ONE, s.total), s.diagonals);
 });
 $('random').addEventListener('click', () => {
   const s = parseHash();
-  goToTiling(s.board, randomBelow(BigInt(s.board.total)) + ONE);
+  goToTiling(s.board, randomBelow(s.total) + ONE, s.diagonals);
 });
 $('resample').addEventListener('click', render);
 $('load-table').addEventListener('click', () => {
@@ -602,24 +746,31 @@ function runsLabel(row) {
 }
 
 const benchmarkColumns = [...document.querySelectorAll('#domino-benchmark thead th')].map(th => th.textContent);
-const domiculeBenchmarkColumns = [...document.querySelectorAll('#domicule-benchmark thead th')].map(th => th.textContent);
 
 $('benchmark-rows').innerHTML = DATA.benchmark
   .map(r => [`${r.rowCount}×${r.colCount}`, r.tilings === null ? '-' : num(r.tilings), ms(r.number), ms(r.bigint), ms(r.formula), runsLabel(r)])
   .map(cells => `<tr role="row">${cells.map((cell, i) => `<td role="cell" data-label="${benchmarkColumns[i]}">${cell}</td>`).join('')}</tr>`)
   .join('');
 
-$('domicule-benchmark-rows').innerHTML = DATA.domiculeBenchmark
-  .map(r => {
-    const runs = [r.bigint, r.modular].map(result => (result ? result.runs : null));
-    const measured = runs.filter(count => count !== null);
-    const runsCell = measured.every(count => count === measured[0])
-      ? fmt(measured[0])
-      : `<span title="BigInt / Modular">${runs.map(count => (count === null ? '-' : fmt(count))).join(' / ')}</span>`;
-    return [`${r.rowCount}×${r.colCount}`, r.tilings === null ? '-' : num(r.tilings), ms(r.bigint), ms(r.modular), runsCell];
-  })
-  .map(cells => `<tr role="row">${cells.map((cell, i) => `<td role="cell" data-label="${domiculeBenchmarkColumns[i]}">${cell}</td>`).join('')}</tr>`)
-  .join('');
+function renderSolverRows(table, rows, boardLabel) {
+  const columns = [...document.querySelectorAll(`#${table} thead th`)].map(th => th.textContent);
+
+  $(`${table}-rows`).innerHTML = rows
+    .map(r => {
+      const runs = [r.bigint, r.modular].map(result => (result ? result.runs : null));
+      const measured = runs.filter(count => count !== null);
+      const runsCell = measured.every(count => count === measured[0])
+        ? fmt(measured[0])
+        : `<span title="BigInt / Modular">${runs.map(count => (count === null ? '-' : fmt(count))).join(' / ')}</span>`;
+      return [boardLabel(r), r.tilings === null ? '-' : num(r.tilings), ms(r.bigint), ms(r.modular), runsCell];
+    })
+    .map(cells => `<tr role="row">${cells.map((cell, i) => `<td role="cell" data-label="${columns[i]}">${cell}</td>`).join('')}</tr>`)
+    .join('');
+}
+
+renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, r => `${r.rowCount}×${r.colCount}`);
+renderSolverRows('periodic-benchmark', DATA.periodicBenchmark, r => `${r.rowCount}×${r.colCount} ${r.surface}`);
+renderSolverRows('diagonal-benchmark', DATA.diagonalBenchmark, r => `${r.rowCount}×${r.colCount}`);
 
 if (DATA.environment) {
   const { date, node, cpu, platform, cores, memory } = DATA.environment;
@@ -629,7 +780,7 @@ if (DATA.environment) {
 }
 
 function visibleLabel(number) {
-  const labels = [...$('sheet').querySelectorAll('text')].filter(text => {
+  const labels = sheetLabels().filter(text => {
     const { top } = text.getBoundingClientRect();
     return top >= 0 && top < innerHeight;
   });
@@ -646,7 +797,7 @@ new ResizeObserver(() => {
   const anchorTop = anchor?.getBoundingClientRect().top;
   showSheet(board, tilings, first, labels);
   if (highlight) highlightTiling(highlight);
-  const moved = anchor && [...$('sheet').querySelectorAll('text')].find(text => labelOf(text) === anchorText);
+  const moved = anchor && sheetLabels().find(text => labelOf(text) === anchorText);
   if (moved) scrollBy(0, moved.getBoundingClientRect().top - anchorTop);
 }).observe($('gallery'));
 

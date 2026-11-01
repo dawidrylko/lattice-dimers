@@ -58,6 +58,14 @@ Every prime contributes at least 30 bits, so $\lceil (\log_2 B + 1)/30 \rceil$ p
 
 Domicule tilings have no lattice structure like the domino rotations, so coupling from the past does not apply. Up to $16 \times 16$ the gallery numbers every tiling with a table of $(hw + 1) \cdot 2^{w+2}$ entries, which is exactly uniform when the number is drawn at random. For $18 \times 18$ and $20 \times 20$ it runs a Markov chain. A step picks a cell $a$ and one of its eight neighbours $c$; when the partner $b$ of $a$ and the partner $d$ of $c$ are neighbours too, the pairs $ab$ and $cd$ become $ac$ and $bd$. Each such move arises from four ordered choices, and so does the move back, so the proposal is symmetric and the uniform distribution is stationary. On every board small enough to check (up to $4 \times 5$) the moves connect all tilings. Still, a finite chain is only approximately uniform. The gallery says so.
 
+### Numbering by diagonal pieces
+
+The gallery can also number only the tilings with $k$ diagonal pieces. Every entry of the table then becomes a list, `table[i][state][r]`, of the completions with exactly $r \le k$ diagonal pieces, and unranking keeps the order of the full numbering. A straight piece covers a black and a white cell of the chessboard and a diagonal piece two cells of one colour, so on the $2n \times 2n$ board the number of diagonal pieces is even. The count for every $k$ comes from [`domiculeDiagonalSolver-BigInt.js`](../src/solvers/domiculeDiagonalSolver-BigInt.js) or `data/`, and the build checks that the counts add up to the number of tilings. The gallery offers this up to $10 \times 10$.
+
+## Cylinders and tori
+
+A cylinder has its left and right edges glued, a torus both pairs of opposite edges. The gallery numbers their tilings up to $10 \times 10$ with the cell-by-cell scan of [`periodicTilingSolver-Modular.js`](../src/solvers/periodicTilingSolver-Modular.js): a state has $w + 2$ bits and, on the king's graph, one more bit for the piece from the first column to the last column of the next row. A torus tiling covers a set $S$ of first-row cells from the last row, and its scan starts from $S$ and must end with $S$. The tilings are ordered by $S$ and then by the scan. The tilings of $S$ and of its rotations are equally many, so one table per rotation class gives every count, and the table of a single $S$ is rebuilt when a page needs it. Random draws a uniformly random number, so the sample is exact. As in the solvers, each edge of a circumference 2 is a separate piece. A piece that crosses a glued edge is drawn cut there, half on each side of the board.
+
 ## Verification
 
 Every count is checked in more than one independent way:

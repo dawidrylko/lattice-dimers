@@ -41,6 +41,9 @@ const SHEET_BOARDS = [
   '12x12-diagonal',
   '18x18-diagonal',
   '20x20-diagonal',
+  '10x10-torus',
+  '10x10-diagonal-cylinder',
+  '10x10-diagonal-torus',
 ];
 const CONFIRMATION_BOARDS = ['18x18', '16x16-diagonal'];
 const NOTES = [
@@ -62,7 +65,11 @@ const siteTestCases = [
   { width: 1440, check: 'styles' },
   { width: 1440, check: 'labels' },
   { width: 1440, check: 'history' },
+  { width: 1440, check: 'surfaces' },
+  { width: 1440, check: 'diagonals' },
   { width: 375, check: 'styles' },
+  { width: 375, check: 'surfaces' },
+  { width: 375, check: 'diagonals' },
   { width: 1440, check: 'landing' },
   { width: 1440, check: 'notes' },
   { width: 1440, check: 'chrome' },
@@ -306,7 +313,7 @@ async function checkSheets(page, baseUrl, width) {
 
   for (const board of SHEET_BOARDS) {
     const [, rowCount, colCount] = board.match(/^(\d+)x(\d+)/);
-    const label = `${board.endsWith('-diagonal') ? 'Domicule' : 'Domino'} tilings of a ${rowCount} by ${colCount}`;
+    const label = `${board.includes('-diagonal') ? 'Domicule' : 'Domino'} tilings of a ${rowCount} by ${colCount}`;
     await page.evaluate(`location.hash = 'gallery/${board}/1'`);
     await page.waitFor(
       `(document.querySelector('#sheet svg')?.getAttribute('aria-label') || '').includes('${label}')`,
@@ -489,8 +496,9 @@ async function checkLongLabels(page, baseUrl, width) {
   await page.settle();
   const state = await page.evaluate(`(() => {
     const texts = [...document.querySelectorAll('#sheet text')];
-    const boxes = texts.map(text => text.getBoundingClientRect());
-    const overlaps = boxes.filter((box, i) => i && Math.abs(box.top - boxes[i - 1].top) < 1 && box.left < boxes[i - 1].right).length;
+    const overlaps = ['text:not(.n)', 'text.n']
+      .map(selector => [...document.querySelectorAll('#sheet ' + selector)].map(text => text.getBoundingClientRect()))
+      .reduce((sum, boxes) => sum + boxes.filter((box, i) => i && Math.abs(box.top - boxes[i - 1].top) < 1 && box.left < boxes[i - 1].right).length, 0);
     const hit = texts.find(text => text.style.fill === 'var(--hit)');
     return { overlaps, hit: hit && (hit.dataset.label || hit.textContent), title: hit && hit.parentNode.querySelector('title')?.textContent };
   })()`);
@@ -549,6 +557,142 @@ async function checkHistory(page, baseUrl, width) {
 
   if (tabs) {
     problems.push(`tab links navigated to a URL fragment ${tabs} times`);
+  }
+
+  return problems;
+}
+
+const READ_SHEET = `(() => ({
+  hash: location.hash,
+  aria: document.querySelector('#sheet svg')?.getAttribute('aria-label') || '',
+  meta: document.getElementById('gallery-meta').textContent,
+  boards: [...document.querySelectorAll('#boards button')].filter(button => !button.hidden).map(button => button.dataset.id),
+  surface: document.querySelector('#surfaces [aria-pressed=true]')?.dataset.surface,
+  seam: !document.querySelector('.legend .seam').hidden,
+  picker: !document.getElementById('diagonal-picker').hidden,
+  filter: { value: document.getElementById('diagonals').value, disabled: document.getElementById('diagonals').disabled, options: document.getElementById('diagonals').options.length },
+  labels: document.querySelectorAll('#sheet text:not(.n)').length,
+  sublabels: [...new Set([...document.querySelectorAll('#sheet text.n')].map(text => text.textContent))],
+  clipped: document.querySelectorAll('#sheet svg svg').length,
+  edges: document.querySelectorAll('#sheet path.s').length,
+}))()`;
+
+async function showBoard(page, hash, description) {
+  const first = (BigInt(hash.split('?')[0].split('/')[2]) - BigInt(1)) * BigInt(100) + BigInt(1);
+  await page.evaluate(`history.pushState(null, '', '#${hash}'); render()`);
+  await page.waitFor(
+    `location.hash === '#${hash}' && (label => label && (label.dataset.label || label.textContent) === '#${first}')(document.querySelector('#sheet text:not(.n)'))`,
+    description,
+  );
+  await page.settle();
+
+  return page.evaluate(READ_SHEET);
+}
+
+async function checkSurfaces(page, baseUrl, width) {
+  const problems = [];
+  await loadSite(page, baseUrl, width, 'gallery/4x4-diagonal/1');
+  await page.waitFor("document.querySelector('#sheet svg')", 'the 4x4 domicule sheet');
+  await page.evaluate("document.querySelector('#surfaces [data-surface=torus]').click()");
+  await page.waitFor("location.hash === '#gallery/4x4-diagonal-torus/1' && document.querySelector('#sheet svg')?.getAttribute('aria-label').endsWith('4 by 4 torus')", 'the 4x4 domicule torus');
+  await page.settle();
+  const torus = await page.evaluate(READ_SHEET);
+
+  if (torus.boards.join() !== [2, 4, 6, 8, 10].map(side => `${side}x${side}-diagonal-torus`).join() || torus.surface !== 'torus') {
+    problems.push(`torus picker shows ${torus.boards.join(', ')} with ${torus.surface} pressed`);
+  }
+
+  if (!torus.seam || torus.clipped !== 100 || torus.edges !== 100 || !torus.meta.startsWith('4×4 torus · 17,552 tilings')) {
+    problems.push(`4x4 torus sheet: ${JSON.stringify({ ...torus, boards: undefined })}`);
+  }
+
+  await page.evaluate("document.querySelector('#pieces [data-pieces=domino]').click()");
+  await page.waitFor("location.hash === '#gallery/4x4-torus/1' && document.querySelector('#sheet svg')?.getAttribute('aria-label').startsWith('Domino')", 'the 4x4 domino torus');
+  const straight = await page.evaluate(READ_SHEET);
+
+  if (straight.picker || straight.sublabels.length || straight.surface !== 'torus') {
+    problems.push(`domino torus shows the diagonal filter or counts: ${JSON.stringify(straight.sublabels)}`);
+  }
+
+  await page.evaluate("document.querySelector('#surfaces [data-surface=rectangle]').click()");
+  await page.waitFor("location.hash === '#gallery/4x4/1'", 'the switch back to the 4x4 rectangle');
+  const rectangle = await page.evaluate(READ_SHEET);
+
+  if (rectangle.seam || rectangle.clipped || rectangle.edges) {
+    problems.push('the rectangle keeps the glued edges');
+  }
+
+  if (width < 1440) {
+    return problems;
+  }
+
+  const boards = await page.evaluate("JSON.stringify(DATA.boards.filter(b => b.surface !== 'rectangle').map(({ id, total }) => ({ id, total })))");
+
+  for (const { id, total } of JSON.parse(boards)) {
+    const pages = (BigInt(total) + BigInt(99)) / BigInt(100);
+    const expected = Number(BigInt(total) - (pages - BigInt(1)) * BigInt(100));
+    const last = await showBoard(page, `gallery/${id}/${pages}`, `the last page of ${id}`);
+
+    if (last.labels !== expected) {
+      problems.push(`the last page of ${id} shows ${last.labels} tilings, not ${expected} of ${total}`);
+    }
+  }
+
+  return problems;
+}
+
+async function checkDiagonals(page, baseUrl, width) {
+  const problems = [];
+  await loadSite(page, baseUrl, width, 'gallery/6x6-diagonal/1?diagonals=4');
+  await page.waitFor("document.querySelector('#sheet svg') && document.getElementById('gallery-meta').textContent.includes('showing')", 'the 6x6 sheet with 4 diagonal pieces');
+  await page.settle();
+  const filtered = await page.evaluate(READ_SHEET);
+
+  if (
+    !filtered.meta.startsWith('6×6 · 413,932 tilings with 4 diagonal pieces (of 3,037,561)') ||
+    filtered.filter.value !== '4' ||
+    filtered.filter.options !== 11 ||
+    filtered.labels !== 100 ||
+    filtered.sublabels.join() !== '4 diagonal'
+  ) {
+    problems.push(`6x6 with 4 diagonal pieces: ${JSON.stringify(filtered)}`);
+  }
+
+  const last = await showBoard(page, 'gallery/6x6-diagonal/4140?diagonals=4', 'the last 6x6 page with 4 diagonal pieces');
+
+  if (last.labels !== 32 || last.sublabels.join() !== '4 diagonal') {
+    problems.push(`the last page with 4 diagonal pieces shows ${last.labels} tilings with ${last.sublabels.join(', ')}`);
+  }
+
+  await page.evaluate("const select = document.getElementById('diagonals'); select.value = ''; select.dispatchEvent(new Event('change'))");
+  await page.waitFor("location.hash === '#gallery/6x6-diagonal/1' && document.getElementById('gallery-meta').textContent.startsWith('6×6 · 3,037,561 tilings · showing')", 'the 6x6 sheet without the filter');
+  await page.evaluate("if (!document.getElementById('highlight').checked) document.getElementById('highlight').click()");
+  await page.settle();
+  const colors = await page.evaluate(`(() => {
+    const probe = document.body.appendChild(document.createElement('i'));
+    const resolve = name => { probe.style.color = 'var(' + name + ')'; return getComputedStyle(probe).color; };
+    const expected = { mute: resolve('--mute'), d: resolve('--d') };
+    probe.remove();
+    return {
+      highlight: 'highlight' in document.getElementById('gallery').dataset,
+      straight: getComputedStyle(document.querySelector('#sheet svg .h, #sheet svg .v')).fill,
+      diagonal: getComputedStyle(document.querySelector('#sheet svg .d')).fill,
+      expected,
+    };
+  })()`);
+
+  if (!colors.highlight || colors.straight !== colors.expected.mute || colors.diagonal !== colors.expected.d) {
+    problems.push(`highlighted diagonals: ${JSON.stringify(colors)}`);
+  }
+
+  await page.evaluate("document.getElementById('highlight').click()");
+
+  for (const [board, enabled] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', false], ['2x2-diagonal', true]]) {
+    const state = await showBoard(page, `gallery/${board}/1`, `the ${board} sheet`);
+
+    if (!state.picker || state.filter.disabled === enabled || !state.sublabels.length) {
+      problems.push(`${board} filter: ${JSON.stringify(state.filter)}, counts ${state.sublabels.join(', ')}`);
+    }
   }
 
   return problems;
@@ -727,20 +871,25 @@ async function checkBenchmark(page, baseUrl, width) {
     await page.settle();
     const state = await page.evaluate(`(() => {
       const section = document.getElementById('${tab}');
-      const wrap = section.querySelector('.table-wrap');
-      const box = wrap.getBoundingClientRect();
-      const cells = [...wrap.querySelectorAll('td')];
+      const wraps = [...section.querySelectorAll('.table-wrap')];
+      const times = row => [...row.cells].slice(2, -1).map(cell => cell.textContent);
       return {
         shown: !section.hidden && document.getElementById('${otherTab}').hidden && document.getElementById('gallery').hidden,
-        overflow: wrap.scrollWidth - wrap.clientWidth,
-        hidden: cells.filter(cell => {
-          const rect = cell.getBoundingClientRect();
-          return rect.left < box.left - 0.5 || rect.right > box.right + 0.5;
+        overflow: Math.max(...wraps.map(wrap => wrap.scrollWidth - wrap.clientWidth)),
+        hidden: wraps.flatMap(wrap => {
+          const box = wrap.getBoundingClientRect();
+          return [...wrap.querySelectorAll('td')].filter(cell => {
+            const rect = cell.getBoundingClientRect();
+            return rect.left < box.left - 0.5 || rect.right > box.right + 0.5;
+          });
         }).length,
-        missing: [...wrap.querySelectorAll('tbody tr')]
-          .filter(row => row.cells[0].textContent !== '0×0')
-          .filter(row => [...row.cells].slice(2, -1).some(cell => cell.textContent === '-'))
-          .map(row => row.cells[0].textContent),
+        empty: wraps.filter(wrap => !wrap.querySelectorAll('tbody tr').length).map(wrap => wrap.querySelector('table').id),
+        missing: wraps.flatMap((wrap, index) =>
+          [...wrap.querySelectorAll('tbody tr')]
+            .filter(row => row.cells[0].textContent !== '0×0')
+            .filter(row => (index ? times(row).every(time => time === '-') : times(row).includes('-')))
+            .map(row => row.cells[0].textContent),
+        ),
         environment: section.querySelector('.environment').textContent,
       };
     })()`);
@@ -753,8 +902,8 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`${tab} scrolls ${state.overflow} px sideways with ${state.hidden} cells off screen`);
     }
 
-    if (tab === 'benchmark-domicule' && state.missing.length) {
-      problems.push(`${tab} has no time for ${state.missing.join(', ')}`);
+    if (tab === 'benchmark-domicule' && (state.missing.length || state.empty.length)) {
+      problems.push(`${tab} has no time for ${state.missing.join(', ')} and no rows in ${state.empty.join(', ')}`);
     }
 
     if (!state.environment.startsWith('Measured with Node.js')) {
@@ -773,6 +922,8 @@ const CHECKS = {
   styles: { label: 'sheet style switch', run: checkStyles },
   labels: { label: 'long tiling numbers', run: checkLongLabels },
   history: { label: 'random jump and back', run: checkHistory },
+  surfaces: { label: 'cylinders and tori', run: checkSurfaces },
+  diagonals: { label: 'diagonal filter and highlight', run: checkDiagonals },
   landing: { label: 'main page', run: checkLanding },
   notes: { label: 'notes', run: checkNotes },
   chrome: { label: 'shared header and footer', run: checkChrome },
