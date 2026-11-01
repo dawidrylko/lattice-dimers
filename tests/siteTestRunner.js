@@ -960,6 +960,7 @@ async function checkBenchmark(page, baseUrl, width) {
     ['benchmark', 'dominoes', 'benchmark-rows', null],
     ['benchmark/domicules', 'domicules', 'domicule-benchmark-rows', 'every'],
     ['benchmark-domicule', 'domicules', 'domicule-benchmark-rows', 'every'],
+    ['benchmark/cylinders', 'cylinders', 'cylinder-benchmark-rows', 'some'],
     ['benchmark/tori', 'tori', 'torus-benchmark-rows', 'some'],
     ['benchmark/diagonals', 'diagonals', 'diagonal-benchmark-rows', 'some'],
   ]) {
@@ -1011,16 +1012,26 @@ async function checkBenchmark(page, baseUrl, width) {
   }
 
   await loadSite(page, baseUrl, width, 'benchmark');
+  await page.evaluate("document.querySelector('#benchmark-groups button[data-group=cylinders]').click()");
+  await page.waitFor(
+    "location.hash === '#benchmark/cylinders' && !document.querySelector('.bench-group[data-group=cylinders]').hidden",
+    'the switch to cylinders',
+  );
+  const cylinders = await page.evaluate(`({
+    rows: document.querySelectorAll('.bench-group[data-group=cylinders] #cylinder-benchmark-rows tr').length,
+    inTori: Boolean(document.querySelector('.bench-group[data-group=tori] #cylinder-benchmark-rows')),
+    tori: !document.querySelector('.bench-group[data-group=tori]').hidden,
+  })`);
+
+  if (!cylinders.rows || cylinders.inTori || cylinders.tori) {
+    problems.push(`the cylinders group shows ${cylinders.rows} cylinder rows, the tori group ${cylinders.inTori ? 'also holds' : 'does not hold'} the cylinder table and is ${cylinders.tori ? 'shown' : 'hidden'}`);
+  }
+
   await page.evaluate("document.querySelector('#benchmark-groups button[data-group=tori]').click()");
   await page.waitFor(
     "location.hash === '#benchmark/tori' && !document.querySelector('.bench-group[data-group=tori]').hidden",
-    'the switch to tori and cylinders',
+    'the switch to tori',
   );
-  const cylinders = await page.evaluate("document.querySelectorAll('#cylinder-benchmark-rows tr').length");
-
-  if (!cylinders) {
-    problems.push('the tori and cylinders group has no cylinder rows');
-  }
 
   const length = await page.evaluate('history.length');
   await page.evaluate(
@@ -1040,7 +1051,7 @@ const CHECKS = {
   sheets: { label: 'tiling sheets', run: checkSheets },
   picker: { label: 'board picker', run: checkPicker },
   confirmation: { label: '18x18 and 16x16 domicule confirmation', run: checkConfirmation },
-  pieces: { label: 'straight and diagonal switch', run: checkPieces },
+  pieces: { label: 'dominoes and domicules switch', run: checkPieces },
   styles: { label: 'sheet style switch', run: checkStyles },
   labels: { label: 'long tiling numbers', run: checkLongLabels },
   history: { label: 'random jump and back', run: checkHistory },

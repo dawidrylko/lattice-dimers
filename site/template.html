@@ -203,8 +203,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="picker">
       <span class="label" id="pieces-label">Pieces</span>
       <div class="pieces" id="pieces" role="group" aria-labelledby="pieces-label">
-        <button type="button" data-pieces="domino">Straight</button>
-        <button type="button" data-pieces="domicule">Straight + diagonal</button>
+        <button type="button" data-pieces="domino" title="Every piece covers two cells that share a side">Dominoes</button>
+        <button type="button" data-pieces="domicule" title="A piece may also cover two cells that share only a corner">Domicules</button>
       </div>
     </div>
     <div class="picker">
@@ -274,7 +274,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       <div class="pieces" id="benchmark-groups" role="group" aria-labelledby="benchmark-groups-label">
         <button type="button" data-group="dominoes">Dominoes</button>
         <button type="button" data-group="domicules">Domicules</button>
-        <button type="button" data-group="tori">Tori and cylinders</button>
+        <button type="button" data-group="cylinders">Cylinders</button>
+        <button type="button" data-group="tori">Tori</button>
         <button type="button" data-group="diagonals">Diagonal pieces</button>
       </div>
     </div>
@@ -306,15 +307,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
         Re-run with <code>pnpm benchmark:domicule</code>.
       </p>
     </div>
-    <div class="bench-group" data-group="tori" hidden>
-      <h2 class="table-title">Tori (king's graph)</h2>
-      <div class="table-wrap">
-        <table role="table" id="torus-benchmark">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Modular</th><th role="columnheader">Runs</th></tr></thead>
-          <tbody id="torus-benchmark-rows" role="rowgroup"></tbody>
-        </table>
-      </div>
-      <h2 class="table-title">Cylinders (king's graph)</h2>
+    <div class="bench-group" data-group="cylinders" hidden>
+      <h2 class="table-title">Domicules on cylinders</h2>
       <div class="table-wrap">
         <table role="table" id="cylinder-benchmark">
           <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Modular</th><th role="columnheader">Runs</th></tr></thead>
@@ -322,10 +316,23 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
         </table>
       </div>
       <p class="note">
-        <code>node &lt;solver&gt; -r R -c C --torus</code> for a torus, without <code>--torus</code> for a cylinder of
-        circumference C. BigInt multiplies by the row transfer matrix and runs the torus once for every set of first-row
-        cells covered from the last row. Modular goes cell by cell modulo primes below 2<sup>31</sup> and runs one set per
-        rotation class.
+        <code>node &lt;solver&gt; -r R -c C</code> for a cylinder of circumference C. BigInt multiplies by the row transfer
+        matrix. Modular goes cell by cell modulo primes below 2<sup>31</sup>. The same two solvers count the tori.
+        Re-run with <code>pnpm benchmark:periodic</code>.
+      </p>
+    </div>
+    <div class="bench-group" data-group="tori" hidden>
+      <h2 class="table-title">Domicules on tori (A401670)</h2>
+      <div class="table-wrap">
+        <table role="table" id="torus-benchmark">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Modular</th><th role="columnheader">Runs</th></tr></thead>
+          <tbody id="torus-benchmark-rows" role="rowgroup"></tbody>
+        </table>
+      </div>
+      <p class="note">
+        <code>node &lt;solver&gt; -r R -c C --torus</code> for a torus. BigInt multiplies by the row transfer matrix and runs
+        the torus once for every set of first-row cells covered from the last row. Modular goes cell by cell modulo primes
+        below 2<sup>31</sup> and runs one set per rotation class. The same two solvers count the cylinders.
         Re-run with <code>pnpm benchmark:periodic</code>.
       </p>
     </div>
@@ -517,7 +524,7 @@ function clamp(value, min, max) {
   return value < min ? min : value > max ? max : value;
 }
 
-const BENCHMARK_GROUPS = ['dominoes', 'domicules', 'tori', 'diagonals'];
+const BENCHMARK_GROUPS = ['dominoes', 'domicules', 'cylinders', 'tori', 'diagonals'];
 
 function parseHash() {
   const [path, query = ''] = location.hash.slice(1).split('?');
