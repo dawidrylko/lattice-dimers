@@ -24,7 +24,7 @@ tilings. Evaluated with floating-point cosines the product loses its last digits
 a(n) = (-1)^n \mathrm{Res}\bigl(P(x), P(-x)\bigr), \qquad P(x^2) = U_{2n}(x/2)
 ```
 
-where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is the determinant of the Sylvester matrix, an integer matrix of size $2n$, and fraction-free Bareiss elimination [3] keeps every intermediate value an integer. Neither square roots nor floating point are involved, and $20 \times 20$ takes milliseconds. The same formula is a two-line PARI/GP program in [`pari/A004003.gp`](../pari/A004003.gp).
+where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is the determinant of the Sylvester matrix, an integer matrix of size $2n$, and fraction-free Bareiss elimination [3] keeps every intermediate value an integer. Neither square roots nor floating point are involved, and $20 \times 20$ takes milliseconds. The same formula is a two-line PARI/GP program in [`oeis/A004003/A004003.gp`](../oeis/A004003/A004003.gp).
 
 ### Transfer by rows
 
@@ -42,7 +42,7 @@ The table for $20 \times 20$ would need several gigabytes, so the gallery sample
 
 ### Transfer by cells
 
-A domicule tiling is counted with the same cell-by-cell scan. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the domino one. [`domiculeTilingSolver-BigInt.js`](../src/solvers/domiculeTilingSolver-BigInt.js) keeps the counts as `BigInt` and is the reference. The same scan is in [`pari/A239273.gp`](../pari/A239273.gp), where `T(h, w)` is A239264 and `a(n)` is A239273.
+A domicule tiling is counted with the same cell-by-cell scan. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the domino one. [`domiculeTilingSolver-BigInt.js`](../src/solvers/domiculeTilingSolver-BigInt.js) keeps the counts as `BigInt` and is the reference. The same scan is in [`oeis/A239264/A239264.gp`](../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../oeis/A239273/A239273.gp), where `a(n)` is A239273.
 
 ### Counting modulo primes
 
@@ -76,7 +76,7 @@ Every count is checked in more than one independent way:
 
 - the formula and BigInt domino solvers agree with each other and with A004003 up to $20 \times 20$, the Number solver up to $10 \times 10$, and the two domicule solvers with A239273 and the data section of A239264;
 - the two periodic solvers agree with each other and with A335586, A253678, A281679 and A006253, and the two diagonal solvers with each other, with A004003 at $x = 0$ and with A239273 at $x = 1$;
-- the four PARI/GP programs in `pari/` run in CI against the same data;
+- the PARI/GP programs in `oeis/` run in CI against the same data;
 - unranking is checked against an enumeration of every tiling of the small boards, and every unranked tiling is checked for coverage;
 - coupling from the past and the domicule chain are checked with chi-squared tests on $2 \times 2$ and $4 \times 4$;
 - the modular solver checks every result against an extra prime.

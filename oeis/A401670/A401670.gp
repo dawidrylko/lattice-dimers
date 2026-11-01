@@ -1,5 +1,5 @@
 \\ Domicule tilings of the h X w torus = perfect matchings of the king's graph C_h X C_w (strong product);
-\\ for h or w = 2 its multiple edges are counted as separate pieces.
+\\ for h or w = 2 its multiple edges are counted as separate pieces; a(n) is OEIS A401670.
 \\ R(w, c, f, t) lists the ways to finish a row whose filled cells are f from column c on, as the sets t
 \\ of next-row cells they cover: a free cell is matched with its right neighbour (or, in column 0,
 \\ with the last column across the seam), or with the cell below, below-left or below-right.

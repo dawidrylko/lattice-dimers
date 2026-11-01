@@ -1,7 +1,7 @@
 DRAFT OEIS ENTRY - SUBMITTED AS A401669 ON 2026-11-01
 
 Status: proposed on 2026-11-01, https://oeis.org/draft/A401669. The submitted text is
-oeis/A401669.txt at the repository root. It differs from this draft in the %C, %F, %H, %Y
+oeis/A401669/A401669.txt at the repository root. It differs from this draft in the %C, %F, %H, %Y
 and %A lines. This file keeps the draft as it stood before submission. Every number below
 is in paper/NUMBERS.md.
 

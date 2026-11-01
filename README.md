@@ -72,7 +72,7 @@ A torus has no boundary, so the count has no surface or corner term. Divided by 
 
 **Diagonal pieces.** [`domiculeDiagonalSolver-BigInt.js`](src/solvers/domiculeDiagonalSolver-BigInt.js) and [`domiculeDiagonalSolver-Modular.js`](src/solvers/domiculeDiagonalSolver-Modular.js) count the domicule tilings by the number of pieces that join two cells sharing only a corner. On the $2n \times 2n$ board that number is even, and the triangle of the tilings with $0, 2, \dots, 2n^2$ diagonal pieces begins 1; 2, 1; 36, 126, 105, 12, 1; 6728, 84132, 413932, 934213, 1000638, 491689, 99554, 6638, 36, 1. Its first column is A004003, its row sums are A239273, and it is counted up to $20 \times 20$ ([notebook](notes/05-diagonals.md)).
 
-The PARI/GP programs, both run in CI: [`pari/king-torus.gp`](pari/king-torus.gp), where `T(h, w)` is the $h \times w$ torus and `a(n)` the $2n \times 2n$ one, and [`pari/king-diagonals.gp`](pari/king-diagonals.gp), where `P(h, w)` is the polynomial in $x$ and `row(n)` a row of the triangle.
+The PARI/GP programs, both run in CI: [`oeis/A401670/A401670.gp`](oeis/A401670/A401670.gp), where `T(h, w)` is the $h \times w$ torus and `a(n)` the $2n \times 2n$ one, and [`oeis/A401673/A401673.gp`](oeis/A401673/A401673.gp), where `P(h, w)` is the polynomial in $x$ and `row(n)` a row of the triangle.
 
 ```gp
 R(w, c, f, t) = {
@@ -137,7 +137,7 @@ Both kinds of tilings are also counted by transfer. Dominoes go row by row with 
 
 A table of completion counts turns a number into a tiling. Domino tilings too large to number are sampled exactly with monotone [coupling from the past](https://doi.org/10.1002/%28SICI%291098-2418%28199608/09%299:1/2%3C223::AID-RSA14%3E3.0.CO;2-O) (Propp and Wilson, 1996). The full references are in the [method note](notes/01-method.md#references). Domicule tilings are sampled with a symmetric Markov chain of pair swaps, which is only approximately uniform.
 
-The PARI/GP programs, both run in CI against the known values:
+The PARI/GP programs, run in CI against the known values:
 
 ```gp
 a(n) = my(P = substpol(polchebyshev(2*n, 2, x/2), x^2, x)); (-1)^n * polresultant(P, subst(P, x, -x));
@@ -165,10 +165,13 @@ T(h, w) = {
     v = u);
   v[1]
 };
+```
+
+```gp
 a(n) = T(2*n, 2*n);
 ```
 
-The first is [`pari/A004003.gp`](pari/A004003.gp), the second [`pari/A239273.gp`](pari/A239273.gp), where `T(h, w)` is A239264 and `a(n)` is A239273.
+The first is [`oeis/A004003/A004003.gp`](oeis/A004003/A004003.gp), the second [`oeis/A239264/A239264.gp`](oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and the third [`oeis/A239273/A239273.gp`](oeis/A239273/A239273.gp), where `a(n)` is A239273.
 
 ## Repository layout
 
@@ -185,8 +188,7 @@ src/solvers/      command-line solvers, one file per method
   domiculeDiagonalSolver-Modular.js domicules by the number of diagonal pieces, modulo primes
 src/renderer/     numbering, coupling from the past, the domicule chain, SVG and ASCII output
 src/dominoTilingRenderer.js         command line for drawing tilings
-pari/             PARI/GP programs
-oeis/             b-files and entry texts contributed to the OEIS, and the script that rebuilds the b-files
+oeis/             one directory per OEIS entry: entry text, b-file and PARI/GP program, and the script that rebuilds the b-files
 notes/            the research page, the method and the notebooks, built into the site
 data/             known values the solvers, the PARI programs and the site are checked against
 tests/            test runners for the solvers, the renderer, the PARI programs and the site
@@ -220,8 +222,8 @@ Verification:
 ```sh
 pnpm test           # solvers against data/, up to 12×12 (node tests/testRunner.js runs every known term and takes hours: the 16×16 torus alone about 75 minutes)
 pnpm test:render    # numbering, sampling and drawing
-pnpm test:pari      # the four PARI/GP programs and their copies in this README
-pnpm test:oeis      # the b-files in oeis/ against a rebuild from the committed counts
+pnpm test:pari      # the PARI/GP programs in oeis/, their copies in this README and the programs in the entry texts
+pnpm test:oeis      # the b-files in oeis/ against a rebuild, and the layout and format of every entry
 pnpm site:build     # runs the notebooks and builds dist/site
 pnpm test:site      # the built site in headless Chrome at 1440, 786 and 375 px (set CHROME_PATH if needed)
 ```
@@ -281,7 +283,7 @@ The code is MIT, see [LICENSE](LICENSE). Text and data are licensed under
   `research/king-entropy/replication/out/`, the outputs `research/king-entropy/log-convexity/out_*.txt` and
   `research/king-entropy/log-convexity/time_*.txt`, the JSON files in `data/` and the measurements in `benchmarks/results/`.
 
-Everything else is MIT, in particular all programs and scripts: `src/`, `pari/`, `site/`, `tests/`,
+Everything else is MIT, in particular all programs and scripts: `src/`, `oeis/`, `site/`, `tests/`,
 `benchmarks/benchmarkRunner.js`, `data/index.js`, `research/king-entropy/src/`,
 `research/king-entropy/log-convexity/*.py` and the code in `research/king-entropy/replication/`.
 
