@@ -793,6 +793,7 @@ async function checkLanding(page, baseUrl, width) {
     'papers/king-entropy-log-convexity.pdf',
     'https://oeis.org/A004003',
     'https://oeis.org/A239273',
+    'https://github.com/dawidrylko/lattice-dimers/tree/master/oeis',
   ];
 
   if (state.oeis.join() !== introLinks.join()) {

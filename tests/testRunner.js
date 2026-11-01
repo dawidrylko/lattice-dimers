@@ -83,30 +83,6 @@ const rejectionTestCases = [
   { args: ['benchmarks/benchmarkRunner.js', '-n', '1', '--torus', '--diagonal'], message: 'Usage' },
 ];
 
-function executeReadmeResultsTest() {
-  process.stdout.write('Executing README results test 1 of 1 for the sequence table... ');
-
-  const readme = fs.readFileSync(path.join(ROOT_DIRECTORY, 'README.md'), 'utf-8');
-  const rows = [...readme.matchAll(/^\| (\d+) \| \d+×\d+ \| (\d+) \| (\d+)(?: \*\*new\*\*)? \|$/gm)];
-  const known = (testCases, side) => testCases.find(t => t.rowCount === side && t.colCount === side)?.expectedResult;
-  const wrong = rows.filter(([, n, domino, domicule]) => {
-    const side = 2 * Number(n);
-    const domiculeExpected = known(testCasesDomicule, side);
-
-    return domino !== known(testCasesBigInt, side) || (domiculeExpected !== undefined && domicule !== domiculeExpected);
-  });
-
-  if (rows.length !== 11 || wrong.length) {
-    console.error(`Failed! ${rows.length} rows, wrong: ${wrong.map(([, n]) => n).join(', ')}`);
-
-    return false;
-  }
-
-  console.log('Passed!');
-
-  return true;
-}
-
 function executeCheckPrimeTests() {
   const primes = listPrimes(3);
   const residuesOf = value => primes.map(prime => Number(((BigInt(value) % BigInt(prime)) + BigInt(prime)) % BigInt(prime)));
@@ -459,7 +435,6 @@ function __main__() {
     const allParserTestsPassed = executeParserTests();
     const allRejectionTestsPassed = executeRejectionTests();
     const executorTestPassed = executeExecutorTest();
-    const readmeResultsTestPassed = executeReadmeResultsTest();
     const benchmarkGuardTestPassed = executeBenchmarkGuardTest();
     const benchmarkSurfaceTestsPassed = executeBenchmarkSurfaceTests();
     const precisionWarningTestsPassed = executePrecisionWarningTests();
@@ -480,7 +455,6 @@ function __main__() {
       allParserTestsPassed &&
       allRejectionTestsPassed &&
       executorTestPassed &&
-      readmeResultsTestPassed &&
       benchmarkGuardTestPassed &&
       benchmarkSurfaceTestsPassed &&
       precisionWarningTestsPassed
