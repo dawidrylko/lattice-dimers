@@ -193,6 +193,7 @@ const sublabelTestCases = [
 const unlabelledTestCases = [
   { rowCount: 4, colCount: 4 },
   { rowCount: 6, colCount: 6, surface: 'torus' },
+  { rowCount: 4, colCount: 4, sublabels: ['4 diagonal'] },
 ];
 const diagonalUnrankTestCases = [
   { rowCount: 2, colCount: 2 },

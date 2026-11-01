@@ -234,7 +234,7 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
         ]
       : drawn),
     ...(label === null ? [] : [renderLabel(label, offsetX + boardWidth / 2, labelY, boardWidth)]),
-    ...(sublabel === undefined ? [] : [renderLabel(fitSublabel(sublabel, boardWidth + PADDING / 2), offsetX + boardWidth / 2, labelY + LABEL_HEIGHT, boardWidth + PADDING / 2, 'n')]),
+    ...(label === null || sublabel === undefined ? [] : [renderLabel(fitSublabel(sublabel, boardWidth + PADDING / 2), offsetX + boardWidth / 2, labelY + LABEL_HEIGHT, boardWidth + PADDING / 2, 'n')]),
   ].join('');
 }
 
