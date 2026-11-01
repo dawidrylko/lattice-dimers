@@ -9,12 +9,13 @@ The b-files and the entry texts this repository has contributed to the [OEIS](ht
 | [A239264](https://oeis.org/A239264) | the PARI program and the b-file to antidiagonal 44, submitted 15 October and approved 31 October 2026 (#34); the extension to antidiagonal 46 | extension approved 1 November 2026 (#40) | `A239264.txt`, `b239264.txt` |
 | [A401669](https://oeis.org/draft/A401669) | new entry: the decimal expansion of the entropy per site $s$ of the king's graph | proposed 1 November 2026 (#4) | `A401669.txt` |
 | [A401670](https://oeis.org/draft/A401670) | new entry: domicule tilings of the $2n \times 2n$ torus | proposed 1 November 2026 (#3) | `A401670.txt` |
+| [A401673](https://oeis.org/draft/A401673) | new entry: the triangle of domicule tilings of the $2n \times 2n$ square by the number of diagonal domicules, with the b-file of rows 0..10 | proposed 1 November 2026 (#4) | `A401673.txt`, `b401673.txt` |
 
 ## b-files
 
-`node oeis/buildBFiles.js` rebuilds `b239264.txt` (antidiagonals 0..46, 1128 terms) and `b239273.txt` (n = 0..12) in seconds from the exact strip counts in [`research/king-entropy/data/zex`](../research/king-entropy/data/zex), and `pnpm test:oeis` fails in CI when a committed file differs from the rebuild. The independent program of the replication, `kd.c`, recomputes every one of those strip files with 0 mismatches ([`compare_counts.txt`](../research/king-entropy/replication/out/compare_counts.txt)).
+`node oeis/buildBFiles.js` rebuilds `b239264.txt` (antidiagonals 0..46, 1128 terms) and `b239273.txt` (n = 0..12) in seconds from the exact strip counts in [`research/king-entropy/data/zex`](../research/king-entropy/data/zex), and `b401673.txt` (rows 0..10 of the triangle, 396 terms) from the diagonal counts in [`data/domiculeDiagonalTests.json`](../data/domiculeDiagonalTests.json) and [`data/domiculeDiagonalTests-Modular.json`](../data/domiculeDiagonalTests-Modular.json). `pnpm test:oeis` fails in CI when a committed file differs from the rebuild, when the two diagonal files disagree on a board, or when a board has tilings with an odd number of diagonal pieces. The independent program of the replication, `kd.c`, recomputes every one of those strip files with 0 mismatches ([`compare_counts.txt`](../research/king-entropy/replication/out/compare_counts.txt)).
 
-On 1 November 2026 both files were byte-identical to the OEIS: `b239273.txt` to the published b-file, `b239264.txt` to the published b-file of antidiagonals 0..46, and its first 1035 lines to the former file of antidiagonals 0..44, which oeis.org keeps as `b239264_3.txt`. Antidiagonal 47 is out of reach for now: it needs the strips of widths 21, 22 and 23 up to lengths 26, 25 and 24, and the data reach lengths 24, 24 and 20. In A239273, $a(13)$ needs the $26 \times 26$ board.
+On 1 November 2026 the three files were byte-identical to the OEIS: `b401673.txt` to the file uploaded with the A401673 draft, `b239273.txt` to the published b-file, `b239264.txt` to the published b-file of antidiagonals 0..46, and its first 1035 lines to the former file of antidiagonals 0..44, which oeis.org keeps as `b239264_3.txt`. Antidiagonal 47 is out of reach for now: it needs the strips of widths 21, 22 and 23 up to lengths 26, 25 and 24, and the data reach lengths 24, 24 and 20. In A239273, $a(13)$ needs the $26 \times 26$ board.
 
 ## Entry texts
 
@@ -24,4 +25,4 @@ The comment of A401670 that its terms up to $a(6)$ agree between two programs re
 
 ## After approval
 
-When an editor approves a draft, the links to `https://oeis.org/draft/...` in this file, in `README.md`, in `notes/00-research.md` and in `notes/04-torus.md` become links to the entry, and the status column changes.
+When an editor approves a draft, the links to `https://oeis.org/draft/...` in this file, in `README.md`, in `notes/00-research.md`, `notes/04-torus.md` and `notes/05-diagonals.md` become links to the entry, and the status column changes. The A401673 b-file was uploaded as `b401673_1.txt`; the OEIS is expected to install it as `b401673.txt`, as it did with the A239264 upload, and the `%H` line of `A401673.txt` then changes with it.

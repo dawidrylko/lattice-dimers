@@ -5,6 +5,13 @@ const ROOT_DIRECTORY = path.join(__dirname, '..');
 const ZEX_DIRECTORY = path.join(ROOT_DIRECTORY, 'research', 'king-entropy', 'data', 'zex');
 const LAST_ANTIDIAGONAL = 46;
 const LAST_SQUARE = 12;
+const LAST_DIAGONAL_ROW = 10;
+const DIAGONAL_FILES = ['domiculeDiagonalTests.json', 'domiculeDiagonalTests-Modular.json'];
+const SOURCES = {
+  'b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
+  'b239273.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
+  'b401673.txt': DIAGONAL_FILES.map(name => `data/${name}`).join(' and '),
+};
 
 function readStrips() {
   const strips = new Map();
@@ -58,6 +65,48 @@ function countTilings(strips, rows, columns) {
   return counts[length];
 }
 
+function readDiagonalRows() {
+  const rows = new Map();
+
+  for (const name of DIAGONAL_FILES) {
+    const { testCases } = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'data', name), 'utf-8'));
+
+    for (const { rowCount, colCount, expectedResult } of testCases) {
+      if (rowCount !== colCount || rowCount % 2 === 1) {
+        continue;
+      }
+
+      const coefficients = expectedResult.split(',');
+
+      if (coefficients.some((coefficient, index) => index % 2 === 1 && coefficient !== '0')) {
+        throw new Error(`An odd number of diagonal pieces has tilings on the ${rowCount} X ${rowCount} board in data/${name}.`);
+      }
+
+      const row = coefficients.filter((_, index) => index % 2 === 0);
+      const length = (rowCount / 2) ** 2 + 1;
+
+      if (row.length !== length) {
+        throw new Error(`The ${rowCount} X ${rowCount} board has ${row.length} diagonal counts in data/${name} instead of ${length}.`);
+      }
+      const known = rows.get(rowCount / 2);
+
+      if (known && known.join(',') !== row.join(',')) {
+        throw new Error(`The diagonal counts of the ${rowCount} X ${rowCount} board disagree between the files in data/.`);
+      }
+
+      rows.set(rowCount / 2, row);
+    }
+  }
+
+  return Array.from({ length: LAST_DIAGONAL_ROW + 1 }, (_, n) => {
+    if (!rows.has(n)) {
+      throw new Error(`No diagonal counts for the ${2 * n} X ${2 * n} board in data/.`);
+    }
+
+    return rows.get(n);
+  });
+}
+
 function formatBFile(terms) {
   return terms.map((term, index) => `${index} ${term}\n`).join('');
 }
@@ -74,7 +123,13 @@ function buildBFiles() {
 
   const squares = Array.from({ length: LAST_SQUARE + 1 }, (_, n) => countTilings(strips, 2 * n, 2 * n));
 
-  return { 'b239264.txt': formatBFile(array), 'b239273.txt': formatBFile(squares) };
+  const triangle = readDiagonalRows().flat();
+
+  return {
+    'b239264.txt': formatBFile(array),
+    'b239273.txt': formatBFile(squares),
+    'b401673.txt': formatBFile(triangle),
+  };
 }
 
 function main() {
@@ -91,7 +146,7 @@ function main() {
       continue;
     }
 
-    process.stdout.write(`Checking ${name} (${terms} terms) against ${path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY)}... `);
+    process.stdout.write(`Checking ${name} (${terms} terms) against ${SOURCES[name]}... `);
 
     if (fs.existsSync(file) && fs.readFileSync(file, 'utf-8') === content) {
       console.log('Passed!');
