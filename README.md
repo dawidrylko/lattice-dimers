@@ -224,6 +224,7 @@ pnpm test           # solvers against data/, up to 12×12 (node tests/testRunner
 pnpm test:render    # numbering, sampling and drawing
 pnpm test:pari      # the PARI/GP programs in oeis/, their copies in this README and the programs in the entry texts
 pnpm test:oeis      # the b-files in oeis/ against a rebuild, and the layout and format of every entry
+pnpm test:markdown  # the math in every Markdown file renders on GitHub
 pnpm site:build     # runs the notebooks and builds dist/site
 pnpm test:site      # the built site in headless Chrome at 1440, 786 and 375 px (set CHROME_PATH if needed)
 ```

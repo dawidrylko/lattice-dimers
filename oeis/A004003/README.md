@@ -4,7 +4,7 @@
 
 ## Contribution
 
-- The formula $a(n) = (-1)^n \operatorname{Res}(P(x), P(-x))$, where $P(x^2) = U_{2n}(x/2)$, and its PARI program, submitted 15 October 2026.
+- The formula $a(n) = (-1)^n \mathrm{Res}(P(x), P(-x))$, where $P(x^2) = U_{2n}(x/2)$, and its PARI program, submitted 15 October 2026.
 
 ## Status
 
@@ -15,7 +15,7 @@ Approved 21 October 2026, revision #168.
 | file | content |
 | --- | --- |
 | [A004003.txt](A004003.txt) | the `%F` and `%o` lines contributed |
-| [b004003.txt](b004003.txt) | $n = 0..44$, rebuilt from the resultant by [`dominoTilingSolver-Formula.js`](../../src/solvers/dominoTilingSolver-Formula.js); identical to the published b-file of Alois P. Heinz on 1 November 2026 |
+| [b004003.txt](b004003.txt) | $n = 0, \dots, 44$, rebuilt from the resultant by [`dominoTilingSolver-Formula.js`](../../src/solvers/dominoTilingSolver-Formula.js); identical to the published b-file of Alois P. Heinz on 1 November 2026 |
 | [A004003.gp](A004003.gp) | the program of the `%o` line |
 
 ## Notes
