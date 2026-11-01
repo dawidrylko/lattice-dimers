@@ -54,4 +54,4 @@ A tiling is drawn in one of three styles. The same four 8 × 8 domicule tilings:
 
 ![The same four tilings drawn as an engraving](../.github/assets/gallery-engraving.svg)
 
-`pnpm readme:images` regenerates these images and the three on the front page; `pnpm test:render` fails when they no longer match the renderer.
+`pnpm readme:images` regenerates these images and the four on the front page; `pnpm test:render` fails when they no longer match the renderer.

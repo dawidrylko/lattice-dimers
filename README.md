@@ -10,14 +10,16 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 
 <table>
   <tr>
-    <td align="center"><img src=".github/assets/showcase-domino.svg" alt="A uniformly random domino tiling of a 10×10 board" width="250"></td>
-    <td align="center"><img src=".github/assets/showcase-domicule.svg" alt="A domicule tiling of a 10×10 board" width="250"></td>
-    <td align="center"><img src=".github/assets/showcase-torus.svg" alt="A domicule tiling of the 10×10 torus" width="250"></td>
+    <td align="center"><img src=".github/assets/showcase-domino.svg" alt="A domino tiling of a 10×10 board" width="200"></td>
+    <td align="center"><img src=".github/assets/showcase-domicule.svg" alt="A domicule tiling of a 10×10 board" width="200"></td>
+    <td align="center"><img src=".github/assets/showcase-cylinder.svg" alt="A domicule tiling of the 10×10 cylinder" width="200"></td>
+    <td align="center"><img src=".github/assets/showcase-torus.svg" alt="A domicule tiling of the 10×10 torus" width="200"></td>
   </tr>
   <tr>
-    <td align="center">dominoes, 10 × 10, a uniform sample</td>
+    <td align="center">dominoes, 10 × 10</td>
     <td align="center">domicules, 10 × 10</td>
-    <td align="center">domicules on the 10 × 10 torus</td>
+    <td align="center">domicules, 10 × 10 cylinder</td>
+    <td align="center">domicules, 10 × 10 torus</td>
   </tr>
 </table>
 
