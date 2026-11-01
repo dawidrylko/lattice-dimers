@@ -1,6 +1,6 @@
 # A239264
 
-[A239264](https://oeis.org/A239264): number of domicule tilings of the $h \times w$ rectangle, read by antidiagonals.
+[OEIS A239264](https://oeis.org/A239264): number of domicule tilings of the $h \times w$ rectangle, read by antidiagonals.
 
 ## Contribution
 

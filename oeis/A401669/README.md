@@ -1,6 +1,6 @@
 # A401669
 
-[A401669](https://oeis.org/draft/A401669): decimal expansion of the entropy per site $s$ of the dimer coverings of the king's graph.
+[OEIS A401669](https://oeis.org/draft/A401669): decimal expansion of the entropy per site $s$ of the dimer coverings of the king's graph.
 
 ## Contribution
 

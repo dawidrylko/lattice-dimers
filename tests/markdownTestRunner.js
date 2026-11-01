@@ -42,6 +42,18 @@ function checkMathRanges(file) {
     .map(([, math]) => `${file} writes a range as ".." in the math "${math}", which GitHub renders with a gap; use \\dots.`);
 }
 
+function checkOeisLinks(file) {
+  const prose = readProse(file);
+  const labels = [...prose.matchAll(/\[([^\]\n]*)\]\(https:\/\/oeis\.org\/(?:draft\/)?(A\d{6})\)/g)]
+    .filter(([, label, entry]) => label !== `OEIS ${entry}`)
+    .map(([link, , entry]) => `${file} links ${link}; a link to an OEIS entry reads [OEIS ${entry}](...).`);
+  const outside = [...prose.matchAll(/OEIS \[A\d{6}\]\([^)]*\)|\[OEIS A\d{6}\]\((?!https:\/\/oeis\.org\/)[^)]*\)/g)].map(
+    ([link]) => `${file} has ${link}; [OEIS A<n>] links to the entry on oeis.org, and the word OEIS belongs inside the link.`,
+  );
+
+  return [...labels, ...outside];
+}
+
 function decodeTarget(target) {
   try {
     return decodeURIComponent(target.split('#')[0]);
@@ -84,6 +96,7 @@ function __main__() {
     runCheck('math in link text', files, checkMathInLinks),
     runCheck('ranges written as .. in math', files, checkMathRanges),
     runCheck('relative links to missing files', files, checkRelativeLinks),
+    runCheck('links to OEIS entries', files, checkOeisLinks),
   ].every(Boolean);
 
   if (passed) {

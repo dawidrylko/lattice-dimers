@@ -190,6 +190,10 @@ const sublabelTestCases = [
   { rowCount: 2, colCount: 2, choices: ['2 diagonal', '2 diag.', '2'], shown: '2' },
   { rowCount: 1, colCount: 2, choices: ['wider than the board'], shown: 'wider than the board' },
 ];
+const unlabelledTestCases = [
+  { rowCount: 4, colCount: 4 },
+  { rowCount: 6, colCount: 6, surface: 'torus' },
+];
 const diagonalUnrankTestCases = [
   { rowCount: 2, colCount: 2 },
   { rowCount: 3, colCount: 4 },
@@ -1030,6 +1034,21 @@ function runSublabelTest({ choices, shown, ...options }) {
   return true;
 }
 
+function runUnlabelledTest(options) {
+  const sheet = renderSheet([[]], 1, { ...options, labels: false, columns: 1 });
+  const [, width, height] = sheet.match(/width="([\d.]+)" height="([\d.]+)"/);
+
+  if (width !== height || sheet.includes('<text')) {
+    console.error(`Failed! A sheet without labels is ${width} x ${height}${sheet.includes('<text') ? ' and has text' : ''}.`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function runDiagonalUnrankTest({ expectedResult, order, ...board }) {
   const coefficients = expectedResult.split(',').map(BigInt);
   const totals = coefficients.map((_, diagonals) => createDiagonalUnranker({ ...board, diagonals }).total);
@@ -1144,6 +1163,7 @@ function __main__() {
     runSuite('periodic sheet', periodicSheetTestCases, runPeriodicSheetTest),
     runSuite('glued edge marks', [{ rowCount: 2, colCount: 4 }], runSeamGeometryTest),
     runSuite('second label line', sublabelTestCases, runSublabelTest),
+    runSuite('sheet without labels', unlabelledTestCases, runUnlabelledTest),
     runSuite('diagonal unrank', diagonalUnrankTestCases, runDiagonalUnrankTest),
     runSuite('sheet style', styleTestCases, runStyleTest),
     runSuite('engraving containment', engravingContainmentTestCases, runEngravingContainmentTest),
