@@ -98,10 +98,10 @@ A new fix adds its row here with the check that guards it.
 | `zexact.py` read the commit from the working directory | `9ddb2fb` (#33) | `src/test_paths.py` | `cwd=ROOT` removed |
 | `e0_spectrum` inverted a singular eigenbasis | `9ddb2fb` (#33) | rerun of `src/lspec.py` in `Research` and `macOS` (new) | the restriction to the reachable states removed |
 | `timed.py` printed KiB as MiB on macOS | `db0e7c8` (#59) | job `macOS`, `src/test_timed.py` (new) | `ru_maxrss / 1024` |
-| the hidden-mode amplitudes were those whose rms stayed within 3 times the best fit, which left out B = 0 | `c4d74c2` | rerun of `src/errbar.py` (new) | the allowed range from that rule; the widening of today's range to B = 0 changes nothing while every 3-standard-error range contains 0, so that line alone is not guarded |
+| the hidden-mode amplitudes were those whose rms stayed within 3 times the best fit, which left out B = 0 | `c4d74c2` | rerun of `src/errbar.py` (new) | the allowed range from that rule; the widening of today's range to B = 0 changes nothing while the range from the window w = 11 reaches below 0, so that line alone is not guarded |
 | the hidden-mode term came from one fit window | `29efdc1` | rerun of `src/errbar.py` (new) | the range from the window w = 13..25 alone |
 | `out/out_ltest.txt` predated the 24 × 24 counts | `f3deaa6` | rerun of `src/ltest.py` (new) | the output from `f3deaa6^` |
-| float64 values compared through their decimal repr; median m printed with 6 digits | `9f9e989` | reruns of `replication/compare_eig.py` and `analyze_eig.py` (new) | `mpf(repr(val))` and the string of `log_lambda`; `nstr(m_gap, 6)` |
+| float64 values compared through their decimal repr; median m printed with 6 digits | `9f9e989` | reruns of `replication/compare_eig.py` and `analyze_eig.py` (new) | `mpf(repr(val))` for the sector values; `nstr(m_gap, 6)`. The same change for `log_lambda` and for the bound values changes no output today, so those lines alone are not guarded |
 
 ## Limits of the checks, fixed here
 
@@ -111,7 +111,7 @@ A new fix adds its row here with the check that guards it.
 | reference-style links (`[A401670][a]`) were not read | `test:markdown`, links to OEIS entries, relative links, math in link text | a wrong reference link passes the old runner and fails the new one |
 | a link to a draft's b-file (`oeis.org/A401670/b401670.txt`) counted as a link to the draft's page | `test:oeis`, links to approved entries and drafts | the old runner rejects it, the new one accepts it |
 | the PARI comparison dropped spaces and split at `;` inside strings | `test:oeis`, `A<n>.gp` | `print1("a b")` in the entry against `print1("ab")` in the program |
-| a copy of a constant was matched by its first 5 characters | `test:numbers`, summary files | 0.5755119110413253 for s in `.zenodo.json`: the old runner passes, the new one names the nearest constant |
+| a copy of a constant was matched by its first 5 characters | `test:numbers`, summary files | 0.5755119110413253 for s in `.zenodo.json`: the old runner passes, the new one names every constant within 10% |
 
 ## Not guarded by CI
 

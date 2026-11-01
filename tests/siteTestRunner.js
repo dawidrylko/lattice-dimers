@@ -1185,11 +1185,15 @@ async function checkRepositoryLinks() {
 }
 
 async function checkIntegrity() {
-  return listSitePages().flatMap(file =>
-    (fs.readFileSync(file, 'utf-8').match(EXTERNAL_RESOURCE) || [])
-      .filter(tag => !/\bintegrity="sha(256|384|512)-[^"]+"/.test(tag) || !/\bcrossorigin="anonymous"/.test(tag))
-      .map(tag => `${path.relative(SITE_DIRECTORY, file)} loads ${tag.match(/(?:src|href)="([^"]+)"/)[1]} without a subresource integrity hash`),
-  );
+  const resources = listSitePages().flatMap(file => (fs.readFileSync(file, 'utf-8').match(EXTERNAL_RESOURCE) || []).map(tag => ({ file, tag })));
+
+  if (!resources.length) {
+    return ['no page loads a script or a stylesheet from another host, so the check found nothing to read'];
+  }
+
+  return resources
+    .filter(({ tag }) => !/\bintegrity="sha(256|384|512)-[^"]+"/.test(tag) || !/\bcrossorigin="anonymous"/.test(tag))
+    .map(({ file, tag }) => `${path.relative(SITE_DIRECTORY, file)} loads ${tag.match(/(?:src|href)="([^"]+)"/)[1]} without a subresource integrity hash`);
 }
 
 async function checkGeneratedText() {
