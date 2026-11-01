@@ -9,7 +9,7 @@ const LAST_SQUARE = 12;
 function readStrips() {
   const strips = new Map();
 
-  for (const file of fs.readdirSync(ZEX_DIRECTORY)) {
+  for (const file of fs.readdirSync(ZEX_DIRECTORY).sort()) {
     const match = file.match(/^zex_king_free_m(\d+)_K\d+\.json$/);
 
     if (!match) {
@@ -18,8 +18,14 @@ function readStrips() {
 
     const width = Number(match[1]);
     const counts = JSON.parse(fs.readFileSync(path.join(ZEX_DIRECTORY, file), 'utf-8')).Z.map(String);
+    const known = strips.get(width) ?? [];
+    const shared = Math.min(known.length, counts.length);
 
-    if (counts.length > (strips.get(width) ?? []).length) {
+    if (known.slice(0, shared).some((count, length) => count !== counts[length])) {
+      throw new Error(`The strip counts of width ${width} disagree between files in ${path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY)}.`);
+    }
+
+    if (counts.length > known.length) {
       strips.set(width, counts);
     }
   }

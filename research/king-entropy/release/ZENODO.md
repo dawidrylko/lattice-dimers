@@ -221,7 +221,9 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      and
      `%H A000000 Dawid Ry&#322;ko, <a href="https://doi.org/<DOI_SOFT>">The dimer entropy of the king's graph: transfer-matrix scripts, data and outputs</a>, Zenodo, 2026.`;
      delete the second `%H` line, which links to the `paper/king-entropy.pdf` of the tag, still
-     showing the DOI placeholder; update the "Before submitting" header.
+     showing the DOI placeholder; update the "Before submitting" header. (Done on 2026-10-27;
+     the draft was submitted as A401669 on 2026-11-01, and `oeis/A401669.txt` holds the
+     submitted text.)
 8. Rebuild both PDFs in the pinned image and commit them with the sources:
    ```bash
    cd research/king-entropy/paper
