@@ -25,4 +25,4 @@ The comment of A401670 that its terms up to $a(6)$ agree between two programs re
 
 ## After approval
 
-When an editor approves a draft, the links to `https://oeis.org/draft/...` in this file, in `README.md`, in `notes/00-research.md`, `notes/04-torus.md` and `notes/05-diagonals.md` become links to the entry, and the status column changes. The A401673 b-file was uploaded as `b401673_1.txt`; the OEIS installs it as `b401673.txt`, and the `%H` line of `A401673.txt` changes with it.
+When an editor approves a draft, the links to `https://oeis.org/draft/...` in this file, in `README.md`, in `notes/00-research.md`, `notes/04-torus.md` and `notes/05-diagonals.md` become links to the entry, and the status column changes. The A401673 b-file was uploaded as `b401673_1.txt`; the OEIS is expected to install it as `b401673.txt`, as it did with the A239264 upload, and the `%H` line of `A401673.txt` then changes with it.

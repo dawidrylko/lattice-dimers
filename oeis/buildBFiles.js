@@ -83,6 +83,11 @@ function readDiagonalRows() {
       }
 
       const row = coefficients.filter((_, index) => index % 2 === 0);
+      const length = (rowCount / 2) ** 2 + 1;
+
+      if (row.length !== length) {
+        throw new Error(`The ${rowCount} X ${rowCount} board has ${row.length} diagonal counts in data/${name} instead of ${length}.`);
+      }
       const known = rows.get(rowCount / 2);
 
       if (known && known.join(',') !== row.join(',')) {

@@ -12,7 +12,7 @@ P_{h,w}(x) = \sum_k T(h, w, k)\, x^k,
 
 where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the domicule count ([OEIS A239273](https://oeis.org/A239273)). This is the dimer model of [Sandvik and Moessner (2006)](https://doi.org/10.1103/PhysRevB.73.144504) with diagonal dimers of fugacity $x$, and the weights $x = 3/2, 2, 3$ of the companion note on log-convexity are values of the same polynomial.
 
-`domiculeDiagonalSolver-BigInt.js` runs the transfer of the A239273 notebook with a polynomial in every state, and `domiculeDiagonalSolver-Modular.js` does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. The OEIS has no such triangle; it was searched by terms and by name on 30 October 2026.
+`domiculeDiagonalSolver-BigInt.js` runs the transfer of the A239273 notebook with a polynomial in every state, and `domiculeDiagonalSolver-Modular.js` does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. When the OEIS was searched by terms and by name on 30 October 2026, it had no such triangle.
 
 ```js run
 const reference = require('./src/solvers/domiculeDiagonalSolver-BigInt.js');
@@ -47,6 +47,7 @@ for (let n = 0; n <= 10; n++) {
     coefficients.some((c, k) => k % 2 === 1 && c !== 0n) && 'an odd number of diagonal pieces',
     row.at(-1) !== 1n && `T(n, n²) = ${row.at(-1)}`,
     n > 0 && row.at(-2) !== BigInt(n * n * (n + 1)) && `T(n, n² − 1) = ${row.at(-2)}`,
+    source === 'BigInt' && stored(side) && stored(side).expectedResult !== coefficients.join(',') && 'the BigInt row differs from data/',
   ].filter(Boolean);
 
   if (problems.length) {
