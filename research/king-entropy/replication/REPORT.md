@@ -2,7 +2,7 @@
 
 **Verdict.** Claims 1-5 CONFIRMED, claim 6 found no failure mode; no contradiction of substance. Three
 minor last-digit issues are listed under Contradictions. One check is NOT REACHED: the A239264 b-file
-(oeis.org is blocked from this machine). The widths w = 26 and 27, beyond the paper, agree with its
+(oeis.org is blocked from this machine; reached on 2026-11-01 from another one, see the note at the end). The widths w = 26 and 27, beyond the paper, agree with its
 extrapolation to 1e-18 in s, and so do both sectors of w = 28 (float64).
 
 | claim | verdict | own value | paper |
@@ -55,7 +55,8 @@ None of substance. Minor, last digits only:
 
 NOT REACHED: the A239264 b-file (antidiagonals 0..36). oeis.org is blocked here and the GitHub mirror
 `oeis/oeisdata` has only its LFS pointer (SHA-256 `21ecae3e...`, 14988 bytes); a plain `n a(n)` rebuild
-from the own counts has 14930 bytes, so the file differs from it in format or content (undecided).
+from the own counts has 14930 bytes, so the file differs from it in format or content (undecided; it is
+format, see the note at the end).
 
 ## Claim 2 - cylinder eigenvalues and s: CONFIRMED (w <= 25 as in the paper; w = 26, 27, 28 beyond it)
 
@@ -196,6 +197,15 @@ widths w = 17..25 it looked for an own run started in sector 1, and only sector-
 branches already did; the five added rows differ by at most 5.7e-20 per site, and the maximum of
 7.8e-20 above is unchanged.
 
+The A239264 b-file was reached on 2026-11-01 from a machine with access to oeis.org, after its
+extension to antidiagonals 0..44 (1035 terms) was approved on 2026-10-31. oeis.org serves the extension
+as `b239264.txt` and the file this report could not reach as `b239264_2.txt`. That file holds the 703
+terms followed by 58 empty lines: the own rebuild plus those lines is byte-identical to it and has the
+SHA-256 and size of the LFS pointer above, so the 58 missing bytes were format, not content. The
+extension matches the own counts on antidiagonals 0..36 and `data/zex` on all 1035 terms, 0 mismatches.
+`out/bfile_check.txt`, `python3 bfile_check.py DIR` (the two files fetched from oeis.org, as in its
+docstring).
+
 ## Commands
 
 From `research/king-entropy/replication/`, after `python3 -m pip install -r requirements.txt` and
@@ -209,6 +219,7 @@ Machine: x86-64, 4 cores, 15 GiB.
 | `out/counts_free.json`, `out/counts_cyl.json`, `out/counts_log.txt` | `python3 counts.py` | 7 min |
 | `out/oeis_fetch.txt`, `out/oeis_check.txt` | `sh fetch_oeis.sh DIR > out/oeis_fetch.txt; python3 oeis_check.py DIR` | seconds |
 | `out/compare_counts.txt` | `python3 compare_counts.py` | minutes |
+| `out/bfile_check.txt` | `python3 bfile_check.py DIR` (after `counts.py`; DIR holds the two b-files from oeis.org) | seconds |
 | `out/pfaff.txt` | `python3 pfaff.py` | 10 s |
 | `out/bounds_exact.txt` | `python3 bounds_exact.py 4 8 12` | minutes |
 | `out/cert.txt` | `python3 cert.py 16 20 22 23 24` | about 30 min |
