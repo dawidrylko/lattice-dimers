@@ -208,6 +208,11 @@ counts on antidiagonals 0..36, and on all 1035 terms the files `data/zex/zex_kin
 `compare_counts.py` checks against `kd.c`: 0 mismatches. The check is `bfile_check.py`, its output
 `out/bfile_check.txt` with the SHA-256 of both files.
 
+On 2026-11-01 the extension to antidiagonals 0..46 (1128 terms) was approved as well. oeis.org serves
+it as `b239264.txt` and the 0..44 file as `b239264_3.txt`. `bfile_check.py` now reads the number of
+antidiagonals from the length of the file, and `out/bfile_check.txt`, rerun on that day, records 0
+mismatches on all 1128 terms.
+
 ## Commands
 
 From `research/king-entropy/replication/`, after `python3 -m pip install -r requirements.txt` and
