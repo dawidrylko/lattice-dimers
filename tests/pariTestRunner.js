@@ -14,6 +14,7 @@ const OEIS_DIRECTORY = path.join(ROOT_DIRECTORY, 'oeis');
 const README_FILE = path.join(ROOT_DIRECTORY, 'README.md');
 const GP = process.env.GP_PATH || 'gp';
 const GP_TIMEOUT = 300000;
+const OUTPUT_MARKER = 'END OF PROGRAMS';
 const MAX_DOMICULE_SQUARE_SIDE = 12;
 const MAX_TORUS_CIRCUMFERENCE = 8;
 const MAX_DIAGONAL_SIDE = 8;
@@ -99,7 +100,7 @@ function executeReadmeTests() {
 }
 
 function runGp(programs, calls) {
-  const script = ['default(parisizemax, 10^9);', ...programs, ...calls.map(call => `print(${call});`)].join('\n');
+  const script = ['default(parisizemax, 10^9);', ...programs, `print("${OUTPUT_MARKER}");`, ...calls.map(call => `print(${call});`)].join('\n');
   const { status, stdout, stderr, error } = spawnSync(GP, ['-q', '-f'], {
     input: script,
     encoding: 'utf-8',
@@ -114,7 +115,7 @@ function runGp(programs, calls) {
     return null;
   }
 
-  return stdout.trim().split('\n');
+  return stdout.slice(stdout.indexOf(`${OUTPUT_MARKER}\n`) + OUTPUT_MARKER.length + 1).trim().split('\n');
 }
 
 function executeGpTests({ files, testCases }) {
