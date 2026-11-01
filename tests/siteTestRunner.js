@@ -570,7 +570,7 @@ const READ_SHEET = `(() => ({
   surface: document.querySelector('#surfaces [aria-pressed=true]')?.dataset.surface,
   seam: !document.querySelector('.legend .seam').hidden,
   picker: !document.getElementById('diagonal-picker').hidden,
-  filter: { value: document.getElementById('diagonals').value, disabled: document.getElementById('diagonals').disabled, options: document.getElementById('diagonals').options.length },
+  filter: { value: document.getElementById('diagonals').value, shown: !document.getElementById('diagonals').hidden, options: document.getElementById('diagonals').options.length },
   labels: document.querySelectorAll('#sheet text:not(.n)').length,
   sublabels: [...new Set([...document.querySelectorAll('#sheet text.n')].map(text => text.textContent))],
   clipped: document.querySelectorAll('#sheet svg svg').length,
@@ -664,6 +664,13 @@ async function checkDiagonals(page, baseUrl, width) {
     problems.push(`the last page with 4 diagonal pieces shows ${last.labels} tilings with ${last.sublabels.join(', ')}`);
   }
 
+  const single = await showBoard(page, 'gallery/4x4-diagonal/1?diagonals=8', 'the only 4x4 tiling with 8 diagonal pieces');
+
+  if (!single.meta.startsWith('4×4 · 1 tiling with 8 diagonal pieces (of 280)') || single.labels !== 1) {
+    problems.push(`the 4x4 sheet with 8 diagonal pieces reads "${single.meta}" with ${single.labels} tilings`);
+  }
+
+  await showBoard(page, 'gallery/6x6-diagonal/1?diagonals=4', 'the 6x6 sheet with 4 diagonal pieces again');
   await page.evaluate("const select = document.getElementById('diagonals'); select.value = ''; select.dispatchEvent(new Event('change'))");
   await page.waitFor("location.hash === '#gallery/6x6-diagonal/1' && document.getElementById('gallery-meta').textContent.startsWith('6×6 · 3,037,561 tilings · showing')", 'the 6x6 sheet without the filter');
   await page.evaluate("if (!document.getElementById('highlight').checked) document.getElementById('highlight').click()");
@@ -687,10 +694,10 @@ async function checkDiagonals(page, baseUrl, width) {
 
   await page.evaluate("document.getElementById('highlight').click()");
 
-  for (const [board, enabled] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', false], ['2x2-diagonal', true]]) {
+  for (const [board, filtered] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', false], ['2x2-diagonal', true]]) {
     const state = await showBoard(page, `gallery/${board}/1`, `the ${board} sheet`);
 
-    if (!state.picker || state.filter.disabled === enabled || !state.sublabels.length) {
+    if (!state.picker || state.filter.shown !== filtered || !state.sublabels.length) {
       problems.push(`${board} filter: ${JSON.stringify(state.filter)}, counts ${state.sublabels.join(', ')}`);
     }
   }

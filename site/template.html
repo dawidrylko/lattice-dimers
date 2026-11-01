@@ -304,7 +304,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       rotation class.
       Re-run with <code>pnpm benchmark:periodic</code>.
     </p>
-    <h2 class="table-title">Domicules by the number of diagonal pieces</h2>
+    <h2 class="table-title">Diagonal pieces</h2>
     <div class="table-wrap">
       <table role="table" id="diagonal-benchmark">
         <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Modular</th><th role="columnheader">Runs</th></tr></thead>
@@ -566,8 +566,7 @@ function showDiagonalFilter(board, diagonals) {
   });
   select.innerHTML = options.map(([value, text]) => `<option value="${value}">${text}</option>`).join('');
   select.value = diagonals === null ? '' : String(diagonals);
-  select.disabled = !board.diagonals || needsConfirmation(board);
-  select.title = board.diagonals ? '' : 'Tilings are counted by diagonal pieces on rectangles up to 10×10.';
+  select.hidden = !board.diagonals;
 }
 
 function updateControls({ board, page, diagonals, total }) {
@@ -632,7 +631,7 @@ async function renderGallery(state) {
   const locked = needsConfirmation(board);
 
   $('gallery-meta').innerHTML =
-    `${name} · ${num(total)} tilings` +
+    `${name} · ${num(total)} ${total === ONE ? 'tiling' : 'tilings'}` +
     (diagonals === null ? '' : ` with ${diagonals} diagonal pieces (of ${num(board.total)})`) +
     (locked ? '' : ' · showing ' +
       (isLong(end) ? `<span class="range">#${fmt(first + ONE)} to #${fmt(end)}</span>` : `${fmt(first + ONE)}-${fmt(end)}`));
