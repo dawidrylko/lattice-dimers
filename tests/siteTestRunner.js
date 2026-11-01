@@ -1064,10 +1064,19 @@ async function checkBenchmark(page, baseUrl, width) {
 
 async function checkBenchmarkCells(page, baseUrl, width) {
   const problems = [];
+  await loadSite(page, baseUrl, width, 'benchmark');
+  const groups = await page.evaluate("[...document.querySelectorAll('#benchmark-groups button')].map(button => button.dataset.group)");
 
-  for (const hash of ['benchmark', 'benchmark/domicules', 'benchmark/tori', 'benchmark/diagonals']) {
-    await loadSite(page, baseUrl, width, hash);
-    await page.waitFor("document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0", `the #${hash} rows`);
+  if (groups.length < 2) {
+    problems.push(`the benchmark switch has ${groups.length} groups`);
+  }
+
+  for (const group of groups) {
+    await page.evaluate(`document.querySelector('#benchmark-groups button[data-group=${group}]').click()`);
+    await page.waitFor(
+      `!document.querySelector('.bench-group[data-group=${group}]').hidden && document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0`,
+      `the ${group} rows`,
+    );
     const times = await page.evaluate(
       "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr')].flatMap(row => [...row.cells].slice(2, -1).map(cell => cell.textContent))",
     );
@@ -1077,7 +1086,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     const odd = [...new Set(times.filter(time => !/^(-|\d+\.\d{2} m?s)$/.test(time)))];
 
     if (odd.length || dashes.length) {
-      problems.push(`#${hash} shows ${[...odd, ...dashes].join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing value -`);
+      problems.push(`the ${group} tables show ${[...odd, ...dashes].join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing value -`);
     }
   }
 

@@ -127,4 +127,4 @@ A new fix adds its row here with the check that guards it.
 | --- | --- | --- |
 | the Pages workflow ran `pnpm test` and the layout test before deploying | `1a1445b`, `3d9cb08` | #29, which tests pull requests only and deploys without retesting |
 | a page title of at most 62 characters | `d09e393` | `0bc02b5`, which leads the title with the king-entropy research (103 characters) |
-| benchmark headers kept short so the domino table fits at 786 px | `e23920e` | #74, whose tables fit at 786 px with "(mean)" in every header; the benchmark table check at 786 px still guards the fit |
+| benchmark headers kept short so the domino table fits at 786 px | `e23920e` | #74, whose layout fits the tables at 786 px even with "(mean)" put back into every header; the benchmark table check at 786 px still guards the fit |
