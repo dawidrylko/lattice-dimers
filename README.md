@@ -137,7 +137,7 @@ Both kinds of tilings are also counted by transfer. Dominoes go row by row with 
 
 A table of completion counts turns a number into a tiling. Domino tilings too large to number are sampled exactly with monotone [coupling from the past](https://doi.org/10.1002/%28SICI%291098-2418%28199608/09%299:1/2%3C223::AID-RSA14%3E3.0.CO;2-O) (Propp and Wilson, 1996). The full references are in the [method note](notes/01-method.md#references). Domicule tilings are sampled with a symmetric Markov chain of pair swaps, which is only approximately uniform.
 
-The PARI/GP programs, both run in CI against the known values:
+The PARI/GP programs, run in CI against the known values:
 
 ```gp
 a(n) = my(P = substpol(polchebyshev(2*n, 2, x/2), x^2, x)); (-1)^n * polresultant(P, subst(P, x, -x));

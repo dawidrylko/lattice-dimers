@@ -20,4 +20,4 @@ Approved 21 October 2026, revision #168.
 
 ## Notes
 
-The b-file is not a contribution: it reproduces the published one from the formula. $a(45)$ has 1025 digits, more than a b-file line may hold.
+The b-file is not a contribution: it reproduces the published one from the formula. $a(45)$ has 1015 digits, more than a b-file line may hold.

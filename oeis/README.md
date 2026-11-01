@@ -1,22 +1,19 @@
 # OEIS
 
-Entries of the [OEIS](https://oeis.org/) this repository has contributed to. Each directory holds the entry text, the b-file, the PARI/GP program and a README with the contribution and its status. The OEIS is the authoritative copy, and its editors may still change a proposed draft before they approve it.
+Entries of the [OEIS](https://oeis.org/) this repository has contributed to. Each directory holds the entry text, where there is one the b-file and the PARI/GP program, and a README with the contribution and its status. The OEIS is the authoritative copy, and its editors may still change a proposed draft before they approve it.
 
 | entry | sequence | entry text | b-file | PARI/GP |
 | --- | --- | --- | --- | --- |
 | [A004003](https://oeis.org/A004003) | [domino tilings of the $2n \times 2n$ square](A004003/) | [A004003.txt](A004003/A004003.txt) | [b004003.txt](A004003/b004003.txt) | [A004003.gp](A004003/A004003.gp) |
 | [A239264](https://oeis.org/A239264) | [domicule tilings of the $h \times w$ rectangle](A239264/) | [A239264.txt](A239264/A239264.txt) | [b239264.txt](A239264/b239264.txt) | [A239264.gp](A239264/A239264.gp) |
 | [A239273](https://oeis.org/A239273) | [domicule tilings of the $2n \times 2n$ square](A239273/) | [A239273.txt](A239273/A239273.txt) | [b239273.txt](A239273/b239273.txt) | [A239273.gp](A239273/A239273.gp) |
-| [A401669](https://oeis.org/draft/A401669) | [entropy per site of the dimers of the king's graph](A401669/) | [A401669.txt](A401669/A401669.txt) | — | — |
+| [A401669](https://oeis.org/draft/A401669) | [decimal expansion of the entropy per site of the dimers of the king's graph](A401669/) | [A401669.txt](A401669/A401669.txt) | — | — |
 | [A401670](https://oeis.org/draft/A401670) | [domicule tilings of the $2n \times 2n$ torus](A401670/) | [A401670.txt](A401670/A401670.txt) | [b401670.txt](A401670/b401670.txt) | [A401670.gp](A401670/A401670.gp) |
-| [A401673](https://oeis.org/draft/A401673) | [domicule tilings of the $2n \times 2n$ square by diagonal domicules](A401673/) | [A401673.txt](A401673/A401673.txt) | [b401673.txt](A401673/b401673.txt) | [A401673.gp](A401673/A401673.gp) |
+| [A401673](https://oeis.org/draft/A401673) | [domicule tilings of the $2n \times 2n$ square by the number of diagonal domicules](A401673/) | [A401673.txt](A401673/A401673.txt) | [b401673.txt](A401673/b401673.txt) | [A401673.gp](A401673/A401673.gp) |
 
 ## Files
 
 The entry texts `A*.txt` are in the OEIS internal format. Published lines come from `https://oeis.org/search?q=id:<A-number>&fmt=text`; a proposed draft exists only as the HTML of its draft page, and its text is reconstructed from that page. A new entry is given in full, with the data on one `%S` line; an existing entry holds only the lines this repository contributed.
 
-The b-files `b*.txt` are rebuilt by `node oeis/buildBFiles.js` from the exact counts committed in this repository; the README of each entry names the source. The programs `A*.gp` are the PARI/GP programs of the entry texts, laid out over several lines.
+The b-files `b*.txt` are rebuilt by `node oeis/buildBFiles.js` from the exact counts committed in this repository; the README of each entry names the source. The programs `A*.gp` hold the PARI/GP programs of the entry texts, laid out over several lines; `A401670.gp` also defines `T(h, w)` for the $h \times w$ torus.
 
-## Checks
-
-`pnpm test:oeis` rebuilds every b-file and compares it with the committed one, and checks the layout of this directory, the table above, the README of each entry, the format of every entry text and b-file, and that the data of an entry text agree with its b-file. `pnpm test:pari` runs the programs `A*.gp` and the PARI programs of the entry texts and compares them with the known counts and the b-files.

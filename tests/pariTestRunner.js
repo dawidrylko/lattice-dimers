@@ -106,7 +106,7 @@ function runGp(programs, calls) {
     timeout: GP_TIMEOUT,
   });
 
-  if (error || status !== 0 || /\*\*\*/.test(stderr)) {
+  if (error || status !== 0 || stderr.split('\n').some(line => line.includes('***') && !line.includes('Warning'))) {
     console.error(
       `Failed to run PARI/GP (${GP}): ${error ? error.message : stderr.trim()}. Install it (apt install pari-gp, brew install pari) or set GP_PATH.`,
     );

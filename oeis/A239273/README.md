@@ -20,4 +20,4 @@ Approved 15 October 2026, revision #45.
 
 ## Notes
 
-$a(13)$ needs the $26 \times 26$ board.
+The b-file stops at $n = 12$ because $a(13)$ needs the $26 \times 26$ board.

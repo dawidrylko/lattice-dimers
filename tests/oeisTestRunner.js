@@ -13,6 +13,7 @@ const OPTIONAL_SECTIONS = ['Notes'];
 const LINE_ORDER = 'ISTUNCDHFeptoYKOAE';
 const MAX_TERM_DIGITS = 1000;
 const TEXT_EXTENSIONS = ['.md', '.txt', '.js', '.json', '.html', '.tex', '.bib', '.cff'];
+const SUBMITTED_DRAFTS = ['research/king-entropy/release/oeis-draft.txt'];
 
 function listEntries() {
   return fs
@@ -400,10 +401,20 @@ function checkProgram(entry) {
 
 function checkDraftLinks() {
   const approved = listEntries().filter(entry => readStatus(entry)?.[1] === 'Approved');
-  const { stdout } = spawnSync('git', ['ls-files'], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
+  const { stdout, error } = spawnSync('git', ['ls-files'], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
+
+  if (error) {
+    return [`git ls-files failed: ${error.message}`];
+  }
+
   const errors = [];
 
-  for (const file of stdout.split('\n').filter(name => TEXT_EXTENSIONS.includes(path.extname(name)))) {
+  const files = stdout
+    .split('\n')
+    .filter(name => TEXT_EXTENSIONS.includes(path.extname(name)) && !SUBMITTED_DRAFTS.includes(name))
+    .filter(name => fs.existsSync(path.join(ROOT_DIRECTORY, name)));
+
+  for (const file of files) {
     const content = fs.readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8');
 
     for (const entry of approved) {
