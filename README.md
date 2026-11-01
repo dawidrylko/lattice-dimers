@@ -86,4 +86,6 @@ Everything else is MIT, in particular all programs and scripts: `src/`, `oeis/`,
 
 ## Author
 
-[Dawid Ryłko](https://dawidrylko.com). The first version of the domino solvers and the test and benchmark runners is described in two blog posts (in Polish): [Domino Tiling](https://dawidrylko.com/domino-tiling/) and [Domino tiling library](https://dawidrylko.com/domino-tiling-library/).
+[Dawid Ryłko](https://dawidrylko.com), ORCID [0009-0008-6307-9015](https://orcid.org/0009-0008-6307-9015).
+
+The project began as two blog posts in Polish, [Domino Tiling](https://dawidrylko.com/domino-tiling/) and [Domino tiling library](https://dawidrylko.com/domino-tiling-library/), which describe the first domino solvers and their test and benchmark runners. The domicule solvers, the research on the king's graph and the OEIS entries grew from that code.
