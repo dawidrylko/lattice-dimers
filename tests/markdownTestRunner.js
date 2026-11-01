@@ -39,7 +39,15 @@ function checkMathInLinks(file) {
 function checkMathRanges(file) {
   return [...readProse(file).matchAll(/\$([^$\n]+)\$/g)]
     .filter(([, math]) => math.includes('..'))
-    .map(([, math]) => `${file} writes a range as ".." in the math "${math}", which GitHub renders with a gap ("0. .44"); use \\dots.`);
+    .map(([, math]) => `${file} writes a range as ".." in the math "${math}", which GitHub renders with a gap; use \\dots.`);
+}
+
+function checkRelativeLinks(file) {
+  return [...readProse(file).matchAll(/\]\(([^)\s]+)\)/g)]
+    .map(([, target]) => target)
+    .filter(target => !/^([a-z]+:|#)/i.test(target))
+    .filter(target => !fs.existsSync(path.join(ROOT_DIRECTORY, path.dirname(file), decodeURIComponent(target.split('#')[0]))))
+    .map(target => `${file} links to ${target}, which does not exist.`);
 }
 
 function runCheck(name, files, check) {
@@ -63,6 +71,7 @@ function __main__() {
     runCheck('math macros GitHub does not render', files, checkMathMacros),
     runCheck('math in link text', files, checkMathInLinks),
     runCheck('ranges written as .. in math', files, checkMathRanges),
+    runCheck('relative links to missing files', files, checkRelativeLinks),
   ].every(Boolean);
 
   if (passed) {

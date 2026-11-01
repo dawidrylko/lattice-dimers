@@ -392,11 +392,96 @@ function checkProgram(entry) {
     return [];
   }
 
+  const errors = [];
   const comments = read(entry, program)
     .split('\n')
     .filter(line => line.startsWith('\\\\'));
 
-  return comments.some(line => line.includes(`OEIS ${entry}`)) ? [] : [`The comments of ${program} must name OEIS ${entry}.`];
+  if (!comments.some(line => line.includes(`OEIS ${entry}`))) {
+    errors.push(`The comments of ${program} must name OEIS ${entry}.`);
+  }
+
+  const lines = parseEntryText(entry)
+    .filter(line => line.type === 'o')
+    .map(line => line.value);
+  const start = lines.findIndex(line => line.startsWith('(PARI) '));
+  const end = lines.findIndex((line, index) => index > start && /^\([A-Za-z]/.test(line));
+  const entryProgram = lines
+    .slice(start, end === -1 ? lines.length : end)
+    .join('\n')
+    .replace(/^\(PARI\) /, '');
+  const definitions = splitDefinitions(read(entry, program));
+
+  for (const definition of splitDefinitions(entryProgram)) {
+    if (!definitions.includes(definition)) {
+      errors.push(`${program} lacks the definition ${definition.slice(0, 60)}... of the PARI program in ${entryFiles(entry).text}.`);
+    }
+  }
+
+  return errors;
+}
+
+function splitDefinitions(program) {
+  const code = program.replace(/\\\\.*$/gm, '').replace(/\s+/g, '');
+  const definitions = [];
+  let depth = 0;
+  let current = '';
+
+  for (const character of code) {
+    depth += '({['.includes(character) ? 1 : ')}]'.includes(character) ? -1 : 0;
+
+    if (character === ';' && depth === 0) {
+      definitions.push(current);
+      current = '';
+    } else {
+      current += character;
+    }
+  }
+
+  return [...definitions, current].filter(Boolean);
+}
+
+function checkBFileFacts(entry) {
+  const { text, bFile } = entryFiles(entry);
+  const errors = [];
+  const terms = readBFile(entry);
+  const first = terms[0][0];
+  const last = terms[terms.length - 1][0];
+  const row = read(entry, 'README.md')
+    .split('\n')
+    .find(line => line.startsWith(`| [${bFile}](${bFile}) | `));
+  const description = row?.split(' | ')[1] ?? '';
+  const ranges = parseEntryText(entry)
+    .filter(line => line.type === 'H' && line.value.includes(`/${entry}/b${entry.slice(1)}`))
+    .map(line => line.value.match(/(Antidiagonals|Rows) n = (\d+)\.\.(\d+)/))
+    .filter(Boolean);
+  const count = description.match(/(\d+) terms/);
+  const indices = description.match(/^\$n = (-?\d+), \\dots, (-?\d+)\$/);
+  const blocks = description.match(/^(antidiagonals|rows) (\d+)\.\.(\d+)/);
+
+  if (!count && !indices) {
+    errors.push(`The ${bFile} row of oeis/${entry}/README.md must give $n = a, \\dots, b$ or the number of terms.`);
+  }
+
+  if (count && Number(count[1]) !== terms.length) {
+    errors.push(`oeis/${entry}/README.md says ${count[1]} terms, ${bFile} has ${terms.length}.`);
+  }
+
+  if (indices && (indices[1] !== first || indices[2] !== last)) {
+    errors.push(`oeis/${entry}/README.md says n = ${indices[1]}..${indices[2]}, ${bFile} holds ${first}..${last}.`);
+  }
+
+  for (const [, kind, from, to] of ranges) {
+    if (!blocks || blocks[1] !== kind.toLowerCase() || blocks[2] !== from || blocks[3] !== to) {
+      errors.push(`${text} describes the b-file as ${kind.toLowerCase()} ${from}..${to}, oeis/${entry}/README.md does not.`);
+    }
+
+    if (kind === 'Antidiagonals' && ((Number(to) + 1) * (Number(to) + 2)) / 2 !== terms.length) {
+      errors.push(`Antidiagonals ${from}..${to} hold ${((Number(to) + 1) * (Number(to) + 2)) / 2} terms, ${bFile} has ${terms.length}.`);
+    }
+  }
+
+  return errors;
 }
 
 function checkDraftLinks() {
@@ -452,7 +537,7 @@ function __main__() {
       return [
         [`oeis/${entry}/README.md`, () => checkEntryReadme(entry)],
         [`oeis/${entry}/${text}`, () => checkEntryText(entry)],
-        ...(exists(entry, bFile) ? [[`oeis/${entry}/${bFile}`, () => checkBFile(entry)]] : []),
+        ...(exists(entry, bFile) ? [[`oeis/${entry}/${bFile}`, () => [...checkBFile(entry), ...checkBFileFacts(entry)]]] : []),
         ...(exists(entry, program) ? [[`oeis/${entry}/${program}`, () => checkProgram(entry)]] : []),
       ];
     }),
