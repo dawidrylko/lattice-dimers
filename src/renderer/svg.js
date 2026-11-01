@@ -1,6 +1,7 @@
 const CELL_SIZE = 16;
 const PADDING = 12;
 const LABEL_HEIGHT = 14;
+const LABEL_GAP = 3;
 const LABEL_FONT_SIZE = 11;
 const LABEL_CHAR_WIDTH = 0.6 * LABEL_FONT_SIZE;
 const SHEET_COLUMNS = 10;
@@ -14,10 +15,17 @@ const ENGRAVING_OUTLINE = 1;
 const ENGRAVING_HATCH_WIDTH = 1;
 const ENGRAVING_AXIS_WIDTH = 2.4;
 const SEAM = '#c026d3';
-const SEAM_CHEVRON = 2.5;
+const SEAM_ENDS = '#15803d';
+const SEAM_TICK = 3;
+const SEAM_TICK_SPACING = 3;
 const COMMON_STYLE = [`.b{fill:${BOARD_COLOR}}`, `text{font:${LABEL_FONT_SIZE}px monospace;fill:#4b5563;text-anchor:middle}`].join('');
 const SUBLABEL_STYLE = '.n{fill:#6b7280}';
-const SEAM_STYLE = [`.s{fill:none;stroke:${SEAM};stroke-width:1.5;stroke-dasharray:3 2}`, `.m{fill:none;stroke:${SEAM};stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}`].join('');
+const SEAM_STYLE = [
+  `.s,.t{fill:none;stroke-width:1.5;stroke-dasharray:3 2}`,
+  `.m,.u{fill:none;stroke-width:1.5;stroke-linecap:round}`,
+  `.s,.m{stroke:${SEAM}}`,
+  `.t,.u{stroke:${SEAM_ENDS}}`,
+].join('');
 const SHEET_STYLES = {
   blocks: {
     straight: ['.h,.v{stroke:#1f2937;stroke-width:1}', `.h{fill:${COLORS.h}}`, `.v{fill:${COLORS.v}}`].join(''),
@@ -181,14 +189,25 @@ function wrapPiece(piece, rowCount, colCount, surface) {
 }
 
 function renderSeams(x, y, width, height, surface) {
-  const c = SEAM_CHEVRON;
-  const up = cx => `M${cx - c} ${y + height / 2 + c / 2}L${cx} ${y + height / 2 - c / 2}L${cx + c} ${y + height / 2 + c / 2}`;
-  const right = (cx, cy) => `M${cx - c / 2} ${cy - c}L${cx + c / 2} ${cy}L${cx - c / 2} ${cy + c}`;
-  const torus = surface === 'torus';
-  const edges = [`M${x} ${y}V${y + height}M${x + width} ${y}V${y + height}`, ...(torus ? [`M${x} ${y}H${x + width}M${x} ${y + height}H${x + width}`] : [])];
-  const chevrons = [up(x), up(x + width), ...(torus ? [y, y + height].flatMap(cy => [right(x + width / 2 - c, cy), right(x + width / 2 + c, cy)]) : [])];
+  const t = SEAM_TICK;
+  const middleY = y + height / 2;
+  const middleX = x + width / 2;
+  const sides = [
+    `<path class="s" d="M${x} ${y}V${y + height}M${x + width} ${y}V${y + height}"/>`,
+    `<path class="m" d="M${x - t} ${middleY}H${x + t}M${x + width - t} ${middleY}H${x + width + t}"/>`,
+  ];
 
-  return `<path class="s" d="${edges.join('')}"/><path class="m" d="${chevrons.join('')}"/>`;
+  if (surface !== 'torus') {
+    return sides.join('');
+  }
+
+  const ticks = [middleX - SEAM_TICK_SPACING / 2, middleX + SEAM_TICK_SPACING / 2].flatMap(cx => [y, y + height].map(cy => `M${cx} ${cy - t}V${cy + t}`));
+
+  return [...sides, `<path class="t" d="M${x} ${y}H${x + width}M${x} ${y + height}H${x + width}"/>`, `<path class="u" d="${ticks.join('')}"/>`].join('');
+}
+
+function tileSize({ rowCount, colCount, sublabels }) {
+  return { width: colCount * CELL_SIZE + PADDING, height: rowCount * CELL_SIZE + LABEL_GAP + LABEL_HEIGHT * (sublabels ? 2 : 1) + PADDING };
 }
 
 function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
@@ -202,7 +221,7 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
     ...pieces.filter(piece => !isDiagonal(piece)).map(piece => renderers.straight(piece, offsetX, offsetY)),
     ...pieces.filter(isDiagonal).map(piece => renderers.diagonal(piece, offsetX, offsetY)),
   ];
-  const labelY = offsetY + boardHeight + LABEL_HEIGHT - 2;
+  const labelY = offsetY + boardHeight + LABEL_GAP + LABEL_HEIGHT - 2;
 
   return [
     `<rect class="b" x="${offsetX}" y="${offsetY}" width="${boardWidth}" height="${boardHeight}"/>`,
@@ -230,7 +249,8 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
  * diagonal pieces; given a list of wordings, the first that fits under the board is shown.
  * @property {string} [options.style] How pieces are drawn: blocks (default), dimer or engraving.
  * @property {string} [options.surface] cylinder (left and right edges glued) or torus (opposite edges glued);
- * a piece that crosses a glued edge is cut there and drawn on both sides of the board.
+ * a piece that crosses a glued edge is cut there and drawn on both sides of the board. Glued edges are dashed and
+ * marked with one tick (left and right) or two ticks (top and bottom), one colour per pair.
  * @returns {string} The SVG document.
  */
 function renderSheet(tilings, firstNumber, options) {
@@ -241,8 +261,7 @@ function renderSheet(tilings, firstNumber, options) {
     throw new Error(`Unknown style "${style}"; use one of: ${STYLES.join(', ')}.`);
   }
 
-  const tileWidth = colCount * CELL_SIZE + PADDING;
-  const tileHeight = rowCount * CELL_SIZE + LABEL_HEIGHT * (options.sublabels ? 2 : 1) + PADDING;
+  const { width: tileWidth, height: tileHeight } = tileSize(options);
   const sheetColumns = options.columns || SHEET_COLUMNS;
   const columns = Math.min(sheetColumns, tilings.length);
   const rows = Math.ceil(tilings.length / sheetColumns);
@@ -275,7 +294,7 @@ renderSheet.STYLES = STYLES;
 renderSheet.SURFACES = SURFACES;
 renderSheet.CELL_SIZE = CELL_SIZE;
 renderSheet.PADDING = PADDING;
-renderSheet.LABEL_HEIGHT = LABEL_HEIGHT;
+renderSheet.tileSize = tileSize;
 renderSheet.LABEL_CHAR_WIDTH = LABEL_CHAR_WIDTH;
 
 if (typeof module !== 'undefined') {

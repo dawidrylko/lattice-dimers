@@ -569,6 +569,13 @@ const READ_SHEET = `(() => ({
   boards: [...document.querySelectorAll('#boards button')].filter(button => !button.hidden).map(button => button.dataset.id),
   surface: document.querySelector('#surfaces [aria-pressed=true]')?.dataset.surface,
   seam: !document.querySelector('.legend .seam').hidden,
+  seamEnds: !document.querySelector('.legend .seam-ends').hidden,
+  ends: document.querySelectorAll('#sheet path.t').length,
+  endsColor: (seam => seam && getComputedStyle(seam).stroke)(document.querySelector('#sheet path.t')),
+  labelGap: (board => {
+    const label = document.querySelector('#sheet text:not(.n)');
+    return board && label ? Math.round((label.getBBox().y - (board.getBBox().y + board.getBBox().height)) * 10) / 10 : null;
+  })(document.querySelector('#sheet rect.b')),
   picker: !document.getElementById('diagonal-picker').hidden,
   filter: { value: document.getElementById('diagonals').value, shown: !document.getElementById('diagonals').hidden, options: document.getElementById('diagonals').options.length },
   labels: document.querySelectorAll('#sheet text:not(.n)').length,
@@ -613,7 +620,7 @@ async function checkSurfaces(page, baseUrl, width) {
     problems.push(`torus picker shows ${torus.boards.join(', ')} with ${torus.surface} pressed`);
   }
 
-  if (!torus.seam || torus.sublabels || !/^#1 \d+ horizontal, \d+ vertical \d+ diagonal pieces?: \d+ ↘, \d+ ↙ \d+ pieces? across a glued edge$/.test(torus.tip) || torus.clipped !== 100 || torus.clip !== '64x64' || torus.edges !== 100 || !torus.meta.startsWith('4×4 torus · 17,552 tilings')) {
+  if (!torus.seamEnds || torus.ends !== 100 || !(torus.labelGap >= 4 && torus.labelGap <= 7) || !torus.seam || torus.sublabels || !/^#1 \d+ horizontal, \d+ vertical \d+ diagonal pieces?: \d+ ↘, \d+ ↙ \d+ pieces? across a glued edge$/.test(torus.tip) || torus.clipped !== 100 || torus.clip !== '64x64' || torus.edges !== 100 || !torus.meta.startsWith('4×4 torus · 17,552 tilings')) {
     problems.push(`4x4 torus sheet: ${JSON.stringify({ ...torus, boards: undefined })}`);
   }
 
@@ -641,23 +648,23 @@ async function checkSurfaces(page, baseUrl, width) {
     problems.push(`domino torus shows the diagonal filter or counts: ${straight.tip}`);
   }
 
-  const seamColor = await page.evaluate(`(() => {
+  const seamColors = await page.evaluate(`(() => {
     const probe = document.body.appendChild(document.createElement('i'));
-    probe.style.color = 'var(--seam)';
-    const color = getComputedStyle(probe).color;
+    const resolve = name => { probe.style.color = 'var(' + name + ')'; return getComputedStyle(probe).color; };
+    const colors = { sides: resolve('--seam'), ends: resolve('--seam-ends') };
     probe.remove();
-    return color;
+    return colors;
   })()`);
 
-  if (straight.seamColor !== seamColor) {
-    problems.push(`the glued edges are drawn in ${straight.seamColor}, not --seam ${seamColor}`);
+  if (straight.seamColor !== seamColors.sides || straight.endsColor !== seamColors.ends || seamColors.sides === seamColors.ends) {
+    problems.push(`the glued edges are drawn in ${straight.seamColor} and ${straight.endsColor}, not --seam ${seamColors.sides} and --seam-ends ${seamColors.ends}`);
   }
 
   await page.evaluate("document.querySelector('#surfaces [data-surface=rectangle]').click()");
   await page.waitFor("location.hash === '#gallery/4x4/1'", 'the switch back to the 4x4 rectangle');
   const rectangle = await page.evaluate(READ_SHEET);
 
-  if (rectangle.seam || rectangle.clipped || rectangle.edges) {
+  if (rectangle.seam || rectangle.seamEnds || rectangle.clipped || rectangle.edges || rectangle.ends) {
     problems.push('the rectangle keeps the glued edges');
   }
 
@@ -667,7 +674,9 @@ async function checkSurfaces(page, baseUrl, width) {
   ]) {
     const filtered = await showBoard(page, hash, `the ${hash} sheet`);
 
-    if (!filtered.meta.startsWith(meta) || !filtered.picker || !filtered.filter.shown || !filtered.tip.includes(`${hash.split('=')[1]} diagonal pieces`)) {
+    const onTorus = hash.includes('torus');
+
+    if (!filtered.meta.startsWith(meta) || !filtered.picker || !filtered.filter.shown || !filtered.tip.includes(`${hash.split('=')[1]} diagonal pieces`) || filtered.seamEnds !== onTorus || (filtered.ends > 0) !== onTorus) {
       problems.push(`${hash}: ${JSON.stringify(filtered)}`);
     }
   }
