@@ -52,6 +52,7 @@ A new fix adds its row here with the check that guards it.
 | the benchmark did not turn into cards on narrow screens | `e75d200` | `test:site`, benchmark table at 375 px | the 720 px media query disabled |
 | the pager worked before the 18 × 18 table was confirmed | `edb10cf` | `test:site`, diagonal filter confirmation, the table that still asks first since #79 replaced 18 × 18 by numbered samples | `locked = false` |
 | the board picker and the sheet were wider than the page | `96b696f` | `test:site`, board picker, tiling sheets, and cylinders and tori at 375 px | `overflow-x: auto`; `max-width: none`; columns for a fixed width of 1040 px |
+| benchmark headers too long for 786 px | `e23920e` | `test:site`, benchmark table, whose column names #80 pins | "(mean)" in every header |
 | the domicule BigInt solver had no 18 × 18 and 20 × 20 timing | `8e8b177` | `test:site`, benchmark table | both files removed and the 20 × 20 requirement dropped |
 | Random froze Safari by assigning `location.hash` | `08ebc4b` | `test:site`, random jump and back | `location.hash` in `go()` and in the tab links |
 | an invalid page entry stayed in the field | `08ebc4b` | `test:site`, random jump and back | `go()` returns without updating the controls |
@@ -127,4 +128,3 @@ A new fix adds its row here with the check that guards it.
 | --- | --- | --- |
 | the Pages workflow ran `pnpm test` and the layout test before deploying | `1a1445b`, `3d9cb08` | #29, which tests pull requests only and deploys without retesting |
 | a page title of at most 62 characters | `d09e393` | `0bc02b5`, which leads the title with the king-entropy research (103 characters) |
-| benchmark headers kept short so the domino table fits at 786 px | `e23920e` | #74, whose layout fits the tables at 786 px even with "(mean)" put back into every header; the benchmark table check at 786 px still guards the fit |
