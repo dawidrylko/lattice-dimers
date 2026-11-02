@@ -26,7 +26,7 @@ const crypto = require('crypto');
 const { createRandom } = require('../src/renderer/cftp');
 const fs = require('fs');
 const { buildReadmeImages } = require('../site/readme-images');
-const { renderChart, formatTime, logCount } = require('../site/notes');
+const { renderChart, renderNote, drawTilings, formatTime, logCount } = require('../site/notes');
 const {
   testCasesBigInt,
   testCasesDomicule,
@@ -850,6 +850,63 @@ const notebookHelperTestCases = [
   { name: 'the log of a 49-digit count', actual: () => Math.abs(logCount(`1${'0'.repeat(48)}`) / (48 * Math.LN10) - 1) < 1e-15, expected: true },
 ];
 
+const figureCell = code => renderNote(['# Figure', '', '```js run', code, '```', ''].join('\n'), { resolveLink: target => target, context: {} });
+const figureTestCases = [
+  {
+    name: 'a drawing with a caption',
+    run: () => figureCell("figure('<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"20\"></svg>', 'a <b>', { highlight: true });").then(({ html }) => /<figure id="figure-\d+" class="tiling output highlight" style="--width: 40px"><svg/.test(html) && html.includes('<figcaption>a &lt;b&gt;</figcaption>')),
+  },
+  {
+    name: 'something that is not a drawing',
+    run: () => figureCell("figure('<script>alert(1)</script>');").then(() => false, error => error.message.includes('takes an SVG drawing')),
+  },
+  {
+    name: 'a drawing whose style stays inside it',
+    run: () =>
+      figureCell("figure('<svg xmlns=\"http://www.w3.org/2000/svg\"><style>text{fill:red}.h,.v{stroke:blue}</style></svg>');").then(({ html }) => {
+        const id = html.match(/<figure id="(figure-\d+)"/)[1];
+
+        return html.includes(`<style>#${id} text{fill:red}#${id} .h,#${id} .v{stroke:blue}</style>`);
+      }),
+  },
+  {
+    name: 'the counts of every board drawTilings draws',
+    run: async () =>
+      [
+        [{ pieces: 'domino', surface: 'rectangle' }, 36n],
+        [{ pieces: 'domicule', surface: 'rectangle' }, 280n],
+        [{ pieces: 'domino', surface: 'cylinder' }, 121n],
+        [{ pieces: 'domicule', surface: 'cylinder' }, 2649n],
+        [{ pieces: 'domino', surface: 'torus' }, 272n],
+        [{ pieces: 'domicule', surface: 'torus' }, 17552n],
+      ].every(([options, expected]) => drawTilings({ rowCount: 4, colCount: 4, ranks: [0], ...options }).total === expected),
+  },
+  {
+    name: 'every domino tiling of the 4 x 4 board',
+    run: async () => {
+      const { svg, total } = drawTilings({ rowCount: 4, colCount: 4, ranks: 'all' });
+
+      return total === 36n && svg.startsWith('<svg') && (svg.match(/>#\d+</g) || []).length === 36;
+    },
+  },
+];
+
+async function runFigureTests() {
+  for (const [index, { name, run }] of figureTestCases.entries()) {
+    process.stdout.write(`Executing figure test ${index + 1} of ${figureTestCases.length} for ${name}... `);
+
+    if (!(await run())) {
+      console.error('Failed!');
+
+      return false;
+    }
+
+    console.log('Passed!');
+  }
+
+  return true;
+}
+
 function runNotebookHelperTests() {
   return notebookHelperTestCases.every(({ name, actual, expected }, index) => {
     process.stdout.write(`Executing notebook helper test ${index + 1} of ${notebookHelperTestCases.length} for ${name}... `);
@@ -1199,7 +1256,7 @@ function runSuite(name, testCases, run) {
   });
 }
 
-function __main__() {
+async function __main__() {
   const testCases = testCasesBigInt.filter(
     ({ rowCount, colCount }) => rowCount * colCount <= MAX_CELLS,
   );
@@ -1266,6 +1323,7 @@ function __main__() {
     runSuite('command line', cliTestCases, runCliTest),
     runChartTests(),
     runNotebookHelperTests(),
+    await runFigureTests(),
   ];
 
   if (results.every(Boolean)) {
