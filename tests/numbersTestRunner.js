@@ -14,6 +14,7 @@ const SUMMARY_FILES = [
 const SUPERSCRIPTS = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
 const XI_DIGITS = 6;
 const XI_ERROR = 1e-6;
+const COPY_WINDOW = 0.1;
 
 function readResearch(file) {
   return fs.readFileSync(path.join(RESEARCH_DIRECTORY, file), 'utf-8');
@@ -105,19 +106,18 @@ function readConstants() {
 
 function checkSummaryCopies(constants) {
   const errors = [];
+  const copies = Object.entries(constants).flatMap(([name, { values }]) => values.map(value => ({ name, value })));
 
   for (const file of SUMMARY_FILES) {
     const content = fs.readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8');
 
     for (const [number] of content.matchAll(/\d+\.\d{6,}/g)) {
-      const owners = Object.values(constants).filter(({ values }) =>
-        values.some(value => value.slice(0, 5) === number.slice(0, 5)),
-      );
+      const near = copies.filter(({ value }) => Math.abs(Number(value) - Number(number)) <= COPY_WINDOW * Number(value));
 
-      if (owners.length > 0 && !owners.some(({ values }) => values.includes(number))) {
-        const allowed = owners.flatMap(({ values }) => values).join(' or ');
+      if (near.length > 0 && !near.some(({ value }) => value === number)) {
+        const allowed = near.map(({ name, value }) => `${name} = ${value}`).join(', ');
 
-        errors.push(`${file} has ${number}, where research/king-entropy gives ${allowed}.`);
+        errors.push(`${file} has ${number}, which is none of the constants of research/king-entropy within ${COPY_WINDOW * 100}% of it: ${allowed}.`);
       }
     }
   }

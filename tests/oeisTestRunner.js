@@ -422,18 +422,31 @@ function checkProgram(entry) {
 }
 
 function splitDefinitions(program) {
-  const code = program.replace(/\\\\.*$/gm, '').replace(/\s+/g, '');
   const definitions = [];
   let depth = 0;
   let current = '';
 
-  for (const character of code) {
-    depth += '({['.includes(character) ? 1 : ')}]'.includes(character) ? -1 : 0;
+  for (let i = 0; i < program.length; i++) {
+    const character = program[i];
 
-    if (character === ';' && depth === 0) {
+    if (character === '"') {
+      let end = i + 1;
+
+      while (end < program.length && program[end] !== '"') {
+        end += program[end] === '\\' ? 2 : 1;
+      }
+
+      current += program.slice(i, end + 1);
+      i = end;
+    } else if (program.startsWith('\\\\', i)) {
+      i = program.indexOf('\n', i) === -1 ? program.length : program.indexOf('\n', i) - 1;
+    } else if (program.startsWith('/*', i)) {
+      i = program.indexOf('*/', i) === -1 ? program.length : program.indexOf('*/', i) + 1;
+    } else if (character === ';' && depth === 0) {
       definitions.push(current);
       current = '';
-    } else {
+    } else if (!/\s/.test(character)) {
+      depth += '({['.includes(character) ? 1 : ')}]'.includes(character) ? -1 : 0;
       current += character;
     }
   }
@@ -487,10 +500,10 @@ function checkBFileFacts(entry) {
 function checkDraftLinks() {
   const approved = listEntries().filter(entry => readStatus(entry)?.[1] === 'Approved');
   const proposed = listEntries().filter(entry => readStatus(entry)?.[1] === 'Proposed');
-  const { stdout, error } = spawnSync('git', ['ls-files'], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
+  const { stdout, stderr, status, error } = spawnSync('git', ['ls-files'], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
 
-  if (error) {
-    return [`git ls-files failed: ${error.message}`];
+  if (error || status !== 0) {
+    return [`git ls-files failed: ${error ? error.message : stderr.trim()}`];
   }
 
   const errors = [];
@@ -510,7 +523,7 @@ function checkDraftLinks() {
     }
 
     for (const entry of proposed) {
-      if (content.includes(`oeis.org/${entry}`)) {
+      if (new RegExp(`oeis\\.org/${entry}(?!/)`).test(content)) {
         errors.push(`${file} links to the page of ${entry}, which is still a draft at oeis.org/draft/${entry}.`);
       }
     }

@@ -3,8 +3,18 @@ const http = require('http');
 const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
+const { DOMICULE_SWEEPS } = require('../src/renderer');
 
-const SITE_DIRECTORY = path.resolve(process.env.SITE_DIRECTORY || path.join(__dirname, '..', 'dist', 'site'));
+const ROOT_DIRECTORY = path.join(__dirname, '..');
+const SITE_DIRECTORY = path.resolve(process.env.SITE_DIRECTORY || path.join(ROOT_DIRECTORY, 'dist', 'site'));
+const REPOSITORY_LINK = /https:\/\/github\.com\/dawidrylko\/lattice-dimers\/(?:tree|blob)\/master\/([^"'#?\s<>)]+)/g;
+const EXTERNAL_RESOURCE = /<script\b[^>]*\bsrc="https?:[^>]*>|<link\b(?=[^>]*\brel="stylesheet")[^>]*\bhref="https?:[^>]*>/g;
+const MIN_HIT_CONTRAST = 4.5;
+const MIN_SEAM_DISTANCE = 40;
+const ARCHIVES = [
+  ['benchmarks/results/2024-03', 'March 2024, up to 1,000 runs per board, machine not recorded'],
+  ['benchmarks/results/2024-04', 'April 2024, 100,000 runs per board, Intel(R) Core(TM) i7-8700'],
+];
 const CHROME_CANDIDATES = [
   '/usr/bin/google-chrome',
   '/usr/bin/chromium',
@@ -95,6 +105,11 @@ const siteTestCases = [
   { width: 375, check: 'landing' },
   { width: 375, check: 'notes' },
   { width: 375, check: 'chrome' },
+  { width: 1440, check: 'cells' },
+  { width: 1440, check: 'palette' },
+  { width: 1440, check: 'links' },
+  { width: 1440, check: 'integrity' },
+  { width: 1440, check: 'text' },
 ];
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -1127,6 +1142,161 @@ async function checkBenchmark(page, baseUrl, width) {
   return problems;
 }
 
+async function checkBenchmarkCells(page, baseUrl, width) {
+  const problems = [];
+  await loadSite(page, baseUrl, width, 'benchmark');
+  const groups = await page.evaluate("[...document.querySelectorAll('#benchmark-groups button')].map(button => button.dataset.group)");
+
+  if (groups.length < 2) {
+    problems.push(`the benchmark switch has ${groups.length} groups`);
+  }
+
+  for (const group of groups) {
+    await page.evaluate(`document.querySelector('#benchmark-groups button[data-group=${group}]').click()`);
+    await page.waitFor(
+      `!document.querySelector('.bench-group[data-group=${group}]').hidden && document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0`,
+      `the ${group} rows`,
+    );
+    const times = await page.evaluate(
+      "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr')].flatMap(row => [...row.cells].slice(2, -1).map(cell => cell.textContent))",
+    );
+    const dashes = await page.evaluate(
+      "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody td')].map(cell => cell.textContent).filter(text => /[\\u2013\\u2014]/.test(text))",
+    );
+    const odd = [...new Set(times.filter(time => !/^(-|\d+\.\d{2} m?s)$/.test(time)))];
+
+    if (odd.length || dashes.length) {
+      problems.push(`the ${group} tables show ${[...odd, ...dashes].join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing value -`);
+    }
+  }
+
+  return problems;
+}
+
+const READ_PALETTE = `(() => {
+  const probe = document.body.appendChild(document.createElement('i'));
+  const read = name => {
+    probe.style.color = 'var(' + name + ')';
+    return getComputedStyle(probe).color.match(/[\\d.]+/g).slice(0, 3).map(Number);
+  };
+  const palette = Object.fromEntries(['--hit', '--sheet', '--seam', '--seam-ends', '--h', '--v', '--d', '--a'].map(name => [name, read(name)]));
+  probe.remove();
+  return palette;
+})()`;
+
+function luminance(rgb) {
+  const [r, g, b] = rgb.map(value => value / 255).map(c => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrast(first, second) {
+  const [lighter, darker] = [luminance(first), luminance(second)].sort((a, b) => b - a);
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function toLab(rgb) {
+  const [r, g, b] = rgb.map(value => value / 255).map(c => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  const f = t => (t > 216 / 24389 ? Math.cbrt(t) : ((24389 / 27) * t + 16) / 116);
+  const [x, y, z] = [
+    (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047,
+    0.2126 * r + 0.7152 * g + 0.0722 * b,
+    (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883,
+  ].map(f);
+
+  return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
+}
+
+function colorDistance(first, second) {
+  const [a, b] = [toLab(first), toLab(second)];
+
+  return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+}
+
+async function checkPalette(page, baseUrl, width) {
+  const problems = [];
+  await loadSite(page, baseUrl, width, 'gallery/4x4/1');
+
+  try {
+    for (const scheme of ['light', 'dark']) {
+      await page.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: scheme }] });
+      const palette = await page.evaluate(READ_PALETTE);
+      const hit = contrast(palette['--hit'], palette['--sheet']);
+
+      if (hit < MIN_HIT_CONTRAST) {
+        problems.push(`the highlighted label has a contrast of ${hit.toFixed(2)}:1 on the ${scheme} sheet, below ${MIN_HIT_CONTRAST}:1`);
+      }
+
+      for (const seam of ['--seam', '--seam-ends']) {
+        for (const piece of ['--h', '--v', '--d', '--a']) {
+          const distance = colorDistance(palette[seam], palette[piece]);
+
+          if (distance < MIN_SEAM_DISTANCE) {
+            problems.push(`${seam} is ${distance.toFixed(0)} from the ${piece} pieces in the ${scheme} palette, below ${MIN_SEAM_DISTANCE}`);
+          }
+        }
+      }
+    }
+  } finally {
+    await page.send('Emulation.setEmulatedMedia', { features: [] });
+  }
+
+  return problems;
+}
+
+function listSitePages(directory = SITE_DIRECTORY) {
+  return fs
+    .readdirSync(directory, { withFileTypes: true })
+    .flatMap(entry =>
+      entry.isDirectory()
+        ? listSitePages(path.join(directory, entry.name))
+        : entry.name.endsWith('.html')
+          ? [path.join(directory, entry.name)]
+          : [],
+    );
+}
+
+async function checkRepositoryLinks() {
+  const links = listSitePages().flatMap(file =>
+    [...new Set([...fs.readFileSync(file, 'utf-8').matchAll(REPOSITORY_LINK)].map(match => decodeURIComponent(match[1]).replace(/\/$/, '')))].map(
+      target => ({ file, target }),
+    ),
+  );
+
+  if (!links.length) {
+    return ['no page links into github.com/dawidrylko/lattice-dimers/tree/master or blob/master'];
+  }
+
+  return links
+    .filter(({ target }) => !fs.existsSync(path.join(ROOT_DIRECTORY, target)))
+    .map(({ file, target }) => `${path.relative(SITE_DIRECTORY, file)} links to ${target}, which is not in the repository`);
+}
+
+async function checkIntegrity() {
+  const resources = listSitePages().flatMap(file => (fs.readFileSync(file, 'utf-8').match(EXTERNAL_RESOURCE) || []).map(tag => ({ file, tag })));
+
+  if (!resources.length) {
+    return ['no page loads a script or a stylesheet from another host, so the check found nothing to read'];
+  }
+
+  return resources
+    .filter(({ tag }) => !/\bintegrity="sha(256|384|512)-[^"]+"/.test(tag) || !/\bcrossorigin="anonymous"/.test(tag))
+    .map(({ file, tag }) => `${path.relative(SITE_DIRECTORY, file)} loads ${tag.match(/(?:src|href)="([^"]+)"/)[1]} without a subresource integrity hash`);
+}
+
+async function checkGeneratedText() {
+  const text = fs.readFileSync(path.join(SITE_DIRECTORY, 'index.html'), 'utf-8').replace(/<[^>]+>/g, '');
+  const chain = `a Markov chain of ${DOMICULE_SWEEPS.toLocaleString('en-US')} steps per cell`;
+
+  return [
+    ...ARCHIVES.filter(([run, description]) => !text.includes(`${run} (${description}`)).map(
+      ([run, description]) => `the main page does not describe ${run} as "${description}"`,
+    ),
+    ...(text.includes(chain) ? [] : [`the main page does not say "${chain}", the chain length of src/renderer`]),
+  ];
+}
+
 const CHECKS = {
   sheets: { label: 'tiling sheets', run: checkSheets },
   picker: { label: 'board picker', run: checkPicker },
@@ -1142,6 +1312,11 @@ const CHECKS = {
   notes: { label: 'notes', run: checkNotes },
   chrome: { label: 'shared header and footer', run: checkChrome },
   benchmark: { label: 'benchmark table', run: checkBenchmark },
+  cells: { label: 'benchmark times', run: checkBenchmarkCells },
+  palette: { label: 'highlight contrast and glued-edge colours', run: checkPalette },
+  links: { label: 'links into the repository', run: checkRepositoryLinks },
+  integrity: { label: 'subresource integrity', run: checkIntegrity },
+  text: { label: 'text read from the code and the data', run: checkGeneratedText },
 };
 
 async function runTest(page, baseUrl, { width, check }) {

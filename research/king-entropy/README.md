@@ -49,6 +49,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/timed.py` | runs a command and appends wall time and peak RSS (MiB on Linux and macOS) to stderr; `src/test_timed.py` checks the unit |
 | `src/paths.py` | the directory of each file by its name, so the scripts read and write the right place from any working directory |
 | `src/test_paths.py` | smoke test: `src/tm2.py`, `src/cylw.py`, `src/lean.py`, `src/zexact.py` on tiny inputs from another directory write where `src/paths.py` says and record the commit |
+| `src/test_regressions.py` | checks for fixed defects that no rerun of an output covers: 12-decimal bound strings of `src/bounds.py`, the x87 guard of `src/lean.py` and `src/lcert.py`, and `replication/bfile_check.py` on the b-file in `oeis/A239264/` |
 | `src/zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `data/zex/zex_*.json` |
 | `src/lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/lean/lean_*.json` |
 | `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`proofs/*-bound.md`) |
@@ -122,6 +123,7 @@ python3 src/lweight.py > out/out_lweight.txt; python3 src/lweight.py big > out/o
 python3 src/repro.py > out/out_repro.txt
 python3 src/test_paths.py
 python3 src/test_timed.py
+python3 src/test_regressions.py
 ```
 
 Paper (needs a TeX distribution with `latexmk`, e.g. TeX Live with

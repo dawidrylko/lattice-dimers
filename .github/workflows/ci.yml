@@ -38,9 +38,31 @@ jobs:
       - run: pnpm test:render
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends pari-gp
       - run: pnpm test:pari
-      - run: pnpm site:build
+      - run: node "$GITHUB_WORKSPACE/site/build.js"
+        working-directory: ${{ runner.temp }}
       - run: pnpm test:site
         timeout-minutes: 10
+
+  macos:
+    name: macOS
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: research/king-entropy/src/requirements.txt
+      - run: python -m pip install -r research/king-entropy/src/requirements.txt
+      - run: node tests/renderTestRunner.js
+      - run: python src/test_timed.py
+        working-directory: research/king-entropy
+      - run: python src/lspec.py > "$RUNNER_TEMP/out_lspec.txt" && diff -u out/out_lspec.txt "$RUNNER_TEMP/out_lspec.txt"
+        working-directory: research/king-entropy
 
   research:
     name: Research
@@ -60,4 +82,16 @@ jobs:
       - run: python src/test_paths.py
       - run: python src/test_timed.py
       - run: python src/derived.py > "$RUNNER_TEMP/out_derived.txt" && diff -u out/out_derived.txt "$RUNNER_TEMP/out_derived.txt"
+      - run: python src/test_regressions.py
+      - run: |
+          for script in errbar hidden_oos lspec ltest; do
+            python "src/$script.py" > "$RUNNER_TEMP/out_$script.txt"
+            diff -u "out/out_$script.txt" "$RUNNER_TEMP/out_$script.txt"
+          done
+      - run: |
+          for script in analyze_eig compare_eig; do
+            python "$script.py" > "$RUNNER_TEMP/$script.txt"
+            diff -u "out/$script.txt" "$RUNNER_TEMP/$script.txt"
+          done
+        working-directory: research/king-entropy/replication
       - run: python -m json.tool ../../.zenodo.json > /dev/null

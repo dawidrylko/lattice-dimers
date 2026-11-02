@@ -2,11 +2,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const {
-  filesInt,
-  testCasesInt,
-  filesBigInt,
   testCasesBigInt,
-  filesDomicule,
   testCasesDomicule,
   testCasesPeriodic,
   testCasesPeriodicModular,
@@ -20,6 +16,7 @@ const diagonalReference = require('../src/solvers/domiculeDiagonalSolver-BigInt.
 const { countPeriodicDiagonals } = require('../src/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
+const { readBenchmarkRuns } = require('./benchmarkRuns');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
 const REPOSITORY_TREE_URL = 'https://github.com/dawidrylko/lattice-dimers/tree/master';
@@ -28,16 +25,7 @@ const OUTPUT_DIRECTORY = path.join(ROOT_DIRECTORY, 'dist', 'site');
 const BENCHMARK_ROOT = 'benchmarks/results';
 const RESULT_FILE = /_(\d+)x(\d+)\.txt$/;
 const PERIODIC_RESULT_FILE = /_(\d+)x(\d+)-king-(torus|cylinder)\.txt$/;
-const LARGEST_PERIODIC_RESULTS = [
-  'periodicTilingSolver-BigInt.js_10x10-king-torus.txt',
-  'periodicTilingSolver-Modular.js_14x14-king-torus.txt',
-  'periodicTilingSolver-BigInt.js_12x12-king-cylinder.txt',
-  'periodicTilingSolver-Modular.js_16x16-king-cylinder.txt',
-  'domiculeDiagonalSolver-BigInt.js_12x12.txt',
-  'domiculeDiagonalSolver-Modular.js_20x20.txt',
-];
-const BENCHMARK_RUNS = listBenchmarkRuns();
-const BENCHMARK_RUN = findLatestCompleteRun();
+const { runs: BENCHMARK_RUNS, latest: BENCHMARK_RUN } = readBenchmarkRuns();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
 const BROWSER_SCRIPTS = ['src/renderer/svg.js', 'src/renderer/rank.js'];
 const WORKER_SCRIPTS = [
@@ -125,45 +113,6 @@ const NOTE_SUMMARIES = {
   diagonals: 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces (A401673), up to 20 × 20.',
 };
 const NOTE_REDIRECTS = { a004003: 'dominoes', a239273: 'domicules', torus: 'tori' };
-
-function listBenchmarkRuns() {
-  return fs
-    .readdirSync(path.join(ROOT_DIRECTORY, BENCHMARK_ROOT))
-    .filter(name => /^\d{4}-\d{2}$/.test(name))
-    .sort()
-    .reverse();
-}
-
-function resultFileName(fileName, { rowCount, colCount }) {
-  return `${fileName}_${rowCount}x${colCount}.txt`;
-}
-
-function isCompleteRun(run) {
-  const lastInt = testCasesInt[testCasesInt.length - 1];
-  const lastBigInt = testCasesBigInt[testCasesBigInt.length - 1];
-  const requiredFiles = [
-    'environment.json',
-    ...filesInt.map(fileName => resultFileName(fileName, lastInt)),
-    ...filesBigInt.map(fileName => resultFileName(fileName, lastBigInt)),
-    ...filesDomicule.map(fileName => resultFileName(fileName, { rowCount: 16, colCount: 16 })),
-    ...filesDomicule.map(fileName => resultFileName(fileName, { rowCount: 20, colCount: 20 })),
-    ...LARGEST_PERIODIC_RESULTS,
-  ];
-
-  return requiredFiles.every(file => fs.existsSync(path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, run, file)));
-}
-
-function findLatestCompleteRun() {
-  const run = BENCHMARK_RUNS.find(isCompleteRun);
-
-  if (!run) {
-    throw new Error(
-      `No complete benchmarks/results/YYYY-MM directory: one needs environment.json and every solver's largest board.`,
-    );
-  }
-
-  return run;
-}
 
 function describeRun(run) {
   const directory = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, run);
