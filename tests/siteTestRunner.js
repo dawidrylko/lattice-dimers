@@ -55,15 +55,16 @@ const SHEET_BOARDS = [
   '10x10-diagonal-cylinder',
   '10x10-diagonal-torus',
 ];
-const CONFIRMATION_BOARDS = ['18x18', '16x16-diagonal', '10x10-diagonal-torus?diagonals=20'];
+const CONFIRMATION_BOARDS = ['10x10-diagonal-torus?diagonals=20'];
+const SAMPLE_BOARDS = ['18x18', '16x16-diagonal', '20x20'];
 const NOTES = [
   { slug: 'research', cells: 2 },
   { slug: 'method', cells: 0 },
-  { slug: 'dominoes', cells: 6 },
-  { slug: 'domicules', cells: 8 },
-  { slug: 'cylinders', cells: 5 },
-  { slug: 'tori', cells: 6 },
-  { slug: 'diagonals', cells: 5 },
+  { slug: 'dominoes', cells: 7, figures: 1 },
+  { slug: 'domicules', cells: 9, figures: 2 },
+  { slug: 'cylinders', cells: 6, figures: 2 },
+  { slug: 'tori', cells: 7, figures: 2 },
+  { slug: 'diagonals', cells: 6, figures: 1 },
 ];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes'],
@@ -76,6 +77,7 @@ const siteTestCases = [
   { width: 1440, check: 'sheets' },
   { width: 1440, check: 'picker' },
   { width: 1440, check: 'confirmation' },
+  { width: 1440, check: 'samples' },
   { width: 1440, check: 'benchmark' },
   { width: 1440, check: 'pieces' },
   { width: 1440, check: 'styles' },
@@ -97,6 +99,7 @@ const siteTestCases = [
   { width: 786, check: 'benchmark' },
   { width: 375, check: 'sheets' },
   { width: 375, check: 'confirmation' },
+  { width: 375, check: 'samples' },
   { width: 375, check: 'benchmark' },
   { width: 375, check: 'pieces' },
   { width: 375, check: 'landing' },
@@ -400,6 +403,57 @@ async function checkBoardConfirmation(page, baseUrl, width, board) {
   return problems;
 }
 
+async function checkSamples(page, baseUrl, width) {
+  const problems = [];
+  await loadSite(page, baseUrl, width, 'gallery');
+  await page.waitFor("document.querySelector('#sheet svg')", 'the default board');
+  const chosen = await page.evaluate("[...document.querySelectorAll('#boards button')].filter(b => b.getAttribute('aria-pressed') === 'true').map(b => b.dataset.id).join()");
+
+  if (chosen !== '8x8') {
+    problems.push(`the gallery opens on ${chosen}`);
+  }
+
+  for (const board of SAMPLE_BOARDS) {
+    problems.push(...(await checkBoardSamples(page, baseUrl, width, board)).map(problem => `${board}: ${problem}`));
+  }
+
+  return problems;
+}
+
+async function checkBoardSamples(page, baseUrl, width, board) {
+  const numbered = `(() => {
+    const labels = [...document.querySelectorAll('#sheet text')].map(text => text.dataset.label || text.textContent);
+    return labels.length === ${10} && labels.every(label => /^#[0-9]+$/.test(label)) ? labels.join() : '';
+  })()`;
+  await loadSite(page, baseUrl, width, `gallery/${board}/1`);
+  await page.waitFor(numbered, `the numbered ${board} samples`);
+  const state = await page.evaluate(`(() => {
+    const total = BigInt(DATA.boards.find(b => b.id === '${board}').total);
+    const labels = [...document.querySelectorAll('#sheet text')].map(text => text.dataset.label || text.textContent);
+    return {
+      labels: labels.join(),
+      outOfRange: labels.filter(label => BigInt(label.slice(1)) < 1n || BigInt(label.slice(1)) > total),
+      shown: !document.getElementById('page-controls').hidden,
+      enabled: [...document.querySelectorAll('${PAGE_CONTROLS}')].filter(control => !control.disabled).map(control => control.id || control.textContent.trim()),
+      notice: !document.getElementById('notice').hidden,
+    };
+  })()`);
+  const problems = [];
+
+  if (state.outOfRange.length) {
+    problems.push(`numbers outside the board: ${state.outOfRange.join(', ')}`);
+  }
+
+  if (!state.shown || state.enabled.join() !== 'random' || state.notice) {
+    problems.push(`toolbar shows ${JSON.stringify(state)}`);
+  }
+
+  await page.evaluate("document.getElementById('random').click()");
+  await page.waitFor(`${numbered} && ${numbered} !== ${JSON.stringify(state.labels)}`, `new ${board} samples`);
+
+  return problems;
+}
+
 async function checkPieces(page, baseUrl, width) {
   await loadSite(page, baseUrl, width, 'gallery/8x8/1');
   await page.waitFor("document.querySelector('#sheet svg')", 'the 8x8 sheet');
@@ -424,7 +478,7 @@ async function checkPieces(page, baseUrl, width) {
   }
 
   await page.evaluate("location.hash = 'gallery/20x20-diagonal/1'");
-  await page.waitFor("document.querySelector('#sheet svg rect.d, #sheet svg rect.a')", 'the 20x20 domicule sample');
+  await page.waitFor("document.querySelector('#sheet svg .d, #sheet svg .a')", 'the 20x20 domicule sample');
   await page.evaluate("document.querySelector('#pieces [data-pieces=domino]').click()");
   await page.waitFor("location.hash === '#gallery/20x20/1'", 'the switch back to 20x20 dominoes');
   const straight = await read();
@@ -467,11 +521,17 @@ async function checkStyles(page, baseUrl, width) {
     await page.evaluate("localStorage.setItem('lattice-dimers-style', 'bogus')");
     const initial = await reload('the 4x4 domicule sheet');
 
-    if (initial.svg !== 'blocks' || initial.gallery !== 'blocks' || initial.pressed.join() !== 'blocks' || !initial.highlighted || !initial.themed) {
-      problems.push(`an unknown saved style does not fall back to blocks: ${JSON.stringify(initial)}`);
+    if (initial.svg !== 'dimer' || initial.gallery !== 'dimer' || initial.pressed.join() !== 'dimer' || !initial.highlighted || !initial.themed) {
+      problems.push(`an unknown saved style does not fall back to the dimer graph: ${JSON.stringify(initial)}`);
     }
 
-    for (const style of ['dimer', 'engraving']) {
+    const order = await page.evaluate("[...document.querySelectorAll('#styles button')].map(b => b.dataset.style).join()");
+
+    if (order !== 'dimer,blocks,engraving') {
+      problems.push(`styles are listed as ${order}`);
+    }
+
+    for (const style of ['blocks', 'engraving']) {
       await page.evaluate(`document.querySelector('#styles [data-style=${style}]').click()`);
       const state = await read();
 
@@ -835,7 +895,7 @@ async function checkLanding(page, baseUrl, width) {
 async function checkNotes(page, baseUrl, width) {
   const problems = [];
 
-  for (const { slug, cells } of NOTES) {
+  for (const { slug, cells, figures = 0 } of NOTES) {
     const run = `run=${Date.now()}`;
 
     await page.send('Emulation.setDeviceMetricsOverride', { width, height: VIEWPORT_HEIGHT, deviceScaleFactor: 1, mobile: width < 640 });
@@ -849,11 +909,21 @@ async function checkNotes(page, baseUrl, width) {
       unresolved: /undefined|\\u0000/.test(document.querySelector('article').textContent),
       math: document.querySelectorAll('.math').length,
       katex: document.querySelectorAll('.katex').length,
+      chartFont: [...document.querySelectorAll('figure.chart svg text')].map(text => getComputedStyle(text).fontFamily).filter(font => /monospace/.test(font)).length,
+      figures: [...document.querySelectorAll('figure.tiling > svg')].filter(svg => svg.getBoundingClientRect().width > 0 && svg.getBoundingClientRect().right <= document.documentElement.clientWidth + 0.5).length,
       charts: [...document.querySelectorAll('figure.chart')].map(figure => [...figure.querySelectorAll('svg')].filter(svg => getComputedStyle(svg).display !== 'none').length),
     }))()`);
 
     if (state.cells !== cells) {
       problems.push(`${slug} has ${state.cells} cells instead of ${cells}`);
+    }
+
+    if (state.chartFont) {
+      problems.push(`${slug} draws ${state.chartFont} chart labels in the monospace of a tiling drawing`);
+    }
+
+    if (state.figures !== figures) {
+      problems.push(`${slug} shows ${state.figures} tiling drawings within the page instead of ${figures}`);
     }
 
     if (state.unresolved) {
@@ -1024,6 +1094,16 @@ async function checkBenchmark(page, baseUrl, width) {
     if (!state.environment.startsWith('Measured with Node.js')) {
       problems.push(`#${hash} has no environment`);
     }
+  }
+
+  await loadSite(page, baseUrl, width, 'benchmark');
+  const dominoColumns = await page.evaluate(`({
+    headers: [...document.querySelectorAll('#domino-benchmark thead th')].map(th => th.textContent).join(),
+    cells: [...document.querySelectorAll('#benchmark-rows tr')].map(row => row.cells.length).filter(count => count !== 5).length,
+  })`);
+
+  if (dominoColumns.headers !== 'Board,Tilings,BigInt,Formula,Runs' || dominoColumns.cells) {
+    problems.push(`the domino benchmark has the columns ${dominoColumns.headers} and ${dominoColumns.cells} rows without five cells`);
   }
 
   await loadSite(page, baseUrl, width, 'benchmark');
@@ -1220,7 +1300,8 @@ async function checkGeneratedText() {
 const CHECKS = {
   sheets: { label: 'tiling sheets', run: checkSheets },
   picker: { label: 'board picker', run: checkPicker },
-  confirmation: { label: '18x18 and 16x16 domicule confirmation', run: checkConfirmation },
+  confirmation: { label: 'diagonal filter confirmation', run: checkConfirmation },
+  samples: { label: 'numbered samples', run: checkSamples },
   pieces: { label: 'dominoes and domicules switch', run: checkPieces },
   styles: { label: 'sheet style switch', run: checkStyles },
   labels: { label: 'long tiling numbers', run: checkLongLabels },

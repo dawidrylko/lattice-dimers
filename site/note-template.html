@@ -65,6 +65,9 @@ blockquote { margin: 0 0 14px; padding-left: 14px; border-left: 3px solid var(--
 .chart .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
 .chart .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
 .chart svg { display: block; width: 100%; max-width: 720px; height: auto; }
+.tiling { margin: 0 0 14px; }
+.tiling svg { display: block; width: calc(2 * var(--width, 200px)); max-width: 100%; height: auto; border-radius: 4px; }
+.tiling figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .chart svg.narrow { display: none; max-width: 480px; }
 @media (max-width: 560px) {
   .chart svg.wide { display: none; }

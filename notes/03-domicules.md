@@ -2,6 +2,20 @@
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules.html) has the results. It counts the domicule tilings of the $2n \times 2n$ board, [OEIS A239273](https://oeis.org/A239273), and of the $h \times w$ rectangles, [OEIS A239264](https://oeis.org/A239264). The method is described in the [method note](01-method.md).
 
+## The problem
+
+A domicule covers two cells that share a side, a straight piece, or two cells that share only a corner, a diagonal piece. The $2 \times 2$ board has 3 tilings: two of straight pieces and one of two crossing diagonal pieces. The $4 \times 4$ board has 280; the second drawing shows 8 of them, spread over the numbering.
+
+```js run
+const { drawTilings } = require('./site/notes.js');
+const small = drawTilings({ rowCount: 2, colCount: 2, pieces: 'domicule', ranks: 'all' });
+const ranks = Array.from({ length: 8 }, (_, i) => 35 * i);
+const board = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', ranks });
+
+figure(small.svg, `All ${small.total} domicule tilings of the 2 × 2 board.`);
+figure(board.svg, `8 of the ${board.total} domicule tilings of the 4 × 4 board.`);
+```
+
 ## The sequence up to 20 × 20
 
 The `BigInt` solver counts the boards up to $16 \times 16$, the modular one $18 \times 18$ and $20 \times 20$. The data section of the OEIS entry lists the terms up to $a(9)$; the [OEIS A239273 b-file](https://oeis.org/A239273/b239273.txt) continues to $a(12)$ ($24 \times 24$), beyond the solvers here, and $a(10)$ is checked against it.

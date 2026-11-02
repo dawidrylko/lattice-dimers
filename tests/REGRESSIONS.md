@@ -50,7 +50,7 @@ A new fix adds its row here with the check that guards it.
 | a 49-digit count pushed the time columns off screen | `b485aa3` | `test:site`, benchmark table | `fmt` instead of `num` |
 | missing times showed an em dash | `d09e393` | `test:site`, benchmark times (new) | `'—'` for a missing time |
 | the benchmark did not turn into cards on narrow screens | `e75d200` | `test:site`, benchmark table at 375 px | the 720 px media query disabled |
-| the pager worked before the 18 × 18 table was confirmed | `edb10cf` | `test:site`, confirmation | `locked = false` |
+| the pager worked before the 18 × 18 table was confirmed | `edb10cf` | `test:site`, diagonal filter confirmation, the table that still asks first since #79 replaced 18 × 18 by numbered samples | `locked = false` |
 | the board picker and the sheet were wider than the page | `96b696f` | `test:site`, board picker, tiling sheets, and cylinders and tori at 375 px | `overflow-x: auto`; `max-width: none`; columns for a fixed width of 1040 px |
 | the domicule BigInt solver had no 18 × 18 and 20 × 20 timing | `8e8b177` | `test:site`, benchmark table | both files removed and the 20 × 20 requirement dropped |
 | Random froze Safari by assigning `location.hash` | `08ebc4b` | `test:site`, random jump and back | `location.hash` in `go()` and in the tab links |
