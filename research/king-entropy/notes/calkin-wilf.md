@@ -4,7 +4,7 @@ Question: does the Calkin-Wilf (CW) lower bound
 
     s >= (a_{2q+p} - a_{2q}) / p,        a_k = log lambda_k (free strip, k rows),
 
-hold for perfect matchings of the king graph, and can it be proven?
+hold for perfect matchings of the king's graph, and can it be proven?
 Everything below is produced by `python3 src/cw.py > out/out_cw.txt` (code at
 `0357d17`, run at `73a0628`, 214 s); free-strip `a_k` and certified lambdas
 come from `src/bounds.py 24` (`data/bounds.json`), `s` from `src/estimate.py` (`data/z2.json`).
@@ -20,7 +20,7 @@ The usual proof writes `Z(2q+p, m) = <g, X g>`, `Z(2q, m) = <g, G g>` with
 (reflection positivity, RP), which gives `Z(2q+p, m) <= rho(R_m)^p Z(2q, m)`
 for every width `m`; then `m -> infinity`.
 
-For the king lattice RP fails for every reflection line:
+For the king's graph RP fails for every reflection line:
 
 - between rows: a crossing diagonal is mapped to the other diagonal, so the
   gluing form is `M(A, B)` = number of matchings `A -> B` with `|a - b| <= 1`;

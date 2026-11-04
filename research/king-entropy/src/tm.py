@@ -1,7 +1,7 @@
 """Cell-by-cell transfer for perfect matchings on w-wide strips.
 
 lattice: 'king' (square + both diagonals), 'tri' (square + one diagonal), 'sq' (square)
-bc: 'free' (open strip) or 'cyl' (periodic across the width)
+bc: 'free' (free strip) or 'cyl' (periodic across the width)
 
 State: bits 0..w+1 = occupancy of the next w+2 cells in row-major order,
 bit w+2 (cyl only) = (r+1, w-1) claimed by (r,0) through the down-left wrap edge.

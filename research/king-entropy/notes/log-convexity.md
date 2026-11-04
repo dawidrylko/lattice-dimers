@@ -7,7 +7,7 @@
 **Status: UNRESOLVED.** No counterexample at unit weights (exact, much larger range than `src/cw.py`), no
 proof. Five proof routes closed with explicit obstructions; two exact reformulations; two
 control experiments showing that (L) is *not* a generic property: it fails on the triangular
-lattice and when the two diagonals of the king lattice get clearly unequal weights ((1, ½),
+lattice and when the two diagonals of the king's graph get clearly unequal weights ((1, ½),
 (1, ¾)), while equal weights x ∈ [0, 100] and near-equal (1, 0.9), (1, 0.95) survive. A proof
 cannot be uniform in the diagonal weights; the left-right symmetry is the natural ingredient.
 Every pair of unequal diagonal weights on which (L) was tested ((1, 9/10), (1, 19/20), (1, 3/4),
@@ -72,7 +72,7 @@ deep in the asymptotic regime (constant ratio).
 3. **Total nonnegativity of the transfer** (in any ordering of states): a TN matrix has real
    nonnegative spectrum (Gantmacher-Krein); A has non-real e₀-visible eigenvalues. Dead.
 4. **Lindström-Gessel-Viennot**: needs a planar acyclic path model of the configurations; the
-   king graph is non-planar (crossing diagonals) and non-bipartite, no height function, no
+   king's graph is non-planar (crossing diagonals) and non-bipartite, no height function, no
    path bijection. Dead as stated (would need a genuinely new encoding).
 5. **"Generic" arguments** valid for all non-bipartite / non-RP dimer models: refuted by the
    triangular free strips (table above). **Arguments not using the left-right symmetry**:
@@ -114,7 +114,7 @@ changes TB parities only when ℓ(b→bottom_P) ≢ ℓ(d→bottom_Q) (mod 2), w
 a 3-way move, not an involution.
 
 **(R2) Krein-space form.** Cutting the 2q-row board in the middle with the bottom half reflected
-(the king lattice is invariant under r ↦ −r), Z(k₁ + k₂) = u_{k₁}ᵀ M u_{k₂}, with u_k the
+(the king's graph is invariant under r ↦ −r), Z(k₁ + k₂) = u_{k₁}ᵀ M u_{k₂}, with u_k the
 boundary vector of a k-row half-board and M(A, B) the symmetric, indefinite crossing kernel
 (|a − b| ≤ 1). Since Z(2q−2) = u_{q−1}ᵀMu_{q−1} > 0 and Z(2q+2) = u_{q+1}ᵀMu_{q+1} > 0:
 **(L) ⇔ M is positive semidefinite on span(u_{q−1}, u_{q+1}) for every q** (the Gram determinant

@@ -1,8 +1,8 @@
 /*
- * kd.c - independent cross-check of the king-graph dimer computations.
+ * kd.c - independent cross-check of the dimer computations on the king's graph.
  *
  * Perfect matchings of the king's graph (and, for validation, the square and
- * triangular lattices) on a strip of width w, free (open sides) or periodic
+ * triangular lattices) on a strip of width w, free or periodic
  * across the width (cylinder), by a cell-by-cell transfer applied in place.
  *
  * Cells are scanned row by row, p = r*w + c. Before cell p is processed the

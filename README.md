@@ -6,7 +6,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23686293.svg)](https://doi.org/10.5281/zenodo.23686293)
 [![Site](https://img.shields.io/badge/Site_%26_notebooks-dawidrylko.github.io-044cb6?style=flat)](https://dawidrylko.github.io/lattice-dimers/)
 
-Research code, data and papers on dimer coverings of two lattices: the square lattice, whose perfect matchings are domino tilings, and the king's graph, the square lattice with both diagonals, whose perfect matchings are domicule tilings. The repository holds a paper on the entropy per site of the king's graph dimers with its companion note, exact solvers for boards, cylinders and tori, and the OEIS entries built on them.
+Research code, data and papers on dimer coverings of two lattices: the square lattice, whose perfect matchings are domino tilings, and the king's graph, the square lattice with both diagonals, whose perfect matchings are domicule tilings. The repository holds a paper on the entropy per site of the king's graph dimers with its companion note, exact solvers for rectangles, cylinders and tori, and the OEIS entries built on them.
 
 <table>
   <tr>
@@ -23,7 +23,7 @@ Research code, data and papers on dimer coverings of two lattices: the square la
   </tr>
 </table>
 
-The [gallery](https://dawidrylko.github.io/lattice-dimers/) numbers every tiling of a board, cylinder or torus and draws any single one.
+The [gallery](https://dawidrylko.github.io/lattice-dimers/) numbers every tiling of a rectangle, a cylinder or a torus and draws any single one.
 
 ## Results
 
@@ -48,9 +48,9 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | [`research/king-entropy`](research/king-entropy/README.md) | scripts, data, outputs, proofs and papers on the entropy of the king's graph |
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
 | [`notes`](notes/README.md) | notebooks on the method and the sequences, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
-| [`src`](src/README.md) | solvers for boards, cylinders and tori, and the renderer that numbers, samples and draws tilings |
+| [`src`](src/README.md) | solvers for rectangles, cylinders and tori, and the renderer that numbers, samples and draws tilings |
 | [`data`](data/README.md) | the known counts every solver and program is checked against |
-| [`docs`](docs/glossary.md) | the glossary of the words the repository uses for pieces and surfaces |
+| [`docs`](docs/glossary.md) | the glossary of the words the repository uses for pieces, lattices and surfaces |
 | [`tests`](tests/README.md) | the test runners and what each one checks |
 | [`benchmarks`](benchmarks/README.md) | the benchmark runner and its results |
 | `site` | the build of the [site](https://dawidrylko.github.io/lattice-dimers/): the gallery, the benchmark tables and the notebooks |

@@ -64,7 +64,7 @@ def check(name, ok, detail=''):
 
 
 def king_adj(cells):
-    """Adjacency of the king graph on a set of (r, c) cells."""
+    """Adjacency of the king's graph on a set of (r, c) cells."""
     S = set(cells)
     return {x: [y for y in S if y != x and abs(y[0] - x[0]) <= 1 and abs(y[1] - x[1]) <= 1] for x in S}
 

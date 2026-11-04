@@ -1,4 +1,4 @@
-# Independent recomputation of `paper/king-entropy.tex` (king-graph dimer entropy)
+# Independent recomputation of `paper/king-entropy.tex` (dimer entropy of the king's graph)
 
 **Verdict.** Claims 1-5 CONFIRMED, claim 6 found no failure mode; no contradiction of substance. Three
 minor last-digit issues are listed under Contradictions. One check was NOT REACHED here: the A239264
