@@ -59,9 +59,6 @@ const rejectionTestCases = [
   },
   { args: ['js/solvers/periodicTilingSolver-BigInt.js', '-r', '4', '-c', '13'], message: 'at most 12' },
   { args: ['js/solvers/periodicTilingSolver-BigInt.js', '-r', '1', '-c', '4', '--torus'], message: 'Usage' },
-  { args: ['js/solvers/periodicTilingSolver-Modular.js', '-r', '4', '-c', '25'], message: 'at most 24' },
-  { args: ['js/solvers/periodicTilingSolver-Modular.js', '-r', '4', '-c', '1'], message: 'Usage' },
-  { args: ['js/solvers/periodicTilingSolver-Modular.js', '-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
   { args: ['js/solvers/domiculeDiagonalSolver-BigInt.js', '-r', '13', '-c', '13'], message: 'at most 12' },
   { args: ['js/solvers/domiculeDiagonalSolver-Modular.js', '-r', '21', '-c', '21'], message: 'at most 20' },
   { args: ['js/solvers/domiculeDiagonalSolver-Modular.js', '-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
@@ -86,6 +83,21 @@ const rejectionTestCases = [
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--domicule', '--only', 'dominoTilingSolver.js'], message: 'Usage' },
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--only', 'domiculeTilingSolver-BigInt.js'], message: 'Usage' },
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--diagonal'], message: 'Usage' },
+];
+const implementationRejectionTestCases = [
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '25'], message: 'at most 24' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '25', '-c', '25', '--torus'], message: 'at most 24' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '25', '--torus', '--twisted'], message: 'at most 24' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '1'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '1', '-c', '4', '--torus'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '2abc', '-c', '4'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '+4', '-c', '4'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '9007199254740992', '-c', '4'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-c', '4'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', '0'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', 'x'], message: 'Usage' },
 ];
 
 function executeCheckPrimeTests() {
@@ -740,19 +752,24 @@ function executeParserTests() {
 }
 
 function executeRejectionTests() {
-  return rejectionTestCases.every(({ args, message }, index) => {
-    process.stdout.write(
-      `Executing rejection test ${index + 1} of ${rejectionTestCases.length} for "${args.join(' ')}"... `,
-    );
+  const runs = [
+    ...rejectionTestCases.map(({ args, message }) => ({ name: args.join(' '), command: [process.execPath, ...args], message })),
+    ...implementationRejectionTestCases.flatMap(({ algorithm, args, message }) =>
+      listImplementations(algorithm).map(({ file }) => ({ name: `${file} ${args.join(' ')}`, command: [...exec.launch(file), ...args], message })),
+    ),
+  ];
 
-    const { status, stderr } = spawnSync(process.execPath, args, {
+  return runs.every(({ name, command: [program, ...args], message }, index) => {
+    process.stdout.write(`Executing rejection test ${index + 1} of ${runs.length} for "${name}"... `);
+
+    const { status, stderr, error } = spawnSync(program, args, {
       cwd: ROOT_DIRECTORY,
       encoding: 'utf-8',
       timeout: REJECTION_TIMEOUT,
     });
 
-    if (status === 0 || !stderr.includes(message)) {
-      console.error(`Failed! Exit code ${status}: ${stderr.trim()}`);
+    if (error || status === 0 || !stderr.includes(message)) {
+      console.error(`Failed! Exit code ${status}: ${(error ? error.message : stderr).trim()}`);
 
       return false;
     }

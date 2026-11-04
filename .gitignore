@@ -4,3 +4,4 @@ dist/
 research/king-entropy/paper/sources/
 target/
 __pycache__/
+*.egg-info/

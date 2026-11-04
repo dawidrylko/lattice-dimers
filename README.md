@@ -49,6 +49,8 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
 | [`notes`](notes/README.md) | notebooks on the method and the sequences, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
 | [`spec`](spec/README.md) | the solver contract, the registry of algorithms and the known counts every implementation and program is checked against |
+| `rust` | the Rust solvers and the library they share; the workspace manifest is [`Cargo.toml`](Cargo.toml) at the root |
+| [`python`](python/pyproject.toml) | the Python package `lattice_dimers`: the Python solvers and the library they share |
 | [`js`](js/README.md) | the JavaScript solvers for rectangles, cylinders and tori, and the renderer that numbers, samples and draws tilings |
 | [`docs`](docs/glossary.md) | the glossary of the words the repository uses for pieces, lattices and surfaces |
 | [`harness`](harness/README.md) | the test runners, the check that keeps the languages in step, and the benchmark runner |
@@ -57,13 +59,15 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 
 ## Quick start
 
-Node.js 26 or newer (`.nvmrc`) and pnpm:
+Node.js 26 or newer (`.nvmrc`) and pnpm; `pnpm test` also runs the Rust and Python implementations, so it needs Rust 1.99 and Python 3.13 or newer:
 
 ```sh
 git clone https://github.com/dawidrylko/lattice-dimers.git
 cd lattice-dimers
 pnpm install
 node js/solvers/domiculeTilingSolver-Modular.js -r 20 -c 20
+cargo build --release
+python3 -m pip install -e python
 pnpm test
 ```
 

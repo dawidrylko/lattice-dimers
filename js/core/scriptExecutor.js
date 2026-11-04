@@ -21,6 +21,11 @@ function resolve(fileName) {
   return path.join(ROOT_DIRECTORY, fileName.includes('/') ? fileName : path.join('js', 'solvers', fileName));
 }
 
+/**
+ * Lists the program and the arguments that start one implementation of a solver, before the solver's own arguments.
+ * @param {string} fileName The root-relative file of the implementation, or the bare name of a file in js/solvers.
+ * @returns {string[]} The program, then its arguments.
+ */
 function launch(fileName) {
   return LAUNCHERS[path.extname(fileName)](resolve(fileName));
 }
@@ -83,4 +88,4 @@ function executeSolver(fileName, options) {
   }
 }
 
-module.exports = Object.assign(executeSolver, { generateCommand, LANGUAGES: Object.keys(LAUNCHERS).map(name => name.slice(1)) });
+module.exports = Object.assign(executeSolver, { generateCommand, launch, LANGUAGES: Object.keys(LAUNCHERS).map(name => name.slice(1)) });
