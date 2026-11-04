@@ -67,6 +67,11 @@ A new fix adds its row here with the check that guards it.
 | a partial newer benchmark month replaced the full table | `96ece59` | `test`, benchmark run test (new) of `site/benchmarkRuns.js`, the only place the build gets its run from | the newest run instead of the newest complete one |
 | the older runs were described with 100,000 runs on an i7-8700 each | `8298d43` | `test:site`, text read from the code and the data (new) | one hand-written sentence for both |
 | the glued edge had the colour of the blue pieces | `a2f03dd` | `test:site`, glued-edge colours (new) | `--seam: #4f7cac`, the colour before the fix |
+| the notebook drawings labelled their tilings at 5.4 px on a 375 px phone | #85 | `test:site`, notes, label size (new) | a build of `bf5b7fd`, the base of #85 |
+| the notebook drawings had no accessible name | #85 | `test:site`, notes, drawing names (new) | a build of `bf5b7fd` |
+| the notebook drawings stayed white in dark mode and greyed their pieces off the dark palette | #85 | `test:site`, notes, dark sheet and `--mute` (new) | a build of `bf5b7fd` |
+| a notebook tile painted its background over the seam of the tile beside it | #85 | `test:site`, notes, covering tile background (new) | `.tiling .sheet .bg { fill: none; }` removed |
+| the gallery named a rectangle sheet a board | #85 | `test:site`, tiling sheets, surface in the sheet name | a build of `bf5b7fd` |
 | the front-page tilings were not square | `f3b5023` | `test:render`, sheet without labels and readme images | `svg.js` and `readme-images.js` from `f3b5023^` |
 
 ## Benchmarks
