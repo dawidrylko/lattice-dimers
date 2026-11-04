@@ -4,15 +4,14 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-A diagonal piece covers two cells that share only a corner. On the $2n \times 2n$ board a tiling has an even number of them, from 0 to $2n^2$. The drawing shows the first tiling of the $4 \times 4$ board, in the gallery's numbering, for each possible number of diagonal pieces, with the straight pieces greyed out.
+A diagonal piece covers two cells that share only a corner, and on the $2n \times 2n$ board every tiling has an even number of them, anywhere from 0 to $2n^2$. For each possible number of diagonal pieces the drawing shows the first tiling of the $4 \times 4$ board in the gallery's numbering, with the straight pieces greyed out.
 
 ```js run
-const renderer = require('./src/renderer');
+const { drawTilings } = require('./site/notes.js');
 const counts = [0, 2, 4, 6, 8];
-const tilings = counts.map(k => renderer.unrankDiagonalTiling(renderer.createDiagonalUnranker({ rowCount: 4, colCount: 4, diagonals: k }), 0n));
-const svg = renderer.renderSheet(tilings, 1, { rowCount: 4, colCount: 4, style: 'dimer', labels: counts.map(k => `k = ${k}`) });
+const svgs = counts.flatMap(k => drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', diagonals: k, ranks: [0] }).svgs);
 
-figure(svg, 'Tilings of the 4 × 4 board with k = 0, 2, 4, 6 and 8 diagonal pieces.', { highlight: true });
+figure(svgs, 'Tilings of the 4 × 4 board with k = 0, 2, 4, 6 and 8 diagonal pieces.', { highlight: true });
 ```
 
 ## The polynomial

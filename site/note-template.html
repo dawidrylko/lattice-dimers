@@ -20,16 +20,13 @@
 <meta property="og:description" content="__DESCRIPTION__">
 <meta property="og:image" content="__SITE_URL__og-image.png">
 <style>
+__THEME_CSS__
 :root {
-  --bg: #ffffff; --fg: #111827; --muted: #6b7280; --border: #e5e7eb;
-  --surface: #f9fafb; --accent: #4f7cac;
   --series-1: #2a78d6; --series-2: #eb6834; --series-3: #1baf7a;
   --ordinal-1: #86b6ef; --ordinal-2: #3987e5; --ordinal-3: #1c5cab; --ordinal-4: #0d366b;
-  color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #0f1115; --fg: #e5e7eb; --muted: #9ca3af; --border: #262a33; --surface: #161a21; --accent: #7aa2cf;
-    --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70;
+  :root { --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70;
     --ordinal-1: #184f95; --ordinal-2: #2a78d6; --ordinal-3: #6da7ec; --ordinal-4: #b7d3f6; }
 }
 * { box-sizing: border-box; }
@@ -65,8 +62,10 @@ blockquote { margin: 0 0 14px; padding-left: 14px; border-left: 3px solid var(--
 .chart .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
 .chart .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
 .chart svg { display: block; width: 100%; max-width: 720px; height: auto; }
-.tiling { margin: 0 0 14px; }
-.tiling svg { display: block; width: calc(2 * var(--width, 200px)); max-width: 100%; height: auto; border-radius: 4px; }
+.tiling { margin: 0 0 14px; --scale: 1.5; }
+.tiling .sheet { display: flex; flex-wrap: wrap; width: fit-content; max-width: 100%; overflow: hidden; padding: 0 calc(var(--scale) * var(--pad)) calc(var(--scale) * var(--pad)) 0; }
+.tiling .sheet svg { width: calc(var(--scale) * var(--width)); margin: 0 calc(-1 * var(--scale) * var(--pad)) calc(-1 * var(--scale) * var(--pad)) 0; }
+@media (max-width: 560px) { .tiling { --scale: 1; } }
 .tiling figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .chart svg.narrow { display: none; max-width: 480px; }
 @media (max-width: 560px) {

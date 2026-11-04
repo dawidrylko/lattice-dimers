@@ -196,20 +196,28 @@ function createCellHelpers() {
       flush();
       outputs.push(renderChart(spec));
     },
-    figure: (svg, caption, { highlight = false } = {}) => {
-      const drawing = String(svg).trim();
+    figure: (svgs, caption, { highlight = false } = {}) => {
+      const drawings = [].concat(svgs).map(svg => String(svg).trim());
 
-      if (!/^<svg[\s>]/.test(drawing)) {
-        throw new Error('figure() takes an SVG drawing.');
+      if (!drawings.length || drawings.some(drawing => !/^<svg[\s>]/.test(drawing))) {
+        throw new Error('figure() takes an SVG drawing or a list of them.');
       }
 
       const id = `figure-${++figureCount}`;
-      const scoped = drawing.replace(/<style>([\s\S]*?)<\/style>/g, (_, css) => `<style>${scopeStyle(css, `#${id}`)}</style>`);
-      const width = Number((drawing.match(/^<svg[^>]*\swidth="(\d+(?:\.\d+)?)"/) || [])[1]) || 0;
+      const rules = new Set();
+      const bare = drawings.map(drawing =>
+        drawing.replace(/<style>([\s\S]*?)<\/style>/g, (_, css) => {
+          (css.match(/[^{}]+\{[^}]*\}/g) || []).forEach(rule => rules.add(rule));
+          return '';
+        }),
+      );
+      const style = rules.size ? `<style>${scopeStyle([...rules].join(''), `:where(#${id})`)}</style>` : '';
+      const width = Number((drawings[0].match(/^<svg[^>]*\swidth="(\d+(?:\.\d+)?)"/) || [])[1]) || 0;
+      const { PADDING } = repositoryRequire('./src/renderer').renderSheet;
 
       flush();
       outputs.push(
-        `<figure id="${id}" class="tiling output${highlight ? ' highlight' : ''}"${width ? ` style="--width: ${width}px"` : ''}>${scoped}${highlight ? `<style>#${id} .h,#${id} .v{fill:#d1d5db;stroke:#d1d5db}</style>` : ''}${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''}</figure>`,
+        `<figure id="${id}" class="tiling output${highlight ? ' highlight' : ''}" style="${width ? `--width: ${width}px; ` : ''}--pad: ${PADDING}px">${style}<div class="sheet">${bare.join('')}</div>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''}</figure>`,
       );
     },
   };
@@ -379,26 +387,35 @@ async function renderNote(markdown, { resolveLink, context }) {
 }
 
 /**
- * Draws tilings of one board, as the gallery numbers them, in the dimer style.
+ * Draws tilings of one board, as the gallery numbers them, in the dimer style, one SVG per tiling, each named for
+ * screen readers by its pieces, board, surface and number.
  * @param {Object} options
  * @property {number} options.rowCount The height.
  * @property {number} options.colCount The width or circumference.
  * @property {string} [options.pieces] 'domino' or 'domicule'.
  * @property {string} [options.surface] 'rectangle', 'cylinder' or 'torus'.
+ * @property {number} [options.diagonals] Only the domicule tilings of a rectangle with this many diagonal pieces, as the
+ * gallery's Diagonal pieces filter numbers them; the label under each tiling then gives that number.
  * @property {number[]|'all'} options.ranks The 0-based numbers of the tilings to draw.
- * @property {number} [options.columns] Tilings per row of the drawing.
- * @returns {{ svg: string, total: bigint }} The drawing and the number of tilings it chooses from.
+ * @returns {{ svgs: string[], total: bigint }} The drawings and the number of tilings they choose from.
  */
-function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectangle', ranks, columns }) {
+function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectangle', diagonals, ranks }) {
   if (!['domino', 'domicule'].includes(pieces) || !['rectangle', 'cylinder', 'torus'].includes(surface)) {
     throw new Error(`drawTilings() takes pieces domino or domicule and surface rectangle, cylinder or torus, not ${pieces} on a ${surface}.`);
+  }
+
+  if (diagonals !== undefined && (pieces !== 'domicule' || surface !== 'rectangle')) {
+    throw new Error(`drawTilings() counts diagonal pieces of domicule tilings of a rectangle only, not ${pieces} on a ${surface}.`);
   }
 
   const renderer = repositoryRequire('./src/renderer');
   let unranker;
   let unrank;
 
-  if (surface !== 'rectangle') {
+  if (diagonals !== undefined) {
+    unranker = renderer.createDiagonalUnranker({ rowCount, colCount, diagonals });
+    unrank = renderer.unrankDiagonalTiling;
+  } else if (surface !== 'rectangle') {
     unranker = renderer.createPeriodicUnranker({ rowCount, colCount, lattice: pieces === 'domino' ? 'square' : 'king', torus: surface === 'torus' });
     unrank = renderer.unrankPeriodicTiling;
   } else if (pieces === 'domino') {
@@ -410,20 +427,21 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectang
   }
 
   const chosen = ranks === 'all' ? Array.from({ length: Number(unranker.total) }, (_, i) => i) : ranks;
-  const svg = renderer.renderSheet(
-    chosen.map(rank => unrank(unranker, BigInt(rank))),
-    1,
-    {
+  const filter = diagonals === undefined ? '' : ` with ${diagonals} diagonal piece${diagonals === 1 ? '' : 's'}`;
+  const svgs = chosen.map(rank => {
+    const name = `${pieces === 'domicule' ? 'Domicule' : 'Domino'} tiling number ${rank + 1}${filter} of a ${rowCount} by ${colCount} ${surface === 'rectangle' ? 'board' : surface}`;
+    const svg = renderer.renderSheet([unrank(unranker, BigInt(rank))], 1, {
       rowCount,
       colCount,
       style: 'dimer',
-      labels: chosen.map(rank => `#${rank + 1}`),
-      columns,
+      labels: [diagonals === undefined ? `#${rank + 1}` : `k = ${diagonals}`],
       ...(surface !== 'rectangle' && { surface }),
-    },
-  );
+    });
 
-  return { svg, total: unranker.total };
+    return svg.trim().replace(/^<svg /, `<svg role="img" aria-label="${escapeHtml(name)}" `);
+  });
+
+  return { svgs, total: unranker.total };
 }
 
 /**

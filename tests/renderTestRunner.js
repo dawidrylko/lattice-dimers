@@ -854,7 +854,7 @@ const figureCell = code => renderNote(['# Figure', '', '```js run', code, '```',
 const figureTestCases = [
   {
     name: 'a drawing with a caption',
-    run: () => figureCell("figure('<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"20\"></svg>', 'a <b>', { highlight: true });").then(({ html }) => /<figure id="figure-\d+" class="tiling output highlight" style="--width: 40px"><svg/.test(html) && html.includes('<figcaption>a &lt;b&gt;</figcaption>')),
+    run: () => figureCell("figure('<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"20\"></svg>', 'a <b>', { highlight: true });").then(({ html }) => /<figure id="figure-\d+" class="tiling output highlight" style="--width: 40px; --pad: 12px"><div class="sheet"><svg/.test(html) && html.includes('<figcaption>a &lt;b&gt;</figcaption>')),
   },
   {
     name: 'something that is not a drawing',
@@ -866,7 +866,22 @@ const figureTestCases = [
       figureCell("figure('<svg xmlns=\"http://www.w3.org/2000/svg\"><style>text{fill:red}.h,.v{stroke:blue}</style></svg>');").then(({ html }) => {
         const id = html.match(/<figure id="(figure-\d+)"/)[1];
 
-        return html.includes(`<style>#${id} text{fill:red}#${id} .h,#${id} .v{stroke:blue}</style>`);
+        return html.includes(`<style>:where(#${id}) text{fill:red}:where(#${id}) .h,:where(#${id}) .v{stroke:blue}</style>`);
+      }),
+  },
+  {
+    name: 'drawings that share one style',
+    run: () =>
+      figureCell(
+        "figure(['<svg xmlns=\"http://www.w3.org/2000/svg\"><style>text{fill:red}</style></svg>', '<svg xmlns=\"http://www.w3.org/2000/svg\"><style>text{fill:red}.d{fill:blue}</style></svg>']);",
+      ).then(({ html }) => {
+        const id = html.match(/<figure id="(figure-\d+)"/)[1];
+
+        return (
+          (html.match(/<style>/g) || []).length === 1 &&
+          html.includes(`<style>:where(#${id}) text{fill:red}:where(#${id}) .d{fill:blue}</style>`) &&
+          (html.match(/<svg /g) || []).length === 2
+        );
       }),
   },
   {
@@ -884,9 +899,33 @@ const figureTestCases = [
   {
     name: 'every domino tiling of the 4 x 4 board',
     run: async () => {
-      const { svg, total } = drawTilings({ rowCount: 4, colCount: 4, ranks: 'all' });
+      const { svgs, total } = drawTilings({ rowCount: 4, colCount: 4, ranks: 'all' });
 
-      return total === 36n && svg.startsWith('<svg') && (svg.match(/>#\d+</g) || []).length === 36;
+      return (
+        total === 36n &&
+        svgs.length === 36 &&
+        svgs.every((svg, i) => svg.startsWith(`<svg role="img" aria-label="Domino tiling number ${i + 1} of a 4 by 4 board" `) && (svg.match(/>#\d+</g) || []).length === 1)
+      );
+    },
+  },
+  {
+    name: 'the names of the drawings on every surface',
+    run: async () =>
+      [
+        [{ pieces: 'domicule', surface: 'cylinder', ranks: [661] }, 'Domicule tiling number 662 of a 4 by 4 cylinder'],
+        [{ pieces: 'domino', surface: 'torus', ranks: [0] }, 'Domino tiling number 1 of a 4 by 4 torus'],
+        [{ pieces: 'domicule', diagonals: 8, ranks: [0] }, 'Domicule tiling number 1 with 8 diagonal pieces of a 4 by 4 board'],
+      ].every(([options, name]) => drawTilings({ rowCount: 4, colCount: 4, ...options }).svgs[0].includes(`aria-label="${name}"`)),
+  },
+  {
+    name: 'diagonal pieces counted on a torus',
+    run: async () => {
+      try {
+        drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', surface: 'torus', diagonals: 2, ranks: [0] });
+        return false;
+      } catch (error) {
+        return error.message.includes('rectangle only');
+      }
     },
   },
 ];
