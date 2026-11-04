@@ -15,7 +15,7 @@ const periodicModular = require('../src/solvers/periodicTilingSolver-Modular.js'
 const diagonalReference = require('../src/solvers/domiculeDiagonalSolver-BigInt.js');
 const { countPeriodicDiagonals } = require('../src/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
-const { CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
+const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
 const { readBenchmarkRuns } = require('./benchmarkRuns');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -582,6 +582,7 @@ async function buildNotes(notes, context) {
       .replace(/__URL__/g, `${SITE_URL}notes/${note.slug}.html`)
       .replace(/__SITE_URL__/g, SITE_URL)
       .replace('__CONTENT__', () => html.replace('</h1>', `</h1>\n${tocHtml}`))
+      .replace('__THEME_CSS__', () => THEME_CSS)
       .replace('__CHROME_CSS__', () => CHROME_CSS)
       .replace('__SITE_HEADER__', () => renderHeader({ root: '../', current: note.slug, notes }))
       .replace('__SITE_FOOTER__', () =>
@@ -699,6 +700,7 @@ async function __main__() {
     .replace(/__BENCHMARK_DIRECTORY__/g, `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`)
     .replace('__OLDER_BENCHMARKS__', () => buildOlderBenchmarks())
     .replace(/__DOMICULE_SWEEPS__/g, DOMICULE_SWEEPS.toLocaleString('en-US'))
+    .replace('__THEME_CSS__', () => THEME_CSS)
     .replace('__CHROME_CSS__', () => CHROME_CSS)
     .replace('__SITE_HEADER__', () => renderHeader({ root: '', current: 'home', notes }))
     .replace('__SITE_FOOTER__', () => renderFooter());

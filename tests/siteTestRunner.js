@@ -10,6 +10,8 @@ const SITE_DIRECTORY = path.resolve(process.env.SITE_DIRECTORY || path.join(ROOT
 const REPOSITORY_LINK = /https:\/\/github\.com\/dawidrylko\/lattice-dimers\/(?:tree|blob)\/master\/([^"'#?\s<>)]+)/g;
 const EXTERNAL_RESOURCE = /<script\b[^>]*\bsrc="https?:[^>]*>|<link\b(?=[^>]*\brel="stylesheet")[^>]*\bhref="https?:[^>]*>/g;
 const MIN_HIT_CONTRAST = 4.5;
+const MIN_FIGURE_LABEL = 11;
+const FIGURE_NAME = /^(Domino|Domicule) tiling number \d+( with \d+ diagonal pieces?)? of a \d+ by \d+ (rectangle|cylinder|torus)$/;
 const MIN_SEAM_DISTANCE = 40;
 const ARCHIVES = [
   ['benchmarks/results/2024-03', 'March 2024, up to 1,000 runs per board, machine not recorded'],
@@ -337,7 +339,7 @@ async function checkSheets(page, baseUrl, width) {
 
   for (const board of SHEET_BOARDS) {
     const [, rowCount, colCount] = board.match(/^(\d+)x(\d+)/);
-    const label = `${board.includes('-diagonal') ? 'Domicule' : 'Domino'} tilings of a ${rowCount} by ${colCount}`;
+    const label = `${board.includes('-diagonal') ? 'Domicule' : 'Domino'} tilings of a ${rowCount} by ${colCount} ${(board.match(/cylinder|torus/) || ['rectangle'])[0]}`;
     await page.evaluate(`location.hash = 'gallery/${board}/1'`);
     await page.waitFor(
       `(document.querySelector('#sheet svg')?.getAttribute('aria-label') || '').includes('${label}')`,
@@ -910,9 +912,45 @@ async function checkNotes(page, baseUrl, width) {
       math: document.querySelectorAll('.math').length,
       katex: document.querySelectorAll('.katex').length,
       chartFont: [...document.querySelectorAll('figure.chart svg text')].map(text => getComputedStyle(text).fontFamily).filter(font => /monospace/.test(font)).length,
-      figures: [...document.querySelectorAll('figure.tiling > svg')].filter(svg => svg.getBoundingClientRect().width > 0 && svg.getBoundingClientRect().right <= document.documentElement.clientWidth + 0.5).length,
+      figures: [...document.querySelectorAll('figure.tiling')].filter(figure => { const svgs = [...figure.querySelectorAll('svg:not(svg svg)')]; return svgs.length > 0 && svgs.every(svg => svg.getBoundingClientRect().width > 0 && svg.getBoundingClientRect().right <= document.documentElement.clientWidth + 0.5); }).length,
       charts: [...document.querySelectorAll('figure.chart')].map(figure => [...figure.querySelectorAll('svg')].filter(svg => getComputedStyle(svg).display !== 'none').length),
+      label: Math.min(...[...document.querySelectorAll('figure.tiling svg text')].map(text => {
+        const svg = text.closest('figure.tiling svg:not(svg svg)');
+
+        return (parseFloat(getComputedStyle(text).fontSize) * svg.getBoundingClientRect().width) / svg.viewBox.baseVal.width;
+      })),
+      covering: [...document.querySelectorAll('figure.tiling .bg')].filter(bg => getComputedStyle(bg).fill !== 'none').length,
+      unnamed: [...document.querySelectorAll('figure.tiling svg:not(svg svg)')].filter(svg => svg.getAttribute('role') !== 'img' || !${FIGURE_NAME}.test(svg.getAttribute('aria-label') || '')).length,
     }))()`);
+    await page.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'dark' }] });
+    const dark = await page.evaluate(`(() => {
+      const probe = document.body.appendChild(document.createElement('i'));
+      probe.style.color = 'var(--mute)';
+      const mute = getComputedStyle(probe).color;
+      probe.remove();
+
+      return {
+        backgrounds: [...document.querySelectorAll('figure.tiling')].filter(figure => { const sheet = figure.querySelector('.sheet'); return !sheet || ['rgba(0, 0, 0, 0)', 'rgb(255, 255, 255)'].includes(getComputedStyle(sheet).backgroundColor); }).length,
+        muted: [...document.querySelectorAll('figure.tiling.highlight .h, figure.tiling.highlight .v')].filter(piece => getComputedStyle(piece).fill !== mute).length,
+      };
+    })()`);
+    await page.send('Emulation.setEmulatedMedia', { features: [] });
+
+    if (figures && !(state.label >= MIN_FIGURE_LABEL)) {
+      problems.push(`${slug} labels its tilings at ${state.label.toFixed(1)} px, under ${MIN_FIGURE_LABEL} px`);
+    }
+
+    if (state.covering) {
+      problems.push(`${slug} paints ${state.covering} tiling backgrounds over the seam marks of the tiling beside them`);
+    }
+
+    if (state.unnamed) {
+      problems.push(`${slug} has ${state.unnamed} tiling drawings without a name that says what they show`);
+    }
+
+    if (dark.backgrounds || dark.muted) {
+      problems.push(`${slug} draws ${dark.backgrounds} drawings off the dark sheet and ${dark.muted} greyed pieces off the dark palette`);
+    }
 
     if (state.cells !== cells) {
       problems.push(`${slug} has ${state.cells} cells instead of ${cells}`);

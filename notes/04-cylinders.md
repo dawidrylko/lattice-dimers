@@ -4,7 +4,7 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-On a cylinder the left and right edges of the board are glued, so a piece may cross the seam between the last and the first column. Such a piece is drawn cut, half on each side, and the glued edges are marked. The drawings show tilings of the cylinder of circumference 4 and height 4, with dominoes and with domicules, spread over the numbering.
+On a cylinder the left and right edges of the board are glued, so a piece may cross the seam between the last and the first column. The drawings mark the glued edges and draw a piece that crosses the seam cut, with one half on each side. They show tilings of the cylinder of circumference 4 and height 4, first with dominoes and then with domicules, spread over the numbering.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
@@ -12,9 +12,9 @@ const { drawTilings } = require('./site/notes.js');
 for (const pieces of ['domino', 'domicule']) {
   const { total } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'cylinder', ranks: [0] });
   const ranks = [0, 1, 2, 3].map(i => Math.floor((Number(total) * i) / 4));
-  const { svg } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'cylinder', ranks });
+  const { svgs } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'cylinder', ranks });
 
-  figure(svg, `4 of the ${total} ${pieces} tilings of the cylinder of circumference 4 and height 4.`);
+  figure(svgs, `4 of the ${total} ${pieces} tilings of the cylinder of circumference 4 and height 4.`);
 }
 ```
 

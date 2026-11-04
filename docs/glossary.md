@@ -29,7 +29,7 @@ A board is the h × w grid of cells a tiling covers, on any surface; the gallery
 
 | term | meaning | where it is used | avoid |
 | --- | --- | --- | --- |
-| rectangle | a board with no glued edges; the 2n × 2n board is the square case | the gallery's Surface switch (Rectangle), the gallery sentence of the README and the site | "board" for the rectangle alone, as in "a board, cylinder or torus" |
+| rectangle | a board with no glued edges; the 2n × 2n board is the square case | the gallery's Surface switch (Rectangle), the gallery sentence of the README and the site, the screen-reader names of the gallery sheets and the notebook drawings ("Domino tiling number 3 of a 4 by 4 rectangle") | "board" for the rectangle alone, as in "a board, cylinder or torus" |
 | cylinder, cylinders | a board of circumference w and height h whose left and right edges are glued and which is open at the top and the bottom | the gallery's Surface switch (Cylinder), the Cylinders benchmark tab, the Cylinders notebook ([`notes/04-cylinders.md`](../notes/04-cylinders.md)) | "Tori and cylinders" as the name of one notebook or tab |
 | torus, tori | a board whose left and right edges and top and bottom edges are both glued; tori is the plural, as in the literature | the gallery's Surface switch (Torus), the Tori benchmark tab, the Tori notebook ([`notes/05-tori.md`](../notes/05-tori.md), page `tori.html`) | "torus" as the name of the notebook or its file |
 | glued edge | an edge of the board that is identified with the opposite edge; a cylinder has one pair, a torus two | the gallery's legend ("left and right edges glued", "top and bottom edges glued") and its label "pieces across a glued edge", the drawings, the problem sections of the Cylinders and Tori notebooks | |

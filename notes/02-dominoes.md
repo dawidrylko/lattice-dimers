@@ -4,13 +4,13 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-A domino covers two cells that share a side, and a tiling covers every cell exactly once. In the dimer drawing each cell is a vertex and each domino an edge between two of them, so a tiling is a perfect matching of the grid graph. The $4 \times 4$ board has 36 tilings, $a(2)$ in the table below.
+A domino covers two cells that share a side, and a tiling lays dominoes on the board so that every cell is covered exactly once. The dimer drawing turns each cell into a vertex and each domino into an edge between two of them, which makes a tiling a perfect matching of the grid graph. The $4 \times 4$ board has 36 tilings, the value $a(2)$ in the table below, and the drawing shows all of them.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
-const { svg, total } = drawTilings({ rowCount: 4, colCount: 4, ranks: 'all', columns: 9 });
+const { svgs, total } = drawTilings({ rowCount: 4, colCount: 4, ranks: 'all' });
 
-figure(svg, `All ${total} domino tilings of the 4 × 4 board, numbered as in the gallery.`);
+figure(svgs, `All ${total} domino tilings of the 4 × 4 board, numbered as in the gallery.`);
 ```
 
 ## Three ways to the same numbers

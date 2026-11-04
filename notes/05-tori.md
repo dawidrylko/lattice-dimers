@@ -4,7 +4,7 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-On a torus both pairs of opposite edges of the board are glued, so a piece may cross the seam between the last and the first column or between the last and the first row. Such a piece is drawn cut, half on each side, and the glued edges are marked, one pair with one tick and the other with two. The drawings show tilings of the $4 \times 4$ torus, with dominoes and with domicules, spread over the numbering.
+On a torus both pairs of opposite edges of the board are glued, so a piece may cross the column seam, between the last and the first column, or the row seam, between the last and the first row. A piece that crosses a seam is drawn cut, with one half on each side, and the glued edges are marked, one pair with one tick and the other with two. The drawings show tilings of the $4 \times 4$ torus, first with dominoes and then with domicules, spread over the numbering.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
@@ -12,9 +12,9 @@ const { drawTilings } = require('./site/notes.js');
 for (const pieces of ['domino', 'domicule']) {
   const { total } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'torus', ranks: [0] });
   const ranks = [0, 1, 2, 3].map(i => Math.floor((Number(total) * i) / 4));
-  const { svg } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'torus', ranks });
+  const { svgs } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'torus', ranks });
 
-  figure(svg, `4 of the ${total} ${pieces} tilings of the 4 × 4 torus.`);
+  figure(svgs, `4 of the ${total} ${pieces} tilings of the 4 × 4 torus.`);
 }
 ```
 

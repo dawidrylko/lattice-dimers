@@ -4,7 +4,7 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-A domicule covers two cells that share a side, a straight piece, or two cells that share only a corner, a diagonal piece. The $2 \times 2$ board has 3 tilings: two of straight pieces and one of two crossing diagonal pieces. The $4 \times 4$ board has 280; the second drawing shows 8 of them, spread over the numbering.
+A domicule covers two cells that share either a side, as a straight piece, or only a corner, as a diagonal piece. Of the 3 tilings of the $2 \times 2$ board, two use straight pieces and the third uses two diagonal pieces that cross. The $4 \times 4$ board has 280 tilings, and the second drawing shows 8 of them, spread over the numbering.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
@@ -12,8 +12,8 @@ const small = drawTilings({ rowCount: 2, colCount: 2, pieces: 'domicule', ranks:
 const ranks = Array.from({ length: 8 }, (_, i) => 35 * i);
 const board = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', ranks });
 
-figure(small.svg, `All ${small.total} domicule tilings of the 2 × 2 board.`);
-figure(board.svg, `8 of the ${board.total} domicule tilings of the 4 × 4 board.`);
+figure(small.svgs, `All ${small.total} domicule tilings of the 2 × 2 board.`);
+figure(board.svgs, `8 of the ${board.total} domicule tilings of the 4 × 4 board.`);
 ```
 
 ## The sequence up to 20 × 20

@@ -11,6 +11,52 @@ const NOTE_LABELS = {
   diagonals: 'Diagonal pieces',
 };
 
+const THEME_CSS = `
+:root {
+  --bg: #ffffff; --fg: #111827; --muted: #6b7280; --border: #e5e7eb;
+  --surface: #f9fafb; --accent: #4f7cac; --accent-fg: #ffffff;
+  --h: #044cb6; --v: #5eaceb; --d: #ab3415; --a: #f09c17;
+  --paper-h: #ffffff; --paper-v: #e8eef6; --ink: #334155;
+  --sheet: #ffffff; --board: #f3f4f6; --edge: #1f2937; --label: #4b5563; --hit: #dc2626;
+  --mute: #d1d5db; --seam: #c026d3; --seam-ends: #15803d;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115; --fg: #e5e7eb; --muted: #9ca3af; --border: #262a33;
+    --surface: #161a21; --accent: #7aa2cf; --accent-fg: #0f1115;
+    --h: #5590f3; --v: #3b5d96; --d: #f0a53a; --a: #d9601e;
+    --paper-h: #1f2530; --paper-v: #283142; --ink: #8b95a5;
+    --sheet: #161a21; --board: #232833; --edge: #0b0d11; --label: #9ca3af; --hit: #f87171;
+    --mute: #3a404c; --seam: #d946ef; --seam-ends: #4ade80;
+  }
+}
+.sheet { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--sheet); }
+.sheet .bg { fill: var(--sheet); }
+.sheet .b { fill: var(--board); }
+.sheet text { fill: var(--label); }
+.sheet .blocks .h, .sheet .blocks .v, .sheet .blocks .d, .sheet .blocks .a { stroke: var(--edge); }
+.sheet .blocks .h { fill: var(--h); } .sheet .blocks .v { fill: var(--v); } .sheet .blocks .d { fill: var(--d); } .sheet .blocks .a { fill: var(--a); }
+.sheet .dimer .h { fill: var(--h); stroke: var(--h); } .sheet .dimer .v { fill: var(--v); stroke: var(--v); }
+.sheet .dimer .d { fill: var(--d); stroke: var(--d); } .sheet .dimer .a { fill: var(--a); stroke: var(--a); }
+.sheet .dimer .o { stroke: none; }
+.sheet .dimer .e { fill: var(--edge); stroke: var(--edge); }
+.sheet .dimer .r { stroke: var(--board); }
+.sheet .engraving .h, .sheet .engraving .v, .sheet .engraving .cd, .sheet .engraving .ca { stroke: var(--ink); }
+.sheet .engraving .h { fill: var(--paper-h); } .sheet .engraving .v { fill: var(--paper-v); }
+:root { --ed: color-mix(in srgb, var(--d) 55%, var(--ink)); --ea: color-mix(in srgb, var(--a) 55%, var(--ink)); }
+.sheet .engraving .cd { fill: color-mix(in srgb, var(--ed) 9%, var(--paper-h)); }
+.sheet .engraving .ca { fill: color-mix(in srgb, var(--ea) 9%, var(--paper-h)); }
+.sheet .engraving .d { stroke: var(--ed); } .sheet .engraving .a { stroke: var(--ea); }
+.sheet svg { display: block; max-width: 100%; height: auto; }
+.sheet .s, .sheet .m { stroke: var(--seam); }
+.sheet .t, .sheet .u { stroke: var(--seam-ends); }
+.sheet text.n { fill: var(--muted); }
+:is(#gallery[data-highlight], .tiling.highlight) .sheet .blocks .h, :is(#gallery[data-highlight], .tiling.highlight) .sheet .blocks .v { fill: var(--mute); }
+:is(#gallery[data-highlight], .tiling.highlight) .sheet .dimer .h, :is(#gallery[data-highlight], .tiling.highlight) .sheet .dimer .v { fill: var(--mute); stroke: var(--mute); }
+:is(#gallery[data-highlight], .tiling.highlight) .sheet .engraving .h, :is(#gallery[data-highlight], .tiling.highlight) .sheet .engraving .v { fill: var(--sheet); stroke: var(--mute); }
+`.trim();
+
 const CHROME_CSS = `
 .site-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 20px; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
 .brand { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 24px; font-weight: 700; line-height: 1.25; color: var(--fg); text-decoration: none; }
@@ -75,4 +121,4 @@ function renderFooter(lines = []) {
   ].join('\n');
 }
 
-module.exports = { CHROME_CSS, renderHeader, renderFooter };
+module.exports = { THEME_CSS, CHROME_CSS, renderHeader, renderFooter };

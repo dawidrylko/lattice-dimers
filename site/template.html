@@ -31,25 +31,7 @@
 <meta name="twitter:image:alt" content="Four of the 3,263,262,629,905 domicule tilings of an 8×8 board, drawn as dimers">
 <script type="application/ld+json">__JSON_LD__</script>
 <style>
-:root {
-  --bg: #ffffff; --fg: #111827; --muted: #6b7280; --border: #e5e7eb;
-  --surface: #f9fafb; --accent: #4f7cac; --accent-fg: #ffffff;
-  --h: #044cb6; --v: #5eaceb; --d: #ab3415; --a: #f09c17;
-  --paper-h: #ffffff; --paper-v: #e8eef6; --ink: #334155;
-  --sheet: #ffffff; --board: #f3f4f6; --edge: #1f2937; --label: #4b5563; --hit: #dc2626;
-  --mute: #d1d5db; --seam: #c026d3; --seam-ends: #15803d;
-  color-scheme: light dark;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1115; --fg: #e5e7eb; --muted: #9ca3af; --border: #262a33;
-    --surface: #161a21; --accent: #7aa2cf; --accent-fg: #0f1115;
-    --h: #5590f3; --v: #3b5d96; --d: #f0a53a; --a: #d9601e;
-    --paper-h: #1f2530; --paper-v: #283142; --ink: #8b95a5;
-    --sheet: #161a21; --board: #232833; --edge: #0b0d11; --label: #9ca3af; --hit: #f87171;
-    --mute: #3a404c; --seam: #d946ef; --seam-ends: #4ade80;
-  }
-}
+__THEME_CSS__
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
 main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
@@ -105,30 +87,6 @@ nav.tabs a[aria-current="page"] { color: var(--fg); border-color: var(--accent);
 [data-style="engraving"] .legend i.v { background: var(--paper-v); }
 [data-style="engraving"] .legend i.d { background: repeating-linear-gradient(45deg, var(--ed) 0 1px, color-mix(in srgb, var(--ed) 9%, var(--paper-h)) 1px 4px); }
 [data-style="engraving"] .legend i.a { background: repeating-linear-gradient(-45deg, var(--ea) 0 1px, color-mix(in srgb, var(--ea) 9%, var(--paper-h)) 1px 4px); }
-.sheet { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--sheet); }
-.sheet .bg { fill: var(--sheet); }
-.sheet .b { fill: var(--board); }
-.sheet text { fill: var(--label); }
-.sheet .blocks .h, .sheet .blocks .v, .sheet .blocks .d, .sheet .blocks .a { stroke: var(--edge); }
-.sheet .blocks .h { fill: var(--h); } .sheet .blocks .v { fill: var(--v); } .sheet .blocks .d { fill: var(--d); } .sheet .blocks .a { fill: var(--a); }
-.sheet .dimer .h { fill: var(--h); stroke: var(--h); } .sheet .dimer .v { fill: var(--v); stroke: var(--v); }
-.sheet .dimer .d { fill: var(--d); stroke: var(--d); } .sheet .dimer .a { fill: var(--a); stroke: var(--a); }
-.sheet .dimer .o { stroke: none; }
-.sheet .dimer .e { fill: var(--edge); stroke: var(--edge); }
-.sheet .dimer .r { stroke: var(--board); }
-.sheet .engraving .h, .sheet .engraving .v, .sheet .engraving .cd, .sheet .engraving .ca { stroke: var(--ink); }
-.sheet .engraving .h { fill: var(--paper-h); } .sheet .engraving .v { fill: var(--paper-v); }
-:root { --ed: color-mix(in srgb, var(--d) 55%, var(--ink)); --ea: color-mix(in srgb, var(--a) 55%, var(--ink)); }
-.sheet .engraving .cd { fill: color-mix(in srgb, var(--ed) 9%, var(--paper-h)); }
-.sheet .engraving .ca { fill: color-mix(in srgb, var(--ea) 9%, var(--paper-h)); }
-.sheet .engraving .d { stroke: var(--ed); } .sheet .engraving .a { stroke: var(--ea); }
-.sheet svg { display: block; max-width: 100%; height: auto; }
-.sheet .s, .sheet .m { stroke: var(--seam); }
-.sheet .t, .sheet .u { stroke: var(--seam-ends); }
-.sheet text.n { fill: var(--muted); }
-#gallery[data-highlight] .sheet .blocks .h, #gallery[data-highlight] .sheet .blocks .v { fill: var(--mute); }
-#gallery[data-highlight] .sheet .dimer .h, #gallery[data-highlight] .sheet .dimer .v { fill: var(--mute); stroke: var(--mute); }
-#gallery[data-highlight] .sheet .engraving .h, #gallery[data-highlight] .sheet .engraving .v { fill: var(--sheet); stroke: var(--mute); }
 #gallery[data-highlight] .legend i.h, #gallery[data-highlight] .legend i.v { --k: var(--mute); }
 #gallery[data-highlight][data-style="engraving"] .legend i.h, #gallery[data-highlight][data-style="engraving"] .legend i.v { background: var(--sheet); border-color: var(--mute); }
 .legend i.s, [data-style] .legend i.s, .legend i.t, [data-style] .legend i.t { position: relative; height: 0; border: 0; border-top: 1.5px dashed var(--k); border-radius: 0; background: none; vertical-align: 3px; }
@@ -705,7 +663,7 @@ function showSheet(board, tilings, first, labels) {
   svg.setAttribute('role', 'img');
   svg.setAttribute(
     'aria-label',
-    `${board.pieces === 'domicule' ? 'Domicule' : 'Domino'} tilings of a ${board.rowCount} by ${board.colCount} ${board.surface === 'rectangle' ? 'board' : board.surface}`,
+    `${board.pieces === 'domicule' ? 'Domicule' : 'Domino'} tilings of a ${board.rowCount} by ${board.colCount} ${board.surface}`,
   );
 }
 
