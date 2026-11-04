@@ -119,12 +119,18 @@ function executeMemoryTests() {
   return runs.every(({ file, command, args, expectedResult }, index) => {
     process.stdout.write(`Executing memory test ${index + 1} of ${runs.length} for "${file} ${args.join(' ')}"... `);
 
-    const { stdout, stderr } = spawnSync(process.env.PYTHON || 'python3', ['-I', '-c', measure, ...command], {
+    const { stdout, stderr, error } = spawnSync(process.env.PYTHON || 'python3', ['-I', '-c', measure, ...command], {
       cwd: ROOT_DIRECTORY,
       encoding: 'utf-8',
       timeout: MEMORY_TEST_TIMEOUT,
     });
     const [status, peak, output] = (stdout || '').trim().split(' ');
+
+    if (error) {
+      console.error(`Failed! ${error.message}`);
+
+      return false;
+    }
 
     if (status !== '0' || output !== expectedResult || !(Number(peak) <= MEMORY_TEST_BYTES)) {
       console.error(`Failed! Exit code ${status}, ${output || (stderr || '').trim()}, peak ${Math.round(Number(peak) / 2 ** 20)} MB of at most ${MEMORY_TEST_BYTES / 2 ** 20} MB`);

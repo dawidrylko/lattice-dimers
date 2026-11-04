@@ -57,7 +57,8 @@ def count_modulo(board):
     js/solvers/periodicTilingSolver-Modular.js, with the same two tables of 32-bit counts. A cell step moves
     the states block by block, one move at a time: within one move no two states share a target, so the
     counts are added to their targets at once and reduced modulo the prime as in the JavaScript solver. The
-    targets of each block and move are kept between cells only while the bound 2 cols state_count of their number stays within CACHED_STATES."""
+    sources and targets of each block and move are kept between cells only while 2 * cols * state_count
+    stays within CACHED_STATES."""
     rows, cols, prime = board["rows"], board["cols"], board["prime"]
     torus, twisted = board["torus"], board["twisted"]
     lattice = LATTICES[board["lattice"]]
