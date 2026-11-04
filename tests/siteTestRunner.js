@@ -919,6 +919,7 @@ async function checkNotes(page, baseUrl, width) {
 
         return (parseFloat(getComputedStyle(text).fontSize) * svg.getBoundingClientRect().width) / svg.viewBox.baseVal.width;
       })),
+      covering: [...document.querySelectorAll('figure.tiling .bg')].filter(bg => getComputedStyle(bg).fill !== 'none').length,
       unnamed: [...document.querySelectorAll('figure.tiling svg:not(svg svg)')].filter(svg => svg.getAttribute('role') !== 'img' || !${FIGURE_NAME}.test(svg.getAttribute('aria-label') || '')).length,
     }))()`);
     await page.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'dark' }] });
@@ -929,7 +930,7 @@ async function checkNotes(page, baseUrl, width) {
       probe.remove();
 
       return {
-        backgrounds: [...document.querySelectorAll('figure.tiling .bg')].filter(bg => { const sheet = bg.closest('.sheet'); return !sheet || getComputedStyle(sheet).backgroundColor === 'rgb(255, 255, 255)' || getComputedStyle(bg).fill !== getComputedStyle(sheet).backgroundColor; }).length,
+        backgrounds: [...document.querySelectorAll('figure.tiling')].filter(figure => { const sheet = figure.querySelector('.sheet'); return !sheet || ['rgba(0, 0, 0, 0)', 'rgb(255, 255, 255)'].includes(getComputedStyle(sheet).backgroundColor); }).length,
         muted: [...document.querySelectorAll('figure.tiling.highlight .h, figure.tiling.highlight .v')].filter(piece => getComputedStyle(piece).fill !== mute).length,
       };
     })()`);
@@ -939,12 +940,16 @@ async function checkNotes(page, baseUrl, width) {
       problems.push(`${slug} labels its tilings at ${state.label.toFixed(1)} px, under ${MIN_FIGURE_LABEL} px`);
     }
 
+    if (state.covering) {
+      problems.push(`${slug} paints ${state.covering} tiling backgrounds over the seam marks of the tiling beside them`);
+    }
+
     if (state.unnamed) {
       problems.push(`${slug} has ${state.unnamed} tiling drawings without a name that says what they show`);
     }
 
     if (dark.backgrounds || dark.muted) {
-      problems.push(`${slug} draws ${dark.backgrounds} tilings off the dark sheet and ${dark.muted} greyed pieces off the dark palette`);
+      problems.push(`${slug} draws ${dark.backgrounds} drawings off the dark sheet and ${dark.muted} greyed pieces off the dark palette`);
     }
 
     if (state.cells !== cells) {
