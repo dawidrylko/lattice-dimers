@@ -21,8 +21,8 @@ figure(board.svgs, `8 of the ${board.total} domicule tilings of the 4 × 4 board
 The `BigInt` solver counts the boards up to $16 \times 16$, the modular one $18 \times 18$ and $20 \times 20$. The data section of the OEIS entry lists the terms up to $a(9)$; the [OEIS A239273 b-file](https://oeis.org/A239273/b239273.txt) continues to $a(12)$ ($24 \times 24$), beyond the solvers here, and $a(10)$ is checked against it.
 
 ```js run
-const reference = require('./src/solvers/domiculeTilingSolver-BigInt.js');
-const known = require('./data').testCasesDomicule;
+const reference = require('./js/solvers/domiculeTilingSolver-BigInt.js');
+const known = require('./js/core/cases').testCasesDomicule;
 const bFile = { 10: '974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427' };
 
 nb.terms = [];
@@ -52,7 +52,7 @@ table(['n', 'board', 'a(n)', 'digits', 'solver', 'status'], rows);
 `T(h, w)` counts the domicule tilings of an $h \times w$ board. The table is symmetric, and its diagonal of even sides is A239273.
 
 ```js run
-const { calculateTotalTilingCombinations } = require('./src/solvers/domiculeTilingSolver-BigInt.js');
+const { calculateTotalTilingCombinations } = require('./js/solvers/domiculeTilingSolver-BigInt.js');
 const sides = [1, 2, 3, 4, 5, 6, 7, 8];
 
 table(
@@ -66,7 +66,7 @@ table(
 The Kahn-Lovász theorem bounds $\log_2$ of the count. Each prime below $2^{31}$ adds at least 30 bits, and one more prime checks the result.
 
 ```js run
-const { calculateLog2Bound } = require('./src/solvers/domiculeTilingSolver-Modular.js');
+const { calculateLog2Bound } = require('./js/solvers/domiculeTilingSolver-Modular.js');
 
 table(
   ['board', 'log2 of the bound', 'log2 of a(n)', 'primes for the CRT', 'check primes'],
@@ -84,7 +84,7 @@ table(
 The $8 \times 8$ board counted modulo the two largest primes below $2^{31}$, combined, and checked against a third.
 
 ```js run
-const { listPrimes, countModulo, combineResidues } = require('./src/solvers/domiculeTilingSolver-Modular.js');
+const { listPrimes, countModulo, combineResidues } = require('./js/solvers/domiculeTilingSolver-Modular.js');
 const primes = listPrimes(3);
 const residues = primes.map(p => countModulo(8, 8, p));
 const combined = combineResidues(residues.slice(0, 2), primes.slice(0, 2));
@@ -120,8 +120,8 @@ table(
 On $4 \times 4$ the chain can be compared with the exact answer: 280 tilings, each should appear equally often. A chi-squared statistic above 357.8 (279 degrees of freedom, $p = 0.001$) would reject uniformity.
 
 ```js run
-const { sampleDomiculeTiling } = require('./src/renderer');
-const { createRandom } = require('./src/renderer/cftp');
+const { sampleDomiculeTiling } = require('./js/renderer');
+const { createRandom } = require('./js/renderer/cftp');
 const random = createRandom(2024);
 const board = { rowCount: 4, colCount: 4 };
 const samples = 280 * 100;

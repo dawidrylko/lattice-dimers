@@ -1,0 +1,154 @@
+{
+  "algorithms": ["periodic-tiling-modular"],
+  "testCases": [
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "11203604497408",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "5054",
+      "oeis": "A281679"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "537636",
+      "oeis": "A281679"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "2540032",
+      "oeis": "A281679"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "114557000",
+      "oeis": "A281679"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "king",
+      "expectedResult": "57427497888371336885449"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "7259829482503772231361024"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "5521618322907942018304"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "8215891991390871552"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "triangular",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "-4460642304"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "triangular",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "-7593238452740096"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "king",
+      "expectedResult": "1395563348793812044332013274776713"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "triangular",
+      "expectedResult": "10118752662999654154224064"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "4161957566985310208",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "464778919849879305868191391185324176"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "77606331769743172259328822493696"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "15954943354032349049274368",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "2743949253453878323721620757393919402021091285528"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "king",
+      "torus": true,
+      "twisted": true,
+      "expectedResult": "98431102825533810179525030992672171665425028"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "king",
+      "torus": true,
+      "expectedResult": "1493818604384654177402428232647033968399591852459255168583663616"
+    }
+  ]
+}

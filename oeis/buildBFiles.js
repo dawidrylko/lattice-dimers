@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { calculateTotalTilingCombinations } = require('../src/solvers/dominoTilingSolver-Formula');
+const { calculateTotalTilingCombinations } = require('../js/solvers/dominoTilingSolver-Formula');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const ZEX_DIRECTORY = path.join(ROOT_DIRECTORY, 'research', 'king-entropy', 'data', 'zex');
@@ -12,11 +12,11 @@ const LAST_DIAGONAL_ROW = 10;
 const TORUS_FILES = ['periodicTilingTests.json', 'periodicTilingTests-Modular.json'];
 const DIAGONAL_FILES = ['domiculeDiagonalTests.json', 'domiculeDiagonalTests-Modular.json'];
 const SOURCES = {
-  'A004003/b004003.txt': 'src/solvers/dominoTilingSolver-Formula.js',
+  'A004003/b004003.txt': 'js/solvers/dominoTilingSolver-Formula.js',
   'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A239273/b239273.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
-  'A401670/b401670.txt': TORUS_FILES.map(name => `data/${name}`).join(' and '),
-  'A401673/b401673.txt': DIAGONAL_FILES.map(name => `data/${name}`).join(' and '),
+  'A401670/b401670.txt': TORUS_FILES.map(name => `spec/cases/${name}`).join(' and '),
+  'A401673/b401673.txt': DIAGONAL_FILES.map(name => `spec/cases/${name}`).join(' and '),
 };
 
 function readStrips() {
@@ -75,7 +75,7 @@ function readTori() {
   const tori = new Map([[0, '1']]);
 
   for (const name of TORUS_FILES) {
-    const { testCases } = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'data', name), 'utf-8'));
+    const { testCases } = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'spec', 'cases', name), 'utf-8'));
 
     for (const { rowCount, colCount, lattice, torus, twisted, expectedResult } of testCases) {
       if (lattice !== 'king' || !torus || twisted || rowCount !== colCount || rowCount % 2 === 1) {
@@ -85,7 +85,7 @@ function readTori() {
       const known = tori.get(rowCount / 2);
 
       if (known && known !== expectedResult) {
-        throw new Error(`The ${rowCount} X ${rowCount} torus counts disagree between the files in data/.`);
+        throw new Error(`The ${rowCount} X ${rowCount} torus counts disagree between the files in spec/cases/.`);
       }
 
       tori.set(rowCount / 2, expectedResult);
@@ -94,7 +94,7 @@ function readTori() {
 
   return Array.from({ length: LAST_TORUS + 1 }, (_, n) => {
     if (!tori.has(n)) {
-      throw new Error(`No count for the ${2 * n} X ${2 * n} torus in data/.`);
+      throw new Error(`No count for the ${2 * n} X ${2 * n} torus in spec/cases/.`);
     }
 
     return tori.get(n);
@@ -105,7 +105,7 @@ function readDiagonalRows() {
   const rows = new Map();
 
   for (const name of DIAGONAL_FILES) {
-    const { testCases } = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'data', name), 'utf-8'));
+    const { testCases } = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'spec', 'cases', name), 'utf-8'));
 
     for (const { rowCount, colCount, expectedResult } of testCases) {
       if (rowCount !== colCount || rowCount % 2 === 1) {
@@ -115,19 +115,19 @@ function readDiagonalRows() {
       const coefficients = expectedResult.split(',');
 
       if (coefficients.some((coefficient, index) => index % 2 === 1 && coefficient !== '0')) {
-        throw new Error(`An odd number of diagonal pieces has tilings on the ${rowCount} X ${rowCount} board in data/${name}.`);
+        throw new Error(`An odd number of diagonal pieces has tilings on the ${rowCount} X ${rowCount} board in spec/cases/${name}.`);
       }
 
       const row = coefficients.filter((_, index) => index % 2 === 0);
       const length = (rowCount / 2) ** 2 + 1;
 
       if (row.length !== length) {
-        throw new Error(`The ${rowCount} X ${rowCount} board has ${row.length} diagonal counts in data/${name} instead of ${length}.`);
+        throw new Error(`The ${rowCount} X ${rowCount} board has ${row.length} diagonal counts in spec/cases/${name} instead of ${length}.`);
       }
       const known = rows.get(rowCount / 2);
 
       if (known && known.join(',') !== row.join(',')) {
-        throw new Error(`The diagonal counts of the ${rowCount} X ${rowCount} board disagree between the files in data/.`);
+        throw new Error(`The diagonal counts of the ${rowCount} X ${rowCount} board disagree between the files in spec/cases/.`);
       }
 
       rows.set(rowCount / 2, row);
@@ -136,7 +136,7 @@ function readDiagonalRows() {
 
   return Array.from({ length: LAST_DIAGONAL_ROW + 1 }, (_, n) => {
     if (!rows.has(n)) {
-      throw new Error(`No diagonal counts for the ${2 * n} X ${2 * n} board in data/.`);
+      throw new Error(`No diagonal counts for the ${2 * n} X ${2 * n} board in spec/cases/.`);
     }
 
     return rows.get(n);

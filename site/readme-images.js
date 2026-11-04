@@ -8,7 +8,7 @@ const {
   unrankDomiculeTiling,
   createPeriodicUnranker,
   unrankPeriodicTiling,
-} = require('../src/renderer');
+} = require('../js/renderer');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const BOARD = { rowCount: 8, colCount: 8 };

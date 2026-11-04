@@ -8,12 +8,12 @@ const {
   testCasesPeriodicModular,
   testCasesDiagonal,
   testCasesDiagonalModular,
-} = require('../data');
-const { DOMICULE_SWEEPS } = require('../src/renderer');
-const domiculeModular = require('../src/solvers/domiculeTilingSolver-Modular.js');
-const periodicModular = require('../src/solvers/periodicTilingSolver-Modular.js');
-const diagonalReference = require('../src/solvers/domiculeDiagonalSolver-BigInt.js');
-const { countPeriodicDiagonals } = require('../src/renderer/periodic');
+} = require('../js/core/cases');
+const { DOMICULE_SWEEPS } = require('../js/renderer');
+const domiculeModular = require('../js/solvers/domiculeTilingSolver-Modular.js');
+const periodicModular = require('../js/solvers/periodicTilingSolver-Modular.js');
+const diagonalReference = require('../js/solvers/domiculeDiagonalSolver-BigInt.js');
+const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
 const { readBenchmarkRuns } = require('./benchmarkRuns');
@@ -27,13 +27,13 @@ const RESULT_FILE = /_(\d+)x(\d+)\.txt$/;
 const PERIODIC_RESULT_FILE = /_(\d+)x(\d+)-king-(torus|cylinder)\.txt$/;
 const { runs: BENCHMARK_RUNS, latest: BENCHMARK_RUN } = readBenchmarkRuns();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
-const BROWSER_SCRIPTS = ['src/renderer/svg.js', 'src/renderer/rank.js'];
+const BROWSER_SCRIPTS = ['js/renderer/svg.js', 'js/renderer/rank.js'];
 const WORKER_SCRIPTS = [
-  'src/renderer/unrank.js',
-  'src/renderer/cftp.js',
-  'src/renderer/domicule.js',
-  'src/renderer/periodic.js',
-  'src/renderer/rank.js',
+  'js/renderer/unrank.js',
+  'js/renderer/cftp.js',
+  'js/renderer/domicule.js',
+  'js/renderer/periodic.js',
+  'js/renderer/rank.js',
   'site/worker.js',
 ];
 const ASSETS = {
@@ -100,8 +100,8 @@ const NOTE_PROVENANCE = {
   dominoes: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
   domicules: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
   cylinders: 'every output on this page was produced during that build from the files of this repository; the running times come from the benchmark run the page names.',
-  tori: 'every output on this page was produced during that build from the files of this repository; the boards the solver column marks as data/ are stored counts, the entropies and the decay length ξ come from research/king-entropy/, and the running times from the benchmark run the page names.',
-  diagonals: 'every output on this page was produced during that build from the files of this repository; the rows the solver column marks as data/ are stored counts, which the build checked, and the running times come from the benchmark run the page names.',
+  tori: 'every output on this page was produced during that build from the files of this repository; the boards the solver column marks as spec/cases/ are stored counts, the entropies and the decay length ξ come from research/king-entropy/, and the running times from the benchmark run the page names.',
+  diagonals: 'every output on this page was produced during that build from the files of this repository; the rows the solver column marks as spec/cases/ are stored counts, which the build checked, and the running times come from the benchmark run the page names.',
 };
 const NOTE_SUMMARIES = {
   research: "The entropy per site of the king's graph dimers: an estimate with error bar 6·10⁻¹⁶, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
@@ -158,7 +158,7 @@ function countTilings(board) {
   );
 
   if (!testCase) {
-    throw new Error(`No expected result in data/ for ${board.rowCount}x${board.colCount}.`);
+    throw new Error(`No expected result in spec/cases/ for ${board.rowCount}x${board.colCount}.`);
   }
 
   return testCase.expectedResult;
@@ -168,7 +168,7 @@ const periodicCounts = new Map();
 
 /**
  * Counts the tilings of a king's graph or square lattice cylinder or torus once per build:
- * from data/ when the board is known there, otherwise with the modular solver.
+ * from spec/cases/ when the board is known there, otherwise with the modular solver.
  * @param {Object} board The board.
  * @property {number} board.rowCount The number of rows.
  * @property {number} board.colCount The circumference.
@@ -198,7 +198,7 @@ function countPeriodicTilings({ rowCount, colCount, lattice, torus }) {
 }
 
 /**
- * Reads the domicule tilings of a board by the number of diagonal pieces from data/, or counts
+ * Reads the domicule tilings of a board by the number of diagonal pieces from spec/cases/, or counts
  * them with the reference solver, and checks that they add up to the number of tilings.
  * @param {Object} board The board.
  * @param {string} total The number of tilings.
@@ -245,7 +245,7 @@ async function countPeriodicDiagonalTilings(board, total) {
 const domiculeCounts = new Map();
 
 /**
- * Counts the domicule tilings of a board once per build: from data/ when the term is
+ * Counts the domicule tilings of a board once per build: from spec/cases/ when the term is
  * known there, otherwise with the modular solver. The gallery and the notebooks share the result.
  * @param {Object} board The board.
  * @returns {Promise<string>} The number of tilings.

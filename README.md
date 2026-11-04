@@ -48,11 +48,11 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | [`research/king-entropy`](research/king-entropy/README.md) | scripts, data, outputs, proofs and papers on the entropy of the king's graph |
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
 | [`notes`](notes/README.md) | notebooks on the method and the sequences, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
-| [`src`](src/README.md) | solvers for rectangles, cylinders and tori, and the renderer that numbers, samples and draws tilings |
-| [`data`](data/README.md) | the known counts every solver and program is checked against |
+| [`spec`](spec/README.md) | the solver contract, the registry of algorithms and the known counts every implementation and program is checked against |
+| [`js`](js/README.md) | the JavaScript solvers for rectangles, cylinders and tori, and the renderer that numbers, samples and draws tilings |
 | [`docs`](docs/glossary.md) | the glossary of the words the repository uses for pieces, lattices and surfaces |
-| [`tests`](tests/README.md) | the test runners and what each one checks |
-| [`benchmarks`](benchmarks/README.md) | the benchmark runner and its results |
+| [`harness`](harness/README.md) | the test runners, the check that keeps the languages in step, and the benchmark runner |
+| [`benchmarks`](benchmarks/README.md) | the benchmark results |
 | `site` | the build of the [site](https://dawidrylko.github.io/lattice-dimers/): the gallery, the benchmark tables and the notebooks |
 
 ## Quick start
@@ -63,7 +63,7 @@ Node.js 26 or newer (`.nvmrc`) and pnpm:
 git clone https://github.com/dawidrylko/lattice-dimers.git
 cd lattice-dimers
 pnpm install
-node src/solvers/domiculeTilingSolver-Modular.js -r 20 -c 20
+node js/solvers/domiculeTilingSolver-Modular.js -r 20 -c 20
 pnpm test
 ```
 
@@ -81,10 +81,9 @@ The code is MIT, see [LICENSE](LICENSE). Text and data are licensed under
   `research/king-entropy/release/`, `research/king-entropy/replication/REPORT.md` and `notes/`;
 - data: `research/king-entropy/data/`, `research/king-entropy/out/`, `research/king-entropy/logs/`,
   `research/king-entropy/replication/out/`, the outputs `research/king-entropy/log-convexity/out_*.txt` and
-  `research/king-entropy/log-convexity/time_*.txt`, the JSON files in `data/` and the measurements in `benchmarks/results/`.
+  `research/king-entropy/log-convexity/time_*.txt`, the JSON files in `spec/cases/` and the measurements in `benchmarks/results/`.
 
-Everything else is MIT, in particular all programs and scripts: `src/`, `oeis/`, `site/`, `tests/`,
-`benchmarks/benchmarkRunner.js`, `data/index.js`, `research/king-entropy/src/`,
+Everything else is MIT, in particular all programs and scripts: `js/`, `oeis/`, `site/`, `harness/`, `research/king-entropy/src/`,
 `research/king-entropy/log-convexity/*.py` and the code in `research/king-entropy/replication/`.
 
 ## Author

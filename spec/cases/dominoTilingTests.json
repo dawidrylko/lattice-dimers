@@ -1,0 +1,35 @@
+{
+  "algorithms": ["domino-tiling-number"],
+  "testCases": [
+    {
+      "rowCount": 0,
+      "colCount": 0,
+      "expectedResult": 1
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "expectedResult": 2
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "expectedResult": 36
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "expectedResult": 6728
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "expectedResult": 12988816
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "expectedResult": 258584046368
+    }
+  ]
+}

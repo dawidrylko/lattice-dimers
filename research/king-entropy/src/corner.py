@@ -4,7 +4,7 @@ usage: python3 src/corner.py > out/out_corner.txt      (writes corner.json)
 
 Inputs: exact counts Z(k, m) of free king boards (zex_king_free_m<m>_K<K>.json, zexact.py), s from
 errbar.json (RECOMMENDATION), sigma from surface.json; for a check from a separate code base, the
-square counts of the JavaScript solvers (../../data/domiculeTilingTests.json, L <= 20) and their
+square counts of the JavaScript solvers (../../spec/cases/domiculeTilingTests.json, L <= 20) and their
 20 x 20 count (README, also checked in validate.py).
 
 1. rho(K, L) = log Z(K, L) - s K L + 2 sigma (K + L) tends to the corner free energy kappa, so that
@@ -133,7 +133,7 @@ print('  (b) mixed second differences on the diagonal, / 4: ' +
 Lm = max(am)
 print(f'      geometric extrapolation at L = {Lm}: s{sd(am[Lm] - S)}'
       f' (at L = {Lm - 2}: s{sd(am[Lm - 2] - S)})')
-js = json.load(open(os.path.join(ROOT, '..', '..', 'data', 'domiculeTilingTests.json')))
+js = json.load(open(os.path.join(ROOT, '..', '..', 'spec', 'cases', 'domiculeTilingTests.json')))
 J = {t['rowCount']: int(t['expectedResult']) for t in js['testCases'] if t['rowCount'] == t.get('colCount', t['rowCount'])}
 J[20] = int('974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427')
 assert all(J[L] == Z[L, L] for L in J if (L, L) in Z and L > 0), 'JS counts differ from the CRT counts'

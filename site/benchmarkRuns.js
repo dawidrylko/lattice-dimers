@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { filesInt, testCasesInt, filesBigInt, testCasesBigInt, filesDomicule } = require('../data');
+const { filesInt, testCasesInt, filesBigInt, testCasesBigInt, filesDomicule } = require('../js/core/cases');
 
 const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
 const LARGEST_PERIODIC_RESULTS = [
