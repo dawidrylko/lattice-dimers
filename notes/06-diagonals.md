@@ -24,11 +24,11 @@ P_{h,w}(x) = \sum_k T(h, w, k)\, x^k,
 
 where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the domicule count ([OEIS A239273](https://oeis.org/A239273)). This is the dimer model of [Sandvik and Moessner (2006)](https://doi.org/10.1103/PhysRevB.73.144504) with diagonal dimers of fugacity $x$, and the weights $x = 3/2, 2, 3$ of the [companion note on log-convexity](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy-log-convexity.pdf) are values of the same polynomial.
 
-[`domiculeDiagonalSolver-BigInt.js`](../src/solvers/domiculeDiagonalSolver-BigInt.js) runs the transfer of the [domicules notebook](03-domicules.md) with a polynomial in every state, and [`domiculeDiagonalSolver-Modular.js`](../src/solvers/domiculeDiagonalSolver-Modular.js) does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. When the OEIS was searched by terms and by name on 30 October 2026, before A401673 was drafted, it had no such triangle.
+[`domiculeDiagonalSolver-BigInt.js`](../js/solvers/domiculeDiagonalSolver-BigInt.js) runs the transfer of the [domicules notebook](03-domicules.md) with a polynomial in every state, and [`domiculeDiagonalSolver-Modular.js`](../js/solvers/domiculeDiagonalSolver-Modular.js) does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. When the OEIS was searched by terms and by name on 30 October 2026, before A401673 was drafted, it had no such triangle.
 
 ```js run
-const reference = require('./src/solvers/domiculeDiagonalSolver-BigInt.js');
-const data = require('./data');
+const reference = require('./js/solvers/domiculeDiagonalSolver-BigInt.js');
+const data = require('./js/core/cases');
 const stored = side => data.testCasesDiagonalModular.find(t => t.rowCount === side && t.colCount === side);
 const domino = side => data.testCasesBigInt.find(t => t.rowCount === side && t.colCount === side).expectedResult;
 
@@ -46,7 +46,7 @@ for (let n = 0; n <= 10; n++) {
     source = 'BigInt';
   } else if (stored(side)) {
     coefficients = stored(side).expectedResult.split(',').map(BigInt);
-    source = 'data/';
+    source = 'spec/cases/';
   } else {
     continue;
   }
@@ -59,7 +59,7 @@ for (let n = 0; n <= 10; n++) {
     coefficients.some((c, k) => k % 2 === 1 && c !== 0n) && 'an odd number of diagonal pieces',
     row.at(-1) !== 1n && `T(n, n²) = ${row.at(-1)}`,
     n > 0 && row.at(-2) !== BigInt(n * n * (n + 1)) && `T(n, n² − 1) = ${row.at(-2)}`,
-    source === 'BigInt' && stored(side) && stored(side).expectedResult !== coefficients.join(',') && 'the BigInt row differs from data/',
+    source === 'BigInt' && stored(side) && stored(side).expectedResult !== coefficients.join(',') && 'the BigInt row differs from spec/cases/',
   ].filter(Boolean);
 
   if (problems.length) {

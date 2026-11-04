@@ -86,5 +86,5 @@ zex_tri_free_m8_K60.json     K = 0.. 60  mismatches 0
 zex_tri_free_m9_K60.json     K = 0.. 60  mismatches 0
 
 zex files 86, values compared 5562, mismatches 0
-JavaScript solver test data (repository root data/): 15 boards compared, mismatches 0
+JavaScript solver test data (repository root spec/cases/): 15 boards compared, mismatches 0
 TOTAL MISMATCHES: 0

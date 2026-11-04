@@ -15,7 +15,7 @@ Approved 21 October 2026, revision #168.
 | file | content |
 | --- | --- |
 | [A004003.txt](A004003.txt) | the `%F` and `%o` lines contributed |
-| [b004003.txt](b004003.txt) | $n = 0, \dots, 44$, rebuilt from the resultant by [`dominoTilingSolver-Formula.js`](../../src/solvers/dominoTilingSolver-Formula.js); identical to the published b-file of Alois P. Heinz on 1 November 2026 |
+| [b004003.txt](b004003.txt) | $n = 0, \dots, 44$, rebuilt from the resultant by [`dominoTilingSolver-Formula.js`](../../js/solvers/dominoTilingSolver-Formula.js); identical to the published b-file of Alois P. Heinz on 1 November 2026 |
 | [A004003.gp](A004003.gp) | the program of the `%o` line |
 
 ## Notes

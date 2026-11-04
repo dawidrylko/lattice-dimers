@@ -213,7 +213,7 @@ function createCellHelpers() {
       );
       const style = rules.size ? `<style>${scopeStyle([...rules].join(''), `:where(#${id})`)}</style>` : '';
       const width = Number((drawings[0].match(/^<svg[^>]*\swidth="(\d+(?:\.\d+)?)"/) || [])[1]) || 0;
-      const { PADDING } = repositoryRequire('./src/renderer').renderSheet;
+      const { PADDING } = repositoryRequire('./js/renderer').renderSheet;
 
       flush();
       outputs.push(
@@ -408,7 +408,7 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectang
     throw new Error(`drawTilings() counts diagonal pieces of domicule tilings of a rectangle only, not ${pieces} on a ${surface}.`);
   }
 
-  const renderer = repositoryRequire('./src/renderer');
+  const renderer = repositoryRequire('./js/renderer');
   let unranker;
   let unrank;
 

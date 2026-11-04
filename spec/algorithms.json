@@ -1,0 +1,37 @@
+{
+  "languages": {
+    "rs": "rust/solvers/src/bin",
+    "py": "python/lattice_dimers/solvers",
+    "js": "js/solvers"
+  },
+  "pendingPorts": 18,
+  "algorithms": {
+    "domicule-diagonal-bigint": {
+      "js": "js/solvers/domiculeDiagonalSolver-BigInt.js"
+    },
+    "domicule-diagonal-modular": {
+      "js": "js/solvers/domiculeDiagonalSolver-Modular.js"
+    },
+    "domicule-tiling-bigint": {
+      "js": "js/solvers/domiculeTilingSolver-BigInt.js"
+    },
+    "domicule-tiling-modular": {
+      "js": "js/solvers/domiculeTilingSolver-Modular.js"
+    },
+    "domino-tiling-bigint": {
+      "js": "js/solvers/dominoTilingSolver-BigInt.js"
+    },
+    "domino-tiling-formula": {
+      "js": "js/solvers/dominoTilingSolver-Formula.js"
+    },
+    "domino-tiling-number": {
+      "js": "js/solvers/dominoTilingSolver.js"
+    },
+    "periodic-tiling-bigint": {
+      "js": "js/solvers/periodicTilingSolver-BigInt.js"
+    },
+    "periodic-tiling-modular": {
+      "js": "js/solvers/periodicTilingSolver-Modular.js"
+    }
+  }
+}

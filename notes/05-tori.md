@@ -20,24 +20,24 @@ for (const pieces of ['domino', 'domicule']) {
 
 ## How the counts are made
 
-Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../src/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix.
+Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix.
 
-[`periodicTilingSolver-Modular.js`](../src/solvers/periodicTilingSolver-Modular.js) goes cell by cell, like the solver of the [domicules notebook](03-domicules.md). Its state holds the next $w + 2$ cells and, on the king's graph with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
+[`periodicTilingSolver-Modular.js`](../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell, like the solver of the [domicules notebook](03-domicules.md). Its state holds the next $w + 2$ cells and, on the king's graph with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
 
 A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The modular solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
-The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [OEIS A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [OEIS A281679](https://oeis.org/A281679). `node tests/testRunner.js` runs these boards and the king's graph and triangular boards of `data/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
+The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [OEIS A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [OEIS A281679](https://oeis.org/A281679). `node harness/testRunner.js` runs these boards and the king's graph and triangular boards of `spec/cases/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
 
 The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670). The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph or triangular tori.
 
 ## The king's graph on the 2n × 2n torus: A401670
 
-For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in A335586. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `data/periodicTilingTests-Modular.json`, where it wrote them once.
+For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in A335586. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `spec/cases/periodicTilingTests-Modular.json`, where it wrote them once.
 
 ```js run
-const reference = require('./src/solvers/periodicTilingSolver-BigInt.js');
-const modular = require('./src/solvers/periodicTilingSolver-Modular.js');
-const known = require('./data').testCasesPeriodicModular;
+const reference = require('./js/solvers/periodicTilingSolver-BigInt.js');
+const modular = require('./js/solvers/periodicTilingSolver-Modular.js');
+const known = require('./js/core/cases').testCasesPeriodicModular;
 const stored = (side, twisted) =>
   known.find(t => t.lattice === 'king' && t.torus && !t.twisted === !twisted && t.rowCount === side && t.colCount === side);
 
@@ -70,7 +70,7 @@ for (let n = 1; n <= 8; n++) {
   } else if (stored(side, false)) {
     count = BigInt(stored(side, false).expectedResult);
     twisted = stored(side, true) ? BigInt(stored(side, true).expectedResult) : null;
-    method = 'data/';
+    method = 'spec/cases/';
   } else {
     continue;
   }
@@ -92,7 +92,7 @@ The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the ch
 ```js run
 const fs = require('fs');
 const path = require('path');
-const modular = require('./src/solvers/periodicTilingSolver-Modular.js');
+const modular = require('./js/solvers/periodicTilingSolver-Modular.js');
 const root = nb.context.root;
 const validate = fs.readFileSync(path.join(root, 'research/king-entropy/out/out_validate.txt'), 'utf-8');
 const [, triangular] = validate.match(/Kasteleyn Bloch average, 64x64 grid: s_tri = ([0-9.]+)/);

@@ -44,11 +44,11 @@ The number of a sampled tiling needs no table either. A scan from the last cell 
 
 ### Transfer by cells
 
-A domicule tiling is counted with the same cell-by-cell scan. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the domino one. [`domiculeTilingSolver-BigInt.js`](../src/solvers/domiculeTilingSolver-BigInt.js) keeps the counts as `BigInt` and is the reference. The same scan is in [`oeis/A239264/A239264.gp`](../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../oeis/A239273/A239273.gp), where `a(n)` is A239273.
+A domicule tiling is counted with the same cell-by-cell scan. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the domino one. [`domiculeTilingSolver-BigInt.js`](../js/solvers/domiculeTilingSolver-BigInt.js) keeps the counts as `BigInt` and is the reference. The same scan is in [`oeis/A239264/A239264.gp`](../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../oeis/A239273/A239273.gp), where `a(n)` is A239273.
 
 ### Counting modulo primes
 
-The scan only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domiculeTilingSolver-Modular.js`](../src/solvers/domiculeTilingSolver-Modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [5], bounds the number of perfect matchings of a graph with degrees $d(v)$:
+The scan only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domiculeTilingSolver-Modular.js`](../js/solvers/domiculeTilingSolver-Modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [5], bounds the number of perfect matchings of a graph with degrees $d(v)$:
 
 ```math
 \#\text{perfect matchings} \le \prod_{v} \bigl(d(v)!\bigr)^{1/(2d(v))}
@@ -64,11 +64,11 @@ Domicule tilings have no lattice structure like the domino rotations, so couplin
 
 The gallery can also number only the tilings with $k$ diagonal pieces. Every entry of the table then becomes a list, `table[i][state][r]`, of the completions with exactly $r \le k$ diagonal pieces, and unranking keeps the order of the full numbering. The gallery offers this up to $10 \times 10$.
 
-A straight piece covers a black and a white cell of the chessboard, a diagonal piece two cells of one colour. So on the $2n \times 2n$ board the number of diagonal pieces is even. On a rectangle the count for every $k$ comes from [`domiculeDiagonalSolver-BigInt.js`](../src/solvers/domiculeDiagonalSolver-BigInt.js) or `data/`. On a cylinder or torus the gallery's own scan carries the same lists, one per rotation class, and the build checks its count for $k = 0$ against the domino count of the same surface. It also checks that the counts add up to the number of tilings.
+A straight piece covers a black and a white cell of the chessboard, a diagonal piece two cells of one colour. So on the $2n \times 2n$ board the number of diagonal pieces is even. On a rectangle the count for every $k$ comes from [`domiculeDiagonalSolver-BigInt.js`](../js/solvers/domiculeDiagonalSolver-BigInt.js) or `spec/cases/`. On a cylinder or torus the gallery's own scan carries the same lists, one per rotation class, and the build checks its count for $k = 0$ against the domino count of the same surface. It also checks that the counts add up to the number of tilings.
 
 ## Cylinders and tori
 
-A cylinder has its left and right edges glued, a torus both pairs of opposite edges. The gallery numbers their tilings up to $10 \times 10$ with the cell-by-cell scan of [`periodicTilingSolver-Modular.js`](../src/solvers/periodicTilingSolver-Modular.js). A state has $w + 2$ bits. On the king's graph with $w \ge 3$ it has one more bit, for the piece from the first column to the last column of the next row. As in the solvers, each edge of a circumference 2 is a separate piece.
+A cylinder has its left and right edges glued, a torus both pairs of opposite edges. The gallery numbers their tilings up to $10 \times 10$ with the cell-by-cell scan of [`periodicTilingSolver-Modular.js`](../js/solvers/periodicTilingSolver-Modular.js). A state has $w + 2$ bits. On the king's graph with $w \ge 3$ it has one more bit, for the piece from the first column to the last column of the next row. As in the solvers, each edge of a circumference 2 is a separate piece.
 
 A torus tiling covers a set $S$ of first-row cells from the last row, and its scan starts from $S$ and must end with $S$. The tilings are ordered by $S$ and then by the scan. The tilings of $S$ and of its rotations are equally many, so one table per rotation class gives every count. The table of a single $S$ is rebuilt when a page needs it. The Random button draws a uniformly random number, so the sample is exact. A piece that crosses a glued edge is drawn cut there, half on each side of the board.
 
@@ -83,7 +83,7 @@ Every count is checked in more than one independent way:
 - coupling from the past and the domicule chain are checked with chi-squared tests on $2 \times 2$ and $4 \times 4$;
 - the modular solver checks every result against an extra prime.
 
-The tests are in [`tests/`](../tests), the known values in [`data/`](../data).
+The tests are in [`harness/`](../harness), the known values in [`spec/cases/`](../spec/cases).
 
 ## References
 

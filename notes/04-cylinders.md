@@ -20,7 +20,7 @@ for (const pieces of ['domino', 'domicule']) {
 
 ## How the counts are made
 
-Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../src/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. [`periodicTilingSolver-Modular.js`](../src/solvers/periodicTilingSolver-Modular.js) goes cell by cell, from the empty state to the empty state; the [tori notebook](05-tori.md) describes its state. Every table below checks its last column, $h = 8$, against the modular solver.
+Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. [`periodicTilingSolver-Modular.js`](../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell, from the empty state to the empty state; the [tori notebook](05-tori.md) describes its state. Every table below checks its last column, $h = 8$, against the modular solver.
 
 Circumference 2 has multiple edges, because on a ring of two cells a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate piece, so one row of two cells has 2 tilings. A row of odd circumference has an odd number of cells, so the counts vanish at odd heights.
 
@@ -29,8 +29,8 @@ Circumference 2 has multiple edges, because on a ring of two cells a cell meets 
 For fixed $w$ the counts grow like $\lambda_w^h$, with $\lambda_w$ the leading eigenvalue of the cylinder transfer matrix that [the paper](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf) extrapolates in $w$.
 
 ```js run
-const { calculateTotalTilingCombinations } = require('./src/solvers/periodicTilingSolver-BigInt.js');
-const modular = require('./src/solvers/periodicTilingSolver-Modular.js');
+const { calculateTotalTilingCombinations } = require('./js/solvers/periodicTilingSolver-BigInt.js');
+const modular = require('./js/solvers/periodicTilingSolver-Modular.js');
 
 nb.heights = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 nb.widths = [2, 3, 4, 5, 6, 7, 8];

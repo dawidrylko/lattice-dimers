@@ -1,6 +1,6 @@
 # Benchmarks
 
-[`benchmarkRunner.js`](benchmarkRunner.js) times the solvers in [`src/solvers`](../src/README.md) on the boards of [`data/`](../data/README.md) and writes one file per solver and board to `results/<year-month>/`.
+[`harness/benchmarkRunner.js`](../harness/benchmarkRunner.js) times the solvers in [`js/solvers`](../js/README.md) on the boards of [`spec/cases/`](../spec/cases/README.md) and writes one file per solver and board to `results/<year-month>/`.
 
 ```sh
 pnpm benchmark            # domino solvers

@@ -19,7 +19,7 @@ A lattice says which cells of a board are neighbours, and so which pieces a tili
 
 | term | meaning | where it is used | avoid |
 | --- | --- | --- | --- |
-| square lattice | the graph whose vertices are the cells and whose edges join cells sharing a side; on a rectangle it is the grid graph, and its perfect matchings are the domino tilings | the Cylinders and Tori notebooks, the periodic solvers ([`src/README.md`](../src/README.md)), the controls of the research scripts | |
+| square lattice | the graph whose vertices are the cells and whose edges join cells sharing a side; on a rectangle it is the grid graph, and its perfect matchings are the domino tilings | the Cylinders and Tori notebooks, the periodic solvers ([`js/README.md`](../js/README.md)), the controls of the research scripts | |
 | triangular lattice | the square lattice with one diagonal in every cell, the one that runs down to the right (↘), so a tiling uses dominoes and ↘ diagonal pieces; the project counts it for comparison | the method note, the Cylinders and Tori notebooks, the periodic solvers, the controls of the papers and the research scripts | |
 | king's graph | the square lattice with both diagonals, so every cell is joined to its eight neighbours; its perfect matchings are the domicule tilings | the titles of both papers, the notebooks, the site, the research notes and scripts | "king graph" and "king-graph", "king lattice", also in a list next to the square and triangular lattices |
 
@@ -45,16 +45,16 @@ A signed count weighs each tiling with a sign instead of counting it once. The o
 | term | meaning | where it is used | avoid |
 | --- | --- | --- | --- |
 | seam sign | the sign (-1)^k of a tiling of a cylinder or a torus, where k is the number of pieces that cross the column seam; the row seam of a torus is not counted. The signed count is the difference between the two parities of those crossings, and the papers call the sign a Z2 flux | the Tori notebook (section The seam sign), the periodic solvers, the research notes and the papers | |
-| twisted | counted with the seam sign | the option `twisted` and the flag `--twisted` of the periodic solvers, the field `twisted` of the test cases in `data/`, the twisted transfer and its twisted levels in the research notes | "twisted" in the prose of the notebooks and the site, where the name is seam sign |
+| twisted | counted with the seam sign | the option `twisted` and the flag `--twisted` of the periodic solvers, the field `twisted` of the test cases in `spec/cases/`, the twisted transfer and its twisted levels in the research notes | "twisted" in the prose of the notebooks and the site, where the name is seam sign |
 | twisted cut, twisted swap | a cut where two rows agree up to the left-right reflection J, and the swap of the parts below it; neither has anything to do with the seam sign | the notes on log-convexity, `log-convexity/involution.py`, the companion note | |
 
 ## Code
 
-A solver counts the tilings of one kind of board by one method; the code calls it an algorithm when it speaks of the solver apart from its language, and names it by its file name without the extension.
+An algorithm is a solver apart from its language. [`spec/algorithms.json`](../spec/algorithms.json) names each one by an id and lists the file of every implementation it has.
 
 | term | meaning | where it is used | avoid |
 | --- | --- | --- | --- |
-| algorithm | a solver apart from its language, named by its file name without the extension, such as `periodicTilingSolver-Modular` | [`src/README.md`](../src/README.md) (section Implementations), [`src/ports.json`](../src/ports.json), the port tests of [`tests/testRunner.js`](../tests/testRunner.js) | |
-| implementation | one algorithm in one language, a `.rs`, `.py` or `.js` file in [`src/solvers`](../src/solvers); Rust is the first language, Python the second, JavaScript the third | `src/README.md`, the port tests, the executor | "reference implementation" for the Rust one, since reference names the BigInt solver of a Modular one |
-| solver contract | the arguments, output and errors every implementation keeps, so the runners and `data/` treat the three languages alike | `src/README.md` (section Implementations) | |
-| pending port | a language an algorithm still lacks, listed in `src/ports.json`, which is not to grow | `src/ports.json`, the port tests | |
+| algorithm | a solver apart from its language, named by an id in kebab case, such as `periodic-tiling-modular` | [`spec/contract.md`](../spec/contract.md), `spec/algorithms.json`, the field `algorithms` of the files in [`spec/cases`](../spec/cases/README.md), the port tests of [`harness/testRunner.js`](../harness/testRunner.js) | the JavaScript file name as the name of the algorithm |
+| implementation | one algorithm in one language: a binary in `rust/solvers/src/bin`, a module in `python/lattice_dimers/solvers` or a script in [`js/solvers`](../js/solvers); Rust is the first language, Python the second, JavaScript the third | `spec/contract.md`, the registry, the executor | "reference implementation" for the Rust one, since reference names the BigInt solver of a Modular one |
+| solver contract | the arguments, output, errors and limits every implementation keeps, so the runners and `spec/cases` treat the three languages alike | `spec/contract.md` | |
+| pending port | a language missing from an algorithm's entry in `spec/algorithms.json`; the field `pendingPorts` there counts them, and the test holds it to the count | `spec/contract.md`, the registry | |

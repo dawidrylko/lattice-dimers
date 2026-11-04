@@ -15,13 +15,13 @@ figure(svgs, `All ${total} domino tilings of the 4 × 4 board, numbered as in th
 
 ## Three ways to the same numbers
 
-The formula solver evaluates the resultant, the two transfer solvers scan the board. The `Number` solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `data/`.
+The formula solver evaluates the resultant, the two transfer solvers scan the board. The `Number` solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
 
 ```js run
-const formula = require('./src/solvers/dominoTilingSolver-Formula.js');
-const transfer = require('./src/solvers/dominoTilingSolver-BigInt.js');
-const number = require('./src/solvers/dominoTilingSolver.js');
-const known = require('./data').testCasesBigInt;
+const formula = require('./js/solvers/dominoTilingSolver-Formula.js');
+const transfer = require('./js/solvers/dominoTilingSolver-BigInt.js');
+const number = require('./js/solvers/dominoTilingSolver.js');
+const known = require('./js/core/cases').testCasesBigInt;
 
 nb.terms = [];
 const rows = [];
@@ -36,7 +36,7 @@ for (let n = 0; n <= 10; n++) {
   const agree = String(viaFormula) === expected && (viaTransfer === null || viaTransfer === viaFormula) && (viaNumber === null || BigInt(viaNumber) === viaFormula);
 
   if (!agree) {
-    throw new Error(`a(${n}) disagrees with data/`);
+    throw new Error(`a(${n}) disagrees with spec/cases/`);
   }
 
   nb.terms.push(viaFormula);
@@ -75,7 +75,7 @@ table(
 $P$ is monic of degree $n$ with integer coefficients, and its roots are $4\cos^2(j\pi/(2n+1))$. The Sylvester matrix of $P(x)$ and $P(-x)$ has size $2n$.
 
 ```js run
-const { createRootPolynomial, calculateResultant } = require('./src/solvers/dominoTilingSolver-Formula.js');
+const { createRootPolynomial, calculateResultant } = require('./js/solvers/dominoTilingSolver-Formula.js');
 
 for (let n = 1; n <= 5; n++) {
   const p = createRootPolynomial(n);
@@ -97,7 +97,7 @@ for (let n = 1; n <= 5; n++) {
 The completion-count table numbers every tiling. Here are tiling 1 and the last tiling of a $4 \times 4$ board, and the size of the table on the gallery boards. The gallery pages through the tilings up to $16 \times 16$; at $18 \times 18$ and $20 \times 20$ it samples them and finds the number of each sample without the table.
 
 ```js run
-const { createUnranker, unrankTiling, renderAscii } = require('./src/renderer');
+const { createUnranker, unrankTiling, renderAscii } = require('./js/renderer');
 const board = { rowCount: 4, colCount: 4 };
 const unranker = createUnranker(board);
 
