@@ -263,8 +263,16 @@ function executePortTests() {
   const repository = readRepository();
   const languages = { rs: 'rust/solvers/src/bin', py: 'python/lattice_dimers/solvers', js: 'js/solvers' };
   const complete = { rs: 'rust/solvers/src/bin/a.rs', py: 'python/lattice_dimers/solvers/a.py', js: 'js/solvers/a.js' };
-  const state = ({ algorithms = { a: complete }, files = Object.values(complete), caseFiles = [{ name: 'a.json', algorithms: ['a'] }], ...rest } = {}) => ({
-    registry: { languages, algorithms },
+  const countPending = algorithms =>
+    Object.values(algorithms).reduce((count, entry) => count + Object.keys(languages).filter(language => !Object.hasOwn(entry, language)).length, 0);
+  const state = ({
+    algorithms = { a: complete },
+    pendingPorts = countPending(algorithms),
+    files = Object.values(complete),
+    caseFiles = [{ name: 'a.json', algorithms: ['a'] }],
+    ...rest
+  } = {}) => ({
+    registry: { languages, pendingPorts, algorithms },
     files,
     caseFiles,
     loadedCaseFiles: ['a.json'],
@@ -275,6 +283,16 @@ function executePortTests() {
     ['the repository', repository, []],
     ['three implementations', state(), []],
     ['an algorithm still waiting for its ports', state({ algorithms: { a: { js: complete.js } }, files: [complete.js] }), []],
+    [
+      'a new algorithm with one language',
+      state({ algorithms: { a: complete, b: { js: 'js/solvers/b.js' } }, pendingPorts: 0, files: [...Object.values(complete), 'js/solvers/b.js'], caseFiles: [{ name: 'a.json', algorithms: ['a', 'b'] }] }),
+      ['2 implementations are missing, but spec/algorithms.json allows 0 pending ports; an algorithm added from now on comes with all three.'],
+    ],
+    [
+      'a port that did not lower the count',
+      state({ pendingPorts: 1 }),
+      ['0 implementations are missing; lower pendingPorts in spec/algorithms.json from 1 to 0.'],
+    ],
     [
       'a Rust binary not named by its id',
       state({ algorithms: { a: { ...complete, rs: 'rust/solvers/src/bin/b.rs' } }, files: ['rust/solvers/src/bin/b.rs', complete.py, complete.js] }),
@@ -365,7 +383,7 @@ function executeResearchPathTest() {
           ? [path.join(directory, entry.name)]
           : [],
     );
-  const oldRoot = /parents\[3\] \/ 'data'|'\.\.', '\.\.', 'data'|REPO, "data"|\.\.\/\.\.\/data\//;
+  const oldRoot = /parents\[3\] \/ ['"]data['"]|['"]\.\.['"], ['"]\.\.['"], ['"]data['"]|REPO, ['"]data['"]|\.\.\/\.\.\/data\//;
   const stale = ['src', 'replication', 'README.md']
     .map(name => path.join(root, name))
     .flatMap(entry => (fs.statSync(entry).isDirectory() ? listSources(entry) : [entry]))

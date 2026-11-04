@@ -4,6 +4,7 @@
     "py": "python/lattice_dimers/solvers",
     "js": "js/solvers"
   },
+  "pendingPorts": 18,
   "algorithms": {
     "domicule-diagonal-bigint": {
       "js": "js/solvers/domiculeDiagonalSolver-BigInt.js"

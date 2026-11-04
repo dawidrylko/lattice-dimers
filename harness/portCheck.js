@@ -38,7 +38,7 @@ function readRepository() {
 /**
  * Lists every way spec/algorithms.json, the implementations on disk and spec/cases disagree.
  * @param {Object} repository The state to check.
- * @property {{languages: Object<string, string>, algorithms: Object<string, Object<string, string>>}} repository.registry
+ * @property {{languages: Object<string, string>, pendingPorts: number, algorithms: Object<string, Object<string, string>>}} repository.registry
  *   The contents of spec/algorithms.json.
  * @property {string[]} repository.files The root-relative files in the directories of the languages.
  * @property {{name: string, algorithms: string[]}[]} repository.caseFiles The files of spec/cases with the algorithms each checks.
@@ -84,6 +84,21 @@ function listPortErrors({ registry, files, caseFiles, loadedCaseFiles, runnableL
     if (!Object.hasOwn(entry, 'js')) {
       errors.push(`${algorithm} has no js implementation; the runners and the site still reach every algorithm through it.`);
     }
+  }
+
+  const pending = Object.values(registry.algorithms).reduce(
+    (count, entry) => count + Object.keys(registry.languages).filter(language => !Object.hasOwn(entry, language)).length,
+    0,
+  );
+
+  if (pending > registry.pendingPorts) {
+    errors.push(
+      `${pending} implementations are missing, but spec/algorithms.json allows ${registry.pendingPorts} pending ports; an algorithm added from now on comes with all three.`,
+    );
+  }
+
+  if (pending < registry.pendingPorts) {
+    errors.push(`${pending} implementations are missing; lower pendingPorts in spec/algorithms.json from ${registry.pendingPorts} to ${pending}.`);
   }
 
   for (const file of files.filter(file => !registered.has(file))) {
