@@ -26,6 +26,19 @@ node src/solvers/periodicTilingSolver-Modular.js -r 8 -c 6 --lattice triangular 
 node src/solvers/domiculeDiagonalSolver-Modular.js -r 16 -c 16                   # 20 × 20 needs 3.4 GB per thread
 ```
 
+## Implementations
+
+Every algorithm is to be kept in three languages, Rust first, Python second and JavaScript third; today each has only its JavaScript implementation, and [`ports.json`](ports.json) lists what is still missing. A change to an algorithm lands in Rust, and the Python and JavaScript implementations follow it in the same pull request. The three files of an algorithm sit side by side in [`solvers/`](solvers) and share its name: `periodicTilingSolver-Modular.rs`, `periodicTilingSolver-Modular.py` and `periodicTilingSolver-Modular.js`. The BigInt solvers stay the reference of their Modular twins in every language; "reference" never names the Rust implementation.
+
+All three keep one contract, so the test runner, the benchmark runner and `data/` treat them alike:
+
+- An implementation takes `-r <rowCount> -c <colCount>`, and where the algorithm has them `--lattice king|triangular|square`, `--torus`, `--twisted` and `-j <jobs>`, each meaning what it means in the JavaScript solver.
+- It prints one line on standard output: the count in decimal, or for the diagonal solvers the counts with 0, 1, 2 and more diagonal pieces separated by commas. Nothing else goes to standard output.
+- It rejects arguments it cannot use, and a board it cannot count, with a usage line that starts with `Usage:` or another message on standard error and a nonzero exit code, never with a wrong count. A note on standard error with exit code 0, such as the number of worker threads a diagonal solver actually runs, is allowed and ignored by the runners.
+- [`helpers/scriptExecutor.js`](helpers/scriptExecutor.js) runs a `.rs` file as the release binary of the same name in `target/release` (or `$CARGO_TARGET_DIR/release`), built with `cargo build --release`, a `.py` file with `python3 -I` (or the interpreter at `$PYTHON`), and a `.js` file with the running Node.js.
+
+[`ports.json`](ports.json) lists, for each algorithm, the languages it still lacks. `pnpm test` fails when an algorithm lacks a language that `ports.json` does not list, when `ports.json` lists a language that exists or one the executor cannot run, when a file in `data/` checks one implementation of an algorithm and not the others, when a file in `data/` is not loaded by [`data/index.js`](../data/index.js), and when an implementation is checked by no file in `data/`. An algorithm added from now on is to come with all three implementations and not to enter `ports.json`; review holds that line, the test does not.
+
 ## Renderer
 
 [`renderer/`](renderer) numbers tilings, rebuilds any tiling from its number without listing the ones before, samples domino tilings exactly with coupling from the past and domicule tilings with a Markov chain, and draws them as SVG or ASCII. [`dominoTilingRenderer.js`](dominoTilingRenderer.js) is its command line:

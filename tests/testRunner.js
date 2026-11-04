@@ -7,6 +7,7 @@ const { listPrimes, combineCheckedResidues } = require('../src/helpers/modular')
 const periodicModular = require('../src/solvers/periodicTilingSolver-Modular.js');
 const { capThreads } = require('../src/solvers/domiculeDiagonalSolver-Modular.js');
 const { readBenchmarkRuns } = require('../site/benchmarkRuns.js');
+const { readRepository, listPortErrors } = require('./portCheck.js');
 const {
   filesInt,
   testCasesInt,
@@ -184,21 +185,162 @@ function executeDiagonalAnchorTests() {
   });
 }
 
-function executeExecutorTest() {
-  process.stdout.write('Executing executor test 1 of 1 for the Node.js binary... ');
+function executeExecutorTests() {
+  const board = { rowCount: 2, colCount: 2 };
+  const solver = name => path.join(ROOT_DIRECTORY, 'src', 'solvers', name);
+  const guard = action => {
+    try {
+      return action();
+    } catch (error) {
+      return `an error: ${error.message}`;
+    }
+  };
+  const command = fileName => guard(() => exec.generateCommand(fileName, board));
+  const attempt = fileName => guard(() => exec(fileName, board));
+  const absoluteTarget = path.join(os.tmpdir(), 'cargo-target');
+  const cases = [
+    ['the Node.js binary', 'dominoTilingSolver.js', {}, `"${process.execPath}" "${solver('dominoTilingSolver.js')}" -r 2 -c 2`],
+    ['python3', 'dominoTilingSolver.py', { PYTHON: undefined }, `"python3" "-I" "${solver('dominoTilingSolver.py')}" -r 2 -c 2`],
+    ['$PYTHON', 'dominoTilingSolver.py', { PYTHON: '/opt/python' }, `"/opt/python" "-I" "${solver('dominoTilingSolver.py')}" -r 2 -c 2`],
+    [
+      'the Rust binary in target',
+      'dominoTilingSolver.rs',
+      { CARGO_TARGET_DIR: undefined },
+      `"${path.join(ROOT_DIRECTORY, 'target', 'release', 'dominoTilingSolver')}" -r 2 -c 2`,
+    ],
+    [
+      'a relative $CARGO_TARGET_DIR',
+      'dominoTilingSolver.rs',
+      { CARGO_TARGET_DIR: 'build' },
+      `"${path.join(ROOT_DIRECTORY, 'build', 'release', 'dominoTilingSolver')}" -r 2 -c 2`,
+    ],
+    [
+      'an absolute $CARGO_TARGET_DIR',
+      'dominoTilingSolver.rs',
+      { CARGO_TARGET_DIR: absoluteTarget },
+      `"${path.join(absoluteTarget, 'release', 'dominoTilingSolver')}" -r 2 -c 2`,
+    ],
+    ['an unknown language', 'dominoTilingSolver.ts', {}, 'an error: dominoTilingSolver.ts is not a .rs, .py or .js implementation.'],
+    [
+      'a Rust binary that was not built',
+      'dominoTilingSolver.rs',
+      { CARGO_TARGET_DIR: absoluteTarget },
+      `an error: Execution failed: ${path.join(absoluteTarget, 'release', 'dominoTilingSolver')} does not exist; build it with cargo build --release.`,
+      true,
+    ],
+  ];
 
-  const command = exec.generateNodeCommand('dominoTilingSolver.js', { rowCount: 2, colCount: 2 });
-  const expected = `"${process.execPath}" "${path.join(ROOT_DIRECTORY, 'src', 'solvers', 'dominoTilingSolver.js')}" `;
+  return cases.every(([name, fileName, environment, expected, run], index) => {
+    process.stdout.write(`Executing executor test ${index + 1} of ${cases.length} for ${name}... `);
 
-  if (!command.startsWith(expected)) {
-    console.error(`Failed! Command: ${command}`);
+    const saved = Object.fromEntries(Object.keys(environment).map(key => [key, process.env[key]]));
+    const assign = values =>
+      Object.entries(values).forEach(([key, value]) => (value === undefined ? delete process.env[key] : (process.env[key] = value)));
 
-    return false;
-  }
+    assign(environment);
 
-  console.log('Passed!');
+    const actual = run ? attempt(fileName) : command(fileName);
 
-  return true;
+    assign(saved);
+
+    if (actual !== expected) {
+      console.error(`Failed! Command: ${actual}`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
+function executePortTests() {
+  const repository = readRepository();
+  const ports = { languages: ['rs', 'py', 'js'], pending: {} };
+  const complete = ['a.rs', 'a.py', 'a.js'];
+  const data = files => [{ name: 'a.json', files }];
+  const loaded = { loadedDataFiles: ['a.json', 'b.json'], runnableLanguages: ['rs', 'py', 'js'] };
+  const cases = [
+    ['the repository', repository, []],
+    ['three implementations', { implementations: complete, dataFiles: data(complete), ports }, []],
+    [
+      'a language the executor cannot run',
+      { implementations: complete, dataFiles: data(complete), ports: { ...ports, languages: [...ports.languages, 'go'] } },
+      ['src/ports.json names go, which src/helpers/scriptExecutor.js cannot run.', 'a has no go implementation, and src/ports.json does not list it as pending.'],
+    ],
+    [
+      'a data file that data/index.js does not load',
+      { implementations: complete, dataFiles: [{ name: 'c.json', files: complete }], ports },
+      [
+        'data/c.json is not loaded by data/index.js, so no test runs it.',
+        'src/solvers/a.rs is checked by no file in data/.',
+        'src/solvers/a.py is checked by no file in data/.',
+        'src/solvers/a.js is checked by no file in data/.',
+      ],
+    ],
+    [
+      'a missing port',
+      { implementations: ['a.py', 'a.js'], dataFiles: data(['a.py', 'a.js']), ports },
+      ['a has no rs implementation, and src/ports.json does not list it as pending.'],
+    ],
+    [
+      'a pending port',
+      { implementations: ['a.js'], dataFiles: data(['a.js']), ports: { ...ports, pending: { a: ['rs', 'py'] } } },
+      [],
+    ],
+    [
+      'a stale pending port',
+      { implementations: complete, dataFiles: data(complete), ports: { ...ports, pending: { a: ['rs'] } } },
+      ['src/ports.json lists a.rs as pending, but src/solvers/a.rs exists.'],
+    ],
+    [
+      'a pending algorithm without files',
+      { implementations: complete, dataFiles: data(complete), ports: { ...ports, pending: { b: ['rs'] } } },
+      ['src/ports.json lists b, which has no implementation in src/solvers.'],
+    ],
+    [
+      'a data file that skips one language',
+      { implementations: complete, dataFiles: [...data(complete), { name: 'b.json', files: ['a.js'] }], ports },
+      ['data/b.json checks a.js but not a.rs.', 'data/b.json checks a.js but not a.py.'],
+    ],
+    [
+      'an implementation no data file checks',
+      { implementations: complete, dataFiles: data(['a.js']), ports },
+      [
+        'data/a.json checks a.js but not a.rs.',
+        'data/a.json checks a.js but not a.py.',
+        'src/solvers/a.rs is checked by no file in data/.',
+        'src/solvers/a.py is checked by no file in data/.',
+      ],
+    ],
+    [
+      'a data file naming a missing file',
+      { implementations: complete, dataFiles: data([...complete, 'b.js']), ports },
+      ['data/a.json checks b.js, which is not in src/solvers.'],
+    ],
+    [
+      'an unknown language',
+      { implementations: [...complete, 'a.ts'], dataFiles: data(complete), ports },
+      ['src/solvers/a.ts is not a .rs, .py or .js implementation.'],
+    ],
+  ];
+
+  return cases.every(([name, state, expected], index) => {
+    process.stdout.write(`Executing port test ${index + 1} of ${cases.length} for ${name}... `);
+
+    const actual = listPortErrors(state === repository ? state : { ...loaded, ...state });
+
+    if (actual.join('\n') !== expected.join('\n')) {
+      console.error(`Failed!\n  Expected: ${expected.join(' | ') || 'no errors'}\n  Actual: ${actual.join(' | ') || 'no errors'}`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
 }
 
 function runBenchmark(benchmarkRoot, extraArgs) {
@@ -640,7 +782,8 @@ async function __main__() {
     const limitTestsPassed = executeLimitTests();
     const allParserTestsPassed = executeParserTests();
     const allRejectionTestsPassed = executeRejectionTests();
-    const executorTestPassed = executeExecutorTest();
+    const executorTestsPassed = executeExecutorTests();
+    const portTestsPassed = executePortTests();
     const benchmarkGuardTestPassed = executeBenchmarkGuardTest();
     const benchmarkSurfaceTestsPassed = executeBenchmarkSurfaceTests();
     const precisionWarningTestsPassed = executePrecisionWarningTests();
@@ -667,7 +810,8 @@ async function __main__() {
       limitTestsPassed &&
       allParserTestsPassed &&
       allRejectionTestsPassed &&
-      executorTestPassed &&
+      executorTestsPassed &&
+      portTestsPassed &&
       benchmarkGuardTestPassed &&
       benchmarkSurfaceTestsPassed &&
       precisionWarningTestsPassed &&

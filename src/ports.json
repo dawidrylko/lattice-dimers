@@ -1,0 +1,14 @@
+{
+  "languages": ["rs", "py", "js"],
+  "pending": {
+    "domiculeDiagonalSolver-BigInt": ["rs", "py"],
+    "domiculeDiagonalSolver-Modular": ["rs", "py"],
+    "domiculeTilingSolver-BigInt": ["rs", "py"],
+    "domiculeTilingSolver-Modular": ["rs", "py"],
+    "dominoTilingSolver": ["rs", "py"],
+    "dominoTilingSolver-BigInt": ["rs", "py"],
+    "dominoTilingSolver-Formula": ["rs", "py"],
+    "periodicTilingSolver-BigInt": ["rs", "py"],
+    "periodicTilingSolver-Modular": ["rs", "py"]
+  }
+}

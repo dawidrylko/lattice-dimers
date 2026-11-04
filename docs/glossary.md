@@ -1,6 +1,6 @@
 # Glossary
 
-The words this repository uses for its pieces, lattices and surfaces, in the README files, the notes, the site, the research notes, the papers and the code comments. Use these words and avoid the ones listed against them. A new term, or a correction to one, is added here in the same change that introduces it.
+The words this repository uses for its pieces, lattices, surfaces, signs and code, in the README files, the notes, the site, the research notes, the papers and the code comments. Use these words and avoid the ones listed against them. A new term, or a correction to one, is added here in the same change that introduces it.
 
 Three exceptions. The OEIS entry texts in [`oeis/`](../oeis) are quoted as they stand on the OEIS, so they keep the OEIS wording ("diagonal domicule", the link text of a `%H` line). An avoided name is avoided as the name of one notebook, page or tab; a section that describes two surfaces together, such as "Cylinders and tori" in the method note, may name both. Text that a script prints into a recorded output keeps its wording until the output is recomputed, so [`research/king-entropy/src/cw.py`](../research/king-entropy/src/cw.py) still prints "king lattice" into `out/out_cw.txt`.
 
@@ -47,3 +47,14 @@ A signed count weighs each tiling with a sign instead of counting it once. The o
 | seam sign | the sign (-1)^k of a tiling of a cylinder or a torus, where k is the number of pieces that cross the column seam; the row seam of a torus is not counted. The signed count is the difference between the two parities of those crossings, and the papers call the sign a Z2 flux | the Tori notebook (section The seam sign), the periodic solvers, the research notes and the papers | |
 | twisted | counted with the seam sign | the option `twisted` and the flag `--twisted` of the periodic solvers, the field `twisted` of the test cases in `data/`, the twisted transfer and its twisted levels in the research notes | "twisted" in the prose of the notebooks and the site, where the name is seam sign |
 | twisted cut, twisted swap | a cut where two rows agree up to the left-right reflection J, and the swap of the parts below it; neither has anything to do with the seam sign | the notes on log-convexity, `log-convexity/involution.py`, the companion note | |
+
+## Code
+
+A solver counts the tilings of one kind of board by one method; the code calls it an algorithm when it speaks of the solver apart from its language, and names it by its file name without the extension.
+
+| term | meaning | where it is used | avoid |
+| --- | --- | --- | --- |
+| algorithm | a solver apart from its language, named by its file name without the extension, such as `periodicTilingSolver-Modular` | [`src/README.md`](../src/README.md) (section Implementations), [`src/ports.json`](../src/ports.json), the port tests of [`tests/testRunner.js`](../tests/testRunner.js) | |
+| implementation | one algorithm in one language, a `.rs`, `.py` or `.js` file in [`src/solvers`](../src/solvers); Rust is the first language, Python the second, JavaScript the third | `src/README.md`, the port tests, the executor | "reference implementation" for the Rust one, since reference names the BigInt solver of a Modular one |
+| solver contract | the arguments, output and errors every implementation keeps, so the runners and `data/` treat the three languages alike | `src/README.md` (section Implementations) | |
+| pending port | a language an algorithm still lacks, listed in `src/ports.json`, which is not to grow | `src/ports.json`, the port tests | |
