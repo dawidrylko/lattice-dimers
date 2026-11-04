@@ -904,7 +904,7 @@ const figureTestCases = [
       return (
         total === 36n &&
         svgs.length === 36 &&
-        svgs.every((svg, i) => svg.startsWith(`<svg role="img" aria-label="Domino tiling number ${i + 1} of a 4 by 4 board" `) && (svg.match(/>#\d+</g) || []).length === 1)
+        svgs.every((svg, i) => svg.startsWith(`<svg role="img" aria-label="Domino tiling number ${i + 1} of a 4 by 4 rectangle" `) && (svg.match(/>#\d+</g) || []).length === 1)
       );
     },
   },
@@ -914,7 +914,7 @@ const figureTestCases = [
       [
         [{ pieces: 'domicule', surface: 'cylinder', ranks: [661] }, 'Domicule tiling number 662 of a 4 by 4 cylinder'],
         [{ pieces: 'domino', surface: 'torus', ranks: [0] }, 'Domino tiling number 1 of a 4 by 4 torus'],
-        [{ pieces: 'domicule', diagonals: 8, ranks: [0] }, 'Domicule tiling number 1 with 8 diagonal pieces of a 4 by 4 board'],
+        [{ pieces: 'domicule', diagonals: 8, ranks: [0] }, 'Domicule tiling number 1 with 8 diagonal pieces of a 4 by 4 rectangle'],
       ].every(([options, name]) => drawTilings({ rowCount: 4, colCount: 4, ...options }).svgs[0].includes(`aria-label="${name}"`)),
   },
   {

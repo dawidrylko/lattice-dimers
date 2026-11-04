@@ -663,7 +663,7 @@ function showSheet(board, tilings, first, labels) {
   svg.setAttribute('role', 'img');
   svg.setAttribute(
     'aria-label',
-    `${board.pieces === 'domicule' ? 'Domicule' : 'Domino'} tilings of a ${board.rowCount} by ${board.colCount} ${board.surface === 'rectangle' ? 'board' : board.surface}`,
+    `${board.pieces === 'domicule' ? 'Domicule' : 'Domino'} tilings of a ${board.rowCount} by ${board.colCount} ${board.surface}`,
   );
 }
 

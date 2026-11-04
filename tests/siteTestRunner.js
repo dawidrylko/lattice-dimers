@@ -11,7 +11,7 @@ const REPOSITORY_LINK = /https:\/\/github\.com\/dawidrylko\/lattice-dimers\/(?:t
 const EXTERNAL_RESOURCE = /<script\b[^>]*\bsrc="https?:[^>]*>|<link\b(?=[^>]*\brel="stylesheet")[^>]*\bhref="https?:[^>]*>/g;
 const MIN_HIT_CONTRAST = 4.5;
 const MIN_FIGURE_LABEL = 11;
-const FIGURE_NAME = /^(Domino|Domicule) tiling number \d+( with \d+ diagonal pieces?)? of a \d+ by \d+ (board|cylinder|torus)$/;
+const FIGURE_NAME = /^(Domino|Domicule) tiling number \d+( with \d+ diagonal pieces?)? of a \d+ by \d+ (rectangle|cylinder|torus)$/;
 const MIN_SEAM_DISTANCE = 40;
 const ARCHIVES = [
   ['benchmarks/results/2024-03', 'March 2024, up to 1,000 runs per board, machine not recorded'],
@@ -339,7 +339,7 @@ async function checkSheets(page, baseUrl, width) {
 
   for (const board of SHEET_BOARDS) {
     const [, rowCount, colCount] = board.match(/^(\d+)x(\d+)/);
-    const label = `${board.includes('-diagonal') ? 'Domicule' : 'Domino'} tilings of a ${rowCount} by ${colCount}`;
+    const label = `${board.includes('-diagonal') ? 'Domicule' : 'Domino'} tilings of a ${rowCount} by ${colCount} ${(board.match(/cylinder|torus/) || ['rectangle'])[0]}`;
     await page.evaluate(`location.hash = 'gallery/${board}/1'`);
     await page.waitFor(
       `(document.querySelector('#sheet svg')?.getAttribute('aria-label') || '').includes('${label}')`,

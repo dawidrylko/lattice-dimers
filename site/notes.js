@@ -429,7 +429,7 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectang
   const chosen = ranks === 'all' ? Array.from({ length: Number(unranker.total) }, (_, i) => i) : ranks;
   const filter = diagonals === undefined ? '' : ` with ${diagonals} diagonal piece${diagonals === 1 ? '' : 's'}`;
   const svgs = chosen.map(rank => {
-    const name = `${pieces === 'domicule' ? 'Domicule' : 'Domino'} tiling number ${rank + 1}${filter} of a ${rowCount} by ${colCount} ${surface === 'rectangle' ? 'board' : surface}`;
+    const name = `${pieces === 'domicule' ? 'Domicule' : 'Domino'} tiling number ${rank + 1}${filter} of a ${rowCount} by ${colCount} ${surface}`;
     const svg = renderer.renderSheet([unrank(unranker, BigInt(rank))], 1, {
       rowCount,
       colCount,

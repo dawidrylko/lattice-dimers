@@ -4,7 +4,7 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-On a cylinder the left and right edges of the board are glued, so a piece may cross the seam between the last and the first column. The drawings mark the glued edges and draw such a piece cut, with one half on each side, and they show tilings of the cylinder of circumference 4 and height 4, first with dominoes and then with domicules, spread over the numbering.
+On a cylinder the left and right edges of the board are glued, so a piece may cross the seam between the last and the first column. The drawings mark the glued edges and draw a piece that crosses the seam cut, with one half on each side. They show tilings of the cylinder of circumference 4 and height 4, first with dominoes and then with domicules, spread over the numbering.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
