@@ -7,6 +7,8 @@ import numpy as np
 from lattice_dimers.core import combine_checked_residues, list_primes, parse_args, run_workers
 
 MAX_CIRCUMFERENCE = 24
+BLOCK_SIZE = 1 << 16
+CACHED_STATES = 1 << 20
 LATTICES = {
     "square": {"down_left": False, "down_right": False},
     "triangular": {"down_left": False, "down_right": True},
@@ -52,8 +54,10 @@ def list_moves(cols, c, has_below, lattice, wrap_bit):
 
 def count_modulo(board):
     """Counts the tilings of a cylinder or a torus modulo a prime, cell by cell, like countModulo of
-    js/solvers/periodicTilingSolver-Modular.js. A cell step moves every state at once: each source state
-    sends its count to its target, and the counts that meet in a target are summed."""
+    js/solvers/periodicTilingSolver-Modular.js, with the same two tables of 32-bit counts. A cell step moves
+    the states block by block, one move at a time: within one move no two states share a target, so the
+    counts are added to their targets at once and reduced modulo the prime as in the JavaScript solver. The
+    targets of each block and move are kept between cells only while all of them fit CACHED_STATES."""
     rows, cols, prime = board["rows"], board["cols"], board["prime"]
     torus, twisted = board["torus"], board["twisted"]
     lattice = LATTICES[board["lattice"]]
@@ -63,7 +67,10 @@ def count_modulo(board):
     uses_wrap_bit = lattice["down_left"] and cols >= 3
     state_count = 1 << (window_bits + (1 if uses_wrap_bit else 0))
     top_bit = 1 << (window_bits - 1)
-    states = np.arange(state_count, dtype=np.int64)
+    moves_below = [list_moves(cols, c, True, lattice, wrap_bit) for c in range(cols)]
+    moves_last = [list_moves(cols, c, torus, lattice, wrap_bit) for c in range(cols)]
+    current = np.zeros(state_count, dtype=np.uint32)
+    following = np.zeros(state_count, dtype=np.uint32)
 
     def shift(values, c):
         window = (values & window_mask) >> 1
@@ -76,34 +83,50 @@ def count_modulo(board):
 
         return window | (values & wrap_bit)
 
-    def transitions(c, has_below):
+    def add(targets, counts):
+        sums = following[targets] + counts
+        following[targets] = np.where(sums >= prime, sums - prime, sums)
+
+    def classes(low, c, moves):
+        states = np.arange(low, min(low + BLOCK_SIZE, state_count), dtype=np.int64)
         occupied = states[(states & 1) == 1]
         free = states[(states & 1) == 0]
-        sources = [occupied]
-        targets = [shift(occupied, c)]
-        negative = [np.zeros(len(occupied), dtype=bool)]
+        found = [(occupied, shift(occupied, c), False)]
 
-        for bit, crossing in list_moves(cols, c, has_below, lattice, wrap_bit):
+        for bit, crossing in moves:
             moved = free[(free & bit) == 0]
-            sources.append(moved)
-            targets.append(shift(moved + bit, c))
-            negative.append(np.full(len(moved), twisted and crossing))
+            found.append((moved, shift(moved + bit, c), twisted and crossing))
 
-        return np.concatenate(sources), np.concatenate(targets), np.concatenate(negative)
+        return found
 
-    below = [transitions(c, True) for c in range(cols)]
-    last = [transitions(c, torus) for c in range(cols)]
+    cache = {} if 2 * cols * state_count <= CACHED_STATES else None
+
+    def step(c, last):
+        moves = moves_last[c] if last else moves_below[c]
+        following.fill(0)
+
+        for low in range(0, state_count, BLOCK_SIZE):
+            if cache is None:
+                found = classes(low, c, moves)
+            else:
+                if (low, c, last) not in cache:
+                    cache[(low, c, last)] = classes(low, c, moves)
+
+                found = cache[(low, c, last)]
+
+            for sources, targets, negative in found:
+                counts = current[sources]
+                add(targets, prime - counts if negative else counts)
 
     def run(start):
-        current = np.zeros(state_count, dtype=np.int64)
+        nonlocal current, following
+        current.fill(0)
         current[start] = 1 % prime
 
         for cell in range(rows * cols):
             c = cell % cols
-            sources, targets, negative = below[c] if cell < (rows - 1) * cols else last[c]
-            counts = current[sources]
-            counts = np.where(negative & (counts != 0), prime - counts, counts)
-            current = np.bincount(targets, weights=counts, minlength=state_count).astype(np.int64) % prime
+            step(c, cell >= (rows - 1) * cols)
+            current, following = following, current
 
         return int(current[start])
 

@@ -11,7 +11,7 @@ function parseCommandLineArguments(args, schema) {
     const currentArg = args[i];
     const nextArg = args[i + 1];
 
-    if (schema[currentArg]) {
+    if (Object.hasOwn(schema, currentArg)) {
       options[schema[currentArg]] =
         nextArg !== void 0 && /^\d+$/.test(nextArg) && Number.isSafeInteger(Number(nextArg))
           ? Number(nextArg)

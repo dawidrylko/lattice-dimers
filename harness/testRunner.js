@@ -101,6 +101,41 @@ const implementationRejectionTestCases = [
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', 'x'], message: 'Usage' },
 ];
 
+const MEMORY_TEST_BYTES = 256 * 2 ** 20;
+const memoryTestCases = [{ algorithm: 'periodic-tiling-modular', args: ['-r', '2', '-c', '18', '-j', '1'], expectedResult: '524289' }];
+
+function executeMemoryTests() {
+  const measure = [
+    'import resource, subprocess, sys',
+    'result = subprocess.run(sys.argv[1:], capture_output=True, text=True)',
+    "peak = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss * (1 if sys.platform == 'darwin' else 1024)",
+    'print(result.returncode, peak, result.stdout.strip())',
+  ].join('\n');
+  const runs = memoryTestCases.flatMap(({ algorithm, args, expectedResult }) =>
+    listImplementations(algorithm).map(({ file }) => ({ file, command: [...exec.launch(file), ...args], args, expectedResult })),
+  );
+
+  return runs.every(({ file, command, args, expectedResult }, index) => {
+    process.stdout.write(`Executing memory test ${index + 1} of ${runs.length} for "${file} ${args.join(' ')}"... `);
+
+    const { stdout, stderr } = spawnSync(process.env.PYTHON || 'python3', ['-I', '-c', measure, ...command], {
+      cwd: ROOT_DIRECTORY,
+      encoding: 'utf-8',
+    });
+    const [status, peak, output] = (stdout || '').trim().split(' ');
+
+    if (status !== '0' || output !== expectedResult || !(Number(peak) <= MEMORY_TEST_BYTES)) {
+      console.error(`Failed! Exit code ${status}, ${output || (stderr || '').trim()}, peak ${Math.round(Number(peak) / 2 ** 20)} MB of at most ${MEMORY_TEST_BYTES / 2 ** 20} MB`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
 function executeCheckPrimeTests() {
   const primes = listPrimes(3);
   const residuesOf = value => primes.map(prime => Number(((BigInt(value) % BigInt(prime)) + BigInt(prime)) % BigInt(prime)));
@@ -732,6 +767,18 @@ async function executeModuleTests() {
 }
 
 function executeParserTests() {
+  process.stdout.write('Executing parser test for a bare argument named like an Object property... ');
+
+  const { size } = parseArgs(['constructor', '-s', '12'], { '-s': 'size' });
+
+  if (size !== 12) {
+    console.error(`Failed! Expected: 12, Actual: ${size}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
   return parserTestCases.every(({ value, expectedResult }, index) => {
     process.stdout.write(
       `Executing parser test ${index + 1} of ${parserTestCases.length} for "${value}"... `,
@@ -859,6 +906,7 @@ async function __main__() {
     const limitTestsPassed = executeLimitTests();
     const allParserTestsPassed = executeParserTests();
     const allRejectionTestsPassed = executeRejectionTests();
+    const memoryTestsPassed = executeMemoryTests();
     const executorTestsPassed = executeExecutorTests();
     const portTestsPassed = executePortTests();
     const researchPathTestPassed = executeResearchPathTest();
@@ -888,6 +936,7 @@ async function __main__() {
       limitTestsPassed &&
       allParserTestsPassed &&
       allRejectionTestsPassed &&
+      memoryTestsPassed &&
       executorTestsPassed &&
       portTestsPassed &&
       researchPathTestPassed &&
