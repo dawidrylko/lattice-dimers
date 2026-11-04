@@ -40,6 +40,7 @@ A new fix adds its row here with the check that guards it.
 | no hint to turn a domicule board | `106a9df` | `test:render`, `2x20 --domicule` | the hint removed |
 | usage lines named the paths before the move to `src/` | `4a11337` | `test`, usage tests (new) | `Usage: node domiculeTilingSolver-Modular.js` |
 | the modular solver as a module had no worker count | `4a11337` | `test`, module tests (new) | the default of `jobs` removed |
+| a bare argument named like an Object property, such as `constructor`, took the next argument as its value in `js/core/commandLineArgsParser.js` | #88 | `test`, parser test for a bare argument named like an Object property | `schema[currentArg]` in the flag check |
 
 ## Site
 
