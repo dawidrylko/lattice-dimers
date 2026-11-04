@@ -76,7 +76,7 @@ zt = [int(x) for x in json.load(open('data/zex/zex_tri_free_m5_K60.json'))['Z']]
 print(f'tri free m=5: Z(6), Z(8), Z(10) = {zt[6]}, {zt[8]}, {zt[10]}; '
       f'Z(8)^2 - Z(6) Z(10) = {zt[8] ** 2 - zt[6] * zt[10]}')
 
-# non-planarity: edges of the n x n king graph vs 3V - 6
+# non-planarity: edges of the n x n king's graph vs 3V - 6
 for n in (3, 4, 5):
     E = 2 * n * (n - 1) + 2 * (n - 1) ** 2
     print(f'king {n}x{n}: V = {n * n}, E = {E}, 3V - 6 = {3 * n * n - 6}')

@@ -24,7 +24,7 @@ import collections, itertools, sys
 
 
 def matchings(rows, m):
-    """All perfect matchings of the king graph on rows x range(m), as tuples of edges ((r,c),(r',c'))."""
+    """All perfect matchings of the king's graph on rows x range(m), as tuples of edges ((r,c),(r',c'))."""
     cells = sorted((r, c) for r in rows for c in range(m))
     S = set(cells)
 

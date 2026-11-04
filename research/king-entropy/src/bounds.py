@@ -1,4 +1,4 @@
-"""Rigorous bounds on the king-graph dimer entropy s, and the Calkin-Wilf check.
+"""Rigorous bounds on the dimer entropy s of the king's graph, and the Calkin-Wilf check.
 
 usage: python3 src/bounds.py <wmax> > out/out_bounds.txt
 
@@ -32,7 +32,7 @@ certified c and C are the float ratios times (1 -+ 1e-12). Entries below
 1e-280 are checked to be absent, so no subnormal arithmetic occurs.
 
 UPPER (Kahn-Lovasz / Alon-Friedland). PM(G) <= prod_v (d_v!)^(1/(2 d_v)); the
-king graph has d_v <= 8 and (d!)^(1/(2d)) increases with d, so
+king's graph has d_v <= 8 and (d!)^(1/(2d)) increases with d, so
 s <= log(8!)/16.
 """
 import itertools, json, sys, time

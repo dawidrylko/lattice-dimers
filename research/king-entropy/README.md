@@ -35,7 +35,7 @@ python3 -m pip install -r src/requirements.txt
 
 | file | what it does |
 | --- | --- |
-| `src/tm.py` | cell-by-cell row transfer; lattices `king`, `tri`, `sq`; boundary `free` (open strip) or `cyl` (periodic across the width); exact counts with `count(h, w, lattice, bc)` |
+| `src/tm.py` | cell-by-cell row transfer; lattices `king`, `tri`, `sq`; boundary `free` (free strip) or `cyl` (periodic across the width); exact counts with `count(h, w, lattice, bc)` |
 | `src/tmfast.py` | the same transfer with reshaped views (bit-identical to `src/tm.py`, ~17x faster); open-side weight `z` for `src/bounds.py`; counts mod p |
 | `src/tm2.py` | float64 power iteration on `T^2` separately in each parity sector; writes `data/sec/sec_<lat>_<bc>_<w0>_<w1>.json` |
 | `src/cylw.py` | one width and one sector per run with `src/tmfast.py`, convergence check, Collatz-Wielandt bracket, time and peak RSS; writes `data/eig/eig_<lat>_<bc>_w<w>_p<p>.json` |

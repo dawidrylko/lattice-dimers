@@ -1,4 +1,4 @@
-"""Run-weighted open-strip upper bound on the king-graph dimer entropy s.
+"""Run-weighted open-strip upper bound on the dimer entropy s of the king's graph.
 
 usage: python3 src/runweight.py <scheme> <w> [<w> ...] [--disk DIR] > out/out_runweight_<scheme>.txt
        (--disk: vectors above 3 GiB keep the previous iterate in a memory-mapped file in DIR)

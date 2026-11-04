@@ -9,8 +9,8 @@ D2 of the square to its right). So each diagonal is routed through one corner of
 along the bottom side and up the right side, D2 from v+x along the bottom side and up the left side.
 a = 1 when exactly one of the eight edges at v is occupied and the two routed bits pass straight
 through (D1 from the left bond to the up bond, D2 from the right bond to the up bond); bond states that
-one of the two endpoints forbids are dropped (5 horizontal, 4 vertical states for the king lattice).
-The lattices are the king lattice (both diagonals), the triangular lattice (D1 only, s exact from
+one of the two endpoints forbids are dropped (5 horizontal, 4 vertical states for the king's graph).
+The lattices are the king's graph (both diagonals), the triangular lattice (D1 only, s exact from
 Kasteleyn, out_validate.txt section 4) and the square lattice (no diagonal, s = G/pi, critical).
 The network is contracted in 2 x 2 blocks A of four vertices, so every block holds an even number of
 sites and every rectangle of blocks has perfect matchings.

@@ -3,7 +3,7 @@
 usage: python3 linf.py [kmax] > out_linf.txt      (kmax default 18; the committed out_linf.txt has kmax = 16)
 
 (L-inf): q -> a_{2q} = log lambda_{2q} convex (lambda_k = growth rate of the free strip with k rows
-and length -> infinity). `surface.py` checks it for the king lattice up to 2q = 24. symmetry.py shows
+and length -> infinity). `surface.py` checks it for the king's graph up to 2q = 24. symmetry.py shows
 that (L) at fixed width m breaks under ANY diagonal-weight asymmetry (1, 1 - eps) once q is large
 (m = 4, 8, 12). Question: does (L-inf) break too? If not, (L-inf) is a different, robust statement.
 

@@ -15,7 +15,7 @@ commit `0c53f27`, 0 failures). Caveats at the end (§8).
 
 ## 0. Notation
 
-- King graph: vertices (r, c) ∈ ℤ², edges between distinct vertices with
+- King's graph: vertices (r, c) ∈ ℤ², edges between distinct vertices with
   max(|Δr|, |Δc|) = 1. Board B(K, L) = {0..K−1} × {0..L−1}, induced subgraph;
   Z(K, L) = number of its perfect matchings (Z = 0 if KL is odd).
 - s̄ = limsup and s̲ = liminf of (KL)⁻¹ log Z(K, L) over K, L → ∞ with KL even. The
