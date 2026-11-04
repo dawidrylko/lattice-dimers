@@ -102,6 +102,7 @@ const implementationRejectionTestCases = [
 ];
 
 const MEMORY_TEST_BYTES = 256 * 2 ** 20;
+const MEMORY_TEST_TIMEOUT = 120000;
 const memoryTestCases = [{ algorithm: 'periodic-tiling-modular', args: ['-r', '2', '-c', '18', '-j', '1'], expectedResult: '524289' }];
 
 function executeMemoryTests() {
@@ -121,6 +122,7 @@ function executeMemoryTests() {
     const { stdout, stderr } = spawnSync(process.env.PYTHON || 'python3', ['-I', '-c', measure, ...command], {
       cwd: ROOT_DIRECTORY,
       encoding: 'utf-8',
+      timeout: MEMORY_TEST_TIMEOUT,
     });
     const [status, peak, output] = (stdout || '').trim().split(' ');
 
