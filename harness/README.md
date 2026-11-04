@@ -1,6 +1,6 @@
 # Tests
 
-Every command below runs in CI on each pull request, in the order listed, except the full solver run. Before `pnpm test`, CI builds the Rust workspace with `cargo build --release`, runs `cargo test` and `cargo clippy -- -D warnings`, and installs the Python package with `pip install -e python`; a Rust binary that was not built or a Python package that was not installed fails `pnpm test`.
+Every command below runs in CI on each pull request, in the order listed, except the full solver run. Before `pnpm test`, CI builds the Rust workspace with `cargo build --release`, runs `cargo test --workspace` and `cargo clippy --workspace --all-targets -- -D warnings`, and installs the Python package with `pip install -e python`; a Rust binary that was not built or a Python package that was not installed fails `pnpm test`.
 
 | command | runner | what it checks |
 | --- | --- | --- |

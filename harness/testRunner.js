@@ -93,6 +93,7 @@ const implementationRejectionTestCases = [
   { algorithm: 'periodic-tiling-modular', args: ['-r', '2abc', '-c', '4'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '+4', '-c', '4'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '9007199254740992', '-c', '4'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-modular', args: ['-r', '9'.repeat(5000), '-c', '4'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-c', '4'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },

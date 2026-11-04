@@ -14,8 +14,9 @@ def parse_args(args, schema):
     while i < len(args):
         if args[i] in schema:
             value = args[i + 1] if i + 1 < len(args) else None
-            valid = value is not None and DIGITS.fullmatch(value) and int(value) <= MAX_SAFE_INTEGER
-            options[schema[args[i]]] = int(value) if valid else math.nan
+            digits = (value.lstrip("0") or "0") if value is not None and DIGITS.fullmatch(value) else None
+            valid = digits is not None and len(digits) <= 16 and int(digits) <= MAX_SAFE_INTEGER
+            options[schema[args[i]]] = int(digits) if valid else math.nan
             i += 1
 
         i += 1

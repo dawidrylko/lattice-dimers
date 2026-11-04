@@ -35,8 +35,8 @@ jobs:
           components: clippy
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --release --locked
-      - run: cargo test --locked
-      - run: cargo clippy --all-targets --locked -- -D warnings
+      - run: cargo test --workspace --locked
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
