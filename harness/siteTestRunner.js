@@ -1162,7 +1162,7 @@ async function checkBenchmark(page, baseUrl, width) {
     problems.push(`the domino benchmark has the columns ${dominoColumns.headers} and ${dominoColumns.cells} rows without five cells`);
   }
 
-  for (const [group, id] of [['cylinders', 'cylinder-benchmark'], ['tori', 'torus-benchmark']]) {
+  for (const [group, id, surface] of [['cylinders', 'cylinder-benchmark', 'cylinder'], ['tori', 'torus-benchmark', 'torus']]) {
     await loadSite(page, baseUrl, width, `benchmark/${group}`);
     await page.waitFor(`document.querySelectorAll('#${id}-rows tr').length > 0`, `the ${group} rows`);
     await page.settle();
@@ -1174,6 +1174,7 @@ async function checkBenchmark(page, baseUrl, width) {
         headerRows: document.querySelectorAll('#${id} thead tr').length,
         titles: headers.map(th => th.title).join(' | '),
         headers: headers.map(th => th.textContent.trim() + ' ' + shown(th.querySelector('svg.lang'))).join(' | '),
+        values: [...rows[0].cells].slice(2, -1).map(cell => cell.textContent),
         cards: [...rows[0].cells].slice(2, -1).map(cell => (cell.dataset.text || '') + ' ' + shown(cell.querySelector(':scope > svg.lang'))).join(' | '),
         drifted: rows.flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => {
           const icon = cell.querySelector(':scope > svg.lang');
@@ -1191,7 +1192,8 @@ async function checkBenchmark(page, baseUrl, width) {
     const solvers = names.slice(2, -1);
     const wrong = columns.labels.filter(row => row !== names.join(' | '));
     const cards = width <= MOBILE_TABLE_WIDTH;
-    const unnamed = cells.slice(2, -1).filter((name, i) => (cards ? !name.startsWith(`${solvers[i]} `) : name.includes(solvers[i])));
+    const unnamed = cells.slice(2, -1).filter((name, i) => name !== (cards ? `${solvers[i]} ${columns.values[i]}` : columns.values[i]));
+    const cardIcons = cards ? LANGUAGE_ICONS : LANGUAGE_ICONS.replace(/#icon-\w+/g, 'no icon');
 
     if (columns.headerRows !== 1 || names.join(' | ') !== LANGUAGE_COLUMNS.join(' | ') || columns.titles !== solvers.join(' | ')) {
       problems.push(`#${id} has ${columns.headerRows} header rows named ${names.join(' | ')} with the titles ${columns.titles}`);
@@ -1201,8 +1203,8 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${id} shows the solver headers ${columns.headers}`);
     }
 
-    if (cards && columns.cards !== LANGUAGE_ICONS) {
-      problems.push(`#${id} labels the solver cards ${columns.cards}`);
+    if (columns.cards !== cardIcons) {
+      problems.push(`#${id} labels the solver cells ${columns.cards} at ${width} px`);
     }
 
     if (columns.drifted.length) {
@@ -1219,6 +1221,18 @@ async function checkBenchmark(page, baseUrl, width) {
 
     if (columns.wrapped) {
       problems.push(`#${id} wraps a time onto a second line in ${columns.wrapped} rows`);
+    }
+
+    const runsTitle = await page.evaluate(`(() => {
+      const row = structuredClone(DATA.periodicBenchmark.find(r => r.surface === '${surface}' && r.bigint && r.languages.rs));
+      row.languages.rs.runs += 1;
+      renderSolverRows('${id}', [row], MODULAR_LANGUAGES);
+      const runs = document.querySelector('#${id}-rows tr').lastElementChild.querySelector('span[title]');
+      return runs ? runs.title : 'no tooltip';
+    })()`);
+
+    if (runsTitle !== LANGUAGE_COLUMNS.slice(2, -1).join(' / ')) {
+      problems.push(`#${id} names the runs of different solvers ${runsTitle}`);
     }
   }
 
