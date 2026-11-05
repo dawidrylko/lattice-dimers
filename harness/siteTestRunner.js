@@ -119,6 +119,7 @@ const siteTestCases = [
   { width: 786, check: 'picker' },
   { width: 786, check: 'confirmation' },
   { width: 786, check: 'benchmark' },
+  { width: 721, check: 'benchmark' },
   { width: 375, check: 'sheets' },
   { width: 375, check: 'confirmation' },
   { width: 375, check: 'samples' },
