@@ -87,6 +87,8 @@ const implementationRejectionTestCases = [
   { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '13'], message: 'at most 12' },
   { algorithm: 'periodic-tiling-bigint', args: ['-r', '13', '-c', '13', '--torus', '--twisted'], message: 'at most 12' },
   { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '1'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '1', '-c', '13', '--torus'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '13', '--lattice', 'hexagonal'], message: 'Usage' },
   { algorithm: 'periodic-tiling-bigint', args: ['-r', '1', '-c', '4', '--torus'], message: 'Usage' },
   { algorithm: 'periodic-tiling-bigint', args: ['-r', '2abc', '-c', '4'], message: 'Usage' },
   { algorithm: 'periodic-tiling-bigint', args: ['-r', '9007199254740992', '-c', '4'], message: 'Usage' },
