@@ -69,7 +69,6 @@ A new fix adds its row here with the check that guards it.
 | note pages were narrower than the main page | `4a11337` | `test:site`, shared header and footer | `max-width: 760px` |
 | the chain length on the page was a literal | `106a9df` | `test:site`, text read from the code and the data (new) | "5,000" in the template with 4,000 sweeps in the code |
 | a partial newer benchmark month replaced the full table | `96ece59` | `test`, benchmark run test (new) of `site/benchmarkRuns.js`, the only place the build gets its run from | the newest run instead of the newest complete one |
-| the older runs were described with 100,000 runs on an i7-8700 each | `8298d43` | `test:site`, text read from the code and the data (new) | one hand-written sentence for both |
 | the glued edge had the colour of the blue pieces | `a2f03dd` | `test:site`, glued-edge colours (new) | `--seam: #4f7cac`, the colour before the fix |
 | the notebook drawings labelled their tilings at 5.4 px on a 375 px phone | #85 | `test:site`, notes, label size (new) | a build of `bf5b7fd`, the base of #85 |
 | the notebook drawings had no accessible name | #85 | `test:site`, notes, drawing names (new) | a build of `bf5b7fd` |
