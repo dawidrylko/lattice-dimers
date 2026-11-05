@@ -1,6 +1,6 @@
 # Dominoes on tori
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/torus.html) has the results. It counts the domino tilings of tori, boards whose opposite edges are glued in both directions. The same boards are counted with [domicules](../domicules/03-torus.md), where the torus count of three lattices is compared with their entropy, and on the [triangular lattice](../triangular/02-torus.md); the [cylinders notebook](02-cylinder.md) glues only the left and right edges.
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/tori.html) has the results. It counts the domino tilings of tori, boards whose opposite edges are glued in both directions. The same boards are counted with [domicules](../domicules/03-tori.md), where the torus count of three lattices is compared with their entropy, and on the [triangular lattice](../triangular-lattice/02-tori.md); the [cylinders notebook](02-cylinders.md) glues only the left and right edges.
 
 ## The problem
 

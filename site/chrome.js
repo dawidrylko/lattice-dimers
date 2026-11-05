@@ -6,36 +6,36 @@ const NAV = [
   {
     label: 'Dominoes',
     items: [
-      { slug: 'dominoes/rectangle', label: 'Rectangles' },
-      { slug: 'dominoes/cylinder', label: 'Cylinders' },
-      { slug: 'dominoes/torus', label: 'Tori' },
+      { slug: 'dominoes/rectangles', label: 'Rectangles' },
+      { slug: 'dominoes/cylinders', label: 'Cylinders' },
+      { slug: 'dominoes/tori', label: 'Tori' },
     ],
   },
   {
     label: 'Domicules',
     items: [
-      { slug: 'domicules/rectangle', label: 'Rectangles' },
-      { slug: 'domicules/cylinder', label: 'Cylinders' },
-      { slug: 'domicules/torus', label: 'Tori' },
-      { slug: 'domicules/diagonals', label: 'Diagonal pieces' },
+      { slug: 'domicules/rectangles', label: 'Rectangles' },
+      { slug: 'domicules/cylinders', label: 'Cylinders' },
+      { slug: 'domicules/tori', label: 'Tori' },
+      { slug: 'domicules/diagonal-pieces', label: 'Diagonal pieces' },
     ],
   },
   {
     label: 'Triangular lattice',
     items: [
-      { slug: 'triangular/cylinder', label: 'Cylinders' },
-      { slug: 'triangular/torus', label: 'Tori' },
+      { slug: 'triangular-lattice/cylinders', label: 'Cylinders' },
+      { slug: 'triangular-lattice/tori', label: 'Tori' },
     ],
   },
 ];
 
 const NOTE_REDIRECTS = {
-  a004003: { to: 'dominoes/rectangle' },
-  a239273: { to: 'domicules/rectangle' },
-  dominoes: { to: 'dominoes/rectangle' },
-  domicules: { to: 'domicules/rectangle' },
+  a004003: { to: 'dominoes/rectangles' },
+  a239273: { to: 'domicules/rectangles' },
+  dominoes: { to: 'dominoes/rectangles' },
+  domicules: { to: 'domicules/rectangles' },
   method: {
-    to: 'dominoes/rectangle',
+    to: 'dominoes/rectangles',
     sections: {
       problem: '#the-problem',
       'domino-tilings': '#the-closed-form',
@@ -43,34 +43,43 @@ const NOTE_REDIRECTS = {
       'transfer-by-rows': '#transfer-by-rows',
       numbering: '#numbering-tilings',
       sampling: '#sampling-with-coupling-from-the-past',
-      'domicule-tilings': 'domicules/rectangle#transfer-by-cells',
-      'transfer-by-cells': 'domicules/rectangle#transfer-by-cells',
-      'counting-modulo-primes': 'domicules/rectangle#counting-modulo-primes',
-      'sampling-with-a-markov-chain': 'domicules/rectangle#sampling-with-a-markov-chain',
-      'numbering-by-diagonal-pieces': 'domicules/diagonals#numbering-by-diagonal-pieces',
-      'cylinders-and-tori': 'domicules/torus#numbering',
+      'domicule-tilings': 'domicules/rectangles#transfer-by-cells',
+      'transfer-by-cells': 'domicules/rectangles#transfer-by-cells',
+      'counting-modulo-primes': 'domicules/rectangles#counting-modulo-primes',
+      'sampling-with-a-markov-chain': 'domicules/rectangles#sampling-with-a-markov-chain',
+      'numbering-by-diagonal-pieces': 'domicules/diagonal-pieces#numbering-by-diagonal-pieces',
+      'cylinders-and-tori': 'domicules/tori#numbering',
       verification: '#verification',
       references: '#references',
     },
   },
   cylinders: {
-    to: 'domicules/cylinder',
+    to: 'domicules/cylinders',
     sections: {
       'the-king-s-graph': '#the-counts',
-      'the-square-lattice': 'dominoes/cylinder#the-counts',
-      'the-triangular-lattice': 'triangular/cylinder#the-counts',
+      'the-square-lattice': 'dominoes/cylinders#the-counts',
+      'the-triangular-lattice': 'triangular-lattice/cylinders#the-counts',
     },
   },
-  tori: { to: 'domicules/torus', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
-  torus: { to: 'domicules/torus', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
-  diagonals: { to: 'domicules/diagonals' },
+  tori: { to: 'domicules/tori', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
+  torus: { to: 'domicules/tori', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
+  diagonals: { to: 'domicules/diagonal-pieces' },
+  'dominoes/rectangle': { to: 'dominoes/rectangles' },
+  'dominoes/cylinder': { to: 'dominoes/cylinders' },
+  'dominoes/torus': { to: 'dominoes/tori' },
+  'domicules/rectangle': { to: 'domicules/rectangles' },
+  'domicules/cylinder': { to: 'domicules/cylinders' },
+  'domicules/torus': { to: 'domicules/tori' },
+  'domicules/diagonals': { to: 'domicules/diagonal-pieces' },
+  'triangular/cylinder': { to: 'triangular-lattice/cylinders' },
+  'triangular/torus': { to: 'triangular-lattice/tori' },
 };
 
 /**
  * Says where a section of a moved note now lives, as a path from notes/ with its fragment.
  * @param {string} from The old slug, such as 'method'.
  * @param {string} id The id of the section on the old page.
- * @returns {string} The new address, such as 'domicules/rectangle.html#transfer-by-cells'.
+ * @returns {string} The new address, such as 'domicules/rectangles.html#transfer-by-cells'.
  */
 function resolveRedirect(from, id) {
   const { to, sections = {} } = NOTE_REDIRECTS[from];
