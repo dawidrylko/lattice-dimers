@@ -1517,6 +1517,43 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     }
   }
 
+  const headers = await page.evaluate(`(async () => {
+    const solvers = [...document.querySelectorAll('#benchmark table thead th')].filter(th => /^(Formula|Modular|BigInt)/.test(th.textContent.trim()));
+    const pages = {};
+    const results = [];
+
+    for (const th of solvers) {
+      const link = th.querySelector('a.solver');
+      const table = th.closest('table').id + ' ' + (th.getAttribute('aria-label') || th.textContent.trim());
+
+      if (!link) {
+        results.push(table + ' links nowhere');
+        continue;
+      }
+
+      const url = new URL(link.href);
+      const id = url.hash.slice(1);
+      pages[url.pathname] = pages[url.pathname] || fetch(url.pathname).then(response => (response.ok ? response.text() : ''));
+      const html = await pages[url.pathname];
+      const found = new DOMParser().parseFromString(html, 'text/html').getElementById(id);
+
+      if (!id || !found || !/^H[23]$/.test(found.tagName)) {
+        results.push(table + ' links ' + link.getAttribute('href') + ', which is no section');
+      }
+
+      if ((th.getAttribute('aria-label') || '') !== (link.getAttribute('aria-label') || '')) {
+        results.push(table + ' names its link ' + link.getAttribute('aria-label'));
+      }
+    }
+
+    return solvers.length + ' ' + results.join('; ');
+  })()`);
+  const [count, ...headerProblems] = headers.split(' ');
+
+  if (Number(count) !== 22 || headerProblems.join(' ').trim()) {
+    problems.push(`the benchmark tables have ${count} solver headers, 22 expected, each linking a section of a notebook: ${headerProblems.join(' ').trim() || 'they do'}`);
+  }
+
   return problems;
 }
 
