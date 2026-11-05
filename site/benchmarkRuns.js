@@ -27,7 +27,9 @@ function isCompleteRun(root, run) {
   const lastBigInt = testCasesBigInt[testCasesBigInt.length - 1];
   const requiredFiles = [
     'environment.json',
-    ...filesInt.map(fileName => resultFileName(fileName, lastInt)),
+    ...filesInt
+      .flatMap(fileName => listImplementations(algorithmOf(fileName)))
+      .map(({ file }) => resultFileName(path.basename(file), lastInt)),
     ...filesBigInt
       .flatMap(fileName => listImplementations(algorithmOf(fileName)))
       .map(({ file }) => resultFileName(path.basename(file), lastBigInt)),

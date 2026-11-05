@@ -42,6 +42,10 @@ name = "domino-tiling-formula"
 path = "rust/solvers/src/bin/domino-tiling-formula.rs"
 
 [[bin]]
+name = "domino-tiling-number"
+path = "rust/solvers/src/bin/domino-tiling-number.rs"
+
+[[bin]]
 name = "periodic-tiling-bigint"
 path = "rust/solvers/src/bin/periodic-tiling-bigint.rs"
 
