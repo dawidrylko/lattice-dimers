@@ -1,14 +1,14 @@
-Average Execution Time: 289839.244 ms
-Average Process Time: 289908.435 ms
-Load Average Before: 10.97 10.19 8.84
+Average Execution Time: 237458.317 ms
+Average Process Time: 237503.271 ms
+Load Average Before: 3.73 3.35 2.80
 ---
-1. Execution Time: 421927.1 ms, Process Time: 421992.275 ms
-2. Execution Time: 323862.241 ms, Process Time: 323918.606 ms
-3. Execution Time: 313768.143 ms, Process Time: 313832.973 ms
-4. Execution Time: 292234.871 ms, Process Time: 292341.022 ms
-5. Execution Time: 249477.651 ms, Process Time: 249545.634 ms
-6. Execution Time: 247437.919 ms, Process Time: 247547.524 ms
-7. Execution Time: 282937.676 ms, Process Time: 283007.56 ms
-8. Execution Time: 266111.744 ms, Process Time: 266175.883 ms
-9. Execution Time: 264971.664 ms, Process Time: 265019.59 ms
-10. Execution Time: 235663.435 ms, Process Time: 235703.284 ms
+1. Execution Time: 236564.071 ms, Process Time: 236604.027 ms
+2. Execution Time: 235248.317 ms, Process Time: 235292.345 ms
+3. Execution Time: 234237.1 ms, Process Time: 234275.418 ms
+4. Execution Time: 235640.303 ms, Process Time: 235679.28 ms
+5. Execution Time: 239338.553 ms, Process Time: 239386.886 ms
+6. Execution Time: 236883.171 ms, Process Time: 236929.059 ms
+7. Execution Time: 236853.304 ms, Process Time: 236902.809 ms
+8. Execution Time: 241601.617 ms, Process Time: 241656.635 ms
+9. Execution Time: 240014.368 ms, Process Time: 240062.638 ms
+10. Execution Time: 238202.369 ms, Process Time: 238243.613 ms
