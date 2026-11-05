@@ -47,7 +47,7 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | --- | --- |
 | [`research/king-entropy`](research/king-entropy/README.md) | scripts, data, outputs, proofs and papers on the entropy of the king's graph |
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
-| [`notes`](notes/README.md) | notebooks on the method and the sequences, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
+| [`notes`](notes/README.md) | notebooks on dominoes and domicules on rectangles, cylinders and tori, on the triangular lattice on cylinders and tori, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
 | [`spec`](spec/README.md) | the solver contract, the registry of algorithms and the known counts every implementation and program is checked against |
 | [`rust`](rust/README.md) | the Rust solvers, for the algorithms [`spec/algorithms.json`](spec/algorithms.json) lists with Rust, and the library they share; the workspace manifest is [`Cargo.toml`](Cargo.toml) at the root |
 | [`python`](python/README.md) | the Python package `lattice_dimers`: the Python solvers, for the algorithms `spec/algorithms.json` lists with Python, and the library they share |

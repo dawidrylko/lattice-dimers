@@ -1,6 +1,6 @@
 # Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/diagonals.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673). The method is described in the [method note](01-method.md).
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonals.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673).
 
 ## The problem
 
@@ -14,6 +14,12 @@ const svgs = counts.flatMap(k => drawTilings({ rowCount: 4, colCount: 4, pieces:
 figure(svgs, 'Tilings of the 4 × 4 board with k = 0, 2, 4, 6 and 8 diagonal pieces.', { highlight: true });
 ```
 
+## Numbering by diagonal pieces
+
+The gallery can also number only the tilings with $k$ diagonal pieces. Every entry of the table of the [domicule numbering](01-rectangle.md#transfer-by-cells) then becomes a list, `table[i][state][r]`, of the completions with exactly $r \le k$ diagonal pieces, and unranking keeps the order of the full numbering. The gallery offers this up to $10 \times 10$.
+
+A straight piece covers a black and a white cell of the chessboard, a diagonal piece two cells of one colour. So on the $2n \times 2n$ board the number of diagonal pieces is even. On a rectangle the count for every $k$ comes from [`domiculeDiagonalSolver-BigInt.js`](../../js/solvers/domiculeDiagonalSolver-BigInt.js) or `spec/cases/`. On a [cylinder](02-cylinder.md) or [torus](03-torus.md) the gallery's own scan carries the same lists, one per rotation class, and the build checks its count for $k = 0$ against the domino count of the same surface. It also checks that the counts add up to the number of tilings.
+
 ## The polynomial
 
 Give every diagonal piece the weight $x$. The weighted count of the $h \times w$ board is a polynomial,
@@ -24,7 +30,7 @@ P_{h,w}(x) = \sum_k T(h, w, k)\, x^k,
 
 where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the domicule count ([OEIS A239273](https://oeis.org/A239273)). This is the dimer model of [Sandvik and Moessner (2006)](https://doi.org/10.1103/PhysRevB.73.144504) with diagonal dimers of fugacity $x$, and the weights $x = 3/2, 2, 3$ of the [companion note on log-convexity](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy-log-convexity.pdf) are values of the same polynomial.
 
-[`domiculeDiagonalSolver-BigInt.js`](../js/solvers/domiculeDiagonalSolver-BigInt.js) runs the transfer of the [domicules notebook](03-domicules.md) with a polynomial in every state, and [`domiculeDiagonalSolver-Modular.js`](../js/solvers/domiculeDiagonalSolver-Modular.js) does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. When the OEIS was searched by terms and by name on 30 October 2026, before A401673 was drafted, it had no such triangle.
+[`domiculeDiagonalSolver-BigInt.js`](../../js/solvers/domiculeDiagonalSolver-BigInt.js) runs the transfer of the [domicules notebook](01-rectangle.md#transfer-by-cells) with a polynomial in every state, and [`domiculeDiagonalSolver-Modular.js`](../../js/solvers/domiculeDiagonalSolver-Modular.js) does the same modulo primes, one prime per worker thread. A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. When the OEIS was searched by terms and by name on 30 October 2026, before A401673 was drafted, it had no such triangle.
 
 ```js run
 const reference = require('./js/solvers/domiculeDiagonalSolver-BigInt.js');
@@ -155,7 +161,7 @@ chart({
 
 ## Running time
 
-Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
+Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../../benchmarks/results).
 
 ```js run
 const { formatTime } = nb.context;
@@ -169,8 +175,12 @@ print(`Run: ${nb.context.benchmarkRun}`);
 
 ## PARI/GP
 
-The polynomial $P_{h,w}(x)$ and the rows of the triangle in [`oeis/A401673/A401673.gp`](../oeis/A401673/A401673.gp), checked in CI against the test data up to $8 \times 8$.
+The polynomial $P_{h,w}(x)$ and the rows of the triangle in [`oeis/A401673/A401673.gp`](../../oeis/A401673/A401673.gp), checked in CI against the test data up to $8 \times 8$.
 
 ```js run
 print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A401673/A401673.gp'), 'utf-8').trim());
 ```
+
+## Verification
+
+The two diagonal solvers agree with each other, with A004003 at $k = 0$ and with A239273 summed over $k$, and the PARI/GP program runs in CI against the same data. The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
