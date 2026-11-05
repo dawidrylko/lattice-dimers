@@ -107,11 +107,10 @@ th a.solver { color: inherit; text-decoration: underline 1px var(--muted); text-
 th a.solver:hover { color: var(--fg); text-decoration-color: currentColor; }
 th a.solver:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .table-wrap { overflow-x: auto; }
-@media (min-width: 721px) and (max-width: 860px) { .bench .table-wrap table.languages :is(th, td) { padding-left: 8px; padding-right: 8px; } }
 .lang { width: 16px; height: 16px; vertical-align: -3px; fill: currentColor; }
 td > .lang { display: none; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-@media (max-width: 720px) {
+@media (max-width: 919px) {
   .bench .table-wrap table { display: block; }
   .bench .table-wrap tbody { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 16px; }
   .bench .table-wrap thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }

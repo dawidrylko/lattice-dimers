@@ -28,7 +28,7 @@ const CONTENT_TYPES = {
   '.xml': 'application/xml',
 };
 const VIEWPORT_HEIGHT = 900;
-const MOBILE_TABLE_WIDTH = 720;
+const MOBILE_TABLE_WIDTH = 919;
 const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGES = [['Rust', '#icon-rust'], ['Python', '#icon-python'], ['JavaScript', '#icon-javascript']];
 const solverColumns = (solver, languages) => LANGUAGES.filter(([name]) => languages.includes(name)).map(([name, icon]) => ({ name: `${solver}, ${name}`, icon: `${solver} ${icon}` }));
@@ -141,7 +141,8 @@ const siteTestCases = [
   { width: 786, check: 'picker' },
   { width: 786, check: 'confirmation' },
   { width: 786, check: 'benchmark' },
-  { width: 721, check: 'benchmark' },
+  { width: 919, check: 'benchmark' },
+  { width: 920, check: 'benchmark' },
   { width: 375, check: 'sheets' },
   { width: 375, check: 'confirmation' },
   { width: 375, check: 'samples' },
