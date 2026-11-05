@@ -16,58 +16,9 @@ figure(small.svgs, `All ${small.total} domicule tilings of the 2 × 2 board.`);
 figure(board.svgs, `8 of the ${board.total} domicule tilings of the 4 × 4 board.`);
 ```
 
-## Transfer by cells
+## The Modular solver
 
-A domicule tiling is counted with a cell-by-cell scan. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the one of the [domino scan](../dominoes/01-rectangles.md#numbering-tilings). [`domiculeTilingSolver-BigInt.js`](../../js/solvers/domiculeTilingSolver-BigInt.js) keeps the counts as `BigInt` and is the reference. The same scan is in [`oeis/A239264/A239264.gp`](../../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../../oeis/A239273/A239273.gp), where `a(n)` is A239273.
-
-## The sequence up to 20 × 20
-
-The `BigInt` solver counts the boards up to $16 \times 16$, the modular one $18 \times 18$ and $20 \times 20$. The data section of the OEIS entry lists the terms up to $a(9)$; the [OEIS A239273 b-file](https://oeis.org/A239273/b239273.txt) continues to $a(12)$ ($24 \times 24$), beyond the solvers here, and $a(10)$ is checked against it.
-
-```js run
-const reference = require('./js/solvers/domiculeTilingSolver-BigInt.js');
-const known = require('./js/core/cases').testCasesDomicule;
-const bFile = { 10: '974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427' };
-
-nb.terms = [];
-const rows = [];
-
-for (let n = 0; n <= 10; n++) {
-  const side = 2 * n;
-  const board = { rowCount: side, colCount: side };
-  const count = n <= 8 ? reference.calculateTotalTilingCombinations(board) : await nb.context.countDomicule(board);
-  const published = known.find(t => t.rowCount === side && t.colCount === side);
-  const expected = published?.expectedResult ?? bFile[n] ?? null;
-  const status = expected === null ? 'not in OEIS yet' : expected !== String(count) ? 'DIFFERS FROM OEIS' : published ? 'matches OEIS' : 'matches the OEIS b-file';
-
-  if (expected !== null && expected !== String(count)) {
-    throw new Error(`a(${n}) differs from OEIS`);
-  }
-
-  nb.terms.push(count);
-  rows.push([n, `${side}×${side}`, String(count), String(count).length, n <= 8 ? 'BigInt' : 'modular', status]);
-}
-
-table(['n', 'board', 'a(n)', 'digits', 'solver', 'status'], rows);
-```
-
-## Rectangles: A239264
-
-`T(h, w)` counts the domicule tilings of an $h \times w$ board. The table is symmetric, and its diagonal of even sides is A239273.
-
-```js run
-const { calculateTotalTilingCombinations } = require('./js/solvers/domiculeTilingSolver-BigInt.js');
-const sides = [1, 2, 3, 4, 5, 6, 7, 8];
-
-table(
-  ['h \\ w', ...sides.map(String)],
-  sides.map(h => [String(h), ...sides.map(w => String(calculateTotalTilingCombinations({ rowCount: h, colCount: w })))]),
-);
-```
-
-## Counting modulo primes
-
-The scan only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domiculeTilingSolver-Modular.js`](../../js/solvers/domiculeTilingSolver-Modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [1], bounds the number of perfect matchings of a graph with degrees $d(v)$:
+The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domiculeTilingSolver-Modular.js`](../../js/solvers/domiculeTilingSolver-Modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. Its Rust and Python implementations, [`domicule-tiling-modular.rs`](../../rust/solvers/src/bin/domicule-tiling-modular.rs) and [`domicule_tiling_modular.py`](../../python/lattice_dimers/solvers/domicule_tiling_modular.py), do the same. It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [1], bounds the number of perfect matchings of a graph with degrees $d(v)$:
 
 ```math
 \#\text{perfect matchings} \le \prod_{v} \bigl(d(v)!\bigr)^{1/(2d(v))}
@@ -75,7 +26,7 @@ The scan only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of
 
 Every prime contributes at least 30 bits, so $\lceil (\log_2 B + 1)/30 \rceil$ primes suffice for a bound $B$. One more prime checks the result: the rebuilt count must agree with the residue modulo that prime, and a mismatch stops the solver.
 
-## How many primes the modular solver needs
+### How many primes the modular solver needs
 
 The bound gives $\log_2$ of the count from above. Each prime below $2^{31}$ adds at least 30 bits, and one more prime checks the result.
 
@@ -84,16 +35,17 @@ const { calculateLog2Bound } = require('./js/solvers/domiculeTilingSolver-Modula
 
 table(
   ['board', 'log2 of the bound', 'log2 of a(n)', 'primes for the CRT', 'check primes'],
-  [2, 4, 6, 8, 10].map(n => {
+  await Promise.all([2, 4, 6, 8, 10].map(async n => {
     const side = 2 * n;
     const bound = calculateLog2Bound(side, side);
-    const actual = nb.terms[n].toString(2).length - 1;
+    const actual = (await nb.context.countDomicule({ rowCount: side, colCount: side })).toString(2).length - 1;
+
     return [`${side}×${side}`, bound.toFixed(1), String(actual), String(Math.ceil((bound + 1) / 30)), '1'];
-  }),
+  })),
 );
 ```
 
-## The Chinese remainder theorem at work
+### The Chinese remainder theorem at work
 
 The $8 \times 8$ board counted modulo the two largest primes below $2^{31}$, combined, and checked against a third.
 
@@ -102,18 +54,23 @@ const { listPrimes, countModulo, combineResidues } = require('./js/solvers/domic
 const primes = listPrimes(3);
 const residues = primes.map(p => countModulo(8, 8, p));
 const combined = combineResidues(residues.slice(0, 2), primes.slice(0, 2));
+const exact = await nb.context.countDomicule({ rowCount: 8, colCount: 8 });
 
 primes.forEach((p, i) => print(`a(4) mod ${p} = ${residues[i]}`));
 print(`CRT of the first two: ${combined}`);
 print(`check: ${combined} mod ${primes[2]} = ${combined % BigInt(primes[2])}, residue ${residues[2]}`);
-print(`exact a(4) = ${nb.terms[4]}`);
+print(`exact a(4) = ${exact}`);
 
-if (combined !== nb.terms[4] || combined % BigInt(primes[2]) !== BigInt(residues[2])) {
+if (combined !== exact || combined % BigInt(primes[2]) !== BigInt(residues[2])) {
   throw new Error('the CRT does not reproduce a(4)');
 }
 ```
 
-## The state of the transfer
+## The BigInt solver
+
+A domicule tiling is counted with a cell-by-cell scan, the transfer by cells. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the one of the [domino scan](../dominoes/01-rectangles.md#numbering). [`domiculeTilingSolver-BigInt.js`](../../js/solvers/domiculeTilingSolver-BigInt.js) keeps the counts as `BigInt` and is the reference. The same scan is in [`oeis/A239264/A239264.gp`](../../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../../oeis/A239273/A239273.gp), where `a(n)` is A239273.
+
+### The state of the transfer
 
 The number of states per cell for both pieces, and the size of the domicule numbering table on the gallery boards.
 
@@ -129,11 +86,15 @@ table(
 );
 ```
 
-## Sampling with a Markov chain
+## Numbering
 
-Domicule tilings have no lattice structure like the domino rotations, so [coupling from the past](../dominoes/01-rectangles.md#sampling-with-coupling-from-the-past) does not apply. Up to $14 \times 14$ the gallery numbers every tiling with a table of $(hw + 1) \cdot 2^{w+2}$ entries, which is exactly uniform when the number is drawn at random. From $16 \times 16$ to $20 \times 20$ it runs a Markov chain. A step picks a cell $a$ and one of its eight neighbours $c$; when the partner $b$ of $a$ and the partner $d$ of $c$ are neighbours too, the pairs $ab$ and $cd$ become $ac$ and $bd$. Each such move arises from four ordered choices, and so does the move back, so the proposal is symmetric and the uniform distribution is stationary. On every board small enough to check (up to $4 \times 5$) the moves connect all tilings. A chain run for finitely many steps is still only approximately uniform, and the gallery labels its samples as such. Each sample gets its number from the backward scan of the [domino sampling](../dominoes/01-rectangles.md#sampling-with-coupling-from-the-past); a domicule state has $w + 1$ bits there, since no piece reaches further than $w + 1$ cells ahead and the scan shifts before it stores the state.
+Up to $14 \times 14$ the gallery numbers every tiling with a table of completion counts of the [cell-by-cell scan](#the-bigint-solver), as it numbers the [domino tilings](../dominoes/01-rectangles.md#numbering). The table has $(hw + 1) \cdot 2^{w+2}$ entries, and drawing the number at random gives an exactly uniform tiling.
 
-## Is the Markov chain uniform?
+### Sampling with a Markov chain
+
+Domicule tilings have no lattice structure like the domino rotations, so [coupling from the past](../dominoes/01-rectangles.md#sampling-with-coupling-from-the-past) does not apply. From $16 \times 16$ to $20 \times 20$ it runs a Markov chain. A step picks a cell $a$ and one of its eight neighbours $c$; when the partner $b$ of $a$ and the partner $d$ of $c$ are neighbours too, the pairs $ab$ and $cd$ become $ac$ and $bd$. Each such move arises from four ordered choices, and so does the move back, so the proposal is symmetric and the uniform distribution is stationary. On every board small enough to check (up to $4 \times 5$) the moves connect all tilings. A chain run for finitely many steps is still only approximately uniform, and the gallery labels its samples as such. Each sample gets its number from the backward scan of the [domino sampling](../dominoes/01-rectangles.md#sampling-with-coupling-from-the-past); a domicule state has $w + 1$ bits there, since no piece reaches further than $w + 1$ cells ahead and the scan shifts before it stores the state.
+
+### Is the Markov chain uniform?
 
 On $4 \times 4$ the chain can be compared with the exact answer: 280 tilings, each should appear equally often. A chi-squared statistic above 357.8 (279 degrees of freedom, $p = 0.001$) would reject uniformity.
 
@@ -158,6 +119,49 @@ print(`chi-squared: ${chiSquared.toFixed(1)} (limit 357.8)`);
 if (counts.size !== 280 || chiSquared > 357.8) {
   throw new Error('the chain fails the uniformity test');
 }
+```
+
+## The counts
+
+The `BigInt` solver counts the boards up to $16 \times 16$, the modular one $18 \times 18$ and $20 \times 20$. The data section of the OEIS entry lists the terms up to $a(9)$; the [OEIS A239273 b-file](https://oeis.org/A239273/b239273.txt) continues to $a(12)$ ($24 \times 24$), beyond the solvers here, and $a(10)$ is checked against it.
+
+```js run
+const reference = require('./js/solvers/domiculeTilingSolver-BigInt.js');
+const known = require('./js/core/cases').testCasesDomicule;
+const bFile = { 10: '974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427' };
+
+const rows = [];
+
+for (let n = 0; n <= 10; n++) {
+  const side = 2 * n;
+  const board = { rowCount: side, colCount: side };
+  const count = n <= 8 ? reference.calculateTotalTilingCombinations(board) : await nb.context.countDomicule(board);
+  const published = known.find(t => t.rowCount === side && t.colCount === side);
+  const expected = published?.expectedResult ?? bFile[n] ?? null;
+  const status = expected === null ? 'not in OEIS yet' : expected !== String(count) ? 'DIFFERS FROM OEIS' : published ? 'matches OEIS' : 'matches the OEIS b-file';
+
+  if (expected !== null && expected !== String(count)) {
+    throw new Error(`a(${n}) differs from OEIS`);
+  }
+
+  rows.push([n, `${side}×${side}`, String(count), String(count).length, n <= 8 ? 'BigInt' : 'modular', status]);
+}
+
+table(['n', 'board', 'a(n)', 'digits', 'solver', 'status'], rows);
+```
+
+### Rectangles: A239264
+
+`T(h, w)` counts the domicule tilings of an $h \times w$ board. The table is symmetric, and its diagonal of even sides is A239273.
+
+```js run
+const { calculateTotalTilingCombinations } = require('./js/solvers/domiculeTilingSolver-BigInt.js');
+const sides = [1, 2, 3, 4, 5, 6, 7, 8];
+
+table(
+  ['h \\ w', ...sides.map(String)],
+  sides.map(h => [String(h), ...sides.map(w => String(calculateTotalTilingCombinations({ rowCount: h, colCount: w })))]),
+);
 ```
 
 ## Running time

@@ -4,7 +4,7 @@ Each note is Markdown with code cells marked `js run`. `pnpm site:build` runs th
 
 The renderer in `site/notes.js` covers a subset of Markdown: headings, paragraphs, flat lists, tables, block quotes, code blocks, `math` blocks and inline `$...$` (rendered with KaTeX), code spans, links, bold and italics. Nested lists and a `|` inside a table cell are not supported.
 
-The notebooks are grouped as the site menu groups them: the notes of each kind of piece or lattice sit in their own directory, and a note `notes/<group>/<nn>-<name>.md` is published as `notes/<group>/<name>.html`. Every notebook says how its counts are made and how they are checked; the rectangles notebooks also say how the gallery numbers and samples the tilings.
+The notebooks are grouped as the site menu groups them: the notes of each kind of piece or lattice sit in their own directory, and a note `notes/<group>/<nn>-<name>.md` is published as `notes/<group>/<name>.html`. The notebooks of the groups share one layout, the notebook skeleton of the [glossary](../docs/glossary.md#site): a title with the OEIS entries they count, The problem, one section per solver, Numbering, The counts, their own sections, Running time, PARI/GP, Verification and References; the rectangles notebooks also say how the gallery samples the tilings.
 
 - [Research](00-research.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/research.html)): the king's graph paper in brief, with its results read from `research/king-entropy/data/` and the asymptotics of A239273 checked against the exact terms.
 - Dominoes:

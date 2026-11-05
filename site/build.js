@@ -17,7 +17,7 @@ const { MAX_CIRCUMFERENCE: PERIODIC_BIGINT_CIRCUMFERENCE } = require('../js/solv
 const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
-const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, resolveRedirect } = require('./chrome');
+const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
 const { readBenchmarkRuns } = require('./benchmarkRuns');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -604,6 +604,7 @@ async function buildNotes(notes, context) {
     const { title, description, html, toc, cells } = await renderNote(markdown, {
       resolveLink: target => resolveNoteLink(target, notes, note),
       context,
+      sectionAliases: SECTION_ALIASES[note.slug],
     });
     rendered.push({ ...note, title });
     const tocHtml = toc.length > 2 ? `<nav class="toc" aria-label="Contents"><strong>Contents</strong><ol>${toc.map(item => `<li><a href="#${item.id}">${item.title}</a></li>`).join('')}</ol></nav>` : '';
