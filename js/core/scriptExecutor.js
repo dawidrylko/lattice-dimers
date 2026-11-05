@@ -4,6 +4,7 @@ const path = require('path');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..', '..');
 const PYTHON_ROOT = path.join(ROOT_DIRECTORY, 'python');
+const RUST_DIRECTORY = path.join(ROOT_DIRECTORY, 'rust');
 const LAUNCHERS = {
   '.rs': file => [
     path.join(path.resolve(ROOT_DIRECTORY, process.env.CARGO_TARGET_DIR || 'target'), 'release', path.basename(file, '.rs')),
@@ -28,6 +29,34 @@ function resolve(fileName) {
  */
 function launch(fileName) {
   return LAUNCHERS[path.extname(fileName)](resolve(fileName));
+}
+
+function listRustSources(file) {
+  if (!fs.existsSync(file)) {
+    return [];
+  }
+
+  if (fs.statSync(file).isDirectory()) {
+    return fs.readdirSync(file).flatMap(name => listRustSources(path.join(file, name)));
+  }
+
+  return file.endsWith('.rs') ? [file] : [];
+}
+
+let rustSourcesModified;
+
+/**
+ * Finds when the Rust sources last changed: the newest modification time of a .rs file under rust/, read once per
+ * process. Only .rs files count, because cargo rebuilds when a .rs file it compiles is newer than its last build,
+ * so cargo build --release makes the binary current; a touched Cargo.toml or Cargo.lock is not rebuilt for, and a
+ * .rs file under rust/ that no crate compiles would keep the binary refused. The times are those of this checkout, so a $CARGO_TARGET_DIR shared with another checkout
+ * can hold a newer binary built from that checkout's sources.
+ * @returns {number} The time in milliseconds since the epoch.
+ */
+function rustSourcesModifiedAt() {
+  rustSourcesModified ??= Math.max(...listRustSources(RUST_DIRECTORY).map(file => fs.statSync(file).mtimeMs));
+
+  return rustSourcesModified;
 }
 
 function describeLanguages() {
@@ -61,7 +90,8 @@ function generateCommand(fileName, { rowCount, colCount, lattice, torus, twisted
 }
 
 /**
- * Executes one implementation of a solver with the provided options and returns the output.
+ * Executes one implementation of a solver with the provided options and returns the output. A Rust binary that
+ * was not built, or is older than the .rs files under rust/, fails instead of counting with code that is not the repository's.
  * @param {string} fileName The root-relative file of the implementation, or the bare name of a file in js/solvers.
  * @param {Object} options Options to pass to the solver.
  * @property {number} options.rowCount The number of rows.
@@ -75,6 +105,10 @@ function executeSolver(fileName, options) {
 
     if (path.extname(fileName) === '.rs' && !fs.existsSync(binary)) {
       throw new Error(`${binary} does not exist; build it with cargo build --release.`);
+    }
+
+    if (path.extname(fileName) === '.rs' && fs.statSync(binary).mtimeMs < rustSourcesModifiedAt()) {
+      throw new Error(`${binary} is older than the .rs files under rust/; rebuild it with cargo build --release.`);
     }
 
     const output = execSync(command, {
