@@ -47,9 +47,9 @@ let rustSourcesModified;
 
 /**
  * Finds when the Rust sources last changed: the newest modification time of a .rs file under rust/, read once per
- * process. Only .rs files count, because cargo rebuilds when one of them is newer than its last build, so a
- * binary older than them is always made current by cargo build --release; a touched Cargo.toml or Cargo.lock
- * is not rebuilt for. The times are those of this checkout, so a $CARGO_TARGET_DIR shared with another checkout
+ * process. Only .rs files count, because cargo rebuilds when a .rs file it compiles is newer than its last build,
+ * so cargo build --release makes the binary current; a touched Cargo.toml or Cargo.lock is not rebuilt for, and a
+ * .rs file under rust/ that no crate compiles would keep the binary refused. The times are those of this checkout, so a $CARGO_TARGET_DIR shared with another checkout
  * can hold a newer binary built from that checkout's sources.
  * @returns {number} The time in milliseconds since the epoch.
  */
