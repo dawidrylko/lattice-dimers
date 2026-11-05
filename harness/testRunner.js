@@ -107,6 +107,13 @@ const implementationRejectionTestCases = [
   { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
 ];
 
+const parityTestCases = [
+  {
+    algorithm: 'domicule-tiling-modular',
+    boards: [[0, 5], [5, 0], [1, 1], [1, 2], [2, 1], [10, 1], [1, 40], [3, 3], [2, 31]],
+  },
+];
+
 const MEMORY_TEST_BYTES = 256 * 2 ** 20;
 const MEMORY_TEST_TIMEOUT = 120000;
 const memoryTestCases = [{ algorithm: 'periodic-tiling-modular', args: ['-r', '2', '-c', '18', '-j', '1'], expectedResult: '524289' }];
@@ -140,6 +147,36 @@ function executeMemoryTests() {
 
     if (status !== '0' || output !== expectedResult || !(Number(peak) <= MEMORY_TEST_BYTES)) {
       console.error(`Failed! Exit code ${status}, ${output || (stderr || '').trim()}, peak ${Math.round(Number(peak) / 2 ** 20)} MB of at most ${MEMORY_TEST_BYTES / 2 ** 20} MB`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
+function executeParityTests() {
+  const runs = parityTestCases.flatMap(({ algorithm, boards }) =>
+    boards.map(([rowCount, colCount]) => ({ algorithm, board: { rowCount, colCount } })),
+  );
+
+  return runs.every(({ algorithm, board }, index) => {
+    const name = `${algorithm} on ${board.rowCount} × ${board.colCount}`;
+    process.stdout.write(`Executing parity test ${index + 1} of ${runs.length} for ${name}... `);
+
+    const outputs = listImplementations(algorithm).map(({ file }) => {
+      try {
+        return `${file}: ${exec(file, board)}`;
+      } catch (error) {
+        return `${file}: ${error.message}`;
+      }
+    });
+    const counts = new Set(outputs.map(output => output.slice(output.indexOf(': ') + 2)));
+
+    if (counts.size !== 1 || !/^\d+$/.test([...counts][0])) {
+      console.error(`Failed! ${outputs.join('; ')}`);
 
       return false;
     }
@@ -265,6 +302,10 @@ function executeExecutorTests() {
   const javaScript = path.join(ROOT_DIRECTORY, 'js', 'solvers', 'dominoTilingSolver.js');
   const python = 'python/lattice_dimers/solvers/domino_tiling_number.py';
   const rust = 'rust/solvers/src/bin/domino-tiling-number.rs';
+  const ownRoot = listImplementations('domicule-tiling-modular').find(({ language }) => language === 'rs').file;
+  const ownTarget = fs.mkdtempSync(path.join(os.tmpdir(), 'own-root-target-'));
+  const ownBinary = path.join(ownTarget, 'release', path.basename(ownRoot, '.rs'));
+  const ownTimes = fs.statSync(path.join(ROOT_DIRECTORY, ownRoot));
   const cases = [
     ['a bare name in js/solvers', 'dominoTilingSolver.js', {}, `"${process.execPath}" "${javaScript}" -r 2 -c 2`],
     ['a root-relative JavaScript file', 'js/solvers/dominoTilingSolver.js', {}, `"${process.execPath}" "${javaScript}" -r 2 -c 2`],
@@ -303,16 +344,29 @@ function executeExecutorTests() {
       `an error: Execution failed: ${staleBinary} is older than the .rs files it is built from; rebuild it with cargo build --release.`,
       true,
     ],
+    [
+      'a Rust binary older than only its own root',
+      ownRoot,
+      { CARGO_TARGET_DIR: ownTarget },
+      `an error: Execution failed: ${ownBinary} is older than the .rs files it is built from; rebuild it with cargo build --release.`,
+      true,
+    ],
   ];
 
   try {
     fs.mkdirSync(path.dirname(staleBinary));
     fs.writeFileSync(staleBinary, '', { mode: 0o755 });
     fs.utimesSync(staleBinary, 0, 0);
+    fs.mkdirSync(path.dirname(ownBinary));
+    fs.writeFileSync(ownBinary, '', { mode: 0o755 });
+    fs.utimesSync(ownBinary, Date.now() / 1000, Date.now() / 1000);
+    fs.utimesSync(path.join(ROOT_DIRECTORY, ownRoot), Date.now() / 1000 + 60, Date.now() / 1000 + 60);
 
     return runExecutorTests(cases, command, attempt) && executeRustSourceTests();
   } finally {
+    fs.utimesSync(path.join(ROOT_DIRECTORY, ownRoot), ownTimes.atime, ownTimes.mtime);
     fs.rmSync(staleTarget, { recursive: true, force: true });
+    fs.rmSync(ownTarget, { recursive: true, force: true });
   }
 }
 
@@ -989,8 +1043,37 @@ async function executeModuleTests() {
     [
       ['periodic-tiling-modular', fourByFour(testCasesPeriodic)],
       ['domicule-tiling-modular', fourByFour(testCasesDomicule)],
-    ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase))
+    ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
+    executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6))
   );
+}
+
+function executeScratchTest({ expectedResult, rowCount, colCount }) {
+  const python = listImplementations('domicule-tiling-modular').find(({ language }) => language === 'py');
+  const launcher = exec.launch(python.file);
+  const script = [
+    'import importlib, sys',
+    'solver = importlib.import_module(sys.argv[1])',
+    'solver.SCRATCH_COUNTS = 1',
+    'print(solver.calculate_total_tiling_combinations(int(sys.argv[2]), int(sys.argv[3]), 2))',
+  ].join('\n');
+
+  process.stdout.write(`Executing module test for ${python.file} with a scratch array of one count... `);
+
+  const { status, stdout, stderr } = spawnSync(launcher[0], ['-I', '-c', script, launcher.at(-1), String(rowCount), String(colCount)], {
+    cwd: ROOT_DIRECTORY,
+    encoding: 'utf-8',
+  });
+
+  if (status !== 0 || stdout.trim() !== expectedResult) {
+    console.error(`Failed! Exit code ${status}, expected ${expectedResult}: ${(stdout || stderr).trim()}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
 }
 
 function executeUnknownProcessorCountTest(algorithm, { expectedResult, rowCount, colCount, lattice, torus }) {
@@ -1170,6 +1253,7 @@ async function __main__() {
     const limitTestsPassed = executeLimitTests();
     const allParserTestsPassed = executeParserTests();
     const allRejectionTestsPassed = executeRejectionTests();
+    const parityTestsPassed = executeParityTests();
     const memoryTestsPassed = executeMemoryTests();
     const executorTestsPassed = executeExecutorTests();
     const portTestsPassed = executePortTests();
@@ -1205,6 +1289,7 @@ async function __main__() {
       limitTestsPassed &&
       allParserTestsPassed &&
       allRejectionTestsPassed &&
+      parityTestsPassed &&
       memoryTestsPassed &&
       executorTestsPassed &&
       portTestsPassed &&

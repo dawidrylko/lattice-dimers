@@ -44,11 +44,9 @@ function listRustSources(file) {
   return file.endsWith('.rs') ? [file] : [];
 }
 
-const rustSourcesModified = new Map();
-
 /**
  * Finds when the sources of one Rust binary last changed: the newest modification time of its own file in
- * rust/solvers/src/bin and of every .rs file under rust/ outside that directory, read once per binary and process.
+ * rust/solvers/src/bin and of every .rs file under rust/ outside that directory, read at every run of the binary.
  * The other files in rust/solvers/src/bin are the roots of other binaries, which cargo does not rebuild this one
  * for. Only .rs files count, because cargo rebuilds when a .rs file it compiles is newer than its last build, so
  * cargo build --release makes the binary current; a touched Cargo.toml or Cargo.lock is not rebuilt for, and a .rs
@@ -59,15 +57,10 @@ const rustSourcesModified = new Map();
  * @returns {number} The time in milliseconds since the epoch.
  */
 function rustSourcesModifiedAt(source, directory = RUST_DIRECTORY) {
-  const key = `${directory}\0${source}`;
+  const binaries = path.join(directory, RUST_BINARY_DIRECTORY);
+  const sources = listRustSources(directory).filter(file => path.dirname(file) !== binaries || file === source);
 
-  if (!rustSourcesModified.has(key)) {
-    const binaries = path.join(directory, RUST_BINARY_DIRECTORY);
-    const sources = listRustSources(directory).filter(file => path.dirname(file) !== binaries || file === source);
-    rustSourcesModified.set(key, Math.max(...sources.map(file => fs.statSync(file).mtimeMs)));
-  }
-
-  return rustSourcesModified.get(key);
+  return Math.max(...sources.map(file => fs.statSync(file).mtimeMs));
 }
 
 function describeLanguages() {
