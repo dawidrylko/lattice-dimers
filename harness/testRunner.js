@@ -51,8 +51,6 @@ const rejectionTestCases = [
   { args: ['harness/testRunner.js', '-m'], message: 'Usage' },
   { args: ['js/solvers/dominoTilingSolver-Formula.js', '-r', '3', '-c', '3'], message: '2n x 2n boards only' },
   { args: ['js/solvers/domiculeTilingSolver-BigInt.js', '-r', '30', '-c', '30'], message: 'at most 29' },
-  { args: ['js/solvers/domiculeTilingSolver-Modular.js', '-r', '31', '-c', '31'], message: 'at most 30' },
-  { args: ['js/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
   {
     args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
@@ -99,6 +97,21 @@ const implementationRejectionTestCases = [
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', '0'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', 'x'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '40', '-c', '31'], message: 'because the states are indexed with 32-bit integers' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
+];
+
+const parityTestCases = [
+  {
+    algorithm: 'domicule-tiling-modular',
+    boards: [[0, 5], [5, 0], [1, 1], [1, 2], [2, 1], [10, 1], [1, 40], [3, 3], [2, 31]],
+  },
 ];
 
 const MEMORY_TEST_BYTES = 256 * 2 ** 20;
@@ -134,6 +147,36 @@ function executeMemoryTests() {
 
     if (status !== '0' || output !== expectedResult || !(Number(peak) <= MEMORY_TEST_BYTES)) {
       console.error(`Failed! Exit code ${status}, ${output || (stderr || '').trim()}, peak ${Math.round(Number(peak) / 2 ** 20)} MB of at most ${MEMORY_TEST_BYTES / 2 ** 20} MB`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
+function executeParityTests() {
+  const runs = parityTestCases.flatMap(({ algorithm, boards }) =>
+    boards.map(([rowCount, colCount]) => ({ algorithm, board: { rowCount, colCount } })),
+  );
+
+  return runs.every(({ algorithm, board }, index) => {
+    const name = `${algorithm} on ${board.rowCount} × ${board.colCount}`;
+    process.stdout.write(`Executing parity test ${index + 1} of ${runs.length} for ${name}... `);
+
+    const outputs = listImplementations(algorithm).map(({ file }) => {
+      try {
+        return `${file}: ${exec(file, board)}`;
+      } catch (error) {
+        return `${file}: ${error.message}`;
+      }
+    });
+    const counts = new Set(outputs.map(output => output.slice(output.indexOf(': ') + 2)));
+
+    if (counts.size !== 1 || !/^\d+$/.test([...counts][0])) {
+      console.error(`Failed! ${outputs.join('; ')}`);
 
       return false;
     }
@@ -294,7 +337,7 @@ function executeExecutorTests() {
       'a Rust binary older than the Rust sources',
       rust,
       { CARGO_TARGET_DIR: staleTarget },
-      `an error: Execution failed: ${staleBinary} is older than the .rs files under rust/; rebuild it with cargo build --release.`,
+      `an error: Execution failed: ${staleBinary} is older than the .rs files it is built from; rebuild it with cargo build --release.`,
       true,
     ],
   ];
@@ -304,9 +347,101 @@ function executeExecutorTests() {
     fs.writeFileSync(staleBinary, '', { mode: 0o755 });
     fs.utimesSync(staleBinary, 0, 0);
 
-    return runExecutorTests(cases, command, attempt);
+    return runExecutorTests(cases, command, attempt) && executeOwnRootTest() && executeRustSourceTests();
   } finally {
     fs.rmSync(staleTarget, { recursive: true, force: true });
+  }
+}
+
+function executeOwnRootTest() {
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'own-root-')));
+  const file = name => path.join(root, ...name.split('/'));
+  const binary = file('target/release/solver');
+  const now = Date.now() / 1000;
+  const write = (name, seconds, mode) => {
+    fs.mkdirSync(path.dirname(file(name)), { recursive: true });
+    fs.writeFileSync(file(name), '', { mode });
+    fs.utimesSync(file(name), seconds, seconds);
+  };
+  const target = process.env.CARGO_TARGET_DIR;
+  const expected = `Execution failed: ${binary} is older than the .rs files it is built from; rebuild it with cargo build --release.`;
+
+  process.stdout.write('Executing executor test for a Rust binary older than only its own root... ');
+
+  try {
+    fs.mkdirSync(file('js/core'), { recursive: true });
+    fs.copyFileSync(path.join(ROOT_DIRECTORY, 'js', 'core', 'scriptExecutor.js'), file('js/core/scriptExecutor.js'));
+    write('rust/core/src/lib.rs', now - 60);
+    write('rust/solvers/src/bin/solver.rs', now + 60);
+    write('rust/solvers/src/bin/other.rs', now - 60);
+    write('target/release/solver', now, 0o755);
+    delete process.env.CARGO_TARGET_DIR;
+
+    let actual;
+
+    try {
+      actual = require(file('js/core/scriptExecutor.js'))('rust/solvers/src/bin/solver.rs', { rowCount: 2, colCount: 2 });
+    } catch (error) {
+      actual = error.message;
+    }
+
+    if (actual !== expected) {
+      console.error(`Failed! Expected: ${expected}, Actual: ${actual}`);
+
+      return false;
+    }
+  } finally {
+    if (target === undefined) {
+      delete process.env.CARGO_TARGET_DIR;
+    } else {
+      process.env.CARGO_TARGET_DIR = target;
+    }
+
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function executeRustSourceTests() {
+  const rust = fs.mkdtempSync(path.join(os.tmpdir(), 'rust-sources-'));
+  const file = name => path.join(rust, ...name.split('/'));
+  const sources = [
+    ['core/src/lib.rs', 3000],
+    ['solvers/src/bin/first.rs', 2000],
+    ['solvers/src/bin/second.rs', 4000],
+  ];
+  const cases = [
+    ['a binary whose shared source is newer than its own file, not the newer root of another binary', 'solvers/src/bin/first.rs', 3000],
+    ['a binary whose own file is the newest', 'solvers/src/bin/second.rs', 4000],
+  ];
+
+  try {
+    for (const [name, seconds] of sources) {
+      fs.mkdirSync(path.dirname(file(name)), { recursive: true });
+      fs.writeFileSync(file(name), '');
+      fs.utimesSync(file(name), seconds, seconds);
+    }
+
+    return cases.every(([name, source, seconds], index) => {
+      process.stdout.write(`Executing Rust source test ${index + 1} of ${cases.length} for ${name}... `);
+
+      const actual = exec.rustSourcesModifiedAt(file(source), rust);
+
+      if (actual !== seconds * 1000) {
+        console.error(`Failed! Expected: ${seconds * 1000}, Actual: ${actual}`);
+
+        return false;
+      }
+
+      console.log('Passed!');
+
+      return true;
+    });
+  } finally {
+    fs.rmSync(rust, { recursive: true, force: true });
   }
 }
 
@@ -535,6 +670,10 @@ function executeBenchmarkSurfaceTests() {
     ...listImplementations('periodic-tiling-modular').map(({ file }) => ({
       args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'],
       file: `${path.basename(file)}_2x2-king-torus.txt`,
+    })),
+    ...listImplementations('domicule-tiling-modular').map(({ file }) => ({
+      args: ['--domicule', '--only', 'domiculeTilingSolver-Modular.js'],
+      file: `${path.basename(file)}_0x0.txt`,
     })),
   ];
 
@@ -934,23 +1073,58 @@ async function executeModuleTests() {
     console.log('Passed!');
   }
 
-  return passed && executeUnknownProcessorCountTest(fourByFour(testCasesPeriodic));
+  return (
+    passed &&
+    [
+      ['periodic-tiling-modular', fourByFour(testCasesPeriodic)],
+      ['domicule-tiling-modular', fourByFour(testCasesDomicule)],
+    ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
+    executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6))
+  );
 }
 
-function executeUnknownProcessorCountTest({ expectedResult, rowCount, colCount, lattice, torus }) {
-  const python = listImplementations('periodic-tiling-modular').find(({ language }) => language === 'py');
+function executeScratchTest({ expectedResult, rowCount, colCount }) {
+  const python = listImplementations('domicule-tiling-modular').find(({ language }) => language === 'py');
   const launcher = exec.launch(python.file);
   const script = [
-    'import importlib, os, runpy, sys',
+    'import importlib, sys',
+    'solver = importlib.import_module(sys.argv[1])',
+    'solver.SCRATCH_COUNTS = 1',
+    'print(solver.calculate_total_tiling_combinations(int(sys.argv[2]), int(sys.argv[3]), 2))',
+  ].join('\n');
+
+  process.stdout.write(`Executing module test for ${python.file} with a scratch array of one count... `);
+
+  const { status, stdout, stderr } = spawnSync(launcher[0], ['-I', '-c', script, launcher.at(-1), String(rowCount), String(colCount)], {
+    cwd: ROOT_DIRECTORY,
+    encoding: 'utf-8',
+  });
+
+  if (status !== 0 || stdout.trim() !== expectedResult) {
+    console.error(`Failed! Exit code ${status}, expected ${expectedResult}: ${(stdout || stderr).trim()}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function executeUnknownProcessorCountTest(algorithm, { expectedResult, rowCount, colCount, lattice, torus }) {
+  const python = listImplementations(algorithm).find(({ language }) => language === 'py');
+  const launcher = exec.launch(python.file);
+  const script = [
+    'import importlib, json, os, runpy, sys',
     'os.process_cpu_count = lambda: None',
     'module = sys.argv[1]',
-    'rows, cols, lattice, torus = int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5] == "torus"',
-    'print(importlib.import_module(module).calculate_total_tiling_combinations(rows, cols, lattice, torus), flush=True)',
-    'sys.argv = [module] + sys.argv[6:]',
+    'print(importlib.import_module(module).calculate_total_tiling_combinations(**json.loads(sys.argv[2])), flush=True)',
+    'sys.argv = [module] + sys.argv[3:]',
     'runpy.run_module(module, run_name="__main__", alter_sys=True)',
   ].join('\n');
-  const board = [String(rowCount), String(colCount), lattice, torus ? 'torus' : 'cylinder'];
-  const args = ['-r', String(rowCount), '-c', String(colCount), '--lattice', lattice, ...(torus ? ['--torus'] : [])];
+  const surface = lattice ? { lattice, torus: Boolean(torus) } : {};
+  const board = [JSON.stringify({ row_count: rowCount, col_count: colCount, ...surface })];
+  const args = ['-r', String(rowCount), '-c', String(colCount), ...(lattice ? ['--lattice', lattice] : []), ...(torus ? ['--torus'] : [])];
 
   process.stdout.write(`Executing module test for ${python.file} when the number of processors is unknown... `);
 
@@ -1100,7 +1274,7 @@ async function __main__() {
     const allBigIntTestsPassed = executeTests(filesBigInt, testCasesToRunBigInt, verifyBigInt);
     const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, verifyBigInt);
     const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;
-    const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt);
+    const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt, testCasesDomicule);
     const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, verifyBigInt);
     const testCasesToRunPeriodic = maxSize ? testCasesPeriodic.slice(0, maxSize) : testCasesPeriodic;
     const allPeriodicTestsPassed = executeTests(filesPeriodic, testCasesToRunPeriodic, verifyBigInt, testCasesPeriodic);
@@ -1114,6 +1288,7 @@ async function __main__() {
     const limitTestsPassed = executeLimitTests();
     const allParserTestsPassed = executeParserTests();
     const allRejectionTestsPassed = executeRejectionTests();
+    const parityTestsPassed = executeParityTests();
     const memoryTestsPassed = executeMemoryTests();
     const executorTestsPassed = executeExecutorTests();
     const portTestsPassed = executePortTests();
@@ -1149,6 +1324,7 @@ async function __main__() {
       limitTestsPassed &&
       allParserTestsPassed &&
       allRejectionTestsPassed &&
+      parityTestsPassed &&
       memoryTestsPassed &&
       executorTestsPassed &&
       portTestsPassed &&
