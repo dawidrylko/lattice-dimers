@@ -285,11 +285,11 @@ function readAverageTime(directory, fileName) {
 
   const lines = fs.readFileSync(file, 'utf-8').split('\n');
   const match = lines[0].match(/Average Execution Time: ([\d.]+) ms/);
-  const process = lines.find(line => line.startsWith('Average Process Time:'))?.match(/([\d.]+) ms/);
+  const processTime = lines.find(line => line.startsWith('Average Process Time:'))?.match(/([\d.]+) ms/);
 
   return {
     average: match ? Number(match[1]) : null,
-    process: process ? Number(process[1]) : null,
+    process: processTime ? Number(processTime[1]) : null,
     runs: lines.filter(line => /^\d+\. Execution Time/.test(line)).length,
   };
 }
@@ -378,8 +378,10 @@ async function buildPeriodicBenchmark() {
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
       bigintMissing:
         colCount > PERIODIC_BIGINT_CIRCUMFERENCE
-          ? `BigInt counts circumferences up to ${PERIODIC_BIGINT_CIRCUMFERENCE}`
-          : `not run: BigInt runs all 2^${colCount} sets of first-row cells of the torus`,
+          ? `not run: BigInt counts circumferences up to ${PERIODIC_BIGINT_CIRCUMFERENCE}`
+          : surface === 'torus'
+            ? `not run: BigInt would run all 2^${colCount} sets of first-row cells`
+            : 'not run in this benchmark',
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
       languages: readLanguages('periodic-tiling-modular', suffix),
     });
@@ -407,7 +409,7 @@ function buildDiagonalBenchmark(totals) {
         colCount,
         tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
         bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
-        bigintMissing: `BigInt counts boards with a shorter side up to ${DIAGONAL_BIGINT_SIDE}`,
+        bigintMissing: `not run: BigInt counts boards with a shorter side up to ${DIAGONAL_BIGINT_SIDE}`,
         modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
       };
     });

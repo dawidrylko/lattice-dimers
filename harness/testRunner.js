@@ -573,6 +573,64 @@ function executeBenchmarkTimeTest() {
   return true;
 }
 
+function executeBenchmarkCountTest() {
+  process.stdout.write('Executing benchmark count test 1 of 1 for a count that differs from spec/cases... ');
+
+  const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
+
+  try {
+    const { status, stderr } = spawnSync(
+      process.execPath,
+      ['harness/benchmarkRunner.js', '-n', '1', '-m', '1', '--torus', '--only', 'periodicTilingSolver-Modular.js'],
+      {
+        cwd: ROOT_DIRECTORY,
+        encoding: 'utf-8',
+        timeout: REJECTION_TIMEOUT,
+        env: { ...process.env, BENCHMARK_ROOT: benchmarkRoot, PYTHON: path.join(ROOT_DIRECTORY, 'harness', 'fixtures', 'wrongCount.js') },
+      },
+    );
+
+    if (status === 0 || !stderr.includes('counted 1 instead of 24')) {
+      console.error(`Failed! A wrong count was not refused: exit code ${status}, ${stderr.trim()}`);
+
+      return false;
+    }
+  } finally {
+    fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function executeTimeSpanTests() {
+  const runs = listImplementations('periodic-tiling-modular').map(({ file }) => file);
+
+  return runs.every((file, index) => {
+    process.stdout.write(`Executing time span test ${index + 1} of ${runs.length} for ${file} on the 10 × 10 torus... `);
+
+    const [program, ...launchArgs] = exec.launch(file);
+    const start = process.hrtime.bigint();
+    const { status, stderr } = spawnSync(program, [...launchArgs, '-r', '10', '-c', '10', '--torus', '--time'], {
+      cwd: ROOT_DIRECTORY,
+      encoding: 'utf-8',
+    });
+    const whole = Number(process.hrtime.bigint() - start) / 1e6;
+    const reported = Number((stderr.match(/^time ([\d.]+) ms$/m) || [])[1]);
+
+    if (status !== 0 || !(reported >= whole / 2) || !(reported <= whole)) {
+      console.error(`Failed! The count took ${reported} ms of a ${whole.toFixed(1)} ms process.`);
+
+      return false;
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
 function executeTimeFlagTests() {
   const runs = Object.keys(registry.algorithms).flatMap(algorithm => listImplementations(algorithm).map(({ file }) => file));
 
@@ -975,6 +1033,8 @@ async function __main__() {
     const benchmarkSurfaceTestsPassed = executeBenchmarkSurfaceTests();
     const benchmarkTimeTestPassed = executeBenchmarkTimeTest();
     const timeFlagTestsPassed = executeTimeFlagTests();
+    const timeSpanTestsPassed = executeTimeSpanTests();
+    const benchmarkCountTestPassed = executeBenchmarkCountTest();
     const precisionWarningTestsPassed = executePrecisionWarningTests();
     const benchmarkEmptySelectionTestPassed = executeBenchmarkEmptySelectionTest();
     const benchmarkRunTestPassed = executeBenchmarkRunTest();
@@ -1007,6 +1067,8 @@ async function __main__() {
       benchmarkSurfaceTestsPassed &&
       benchmarkTimeTestPassed &&
       timeFlagTestsPassed &&
+      timeSpanTestsPassed &&
+      benchmarkCountTestPassed &&
       precisionWarningTestsPassed &&
       benchmarkEmptySelectionTestPassed &&
       benchmarkRunTestPassed &&

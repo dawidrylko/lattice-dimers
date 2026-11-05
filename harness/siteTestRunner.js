@@ -1144,17 +1144,29 @@ async function checkBenchmark(page, baseUrl, width) {
     problems.push(`the domino benchmark has the columns ${dominoColumns.headers} and ${dominoColumns.cells} rows without five cells`);
   }
 
-  const languageColumns = await page.evaluate(`['cylinder-benchmark', 'torus-benchmark'].map(id => ({
-    id,
-    icons: [...document.querySelectorAll('#' + id + ' thead th')].filter(th => th.querySelector('svg.lang use')).map(th => th.title).join(),
-    labels: [...document.querySelectorAll('#' + id + '-rows tr')].map(row => [...row.cells].map(cell => cell.dataset.label).join()),
-  }))`);
+  const languageColumns = await page.evaluate(`['cylinder-benchmark', 'torus-benchmark'].map(id => {
+    const group = document.getElementById(id).closest('.bench-group');
+    const hidden = group.hidden;
+    group.hidden = false;
+    const result = {
+      id,
+      icons: [...document.querySelectorAll('#' + id + ' thead th')].filter(th => th.querySelector('svg.lang use')).map(th => th.title).join(),
+      labels: [...document.querySelectorAll('#' + id + '-rows tr')].map(row => [...row.cells].map(cell => cell.dataset.label).join()),
+      split: [...document.querySelectorAll('#' + id + '-rows tr')].filter(row => new Set([...row.cells].slice(2, 6).map(cell => Math.round(cell.getBoundingClientRect().top))).size > 1).length,
+    };
+    group.hidden = hidden;
+    return result;
+  })`);
 
-  for (const { id, icons, labels } of languageColumns) {
+  for (const { id, icons, labels, split } of languageColumns) {
     const wrong = labels.filter(row => row !== 'Board,Tilings,BigInt,Rust,Python,JavaScript,Runs');
 
     if (icons !== 'Modular, Rust,Modular, Python,Modular, JavaScript' || !labels.length || wrong.length) {
       problems.push(`#${id} has the language headers ${icons || 'none'} and ${wrong.length} of ${labels.length} rows without one cell per language`);
+    }
+
+    if (split) {
+      problems.push(`#${id} spreads the four times of ${split} rows over more than one line`);
     }
   }
 

@@ -12,7 +12,11 @@ const {
   filesDomicule,
   testCasesDomicule,
   filesPeriodic,
+  testCasesPeriodic,
+  testCasesPeriodicModular,
   filesDiagonal,
+  testCasesDiagonal,
+  testCasesDiagonalModular,
 } = require('../js/core/cases');
 
 const RUN_DATE = new Date().toISOString().slice(0, 10);
@@ -21,15 +25,16 @@ const BENCHMARK_DIRECTORY = path.join(BENCHMARK_ROOT, RUN_DATE.slice(0, 7));
 const MACHINE_KEYS = ['node', 'python', 'rust', 'platform', 'cpu', 'timing'];
 const TOOLCHAIN_KEYS = ['python', 'rust'];
 const SOLVER_TIME = /^time ([\d.]+) ms$/m;
-const DOMICULE_BOARDS = [
-  ...testCasesDomicule.map(({ rowCount, colCount }) => ({ rowCount, colCount })),
-  { rowCount: 20, colCount: 20 },
-];
+const ROOT_DIRECTORY = path.join(__dirname, '..');
+const LANGUAGE_KEYS = { '.rs': 'rust', '.py': 'python' };
+const PERIODIC_CASES = [...testCasesPeriodic, ...testCasesPeriodicModular];
+const DIAGONAL_CASES = [...testCasesDiagonal, ...testCasesDiagonalModular];
+const DOMICULE_BOARDS = [...testCasesDomicule, { rowCount: 20, colCount: 20 }];
 const GROUPS = {
   '--domicule': [{ files: filesDomicule, testCases: DOMICULE_BOARDS }],
-  '--torus': [{ files: filesPeriodic, testCases: listSquareBoards(2, 14, { lattice: 'king', torus: true }) }],
-  '--cylinder': [{ files: filesPeriodic, testCases: listSquareBoards(2, 16, { lattice: 'king' }) }],
-  '--diagonal': [{ files: filesDiagonal, testCases: listSquareBoards(0, 20) }],
+  '--torus': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 14, { lattice: 'king', torus: true }), PERIODIC_CASES) }],
+  '--cylinder': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 16, { lattice: 'king' }), PERIODIC_CASES) }],
+  '--diagonal': [{ files: filesDiagonal, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
 };
 const USAGE =
   'Usage: node harness/benchmarkRunner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal] [--force]';
@@ -38,6 +43,17 @@ function displayPath(file) {
   const relative = path.relative(path.join(__dirname, '..'), file);
 
   return relative.startsWith('..') ? file : relative;
+}
+
+function withKnownCounts(boards, cases) {
+  const same = (board, known) =>
+    ['rowCount', 'colCount', 'lattice', 'torus', 'twisted'].every(key => (board[key] ?? false) === (known[key] ?? false));
+
+  return boards.map(board => {
+    const known = cases.find(candidate => same(board, candidate));
+
+    return known ? { ...board, expectedResult: known.expectedResult } : board;
+  });
 }
 
 function listSquareBoards(minSide, maxSide, options = {}) {
@@ -67,7 +83,7 @@ function calculateAverageTime(times) {
 }
 
 function readVersion(program, args) {
-  const { status, stdout, stderr } = spawnSync(program, args, { encoding: 'utf-8' });
+  const { status, stdout, stderr } = spawnSync(program, args, { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
 
   return status === 0 ? `${stdout}${stderr}`.trim() : null;
 }
@@ -117,6 +133,7 @@ function describeMachine() {
     date: RUN_DATE,
     timing: 'solver',
     commit: readVersion('git', ['rev-parse', 'HEAD']),
+    dirty: readVersion('git', ['status', '--porcelain', '--', '.', ':!benchmarks/results']) !== '',
     node: process.version,
     python: readVersion(process.env.PYTHON || 'python3', ['--version']),
     rust: readVersion('rustc', ['--version']),
@@ -141,8 +158,8 @@ function checkDirectory(environment, force) {
 
   if (differences.length) {
     throw new Error(
-      `${displayPath(BENCHMARK_DIRECTORY)} holds results measured on another machine (${differences
-        .map(key => `${key} ${recorded[key]}`)
+      `${displayPath(BENCHMARK_DIRECTORY)} holds results measured on another machine or toolchain (${differences
+        .map(key => `${key} ${recorded[key] ?? 'not recorded'} instead of ${environment[key] ?? 'not found'}`)
         .join(', ')}). Run with --force to overwrite them.`,
     );
   }
@@ -288,6 +305,12 @@ function __main__() {
     );
 
     const environment = describeMachine();
+    const missing = [...new Set(runs.flatMap(({ files }) => files.flatMap(listBenchmarkedFiles)).map(file => LANGUAGE_KEYS[path.extname(file)]))]
+      .filter(key => key && environment[key] === null);
+
+    if (missing.length) {
+      throw new Error(`The run includes ${missing.join(' and ')} but cannot read its version (${missing.map(key => (key === 'rust' ? 'rustc' : '$PYTHON or python3')).join(', ')} --version).`);
+    }
 
     checkDirectory(environment, argv.includes('--force'));
     saveEnvironment(environment);
