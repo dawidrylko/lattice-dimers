@@ -32,6 +32,7 @@ const {
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const REJECTION_TIMEOUT = 30000;
+const MAX_PORTED_BIGINT_SIDE = 16;
 const parserTestCases = [
   { value: '12', expectedResult: 12 },
   { value: '0', expectedResult: 0 },
@@ -43,9 +44,7 @@ const parserTestCases = [
 ];
 const rejectionTestCases = [
   { args: ['js/solvers/dominoTilingSolver.js', '-r', '31', '-c', '31'], message: 'at most 30' },
-  { args: ['js/solvers/dominoTilingSolver-BigInt.js', '-r', '31', '-c', '31'], message: 'at most 30' },
   { args: ['js/solvers/dominoTilingSolver.js', '-r', '31', '-c', '31'], message: 'the rows are indexed with 32-bit integers' },
-  { args: ['js/solvers/dominoTilingSolver-BigInt.js', '-r', '31', '-c', '31'], message: 'the rows are indexed with 32-bit integers' },
   { args: ['js/solvers/dominoTilingSolver.js', '-r', '2abc', '-c', '2'], message: 'Usage' },
   { args: ['harness/testRunner.js', '-m', 'abc'], message: 'Usage' },
   { args: ['harness/testRunner.js', '-m'], message: 'Usage' },
@@ -106,6 +105,12 @@ const implementationRejectionTestCases = [
   { algorithm: 'domino-tiling-formula', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
   { algorithm: 'domino-tiling-formula', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
   { algorithm: 'domino-tiling-formula', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-tiling-bigint', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
+  { algorithm: 'domino-tiling-bigint', args: ['-r', '40', '-c', '31'], message: 'the rows are indexed with 32-bit integers' },
+  { algorithm: 'domino-tiling-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-tiling-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-tiling-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-tiling-bigint', args: ['-c', '2'], message: 'Usage' },
   { algorithm: 'domicule-tiling-modular', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
   { algorithm: 'domicule-tiling-modular', args: ['-r', '40', '-c', '31'], message: 'because the states are indexed with 32-bit integers' },
   { algorithm: 'domicule-tiling-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
@@ -687,6 +692,10 @@ function executeBenchmarkSurfaceTests() {
       args: ['--only', 'dominoTilingSolver-Formula.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
+    ...listImplementations('domino-tiling-bigint').map(({ file }) => ({
+      args: ['--only', 'dominoTilingSolver-BigInt.js'],
+      file: `${path.basename(file)}_0x0.txt`,
+    })),
     ...listImplementations('domicule-tiling-modular').map(({ file }) => ({
       args: ['--domicule', '--only', 'domiculeTilingSolver-Modular.js'],
       file: `${path.basename(file)}_0x0.txt`,
@@ -927,6 +936,7 @@ function executeBenchmarkRunTest() {
     touch('2000-02', ['environment.json', 'dominoTilingSolver-Formula.js_0x0.txt']);
     touch('2000-03', complete.filter(file => !['periodic-tiling-modular.rs_14x14-square-torus.txt', 'domicule_tiling_modular.py_20x20.txt'].includes(file)));
     touch('2000-04', complete.filter(file => file !== 'domino_tiling_formula.py_20x20.txt'));
+    touch('2000-05', complete.filter(file => file !== 'domino-tiling-bigint.rs_20x20.txt'));
     const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {
@@ -1321,7 +1331,15 @@ async function __main__() {
     const testCasesToRunBigInt = maxSize ? testCasesBigInt.slice(0, maxSize) : testCasesBigInt;
 
     const allIntTestsPassed = executeTests(filesInt, testCasesToRunInt, verifyInt);
-    const allBigIntTestsPassed = executeTests(filesBigInt, testCasesToRunBigInt, verifyBigInt, testCasesBigInt);
+    const isFormula = fileName => algorithmOf(fileName) === 'domino-tiling-formula';
+    const allBigIntTestsPassed =
+      executeTests(filesBigInt.filter(isFormula), testCasesToRunBigInt, verifyBigInt, testCasesBigInt) &&
+      executeTests(
+        filesBigInt.filter(fileName => !isFormula(fileName)),
+        testCasesToRunBigInt,
+        verifyBigInt,
+        testCasesBigInt.filter(({ rowCount }) => rowCount <= MAX_PORTED_BIGINT_SIDE),
+      );
     const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, verifyBigInt);
     const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;
     const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt, testCasesDomicule);

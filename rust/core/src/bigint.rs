@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 use std::fmt;
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, Sub};
 
 /// An integer of any size, for the Chinese remainder theorem and the exact determinants of the formula solver.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -231,6 +231,40 @@ impl Add for &BigInt {
     }
 }
 
+/// Adds in place, reusing the limbs of the left side, for the sums of the transfer solvers.
+impl AddAssign<&BigInt> for BigInt {
+    fn add_assign(&mut self, other: &BigInt) {
+        if self.negative != other.negative && !other.is_zero() && !self.is_zero() {
+            *self = &*self + other;
+            return;
+        }
+
+        if self.is_zero() {
+            self.negative = other.negative;
+        }
+
+        if self.limbs.len() < other.limbs.len() {
+            self.limbs.resize(other.limbs.len(), 0);
+        }
+
+        let mut carry = 0u64;
+
+        for (i, limb) in self.limbs.iter_mut().enumerate() {
+            if i >= other.limbs.len() && carry == 0 {
+                break;
+            }
+
+            let sum = u64::from(*limb) + u64::from(*other.limbs.get(i).unwrap_or(&0)) + carry;
+            *limb = sum as u32;
+            carry = sum >> 32;
+        }
+
+        if carry != 0 {
+            self.limbs.push(carry as u32);
+        }
+    }
+}
+
 impl Sub for &BigInt {
     type Output = BigInt;
 
@@ -350,6 +384,27 @@ mod tests {
         assert_eq!((&b - &a).to_string(), "2000000000006");
         assert_eq!((&a - &a).to_string(), "0");
         assert!(!(&a - &a).is_negative());
+    }
+
+    #[test]
+    fn adds_in_place_like_the_operator() {
+        let mut seed = 3;
+        let values: Vec<BigInt> = (0..24)
+            .map(|round| {
+                let value = pseudo_random(&mut seed, round % 5);
+                if round % 3 == 0 { value.negated() } else { value }
+            })
+            .chain([BigInt::from_u64(u64::MAX), BigInt::from_u64(1), BigInt::zero()])
+            .collect();
+
+        for a in &values {
+            for b in &values {
+                let mut sum = a.clone();
+                sum += b;
+
+                assert_eq!(sum, a + b, "{a} + {b}");
+            }
+        }
     }
 
     #[test]
