@@ -9,7 +9,7 @@ Each file names the algorithms it checks in `algorithms`, by their ids in [`algo
 | [`dominoTilingTests.json`](dominoTilingTests.json) | domino squares up to 10 × 10 | `domino-tiling-number` |
 | [`dominoTilingTests-BigInt.json`](dominoTilingTests-BigInt.json) | domino squares up to 20 × 20 (A004003) | `domino-tiling-bigint` (up to 16 × 16 in `pnpm test`), `domino-tiling-formula` |
 | [`dominoTilingTests-Rectangles.json`](dominoTilingTests-Rectangles.json) | domino rectangles | `domino-tiling-number`, `domino-tiling-bigint` |
-| [`domiculeTilingTests.json`](domiculeTilingTests.json) | domicule squares up to 18 × 18 (A239273) | `domicule-tiling-bigint`, `domicule-tiling-modular` |
+| [`domiculeTilingTests.json`](domiculeTilingTests.json) | domicule squares up to 18 × 18 (A239273) | `domicule-tiling-bigint` (up to 16 × 16 in `pnpm test`), `domicule-tiling-modular` |
 | [`domiculeTilingTests-Rectangles.json`](domiculeTilingTests-Rectangles.json) | domicule rectangles (A239264) | `domicule-tiling-bigint`, `domicule-tiling-modular` |
 | [`periodicTilingTests.json`](periodicTilingTests.json) | cylinders and tori on three lattices up to 10 × 10 | `periodic-tiling-bigint`, `periodic-tiling-modular` |
 | [`periodicTilingTests-Modular.json`](periodicTilingTests-Modular.json) | larger cylinders and tori, up to the 16 × 16 torus | `periodic-tiling-modular` |

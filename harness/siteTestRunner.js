@@ -37,7 +37,7 @@ const LANGUAGE_TABLES = [
   ['domino/rectangle', 'domino-benchmark', 'DATA.benchmark', '36', 'FORMULA_AND_BIGINT_LANGUAGES', [solverColumns('Formula', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])]],
   ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
   ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
-  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'MODULAR_AND_BIGINT_LANGUAGES', [solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])]],
   ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
   ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
 ];
@@ -1577,9 +1577,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const expected = label => sections[label.replace(/, .*/, '')] || sections[label.split(' ')[0]];
   const wrong = headers.filter(({ label, href, problem }) => problem || href !== expected(label));
 
-  if (headers.length !== 26 || wrong.length) {
+  if (headers.length !== 28 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 26 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 28 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 

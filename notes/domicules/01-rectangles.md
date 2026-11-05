@@ -168,8 +168,11 @@ Average time of the count inside each solver, without the start of its process, 
 const { formatTime } = nb.context;
 
 table(
-  ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt'],
-  nb.context.domiculeBenchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.languages.rs), formatTime(r.languages.py), formatTime(r.modular), formatTime(r.bigint)]),
+  ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
+  nb.context.domiculeBenchmark.map(r => [
+    `${r.rowCount}×${r.colCount}`,
+    ...[r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
+  ]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 ```

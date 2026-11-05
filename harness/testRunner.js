@@ -48,7 +48,6 @@ const rejectionTestCases = [
   { args: ['js/solvers/dominoTilingSolver.js', '-r', '2abc', '-c', '2'], message: 'Usage' },
   { args: ['harness/testRunner.js', '-m', 'abc'], message: 'Usage' },
   { args: ['harness/testRunner.js', '-m'], message: 'Usage' },
-  { args: ['js/solvers/domiculeTilingSolver-BigInt.js', '-r', '30', '-c', '30'], message: 'at most 29' },
   {
     args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
@@ -111,6 +110,12 @@ const implementationRejectionTestCases = [
   { algorithm: 'domino-tiling-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
   { algorithm: 'domino-tiling-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
   { algorithm: 'domino-tiling-bigint', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-bigint', args: ['-r', '30', '-c', '30'], message: 'at most 29' },
+  { algorithm: 'domicule-tiling-bigint', args: ['-r', '40', '-c', '30'], message: 'because a JavaScript array holds fewer than 2^32 states' },
+  { algorithm: 'domicule-tiling-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-bigint', args: ['-c', '2'], message: 'Usage' },
   { algorithm: 'domicule-tiling-modular', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
   { algorithm: 'domicule-tiling-modular', args: ['-r', '40', '-c', '31'], message: 'because the states are indexed with 32-bit integers' },
   { algorithm: 'domicule-tiling-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
@@ -121,12 +126,10 @@ const implementationRejectionTestCases = [
   { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
 ];
 
-const parityTestCases = [
-  {
-    algorithm: 'domicule-tiling-modular',
-    boards: [[0, 5], [5, 0], [1, 1], [1, 2], [2, 1], [10, 1], [1, 40], [3, 3], [2, 31]],
-  },
-];
+const parityTestCases = ['domicule-tiling-modular', 'domicule-tiling-bigint'].map(algorithm => ({
+  algorithm,
+  boards: [[0, 5], [5, 0], [1, 1], [1, 2], [2, 1], [10, 1], [1, 40], [3, 3], [2, 31]],
+}));
 
 const MEMORY_TEST_BYTES = 256 * 2 ** 20;
 const MEMORY_TEST_TIMEOUT = 120000;
@@ -696,6 +699,10 @@ function executeBenchmarkSurfaceTests() {
       args: ['--only', 'dominoTilingSolver-BigInt.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
+    ...listImplementations('domicule-tiling-bigint').map(({ file }) => ({
+      args: ['--domicule', '--only', 'domiculeTilingSolver-BigInt.js'],
+      file: `${path.basename(file)}_0x0.txt`,
+    })),
     ...listImplementations('domicule-tiling-modular').map(({ file }) => ({
       args: ['--domicule', '--only', 'domiculeTilingSolver-Modular.js'],
       file: `${path.basename(file)}_0x0.txt`,
@@ -937,6 +944,7 @@ function executeBenchmarkRunTest() {
     touch('2000-03', complete.filter(file => !['periodic-tiling-modular.rs_14x14-square-torus.txt', 'domicule_tiling_modular.py_20x20.txt'].includes(file)));
     touch('2000-04', complete.filter(file => file !== 'domino_tiling_formula.py_20x20.txt'));
     touch('2000-05', complete.filter(file => file !== 'domino-tiling-bigint.rs_20x20.txt'));
+    touch('2000-06', complete.filter(file => file !== 'domicule_tiling_bigint.py_20x20.txt'));
     const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {
@@ -1110,7 +1118,8 @@ async function executeModuleTests() {
     ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
     executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
     executeLongCountTest('domino-tiling-formula', ['-r', '80', '-c', '80']) &&
-    executeLongCountTest('domino-tiling-bigint', ['-r', '2', '-c', '6000'])
+    executeLongCountTest('domino-tiling-bigint', ['-r', '2', '-c', '6000']) &&
+    executeLongCountTest('domicule-tiling-bigint', ['-r', '2', '-c', '6000'])
   );
 }
 
@@ -1343,7 +1352,15 @@ async function __main__() {
       );
     const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, verifyBigInt);
     const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;
-    const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt, testCasesDomicule);
+    const isBigIntSolver = fileName => algorithmOf(fileName) === 'domicule-tiling-bigint';
+    const allDomiculeTestsPassed =
+      executeTests(filesDomicule.filter(fileName => !isBigIntSolver(fileName)), testCasesToRunDomicule, verifyBigInt, testCasesDomicule) &&
+      executeTests(
+        filesDomicule.filter(isBigIntSolver),
+        testCasesToRunDomicule,
+        verifyBigInt,
+        maxSize ? testCasesDomicule.filter(({ rowCount }) => rowCount <= MAX_PORTED_BIGINT_SIDE) : testCasesDomicule,
+      );
     const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, verifyBigInt);
     const testCasesToRunPeriodic = maxSize ? testCasesPeriodic.slice(0, maxSize) : testCasesPeriodic;
     const allPeriodicTestsPassed = executeTests(filesPeriodic, testCasesToRunPeriodic, verifyBigInt, testCasesPeriodic);
