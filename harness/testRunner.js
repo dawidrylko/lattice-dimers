@@ -604,6 +604,37 @@ function executeBenchmarkCountTest() {
   return true;
 }
 
+function executeBenchmarkToolchainTest() {
+  process.stdout.write('Executing benchmark toolchain test 1 of 1 for a Python whose version cannot be read... ');
+
+  const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
+
+  try {
+    const { status, stderr } = spawnSync(
+      process.execPath,
+      ['harness/benchmarkRunner.js', '-n', '1', '-m', '1', '--torus', '--only', 'periodicTilingSolver-Modular.js'],
+      {
+        cwd: ROOT_DIRECTORY,
+        encoding: 'utf-8',
+        timeout: REJECTION_TIMEOUT,
+        env: { ...process.env, BENCHMARK_ROOT: benchmarkRoot, PYTHON: path.join(benchmarkRoot, 'missing-python') },
+      },
+    );
+
+    if (status === 0 || !stderr.includes('cannot read its version') || fs.readdirSync(benchmarkRoot).length) {
+      console.error(`Failed! A run without a readable Python version was not refused: exit code ${status}, ${stderr.trim()}`);
+
+      return false;
+    }
+  } finally {
+    fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function executeTimeSpanTests() {
   const runs = listImplementations('periodic-tiling-modular').map(({ file }) => file);
 
@@ -1035,6 +1066,7 @@ async function __main__() {
     const timeFlagTestsPassed = executeTimeFlagTests();
     const timeSpanTestsPassed = executeTimeSpanTests();
     const benchmarkCountTestPassed = executeBenchmarkCountTest();
+    const benchmarkToolchainTestPassed = executeBenchmarkToolchainTest();
     const precisionWarningTestsPassed = executePrecisionWarningTests();
     const benchmarkEmptySelectionTestPassed = executeBenchmarkEmptySelectionTest();
     const benchmarkRunTestPassed = executeBenchmarkRunTest();
@@ -1069,6 +1101,7 @@ async function __main__() {
       timeFlagTestsPassed &&
       timeSpanTestsPassed &&
       benchmarkCountTestPassed &&
+      benchmarkToolchainTestPassed &&
       precisionWarningTestsPassed &&
       benchmarkEmptySelectionTestPassed &&
       benchmarkRunTestPassed &&

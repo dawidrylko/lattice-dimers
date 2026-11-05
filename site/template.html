@@ -121,6 +121,7 @@ th[colspan] { text-align: center; padding-bottom: 4px; }
   .bench .table-wrap table.languages tbody { grid-template-columns: repeat(4, 1fr); }
   .bench .table-wrap table.languages td:nth-child(2) { grid-column: span 2; }
   .bench .table-wrap table.languages td:last-child { grid-area: 1 / 4; }
+  .bench .table-wrap table.languages td { white-space: nowrap; font-size: 14px; }
 }
 .note { color: var(--muted); font-size: 13px; margin-top: 12px; }
 .table-title { font-size: 15px; margin: 0 0 8px; }
@@ -296,8 +297,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
         <code>-r R -c C --torus</code> for a torus. BigInt multiplies by the row transfer matrix, in JavaScript, and runs
         the torus once for every set of first-row cells covered from the last row. Modular goes cell by cell modulo primes
         below 2<sup>31</sup>, in Rust, Python and JavaScript, and runs one set per rotation class. BigInt counts
-        circumferences up to 12 and was not run on the 12 × 12 torus, whose 2<sup>12</sup> sets would take hours. The
-        same solvers count the cylinders.
+        circumferences up to 12. It was not run on the 12 × 12 torus: it took 52 s on the 10 × 10 torus and runs four
+        times as many sets of first-row cells on the 12 × 12. The same solvers count the cylinders.
         Re-run with <code>pnpm benchmark:periodic</code>.
       </p>
     </div>

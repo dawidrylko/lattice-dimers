@@ -1153,12 +1153,13 @@ async function checkBenchmark(page, baseUrl, width) {
       icons: [...document.querySelectorAll('#' + id + ' thead th')].filter(th => th.querySelector('svg.lang use')).map(th => th.title).join(),
       labels: [...document.querySelectorAll('#' + id + '-rows tr')].map(row => [...row.cells].map(cell => cell.dataset.label).join()),
       split: [...document.querySelectorAll('#' + id + '-rows tr')].filter(row => new Set([...row.cells].slice(2, 6).map(cell => Math.round(cell.getBoundingClientRect().top))).size > 1).length,
+      wrapped: [...document.querySelectorAll('#' + id + '-rows tr')].filter(row => [...row.cells].slice(2, 6).some(cell => cell.getBoundingClientRect().height > row.cells[0].getBoundingClientRect().height + 1)).length,
     };
     group.hidden = hidden;
     return result;
   })`);
 
-  for (const { id, icons, labels, split } of languageColumns) {
+  for (const { id, icons, labels, split, wrapped } of languageColumns) {
     const wrong = labels.filter(row => row !== 'Board,Tilings,BigInt,Rust,Python,JavaScript,Runs');
 
     if (icons !== 'Modular, Rust,Modular, Python,Modular, JavaScript' || !labels.length || wrong.length) {
@@ -1167,6 +1168,10 @@ async function checkBenchmark(page, baseUrl, width) {
 
     if (split) {
       problems.push(`#${id} spreads the four times of ${split} rows over more than one line`);
+    }
+
+    if (wrapped) {
+      problems.push(`#${id} wraps a time onto a second line in ${wrapped} rows`);
     }
   }
 
