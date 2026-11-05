@@ -125,7 +125,7 @@ th a.solver:focus-visible { outline: 2px solid var(--accent); outline-offset: 1p
   .bench .table-wrap table.languages td:last-child { grid-area: 1 / 4; }
   .bench .table-wrap table.languages td { white-space: nowrap; font-size: 14px; }
   .bench .table-wrap table.languages td:last-child { white-space: normal; }
-  .bench .table-wrap :is(#domino-benchmark, #domino-cylinder-benchmark, #domino-torus-benchmark, #cylinder-benchmark, #torus-benchmark) td:nth-child(6) { grid-column: 1; }
+  .bench .table-wrap :is(#domino-benchmark, #domino-cylinder-benchmark, #domino-torus-benchmark, #domicule-benchmark, #cylinder-benchmark, #torus-benchmark) td:nth-child(6) { grid-column: 1; }
   .bench .table-wrap td[data-text] { display: grid; grid-template-columns: max-content 1fr; align-items: center; column-gap: 4px; }
   .bench .table-wrap td[data-text]::before { content: none; }
   .bench .table-wrap a.card-solver { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 13px; color: var(--muted); text-decoration: underline 1px var(--muted); text-underline-offset: 3px; grid-column: 1 / -1; }
@@ -293,7 +293,7 @@ ul.intro li + li { margin-top: 4px; }
     <div class="bench-group" data-pieces="domicule" data-surface="rectangle" hidden>
       <div class="table-wrap">
         <table role="table" id="domicule-benchmark" aria-label="Domicules (A239273)" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/rectangles.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/rectangles.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/rectangles.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/rectangles.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/rectangles.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/rectangles.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/rectangles.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/domicules/rectangles.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/domicules/rectangles.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/rectangles.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domicule-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
@@ -931,13 +931,7 @@ const FORMULA_AND_BIGINT_LANGUAGES = [
   { read: r => r.bigintLanguages.py },
   { read: r => r.bigint },
 ];
-const MODULAR_LANGUAGES = [
-  { read: r => r.languages.rs },
-  { read: r => r.languages.py },
-  { read: r => r.modular },
-  { read: r => r.bigint, missing: r => r.bigintMissing },
-];
-const PERIODIC_LANGUAGES = [
+const MODULAR_AND_BIGINT_LANGUAGES = [
   { read: r => r.languages.rs },
   { read: r => r.languages.py },
   { read: r => r.modular },
@@ -980,11 +974,11 @@ function renderSolverRows(table, rows, solvers) {
 }
 
 renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_AND_BIGINT_LANGUAGES);
-renderSolverRows('domino-torus-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus'), PERIODIC_LANGUAGES);
-renderSolverRows('domino-cylinder-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder'), PERIODIC_LANGUAGES);
-renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, MODULAR_LANGUAGES);
-renderSolverRows('torus-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'torus'), PERIODIC_LANGUAGES);
-renderSolverRows('cylinder-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'cylinder'), PERIODIC_LANGUAGES);
+renderSolverRows('domino-torus-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_AND_BIGINT_LANGUAGES);
+renderSolverRows('domino-cylinder-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
+renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, MODULAR_AND_BIGINT_LANGUAGES);
+renderSolverRows('torus-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_AND_BIGINT_LANGUAGES);
+renderSolverRows('cylinder-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
 
 if (DATA.environment) {
   const { date, node, python, rust, commit, cpu, platform, cores, memory } = DATA.environment;

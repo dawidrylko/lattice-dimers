@@ -32,15 +32,14 @@ const MOBILE_TABLE_WIDTH = 919;
 const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGES = [['Rust', '#icon-rust'], ['Python', '#icon-python'], ['JavaScript', '#icon-javascript']];
 const solverColumns = (solver, languages) => LANGUAGES.filter(([name]) => languages.includes(name)).map(([name, icon]) => ({ name: `${solver}, ${name}`, icon: `${solver} ${icon}` }));
-const PERIODIC_SOLVERS = [solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])];
-const MODULAR_AND_BIGINT = [[...solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), ...solverColumns('BigInt', ['JavaScript'])]];
+const MODULAR_AND_BIGINT = [solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])];
 const LANGUAGE_TABLES = [
   ['domino/rectangle', 'domino-benchmark', 'DATA.benchmark', '36', 'FORMULA_AND_BIGINT_LANGUAGES', [solverColumns('Formula', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])]],
-  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121', 'PERIODIC_LANGUAGES', PERIODIC_SOLVERS],
-  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272', 'PERIODIC_LANGUAGES', PERIODIC_SOLVERS],
-  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
-  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'PERIODIC_LANGUAGES', PERIODIC_SOLVERS],
-  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552', 'PERIODIC_LANGUAGES', PERIODIC_SOLVERS],
+  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
 ];
 const SHOWN_BENCHMARK = `(() => {
   const view = group => group.dataset.pieces + '/' + group.dataset.surface;
@@ -1774,9 +1773,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     problems.push(`at ${width} px the solver links of the benchmark cards are wrong: ${wrongCards.map(({ label, problem, display, tapped }) => `${label} ${problem || `display ${display}, tapped ${tapped}`}`).join('; ')}`);
   }
 
-  if (headers.length !== 34 || wrong.length) {
+  if (headers.length !== 36 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 34 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 36 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 
