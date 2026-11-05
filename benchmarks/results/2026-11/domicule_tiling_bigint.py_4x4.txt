@@ -1,0 +1,14 @@
+Average Execution Time: 0.061 ms
+Average Process Time: 64.905 ms
+Load Average Before: 11.01 9.98 8.89
+---
+1. Execution Time: 0.082 ms, Process Time: 67.391 ms
+2. Execution Time: 0.036 ms, Process Time: 68.341 ms
+3. Execution Time: 0.077 ms, Process Time: 59.732 ms
+4. Execution Time: 0.069 ms, Process Time: 59.077 ms
+5. Execution Time: 0.048 ms, Process Time: 65.689 ms
+6. Execution Time: 0.077 ms, Process Time: 75.083 ms
+7. Execution Time: 0.075 ms, Process Time: 64.214 ms
+8. Execution Time: 0.036 ms, Process Time: 62.739 ms
+9. Execution Time: 0.036 ms, Process Time: 65.679 ms
+10. Execution Time: 0.076 ms, Process Time: 61.108 ms
