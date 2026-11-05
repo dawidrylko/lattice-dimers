@@ -57,15 +57,15 @@ def count_modulo(board):
     js/solvers/periodicTilingSolver-Modular.js, with tables of 32-bit counts reduced modulo the prime as there.
 
     A state is the window of cols + 2 bits and, on the king's graph with cols >= 3, the extra bit above it. Shifting
-    a state by one bit maps a contiguous range of states onto another, so a cell step needs no index arrays: the
-    table is reshaped into views where one axis is the bit a move covers, and every move adds one view of the
-    current table onto one view of the next. The column where the extra bit joins the window only swaps which axis
-    of the next table it lands on. The sums are reduced through a scratch array of SCRATCH_COUNTS counts, a slice of
-    the view at a time, so a worker thread holds the two tables and little else, as in JavaScript.
+    a state by one bit maps a contiguous range of states onto another. So a cell step needs no index arrays. The
+    table is reshaped into views where one axis is the bit a move covers. Every move adds one view of the current
+    table onto one view of the next. The column where the extra bit joins the window only swaps which axis of the
+    next table it lands on. The sums are reduced a slice at a time through a scratch array of SCRATCH_COUNTS counts.
+    A worker thread thus holds the two tables and that array.
 
-    A torus runs one start per rotation class, as in JavaScript, but a batch of starts at once: each table has one
-    column per start, with at most BATCH_COUNTS counts per table, so the interpreter's work per cell is shared by the
-    whole batch."""
+    A torus runs one start per rotation class, as in JavaScript, but a batch of starts at once. Each table has one
+    column per start. A batch takes as many starts as fit in BATCH_COUNTS counts, and at least one. The interpreter's
+    work per cell is shared by the whole batch."""
     rows, cols, prime = board["rows"], board["cols"], board["prime"]
     torus, twisted = board["torus"], board["twisted"]
     lattice = LATTICES[board["lattice"]]
