@@ -53,6 +53,8 @@ A new fix adds its row here with the check that guards it.
 | the domino rectangle table scrolled sideways at 721 to 739 px in Verdana, with the 12-digit count of 10 × 10 in full | `00ac79c` | `test:site`, benchmark table at 920 px | counts shortened from 13 digits |
 | the domicule torus table scrolled 12 px sideways at 721 px in DejaVu Sans on CI, and the nine columns of the domino rectangle table up to 118 px at 721 to 919 px in Verdana | `fd3de8d` | `test:site`, benchmark table at 919 and 920 px | the 919 px media query back at 720 px |
 | on a card the BigInt times of the domino rectangle table followed the Formula ones on the same line | `fd3de8d` | `test:site`, benchmark table at 375, 786 and 919 px | `#domino-benchmark td:nth-child(6)` removed |
+| the nine columns of the domicule torus table scrolled 10 px sideways at 920 px in Verdana | this change | `test:site`, benchmark table at 920 px | the 8 px cell padding at 920 to 1000 px removed |
+| on a card the BigInt times of the cylinder and torus tables followed the Modular ones on the same line | this change | `test:site`, benchmark table at 375, 786 and 919 px | the cylinder and torus tables out of the `td:nth-child(6)` rule |
 | the highlight had a contrast of 3.61:1 on the dark sheet | `2581b18` | `test:site`, highlight contrast (new) | `--hit: #dc2626` in the dark palette |
 | the highlight used a fixed colour | `2581b18` | `test:site`, sheet style switch | `#dc2626` instead of `var(--hit)` |
 | a 49-digit count pushed the time columns off screen | `b485aa3` | `test:site`, benchmark table | `fmt` instead of `num` |

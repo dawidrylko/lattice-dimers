@@ -1483,8 +1483,8 @@ async function checkBenchmark(page, baseUrl, width) {
         rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
-          const bigint = [...table.tHead.rows[0].cells].findIndex(th => th.textContent.trim().startsWith('BigInt'));
-          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: i + 2 === bigint })));
+          const headers = [...table.tHead.rows[0].cells];
+          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: headers[i + 2].textContent.trim().startsWith('BigInt') })));
           const noted = [...group.querySelectorAll('.note')].some(note => note.textContent.startsWith('A dash under BigInt'));
           return [
             ...(cells.some(cell => cell.dash && !cell.bigint) ? [table.id + ' has a dash outside BigInt'] : []),
