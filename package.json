@@ -65,6 +65,7 @@
     "benchmark:domicule": "node harness/benchmarkRunner.js --domicule -n 10",
     "benchmark:periodic": "node harness/benchmarkRunner.js --torus -n 10 -m 5 && node harness/benchmarkRunner.js --torus -n 10 -o 5 -m 1 --only periodicTilingSolver-Modular.js && node harness/benchmarkRunner.js --torus -n 3 -o 6 --only periodicTilingSolver-Modular.js && node harness/benchmarkRunner.js --cylinder -n 10 -m 6 && node harness/benchmarkRunner.js --cylinder -n 10 -o 6 --only periodicTilingSolver-Modular.js",
     "benchmark:diagonal": "node harness/benchmarkRunner.js --diagonal -n 10 -m 7 && node harness/benchmarkRunner.js --diagonal -n 10 -o 7 -m 3 --only domiculeDiagonalSolver-Modular.js && node harness/benchmarkRunner.js --diagonal -n 1 -o 10 --only domiculeDiagonalSolver-Modular.js",
+    "benchmark:all": "cargo build --release --locked && pnpm benchmark && pnpm benchmark:periodic && node harness/benchmarkRunner.js --torus -n 1 -o 5 -m 1 --only periodicTilingSolver-BigInt.js && pnpm benchmark:domicule && pnpm benchmark:diagonal",
     "test": "node harness/testRunner.js -m 7",
     "render": "node js/dominoTilingRenderer.js",
     "test:render": "node harness/renderTestRunner.js",

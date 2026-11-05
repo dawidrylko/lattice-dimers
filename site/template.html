@@ -296,9 +296,9 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       <p class="note">
         <code>-r R -c C --torus</code> for a torus. BigInt multiplies by the row transfer matrix, in JavaScript, and runs
         the torus once for every set of first-row cells covered from the last row. Modular goes cell by cell modulo primes
-        below 2<sup>31</sup>, in Rust, Python and JavaScript, and runs one set per rotation class. BigInt counts
-        circumferences up to 12. It was not run on the 12 × 12 torus, where it would run four times as many sets of
-        first-row cells as on the 10 × 10 torus above. The same solvers count the cylinders.
+        below 2<sup>31</sup>, in Rust, Python and JavaScript, and runs one set per rotation class. A dash under
+        BigInt is a board it was not run on: it counts circumferences up to 12, and each step of 2 multiplies its sets of
+        first-row cells by four. The same solvers count the cylinders.
         Re-run with <code>pnpm benchmark:periodic</code>.
       </p>
     </div>
