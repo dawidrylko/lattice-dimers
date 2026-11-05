@@ -1,6 +1,6 @@
 const os = require('os');
 const { isMainThread, parentPort, workerData } = require('worker_threads');
-const { parseArgs } = require('../core');
+const { parseArgs, startTimer } = require('../core');
 const { listPrimes, calculateLog2Bound, combineCheckedResidues, runWorkers } = require('../core/modular');
 
 const MAX_SHORTER_SIDE = 20;
@@ -174,7 +174,9 @@ async function __main__() {
     console.error(`Running ${threads} worker threads instead of ${jobs}, so that their tables fit in half the memory.`);
   }
 
+  const stopTimer = startTimer();
   const coefficients = await calculateDiagonalPolynomial({ ...options, jobs });
+  stopTimer();
   console.log(coefficients.join(','));
 }
 

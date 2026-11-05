@@ -198,14 +198,16 @@ print(`e^(2/ξ) = ${Math.exp(2 / Number(xi)).toFixed(2)} with ξ = ${nb.context.
 
 ## Running time
 
-Average wall-clock time of a full solver process on the king's graph, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
+Average time of the count inside each solver on the king's graph, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
 
 ```js run
 const { formatTime } = nb.context;
 
 table(
-  ['board', 'BigInt', 'modular'],
-  nb.context.periodicBenchmark.filter(r => r.surface === 'torus').map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.bigint), formatTime(r.modular)]),
+  ['board', 'BigInt', 'modular, Rust', 'modular, Python', 'modular, JavaScript'],
+  nb.context.periodicBenchmark
+    .filter(r => r.surface === 'torus')
+    .map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.bigint), formatTime(r.languages.rs), formatTime(r.languages.py), formatTime(r.modular)]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 ```

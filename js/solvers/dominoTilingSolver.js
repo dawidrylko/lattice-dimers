@@ -1,4 +1,4 @@
-const { parseArgs } = require('../core');
+const { parseArgs, startTimer } = require('../core');
 
 const MAX_SHORTER_SIDE = 30;
 
@@ -97,7 +97,9 @@ function __main__() {
     process.exit(1);
   }
 
+  const stopTimer = startTimer();
   const result = calculateTotalTilingCombinations(options);
+  stopTimer();
   console.log(result);
 
   if (!Number.isSafeInteger(result)) {

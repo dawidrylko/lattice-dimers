@@ -17,11 +17,11 @@ The Rust workspace manifest is [`Cargo.toml`](../Cargo.toml) at the root of the 
 
 ## Arguments
 
-An implementation takes `-r <rowCount> -c <colCount>`, and where the algorithm has them `--lattice king|triangular|square`, `--torus`, `--twisted` and `-j <jobs>`, each meaning what it means in the JavaScript solver.
+An implementation takes `-r <rowCount> -c <colCount>`, and where the algorithm has them `--lattice king|triangular|square`, `--torus`, `--twisted` and `-j <jobs>`, each meaning what it means in the JavaScript solver. Every implementation takes `--time`.
 
 ## Output
 
-One line on standard output: the count in decimal, or for the diagonal solvers the counts with 0, 1, 2 and more diagonal pieces separated by commas. Nothing else goes to standard output.
+One line on standard output: the count in decimal, or for the diagonal solvers the counts with 0, 1, 2 and more diagonal pieces separated by commas. Nothing else goes to standard output. With `--time` an implementation also writes `time <milliseconds> ms` to standard error, with three decimals: the time from the end of the argument checks to the moment the count is known, on a monotonic clock. It covers the worker threads and the Chinese remainder theorem, and leaves out the start of the process and the loading of the program (`js/core/timer.js`, `rust/core/src/timer.rs`, `python/lattice_dimers/core/timer.py`).
 
 ## Errors and limits
 
@@ -39,4 +39,4 @@ An implementation rejects arguments it cannot use, and a board it cannot count, 
 
 ## Benchmarks
 
-The benchmarks are to compare the languages on the same boards. That needs each implementation to report the time of its count apart from the start of its process, which none does yet, so [`harness/benchmarkRunner.js`](../harness/benchmarkRunner.js) still times the JavaScript solvers as whole processes.
+The benchmarks compare the languages on the same boards. [`harness/benchmarkRunner.js`](../harness/benchmarkRunner.js) runs every implementation of an algorithm with `--time` and records two times per run: the time of the count the implementation reports, and the time of its whole process. The site shows the first and gives the second in a tooltip ([`benchmarks/README.md`](../benchmarks/README.md)).

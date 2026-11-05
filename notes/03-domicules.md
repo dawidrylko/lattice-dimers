@@ -144,7 +144,7 @@ if (counts.size !== 280 || chiSquared > 357.8) {
 
 ## Running time
 
-Average wall-clock time of a full solver process, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
+Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
 
 ```js run
 const { formatTime } = nb.context;

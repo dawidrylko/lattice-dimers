@@ -1,6 +1,6 @@
 const os = require('os');
 const { isMainThread, parentPort, workerData } = require('worker_threads');
-const { parseArgs } = require('../core');
+const { parseArgs, startTimer } = require('../core');
 const { listPrimes, combineCheckedResidues, runWorkers } = require('../core/modular');
 
 const MAX_CIRCUMFERENCE = 24;
@@ -246,7 +246,9 @@ async function __main__() {
     process.exit(1);
   }
 
+  const stopTimer = startTimer(argv);
   const result = await calculateTotalTilingCombinations({ ...options, lattice, torus, twisted, jobs });
+  stopTimer();
   console.log(result.toString());
 }
 

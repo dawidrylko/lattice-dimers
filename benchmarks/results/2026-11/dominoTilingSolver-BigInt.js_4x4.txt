@@ -1,1002 +1,1004 @@
-Average Execution Time: 26.015 ms
+Average Execution Time: 0.175 ms
+Average Process Time: 24.904 ms
+Load Average Before: 3.15 3.98 6.34
 ---
-1. Execution Time: 26 ms
-2. Execution Time: 27 ms
-3. Execution Time: 25 ms
-4. Execution Time: 26 ms
-5. Execution Time: 25 ms
-6. Execution Time: 26 ms
-7. Execution Time: 26 ms
-8. Execution Time: 25 ms
-9. Execution Time: 25 ms
-10. Execution Time: 27 ms
-11. Execution Time: 26 ms
-12. Execution Time: 26 ms
-13. Execution Time: 27 ms
-14. Execution Time: 26 ms
-15. Execution Time: 26 ms
-16. Execution Time: 25 ms
-17. Execution Time: 26 ms
-18. Execution Time: 27 ms
-19. Execution Time: 26 ms
-20. Execution Time: 26 ms
-21. Execution Time: 26 ms
-22. Execution Time: 26 ms
-23. Execution Time: 26 ms
-24. Execution Time: 25 ms
-25. Execution Time: 26 ms
-26. Execution Time: 26 ms
-27. Execution Time: 25 ms
-28. Execution Time: 26 ms
-29. Execution Time: 28 ms
-30. Execution Time: 26 ms
-31. Execution Time: 26 ms
-32. Execution Time: 26 ms
-33. Execution Time: 25 ms
-34. Execution Time: 26 ms
-35. Execution Time: 24 ms
-36. Execution Time: 26 ms
-37. Execution Time: 27 ms
-38. Execution Time: 26 ms
-39. Execution Time: 27 ms
-40. Execution Time: 26 ms
-41. Execution Time: 26 ms
-42. Execution Time: 26 ms
-43. Execution Time: 26 ms
-44. Execution Time: 28 ms
-45. Execution Time: 26 ms
-46. Execution Time: 26 ms
-47. Execution Time: 26 ms
-48. Execution Time: 26 ms
-49. Execution Time: 26 ms
-50. Execution Time: 25 ms
-51. Execution Time: 25 ms
-52. Execution Time: 27 ms
-53. Execution Time: 26 ms
-54. Execution Time: 24 ms
-55. Execution Time: 26 ms
-56. Execution Time: 25 ms
-57. Execution Time: 27 ms
-58. Execution Time: 26 ms
-59. Execution Time: 28 ms
-60. Execution Time: 26 ms
-61. Execution Time: 26 ms
-62. Execution Time: 27 ms
-63. Execution Time: 25 ms
-64. Execution Time: 26 ms
-65. Execution Time: 25 ms
-66. Execution Time: 26 ms
-67. Execution Time: 26 ms
-68. Execution Time: 25 ms
-69. Execution Time: 28 ms
-70. Execution Time: 26 ms
-71. Execution Time: 27 ms
-72. Execution Time: 25 ms
-73. Execution Time: 25 ms
-74. Execution Time: 28 ms
-75. Execution Time: 26 ms
-76. Execution Time: 25 ms
-77. Execution Time: 27 ms
-78. Execution Time: 25 ms
-79. Execution Time: 25 ms
-80. Execution Time: 29 ms
-81. Execution Time: 27 ms
-82. Execution Time: 26 ms
-83. Execution Time: 27 ms
-84. Execution Time: 25 ms
-85. Execution Time: 26 ms
-86. Execution Time: 25 ms
-87. Execution Time: 27 ms
-88. Execution Time: 29 ms
-89. Execution Time: 26 ms
-90. Execution Time: 27 ms
-91. Execution Time: 25 ms
-92. Execution Time: 25 ms
-93. Execution Time: 26 ms
-94. Execution Time: 26 ms
-95. Execution Time: 26 ms
-96. Execution Time: 25 ms
-97. Execution Time: 26 ms
-98. Execution Time: 27 ms
-99. Execution Time: 25 ms
-100. Execution Time: 28 ms
-101. Execution Time: 25 ms
-102. Execution Time: 26 ms
-103. Execution Time: 26 ms
-104. Execution Time: 25 ms
-105. Execution Time: 27 ms
-106. Execution Time: 26 ms
-107. Execution Time: 26 ms
-108. Execution Time: 27 ms
-109. Execution Time: 26 ms
-110. Execution Time: 26 ms
-111. Execution Time: 26 ms
-112. Execution Time: 26 ms
-113. Execution Time: 25 ms
-114. Execution Time: 27 ms
-115. Execution Time: 25 ms
-116. Execution Time: 26 ms
-117. Execution Time: 26 ms
-118. Execution Time: 25 ms
-119. Execution Time: 26 ms
-120. Execution Time: 28 ms
-121. Execution Time: 27 ms
-122. Execution Time: 25 ms
-123. Execution Time: 26 ms
-124. Execution Time: 25 ms
-125. Execution Time: 26 ms
-126. Execution Time: 27 ms
-127. Execution Time: 27 ms
-128. Execution Time: 26 ms
-129. Execution Time: 25 ms
-130. Execution Time: 26 ms
-131. Execution Time: 26 ms
-132. Execution Time: 27 ms
-133. Execution Time: 25 ms
-134. Execution Time: 26 ms
-135. Execution Time: 27 ms
-136. Execution Time: 25 ms
-137. Execution Time: 27 ms
-138. Execution Time: 27 ms
-139. Execution Time: 26 ms
-140. Execution Time: 27 ms
-141. Execution Time: 26 ms
-142. Execution Time: 25 ms
-143. Execution Time: 27 ms
-144. Execution Time: 26 ms
-145. Execution Time: 26 ms
-146. Execution Time: 25 ms
-147. Execution Time: 26 ms
-148. Execution Time: 26 ms
-149. Execution Time: 26 ms
-150. Execution Time: 26 ms
-151. Execution Time: 26 ms
-152. Execution Time: 26 ms
-153. Execution Time: 27 ms
-154. Execution Time: 25 ms
-155. Execution Time: 28 ms
-156. Execution Time: 26 ms
-157. Execution Time: 27 ms
-158. Execution Time: 29 ms
-159. Execution Time: 26 ms
-160. Execution Time: 26 ms
-161. Execution Time: 26 ms
-162. Execution Time: 26 ms
-163. Execution Time: 25 ms
-164. Execution Time: 26 ms
-165. Execution Time: 26 ms
-166. Execution Time: 26 ms
-167. Execution Time: 27 ms
-168. Execution Time: 26 ms
-169. Execution Time: 25 ms
-170. Execution Time: 26 ms
-171. Execution Time: 26 ms
-172. Execution Time: 27 ms
-173. Execution Time: 26 ms
-174. Execution Time: 25 ms
-175. Execution Time: 26 ms
-176. Execution Time: 26 ms
-177. Execution Time: 26 ms
-178. Execution Time: 24 ms
-179. Execution Time: 27 ms
-180. Execution Time: 26 ms
-181. Execution Time: 27 ms
-182. Execution Time: 25 ms
-183. Execution Time: 27 ms
-184. Execution Time: 27 ms
-185. Execution Time: 26 ms
-186. Execution Time: 25 ms
-187. Execution Time: 26 ms
-188. Execution Time: 26 ms
-189. Execution Time: 25 ms
-190. Execution Time: 26 ms
-191. Execution Time: 26 ms
-192. Execution Time: 25 ms
-193. Execution Time: 26 ms
-194. Execution Time: 26 ms
-195. Execution Time: 27 ms
-196. Execution Time: 25 ms
-197. Execution Time: 26 ms
-198. Execution Time: 25 ms
-199. Execution Time: 26 ms
-200. Execution Time: 26 ms
-201. Execution Time: 26 ms
-202. Execution Time: 27 ms
-203. Execution Time: 25 ms
-204. Execution Time: 25 ms
-205. Execution Time: 27 ms
-206. Execution Time: 26 ms
-207. Execution Time: 28 ms
-208. Execution Time: 26 ms
-209. Execution Time: 25 ms
-210. Execution Time: 26 ms
-211. Execution Time: 26 ms
-212. Execution Time: 25 ms
-213. Execution Time: 25 ms
-214. Execution Time: 27 ms
-215. Execution Time: 25 ms
-216. Execution Time: 25 ms
-217. Execution Time: 25 ms
-218. Execution Time: 27 ms
-219. Execution Time: 26 ms
-220. Execution Time: 27 ms
-221. Execution Time: 26 ms
-222. Execution Time: 25 ms
-223. Execution Time: 26 ms
-224. Execution Time: 26 ms
-225. Execution Time: 26 ms
-226. Execution Time: 25 ms
-227. Execution Time: 26 ms
-228. Execution Time: 25 ms
-229. Execution Time: 25 ms
-230. Execution Time: 27 ms
-231. Execution Time: 25 ms
-232. Execution Time: 25 ms
-233. Execution Time: 27 ms
-234. Execution Time: 25 ms
-235. Execution Time: 26 ms
-236. Execution Time: 25 ms
-237. Execution Time: 26 ms
-238. Execution Time: 24 ms
-239. Execution Time: 25 ms
-240. Execution Time: 26 ms
-241. Execution Time: 28 ms
-242. Execution Time: 25 ms
-243. Execution Time: 26 ms
-244. Execution Time: 26 ms
-245. Execution Time: 26 ms
-246. Execution Time: 25 ms
-247. Execution Time: 27 ms
-248. Execution Time: 26 ms
-249. Execution Time: 26 ms
-250. Execution Time: 26 ms
-251. Execution Time: 27 ms
-252. Execution Time: 27 ms
-253. Execution Time: 26 ms
-254. Execution Time: 26 ms
-255. Execution Time: 26 ms
-256. Execution Time: 25 ms
-257. Execution Time: 26 ms
-258. Execution Time: 25 ms
-259. Execution Time: 25 ms
-260. Execution Time: 25 ms
-261. Execution Time: 25 ms
-262. Execution Time: 28 ms
-263. Execution Time: 25 ms
-264. Execution Time: 25 ms
-265. Execution Time: 27 ms
-266. Execution Time: 25 ms
-267. Execution Time: 26 ms
-268. Execution Time: 25 ms
-269. Execution Time: 26 ms
-270. Execution Time: 26 ms
-271. Execution Time: 25 ms
-272. Execution Time: 28 ms
-273. Execution Time: 26 ms
-274. Execution Time: 26 ms
-275. Execution Time: 25 ms
-276. Execution Time: 27 ms
-277. Execution Time: 27 ms
-278. Execution Time: 26 ms
-279. Execution Time: 28 ms
-280. Execution Time: 26 ms
-281. Execution Time: 27 ms
-282. Execution Time: 25 ms
-283. Execution Time: 27 ms
-284. Execution Time: 27 ms
-285. Execution Time: 27 ms
-286. Execution Time: 25 ms
-287. Execution Time: 26 ms
-288. Execution Time: 25 ms
-289. Execution Time: 27 ms
-290. Execution Time: 26 ms
-291. Execution Time: 25 ms
-292. Execution Time: 26 ms
-293. Execution Time: 26 ms
-294. Execution Time: 27 ms
-295. Execution Time: 25 ms
-296. Execution Time: 27 ms
-297. Execution Time: 26 ms
-298. Execution Time: 26 ms
-299. Execution Time: 25 ms
-300. Execution Time: 27 ms
-301. Execution Time: 27 ms
-302. Execution Time: 26 ms
-303. Execution Time: 25 ms
-304. Execution Time: 26 ms
-305. Execution Time: 26 ms
-306. Execution Time: 26 ms
-307. Execution Time: 26 ms
-308. Execution Time: 25 ms
-309. Execution Time: 27 ms
-310. Execution Time: 25 ms
-311. Execution Time: 29 ms
-312. Execution Time: 27 ms
-313. Execution Time: 27 ms
-314. Execution Time: 26 ms
-315. Execution Time: 26 ms
-316. Execution Time: 26 ms
-317. Execution Time: 26 ms
-318. Execution Time: 25 ms
-319. Execution Time: 26 ms
-320. Execution Time: 28 ms
-321. Execution Time: 26 ms
-322. Execution Time: 26 ms
-323. Execution Time: 27 ms
-324. Execution Time: 27 ms
-325. Execution Time: 27 ms
-326. Execution Time: 25 ms
-327. Execution Time: 24 ms
-328. Execution Time: 25 ms
-329. Execution Time: 27 ms
-330. Execution Time: 26 ms
-331. Execution Time: 28 ms
-332. Execution Time: 25 ms
-333. Execution Time: 26 ms
-334. Execution Time: 26 ms
-335. Execution Time: 25 ms
-336. Execution Time: 26 ms
-337. Execution Time: 27 ms
-338. Execution Time: 24 ms
-339. Execution Time: 26 ms
-340. Execution Time: 25 ms
-341. Execution Time: 26 ms
-342. Execution Time: 24 ms
-343. Execution Time: 26 ms
-344. Execution Time: 26 ms
-345. Execution Time: 26 ms
-346. Execution Time: 28 ms
-347. Execution Time: 25 ms
-348. Execution Time: 26 ms
-349. Execution Time: 28 ms
-350. Execution Time: 25 ms
-351. Execution Time: 26 ms
-352. Execution Time: 26 ms
-353. Execution Time: 26 ms
-354. Execution Time: 25 ms
-355. Execution Time: 27 ms
-356. Execution Time: 26 ms
-357. Execution Time: 26 ms
-358. Execution Time: 26 ms
-359. Execution Time: 25 ms
-360. Execution Time: 26 ms
-361. Execution Time: 26 ms
-362. Execution Time: 26 ms
-363. Execution Time: 26 ms
-364. Execution Time: 26 ms
-365. Execution Time: 25 ms
-366. Execution Time: 25 ms
-367. Execution Time: 26 ms
-368. Execution Time: 25 ms
-369. Execution Time: 26 ms
-370. Execution Time: 26 ms
-371. Execution Time: 26 ms
-372. Execution Time: 27 ms
-373. Execution Time: 26 ms
-374. Execution Time: 25 ms
-375. Execution Time: 25 ms
-376. Execution Time: 25 ms
-377. Execution Time: 25 ms
-378. Execution Time: 26 ms
-379. Execution Time: 25 ms
-380. Execution Time: 26 ms
-381. Execution Time: 26 ms
-382. Execution Time: 25 ms
-383. Execution Time: 25 ms
-384. Execution Time: 26 ms
-385. Execution Time: 27 ms
-386. Execution Time: 26 ms
-387. Execution Time: 26 ms
-388. Execution Time: 28 ms
-389. Execution Time: 25 ms
-390. Execution Time: 26 ms
-391. Execution Time: 26 ms
-392. Execution Time: 28 ms
-393. Execution Time: 27 ms
-394. Execution Time: 26 ms
-395. Execution Time: 25 ms
-396. Execution Time: 27 ms
-397. Execution Time: 26 ms
-398. Execution Time: 25 ms
-399. Execution Time: 27 ms
-400. Execution Time: 25 ms
-401. Execution Time: 27 ms
-402. Execution Time: 25 ms
-403. Execution Time: 27 ms
-404. Execution Time: 26 ms
-405. Execution Time: 26 ms
-406. Execution Time: 25 ms
-407. Execution Time: 27 ms
-408. Execution Time: 24 ms
-409. Execution Time: 27 ms
-410. Execution Time: 26 ms
-411. Execution Time: 25 ms
-412. Execution Time: 27 ms
-413. Execution Time: 26 ms
-414. Execution Time: 25 ms
-415. Execution Time: 26 ms
-416. Execution Time: 26 ms
-417. Execution Time: 25 ms
-418. Execution Time: 25 ms
-419. Execution Time: 25 ms
-420. Execution Time: 26 ms
-421. Execution Time: 27 ms
-422. Execution Time: 26 ms
-423. Execution Time: 26 ms
-424. Execution Time: 26 ms
-425. Execution Time: 26 ms
-426. Execution Time: 25 ms
-427. Execution Time: 26 ms
-428. Execution Time: 27 ms
-429. Execution Time: 26 ms
-430. Execution Time: 27 ms
-431. Execution Time: 26 ms
-432. Execution Time: 26 ms
-433. Execution Time: 27 ms
-434. Execution Time: 26 ms
-435. Execution Time: 26 ms
-436. Execution Time: 26 ms
-437. Execution Time: 26 ms
-438. Execution Time: 26 ms
-439. Execution Time: 26 ms
-440. Execution Time: 27 ms
-441. Execution Time: 26 ms
-442. Execution Time: 27 ms
-443. Execution Time: 26 ms
-444. Execution Time: 27 ms
-445. Execution Time: 25 ms
-446. Execution Time: 28 ms
-447. Execution Time: 25 ms
-448. Execution Time: 26 ms
-449. Execution Time: 26 ms
-450. Execution Time: 27 ms
-451. Execution Time: 25 ms
-452. Execution Time: 26 ms
-453. Execution Time: 26 ms
-454. Execution Time: 26 ms
-455. Execution Time: 26 ms
-456. Execution Time: 27 ms
-457. Execution Time: 25 ms
-458. Execution Time: 26 ms
-459. Execution Time: 26 ms
-460. Execution Time: 26 ms
-461. Execution Time: 26 ms
-462. Execution Time: 26 ms
-463. Execution Time: 26 ms
-464. Execution Time: 27 ms
-465. Execution Time: 26 ms
-466. Execution Time: 25 ms
-467. Execution Time: 26 ms
-468. Execution Time: 26 ms
-469. Execution Time: 26 ms
-470. Execution Time: 27 ms
-471. Execution Time: 25 ms
-472. Execution Time: 27 ms
-473. Execution Time: 27 ms
-474. Execution Time: 25 ms
-475. Execution Time: 28 ms
-476. Execution Time: 25 ms
-477. Execution Time: 26 ms
-478. Execution Time: 25 ms
-479. Execution Time: 28 ms
-480. Execution Time: 26 ms
-481. Execution Time: 25 ms
-482. Execution Time: 25 ms
-483. Execution Time: 26 ms
-484. Execution Time: 25 ms
-485. Execution Time: 26 ms
-486. Execution Time: 27 ms
-487. Execution Time: 26 ms
-488. Execution Time: 26 ms
-489. Execution Time: 25 ms
-490. Execution Time: 25 ms
-491. Execution Time: 25 ms
-492. Execution Time: 25 ms
-493. Execution Time: 25 ms
-494. Execution Time: 25 ms
-495. Execution Time: 25 ms
-496. Execution Time: 25 ms
-497. Execution Time: 25 ms
-498. Execution Time: 27 ms
-499. Execution Time: 25 ms
-500. Execution Time: 25 ms
-501. Execution Time: 25 ms
-502. Execution Time: 25 ms
-503. Execution Time: 26 ms
-504. Execution Time: 26 ms
-505. Execution Time: 25 ms
-506. Execution Time: 25 ms
-507. Execution Time: 26 ms
-508. Execution Time: 26 ms
-509. Execution Time: 27 ms
-510. Execution Time: 26 ms
-511. Execution Time: 25 ms
-512. Execution Time: 26 ms
-513. Execution Time: 25 ms
-514. Execution Time: 27 ms
-515. Execution Time: 26 ms
-516. Execution Time: 26 ms
-517. Execution Time: 25 ms
-518. Execution Time: 26 ms
-519. Execution Time: 27 ms
-520. Execution Time: 25 ms
-521. Execution Time: 26 ms
-522. Execution Time: 26 ms
-523. Execution Time: 25 ms
-524. Execution Time: 27 ms
-525. Execution Time: 26 ms
-526. Execution Time: 25 ms
-527. Execution Time: 27 ms
-528. Execution Time: 25 ms
-529. Execution Time: 25 ms
-530. Execution Time: 26 ms
-531. Execution Time: 25 ms
-532. Execution Time: 26 ms
-533. Execution Time: 26 ms
-534. Execution Time: 27 ms
-535. Execution Time: 29 ms
-536. Execution Time: 29 ms
-537. Execution Time: 26 ms
-538. Execution Time: 27 ms
-539. Execution Time: 25 ms
-540. Execution Time: 26 ms
-541. Execution Time: 26 ms
-542. Execution Time: 26 ms
-543. Execution Time: 26 ms
-544. Execution Time: 26 ms
-545. Execution Time: 28 ms
-546. Execution Time: 26 ms
-547. Execution Time: 25 ms
-548. Execution Time: 27 ms
-549. Execution Time: 26 ms
-550. Execution Time: 27 ms
-551. Execution Time: 26 ms
-552. Execution Time: 25 ms
-553. Execution Time: 26 ms
-554. Execution Time: 27 ms
-555. Execution Time: 25 ms
-556. Execution Time: 26 ms
-557. Execution Time: 25 ms
-558. Execution Time: 25 ms
-559. Execution Time: 27 ms
-560. Execution Time: 26 ms
-561. Execution Time: 26 ms
-562. Execution Time: 24 ms
-563. Execution Time: 28 ms
-564. Execution Time: 26 ms
-565. Execution Time: 24 ms
-566. Execution Time: 26 ms
-567. Execution Time: 26 ms
-568. Execution Time: 27 ms
-569. Execution Time: 25 ms
-570. Execution Time: 26 ms
-571. Execution Time: 26 ms
-572. Execution Time: 26 ms
-573. Execution Time: 25 ms
-574. Execution Time: 28 ms
-575. Execution Time: 26 ms
-576. Execution Time: 25 ms
-577. Execution Time: 26 ms
-578. Execution Time: 25 ms
-579. Execution Time: 26 ms
-580. Execution Time: 26 ms
-581. Execution Time: 26 ms
-582. Execution Time: 25 ms
-583. Execution Time: 25 ms
-584. Execution Time: 26 ms
-585. Execution Time: 25 ms
-586. Execution Time: 26 ms
-587. Execution Time: 25 ms
-588. Execution Time: 26 ms
-589. Execution Time: 25 ms
-590. Execution Time: 26 ms
-591. Execution Time: 27 ms
-592. Execution Time: 27 ms
-593. Execution Time: 25 ms
-594. Execution Time: 27 ms
-595. Execution Time: 27 ms
-596. Execution Time: 26 ms
-597. Execution Time: 25 ms
-598. Execution Time: 25 ms
-599. Execution Time: 27 ms
-600. Execution Time: 26 ms
-601. Execution Time: 26 ms
-602. Execution Time: 26 ms
-603. Execution Time: 26 ms
-604. Execution Time: 28 ms
-605. Execution Time: 26 ms
-606. Execution Time: 28 ms
-607. Execution Time: 25 ms
-608. Execution Time: 25 ms
-609. Execution Time: 26 ms
-610. Execution Time: 27 ms
-611. Execution Time: 27 ms
-612. Execution Time: 25 ms
-613. Execution Time: 25 ms
-614. Execution Time: 25 ms
-615. Execution Time: 25 ms
-616. Execution Time: 25 ms
-617. Execution Time: 26 ms
-618. Execution Time: 26 ms
-619. Execution Time: 26 ms
-620. Execution Time: 25 ms
-621. Execution Time: 25 ms
-622. Execution Time: 27 ms
-623. Execution Time: 26 ms
-624. Execution Time: 25 ms
-625. Execution Time: 26 ms
-626. Execution Time: 26 ms
-627. Execution Time: 25 ms
-628. Execution Time: 27 ms
-629. Execution Time: 27 ms
-630. Execution Time: 26 ms
-631. Execution Time: 25 ms
-632. Execution Time: 26 ms
-633. Execution Time: 26 ms
-634. Execution Time: 26 ms
-635. Execution Time: 26 ms
-636. Execution Time: 25 ms
-637. Execution Time: 27 ms
-638. Execution Time: 27 ms
-639. Execution Time: 26 ms
-640. Execution Time: 25 ms
-641. Execution Time: 26 ms
-642. Execution Time: 26 ms
-643. Execution Time: 25 ms
-644. Execution Time: 25 ms
-645. Execution Time: 25 ms
-646. Execution Time: 26 ms
-647. Execution Time: 26 ms
-648. Execution Time: 27 ms
-649. Execution Time: 25 ms
-650. Execution Time: 26 ms
-651. Execution Time: 25 ms
-652. Execution Time: 26 ms
-653. Execution Time: 28 ms
-654. Execution Time: 26 ms
-655. Execution Time: 26 ms
-656. Execution Time: 27 ms
-657. Execution Time: 26 ms
-658. Execution Time: 26 ms
-659. Execution Time: 26 ms
-660. Execution Time: 26 ms
-661. Execution Time: 27 ms
-662. Execution Time: 26 ms
-663. Execution Time: 26 ms
-664. Execution Time: 27 ms
-665. Execution Time: 27 ms
-666. Execution Time: 26 ms
-667. Execution Time: 26 ms
-668. Execution Time: 25 ms
-669. Execution Time: 26 ms
-670. Execution Time: 25 ms
-671. Execution Time: 27 ms
-672. Execution Time: 26 ms
-673. Execution Time: 26 ms
-674. Execution Time: 26 ms
-675. Execution Time: 25 ms
-676. Execution Time: 25 ms
-677. Execution Time: 26 ms
-678. Execution Time: 28 ms
-679. Execution Time: 26 ms
-680. Execution Time: 27 ms
-681. Execution Time: 26 ms
-682. Execution Time: 26 ms
-683. Execution Time: 25 ms
-684. Execution Time: 25 ms
-685. Execution Time: 26 ms
-686. Execution Time: 26 ms
-687. Execution Time: 26 ms
-688. Execution Time: 25 ms
-689. Execution Time: 26 ms
-690. Execution Time: 25 ms
-691. Execution Time: 27 ms
-692. Execution Time: 26 ms
-693. Execution Time: 24 ms
-694. Execution Time: 27 ms
-695. Execution Time: 25 ms
-696. Execution Time: 25 ms
-697. Execution Time: 25 ms
-698. Execution Time: 26 ms
-699. Execution Time: 25 ms
-700. Execution Time: 26 ms
-701. Execution Time: 26 ms
-702. Execution Time: 27 ms
-703. Execution Time: 25 ms
-704. Execution Time: 26 ms
-705. Execution Time: 28 ms
-706. Execution Time: 25 ms
-707. Execution Time: 26 ms
-708. Execution Time: 27 ms
-709. Execution Time: 26 ms
-710. Execution Time: 27 ms
-711. Execution Time: 26 ms
-712. Execution Time: 25 ms
-713. Execution Time: 25 ms
-714. Execution Time: 26 ms
-715. Execution Time: 26 ms
-716. Execution Time: 26 ms
-717. Execution Time: 25 ms
-718. Execution Time: 27 ms
-719. Execution Time: 27 ms
-720. Execution Time: 26 ms
-721. Execution Time: 26 ms
-722. Execution Time: 25 ms
-723. Execution Time: 26 ms
-724. Execution Time: 26 ms
-725. Execution Time: 26 ms
-726. Execution Time: 26 ms
-727. Execution Time: 25 ms
-728. Execution Time: 26 ms
-729. Execution Time: 25 ms
-730. Execution Time: 25 ms
-731. Execution Time: 25 ms
-732. Execution Time: 26 ms
-733. Execution Time: 26 ms
-734. Execution Time: 24 ms
-735. Execution Time: 29 ms
-736. Execution Time: 26 ms
-737. Execution Time: 25 ms
-738. Execution Time: 26 ms
-739. Execution Time: 26 ms
-740. Execution Time: 26 ms
-741. Execution Time: 27 ms
-742. Execution Time: 26 ms
-743. Execution Time: 27 ms
-744. Execution Time: 25 ms
-745. Execution Time: 26 ms
-746. Execution Time: 27 ms
-747. Execution Time: 26 ms
-748. Execution Time: 26 ms
-749. Execution Time: 26 ms
-750. Execution Time: 25 ms
-751. Execution Time: 26 ms
-752. Execution Time: 28 ms
-753. Execution Time: 27 ms
-754. Execution Time: 27 ms
-755. Execution Time: 27 ms
-756. Execution Time: 25 ms
-757. Execution Time: 26 ms
-758. Execution Time: 27 ms
-759. Execution Time: 25 ms
-760. Execution Time: 25 ms
-761. Execution Time: 28 ms
-762. Execution Time: 27 ms
-763. Execution Time: 26 ms
-764. Execution Time: 25 ms
-765. Execution Time: 25 ms
-766. Execution Time: 26 ms
-767. Execution Time: 25 ms
-768. Execution Time: 27 ms
-769. Execution Time: 26 ms
-770. Execution Time: 26 ms
-771. Execution Time: 25 ms
-772. Execution Time: 27 ms
-773. Execution Time: 25 ms
-774. Execution Time: 26 ms
-775. Execution Time: 26 ms
-776. Execution Time: 25 ms
-777. Execution Time: 26 ms
-778. Execution Time: 28 ms
-779. Execution Time: 26 ms
-780. Execution Time: 26 ms
-781. Execution Time: 26 ms
-782. Execution Time: 26 ms
-783. Execution Time: 26 ms
-784. Execution Time: 25 ms
-785. Execution Time: 26 ms
-786. Execution Time: 26 ms
-787. Execution Time: 27 ms
-788. Execution Time: 27 ms
-789. Execution Time: 26 ms
-790. Execution Time: 26 ms
-791. Execution Time: 26 ms
-792. Execution Time: 26 ms
-793. Execution Time: 28 ms
-794. Execution Time: 26 ms
-795. Execution Time: 25 ms
-796. Execution Time: 27 ms
-797. Execution Time: 25 ms
-798. Execution Time: 26 ms
-799. Execution Time: 25 ms
-800. Execution Time: 26 ms
-801. Execution Time: 26 ms
-802. Execution Time: 25 ms
-803. Execution Time: 25 ms
-804. Execution Time: 26 ms
-805. Execution Time: 25 ms
-806. Execution Time: 27 ms
-807. Execution Time: 26 ms
-808. Execution Time: 25 ms
-809. Execution Time: 26 ms
-810. Execution Time: 25 ms
-811. Execution Time: 26 ms
-812. Execution Time: 25 ms
-813. Execution Time: 26 ms
-814. Execution Time: 26 ms
-815. Execution Time: 26 ms
-816. Execution Time: 26 ms
-817. Execution Time: 26 ms
-818. Execution Time: 26 ms
-819. Execution Time: 27 ms
-820. Execution Time: 26 ms
-821. Execution Time: 28 ms
-822. Execution Time: 27 ms
-823. Execution Time: 26 ms
-824. Execution Time: 28 ms
-825. Execution Time: 26 ms
-826. Execution Time: 26 ms
-827. Execution Time: 26 ms
-828. Execution Time: 26 ms
-829. Execution Time: 27 ms
-830. Execution Time: 27 ms
-831. Execution Time: 26 ms
-832. Execution Time: 27 ms
-833. Execution Time: 26 ms
-834. Execution Time: 26 ms
-835. Execution Time: 26 ms
-836. Execution Time: 25 ms
-837. Execution Time: 26 ms
-838. Execution Time: 27 ms
-839. Execution Time: 27 ms
-840. Execution Time: 26 ms
-841. Execution Time: 26 ms
-842. Execution Time: 26 ms
-843. Execution Time: 26 ms
-844. Execution Time: 26 ms
-845. Execution Time: 26 ms
-846. Execution Time: 25 ms
-847. Execution Time: 25 ms
-848. Execution Time: 26 ms
-849. Execution Time: 27 ms
-850. Execution Time: 27 ms
-851. Execution Time: 26 ms
-852. Execution Time: 26 ms
-853. Execution Time: 27 ms
-854. Execution Time: 25 ms
-855. Execution Time: 25 ms
-856. Execution Time: 26 ms
-857. Execution Time: 27 ms
-858. Execution Time: 27 ms
-859. Execution Time: 26 ms
-860. Execution Time: 27 ms
-861. Execution Time: 30 ms
-862. Execution Time: 26 ms
-863. Execution Time: 25 ms
-864. Execution Time: 26 ms
-865. Execution Time: 27 ms
-866. Execution Time: 26 ms
-867. Execution Time: 27 ms
-868. Execution Time: 25 ms
-869. Execution Time: 27 ms
-870. Execution Time: 25 ms
-871. Execution Time: 26 ms
-872. Execution Time: 26 ms
-873. Execution Time: 26 ms
-874. Execution Time: 27 ms
-875. Execution Time: 25 ms
-876. Execution Time: 26 ms
-877. Execution Time: 26 ms
-878. Execution Time: 26 ms
-879. Execution Time: 25 ms
-880. Execution Time: 26 ms
-881. Execution Time: 26 ms
-882. Execution Time: 26 ms
-883. Execution Time: 26 ms
-884. Execution Time: 25 ms
-885. Execution Time: 26 ms
-886. Execution Time: 25 ms
-887. Execution Time: 26 ms
-888. Execution Time: 27 ms
-889. Execution Time: 27 ms
-890. Execution Time: 27 ms
-891. Execution Time: 27 ms
-892. Execution Time: 25 ms
-893. Execution Time: 26 ms
-894. Execution Time: 25 ms
-895. Execution Time: 26 ms
-896. Execution Time: 26 ms
-897. Execution Time: 26 ms
-898. Execution Time: 25 ms
-899. Execution Time: 25 ms
-900. Execution Time: 25 ms
-901. Execution Time: 26 ms
-902. Execution Time: 26 ms
-903. Execution Time: 25 ms
-904. Execution Time: 25 ms
-905. Execution Time: 26 ms
-906. Execution Time: 26 ms
-907. Execution Time: 26 ms
-908. Execution Time: 26 ms
-909. Execution Time: 26 ms
-910. Execution Time: 28 ms
-911. Execution Time: 26 ms
-912. Execution Time: 26 ms
-913. Execution Time: 27 ms
-914. Execution Time: 26 ms
-915. Execution Time: 26 ms
-916. Execution Time: 27 ms
-917. Execution Time: 26 ms
-918. Execution Time: 25 ms
-919. Execution Time: 26 ms
-920. Execution Time: 26 ms
-921. Execution Time: 28 ms
-922. Execution Time: 26 ms
-923. Execution Time: 27 ms
-924. Execution Time: 26 ms
-925. Execution Time: 29 ms
-926. Execution Time: 26 ms
-927. Execution Time: 27 ms
-928. Execution Time: 27 ms
-929. Execution Time: 25 ms
-930. Execution Time: 27 ms
-931. Execution Time: 25 ms
-932. Execution Time: 29 ms
-933. Execution Time: 26 ms
-934. Execution Time: 26 ms
-935. Execution Time: 26 ms
-936. Execution Time: 27 ms
-937. Execution Time: 28 ms
-938. Execution Time: 28 ms
-939. Execution Time: 25 ms
-940. Execution Time: 26 ms
-941. Execution Time: 26 ms
-942. Execution Time: 27 ms
-943. Execution Time: 26 ms
-944. Execution Time: 27 ms
-945. Execution Time: 26 ms
-946. Execution Time: 26 ms
-947. Execution Time: 26 ms
-948. Execution Time: 25 ms
-949. Execution Time: 26 ms
-950. Execution Time: 25 ms
-951. Execution Time: 27 ms
-952. Execution Time: 26 ms
-953. Execution Time: 25 ms
-954. Execution Time: 27 ms
-955. Execution Time: 26 ms
-956. Execution Time: 26 ms
-957. Execution Time: 27 ms
-958. Execution Time: 29 ms
-959. Execution Time: 26 ms
-960. Execution Time: 26 ms
-961. Execution Time: 25 ms
-962. Execution Time: 25 ms
-963. Execution Time: 25 ms
-964. Execution Time: 26 ms
-965. Execution Time: 28 ms
-966. Execution Time: 26 ms
-967. Execution Time: 28 ms
-968. Execution Time: 26 ms
-969. Execution Time: 26 ms
-970. Execution Time: 26 ms
-971. Execution Time: 25 ms
-972. Execution Time: 27 ms
-973. Execution Time: 26 ms
-974. Execution Time: 26 ms
-975. Execution Time: 26 ms
-976. Execution Time: 27 ms
-977. Execution Time: 26 ms
-978. Execution Time: 27 ms
-979. Execution Time: 27 ms
-980. Execution Time: 27 ms
-981. Execution Time: 27 ms
-982. Execution Time: 27 ms
-983. Execution Time: 27 ms
-984. Execution Time: 27 ms
-985. Execution Time: 27 ms
-986. Execution Time: 26 ms
-987. Execution Time: 26 ms
-988. Execution Time: 25 ms
-989. Execution Time: 26 ms
-990. Execution Time: 26 ms
-991. Execution Time: 26 ms
-992. Execution Time: 25 ms
-993. Execution Time: 27 ms
-994. Execution Time: 25 ms
-995. Execution Time: 27 ms
-996. Execution Time: 26 ms
-997. Execution Time: 26 ms
-998. Execution Time: 25 ms
-999. Execution Time: 27 ms
-1000. Execution Time: 25 ms
+1. Execution Time: 0.176 ms, Process Time: 25.658 ms
+2. Execution Time: 0.161 ms, Process Time: 23.747 ms
+3. Execution Time: 0.178 ms, Process Time: 27.239 ms
+4. Execution Time: 0.19 ms, Process Time: 25.531 ms
+5. Execution Time: 0.186 ms, Process Time: 25.89 ms
+6. Execution Time: 0.174 ms, Process Time: 25.178 ms
+7. Execution Time: 0.169 ms, Process Time: 25.251 ms
+8. Execution Time: 0.172 ms, Process Time: 23.928 ms
+9. Execution Time: 0.167 ms, Process Time: 24.88 ms
+10. Execution Time: 0.192 ms, Process Time: 24.45 ms
+11. Execution Time: 0.179 ms, Process Time: 25.015 ms
+12. Execution Time: 0.17 ms, Process Time: 23.983 ms
+13. Execution Time: 0.17 ms, Process Time: 24.723 ms
+14. Execution Time: 0.167 ms, Process Time: 25.792 ms
+15. Execution Time: 0.173 ms, Process Time: 25.251 ms
+16. Execution Time: 0.17 ms, Process Time: 23.95 ms
+17. Execution Time: 0.168 ms, Process Time: 25.945 ms
+18. Execution Time: 0.175 ms, Process Time: 25.365 ms
+19. Execution Time: 0.199 ms, Process Time: 24.791 ms
+20. Execution Time: 0.16 ms, Process Time: 25.313 ms
+21. Execution Time: 0.179 ms, Process Time: 24.895 ms
+22. Execution Time: 0.168 ms, Process Time: 24.685 ms
+23. Execution Time: 0.189 ms, Process Time: 26.64 ms
+24. Execution Time: 0.173 ms, Process Time: 24.086 ms
+25. Execution Time: 0.17 ms, Process Time: 24.757 ms
+26. Execution Time: 0.18 ms, Process Time: 23.918 ms
+27. Execution Time: 0.168 ms, Process Time: 24.25 ms
+28. Execution Time: 0.188 ms, Process Time: 23.871 ms
+29. Execution Time: 0.172 ms, Process Time: 24.97 ms
+30. Execution Time: 0.184 ms, Process Time: 23.29 ms
+31. Execution Time: 0.173 ms, Process Time: 25.865 ms
+32. Execution Time: 0.174 ms, Process Time: 23.805 ms
+33. Execution Time: 0.182 ms, Process Time: 25.237 ms
+34. Execution Time: 0.165 ms, Process Time: 25.652 ms
+35. Execution Time: 0.167 ms, Process Time: 25.003 ms
+36. Execution Time: 0.161 ms, Process Time: 24.636 ms
+37. Execution Time: 0.18 ms, Process Time: 24.771 ms
+38. Execution Time: 0.177 ms, Process Time: 26.861 ms
+39. Execution Time: 0.171 ms, Process Time: 25.048 ms
+40. Execution Time: 0.171 ms, Process Time: 24.603 ms
+41. Execution Time: 0.177 ms, Process Time: 25.608 ms
+42. Execution Time: 0.174 ms, Process Time: 23.925 ms
+43. Execution Time: 0.171 ms, Process Time: 24.422 ms
+44. Execution Time: 0.169 ms, Process Time: 24.849 ms
+45. Execution Time: 0.179 ms, Process Time: 24.864 ms
+46. Execution Time: 0.189 ms, Process Time: 26.12 ms
+47. Execution Time: 0.211 ms, Process Time: 25.285 ms
+48. Execution Time: 0.184 ms, Process Time: 25.177 ms
+49. Execution Time: 0.168 ms, Process Time: 24.488 ms
+50. Execution Time: 0.17 ms, Process Time: 24.139 ms
+51. Execution Time: 0.174 ms, Process Time: 24.584 ms
+52. Execution Time: 0.173 ms, Process Time: 25.087 ms
+53. Execution Time: 0.176 ms, Process Time: 25.258 ms
+54. Execution Time: 0.178 ms, Process Time: 23.723 ms
+55. Execution Time: 0.173 ms, Process Time: 24.985 ms
+56. Execution Time: 0.17 ms, Process Time: 24.704 ms
+57. Execution Time: 0.172 ms, Process Time: 24.458 ms
+58. Execution Time: 0.165 ms, Process Time: 24.653 ms
+59. Execution Time: 0.176 ms, Process Time: 25.099 ms
+60. Execution Time: 0.217 ms, Process Time: 26.616 ms
+61. Execution Time: 0.201 ms, Process Time: 27.372 ms
+62. Execution Time: 0.179 ms, Process Time: 28.832 ms
+63. Execution Time: 0.163 ms, Process Time: 27.241 ms
+64. Execution Time: 0.162 ms, Process Time: 25.336 ms
+65. Execution Time: 0.166 ms, Process Time: 26.085 ms
+66. Execution Time: 0.183 ms, Process Time: 24.765 ms
+67. Execution Time: 0.18 ms, Process Time: 25.096 ms
+68. Execution Time: 0.185 ms, Process Time: 24.921 ms
+69. Execution Time: 0.173 ms, Process Time: 24.912 ms
+70. Execution Time: 0.176 ms, Process Time: 25.021 ms
+71. Execution Time: 0.193 ms, Process Time: 25.225 ms
+72. Execution Time: 0.178 ms, Process Time: 25.458 ms
+73. Execution Time: 0.188 ms, Process Time: 24.476 ms
+74. Execution Time: 0.174 ms, Process Time: 24.973 ms
+75. Execution Time: 0.176 ms, Process Time: 25.32 ms
+76. Execution Time: 0.186 ms, Process Time: 24.218 ms
+77. Execution Time: 0.164 ms, Process Time: 23.881 ms
+78. Execution Time: 0.168 ms, Process Time: 24.877 ms
+79. Execution Time: 0.162 ms, Process Time: 24.7 ms
+80. Execution Time: 0.175 ms, Process Time: 24.645 ms
+81. Execution Time: 0.169 ms, Process Time: 24.601 ms
+82. Execution Time: 0.185 ms, Process Time: 26.858 ms
+83. Execution Time: 0.171 ms, Process Time: 26.703 ms
+84. Execution Time: 0.175 ms, Process Time: 26.544 ms
+85. Execution Time: 0.202 ms, Process Time: 26.006 ms
+86. Execution Time: 0.159 ms, Process Time: 25.709 ms
+87. Execution Time: 0.166 ms, Process Time: 26.034 ms
+88. Execution Time: 0.186 ms, Process Time: 26.371 ms
+89. Execution Time: 0.159 ms, Process Time: 25.734 ms
+90. Execution Time: 0.17 ms, Process Time: 24.855 ms
+91. Execution Time: 0.181 ms, Process Time: 26.648 ms
+92. Execution Time: 0.176 ms, Process Time: 26.143 ms
+93. Execution Time: 0.246 ms, Process Time: 27.485 ms
+94. Execution Time: 0.187 ms, Process Time: 27.162 ms
+95. Execution Time: 0.24 ms, Process Time: 26.266 ms
+96. Execution Time: 0.174 ms, Process Time: 25.162 ms
+97. Execution Time: 0.181 ms, Process Time: 25.517 ms
+98. Execution Time: 0.173 ms, Process Time: 24.838 ms
+99. Execution Time: 0.179 ms, Process Time: 26.676 ms
+100. Execution Time: 0.172 ms, Process Time: 25.382 ms
+101. Execution Time: 0.17 ms, Process Time: 25.771 ms
+102. Execution Time: 0.188 ms, Process Time: 26.228 ms
+103. Execution Time: 0.176 ms, Process Time: 25.388 ms
+104. Execution Time: 0.178 ms, Process Time: 25.097 ms
+105. Execution Time: 0.16 ms, Process Time: 24.681 ms
+106. Execution Time: 0.161 ms, Process Time: 26.918 ms
+107. Execution Time: 0.182 ms, Process Time: 25.347 ms
+108. Execution Time: 0.176 ms, Process Time: 25.063 ms
+109. Execution Time: 0.186 ms, Process Time: 24.168 ms
+110. Execution Time: 0.162 ms, Process Time: 26.538 ms
+111. Execution Time: 0.179 ms, Process Time: 26.196 ms
+112. Execution Time: 0.169 ms, Process Time: 25.607 ms
+113. Execution Time: 0.174 ms, Process Time: 25.896 ms
+114. Execution Time: 0.177 ms, Process Time: 25.787 ms
+115. Execution Time: 0.175 ms, Process Time: 24.947 ms
+116. Execution Time: 0.177 ms, Process Time: 26.488 ms
+117. Execution Time: 0.17 ms, Process Time: 24.885 ms
+118. Execution Time: 0.164 ms, Process Time: 24.35 ms
+119. Execution Time: 0.173 ms, Process Time: 24.764 ms
+120. Execution Time: 0.167 ms, Process Time: 24.157 ms
+121. Execution Time: 0.173 ms, Process Time: 25.174 ms
+122. Execution Time: 0.176 ms, Process Time: 24.765 ms
+123. Execution Time: 0.172 ms, Process Time: 26.529 ms
+124. Execution Time: 0.178 ms, Process Time: 25.073 ms
+125. Execution Time: 0.177 ms, Process Time: 24.193 ms
+126. Execution Time: 0.175 ms, Process Time: 24.145 ms
+127. Execution Time: 0.171 ms, Process Time: 25.695 ms
+128. Execution Time: 0.173 ms, Process Time: 24.753 ms
+129. Execution Time: 0.169 ms, Process Time: 24.987 ms
+130. Execution Time: 0.177 ms, Process Time: 25.701 ms
+131. Execution Time: 0.191 ms, Process Time: 24.287 ms
+132. Execution Time: 0.17 ms, Process Time: 23.827 ms
+133. Execution Time: 0.172 ms, Process Time: 25.382 ms
+134. Execution Time: 0.175 ms, Process Time: 25.026 ms
+135. Execution Time: 0.175 ms, Process Time: 24.65 ms
+136. Execution Time: 0.171 ms, Process Time: 24.956 ms
+137. Execution Time: 0.173 ms, Process Time: 23.973 ms
+138. Execution Time: 0.184 ms, Process Time: 23.533 ms
+139. Execution Time: 0.167 ms, Process Time: 23.79 ms
+140. Execution Time: 0.174 ms, Process Time: 23.938 ms
+141. Execution Time: 0.176 ms, Process Time: 23.604 ms
+142. Execution Time: 0.17 ms, Process Time: 25.907 ms
+143. Execution Time: 0.169 ms, Process Time: 24.2 ms
+144. Execution Time: 0.167 ms, Process Time: 23.521 ms
+145. Execution Time: 0.167 ms, Process Time: 24.014 ms
+146. Execution Time: 0.164 ms, Process Time: 26.074 ms
+147. Execution Time: 0.175 ms, Process Time: 25.058 ms
+148. Execution Time: 0.17 ms, Process Time: 26.227 ms
+149. Execution Time: 0.173 ms, Process Time: 25.523 ms
+150. Execution Time: 0.172 ms, Process Time: 25.898 ms
+151. Execution Time: 0.176 ms, Process Time: 24.95 ms
+152. Execution Time: 0.175 ms, Process Time: 24.705 ms
+153. Execution Time: 0.183 ms, Process Time: 24.588 ms
+154. Execution Time: 0.178 ms, Process Time: 25.125 ms
+155. Execution Time: 0.175 ms, Process Time: 24.364 ms
+156. Execution Time: 0.17 ms, Process Time: 25.1 ms
+157. Execution Time: 0.174 ms, Process Time: 25.413 ms
+158. Execution Time: 0.172 ms, Process Time: 24.759 ms
+159. Execution Time: 0.171 ms, Process Time: 24.331 ms
+160. Execution Time: 0.172 ms, Process Time: 24.217 ms
+161. Execution Time: 0.175 ms, Process Time: 25.461 ms
+162. Execution Time: 0.168 ms, Process Time: 24.764 ms
+163. Execution Time: 0.181 ms, Process Time: 25.188 ms
+164. Execution Time: 0.172 ms, Process Time: 26.682 ms
+165. Execution Time: 0.165 ms, Process Time: 24.175 ms
+166. Execution Time: 0.169 ms, Process Time: 25.126 ms
+167. Execution Time: 0.169 ms, Process Time: 24.431 ms
+168. Execution Time: 0.174 ms, Process Time: 24.438 ms
+169. Execution Time: 0.173 ms, Process Time: 24.339 ms
+170. Execution Time: 0.172 ms, Process Time: 24.036 ms
+171. Execution Time: 0.171 ms, Process Time: 24.044 ms
+172. Execution Time: 0.175 ms, Process Time: 24.291 ms
+173. Execution Time: 0.172 ms, Process Time: 24.547 ms
+174. Execution Time: 0.17 ms, Process Time: 24.929 ms
+175. Execution Time: 0.174 ms, Process Time: 24.022 ms
+176. Execution Time: 0.17 ms, Process Time: 23.676 ms
+177. Execution Time: 0.169 ms, Process Time: 24.29 ms
+178. Execution Time: 0.178 ms, Process Time: 24.602 ms
+179. Execution Time: 0.178 ms, Process Time: 24.111 ms
+180. Execution Time: 0.188 ms, Process Time: 25.671 ms
+181. Execution Time: 0.173 ms, Process Time: 26.416 ms
+182. Execution Time: 0.18 ms, Process Time: 25.884 ms
+183. Execution Time: 0.18 ms, Process Time: 24.789 ms
+184. Execution Time: 0.178 ms, Process Time: 25.955 ms
+185. Execution Time: 0.16 ms, Process Time: 25.518 ms
+186. Execution Time: 0.174 ms, Process Time: 25.03 ms
+187. Execution Time: 0.174 ms, Process Time: 25.335 ms
+188. Execution Time: 0.174 ms, Process Time: 23.866 ms
+189. Execution Time: 0.17 ms, Process Time: 23.843 ms
+190. Execution Time: 0.181 ms, Process Time: 24.844 ms
+191. Execution Time: 0.176 ms, Process Time: 24.056 ms
+192. Execution Time: 0.173 ms, Process Time: 23.594 ms
+193. Execution Time: 0.17 ms, Process Time: 23.346 ms
+194. Execution Time: 0.173 ms, Process Time: 23.763 ms
+195. Execution Time: 0.174 ms, Process Time: 25.037 ms
+196. Execution Time: 0.174 ms, Process Time: 24.33 ms
+197. Execution Time: 0.161 ms, Process Time: 25.375 ms
+198. Execution Time: 0.172 ms, Process Time: 25.865 ms
+199. Execution Time: 0.19 ms, Process Time: 25.513 ms
+200. Execution Time: 0.172 ms, Process Time: 25.209 ms
+201. Execution Time: 0.174 ms, Process Time: 25.817 ms
+202. Execution Time: 0.166 ms, Process Time: 25.772 ms
+203. Execution Time: 0.186 ms, Process Time: 25.329 ms
+204. Execution Time: 0.179 ms, Process Time: 24.786 ms
+205. Execution Time: 0.175 ms, Process Time: 24.761 ms
+206. Execution Time: 0.174 ms, Process Time: 25.029 ms
+207. Execution Time: 0.172 ms, Process Time: 25.687 ms
+208. Execution Time: 0.179 ms, Process Time: 25.306 ms
+209. Execution Time: 0.171 ms, Process Time: 25.407 ms
+210. Execution Time: 0.174 ms, Process Time: 25.017 ms
+211. Execution Time: 0.16 ms, Process Time: 24.63 ms
+212. Execution Time: 0.174 ms, Process Time: 24.33 ms
+213. Execution Time: 0.174 ms, Process Time: 26.525 ms
+214. Execution Time: 0.176 ms, Process Time: 28.461 ms
+215. Execution Time: 0.182 ms, Process Time: 24.345 ms
+216. Execution Time: 0.177 ms, Process Time: 23.643 ms
+217. Execution Time: 0.182 ms, Process Time: 24.276 ms
+218. Execution Time: 0.171 ms, Process Time: 23.83 ms
+219. Execution Time: 0.177 ms, Process Time: 25.684 ms
+220. Execution Time: 0.173 ms, Process Time: 24.321 ms
+221. Execution Time: 0.175 ms, Process Time: 26.892 ms
+222. Execution Time: 0.173 ms, Process Time: 23.651 ms
+223. Execution Time: 0.174 ms, Process Time: 24.931 ms
+224. Execution Time: 0.165 ms, Process Time: 24.413 ms
+225. Execution Time: 0.188 ms, Process Time: 25.343 ms
+226. Execution Time: 0.176 ms, Process Time: 25.414 ms
+227. Execution Time: 0.19 ms, Process Time: 24.306 ms
+228. Execution Time: 0.185 ms, Process Time: 26.452 ms
+229. Execution Time: 0.171 ms, Process Time: 24.118 ms
+230. Execution Time: 0.173 ms, Process Time: 24.887 ms
+231. Execution Time: 0.172 ms, Process Time: 25.458 ms
+232. Execution Time: 0.186 ms, Process Time: 25.598 ms
+233. Execution Time: 0.164 ms, Process Time: 25.136 ms
+234. Execution Time: 0.174 ms, Process Time: 24.197 ms
+235. Execution Time: 0.168 ms, Process Time: 24.614 ms
+236. Execution Time: 0.162 ms, Process Time: 23.546 ms
+237. Execution Time: 0.169 ms, Process Time: 25.807 ms
+238. Execution Time: 0.19 ms, Process Time: 25.812 ms
+239. Execution Time: 0.172 ms, Process Time: 24.417 ms
+240. Execution Time: 0.187 ms, Process Time: 24.267 ms
+241. Execution Time: 0.173 ms, Process Time: 23.438 ms
+242. Execution Time: 0.169 ms, Process Time: 25.447 ms
+243. Execution Time: 0.164 ms, Process Time: 24.32 ms
+244. Execution Time: 0.177 ms, Process Time: 23.207 ms
+245. Execution Time: 0.175 ms, Process Time: 24.331 ms
+246. Execution Time: 0.179 ms, Process Time: 23.45 ms
+247. Execution Time: 0.172 ms, Process Time: 26.065 ms
+248. Execution Time: 0.169 ms, Process Time: 24.342 ms
+249. Execution Time: 0.175 ms, Process Time: 24.839 ms
+250. Execution Time: 0.173 ms, Process Time: 24.071 ms
+251. Execution Time: 0.189 ms, Process Time: 24.795 ms
+252. Execution Time: 0.185 ms, Process Time: 24.268 ms
+253. Execution Time: 0.171 ms, Process Time: 25.891 ms
+254. Execution Time: 0.184 ms, Process Time: 23.924 ms
+255. Execution Time: 0.173 ms, Process Time: 24.367 ms
+256. Execution Time: 0.174 ms, Process Time: 24.971 ms
+257. Execution Time: 0.177 ms, Process Time: 24.925 ms
+258. Execution Time: 0.167 ms, Process Time: 24.238 ms
+259. Execution Time: 0.174 ms, Process Time: 23.631 ms
+260. Execution Time: 0.183 ms, Process Time: 26.24 ms
+261. Execution Time: 0.176 ms, Process Time: 23.935 ms
+262. Execution Time: 0.168 ms, Process Time: 23.132 ms
+263. Execution Time: 0.166 ms, Process Time: 24.344 ms
+264. Execution Time: 0.169 ms, Process Time: 26.526 ms
+265. Execution Time: 0.169 ms, Process Time: 26.137 ms
+266. Execution Time: 0.172 ms, Process Time: 23.973 ms
+267. Execution Time: 0.176 ms, Process Time: 23.701 ms
+268. Execution Time: 0.174 ms, Process Time: 23.522 ms
+269. Execution Time: 0.165 ms, Process Time: 26.851 ms
+270. Execution Time: 0.185 ms, Process Time: 24.619 ms
+271. Execution Time: 0.181 ms, Process Time: 24.735 ms
+272. Execution Time: 0.16 ms, Process Time: 24.496 ms
+273. Execution Time: 0.17 ms, Process Time: 24.319 ms
+274. Execution Time: 0.165 ms, Process Time: 23.71 ms
+275. Execution Time: 0.168 ms, Process Time: 23.575 ms
+276. Execution Time: 0.18 ms, Process Time: 24.185 ms
+277. Execution Time: 0.176 ms, Process Time: 24.461 ms
+278. Execution Time: 0.158 ms, Process Time: 24.744 ms
+279. Execution Time: 0.169 ms, Process Time: 24.511 ms
+280. Execution Time: 0.174 ms, Process Time: 25.411 ms
+281. Execution Time: 0.173 ms, Process Time: 24.701 ms
+282. Execution Time: 0.164 ms, Process Time: 23.88 ms
+283. Execution Time: 0.18 ms, Process Time: 25.629 ms
+284. Execution Time: 0.166 ms, Process Time: 24.355 ms
+285. Execution Time: 0.188 ms, Process Time: 25.415 ms
+286. Execution Time: 0.17 ms, Process Time: 23.8 ms
+287. Execution Time: 0.172 ms, Process Time: 23.927 ms
+288. Execution Time: 0.179 ms, Process Time: 24.849 ms
+289. Execution Time: 0.172 ms, Process Time: 23.756 ms
+290. Execution Time: 0.168 ms, Process Time: 24.291 ms
+291. Execution Time: 0.171 ms, Process Time: 25.755 ms
+292. Execution Time: 0.175 ms, Process Time: 24.095 ms
+293. Execution Time: 0.172 ms, Process Time: 23.249 ms
+294. Execution Time: 0.174 ms, Process Time: 24.755 ms
+295. Execution Time: 0.169 ms, Process Time: 24.114 ms
+296. Execution Time: 0.177 ms, Process Time: 24.814 ms
+297. Execution Time: 0.176 ms, Process Time: 24.741 ms
+298. Execution Time: 0.172 ms, Process Time: 23.62 ms
+299. Execution Time: 0.193 ms, Process Time: 25.589 ms
+300. Execution Time: 0.172 ms, Process Time: 23.383 ms
+301. Execution Time: 0.17 ms, Process Time: 24.431 ms
+302. Execution Time: 0.173 ms, Process Time: 24.137 ms
+303. Execution Time: 0.169 ms, Process Time: 25.047 ms
+304. Execution Time: 0.189 ms, Process Time: 24.179 ms
+305. Execution Time: 0.169 ms, Process Time: 24.345 ms
+306. Execution Time: 0.167 ms, Process Time: 23.614 ms
+307. Execution Time: 0.173 ms, Process Time: 24.23 ms
+308. Execution Time: 0.171 ms, Process Time: 25.194 ms
+309. Execution Time: 0.171 ms, Process Time: 23.562 ms
+310. Execution Time: 0.177 ms, Process Time: 24.268 ms
+311. Execution Time: 0.174 ms, Process Time: 25.8 ms
+312. Execution Time: 0.176 ms, Process Time: 24.064 ms
+313. Execution Time: 0.171 ms, Process Time: 25.028 ms
+314. Execution Time: 0.189 ms, Process Time: 26.156 ms
+315. Execution Time: 0.171 ms, Process Time: 24.779 ms
+316. Execution Time: 0.174 ms, Process Time: 25.617 ms
+317. Execution Time: 0.171 ms, Process Time: 23.896 ms
+318. Execution Time: 0.18 ms, Process Time: 24.793 ms
+319. Execution Time: 0.165 ms, Process Time: 23.453 ms
+320. Execution Time: 0.19 ms, Process Time: 25.001 ms
+321. Execution Time: 0.168 ms, Process Time: 23.424 ms
+322. Execution Time: 0.171 ms, Process Time: 24.231 ms
+323. Execution Time: 0.172 ms, Process Time: 23.515 ms
+324. Execution Time: 0.166 ms, Process Time: 23.308 ms
+325. Execution Time: 0.169 ms, Process Time: 24.057 ms
+326. Execution Time: 0.173 ms, Process Time: 25.318 ms
+327. Execution Time: 0.173 ms, Process Time: 23.752 ms
+328. Execution Time: 0.17 ms, Process Time: 23.394 ms
+329. Execution Time: 0.171 ms, Process Time: 24.252 ms
+330. Execution Time: 0.165 ms, Process Time: 23.518 ms
+331. Execution Time: 0.18 ms, Process Time: 24.912 ms
+332. Execution Time: 0.178 ms, Process Time: 23.912 ms
+333. Execution Time: 0.185 ms, Process Time: 24.023 ms
+334. Execution Time: 0.178 ms, Process Time: 25.953 ms
+335. Execution Time: 0.17 ms, Process Time: 23.812 ms
+336. Execution Time: 0.17 ms, Process Time: 24.331 ms
+337. Execution Time: 0.167 ms, Process Time: 25.126 ms
+338. Execution Time: 0.176 ms, Process Time: 24.087 ms
+339. Execution Time: 0.166 ms, Process Time: 24.758 ms
+340. Execution Time: 0.176 ms, Process Time: 25.291 ms
+341. Execution Time: 0.173 ms, Process Time: 23.947 ms
+342. Execution Time: 0.181 ms, Process Time: 25.008 ms
+343. Execution Time: 0.171 ms, Process Time: 24.009 ms
+344. Execution Time: 0.17 ms, Process Time: 23.784 ms
+345. Execution Time: 0.171 ms, Process Time: 23.677 ms
+346. Execution Time: 0.165 ms, Process Time: 24.288 ms
+347. Execution Time: 0.167 ms, Process Time: 25.041 ms
+348. Execution Time: 0.169 ms, Process Time: 24.354 ms
+349. Execution Time: 0.172 ms, Process Time: 25.959 ms
+350. Execution Time: 0.174 ms, Process Time: 25.28 ms
+351. Execution Time: 0.171 ms, Process Time: 24.193 ms
+352. Execution Time: 0.182 ms, Process Time: 23.366 ms
+353. Execution Time: 0.169 ms, Process Time: 23.977 ms
+354. Execution Time: 0.172 ms, Process Time: 25.411 ms
+355. Execution Time: 0.172 ms, Process Time: 25.028 ms
+356. Execution Time: 0.172 ms, Process Time: 24.821 ms
+357. Execution Time: 0.168 ms, Process Time: 23.572 ms
+358. Execution Time: 0.191 ms, Process Time: 24.948 ms
+359. Execution Time: 0.173 ms, Process Time: 24.671 ms
+360. Execution Time: 0.172 ms, Process Time: 26.138 ms
+361. Execution Time: 0.181 ms, Process Time: 23.753 ms
+362. Execution Time: 0.187 ms, Process Time: 24.573 ms
+363. Execution Time: 0.166 ms, Process Time: 23.835 ms
+364. Execution Time: 0.171 ms, Process Time: 24.187 ms
+365. Execution Time: 0.173 ms, Process Time: 25.463 ms
+366. Execution Time: 0.174 ms, Process Time: 24.256 ms
+367. Execution Time: 0.169 ms, Process Time: 23.658 ms
+368. Execution Time: 0.172 ms, Process Time: 24.084 ms
+369. Execution Time: 0.179 ms, Process Time: 25.273 ms
+370. Execution Time: 0.17 ms, Process Time: 24.891 ms
+371. Execution Time: 0.168 ms, Process Time: 24.642 ms
+372. Execution Time: 0.169 ms, Process Time: 24.422 ms
+373. Execution Time: 0.164 ms, Process Time: 24.117 ms
+374. Execution Time: 0.17 ms, Process Time: 23.886 ms
+375. Execution Time: 0.17 ms, Process Time: 24.245 ms
+376. Execution Time: 0.191 ms, Process Time: 24.984 ms
+377. Execution Time: 0.175 ms, Process Time: 24.756 ms
+378. Execution Time: 0.172 ms, Process Time: 25.809 ms
+379. Execution Time: 0.181 ms, Process Time: 24.404 ms
+380. Execution Time: 0.173 ms, Process Time: 23.136 ms
+381. Execution Time: 0.172 ms, Process Time: 25.395 ms
+382. Execution Time: 0.175 ms, Process Time: 24.475 ms
+383. Execution Time: 0.177 ms, Process Time: 25.505 ms
+384. Execution Time: 0.168 ms, Process Time: 26.097 ms
+385. Execution Time: 0.17 ms, Process Time: 24.321 ms
+386. Execution Time: 0.172 ms, Process Time: 24.157 ms
+387. Execution Time: 0.171 ms, Process Time: 25.689 ms
+388. Execution Time: 0.184 ms, Process Time: 24.652 ms
+389. Execution Time: 0.177 ms, Process Time: 25.355 ms
+390. Execution Time: 0.164 ms, Process Time: 25.395 ms
+391. Execution Time: 0.178 ms, Process Time: 24.265 ms
+392. Execution Time: 0.181 ms, Process Time: 23.538 ms
+393. Execution Time: 0.168 ms, Process Time: 24.108 ms
+394. Execution Time: 0.168 ms, Process Time: 24.551 ms
+395. Execution Time: 0.168 ms, Process Time: 24.391 ms
+396. Execution Time: 0.169 ms, Process Time: 24.569 ms
+397. Execution Time: 0.174 ms, Process Time: 24.008 ms
+398. Execution Time: 0.166 ms, Process Time: 26.07 ms
+399. Execution Time: 0.172 ms, Process Time: 25.347 ms
+400. Execution Time: 0.18 ms, Process Time: 24.013 ms
+401. Execution Time: 0.174 ms, Process Time: 24.683 ms
+402. Execution Time: 0.174 ms, Process Time: 23.115 ms
+403. Execution Time: 0.178 ms, Process Time: 24.395 ms
+404. Execution Time: 0.174 ms, Process Time: 23.858 ms
+405. Execution Time: 0.177 ms, Process Time: 23.828 ms
+406. Execution Time: 0.164 ms, Process Time: 25.127 ms
+407. Execution Time: 0.177 ms, Process Time: 24.548 ms
+408. Execution Time: 0.182 ms, Process Time: 24.216 ms
+409. Execution Time: 0.17 ms, Process Time: 23.893 ms
+410. Execution Time: 0.172 ms, Process Time: 24.642 ms
+411. Execution Time: 0.177 ms, Process Time: 24.293 ms
+412. Execution Time: 0.176 ms, Process Time: 24.205 ms
+413. Execution Time: 0.175 ms, Process Time: 23.383 ms
+414. Execution Time: 0.166 ms, Process Time: 24.7 ms
+415. Execution Time: 0.181 ms, Process Time: 24.795 ms
+416. Execution Time: 0.173 ms, Process Time: 27.466 ms
+417. Execution Time: 0.166 ms, Process Time: 24.714 ms
+418. Execution Time: 0.171 ms, Process Time: 24.344 ms
+419. Execution Time: 0.173 ms, Process Time: 24.38 ms
+420. Execution Time: 0.168 ms, Process Time: 23.952 ms
+421. Execution Time: 0.171 ms, Process Time: 23.764 ms
+422. Execution Time: 0.162 ms, Process Time: 23.142 ms
+423. Execution Time: 0.176 ms, Process Time: 24.659 ms
+424. Execution Time: 0.19 ms, Process Time: 24.342 ms
+425. Execution Time: 0.172 ms, Process Time: 24.935 ms
+426. Execution Time: 0.172 ms, Process Time: 25.325 ms
+427. Execution Time: 0.173 ms, Process Time: 26.833 ms
+428. Execution Time: 0.18 ms, Process Time: 25.042 ms
+429. Execution Time: 0.171 ms, Process Time: 24.415 ms
+430. Execution Time: 0.181 ms, Process Time: 24.607 ms
+431. Execution Time: 0.171 ms, Process Time: 25.587 ms
+432. Execution Time: 0.169 ms, Process Time: 25.851 ms
+433. Execution Time: 0.173 ms, Process Time: 24.448 ms
+434. Execution Time: 0.169 ms, Process Time: 24.441 ms
+435. Execution Time: 0.171 ms, Process Time: 24.022 ms
+436. Execution Time: 0.174 ms, Process Time: 24.502 ms
+437. Execution Time: 0.173 ms, Process Time: 26.483 ms
+438. Execution Time: 0.166 ms, Process Time: 24.323 ms
+439. Execution Time: 0.172 ms, Process Time: 24.361 ms
+440. Execution Time: 0.168 ms, Process Time: 23.985 ms
+441. Execution Time: 0.173 ms, Process Time: 24.665 ms
+442. Execution Time: 0.173 ms, Process Time: 24.474 ms
+443. Execution Time: 0.167 ms, Process Time: 23.999 ms
+444. Execution Time: 0.176 ms, Process Time: 24.324 ms
+445. Execution Time: 0.174 ms, Process Time: 24.745 ms
+446. Execution Time: 0.172 ms, Process Time: 24.578 ms
+447. Execution Time: 0.175 ms, Process Time: 23.952 ms
+448. Execution Time: 0.168 ms, Process Time: 23.382 ms
+449. Execution Time: 0.172 ms, Process Time: 23.592 ms
+450. Execution Time: 0.162 ms, Process Time: 24.344 ms
+451. Execution Time: 0.176 ms, Process Time: 25.099 ms
+452. Execution Time: 0.162 ms, Process Time: 24.329 ms
+453. Execution Time: 0.171 ms, Process Time: 24.641 ms
+454. Execution Time: 0.168 ms, Process Time: 24.347 ms
+455. Execution Time: 0.178 ms, Process Time: 23.846 ms
+456. Execution Time: 0.159 ms, Process Time: 24.604 ms
+457. Execution Time: 0.171 ms, Process Time: 24.524 ms
+458. Execution Time: 0.168 ms, Process Time: 24.691 ms
+459. Execution Time: 0.173 ms, Process Time: 24.491 ms
+460. Execution Time: 0.171 ms, Process Time: 25.09 ms
+461. Execution Time: 0.17 ms, Process Time: 23.319 ms
+462. Execution Time: 0.173 ms, Process Time: 24.162 ms
+463. Execution Time: 0.176 ms, Process Time: 24.296 ms
+464. Execution Time: 0.164 ms, Process Time: 24.074 ms
+465. Execution Time: 0.161 ms, Process Time: 23.89 ms
+466. Execution Time: 0.17 ms, Process Time: 24.443 ms
+467. Execution Time: 0.173 ms, Process Time: 24.687 ms
+468. Execution Time: 0.17 ms, Process Time: 24.672 ms
+469. Execution Time: 0.175 ms, Process Time: 26.607 ms
+470. Execution Time: 0.176 ms, Process Time: 24.299 ms
+471. Execution Time: 0.17 ms, Process Time: 27.591 ms
+472. Execution Time: 0.171 ms, Process Time: 24.066 ms
+473. Execution Time: 0.175 ms, Process Time: 24.125 ms
+474. Execution Time: 0.169 ms, Process Time: 24.788 ms
+475. Execution Time: 0.175 ms, Process Time: 23.858 ms
+476. Execution Time: 0.176 ms, Process Time: 24.081 ms
+477. Execution Time: 0.168 ms, Process Time: 25.627 ms
+478. Execution Time: 0.172 ms, Process Time: 24.2 ms
+479. Execution Time: 0.181 ms, Process Time: 23.483 ms
+480. Execution Time: 0.18 ms, Process Time: 24.516 ms
+481. Execution Time: 0.172 ms, Process Time: 25.638 ms
+482. Execution Time: 0.176 ms, Process Time: 24.715 ms
+483. Execution Time: 0.165 ms, Process Time: 23.923 ms
+484. Execution Time: 0.169 ms, Process Time: 24.098 ms
+485. Execution Time: 0.181 ms, Process Time: 23.875 ms
+486. Execution Time: 0.185 ms, Process Time: 25.569 ms
+487. Execution Time: 0.174 ms, Process Time: 23.851 ms
+488. Execution Time: 0.169 ms, Process Time: 24.443 ms
+489. Execution Time: 0.178 ms, Process Time: 25.336 ms
+490. Execution Time: 0.167 ms, Process Time: 26.224 ms
+491. Execution Time: 0.162 ms, Process Time: 25.053 ms
+492. Execution Time: 0.174 ms, Process Time: 24.73 ms
+493. Execution Time: 0.174 ms, Process Time: 25.888 ms
+494. Execution Time: 0.175 ms, Process Time: 24.042 ms
+495. Execution Time: 0.169 ms, Process Time: 24.363 ms
+496. Execution Time: 0.175 ms, Process Time: 23.755 ms
+497. Execution Time: 0.17 ms, Process Time: 23.84 ms
+498. Execution Time: 0.174 ms, Process Time: 25.129 ms
+499. Execution Time: 0.172 ms, Process Time: 25.618 ms
+500. Execution Time: 0.164 ms, Process Time: 24.489 ms
+501. Execution Time: 0.185 ms, Process Time: 24.093 ms
+502. Execution Time: 0.173 ms, Process Time: 24.601 ms
+503. Execution Time: 0.179 ms, Process Time: 24.953 ms
+504. Execution Time: 0.172 ms, Process Time: 24.975 ms
+505. Execution Time: 0.171 ms, Process Time: 24.708 ms
+506. Execution Time: 0.168 ms, Process Time: 24.243 ms
+507. Execution Time: 0.179 ms, Process Time: 23.328 ms
+508. Execution Time: 0.161 ms, Process Time: 24.268 ms
+509. Execution Time: 0.173 ms, Process Time: 23.361 ms
+510. Execution Time: 0.171 ms, Process Time: 24.062 ms
+511. Execution Time: 0.174 ms, Process Time: 25.341 ms
+512. Execution Time: 0.177 ms, Process Time: 24.471 ms
+513. Execution Time: 0.167 ms, Process Time: 23.997 ms
+514. Execution Time: 0.168 ms, Process Time: 24.444 ms
+515. Execution Time: 0.176 ms, Process Time: 24.751 ms
+516. Execution Time: 0.171 ms, Process Time: 24.122 ms
+517. Execution Time: 0.178 ms, Process Time: 23.761 ms
+518. Execution Time: 0.201 ms, Process Time: 27.646 ms
+519. Execution Time: 0.172 ms, Process Time: 25.906 ms
+520. Execution Time: 0.168 ms, Process Time: 23.962 ms
+521. Execution Time: 0.169 ms, Process Time: 26.441 ms
+522. Execution Time: 0.174 ms, Process Time: 24.194 ms
+523. Execution Time: 0.168 ms, Process Time: 24.408 ms
+524. Execution Time: 0.177 ms, Process Time: 24.915 ms
+525. Execution Time: 0.171 ms, Process Time: 24.069 ms
+526. Execution Time: 0.184 ms, Process Time: 23.737 ms
+527. Execution Time: 0.183 ms, Process Time: 24.777 ms
+528. Execution Time: 0.171 ms, Process Time: 26.695 ms
+529. Execution Time: 0.16 ms, Process Time: 25.76 ms
+530. Execution Time: 0.168 ms, Process Time: 26.09 ms
+531. Execution Time: 0.168 ms, Process Time: 26.051 ms
+532. Execution Time: 0.181 ms, Process Time: 27.582 ms
+533. Execution Time: 0.161 ms, Process Time: 25.145 ms
+534. Execution Time: 0.192 ms, Process Time: 27.517 ms
+535. Execution Time: 0.185 ms, Process Time: 27.048 ms
+536. Execution Time: 0.272 ms, Process Time: 25.119 ms
+537. Execution Time: 0.163 ms, Process Time: 26.072 ms
+538. Execution Time: 0.184 ms, Process Time: 26.381 ms
+539. Execution Time: 0.164 ms, Process Time: 27.119 ms
+540. Execution Time: 0.171 ms, Process Time: 27.453 ms
+541. Execution Time: 0.175 ms, Process Time: 26.995 ms
+542. Execution Time: 0.175 ms, Process Time: 24.938 ms
+543. Execution Time: 0.267 ms, Process Time: 26.213 ms
+544. Execution Time: 0.182 ms, Process Time: 25.302 ms
+545. Execution Time: 0.197 ms, Process Time: 27.285 ms
+546. Execution Time: 0.211 ms, Process Time: 26.118 ms
+547. Execution Time: 0.236 ms, Process Time: 26.248 ms
+548. Execution Time: 0.174 ms, Process Time: 26.087 ms
+549. Execution Time: 0.178 ms, Process Time: 25.598 ms
+550. Execution Time: 0.174 ms, Process Time: 26.134 ms
+551. Execution Time: 0.169 ms, Process Time: 26.74 ms
+552. Execution Time: 0.171 ms, Process Time: 26.081 ms
+553. Execution Time: 0.177 ms, Process Time: 25.685 ms
+554. Execution Time: 0.171 ms, Process Time: 24.711 ms
+555. Execution Time: 0.188 ms, Process Time: 25.041 ms
+556. Execution Time: 0.189 ms, Process Time: 25.341 ms
+557. Execution Time: 0.196 ms, Process Time: 25.688 ms
+558. Execution Time: 0.191 ms, Process Time: 24.253 ms
+559. Execution Time: 0.184 ms, Process Time: 25.504 ms
+560. Execution Time: 0.166 ms, Process Time: 23.382 ms
+561. Execution Time: 0.168 ms, Process Time: 23.592 ms
+562. Execution Time: 0.186 ms, Process Time: 24.253 ms
+563. Execution Time: 0.177 ms, Process Time: 24.303 ms
+564. Execution Time: 0.169 ms, Process Time: 23.898 ms
+565. Execution Time: 0.175 ms, Process Time: 27.158 ms
+566. Execution Time: 0.175 ms, Process Time: 26.064 ms
+567. Execution Time: 0.172 ms, Process Time: 23.589 ms
+568. Execution Time: 0.163 ms, Process Time: 23.991 ms
+569. Execution Time: 0.172 ms, Process Time: 24.454 ms
+570. Execution Time: 0.186 ms, Process Time: 23.584 ms
+571. Execution Time: 0.172 ms, Process Time: 23.786 ms
+572. Execution Time: 0.176 ms, Process Time: 25.205 ms
+573. Execution Time: 0.165 ms, Process Time: 25.531 ms
+574. Execution Time: 0.18 ms, Process Time: 24.54 ms
+575. Execution Time: 0.169 ms, Process Time: 24.598 ms
+576. Execution Time: 0.173 ms, Process Time: 25.547 ms
+577. Execution Time: 0.17 ms, Process Time: 24.396 ms
+578. Execution Time: 0.176 ms, Process Time: 26.323 ms
+579. Execution Time: 0.179 ms, Process Time: 25.064 ms
+580. Execution Time: 0.181 ms, Process Time: 26.403 ms
+581. Execution Time: 0.173 ms, Process Time: 24.366 ms
+582. Execution Time: 0.183 ms, Process Time: 25.718 ms
+583. Execution Time: 0.164 ms, Process Time: 26.845 ms
+584. Execution Time: 0.173 ms, Process Time: 25.759 ms
+585. Execution Time: 0.184 ms, Process Time: 24.726 ms
+586. Execution Time: 0.167 ms, Process Time: 26.143 ms
+587. Execution Time: 0.188 ms, Process Time: 25.964 ms
+588. Execution Time: 0.177 ms, Process Time: 25.935 ms
+589. Execution Time: 0.173 ms, Process Time: 24.565 ms
+590. Execution Time: 0.169 ms, Process Time: 24.118 ms
+591. Execution Time: 0.172 ms, Process Time: 23.781 ms
+592. Execution Time: 0.173 ms, Process Time: 24.965 ms
+593. Execution Time: 0.169 ms, Process Time: 24.14 ms
+594. Execution Time: 0.169 ms, Process Time: 23.924 ms
+595. Execution Time: 0.185 ms, Process Time: 24.097 ms
+596. Execution Time: 0.181 ms, Process Time: 25.175 ms
+597. Execution Time: 0.165 ms, Process Time: 23.67 ms
+598. Execution Time: 0.173 ms, Process Time: 26.898 ms
+599. Execution Time: 0.172 ms, Process Time: 23.911 ms
+600. Execution Time: 0.18 ms, Process Time: 24.371 ms
+601. Execution Time: 0.191 ms, Process Time: 23.936 ms
+602. Execution Time: 0.183 ms, Process Time: 25.141 ms
+603. Execution Time: 0.178 ms, Process Time: 26.018 ms
+604. Execution Time: 0.173 ms, Process Time: 23.956 ms
+605. Execution Time: 0.165 ms, Process Time: 24.68 ms
+606. Execution Time: 0.174 ms, Process Time: 24.258 ms
+607. Execution Time: 0.17 ms, Process Time: 24.335 ms
+608. Execution Time: 0.171 ms, Process Time: 23.991 ms
+609. Execution Time: 0.173 ms, Process Time: 24.966 ms
+610. Execution Time: 0.192 ms, Process Time: 24.776 ms
+611. Execution Time: 0.171 ms, Process Time: 25.037 ms
+612. Execution Time: 0.175 ms, Process Time: 24.742 ms
+613. Execution Time: 0.173 ms, Process Time: 27.08 ms
+614. Execution Time: 0.174 ms, Process Time: 23.552 ms
+615. Execution Time: 0.188 ms, Process Time: 24.443 ms
+616. Execution Time: 0.176 ms, Process Time: 25.873 ms
+617. Execution Time: 0.165 ms, Process Time: 24.936 ms
+618. Execution Time: 0.166 ms, Process Time: 25.647 ms
+619. Execution Time: 0.17 ms, Process Time: 24.468 ms
+620. Execution Time: 0.183 ms, Process Time: 25.114 ms
+621. Execution Time: 0.174 ms, Process Time: 24.324 ms
+622. Execution Time: 0.187 ms, Process Time: 25.392 ms
+623. Execution Time: 0.69 ms, Process Time: 34.261 ms
+624. Execution Time: 0.179 ms, Process Time: 47.589 ms
+625. Execution Time: 0.169 ms, Process Time: 36.547 ms
+626. Execution Time: 0.177 ms, Process Time: 24.558 ms
+627. Execution Time: 0.172 ms, Process Time: 24.596 ms
+628. Execution Time: 0.172 ms, Process Time: 24.62 ms
+629. Execution Time: 0.171 ms, Process Time: 24.58 ms
+630. Execution Time: 0.177 ms, Process Time: 24.954 ms
+631. Execution Time: 0.168 ms, Process Time: 26.461 ms
+632. Execution Time: 0.181 ms, Process Time: 26.596 ms
+633. Execution Time: 0.169 ms, Process Time: 24.774 ms
+634. Execution Time: 0.17 ms, Process Time: 24.522 ms
+635. Execution Time: 0.179 ms, Process Time: 24.479 ms
+636. Execution Time: 0.178 ms, Process Time: 24.465 ms
+637. Execution Time: 0.184 ms, Process Time: 25.429 ms
+638. Execution Time: 0.172 ms, Process Time: 24.422 ms
+639. Execution Time: 0.176 ms, Process Time: 24.189 ms
+640. Execution Time: 0.176 ms, Process Time: 23.811 ms
+641. Execution Time: 0.181 ms, Process Time: 24.066 ms
+642. Execution Time: 0.167 ms, Process Time: 24.193 ms
+643. Execution Time: 0.178 ms, Process Time: 24.459 ms
+644. Execution Time: 0.179 ms, Process Time: 24.94 ms
+645. Execution Time: 0.156 ms, Process Time: 25.104 ms
+646. Execution Time: 0.206 ms, Process Time: 26.569 ms
+647. Execution Time: 0.177 ms, Process Time: 24.762 ms
+648. Execution Time: 0.18 ms, Process Time: 26.471 ms
+649. Execution Time: 0.172 ms, Process Time: 24.964 ms
+650. Execution Time: 0.173 ms, Process Time: 23.729 ms
+651. Execution Time: 0.173 ms, Process Time: 24.753 ms
+652. Execution Time: 0.172 ms, Process Time: 23.667 ms
+653. Execution Time: 0.17 ms, Process Time: 25.01 ms
+654. Execution Time: 0.179 ms, Process Time: 25.004 ms
+655. Execution Time: 0.169 ms, Process Time: 23.809 ms
+656. Execution Time: 0.177 ms, Process Time: 24.291 ms
+657. Execution Time: 0.169 ms, Process Time: 24.097 ms
+658. Execution Time: 0.175 ms, Process Time: 25.143 ms
+659. Execution Time: 0.173 ms, Process Time: 24.496 ms
+660. Execution Time: 0.17 ms, Process Time: 25.38 ms
+661. Execution Time: 0.16 ms, Process Time: 26.542 ms
+662. Execution Time: 0.157 ms, Process Time: 24.353 ms
+663. Execution Time: 0.17 ms, Process Time: 25.985 ms
+664. Execution Time: 0.19 ms, Process Time: 24.825 ms
+665. Execution Time: 0.161 ms, Process Time: 25.718 ms
+666. Execution Time: 0.174 ms, Process Time: 25.155 ms
+667. Execution Time: 0.174 ms, Process Time: 25.321 ms
+668. Execution Time: 0.176 ms, Process Time: 24.819 ms
+669. Execution Time: 0.181 ms, Process Time: 26.997 ms
+670. Execution Time: 0.174 ms, Process Time: 24.554 ms
+671. Execution Time: 0.177 ms, Process Time: 24.544 ms
+672. Execution Time: 0.182 ms, Process Time: 24.65 ms
+673. Execution Time: 0.334 ms, Process Time: 25.08 ms
+674. Execution Time: 0.176 ms, Process Time: 24.893 ms
+675. Execution Time: 0.19 ms, Process Time: 26.693 ms
+676. Execution Time: 0.169 ms, Process Time: 27.5 ms
+677. Execution Time: 0.16 ms, Process Time: 26.02 ms
+678. Execution Time: 0.171 ms, Process Time: 24.328 ms
+679. Execution Time: 0.173 ms, Process Time: 24.89 ms
+680. Execution Time: 0.174 ms, Process Time: 26.82 ms
+681. Execution Time: 0.179 ms, Process Time: 26.305 ms
+682. Execution Time: 0.171 ms, Process Time: 24.641 ms
+683. Execution Time: 0.175 ms, Process Time: 25.215 ms
+684. Execution Time: 0.17 ms, Process Time: 25.581 ms
+685. Execution Time: 0.169 ms, Process Time: 24.519 ms
+686. Execution Time: 0.17 ms, Process Time: 24.887 ms
+687. Execution Time: 0.17 ms, Process Time: 23.985 ms
+688. Execution Time: 0.177 ms, Process Time: 24.516 ms
+689. Execution Time: 0.169 ms, Process Time: 24.062 ms
+690. Execution Time: 0.176 ms, Process Time: 24.658 ms
+691. Execution Time: 0.181 ms, Process Time: 24.061 ms
+692. Execution Time: 0.179 ms, Process Time: 24.898 ms
+693. Execution Time: 0.157 ms, Process Time: 24.631 ms
+694. Execution Time: 0.166 ms, Process Time: 25.462 ms
+695. Execution Time: 0.159 ms, Process Time: 23.956 ms
+696. Execution Time: 0.178 ms, Process Time: 27.25 ms
+697. Execution Time: 0.176 ms, Process Time: 24.831 ms
+698. Execution Time: 0.168 ms, Process Time: 25.643 ms
+699. Execution Time: 0.171 ms, Process Time: 23.517 ms
+700. Execution Time: 0.168 ms, Process Time: 24.527 ms
+701. Execution Time: 0.172 ms, Process Time: 23.788 ms
+702. Execution Time: 0.169 ms, Process Time: 23.896 ms
+703. Execution Time: 0.167 ms, Process Time: 24.486 ms
+704. Execution Time: 0.181 ms, Process Time: 24.088 ms
+705. Execution Time: 0.173 ms, Process Time: 23.893 ms
+706. Execution Time: 0.172 ms, Process Time: 24.316 ms
+707. Execution Time: 0.162 ms, Process Time: 26.074 ms
+708. Execution Time: 0.183 ms, Process Time: 25.322 ms
+709. Execution Time: 0.179 ms, Process Time: 25.59 ms
+710. Execution Time: 0.174 ms, Process Time: 24.166 ms
+711. Execution Time: 0.169 ms, Process Time: 25.587 ms
+712. Execution Time: 0.166 ms, Process Time: 25.949 ms
+713. Execution Time: 0.163 ms, Process Time: 24.291 ms
+714. Execution Time: 0.161 ms, Process Time: 25.681 ms
+715. Execution Time: 0.162 ms, Process Time: 26.013 ms
+716. Execution Time: 0.166 ms, Process Time: 24.877 ms
+717. Execution Time: 0.173 ms, Process Time: 27.001 ms
+718. Execution Time: 0.17 ms, Process Time: 24.131 ms
+719. Execution Time: 0.171 ms, Process Time: 23.95 ms
+720. Execution Time: 0.177 ms, Process Time: 24.488 ms
+721. Execution Time: 0.172 ms, Process Time: 23.671 ms
+722. Execution Time: 0.168 ms, Process Time: 23.608 ms
+723. Execution Time: 0.171 ms, Process Time: 24.694 ms
+724. Execution Time: 0.17 ms, Process Time: 23.96 ms
+725. Execution Time: 0.173 ms, Process Time: 23.916 ms
+726. Execution Time: 0.17 ms, Process Time: 24.009 ms
+727. Execution Time: 0.175 ms, Process Time: 24.197 ms
+728. Execution Time: 0.17 ms, Process Time: 23.899 ms
+729. Execution Time: 0.17 ms, Process Time: 24.248 ms
+730. Execution Time: 0.174 ms, Process Time: 25.378 ms
+731. Execution Time: 0.165 ms, Process Time: 24.073 ms
+732. Execution Time: 0.171 ms, Process Time: 25.605 ms
+733. Execution Time: 0.174 ms, Process Time: 24.079 ms
+734. Execution Time: 0.174 ms, Process Time: 24.012 ms
+735. Execution Time: 0.164 ms, Process Time: 24.383 ms
+736. Execution Time: 0.169 ms, Process Time: 24.545 ms
+737. Execution Time: 0.171 ms, Process Time: 24.263 ms
+738. Execution Time: 0.22 ms, Process Time: 24.317 ms
+739. Execution Time: 0.159 ms, Process Time: 25.752 ms
+740. Execution Time: 0.163 ms, Process Time: 24.523 ms
+741. Execution Time: 0.177 ms, Process Time: 24.668 ms
+742. Execution Time: 0.176 ms, Process Time: 23.708 ms
+743. Execution Time: 0.172 ms, Process Time: 28.845 ms
+744. Execution Time: 0.156 ms, Process Time: 24.414 ms
+745. Execution Time: 0.177 ms, Process Time: 25.603 ms
+746. Execution Time: 0.17 ms, Process Time: 24.592 ms
+747. Execution Time: 0.183 ms, Process Time: 24.946 ms
+748. Execution Time: 0.166 ms, Process Time: 24.627 ms
+749. Execution Time: 0.18 ms, Process Time: 24.615 ms
+750. Execution Time: 0.167 ms, Process Time: 23.349 ms
+751. Execution Time: 0.17 ms, Process Time: 25.12 ms
+752. Execution Time: 0.171 ms, Process Time: 24.087 ms
+753. Execution Time: 0.172 ms, Process Time: 24.476 ms
+754. Execution Time: 0.172 ms, Process Time: 23.646 ms
+755. Execution Time: 0.176 ms, Process Time: 24.378 ms
+756. Execution Time: 0.175 ms, Process Time: 24.053 ms
+757. Execution Time: 0.173 ms, Process Time: 25.016 ms
+758. Execution Time: 0.177 ms, Process Time: 25.03 ms
+759. Execution Time: 0.173 ms, Process Time: 25.214 ms
+760. Execution Time: 0.18 ms, Process Time: 25.266 ms
+761. Execution Time: 0.184 ms, Process Time: 23.652 ms
+762. Execution Time: 0.164 ms, Process Time: 23.961 ms
+763. Execution Time: 0.18 ms, Process Time: 24.044 ms
+764. Execution Time: 0.172 ms, Process Time: 25.654 ms
+765. Execution Time: 0.165 ms, Process Time: 23.817 ms
+766. Execution Time: 0.164 ms, Process Time: 23.473 ms
+767. Execution Time: 0.173 ms, Process Time: 24.028 ms
+768. Execution Time: 0.178 ms, Process Time: 24.645 ms
+769. Execution Time: 0.172 ms, Process Time: 24.427 ms
+770. Execution Time: 0.172 ms, Process Time: 24.625 ms
+771. Execution Time: 0.174 ms, Process Time: 24.462 ms
+772. Execution Time: 0.173 ms, Process Time: 24.134 ms
+773. Execution Time: 0.176 ms, Process Time: 23.792 ms
+774. Execution Time: 0.167 ms, Process Time: 24.834 ms
+775. Execution Time: 0.173 ms, Process Time: 24.718 ms
+776. Execution Time: 0.174 ms, Process Time: 25.891 ms
+777. Execution Time: 0.171 ms, Process Time: 24.415 ms
+778. Execution Time: 0.174 ms, Process Time: 23.934 ms
+779. Execution Time: 0.18 ms, Process Time: 24.66 ms
+780. Execution Time: 0.172 ms, Process Time: 24.152 ms
+781. Execution Time: 0.173 ms, Process Time: 23.735 ms
+782. Execution Time: 0.174 ms, Process Time: 24.241 ms
+783. Execution Time: 0.177 ms, Process Time: 24.338 ms
+784. Execution Time: 0.178 ms, Process Time: 24.337 ms
+785. Execution Time: 0.173 ms, Process Time: 24.146 ms
+786. Execution Time: 0.172 ms, Process Time: 24.534 ms
+787. Execution Time: 0.181 ms, Process Time: 24.167 ms
+788. Execution Time: 0.174 ms, Process Time: 24.607 ms
+789. Execution Time: 0.184 ms, Process Time: 25.174 ms
+790. Execution Time: 0.172 ms, Process Time: 24.468 ms
+791. Execution Time: 0.16 ms, Process Time: 24.608 ms
+792. Execution Time: 0.175 ms, Process Time: 24.911 ms
+793. Execution Time: 0.173 ms, Process Time: 25.108 ms
+794. Execution Time: 0.165 ms, Process Time: 24.719 ms
+795. Execution Time: 0.171 ms, Process Time: 23.596 ms
+796. Execution Time: 0.174 ms, Process Time: 23.902 ms
+797. Execution Time: 0.171 ms, Process Time: 24.163 ms
+798. Execution Time: 0.173 ms, Process Time: 24.453 ms
+799. Execution Time: 0.175 ms, Process Time: 24.711 ms
+800. Execution Time: 0.167 ms, Process Time: 26.038 ms
+801. Execution Time: 0.171 ms, Process Time: 23.481 ms
+802. Execution Time: 0.179 ms, Process Time: 24.114 ms
+803. Execution Time: 0.171 ms, Process Time: 23.572 ms
+804. Execution Time: 0.168 ms, Process Time: 27.116 ms
+805. Execution Time: 0.174 ms, Process Time: 24.958 ms
+806. Execution Time: 0.18 ms, Process Time: 25.751 ms
+807. Execution Time: 0.169 ms, Process Time: 25.85 ms
+808. Execution Time: 0.171 ms, Process Time: 24.748 ms
+809. Execution Time: 0.17 ms, Process Time: 23.696 ms
+810. Execution Time: 0.171 ms, Process Time: 24.055 ms
+811. Execution Time: 0.186 ms, Process Time: 24.056 ms
+812. Execution Time: 0.167 ms, Process Time: 25.03 ms
+813. Execution Time: 0.171 ms, Process Time: 25.704 ms
+814. Execution Time: 0.172 ms, Process Time: 25.303 ms
+815. Execution Time: 0.174 ms, Process Time: 24.789 ms
+816. Execution Time: 0.173 ms, Process Time: 23.935 ms
+817. Execution Time: 0.171 ms, Process Time: 24.74 ms
+818. Execution Time: 0.175 ms, Process Time: 24.5 ms
+819. Execution Time: 0.173 ms, Process Time: 24.216 ms
+820. Execution Time: 0.174 ms, Process Time: 24.019 ms
+821. Execution Time: 0.171 ms, Process Time: 23.727 ms
+822. Execution Time: 0.183 ms, Process Time: 23.825 ms
+823. Execution Time: 0.17 ms, Process Time: 24.218 ms
+824. Execution Time: 0.166 ms, Process Time: 23.942 ms
+825. Execution Time: 0.174 ms, Process Time: 25.054 ms
+826. Execution Time: 0.171 ms, Process Time: 24.838 ms
+827. Execution Time: 0.175 ms, Process Time: 24.598 ms
+828. Execution Time: 0.174 ms, Process Time: 26.239 ms
+829. Execution Time: 0.168 ms, Process Time: 24.784 ms
+830. Execution Time: 0.164 ms, Process Time: 24.552 ms
+831. Execution Time: 0.168 ms, Process Time: 25.01 ms
+832. Execution Time: 0.168 ms, Process Time: 24.642 ms
+833. Execution Time: 0.171 ms, Process Time: 25.225 ms
+834. Execution Time: 0.165 ms, Process Time: 25.293 ms
+835. Execution Time: 0.168 ms, Process Time: 25.895 ms
+836. Execution Time: 0.188 ms, Process Time: 25.261 ms
+837. Execution Time: 0.171 ms, Process Time: 25.776 ms
+838. Execution Time: 0.155 ms, Process Time: 27.971 ms
+839. Execution Time: 0.164 ms, Process Time: 26.269 ms
+840. Execution Time: 0.164 ms, Process Time: 25.021 ms
+841. Execution Time: 0.178 ms, Process Time: 24.278 ms
+842. Execution Time: 0.168 ms, Process Time: 24.667 ms
+843. Execution Time: 0.17 ms, Process Time: 24.621 ms
+844. Execution Time: 0.187 ms, Process Time: 26.357 ms
+845. Execution Time: 0.17 ms, Process Time: 24.916 ms
+846. Execution Time: 0.173 ms, Process Time: 24.22 ms
+847. Execution Time: 0.164 ms, Process Time: 23.746 ms
+848. Execution Time: 0.182 ms, Process Time: 23.983 ms
+849. Execution Time: 0.169 ms, Process Time: 23.834 ms
+850. Execution Time: 0.177 ms, Process Time: 24.895 ms
+851. Execution Time: 0.173 ms, Process Time: 24.909 ms
+852. Execution Time: 0.182 ms, Process Time: 24.142 ms
+853. Execution Time: 0.177 ms, Process Time: 24.269 ms
+854. Execution Time: 0.169 ms, Process Time: 23.725 ms
+855. Execution Time: 0.176 ms, Process Time: 24.363 ms
+856. Execution Time: 0.163 ms, Process Time: 26.248 ms
+857. Execution Time: 0.174 ms, Process Time: 24.97 ms
+858. Execution Time: 0.175 ms, Process Time: 24.181 ms
+859. Execution Time: 0.171 ms, Process Time: 23.868 ms
+860. Execution Time: 0.173 ms, Process Time: 23.682 ms
+861. Execution Time: 0.171 ms, Process Time: 23.627 ms
+862. Execution Time: 0.168 ms, Process Time: 24.065 ms
+863. Execution Time: 0.187 ms, Process Time: 24.848 ms
+864. Execution Time: 0.17 ms, Process Time: 24.681 ms
+865. Execution Time: 0.177 ms, Process Time: 24.803 ms
+866. Execution Time: 0.171 ms, Process Time: 24.125 ms
+867. Execution Time: 0.168 ms, Process Time: 23.72 ms
+868. Execution Time: 0.17 ms, Process Time: 24.522 ms
+869. Execution Time: 0.188 ms, Process Time: 23.902 ms
+870. Execution Time: 0.173 ms, Process Time: 24.824 ms
+871. Execution Time: 0.169 ms, Process Time: 24.066 ms
+872. Execution Time: 0.189 ms, Process Time: 24.779 ms
+873. Execution Time: 0.178 ms, Process Time: 24.062 ms
+874. Execution Time: 0.172 ms, Process Time: 24.466 ms
+875. Execution Time: 0.187 ms, Process Time: 24.231 ms
+876. Execution Time: 0.177 ms, Process Time: 23.809 ms
+877. Execution Time: 0.173 ms, Process Time: 24.616 ms
+878. Execution Time: 0.173 ms, Process Time: 26.133 ms
+879. Execution Time: 0.161 ms, Process Time: 24.909 ms
+880. Execution Time: 0.172 ms, Process Time: 23.768 ms
+881. Execution Time: 0.183 ms, Process Time: 25.528 ms
+882. Execution Time: 0.18 ms, Process Time: 24.561 ms
+883. Execution Time: 0.187 ms, Process Time: 27.837 ms
+884. Execution Time: 0.171 ms, Process Time: 23.355 ms
+885. Execution Time: 0.164 ms, Process Time: 25.336 ms
+886. Execution Time: 0.185 ms, Process Time: 23.995 ms
+887. Execution Time: 0.183 ms, Process Time: 26.125 ms
+888. Execution Time: 0.168 ms, Process Time: 24.297 ms
+889. Execution Time: 0.17 ms, Process Time: 23.527 ms
+890. Execution Time: 0.174 ms, Process Time: 25.28 ms
+891. Execution Time: 0.173 ms, Process Time: 26.214 ms
+892. Execution Time: 0.185 ms, Process Time: 25.863 ms
+893. Execution Time: 0.173 ms, Process Time: 25.093 ms
+894. Execution Time: 0.176 ms, Process Time: 23.427 ms
+895. Execution Time: 0.175 ms, Process Time: 24.295 ms
+896. Execution Time: 0.172 ms, Process Time: 25.1 ms
+897. Execution Time: 0.171 ms, Process Time: 24.785 ms
+898. Execution Time: 0.171 ms, Process Time: 25.66 ms
+899. Execution Time: 0.192 ms, Process Time: 25.249 ms
+900. Execution Time: 0.18 ms, Process Time: 24.463 ms
+901. Execution Time: 0.18 ms, Process Time: 24.231 ms
+902. Execution Time: 0.187 ms, Process Time: 24.373 ms
+903. Execution Time: 0.172 ms, Process Time: 25.319 ms
+904. Execution Time: 0.185 ms, Process Time: 24.498 ms
+905. Execution Time: 0.183 ms, Process Time: 23.837 ms
+906. Execution Time: 0.172 ms, Process Time: 24.573 ms
+907. Execution Time: 0.166 ms, Process Time: 25.164 ms
+908. Execution Time: 0.182 ms, Process Time: 25.625 ms
+909. Execution Time: 0.17 ms, Process Time: 23.753 ms
+910. Execution Time: 0.173 ms, Process Time: 24.67 ms
+911. Execution Time: 0.171 ms, Process Time: 24.172 ms
+912. Execution Time: 0.172 ms, Process Time: 25.005 ms
+913. Execution Time: 0.176 ms, Process Time: 26.079 ms
+914. Execution Time: 0.179 ms, Process Time: 25.385 ms
+915. Execution Time: 0.161 ms, Process Time: 24.054 ms
+916. Execution Time: 0.173 ms, Process Time: 24.087 ms
+917. Execution Time: 0.17 ms, Process Time: 24.451 ms
+918. Execution Time: 0.168 ms, Process Time: 23.743 ms
+919. Execution Time: 0.191 ms, Process Time: 24.202 ms
+920. Execution Time: 0.172 ms, Process Time: 23.92 ms
+921. Execution Time: 0.174 ms, Process Time: 23.438 ms
+922. Execution Time: 0.172 ms, Process Time: 24.487 ms
+923. Execution Time: 0.181 ms, Process Time: 24.532 ms
+924. Execution Time: 0.176 ms, Process Time: 24.395 ms
+925. Execution Time: 0.172 ms, Process Time: 26.749 ms
+926. Execution Time: 0.182 ms, Process Time: 26.532 ms
+927. Execution Time: 0.171 ms, Process Time: 28.009 ms
+928. Execution Time: 0.179 ms, Process Time: 26.233 ms
+929. Execution Time: 0.18 ms, Process Time: 27.092 ms
+930. Execution Time: 0.18 ms, Process Time: 26.036 ms
+931. Execution Time: 0.183 ms, Process Time: 25.502 ms
+932. Execution Time: 0.173 ms, Process Time: 24.775 ms
+933. Execution Time: 0.172 ms, Process Time: 25.39 ms
+934. Execution Time: 0.169 ms, Process Time: 24.395 ms
+935. Execution Time: 0.18 ms, Process Time: 24.432 ms
+936. Execution Time: 0.175 ms, Process Time: 26.702 ms
+937. Execution Time: 0.185 ms, Process Time: 25.461 ms
+938. Execution Time: 0.179 ms, Process Time: 26.77 ms
+939. Execution Time: 0.184 ms, Process Time: 25.465 ms
+940. Execution Time: 0.175 ms, Process Time: 25.814 ms
+941. Execution Time: 0.168 ms, Process Time: 24.923 ms
+942. Execution Time: 0.176 ms, Process Time: 24.446 ms
+943. Execution Time: 0.168 ms, Process Time: 25.346 ms
+944. Execution Time: 0.17 ms, Process Time: 25.191 ms
+945. Execution Time: 0.173 ms, Process Time: 25.465 ms
+946. Execution Time: 0.173 ms, Process Time: 24.599 ms
+947. Execution Time: 0.171 ms, Process Time: 25.031 ms
+948. Execution Time: 0.172 ms, Process Time: 24.099 ms
+949. Execution Time: 0.172 ms, Process Time: 23.963 ms
+950. Execution Time: 0.171 ms, Process Time: 24.818 ms
+951. Execution Time: 0.18 ms, Process Time: 28.616 ms
+952. Execution Time: 0.177 ms, Process Time: 27.397 ms
+953. Execution Time: 0.194 ms, Process Time: 28.851 ms
+954. Execution Time: 0.176 ms, Process Time: 30.03 ms
+955. Execution Time: 0.315 ms, Process Time: 30.797 ms
+956. Execution Time: 0.205 ms, Process Time: 36.05 ms
+957. Execution Time: 0.198 ms, Process Time: 30.619 ms
+958. Execution Time: 0.194 ms, Process Time: 26.204 ms
+959. Execution Time: 0.166 ms, Process Time: 25.052 ms
+960. Execution Time: 0.174 ms, Process Time: 24.988 ms
+961. Execution Time: 0.16 ms, Process Time: 25.447 ms
+962. Execution Time: 0.168 ms, Process Time: 25.395 ms
+963. Execution Time: 0.165 ms, Process Time: 24.101 ms
+964. Execution Time: 0.172 ms, Process Time: 23.798 ms
+965. Execution Time: 0.176 ms, Process Time: 25.017 ms
+966. Execution Time: 0.172 ms, Process Time: 24.629 ms
+967. Execution Time: 0.173 ms, Process Time: 23.764 ms
+968. Execution Time: 0.169 ms, Process Time: 24.903 ms
+969. Execution Time: 0.173 ms, Process Time: 24.108 ms
+970. Execution Time: 0.175 ms, Process Time: 23.492 ms
+971. Execution Time: 0.175 ms, Process Time: 23.933 ms
+972. Execution Time: 0.175 ms, Process Time: 24.248 ms
+973. Execution Time: 0.159 ms, Process Time: 24.628 ms
+974. Execution Time: 0.177 ms, Process Time: 26.578 ms
+975. Execution Time: 0.171 ms, Process Time: 24.804 ms
+976. Execution Time: 0.18 ms, Process Time: 23.754 ms
+977. Execution Time: 0.181 ms, Process Time: 24.845 ms
+978. Execution Time: 0.175 ms, Process Time: 24.317 ms
+979. Execution Time: 0.164 ms, Process Time: 24.65 ms
+980. Execution Time: 0.172 ms, Process Time: 24.064 ms
+981. Execution Time: 0.172 ms, Process Time: 24.021 ms
+982. Execution Time: 0.167 ms, Process Time: 23.723 ms
+983. Execution Time: 0.179 ms, Process Time: 23.812 ms
+984. Execution Time: 0.172 ms, Process Time: 24.45 ms
+985. Execution Time: 0.173 ms, Process Time: 23.567 ms
+986. Execution Time: 0.17 ms, Process Time: 25.866 ms
+987. Execution Time: 0.172 ms, Process Time: 24.552 ms
+988. Execution Time: 0.171 ms, Process Time: 25.16 ms
+989. Execution Time: 0.169 ms, Process Time: 25.886 ms
+990. Execution Time: 0.166 ms, Process Time: 24.3 ms
+991. Execution Time: 0.176 ms, Process Time: 25.052 ms
+992. Execution Time: 0.186 ms, Process Time: 24.282 ms
+993. Execution Time: 0.168 ms, Process Time: 24.637 ms
+994. Execution Time: 0.167 ms, Process Time: 24.058 ms
+995. Execution Time: 0.176 ms, Process Time: 23.957 ms
+996. Execution Time: 0.175 ms, Process Time: 23.57 ms
+997. Execution Time: 0.174 ms, Process Time: 24.928 ms
+998. Execution Time: 0.171 ms, Process Time: 25.298 ms
+999. Execution Time: 0.174 ms, Process Time: 23.829 ms
+1000. Execution Time: 0.177 ms, Process Time: 25.098 ms

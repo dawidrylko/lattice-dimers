@@ -1,13 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 const { filesInt, testCasesInt, filesBigInt, testCasesBigInt, filesDomicule } = require('../js/core/cases');
+const { listImplementations } = require('../js/core/registry');
 
 const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
 const LARGEST_PERIODIC_RESULTS = [
   'periodicTilingSolver-BigInt.js_10x10-king-torus.txt',
-  'periodicTilingSolver-Modular.js_14x14-king-torus.txt',
+  ...listImplementations('periodic-tiling-modular').flatMap(({ file }) => [
+    `${path.basename(file)}_14x14-king-torus.txt`,
+    `${path.basename(file)}_16x16-king-cylinder.txt`,
+  ]),
   'periodicTilingSolver-BigInt.js_12x12-king-cylinder.txt',
-  'periodicTilingSolver-Modular.js_16x16-king-cylinder.txt',
   'domiculeDiagonalSolver-BigInt.js_12x12.txt',
   'domiculeDiagonalSolver-Modular.js_20x20.txt',
 ];

@@ -1,4 +1,4 @@
-const { parseArgs } = require('../core');
+const { parseArgs, startTimer } = require('../core');
 
 const MAX_CIRCUMFERENCE = 12;
 const LATTICES = {
@@ -139,11 +139,14 @@ function __main__() {
     process.exit(1);
   }
 
-  console.log(calculateTotalTilingCombinations({ ...options, lattice, torus, twisted }).toString());
+  const stopTimer = startTimer(argv);
+  const result = calculateTotalTilingCombinations({ ...options, lattice, torus, twisted });
+  stopTimer();
+  console.log(result.toString());
 }
 
 if (require.main === module) {
   __main__();
 }
 
-module.exports = { calculateTotalTilingCombinations, listRowTransitions, LATTICES };
+module.exports = { calculateTotalTilingCombinations, listRowTransitions, LATTICES, MAX_CIRCUMFERENCE };
