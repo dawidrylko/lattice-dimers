@@ -237,87 +237,105 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
   <section id="benchmark" class="bench" hidden>
     <svg width="0" height="0" class="visually-hidden" aria-hidden="true"><symbol id="icon-rust" viewBox="0 0 24 24"><path d="M23.8346 11.7033l-1.0073-.6236a13.7268 13.7268 0 00-.0283-.2936l.8656-.8069a.3483.3483 0 00-.1154-.578l-1.1066-.414a8.4958 8.4958 0 00-.087-.2856l.6904-.9587a.3462.3462 0 00-.2257-.5446l-1.1663-.1894a9.3574 9.3574 0 00-.1407-.2622l.49-1.0761a.3437.3437 0 00-.0274-.3361.3486.3486 0 00-.3006-.154l-1.1845.0416a6.7444 6.7444 0 00-.1873-.2268l.2723-1.153a.3472.3472 0 00-.417-.4172l-1.1532.2724a14.0183 14.0183 0 00-.2278-.1873l.0415-1.1845a.3442.3442 0 00-.49-.328l-1.076.491c-.0872-.0476-.1742-.0952-.2623-.1407l-.1903-1.1673A.3483.3483 0 0016.256.955l-.9597.6905a8.4867 8.4867 0 00-.2855-.086l-.414-1.1066a.3483.3483 0 00-.5781-.1154l-.8069.8666a9.2936 9.2936 0 00-.2936-.0284L12.2946.1683a.3462.3462 0 00-.5892 0l-.6236 1.0073a13.7383 13.7383 0 00-.2936.0284L9.9803.3374a.3462.3462 0 00-.578.1154l-.4141 1.1065c-.0962.0274-.1903.0567-.2855.086L7.744.955a.3483.3483 0 00-.5447.2258L7.009 2.348a9.3574 9.3574 0 00-.2622.1407l-1.0762-.491a.3462.3462 0 00-.49.328l.0416 1.1845a7.9826 7.9826 0 00-.2278.1873L3.8413 3.425a.3472.3472 0 00-.4171.4171l.2713 1.1531c-.0628.075-.1255.1509-.1863.2268l-1.1845-.0415a.3462.3462 0 00-.328.49l.491 1.0761a9.167 9.167 0 00-.1407.2622l-1.1662.1894a.3483.3483 0 00-.2258.5446l.6904.9587a13.303 13.303 0 00-.087.2855l-1.1065.414a.3483.3483 0 00-.1155.5781l.8656.807a9.2936 9.2936 0 00-.0283.2935l-1.0073.6236a.3442.3442 0 000 .5892l1.0073.6236c.008.0982.0182.1964.0283.2936l-.8656.8079a.3462.3462 0 00.1155.578l1.1065.4141c.0273.0962.0567.1914.087.2855l-.6904.9587a.3452.3452 0 00.2268.5447l1.1662.1893c.0456.088.0922.1751.1408.2622l-.491 1.0762a.3462.3462 0 00.328.49l1.1834-.0415c.0618.0769.1235.1528.1873.2277l-.2713 1.1541a.3462.3462 0 00.4171.4161l1.153-.2713c.075.0638.151.1255.2279.1863l-.0415 1.1845a.3442.3442 0 00.49.327l1.0761-.49c.087.0486.1741.0951.2622.1407l.1903 1.1662a.3483.3483 0 00.5447.2268l.9587-.6904a9.299 9.299 0 00.2855.087l.414 1.1066a.3452.3452 0 00.5781.1154l.8079-.8656c.0972.0111.1954.0203.2936.0294l.6236 1.0073a.3472.3472 0 00.5892 0l.6236-1.0073c.0982-.0091.1964-.0183.2936-.0294l.8069.8656a.3483.3483 0 00.578-.1154l.4141-1.1066a8.4626 8.4626 0 00.2855-.087l.9587.6904a.3452.3452 0 00.5447-.2268l.1903-1.1662c.088-.0456.1751-.0931.2622-.1407l1.0762.49a.3472.3472 0 00.49-.327l-.0415-1.1845a6.7267 6.7267 0 00.2267-.1863l1.1531.2713a.3472.3472 0 00.4171-.416l-.2713-1.1542c.0628-.0749.1255-.1508.1863-.2278l1.1845.0415a.3442.3442 0 00.328-.49l-.49-1.076c.0475-.0872.0951-.1742.1407-.2623l1.1662-.1893a.3483.3483 0 00.2258-.5447l-.6904-.9587.087-.2855 1.1066-.414a.3462.3462 0 00.1154-.5781l-.8656-.8079c.0101-.0972.0202-.1954.0283-.2936l1.0073-.6236a.3442.3442 0 000-.5892zm-6.7413 8.3551a.7138.7138 0 01.2986-1.396.714.714 0 11-.2997 1.396zm-.3422-2.3142a.649.649 0 00-.7715.5l-.3573 1.6685c-1.1035.501-2.3285.7795-3.6193.7795a8.7368 8.7368 0 01-3.6951-.814l-.3574-1.6684a.648.648 0 00-.7714-.499l-1.473.3158a8.7216 8.7216 0 01-.7613-.898h7.1676c.081 0 .1356-.0141.1356-.088v-2.536c0-.074-.0536-.0881-.1356-.0881h-2.0966v-1.6077h2.2677c.2065 0 1.1065.0587 1.394 1.2088.0901.3533.2875 1.5044.4232 1.8729.1346.413.6833 1.2381 1.2685 1.2381h3.5716a.7492.7492 0 00.1296-.0131 8.7874 8.7874 0 01-.8119.9526zM6.8369 20.024a.714.714 0 11-.2997-1.396.714.714 0 01.2997 1.396zM4.1177 8.9972a.7137.7137 0 11-1.304.5791.7137.7137 0 011.304-.579zm-.8352 1.9813l1.5347-.6824a.65.65 0 00.33-.8585l-.3158-.7147h1.2432v5.6025H3.5669a8.7753 8.7753 0 01-.2834-3.348zm6.7343-.5437V8.7836h2.9601c.153 0 1.0792.1772 1.0792.8697 0 .575-.7107.7815-1.2948.7815zm10.7574 1.4862c0 .2187-.008.4363-.0243.651h-.9c-.09 0-.1265.0586-.1265.1477v.413c0 .973-.5487 1.1846-1.0296 1.2382-.4576.0517-.9648-.1913-1.0275-.4717-.2704-1.5186-.7198-1.8436-1.4305-2.4034.8817-.5599 1.799-1.386 1.799-2.4915 0-1.1936-.819-1.9458-1.3769-2.3153-.7825-.5163-1.6491-.6195-1.883-.6195H5.4682a8.7651 8.7651 0 014.907-2.7699l1.0974 1.151a.648.648 0 00.9182.0213l1.227-1.1743a8.7753 8.7753 0 016.0044 4.2762l-.8403 1.8982a.652.652 0 00.33.8585l1.6178.7188c.0283.2875.0425.577.0425.8717zm-9.3006-9.5993a.7128.7128 0 11.984 1.0316.7137.7137 0 01-.984-1.0316zm8.3389 6.71a.7107.7107 0 01.9395-.3625.7137.7137 0 11-.9405.3635z"/></symbol><symbol id="icon-python" viewBox="0 0 24 24"><path d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z"/></symbol><symbol id="icon-javascript" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/></symbol></svg>
     <div class="picker">
-      <span class="label" id="benchmark-groups-label">Solvers</span>
-      <div class="pieces" id="benchmark-groups" role="group" aria-labelledby="benchmark-groups-label">
-        <button type="button" data-group="dominoes">Dominoes</button>
-        <button type="button" data-group="domicules">Domicules</button>
-        <button type="button" data-group="cylinders">Cylinders</button>
-        <button type="button" data-group="tori">Tori</button>
-        <button type="button" data-group="diagonals">Diagonal pieces</button>
+      <span class="label" id="benchmark-pieces-label">Pieces</span>
+      <div class="pieces" id="benchmark-pieces" role="group" aria-labelledby="benchmark-pieces-label">
+        <button type="button" data-pieces="domino" title="Every piece covers two cells that share a side">Dominoes</button>
+        <button type="button" data-pieces="domicule" title="A piece may also cover two cells that share only a corner">Domicules</button>
       </div>
     </div>
-    <div class="bench-group" data-group="dominoes">
+    <div class="picker">
+      <span class="label" id="benchmark-surfaces-label">Surface</span>
+      <div class="pieces" id="benchmark-surfaces" role="group" aria-labelledby="benchmark-surfaces-label">
+        <button type="button" data-surface="rectangle">Rectangle</button>
+        <button type="button" data-surface="cylinder">Cylinder</button>
+        <button type="button" data-surface="torus">Torus</button>
+      </div>
+    </div>
+    <div class="bench-group" data-pieces="domino" data-surface="rectangle">
       <h2 class="table-title">Dominoes (A004003)</h2>
       <div class="table-wrap">
         <table role="table" id="domino-benchmark">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Formula</th><th role="columnheader">Runs</th></tr></thead>
-          <tbody id="benchmark-rows" role="rowgroup"></tbody>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">Formula</th><th role="columnheader">BigInt</th><th role="columnheader">Runs</th></tr></thead>
+          <tbody id="domino-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
       <p class="note">
-        BigInt counts exactly. Formula evaluates the product formula of Kasteleyn and Fisher as an exact resultant.
+        Formula evaluates the product formula of Kasteleyn and Fisher as an exact resultant. BigInt counts exactly.
         Re-run with <code>pnpm benchmark</code>.
       </p>
     </div>
-    <div class="bench-group" data-group="domicules" hidden>
+    <div class="bench-group" data-pieces="domino" data-surface="cylinder" hidden>
+      <h2 class="table-title">Dominoes on cylinders</h2>
+      <div class="table-wrap">
+        <table role="table" id="domino-cylinder-benchmark" class="languages">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader">Runs</th></tr></thead>
+          <tbody id="domino-cylinder-benchmark-rows" role="rowgroup"></tbody>
+        </table>
+      </div>
+      <p class="note">
+        <code>-r R -c C --lattice square</code> for a cylinder of circumference C. Modular goes cell by cell modulo
+        primes below 2<sup>31</sup>, in Rust, Python and JavaScript. BigInt multiplies by the row transfer matrix, in
+        JavaScript, and counts circumferences up to 12. Re-run with <code>pnpm benchmark:periodic</code>.
+      </p>
+    </div>
+    <div class="bench-group" data-pieces="domino" data-surface="torus" hidden>
+      <h2 class="table-title">Dominoes on tori</h2>
+      <div class="table-wrap">
+        <table role="table" id="domino-torus-benchmark" class="languages">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader">Runs</th></tr></thead>
+          <tbody id="domino-torus-benchmark-rows" role="rowgroup"></tbody>
+        </table>
+      </div>
+      <p class="note">
+        <code>-r R -c C --torus --lattice square</code> for a torus. Modular goes cell by cell modulo primes below
+        2<sup>31</sup>, in Rust, Python and JavaScript, and runs one set of first-row cells per rotation class. BigInt
+        multiplies by the row transfer matrix, in JavaScript, and runs the torus once for every set of first-row cells
+        covered from the last row. A dash under BigInt is a board it was not run on: it counts circumferences up to 12.
+        Re-run with <code>pnpm benchmark:periodic</code>.
+      </p>
+    </div>
+    <div class="bench-group" data-pieces="domicule" data-surface="rectangle" hidden>
       <h2 class="table-title">Domicules (A239273)</h2>
       <div class="table-wrap">
-        <table role="table" id="domicule-benchmark">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Modular</th><th role="columnheader">Runs</th></tr></thead>
+        <table role="table" id="domicule-benchmark" class="languages">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domicule-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
       <p class="note">
-        BigInt counts exactly. Modular counts modulo primes below 2<sup>31</sup> in parallel worker threads, rebuilds the
-        count with the Chinese remainder theorem and checks it against one more prime.
-        Re-run with <code>pnpm benchmark:domicule</code>.
+        Modular counts modulo primes below 2<sup>31</sup> in parallel worker threads, in Rust, Python and JavaScript,
+        rebuilds the count with the Chinese remainder theorem and checks it against one more prime. BigInt counts
+        exactly, in JavaScript. Re-run with <code>pnpm benchmark:domicule</code>.
       </p>
     </div>
-    <div class="bench-group" data-group="cylinders" hidden>
+    <div class="bench-group" data-pieces="domicule" data-surface="cylinder" hidden>
       <h2 class="table-title">Domicules on cylinders</h2>
       <div class="table-wrap">
         <table role="table" id="cylinder-benchmark" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="cylinder-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
       <p class="note">
-        <code>-r R -c C</code> for a cylinder of circumference C. BigInt multiplies by the row transfer matrix, in
-        JavaScript. Modular goes cell by cell modulo primes below 2<sup>31</sup>, in Rust, Python and JavaScript. BigInt counts
-        circumferences up to 12. The same solvers count the tori.
-        Re-run with <code>pnpm benchmark:periodic</code>.
+        <code>-r R -c C</code> for a cylinder of circumference C. Modular goes cell by cell modulo primes below
+        2<sup>31</sup>, in Rust, Python and JavaScript. BigInt multiplies by the row transfer matrix, in JavaScript, and
+        counts circumferences up to 12. Re-run with <code>pnpm benchmark:periodic</code>.
       </p>
     </div>
-    <div class="bench-group" data-group="tori" hidden>
+    <div class="bench-group" data-pieces="domicule" data-surface="torus" hidden>
       <h2 class="table-title">Domicules on tori (A401670)</h2>
       <div class="table-wrap">
         <table role="table" id="torus-benchmark" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="torus-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
       <p class="note">
-        <code>-r R -c C --torus</code> for a torus. BigInt multiplies by the row transfer matrix, in JavaScript, and runs
-        the torus once for every set of first-row cells covered from the last row. Modular goes cell by cell modulo primes
-        below 2<sup>31</sup>, in Rust, Python and JavaScript, and runs one set per rotation class. A dash under
-        BigInt is a board it was not run on: it counts circumferences up to 12, and each step of 2 multiplies its sets of
-        first-row cells by four. The same solvers count the cylinders.
-        Re-run with <code>pnpm benchmark:periodic</code>.
-      </p>
-    </div>
-    <div class="bench-group" data-group="diagonals" hidden>
-      <h2 class="table-title">Diagonal pieces</h2>
-      <div class="table-wrap">
-        <table role="table" id="diagonal-benchmark">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">BigInt</th><th role="columnheader">Modular</th><th role="columnheader">Runs</th></tr></thead>
-          <tbody id="diagonal-benchmark-rows" role="rowgroup"></tbody>
-        </table>
-      </div>
-      <p class="note">
-        Both solvers run the domicule transfer with a polynomial in the number of diagonal pieces in every state. Modular
-        keeps only the coefficients of the parity a state fixes, counts modulo primes below 2<sup>31</sup> and rebuilds
-        every coefficient with the Chinese remainder theorem.
-        Re-run with <code>pnpm benchmark:diagonal</code>.
+        <code>-r R -c C --torus</code> for a torus. Modular goes cell by cell modulo primes below 2<sup>31</sup>, in
+        Rust, Python and JavaScript, and runs one set of first-row cells per rotation class. BigInt multiplies by the
+        row transfer matrix, in JavaScript, and runs the torus once for every set of first-row cells covered from the
+        last row. A dash under BigInt is a board it was not run on: it counts circumferences up to 12, and each step of
+        2 multiplies its sets of first-row cells by four. Re-run with <code>pnpm benchmark:periodic</code>.
       </p>
     </div>
     <p class="note run">
@@ -549,7 +567,25 @@ function clamp(value, min, max) {
   return value < min ? min : value > max ? max : value;
 }
 
-const BENCHMARK_GROUPS = ['dominoes', 'domicules', 'cylinders', 'tori', 'diagonals'];
+const BENCHMARK_PIECES = ['domino', 'domicule'];
+const BENCHMARK_SURFACES = ['rectangle', 'cylinder', 'torus'];
+const BENCHMARK_ALIASES = {
+  dominoes: ['domino', 'rectangle'],
+  domicules: ['domicule', 'rectangle'],
+  cylinders: ['domicule', 'cylinder'],
+  tori: ['domicule', 'torus'],
+  diagonals: ['domicule', 'rectangle'],
+};
+
+function readBenchmarkView(tab, first, second) {
+  const [pieces, surface] =
+    tab === 'benchmark-domicule' ? BENCHMARK_ALIASES.domicules : Object.hasOwn(BENCHMARK_ALIASES, first) ? BENCHMARK_ALIASES[first] : [first, second];
+
+  return {
+    pieces: BENCHMARK_PIECES.includes(pieces) ? pieces : BENCHMARK_PIECES[0],
+    surface: BENCHMARK_SURFACES.includes(surface) ? surface : BENCHMARK_SURFACES[0],
+  };
+}
 
 function parseHash() {
   const [path, query = ''] = location.hash.slice(1).split('?');
@@ -561,7 +597,7 @@ function parseHash() {
 
   return {
     tab: benchmark ? 'benchmark' : 'gallery',
-    group: tab === 'benchmark-domicule' ? 'domicules' : BENCHMARK_GROUPS.includes(boardId) ? boardId : BENCHMARK_GROUPS[0],
+    benchmark: readBenchmarkView(tab, boardId, page),
     board,
     diagonals,
     total,
@@ -839,8 +875,11 @@ function render() {
   });
   $('gallery').hidden = state.tab !== 'gallery';
   $('benchmark').hidden = state.tab !== 'benchmark';
-  $('benchmark-groups').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.group === state.group));
-  document.querySelectorAll('.bench-group').forEach(group => (group.hidden = group.dataset.group !== state.group));
+  $('benchmark-pieces').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.pieces === state.benchmark.pieces));
+  $('benchmark-surfaces').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.surface === state.benchmark.surface));
+  document.querySelectorAll('.bench-group').forEach(
+    group => (group.hidden = group.dataset.pieces !== state.benchmark.pieces || group.dataset.surface !== state.benchmark.surface),
+  );
 
   if (state.tab === 'gallery') {
     renderGallery(state);
@@ -905,31 +944,12 @@ $('load-table').addEventListener('click', () => {
   render();
 });
 
-function runsLabel(row) {
-  const runs = [row.bigint, row.formula].map(result => (result ? result.runs : null));
-  const measured = runs.filter(count => count !== null);
-
-  return measured.every(count => count === measured[0])
-    ? fmt(measured[0])
-    : `<span title="BigInt / Formula">${runs.map(count => (count === null ? '-' : fmt(count))).join(' / ')}</span>`;
-}
-
-const benchmarkColumns = [...document.querySelectorAll('#domino-benchmark thead th')].map(th => th.textContent);
-
-$('benchmark-rows').innerHTML = DATA.benchmark
-  .map(r => [`${r.rowCount}×${r.colCount}`, r.tilings === null ? '-' : num(r.tilings), ms(r.bigint), ms(r.formula), runsLabel(r)])
-  .map(cells => `<tr role="row">${cells.map((cell, i) => `<td role="cell" data-label="${benchmarkColumns[i]}">${cell}</td>`).join('')}</tr>`)
-  .join('');
-
-const BIGINT_AND_MODULAR = [
-  { read: r => r.bigint, missing: r => r.bigintMissing },
-  { read: r => r.modular },
-];
+const FORMULA_AND_BIGINT = [{ read: r => r.formula }, { read: r => r.bigint }];
 const MODULAR_LANGUAGES = [
-  { read: r => r.bigint, missing: r => r.bigintMissing },
   { read: r => r.languages.rs },
   { read: r => r.languages.py },
   { read: r => r.modular },
+  { read: r => r.bigint, missing: r => r.bigintMissing },
 ];
 
 function columnLabel(th) {
@@ -964,10 +984,12 @@ function renderSolverRows(table, rows, solvers) {
     .join('');
 }
 
-renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, BIGINT_AND_MODULAR);
+renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_AND_BIGINT);
+renderSolverRows('domino-torus-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_LANGUAGES);
+renderSolverRows('domino-cylinder-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_LANGUAGES);
+renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, MODULAR_LANGUAGES);
 renderSolverRows('torus-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_LANGUAGES);
 renderSolverRows('cylinder-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_LANGUAGES);
-renderSolverRows('diagonal-benchmark', DATA.diagonalBenchmark, BIGINT_AND_MODULAR);
 
 if (DATA.environment) {
   const { date, node, python, rust, commit, cpu, platform, cores, memory } = DATA.environment;
@@ -1001,12 +1023,21 @@ new ResizeObserver(() => {
   if (moved) scrollBy(0, moved.getBoundingClientRect().top - anchorTop);
 }).observe($('gallery'));
 
-$('benchmark-groups').addEventListener('click', e => {
-  const button = e.target.closest('button');
-  if (!button) return;
-  if (button.dataset.group === parseHash().group) return;
-  history.pushState(null, '', `#benchmark/${button.dataset.group}`);
+function switchBenchmark(change) {
+  const current = parseHash().benchmark;
+  const { pieces, surface } = { ...current, ...change };
+  if (pieces === current.pieces && surface === current.surface) return;
+  history.pushState(null, '', `#benchmark/${pieces}/${surface}`);
   render();
+}
+
+$('benchmark-pieces').addEventListener('click', e => {
+  const button = e.target.closest('button');
+  if (button) switchBenchmark({ pieces: button.dataset.pieces });
+});
+$('benchmark-surfaces').addEventListener('click', e => {
+  const button = e.target.closest('button');
+  if (button) switchBenchmark({ surface: button.dataset.surface });
 });
 
 document.querySelector('nav.tabs').addEventListener('click', e => {
