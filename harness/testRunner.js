@@ -302,10 +302,6 @@ function executeExecutorTests() {
   const javaScript = path.join(ROOT_DIRECTORY, 'js', 'solvers', 'dominoTilingSolver.js');
   const python = 'python/lattice_dimers/solvers/domino_tiling_number.py';
   const rust = 'rust/solvers/src/bin/domino-tiling-number.rs';
-  const ownRoot = listImplementations('domicule-tiling-modular').find(({ language }) => language === 'rs').file;
-  const ownTarget = fs.mkdtempSync(path.join(os.tmpdir(), 'own-root-target-'));
-  const ownBinary = path.join(ownTarget, 'release', path.basename(ownRoot, '.rs'));
-  const ownTimes = fs.statSync(path.join(ROOT_DIRECTORY, ownRoot));
   const cases = [
     ['a bare name in js/solvers', 'dominoTilingSolver.js', {}, `"${process.execPath}" "${javaScript}" -r 2 -c 2`],
     ['a root-relative JavaScript file', 'js/solvers/dominoTilingSolver.js', {}, `"${process.execPath}" "${javaScript}" -r 2 -c 2`],
@@ -344,30 +340,69 @@ function executeExecutorTests() {
       `an error: Execution failed: ${staleBinary} is older than the .rs files it is built from; rebuild it with cargo build --release.`,
       true,
     ],
-    [
-      'a Rust binary older than only its own root',
-      ownRoot,
-      { CARGO_TARGET_DIR: ownTarget },
-      `an error: Execution failed: ${ownBinary} is older than the .rs files it is built from; rebuild it with cargo build --release.`,
-      true,
-    ],
   ];
 
   try {
     fs.mkdirSync(path.dirname(staleBinary));
     fs.writeFileSync(staleBinary, '', { mode: 0o755 });
     fs.utimesSync(staleBinary, 0, 0);
-    fs.mkdirSync(path.dirname(ownBinary));
-    fs.writeFileSync(ownBinary, '', { mode: 0o755 });
-    fs.utimesSync(ownBinary, Date.now() / 1000, Date.now() / 1000);
-    fs.utimesSync(path.join(ROOT_DIRECTORY, ownRoot), Date.now() / 1000 + 60, Date.now() / 1000 + 60);
 
-    return runExecutorTests(cases, command, attempt) && executeRustSourceTests();
+    return runExecutorTests(cases, command, attempt) && executeOwnRootTest() && executeRustSourceTests();
   } finally {
-    fs.utimesSync(path.join(ROOT_DIRECTORY, ownRoot), ownTimes.atime, ownTimes.mtime);
     fs.rmSync(staleTarget, { recursive: true, force: true });
-    fs.rmSync(ownTarget, { recursive: true, force: true });
   }
+}
+
+function executeOwnRootTest() {
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'own-root-')));
+  const file = name => path.join(root, ...name.split('/'));
+  const binary = file('target/release/solver');
+  const now = Date.now() / 1000;
+  const write = (name, seconds, mode) => {
+    fs.mkdirSync(path.dirname(file(name)), { recursive: true });
+    fs.writeFileSync(file(name), '', { mode });
+    fs.utimesSync(file(name), seconds, seconds);
+  };
+  const target = process.env.CARGO_TARGET_DIR;
+  const expected = `Execution failed: ${binary} is older than the .rs files it is built from; rebuild it with cargo build --release.`;
+
+  process.stdout.write('Executing executor test for a Rust binary older than only its own root... ');
+
+  try {
+    fs.mkdirSync(file('js/core'), { recursive: true });
+    fs.copyFileSync(path.join(ROOT_DIRECTORY, 'js', 'core', 'scriptExecutor.js'), file('js/core/scriptExecutor.js'));
+    write('rust/core/src/lib.rs', now - 60);
+    write('rust/solvers/src/bin/solver.rs', now + 60);
+    write('rust/solvers/src/bin/other.rs', now - 60);
+    write('target/release/solver', now, 0o755);
+    delete process.env.CARGO_TARGET_DIR;
+
+    let actual;
+
+    try {
+      actual = require(file('js/core/scriptExecutor.js'))('rust/solvers/src/bin/solver.rs', { rowCount: 2, colCount: 2 });
+    } catch (error) {
+      actual = error.message;
+    }
+
+    if (actual !== expected) {
+      console.error(`Failed! Expected: ${expected}, Actual: ${actual}`);
+
+      return false;
+    }
+  } finally {
+    if (target === undefined) {
+      delete process.env.CARGO_TARGET_DIR;
+    } else {
+      process.env.CARGO_TARGET_DIR = target;
+    }
+
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+
+  console.log('Passed!');
+
+  return true;
 }
 
 function executeRustSourceTests() {
