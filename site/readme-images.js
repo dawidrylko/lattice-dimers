@@ -9,11 +9,11 @@ const {
   createPeriodicUnranker,
   unrankPeriodicTiling,
 } = require('../js/renderer');
+const { DEFAULT_BOARD } = require('./defaultBoard');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
-const BOARD = { rowCount: 8, colCount: 8 };
+const BOARD = DEFAULT_BOARD;
 const SAMPLES = 4;
-const SHOWCASE = { rowCount: 10, colCount: 10 };
 
 function sampleRanks(total) {
   const step = total / BigInt(SAMPLES + 1);
@@ -26,11 +26,11 @@ function formatRank(rank) {
 }
 
 function buildShowcase() {
-  const dominoes = createUnranker(SHOWCASE);
-  const domicules = createDomiculeUnranker(SHOWCASE);
-  const cylinder = createPeriodicUnranker({ ...SHOWCASE, lattice: 'king', torus: false });
-  const torus = createPeriodicUnranker({ ...SHOWCASE, lattice: 'king', torus: true });
-  const options = { ...SHOWCASE, labels: false, columns: 1, style: 'dimer' };
+  const dominoes = createUnranker(BOARD);
+  const domicules = createDomiculeUnranker(BOARD);
+  const cylinder = createPeriodicUnranker({ ...BOARD, lattice: 'king', torus: false });
+  const torus = createPeriodicUnranker({ ...BOARD, lattice: 'king', torus: true });
+  const options = { ...BOARD, labels: false, columns: 1, style: 'dimer' };
 
   return {
     '.github/assets/showcase-domino.svg': renderSheet([unrankTiling(dominoes, dominoes.total / BigInt(3))], 1, options),
