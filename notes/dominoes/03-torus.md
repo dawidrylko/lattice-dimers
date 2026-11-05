@@ -79,4 +79,4 @@ print(`Run: ${nb.context.benchmarkRun}`);
 
 ## Verification
 
-The two periodic solvers agree with each other and with [OEIS A335586](https://oeis.org/A335586), [OEIS A253678](https://oeis.org/A253678) and [OEIS A281679](https://oeis.org/A281679). `node harness/testRunner.js` runs the tori of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers and those of `spec/cases/periodicTilingTests-Modular.json` through the modular one.
+The two periodic solvers agree with each other and with [OEIS A335586](https://oeis.org/A335586) and [OEIS A253678](https://oeis.org/A253678), and the modular solver also with [OEIS A281679](https://oeis.org/A281679). `node harness/testRunner.js` runs the tori of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers and those of `spec/cases/periodicTilingTests-Modular.json` through the modular one.

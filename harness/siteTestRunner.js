@@ -101,6 +101,12 @@ const NOTE_REDIRECTS = [
   ['torus', 'domicules/torus'],
   ['diagonals', 'domicules/diagonals'],
 ];
+const MOVED_SECTIONS = [
+  ['method', 'sampling', 'dominoes/rectangle', 'sampling-with-coupling-from-the-past'],
+  ['method', 'transfer-by-cells', 'domicules/rectangle', 'transfer-by-cells'],
+  ['cylinders', 'the-triangular-lattice', 'triangular/cylinder', 'the-counts'],
+  ['torus', 'the-king-s-graph-on-the-2n-2n-torus-a401670', 'domicules/torus', 'the-2n-2n-torus-a401670'],
+];
 const MENU_GROUPS = ['Dominoes', 'Domicules', 'Triangular lattice'];
 const NOTE_FAILURES = ['DIFFERS FROM OEIS'];
 const PAGE_CONTROLS = '#page-controls button, #page-controls input';
@@ -1037,6 +1043,14 @@ async function checkNotes(page, baseUrl, width) {
     );
   }
 
+  for (const [from, id, to, fragment] of MOVED_SECTIONS) {
+    await page.send('Page.navigate', { url: `${baseUrl}/notes/${from}.html#${id}` });
+    await page.waitFor(
+      `location.pathname.endsWith('/notes/${to}.html') && location.hash === '#${fragment}' && document.readyState === 'complete' && Boolean(document.getElementById('${fragment}'))`,
+      `the move of the section ${from}.html#${id} to ${to}.html#${fragment}`,
+    );
+  }
+
   return problems;
 }
 
@@ -1066,7 +1080,7 @@ const READ_CHROME = `(() => {
     current: nav.filter(link => link.getAttribute('aria-current') === 'page').map(link => link.href),
     marked: document.querySelectorAll('[aria-current="page"]').length,
     groups: header ? [...header.querySelectorAll('summary')].map(summary => summary.textContent.trim()).join(', ') : '',
-    currentGroups: header ? [...header.querySelectorAll('summary[data-current]')].map(summary => summary.textContent.trim()) : [],
+    currentGroups: header ? [...header.querySelectorAll('summary[data-current][aria-current="true"]')].map(summary => summary.textContent.trim()) : [],
     linkGroup: (() => {
       const link = header && header.querySelector('nav [aria-current="page"]');
       const group = link && link.closest('details');

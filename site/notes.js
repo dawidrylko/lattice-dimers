@@ -472,10 +472,6 @@ function formatTime(result) {
 }
 
 /**
- * Lists the notes in reading order: notes/NN-name.md is published as notes/name.html.
- * @returns {{ file: string, slug: string }[]} The notes.
- */
-/**
  * Lists the notes in reading order: the numbered files of notes/ first, then the numbered files of each
  * group directory, groups in name order. A note's slug is its path without the numbers and the extension,
  * so notes/dominoes/02-cylinder.md is published as notes/dominoes/cylinder.html.

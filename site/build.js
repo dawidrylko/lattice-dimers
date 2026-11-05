@@ -17,7 +17,7 @@ const { MAX_CIRCUMFERENCE: PERIODIC_BIGINT_CIRCUMFERENCE } = require('../js/solv
 const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
-const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
+const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, resolveRedirect } = require('./chrome');
 const { readBenchmarkRuns } = require('./benchmarkRuns');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -122,17 +122,6 @@ const NOTE_SUMMARIES = {
   'domicules/diagonals': 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces (A401673), up to 20 × 20.',
   'triangular/cylinder': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
   'triangular/torus': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
-};
-const NOTE_REDIRECTS = {
-  a004003: 'dominoes/rectangle',
-  a239273: 'domicules/rectangle',
-  dominoes: 'dominoes/rectangle',
-  domicules: 'domicules/rectangle',
-  method: 'dominoes/rectangle',
-  cylinders: 'domicules/cylinder',
-  tori: 'domicules/torus',
-  torus: 'domicules/torus',
-  diagonals: 'domicules/diagonals',
 };
 
 function describeRun(run) {
@@ -547,16 +536,28 @@ function buildJsonLd() {
 }
 
 /**
- * Writes a page at the old address of every renamed note that sends the reader to the new one,
- * keeping the fragment. GitHub Pages has no server-side redirects.
+ * Writes a page at the old address of every moved note that sends the reader to the new one. A fragment
+ * the old page had goes to the section that now holds it, on whichever page that is; any other fragment is
+ * kept. GitHub Pages has no server-side redirects.
+ * @param {{ slug: string }[]} notes The notes, already written to the output directory.
  */
 function writeNoteRedirects(notes) {
-  Object.entries(NOTE_REDIRECTS).forEach(([from, to]) => {
+  Object.entries(NOTE_REDIRECTS).forEach(([from, { to, sections = {} }]) => {
     const url = `${SITE_URL}notes/${to}.html`;
+    const moved = Object.fromEntries(Object.keys(sections).map(id => [id, resolveRedirect(from, id)]));
 
     if (!notes.some(({ slug }) => slug === to) || notes.some(({ slug }) => slug === from)) {
       throw new Error(`the redirect from ${from}.html to ${to}.html leads to no note or hides one`);
     }
+
+    Object.entries(moved).forEach(([id, target]) => {
+      const [page, fragment] = target.split('#');
+      const file = path.join(OUTPUT_DIRECTORY, 'notes', page);
+
+      if (!fs.existsSync(file) || !fs.readFileSync(file, 'utf-8').includes(`id="${fragment}"`)) {
+        throw new Error(`the redirect from ${from}.html#${id} leads to ${target}, which has no such section`);
+      }
+    });
 
     fs.writeFileSync(
       path.join(OUTPUT_DIRECTORY, 'notes', `${from}.html`),
@@ -569,7 +570,7 @@ function writeNoteRedirects(notes) {
         `<link rel="canonical" href="${url}">`,
         '<meta name="robots" content="noindex">',
         `<meta http-equiv="refresh" content="0; url=${to}.html">`,
-        `<script>location.replace('${to}.html' + location.hash);</script>`,
+        `<script>location.replace(${JSON.stringify(moved)}[location.hash.slice(1)] || '${to}.html' + location.hash);</script>`,
         '</head>',
         `<body><p>This page moved to <a href="${to}.html">${url}</a>.</p></body>`,
         '</html>',

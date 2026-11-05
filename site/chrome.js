@@ -29,6 +29,56 @@ const NAV = [
   },
 ];
 
+const NOTE_REDIRECTS = {
+  a004003: { to: 'dominoes/rectangle' },
+  a239273: { to: 'domicules/rectangle' },
+  dominoes: { to: 'dominoes/rectangle' },
+  domicules: { to: 'domicules/rectangle' },
+  method: {
+    to: 'dominoes/rectangle',
+    sections: {
+      problem: '#the-problem',
+      'domino-tilings': '#the-closed-form',
+      'closed-form': '#the-closed-form',
+      'transfer-by-rows': '#transfer-by-rows',
+      numbering: '#numbering-tilings',
+      sampling: '#sampling-with-coupling-from-the-past',
+      'domicule-tilings': 'domicules/rectangle#transfer-by-cells',
+      'transfer-by-cells': 'domicules/rectangle#transfer-by-cells',
+      'counting-modulo-primes': 'domicules/rectangle#counting-modulo-primes',
+      'sampling-with-a-markov-chain': 'domicules/rectangle#sampling-with-a-markov-chain',
+      'numbering-by-diagonal-pieces': 'domicules/diagonals#numbering-by-diagonal-pieces',
+      'cylinders-and-tori': 'domicules/torus#numbering',
+      verification: '#verification',
+      references: '#references',
+    },
+  },
+  cylinders: {
+    to: 'domicules/cylinder',
+    sections: {
+      'the-king-s-graph': '#the-counts',
+      'the-square-lattice': 'dominoes/cylinder#the-counts',
+      'the-triangular-lattice': 'triangular/cylinder#the-counts',
+    },
+  },
+  tori: { to: 'domicules/torus', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
+  torus: { to: 'domicules/torus', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
+  diagonals: { to: 'domicules/diagonals' },
+};
+
+/**
+ * Says where a section of a moved note now lives, as a path from notes/ with its fragment.
+ * @param {string} from The old slug, such as 'method'.
+ * @param {string} id The id of the section on the old page.
+ * @returns {string} The new address, such as 'domicules/rectangle.html#transfer-by-cells'.
+ */
+function resolveRedirect(from, id) {
+  const { to, sections = {} } = NOTE_REDIRECTS[from];
+  const [page, fragment] = (sections[id] || `#${id}`).split('#');
+
+  return `${page || to}.html#${fragment}`;
+}
+
 const NAV_SCRIPT = `(() => {
   const menus = [...document.querySelectorAll('.site-nav details')];
   const close = keep => menus.filter(menu => menu.open && menu !== keep).forEach(menu => { menu.open = false; });
@@ -98,6 +148,7 @@ const CHROME_CSS = `
 .site-nav a, .site-nav summary { color: var(--muted); text-decoration: none; }
 .site-nav a:hover, .site-nav a[aria-current="page"], .site-nav summary:hover, .site-nav summary[data-current], .site-nav details[open] summary { color: var(--fg); }
 .site-nav a[aria-current="page"], .site-nav summary[data-current] { text-decoration: underline 2px var(--accent); text-underline-offset: 6px; }
+.site-nav a:focus-visible, .site-nav summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
 .site-nav details { position: relative; }
 .site-nav summary { cursor: pointer; list-style: none; }
 .site-nav summary::-webkit-details-marker { display: none; }
@@ -144,7 +195,7 @@ function renderHeader({ root, current, notes }) {
       entry.items
         ? [
             '<details>',
-            `        <summary${entry.items.some(({ slug }) => slug === current) ? ' data-current' : ''}>${escapeHtml(entry.label)}</summary>`,
+            `        <summary${entry.items.some(({ slug }) => slug === current) ? ' data-current aria-current="true"' : ''}>${escapeHtml(entry.label)}</summary>`,
             `        <div class="menu">${entry.items.map(note).join('')}</div>`,
             '      </details>',
           ].join('\n')
@@ -184,4 +235,4 @@ function renderFooter(lines = []) {
   ].join('\n');
 }
 
-module.exports = { THEME_CSS, CHROME_CSS, renderHeader, renderFooter };
+module.exports = { THEME_CSS, CHROME_CSS, NAV, NOTE_REDIRECTS, resolveRedirect, renderHeader, renderFooter };

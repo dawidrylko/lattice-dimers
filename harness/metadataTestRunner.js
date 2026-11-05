@@ -93,6 +93,67 @@ function checkKeywords() {
   return errors;
 }
 
+function checkSiteMenu() {
+  const { listNotes } = require('../site/notes');
+  const { NAV, renderHeader } = require('../site/chrome');
+  const notes = listNotes();
+  const slugs = notes.map(({ slug }) => slug);
+  const listed = NAV.flatMap(entry => entry.items || [entry]).map(({ slug }) => slug);
+  const errors = [];
+
+  notes.forEach(({ file, slug }) => {
+    if (slug !== file.replace(/\d+-/g, '').replace(/\.md$/, '')) {
+      errors.push(`notes/${file} is published as ${slug}.html`);
+    }
+  });
+
+  if ([...slugs].sort().join() !== [...listed].sort().join()) {
+    errors.push(`the notes are ${slugs.join(', ')} and the menu lists ${listed.join(', ')}`);
+  }
+
+  [notes.slice(1), [...notes, { file: 'dominoes/09-strip.md', slug: 'dominoes/strip' }]].forEach(wrong => {
+    try {
+      renderHeader({ root: '', current: 'home', notes: wrong });
+      errors.push(`the header accepts the notes ${wrong.map(({ slug }) => slug).join(', ')}`);
+    } catch {}
+  });
+
+  return errors;
+}
+
+function checkOeisLinks() {
+  const { listNotes } = require('../site/notes');
+  const { NOTE_REDIRECTS, resolveRedirect } = require('../site/chrome');
+  const slugs = listNotes().map(({ slug }) => slug);
+  const errors = [];
+
+  listEntries().forEach(entry => {
+    fs.readdirSync(path.join(ROOT_DIRECTORY, 'oeis', entry))
+      .filter(file => file.endsWith('.txt'))
+      .forEach(file => {
+        for (const [, slug] of read(`oeis/${entry}/${file}`).matchAll(/lattice-dimers\/notes\/([a-z0-9/-]+)\.html/g)) {
+          const redirect = NOTE_REDIRECTS[slug];
+
+          if (!slugs.includes(slug) && !(redirect && slugs.includes(redirect.to))) {
+            errors.push(`oeis/${entry}/${file} links notes/${slug}.html, which is neither a note nor a redirect to one`);
+          }
+        }
+      });
+  });
+
+  Object.entries(NOTE_REDIRECTS).forEach(([from, { sections = {} }]) => {
+    Object.keys(sections).forEach(id => {
+      const target = resolveRedirect(from, id).split('.html')[0];
+
+      if (!slugs.includes(target)) {
+        errors.push(`notes/${from}.html#${id} redirects to ${target}.html, which is no note`);
+      }
+    });
+  });
+
+  return errors;
+}
+
 function runCheck(name, check) {
   process.stdout.write(`Checking ${name}... `);
   const errors = check();
@@ -114,6 +175,8 @@ function __main__() {
     runCheck('the description of package.json against CITATION.cff', checkPackage),
     runCheck('that package.json is private', checkPrivate),
     runCheck('the OEIS keywords against oeis/', checkKeywords),
+    runCheck('the notes against the site menu', checkSiteMenu),
+    runCheck('the links of oeis/ to the notes and the redirects', checkOeisLinks),
   ].every(Boolean);
 
   if (passed) {
