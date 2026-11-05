@@ -8,16 +8,16 @@ The notebooks are grouped as the site menu groups them: the notes of each kind o
 
 - [Research](00-research.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/research.html)): the king's graph paper in brief, with its results read from `research/king-entropy/data/` and the asymptotics of A239273 checked against the exact terms.
 - Dominoes:
-  - [Rectangles](dominoes/01-rectangle.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/rectangle.html)): domino tilings of the 2n × 2n board, A004003, by three methods, the resultant, numbering, sampling by coupling from the past and the running time.
-  - [Cylinders](dominoes/02-cylinder.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinder.html)): domino tilings of cylinders and the OEIS entry of every circumference up to 8.
-  - [Tori](dominoes/03-torus.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/torus.html)): domino tilings of tori and A335586.
+  - [Rectangles](dominoes/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/rectangles.html)): domino tilings of the 2n × 2n board, A004003, by three methods, the resultant, numbering, sampling by coupling from the past and the running time.
+  - [Cylinders](dominoes/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html)): domino tilings of cylinders and the OEIS entry of every circumference up to 8.
+  - [Tori](dominoes/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/tori.html)): domino tilings of tori and A335586.
 - Domicules:
-  - [Rectangles](domicules/01-rectangle.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangle.html)): domicule tilings of the 2n × 2n board, A239273, up to 20 × 20, the modular solver and the Markov chain.
-  - [Cylinders](domicules/02-cylinder.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinder.html)): domicule tilings of cylinders, the king's graph on the cylinder.
-  - [Tori](domicules/03-torus.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/torus.html)): domicule tilings of tori, A401670, the torus count of three lattices over $e^{sL^2}$ and the seam sign.
-  - [Diagonal pieces](domicules/04-diagonals.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonals.html)): domicule tilings of the 2n × 2n board by the number of diagonal pieces, A401673.
+  - [Rectangles](domicules/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html)): domicule tilings of the 2n × 2n board, A239273, up to 20 × 20, the modular solver and the Markov chain.
+  - [Cylinders](domicules/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html)): domicule tilings of cylinders, the king's graph on the cylinder.
+  - [Tori](domicules/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html)): domicule tilings of tori, A401670, the torus count of three lattices over $e^{sL^2}$ and the seam sign.
+  - [Diagonal pieces](domicules/04-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html)): domicule tilings of the 2n × 2n board by the number of diagonal pieces, A401673.
 - Triangular lattice:
-  - [Cylinders](triangular/01-cylinder.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular/cylinder.html)): the triangular lattice on cylinders, for comparison.
-  - [Tori](triangular/02-torus.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular/torus.html)): the triangular lattice on 2n × 2n tori, for comparison.
+  - [Cylinders](triangular-lattice/01-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html)): the triangular lattice on cylinders, for comparison.
+  - [Tori](triangular-lattice/02-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori.html)): the triangular lattice on 2n × 2n tori, for comparison.
 
-The pages of the old notes still answer and send the reader on: `method.html` and `dominoes.html` to Dominoes ▸ Rectangles, `domicules.html` to Domicules ▸ Rectangles, `cylinders.html` to Domicules ▸ Cylinders, `tori.html` and `torus.html` to Domicules ▸ Tori, `diagonals.html` to Diagonal pieces. The OEIS drafts of A401670 and A401673 link to `torus.html` and `diagonals.html`.
+The pages of the old notes still answer and send the reader on: `method.html` and `dominoes.html` to Dominoes ▸ Rectangles, `domicules.html` to Domicules ▸ Rectangles, `cylinders.html` to Domicules ▸ Cylinders, `tori.html` and `torus.html` to Domicules ▸ Tori, `diagonals.html` to Diagonal pieces. The OEIS drafts of A401670 and A401673 link to `torus.html` and `diagonals.html`. The singular pages of 5 November 2026, such as `dominoes/rectangle.html`, `domicules/torus.html` and `triangular/cylinder.html`, send the reader to the plural ones.

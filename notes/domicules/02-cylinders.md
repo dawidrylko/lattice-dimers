@@ -1,6 +1,6 @@
 # Domicules on cylinders
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinder.html) has the results. It counts the domicule tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom; they are the perfect matchings of the king's graph on the cylinder. The same boards are counted with [dominoes](../dominoes/02-cylinder.md) and on the [triangular lattice](../triangular/01-cylinder.md); the [rectangles notebook](01-rectangle.md) counts domicules on boards with no glued edge.
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html) has the results. It counts the domicule tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom; they are the perfect matchings of the king's graph on the cylinder. The same boards are counted with [dominoes](../dominoes/02-cylinders.md) and on the [triangular lattice](../triangular-lattice/01-cylinders.md); the [rectangles notebook](01-rectangles.md) counts domicules on boards with no glued edge.
 
 ## The problem
 
@@ -23,7 +23,7 @@ Circumference 2 has multiple edges, because on a ring of two cells a cell meets 
 
 ## Numbering
 
-The gallery numbers the tilings of the cylinders up to $10 \times 10$ with the cell-by-cell scan of the modular solver, as it numbers the [tilings of a rectangle](01-rectangle.md#transfer-by-cells). The Random button draws a uniformly random number, so the sample is exact. The [Diagonal pieces](04-diagonals.md#numbering-by-diagonal-pieces) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
+The gallery numbers the tilings of the cylinders up to $10 \times 10$ with the cell-by-cell scan of the modular solver, as it numbers the [tilings of a rectangle](01-rectangles.md#transfer-by-cells). The Random button draws a uniformly random number, so the sample is exact. The [Diagonal pieces](04-diagonal-pieces.md#numbering-by-diagonal-pieces) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
 
 ## The counts
 

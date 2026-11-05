@@ -77,32 +77,41 @@ const CONFIRMATION_BOARDS = ['10x10-diagonal-torus?diagonals=20'];
 const SAMPLE_BOARDS = ['18x18', '16x16-diagonal', '20x20'];
 const NOTES = [
   { slug: 'research', cells: 2 },
-  { slug: 'dominoes/rectangle', cells: 7, figures: 1, group: 'Dominoes' },
-  { slug: 'dominoes/cylinder', cells: 4, figures: 1, group: 'Dominoes' },
-  { slug: 'dominoes/torus', cells: 3, figures: 1, group: 'Dominoes' },
-  { slug: 'domicules/rectangle', cells: 9, figures: 2, group: 'Domicules' },
-  { slug: 'domicules/cylinder', cells: 4, figures: 1, group: 'Domicules' },
-  { slug: 'domicules/torus', cells: 7, figures: 1, group: 'Domicules' },
-  { slug: 'domicules/diagonals', cells: 6, figures: 1, group: 'Domicules' },
-  { slug: 'triangular/cylinder', cells: 2, group: 'Triangular lattice' },
-  { slug: 'triangular/torus', cells: 1, group: 'Triangular lattice' },
+  { slug: 'dominoes/rectangles', cells: 7, figures: 1, group: 'Dominoes' },
+  { slug: 'dominoes/cylinders', cells: 4, figures: 1, group: 'Dominoes' },
+  { slug: 'dominoes/tori', cells: 3, figures: 1, group: 'Dominoes' },
+  { slug: 'domicules/rectangles', cells: 9, figures: 2, group: 'Domicules' },
+  { slug: 'domicules/cylinders', cells: 4, figures: 1, group: 'Domicules' },
+  { slug: 'domicules/tori', cells: 7, figures: 1, group: 'Domicules' },
+  { slug: 'domicules/diagonal-pieces', cells: 6, figures: 1, group: 'Domicules' },
+  { slug: 'triangular-lattice/cylinders', cells: 2, group: 'Triangular lattice' },
+  { slug: 'triangular-lattice/tori', cells: 1, group: 'Triangular lattice' },
 ];
 const NOTE_REDIRECTS = [
-  ['a004003', 'dominoes/rectangle'],
-  ['a239273', 'domicules/rectangle'],
-  ['dominoes', 'dominoes/rectangle'],
-  ['domicules', 'domicules/rectangle'],
-  ['method', 'dominoes/rectangle'],
-  ['cylinders', 'domicules/cylinder'],
-  ['tori', 'domicules/torus'],
-  ['torus', 'domicules/torus'],
-  ['diagonals', 'domicules/diagonals'],
+  ['a004003', 'dominoes/rectangles'],
+  ['a239273', 'domicules/rectangles'],
+  ['dominoes', 'dominoes/rectangles'],
+  ['domicules', 'domicules/rectangles'],
+  ['method', 'dominoes/rectangles'],
+  ['cylinders', 'domicules/cylinders'],
+  ['tori', 'domicules/tori'],
+  ['torus', 'domicules/tori'],
+  ['diagonals', 'domicules/diagonal-pieces'],
+  ['dominoes/rectangle', 'dominoes/rectangles'],
+  ['dominoes/cylinder', 'dominoes/cylinders'],
+  ['dominoes/torus', 'dominoes/tori'],
+  ['domicules/rectangle', 'domicules/rectangles'],
+  ['domicules/cylinder', 'domicules/cylinders'],
+  ['domicules/torus', 'domicules/tori'],
+  ['domicules/diagonals', 'domicules/diagonal-pieces'],
+  ['triangular/cylinder', 'triangular-lattice/cylinders'],
+  ['triangular/torus', 'triangular-lattice/tori'],
 ];
 const MOVED_SECTIONS = [
-  ['method', 'sampling', 'dominoes/rectangle', 'sampling-with-coupling-from-the-past'],
-  ['method', 'transfer-by-cells', 'domicules/rectangle', 'transfer-by-cells'],
-  ['cylinders', 'the-triangular-lattice', 'triangular/cylinder', 'the-counts'],
-  ['torus', 'the-king-s-graph-on-the-2n-2n-torus-a401670', 'domicules/torus', 'the-2n-2n-torus-a401670'],
+  ['method', 'sampling', 'dominoes/rectangles', 'sampling-with-coupling-from-the-past'],
+  ['method', 'transfer-by-cells', 'domicules/rectangles', 'transfer-by-cells'],
+  ['cylinders', 'the-triangular-lattice', 'triangular-lattice/cylinders', 'the-counts'],
+  ['torus', 'the-king-s-graph-on-the-2n-2n-torus-a401670', 'domicules/tori', 'the-2n-2n-torus-a401670'],
 ];
 const MENU_GROUPS = ['Dominoes', 'Domicules', 'Triangular lattice'];
 const NOTE_FAILURES = ['DIFFERS FROM OEIS'];
@@ -1078,6 +1087,12 @@ const READ_CHROME = `(() => {
       .join(' '),
     current: nav.filter(link => link.getAttribute('aria-current') === 'page').map(link => link.href),
     marked: document.querySelectorAll('[aria-current="page"]').length,
+    misnamed: header ? [...header.querySelectorAll('nav a')].filter(link => link.textContent.trim() !== 'Home').map(link => {
+      const name = text => text.trim().toLowerCase().replace(/\\s+/g, '-');
+      const group = link.closest('details');
+      const expected = [group && name(group.querySelector('summary').textContent), name(link.textContent)].filter(Boolean).join('/');
+      return new URL(link.href).pathname.replace(/^.*\\/notes\\//, '').replace(/\\.html$/, '') === expected ? '' : link.getAttribute('href') + ' for ' + expected;
+    }).filter(Boolean) : [],
     groups: header ? [...header.querySelectorAll('summary')].map(summary => summary.textContent.trim()).join(', ') : '',
     currentGroups: header ? [...header.querySelectorAll('summary[data-current][aria-current="true"]')].map(summary => summary.textContent.trim()) : [],
     linkGroup: (() => {
@@ -1210,6 +1225,10 @@ async function checkChrome(page, baseUrl, width) {
 
   if (home.current.join() !== homeUrl || home.marked !== 1 || home.currentGroups.length) {
     problems.push(`the main page marks ${home.current.join() || 'no link'} and ${home.marked} elements as current, and the groups ${home.currentGroups.join(', ') || 'none'}`);
+  }
+
+  if (home.misnamed.length) {
+    problems.push(`menu entries whose address is not their label: ${home.misnamed.join(', ')}`);
   }
 
   if (home.groups !== MENU_GROUPS.join(', ')) {
@@ -1543,14 +1562,14 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     return results;
   })()`);
   const sections = {
-    'domino-benchmark Formula': 'notes/dominoes/rectangle.html#the-closed-form',
-    'domino-benchmark BigInt': 'notes/dominoes/rectangle.html#transfer-by-rows',
-    'domicule-benchmark Modular': 'notes/domicules/rectangle.html#counting-modulo-primes',
-    'domicule-benchmark BigInt': 'notes/domicules/rectangle.html#transfer-by-cells',
-    'domino-cylinder-benchmark': 'notes/dominoes/cylinder.html#how-the-counts-are-made',
-    'domino-torus-benchmark': 'notes/dominoes/torus.html#how-the-counts-are-made',
-    'cylinder-benchmark': 'notes/domicules/cylinder.html#how-the-counts-are-made',
-    'torus-benchmark': 'notes/domicules/torus.html#how-the-counts-are-made',
+    'domino-benchmark Formula': 'notes/dominoes/rectangles.html#the-closed-form',
+    'domino-benchmark BigInt': 'notes/dominoes/rectangles.html#transfer-by-rows',
+    'domicule-benchmark Modular': 'notes/domicules/rectangles.html#counting-modulo-primes',
+    'domicule-benchmark BigInt': 'notes/domicules/rectangles.html#transfer-by-cells',
+    'domino-cylinder-benchmark': 'notes/dominoes/cylinders.html#how-the-counts-are-made',
+    'domino-torus-benchmark': 'notes/dominoes/tori.html#how-the-counts-are-made',
+    'cylinder-benchmark': 'notes/domicules/cylinders.html#how-the-counts-are-made',
+    'torus-benchmark': 'notes/domicules/tori.html#how-the-counts-are-made',
   };
   const expected = label => sections[label.replace(/, .*/, '')] || sections[label.split(' ')[0]];
   const wrong = headers.filter(({ label, href, problem }) => problem || href !== expected(label));

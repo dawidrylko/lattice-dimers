@@ -101,27 +101,27 @@ const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/m
 const COMPUTED = 'every output on this page was produced during that build from the files of this repository';
 const NOTE_PROVENANCE = {
   research: 'every output on this page was read from the committed research data, checked or computed during that build.',
-  'dominoes/rectangle': `${COMPUTED}; the running times come from the benchmark run the page names.`,
-  'dominoes/cylinder': `${COMPUTED}; the running times come from the benchmark run the page names.`,
-  'dominoes/torus': `${COMPUTED}; the running times come from the benchmark run the page names.`,
-  'domicules/rectangle': `${COMPUTED}; the running times come from the benchmark run the page names.`,
-  'domicules/cylinder': `${COMPUTED}; the running times come from the benchmark run the page names.`,
-  'domicules/torus': `${COMPUTED}; the boards the solver column marks as spec/cases/ are stored counts, the entropies and the decay length ξ come from research/king-entropy/, and the running times from the benchmark run the page names.`,
-  'domicules/diagonals': `${COMPUTED}; the rows the solver column marks as spec/cases/ are stored counts, which the build checked, and the running times come from the benchmark run the page names.`,
-  'triangular/cylinder': `${COMPUTED}.`,
-  'triangular/torus': `${COMPUTED}.`,
+  'dominoes/rectangles': `${COMPUTED}; the running times come from the benchmark run the page names.`,
+  'dominoes/cylinders': `${COMPUTED}; the running times come from the benchmark run the page names.`,
+  'dominoes/tori': `${COMPUTED}; the running times come from the benchmark run the page names.`,
+  'domicules/rectangles': `${COMPUTED}; the running times come from the benchmark run the page names.`,
+  'domicules/cylinders': `${COMPUTED}; the running times come from the benchmark run the page names.`,
+  'domicules/tori': `${COMPUTED}; the boards the solver column marks as spec/cases/ are stored counts, the entropies and the decay length ξ come from research/king-entropy/, and the running times from the benchmark run the page names.`,
+  'domicules/diagonal-pieces': `${COMPUTED}; the rows the solver column marks as spec/cases/ are stored counts, which the build checked, and the running times come from the benchmark run the page names.`,
+  'triangular-lattice/cylinders': `${COMPUTED}.`,
+  'triangular-lattice/tori': `${COMPUTED}.`,
 };
 const NOTE_SUMMARIES = {
   research: "The entropy per site of the king's graph dimers: an estimate with error bar 6·10⁻¹⁶, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
-  'dominoes/rectangle': 'Notebook: domino tilings of the 2n × 2n board (A004003) by three methods, how the gallery numbers and samples them, and how every count is checked.',
-  'dominoes/cylinder': 'Notebook: domino tilings of cylinders, checked against the OEIS entries of every circumference up to 8.',
-  'dominoes/torus': 'Notebook: domino tilings of tori, the 2n × 2n torus (A335586) by two solvers.',
-  'domicules/rectangle': 'Notebook: domicule tilings of the 2n × 2n board (A239273) up to 20 × 20, the modular solver, the Markov chain and how every count is checked.',
-  'domicules/cylinder': "Notebook: domicule tilings of cylinders, the perfect matchings of the king's graph on the cylinder.",
-  'domicules/torus': "Notebook: domicule tilings of tori (A401670); the king's graph torus count over e^(sL²) tends to 2, compared with two other lattices.",
-  'domicules/diagonals': 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces (A401673), up to 20 × 20.',
-  'triangular/cylinder': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
-  'triangular/torus': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
+  'dominoes/rectangles': 'Notebook: domino tilings of the 2n × 2n board (A004003) by three methods, how the gallery numbers and samples them, and how every count is checked.',
+  'dominoes/cylinders': 'Notebook: domino tilings of cylinders, checked against the OEIS entries of every circumference up to 8.',
+  'dominoes/tori': 'Notebook: domino tilings of tori, the 2n × 2n torus (A335586) by two solvers.',
+  'domicules/rectangles': 'Notebook: domicule tilings of the 2n × 2n board (A239273) up to 20 × 20, the modular solver, the Markov chain and how every count is checked.',
+  'domicules/cylinders': "Notebook: domicule tilings of cylinders, the perfect matchings of the king's graph on the cylinder.",
+  'domicules/tori': "Notebook: domicule tilings of tori (A401670); the king's graph torus count over e^(sL²) tends to 2, compared with two other lattices.",
+  'domicules/diagonal-pieces': 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces (A401673), up to 20 × 20.',
+  'triangular-lattice/cylinders': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
+  'triangular-lattice/tori': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
 };
 
 function countTilings(board) {
@@ -507,13 +507,15 @@ function buildJsonLd() {
 function writeNoteRedirects(notes) {
   Object.entries(NOTE_REDIRECTS).forEach(([from, { to, sections = {} }]) => {
     const url = `${SITE_URL}notes/${to}.html`;
-    const moved = Object.fromEntries(Object.keys(sections).map(id => [id, resolveRedirect(from, id)]));
+    const up = '../'.repeat(from.split('/').length - 1);
+    const moved = Object.fromEntries(Object.keys(sections).map(id => [id, `${up}${resolveRedirect(from, id)}`]));
 
     if (!notes.some(({ slug }) => slug === to) || notes.some(({ slug }) => slug === from)) {
       throw new Error(`the redirect from ${from}.html to ${to}.html leads to no note or hides one`);
     }
 
-    Object.entries(moved).forEach(([id, target]) => {
+    Object.keys(sections).forEach(id => {
+      const target = resolveRedirect(from, id);
       const [page, fragment] = target.split('#');
       const file = path.join(OUTPUT_DIRECTORY, 'notes', page);
 
@@ -522,6 +524,7 @@ function writeNoteRedirects(notes) {
       }
     });
 
+    fs.mkdirSync(path.dirname(path.join(OUTPUT_DIRECTORY, 'notes', `${from}.html`)), { recursive: true });
     fs.writeFileSync(
       path.join(OUTPUT_DIRECTORY, 'notes', `${from}.html`),
       [
@@ -532,10 +535,10 @@ function writeNoteRedirects(notes) {
         `<title>Moved to ${to}.html</title>`,
         `<link rel="canonical" href="${url}">`,
         '<meta name="robots" content="noindex">',
-        `<meta http-equiv="refresh" content="0; url=${to}.html">`,
-        `<script>const moved = ${JSON.stringify(moved)}; const id = location.hash.slice(1); location.replace(Object.hasOwn(moved, id) ? moved[id] : '${to}.html' + location.hash);</script>`,
+        `<meta http-equiv="refresh" content="0; url=${up}${to}.html">`,
+        `<script>const moved = ${JSON.stringify(moved)}; const id = location.hash.slice(1); location.replace(Object.hasOwn(moved, id) ? moved[id] : '${up}${to}.html' + location.hash);</script>`,
         '</head>',
-        `<body><p>This page moved to <a href="${to}.html">${url}</a>.</p></body>`,
+        `<body><p>This page moved to <a href="${up}${to}.html">${url}</a>.</p></body>`,
         '</html>',
         '',
       ].join('\n'),
@@ -585,6 +588,13 @@ async function buildNotes(notes, context) {
   const directory = path.join(OUTPUT_DIRECTORY, 'notes');
   const today = new Date().toISOString().slice(0, 10);
   const rendered = [];
+  const slugs = notes.map(({ slug }) => slug).sort().join();
+
+  [['NOTE_SUMMARIES', NOTE_SUMMARIES], ['NOTE_PROVENANCE', NOTE_PROVENANCE]].forEach(([name, map]) => {
+    if (Object.keys(map).sort().join() !== slugs) {
+      throw new Error(`${name} names ${Object.keys(map).sort().join(', ')} and the notes are ${slugs}`);
+    }
+  });
 
   fs.mkdirSync(directory, { recursive: true });
 

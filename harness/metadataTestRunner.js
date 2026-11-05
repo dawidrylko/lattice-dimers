@@ -107,6 +107,18 @@ function checkSiteMenu() {
     }
   });
 
+  const name = text => text.toLowerCase().replace(/\s+/g, '-');
+
+  NAV.forEach(entry =>
+    (entry.items || [entry]).forEach(({ slug, label }) => {
+      const expected = [entry.items && name(entry.label), name(label)].filter(Boolean).join('/');
+
+      if (slug !== expected) {
+        errors.push(`the menu entry ${label} opens ${slug}.html instead of ${expected}.html`);
+      }
+    }),
+  );
+
   if ([...slugs].sort().join() !== [...listed].sort().join()) {
     errors.push(`the notes are ${slugs.join(', ')} and the menu lists ${listed.join(', ')}`);
   }
