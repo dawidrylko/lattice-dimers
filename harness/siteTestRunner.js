@@ -32,6 +32,9 @@ const CONTENT_TYPES = {
   '.xml': 'application/xml',
 };
 const VIEWPORT_HEIGHT = 900;
+const MOBILE_TABLE_WIDTH = 720;
+const LANGUAGE_COLUMNS = ['Board', 'Tilings', 'BigInt, JavaScript', 'Modular, Rust', 'Modular, Python', 'Modular, JavaScript', 'Runs'];
+const LANGUAGE_ICONS = 'BigInt #icon-javascript | Modular #icon-rust | Modular #icon-python | Modular #icon-javascript';
 const WAIT_TIMEOUT = 20000;
 const COMMAND_TIMEOUT = 30000;
 const LAUNCH_TIMEOUT = 30000;
@@ -331,6 +334,21 @@ async function loadSite(page, baseUrl, width, hash) {
     `location.search === '?${run}' && document.readyState === 'complete' && typeof DATA !== 'undefined'`,
     'the page',
   );
+}
+
+async function accessibleNames(page, selector) {
+  const { root } = await page.send('DOM.getDocument', { depth: 0 });
+  const { nodeIds } = await page.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector });
+  const names = [];
+
+  for (const nodeId of nodeIds) {
+    const { nodes } = await page.send('Accessibility.getPartialAXTree', { nodeId, fetchRelatives: false });
+    const name = nodes[0].name ? nodes[0].name.value : '';
+    const description = nodes[0].description ? nodes[0].description.value : '';
+    names.push(description && description !== name ? `${name} (${description})` : name);
+  }
+
+  return names;
 }
 
 async function checkSheets(page, baseUrl, width) {
@@ -1144,34 +1162,63 @@ async function checkBenchmark(page, baseUrl, width) {
     problems.push(`the domino benchmark has the columns ${dominoColumns.headers} and ${dominoColumns.cells} rows without five cells`);
   }
 
-  const languageColumns = await page.evaluate(`['cylinder-benchmark', 'torus-benchmark'].map(id => {
-    const group = document.getElementById(id).closest('.bench-group');
-    const hidden = group.hidden;
-    group.hidden = false;
-    const result = {
-      id,
-      icons: [...document.querySelectorAll('#' + id + ' thead th')].filter(th => th.querySelector('svg.lang use')).map(th => th.title).join(),
-      labels: [...document.querySelectorAll('#' + id + '-rows tr')].map(row => [...row.cells].map(cell => cell.dataset.label).join()),
-      split: [...document.querySelectorAll('#' + id + '-rows tr')].filter(row => new Set([...row.cells].slice(2, 6).map(cell => Math.round(cell.getBoundingClientRect().top))).size > 1).length,
-      wrapped: [...document.querySelectorAll('#' + id + '-rows tr')].filter(row => [...row.cells].slice(2, 6).some(cell => cell.getBoundingClientRect().height > row.cells[0].getBoundingClientRect().height + 1)).length,
-    };
-    group.hidden = hidden;
-    return result;
-  })`);
+  for (const [group, id] of [['cylinders', 'cylinder-benchmark'], ['tori', 'torus-benchmark']]) {
+    await loadSite(page, baseUrl, width, `benchmark/${group}`);
+    await page.waitFor(`document.querySelectorAll('#${id}-rows tr').length > 0`, `the ${group} rows`);
+    await page.settle();
+    const columns = await page.evaluate(`(() => {
+      const headers = [...document.querySelectorAll('#${id} thead th')].slice(2, -1);
+      const rows = [...document.querySelectorAll('#${id}-rows tr')];
+      const shown = icon => icon && icon.getAttribute('aria-hidden') === 'true' && icon.getBoundingClientRect().width > 0 ? icon.querySelector('use').getAttribute('href') : 'no icon';
+      return {
+        headerRows: document.querySelectorAll('#${id} thead tr').length,
+        titles: headers.map(th => th.title).join(' | '),
+        headers: headers.map(th => th.textContent.trim() + ' ' + shown(th.querySelector('svg.lang'))).join(' | '),
+        cards: [...rows[0].cells].slice(2, -1).map(cell => (cell.dataset.text || '') + ' ' + shown(cell.querySelector(':scope > svg.lang'))).join(' | '),
+        drifted: rows.flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => {
+          const icon = cell.querySelector(':scope > svg.lang');
+          const first = rows[0].cells[i + 2].querySelector(':scope > svg.lang');
+          const offset = (svg, td) => Math.round(svg.getBoundingClientRect().left - td.getBoundingClientRect().left);
+          return icon && first && offset(icon, cell) !== offset(first, rows[0].cells[i + 2]) ? row.cells[0].textContent + ' ' + cell.dataset.label : null;
+        })).filter(Boolean),
+        labels: rows.map(row => [...row.cells].map(cell => cell.dataset.label).join(' | ')),
+        split: rows.filter(row => new Set([...row.cells].slice(2, 6).map(cell => Math.round(cell.getBoundingClientRect().top))).size > 1).length,
+        wrapped: rows.filter(row => [...row.cells].slice(2, 6).some(cell => cell.getBoundingClientRect().height > row.cells[0].getBoundingClientRect().height + 1)).length,
+      };
+    })()`);
+    const names = await accessibleNames(page, `#${id} thead th`);
+    const cells = await accessibleNames(page, `#${id}-rows tr:first-child td`);
+    const solvers = names.slice(2, -1);
+    const wrong = columns.labels.filter(row => row !== names.join(' | '));
+    const cards = width <= MOBILE_TABLE_WIDTH;
+    const unnamed = cells.slice(2, -1).filter((name, i) => (cards ? !name.startsWith(`${solvers[i]} `) : name.includes(solvers[i])));
 
-  for (const { id, icons, labels, split, wrapped } of languageColumns) {
-    const wrong = labels.filter(row => row !== 'Board,Tilings,BigInt,Rust,Python,JavaScript,Runs');
-
-    if (icons !== 'Modular, Rust,Modular, Python,Modular, JavaScript' || !labels.length || wrong.length) {
-      problems.push(`#${id} has the language headers ${icons || 'none'} and ${wrong.length} of ${labels.length} rows without one cell per language`);
+    if (columns.headerRows !== 1 || names.join(' | ') !== LANGUAGE_COLUMNS.join(' | ') || columns.titles !== solvers.join(' | ')) {
+      problems.push(`#${id} has ${columns.headerRows} header rows named ${names.join(' | ')} with the titles ${columns.titles}`);
     }
 
-    if (split) {
-      problems.push(`#${id} spreads the four times of ${split} rows over more than one line`);
+    if (columns.headers !== LANGUAGE_ICONS) {
+      problems.push(`#${id} shows the solver headers ${columns.headers}`);
     }
 
-    if (wrapped) {
-      problems.push(`#${id} wraps a time onto a second line in ${wrapped} rows`);
+    if (cards && columns.cards !== LANGUAGE_ICONS) {
+      problems.push(`#${id} labels the solver cards ${columns.cards}`);
+    }
+
+    if (columns.drifted.length) {
+      problems.push(`#${id} moves the card icon away from its label in ${columns.drifted.join(', ')}`);
+    }
+
+    if (!columns.labels.length || wrong.length || unnamed.length) {
+      problems.push(`#${id} has ${wrong.length} of ${columns.labels.length} rows labelled unlike the headers, and the cells ${unnamed.join(', ')} named unlike their cards`);
+    }
+
+    if (columns.split) {
+      problems.push(`#${id} spreads the four times of ${columns.split} rows over more than one line`);
+    }
+
+    if (columns.wrapped) {
+      problems.push(`#${id} wraps a time onto a second line in ${columns.wrapped} rows`);
     }
   }
 
