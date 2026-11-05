@@ -1,0 +1,104 @@
+# Domicules on cylinders
+
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinder.html) has the results. It counts the domicule tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom; they are the perfect matchings of the king's graph on the cylinder. The same boards are counted with [dominoes](../dominoes/02-cylinder.md) and on the [triangular lattice](../triangular/01-cylinder.md); the [rectangles notebook](01-rectangle.md) counts domicules on boards with no glued edge.
+
+## The problem
+
+On a cylinder the left and right edges of the board are glued, so a domicule may cross the seam between the last and the first column. The drawings mark the glued edges and draw a domicule that crosses the seam cut, with one half on each side. They show tilings of the cylinder of circumference 4 and height 4, spread over the numbering.
+
+```js run
+const { drawTilings } = require('./site/notes.js');
+const { total } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', surface: 'cylinder', ranks: [0] });
+const ranks = [0, 1, 2, 3].map(i => Math.floor((Number(total) * i) / 4));
+const { svgs } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', surface: 'cylinder', ranks });
+
+figure(svgs, `4 of the ${total} domicule tilings of the cylinder of circumference 4 and height 4.`);
+```
+
+## How the counts are made
+
+Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. [`periodicTilingSolver-Modular.js`](../../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell, from the empty state to the empty state. Its state holds the next $w + 2$ cells and, with $w \ge 3$, one more bit: a domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there. The solver counts modulo primes below $2^{31}$, the Chinese remainder theorem rebuilds the count, and one more prime checks it. The cell below compares the last column of the table, $h = 8$, with the count of the modular solver.
+
+Circumference 2 has multiple edges, because on a ring of two cells a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate piece, so one row of two cells has 2 tilings. A row of odd circumference has an odd number of cells, so the counts vanish at odd heights.
+
+## Numbering
+
+The gallery numbers the tilings of the cylinders up to $10 \times 10$ with the cell-by-cell scan of the modular solver, as it numbers the [tilings of a rectangle](01-rectangle.md#transfer-by-cells). The Random button draws a uniformly random number, so the sample is exact. The [Diagonal pieces](04-diagonals.md#numbering-by-diagonal-pieces) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
+
+## The counts
+
+For fixed $w$ the counts grow like $\lambda_w^h$, with $\lambda_w$ the leading eigenvalue of the cylinder transfer matrix that [the paper](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf) extrapolates in $w$.
+
+```js run
+const { calculateTotalTilingCombinations } = require('./js/solvers/periodicTilingSolver-BigInt.js');
+const modular = require('./js/solvers/periodicTilingSolver-Modular.js');
+
+nb.heights = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+nb.widths = [2, 3, 4, 5, 6, 7, 8];
+nb.count = (w, h) => calculateTotalTilingCombinations({ rowCount: h, colCount: w, lattice: 'king' });
+
+for (const w of nb.widths) {
+  const check = await modular.calculateTotalTilingCombinations({ rowCount: 8, colCount: w, lattice: 'king' });
+
+  if (check !== nb.count(w, 8)) {
+    throw new Error(`the two solvers differ on the cylinder of circumference ${w} and height 8`);
+  }
+}
+
+table(
+  ['w \\ h', ...nb.heights.map(String)],
+  nb.widths.map(w => [String(w), ...nb.heights.map(h => String(nb.count(w, h)))]),
+);
+```
+
+## What the OEIS has
+
+The OEIS has the cylinders of circumference 2, [OEIS A002532](https://oeis.org/A002532), and those of height 2, [OEIS A062510](https://oeis.org/A062510), each shifted by one. The cell checks both against the table, with the terms of the entries as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
+
+```js run
+const terms = [0n, 1n];
+
+while (terms.length <= nb.heights.length) {
+  terms.push(2n * terms.at(-1) + 5n * terms.at(-2));
+}
+
+const row = terms.slice(1).map((term, h) => [h, term]).filter(([h, term]) => nb.count(2, h) !== term);
+
+if (row.length) {
+  throw new Error(`the cylinders of circumference 2 differ from A002532 at h = ${row.map(([h]) => h).join(', ')}`);
+}
+
+const column = nb.widths.filter(w => nb.count(w, 2) !== 2n ** BigInt(w + 1) + (w % 2 ? -1n : 1n));
+
+if (column.length) {
+  throw new Error(`the cylinders of height 2 differ from A062510 at w = ${column.join(', ')}`);
+}
+
+table(
+  ['board', 'OEIS', 'checked at'],
+  [
+    ['w = 2', 'A002532', `h = ${nb.heights.join(', ')}`],
+    ['h = 2', 'A062510', `w = ${nb.widths.join(', ')}`],
+  ],
+);
+```
+
+## Running time
+
+Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../../benchmarks/results).
+
+```js run
+const { formatTime } = nb.context;
+
+table(
+  ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt'],
+  nb.context.periodicBenchmark
+    .filter(r => r.surface === 'cylinder')
+    .map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.languages.rs), formatTime(r.languages.py), formatTime(r.modular), formatTime(r.bigint)]),
+);
+print(`Run: ${nb.context.benchmarkRun}`);
+```
+
+## Verification
+
+The `BigInt` solver agrees with the OEIS entries above and the modular solver with the `BigInt` one at $h = 8$, and `node harness/testRunner.js` runs the king's graph cylinders of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both of them.

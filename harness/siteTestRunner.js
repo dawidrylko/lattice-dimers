@@ -13,10 +13,6 @@ const MIN_HIT_CONTRAST = 4.5;
 const MIN_FIGURE_LABEL = 11;
 const FIGURE_NAME = /^(Domino|Domicule) tiling number \d+( with \d+ diagonal pieces?)? of a \d+ by \d+ (rectangle|cylinder|torus)$/;
 const MIN_SEAM_DISTANCE = 40;
-const ARCHIVES = [
-  ['benchmarks/results/2024-03', 'March 2024, up to 1,000 runs per board, machine not recorded'],
-  ['benchmarks/results/2024-04', 'April 2024, 100,000 runs per board, Intel(R) Core(TM) i7-8700'],
-];
 const CHROME_CANDIDATES = [
   '/usr/bin/google-chrome',
   '/usr/bin/chromium',
@@ -81,18 +77,34 @@ const CONFIRMATION_BOARDS = ['10x10-diagonal-torus?diagonals=20'];
 const SAMPLE_BOARDS = ['18x18', '16x16-diagonal', '20x20'];
 const NOTES = [
   { slug: 'research', cells: 2 },
-  { slug: 'method', cells: 0 },
-  { slug: 'dominoes', cells: 7, figures: 1 },
-  { slug: 'domicules', cells: 9, figures: 2 },
-  { slug: 'cylinders', cells: 6, figures: 2 },
-  { slug: 'tori', cells: 7, figures: 2 },
-  { slug: 'diagonals', cells: 6, figures: 1 },
+  { slug: 'dominoes/rectangle', cells: 7, figures: 1, group: 'Dominoes' },
+  { slug: 'dominoes/cylinder', cells: 4, figures: 1, group: 'Dominoes' },
+  { slug: 'dominoes/torus', cells: 3, figures: 1, group: 'Dominoes' },
+  { slug: 'domicules/rectangle', cells: 9, figures: 2, group: 'Domicules' },
+  { slug: 'domicules/cylinder', cells: 4, figures: 1, group: 'Domicules' },
+  { slug: 'domicules/torus', cells: 7, figures: 1, group: 'Domicules' },
+  { slug: 'domicules/diagonals', cells: 6, figures: 1, group: 'Domicules' },
+  { slug: 'triangular/cylinder', cells: 2, group: 'Triangular lattice' },
+  { slug: 'triangular/torus', cells: 1, group: 'Triangular lattice' },
 ];
 const NOTE_REDIRECTS = [
-  ['a004003', 'dominoes'],
-  ['a239273', 'domicules'],
-  ['torus', 'tori'],
+  ['a004003', 'dominoes/rectangle'],
+  ['a239273', 'domicules/rectangle'],
+  ['dominoes', 'dominoes/rectangle'],
+  ['domicules', 'domicules/rectangle'],
+  ['method', 'dominoes/rectangle'],
+  ['cylinders', 'domicules/cylinder'],
+  ['tori', 'domicules/torus'],
+  ['torus', 'domicules/torus'],
+  ['diagonals', 'domicules/diagonals'],
 ];
+const MOVED_SECTIONS = [
+  ['method', 'sampling', 'dominoes/rectangle', 'sampling-with-coupling-from-the-past'],
+  ['method', 'transfer-by-cells', 'domicules/rectangle', 'transfer-by-cells'],
+  ['cylinders', 'the-triangular-lattice', 'triangular/cylinder', 'the-counts'],
+  ['torus', 'the-king-s-graph-on-the-2n-2n-torus-a401670', 'domicules/torus', 'the-2n-2n-torus-a401670'],
+];
+const MENU_GROUPS = ['Dominoes', 'Domicules', 'Triangular lattice'];
 const NOTE_FAILURES = ['DIFFERS FROM OEIS'];
 const PAGE_CONTROLS = '#page-controls button, #page-controls input';
 const siteTestCases = [
@@ -129,6 +141,7 @@ const siteTestCases = [
   { width: 375, check: 'notes' },
   { width: 375, check: 'chrome' },
   { width: 1440, check: 'cells' },
+  { width: 375, check: 'cells' },
   { width: 1440, check: 'palette' },
   { width: 1440, check: 'links' },
   { width: 1440, check: 'integrity' },
@@ -1029,6 +1042,14 @@ async function checkNotes(page, baseUrl, width) {
     );
   }
 
+  for (const [from, id, to, fragment] of MOVED_SECTIONS) {
+    await page.send('Page.navigate', { url: `${baseUrl}/notes/${from}.html#${id}` });
+    await page.waitFor(
+      `location.pathname.endsWith('/notes/${to}.html') && location.hash === '#${fragment}' && document.readyState === 'complete' && Boolean(document.getElementById('${fragment}'))`,
+      `the move of the section ${from}.html#${id} to ${to}.html#${fragment}`,
+    );
+  }
+
   return problems;
 }
 
@@ -1051,13 +1072,126 @@ const READ_CHROME = `(() => {
     height: header ? Math.round(header.getBoundingClientRect().height) : 0,
     nav: nav.map(link => link.textContent.trim() + ' ' + link.href).join(' | '),
     navStyle: style(nav.find(link => !link.hasAttribute('aria-current'))),
-    navBoxes: nav.map(link => Math.round(link.getBoundingClientRect().left) + ',' + Math.round(link.getBoundingClientRect().top)).join(' '),
+    navBoxes: (header ? [...header.querySelectorAll('nav a, nav summary')] : [])
+      .filter(item => !item.closest('details:not([open]) .menu'))
+      .map(item => Math.round(item.getBoundingClientRect().left) + ',' + Math.round(item.getBoundingClientRect().top))
+      .join(' '),
     current: nav.filter(link => link.getAttribute('aria-current') === 'page').map(link => link.href),
+    marked: document.querySelectorAll('[aria-current="page"]').length,
+    groups: header ? [...header.querySelectorAll('summary')].map(summary => summary.textContent.trim()).join(', ') : '',
+    currentGroups: header ? [...header.querySelectorAll('summary[data-current][aria-current="true"]')].map(summary => summary.textContent.trim()) : [],
+    linkGroup: (() => {
+      const link = header && header.querySelector('nav [aria-current="page"]');
+      const group = link && link.closest('details');
+      return group ? group.querySelector('summary').textContent.trim() : '';
+    })(),
     back: header ? [...header.querySelectorAll('a')].some(link => link.textContent.includes('←')) : false,
     footer: footer ? [...footer.querySelectorAll('.site-links a')].map(link => link.textContent.trim() + ' ' + link.href).join(' | ') : '',
     footerStyle: footer && [style(footer), getComputedStyle(footer).borderTop, style(footer.lastElementChild), getComputedStyle(footer.lastElementChild).margin].join(' '),
   };
 })()`;
+
+const READ_MENUS = `(() => {
+  const header = document.querySelector('main > header');
+  const focused = document.activeElement;
+  return {
+    height: Math.round(header.getBoundingClientRect().height),
+    width: document.documentElement.clientWidth,
+    menus: [...header.querySelectorAll('nav details')].map(details => {
+      const summary = details.querySelector('summary').getBoundingClientRect();
+      const menu = details.querySelector('.menu').getBoundingClientRect();
+      const links = [...details.querySelectorAll('.menu a')];
+      const top = links.length && document.elementFromPoint(links[0].getBoundingClientRect().left + 2, links[0].getBoundingClientRect().top + links[0].getBoundingClientRect().height / 2);
+      return {
+        label: details.querySelector('summary').textContent.trim(),
+        open: details.open,
+        summary: [summary.left + summary.width / 2, summary.top + summary.height / 2],
+        left: menu.left,
+        right: menu.right,
+        onTop: Boolean(top && links[0].contains(top)),
+        shadow: getComputedStyle(details.querySelector('.menu')).boxShadow,
+        focus: details.contains(focused) ? focused.tagName + ' ' + focused.textContent.trim() : '',
+      };
+    }),
+  };
+})()`;
+
+async function pressKey(page, key, code, keyCode) {
+  const text = key === 'Enter' ? '\r' : undefined;
+
+  await page.send('Input.dispatchKeyEvent', { type: 'keyDown', key, code, windowsVirtualKeyCode: keyCode, ...(text && { text }) });
+  await page.send('Input.dispatchKeyEvent', { type: 'keyUp', key, code, windowsVirtualKeyCode: keyCode });
+}
+
+async function clickAt(page, [x, y]) {
+  for (const type of ['mousePressed', 'mouseReleased']) {
+    await page.send('Input.dispatchMouseEvent', { type, x, y, button: 'left', clickCount: 1 });
+  }
+}
+
+async function checkMenus(page, width) {
+  const problems = [];
+  const before = await page.evaluate(READ_MENUS);
+
+  if (before.menus.some(menu => menu.open)) {
+    problems.push(`at ${width} px a menu is open before anyone opens it`);
+  }
+
+  for (const [index, { label }] of before.menus.entries()) {
+    await page.evaluate(`document.querySelectorAll('main > header nav summary')[${index}].focus()`);
+    await pressKey(page, 'Enter', 'Enter', 13);
+    await page.settle();
+    const opened = await page.evaluate(READ_MENUS);
+    const menu = opened.menus[index];
+
+    if (!menu.open || opened.menus.filter(other => other.open).length !== 1) {
+      problems.push(`at ${width} px Enter on ${label} leaves ${opened.menus.filter(other => other.open).map(other => other.label).join(', ') || 'no menu'} open`);
+    }
+
+    if (menu.left < 0 || menu.right > opened.width || !menu.onTop) {
+      problems.push(`at ${width} px the ${label} menu spans ${Math.round(menu.left)} to ${Math.round(menu.right)} px of ${opened.width} or lies under the page`);
+    }
+
+    if (!/rgba?\(/.test(menu.shadow)) {
+      problems.push(`at ${width} px the ${label} menu casts no shadow over the page: ${menu.shadow}`);
+    }
+
+    if (opened.height !== before.height) {
+      problems.push(`at ${width} px opening ${label} moves the header from ${before.height} to ${opened.height} px`);
+    }
+
+    await pressKey(page, 'Tab', 'Tab', 9);
+    const tabbed = await page.evaluate(READ_MENUS);
+
+    if (!tabbed.menus[index].focus.startsWith('A ')) {
+      problems.push(`at ${width} px Tab from ${label} goes to ${tabbed.menus[index].focus || 'outside the menu'} instead of its first link`);
+    }
+
+    await pressKey(page, 'Escape', 'Escape', 27);
+    const closed = await page.evaluate(READ_MENUS);
+
+    if (closed.menus[index].open || closed.menus[index].focus !== `SUMMARY ${label}`) {
+      problems.push(`at ${width} px Escape leaves ${label} ${closed.menus[index].open ? 'open' : 'closed'} with the focus on ${closed.menus[index].focus || 'another element'}`);
+    }
+  }
+
+  await clickAt(page, before.menus[0].summary);
+  await clickAt(page, before.menus[1].summary);
+  const switched = await page.evaluate(READ_MENUS);
+
+  if (switched.menus.map(menu => menu.open).join() !== before.menus.map((menu, index) => index === 1).join()) {
+    problems.push(`at ${width} px clicking ${before.menus[0].label} then ${before.menus[1].label} leaves ${switched.menus.filter(menu => menu.open).map(menu => menu.label).join(', ') || 'no menu'} open`);
+  }
+
+  await clickAt(page, [Math.round(switched.width / 2), Math.round(before.height + 400)]);
+  const outside = await page.evaluate(READ_MENUS);
+
+  if (outside.menus.some(menu => menu.open)) {
+    problems.push(`at ${width} px a click outside leaves ${outside.menus.filter(menu => menu.open).map(menu => menu.label).join(', ')} open`);
+  }
+
+  return problems;
+}
 
 async function checkChrome(page, baseUrl, width) {
   const problems = [];
@@ -1074,17 +1208,27 @@ async function checkChrome(page, baseUrl, width) {
     problems.push(`the main page has ${home.headings} h1 and its site name is a ${home.brandTag}`);
   }
 
-  if (home.current.join() !== homeUrl) {
-    problems.push(`the main page marks ${home.current.join() || 'no link'} as current`);
+  if (home.current.join() !== homeUrl || home.marked !== 1 || home.currentGroups.length) {
+    problems.push(`the main page marks ${home.current.join() || 'no link'} and ${home.marked} elements as current, and the groups ${home.currentGroups.join(', ') || 'none'}`);
   }
 
-  for (const { slug } of NOTES) {
+  if (home.groups !== MENU_GROUPS.join(', ')) {
+    problems.push(`the menu groups are ${home.groups} instead of ${MENU_GROUPS.join(', ')}`);
+  }
+
+  problems.push(...(await checkMenus(page, width)));
+
+  for (const { slug, group = '' } of NOTES) {
     const run = `run=${Date.now()}`;
 
     await page.send('Page.navigate', { url: `${baseUrl}/notes/${slug}.html?${run}` });
     await page.waitFor(`location.search === '?${run}' && document.readyState === 'complete'`, `the ${slug} note`);
     await page.settle();
     const note = await page.evaluate(READ_CHROME);
+
+    if (note.marked !== 1 || note.linkGroup !== group || note.currentGroups.join() !== group) {
+      problems.push(`${slug} marks ${note.marked} elements as current, its link sits in ${note.linkGroup || 'no group'} and the marked groups are ${note.currentGroups.join(', ') || 'none'} instead of ${group || 'none'}`);
+    }
 
     ['brand', 'brandStyle', 'logo', 'height', 'nav', 'navStyle', 'navBoxes', 'footer', 'footerStyle'].forEach(key => {
       if (note[key] !== home[key]) {
@@ -1156,8 +1300,34 @@ async function checkBenchmark(page, baseUrl, width) {
             .map(row => row.cells[0].textContent),
         ),
         environment: section.querySelector('.environment').textContent,
+        titles: section.querySelectorAll('.bench-group h2, .bench-group h3').length,
+        older: section.textContent.split('benchmarks/results/').length !== 2 || /pnpm benchmark/.test(section.textContent),
+        rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
+        dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
+          const table = group.querySelector('table');
+          const bigint = [...table.tHead.rows[0].cells].findIndex(th => th.textContent.trim().startsWith('BigInt'));
+          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: i + 2 === bigint })));
+          const noted = [...group.querySelectorAll('.note')].some(note => note.textContent.startsWith('A dash under BigInt'));
+          return [
+            ...(cells.some(cell => cell.dash && !cell.bigint) ? [table.id + ' has a dash outside BigInt'] : []),
+            ...(cells.some(cell => cell.dash) !== noted ? [table.id + (noted ? ' explains dashes it does not show' : ' shows a dash it does not explain')] : []),
+          ];
+        }),
+        unnamed: wraps.filter(wrap => !wrap.querySelector('table').getAttribute('aria-label')).length,
       };
     })()`);
+
+    if (state.dashes.length) {
+      problems.push(`#${hash}: ${state.dashes.join(', ')}`);
+    }
+
+    if (state.older || state.rule !== 'none') {
+      problems.push(`#${hash} lists older benchmark runs or rules off the run note (${state.rule})`);
+    }
+
+    if (state.titles || state.unnamed) {
+      problems.push(`#${hash} shows ${state.titles} table headings and ${state.unnamed} tables without a name`);
+    }
 
     if (!state.shown || shown.shown !== view || shown.pressed !== view) {
       problems.push(`#${hash} shows ${shown.shown} with ${shown.pressed} pressed instead of ${view}`);
@@ -1171,7 +1341,7 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${hash} has no time for ${state.missing.join(', ')} and no rows in ${state.empty.join(', ')}`);
     }
 
-    if (!state.environment.startsWith('Measured with Node.js')) {
+    if (!/^Run on \d{4}-\d{2}-\d{2} on .+ with Node\.js /.test(state.environment)) {
       problems.push(`#${hash} has no environment`);
     }
   }
@@ -1344,6 +1514,53 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     }
   }
 
+  const headers = await page.evaluate(`(async () => {
+    const solvers = [...document.querySelectorAll('#benchmark table thead th')].filter(th => /^(Formula|Modular|BigInt)/.test(th.textContent.trim()));
+    const pages = {};
+    const results = [];
+
+    for (const th of solvers) {
+      const link = th.querySelector('a.solver');
+      const label = th.closest('table').id + ' ' + (th.getAttribute('aria-label') || th.textContent.trim());
+
+      if (!link) {
+        results.push({ label, problem: 'links nowhere' });
+        continue;
+      }
+
+      const url = new URL(link.href);
+      pages[url.pathname] = pages[url.pathname] || fetch(url.pathname).then(response => (response.ok ? response.text() : ''));
+      const found = new DOMParser().parseFromString(await pages[url.pathname], 'text/html').getElementById(url.hash.slice(1));
+      const shown = getComputedStyle(link).visibility === 'visible' && getComputedStyle(th.closest('thead')).clipPath === 'none';
+
+      results.push({
+        label,
+        href: link.getAttribute('href'),
+        problem: !found || !/^H[23]$/.test(found.tagName) ? 'links no section' : !th.getAttribute('aria-label') || th.getAttribute('aria-label') !== link.getAttribute('aria-label') ? 'names its header and link apart' : shown !== (link.tabIndex >= 0 && getComputedStyle(link).visibility === 'visible') ? 'can take the focus while hidden' : '',
+      });
+    }
+
+    return results;
+  })()`);
+  const sections = {
+    'domino-benchmark Formula': 'notes/dominoes/rectangle.html#the-closed-form',
+    'domino-benchmark BigInt': 'notes/dominoes/rectangle.html#transfer-by-rows',
+    'domicule-benchmark Modular': 'notes/domicules/rectangle.html#counting-modulo-primes',
+    'domicule-benchmark BigInt': 'notes/domicules/rectangle.html#transfer-by-cells',
+    'domino-cylinder-benchmark': 'notes/dominoes/cylinder.html#how-the-counts-are-made',
+    'domino-torus-benchmark': 'notes/dominoes/torus.html#how-the-counts-are-made',
+    'cylinder-benchmark': 'notes/domicules/cylinder.html#how-the-counts-are-made',
+    'torus-benchmark': 'notes/domicules/torus.html#how-the-counts-are-made',
+  };
+  const expected = label => sections[label.replace(/, .*/, '')] || sections[label.split(' ')[0]];
+  const wrong = headers.filter(({ label, href, problem }) => problem || href !== expected(label));
+
+  if (headers.length !== 22 || wrong.length) {
+    problems.push(
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 22 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+    );
+  }
+
   return problems;
 }
 
@@ -1464,9 +1681,6 @@ async function checkGeneratedText() {
   const chain = `a Markov chain of ${DOMICULE_SWEEPS.toLocaleString('en-US')} steps per cell`;
 
   return [
-    ...ARCHIVES.filter(([run, description]) => !text.includes(`${run} (${description}`)).map(
-      ([run, description]) => `the main page does not describe ${run} as "${description}"`,
-    ),
     ...(text.includes(chain) ? [] : [`the main page does not say "${chain}", the chain length of js/renderer`]),
   ];
 }

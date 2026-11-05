@@ -472,15 +472,28 @@ function formatTime(result) {
 }
 
 /**
- * Lists the notes in reading order: notes/NN-name.md is published as notes/name.html.
- * @returns {{ file: string, slug: string }[]} The notes.
+ * Lists the notes in reading order: the numbered files of notes/ first, then the numbered files of each
+ * group directory, groups in name order. A note's slug is its path without the numbers and the extension,
+ * so notes/dominoes/02-cylinder.md is published as notes/dominoes/cylinder.html.
+ * @returns {{ file: string, slug: string }[]} The notes, with paths relative to notes/.
  */
 function listNotes() {
-  return fs
-    .readdirSync(NOTES_DIRECTORY)
-    .filter(file => /^\d+-.+\.md$/.test(file))
-    .sort()
-    .map(file => ({ file, slug: file.replace(/^\d+-/, '').replace(/\.md$/, '') }));
+  const numbered = directory =>
+    fs
+      .readdirSync(path.join(NOTES_DIRECTORY, directory))
+      .filter(file => /^\d+-.+\.md$/.test(file))
+      .sort()
+      .map(file => path.posix.join(directory, file));
+  const groups = fs
+    .readdirSync(NOTES_DIRECTORY, { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name)
+    .sort();
+
+  return [...numbered(''), ...groups.flatMap(numbered)].map(file => ({
+    file,
+    slug: file.replace(/(^|\/)\d+-/, '$1').replace(/\.md$/, ''),
+  }));
 }
 
 module.exports = { renderNote, renderChart, listNotes, escapeHtml, drawTilings, formatTime, logCount, NOTES_DIRECTORY };
