@@ -924,23 +924,47 @@ async function checkLanding(page, baseUrl, width) {
   await loadSite(page, baseUrl, width, 'gallery/4x4/1');
   await page.settle();
   const state = await page.evaluate(`(() => ({
-    oeis: [...document.querySelectorAll('.intro a')].map(link => link.getAttribute('href')),
+    links: [...document.querySelectorAll('.intro a')].map(link => link.getAttribute('href')),
+    sections: document.querySelectorAll('ul.intro li').length,
+    text: [...document.querySelectorAll('.intro')].map(element => element.textContent).join(' '),
     leftovers: ['.sequences', 'nav.notes', 'math', '.formula'].filter(selector => document.querySelector(selector)),
     tabs: [...document.querySelectorAll('nav.tabs a')].map(link => link.dataset.tab),
   }))()`);
   const problems = [];
 
   const introLinks = [
-    'notes/research.html',
-    'papers/king-entropy.pdf',
-    'papers/king-entropy-log-convexity.pdf',
     'https://oeis.org/A004003',
     'https://oeis.org/A239273',
     'https://github.com/dawidrylko/lattice-dimers/tree/master/oeis',
+    'https://github.com/dawidrylko/lattice-dimers',
+    '#gallery',
+    '#benchmark',
+    'notes/dominoes/rectangles.html',
+    'notes/domicules/rectangles.html',
+    'notes/triangular-lattice/cylinders.html',
+    'notes/research.html',
+    'papers/king-entropy.pdf',
+    'papers/king-entropy-log-convexity.pdf',
   ];
 
-  if (state.oeis.join() !== introLinks.join()) {
-    problems.push(`intro links ${state.oeis.join(', ')}`);
+  if (state.links.join() !== introLinks.join()) {
+    problems.push(`intro links ${state.links.join(', ')}`);
+  }
+
+  if (state.sections !== 4) {
+    problems.push(`intro lists ${state.sections} sections`);
+  }
+
+  if (state.text.includes('__') || !state.text.includes('12,988,816') || !state.text.includes('3,263,262,629,905')) {
+    problems.push('intro lacks the chessboard counts');
+  }
+
+  await page.evaluate(`document.querySelector('#intro-sections a[href="#benchmark"]').click()`);
+  await page.settle();
+  const benchmarkShown = await page.evaluate(`!document.getElementById('benchmark').hidden && location.hash === '#benchmark'`);
+
+  if (!benchmarkShown) {
+    problems.push('the Benchmarks link of the intro does not open the tab');
   }
 
   if (state.leftovers.length) {

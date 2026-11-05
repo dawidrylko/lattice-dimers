@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { DEFAULT_BOARD } = require('../site/defaultBoard');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const NAME = 'Lattice Dimers';
@@ -185,9 +186,27 @@ function runCheck(name, check) {
   return true;
 }
 
+function checkReadmeBoard() {
+  const { rowCount, colCount } = DEFAULT_BOARD;
+  const readme = read('README.md');
+  const showcase = readme.slice(readme.indexOf('<table>'), readme.indexOf('</table>'));
+  const quickStart = readme.slice(readme.indexOf('## Quick start'), readme.indexOf('## Citation'));
+  const boards = [...showcase.matchAll(/(\d+) ?× ?(\d+)/g)].map(([, rows, cols]) => [rows, cols]);
+  const commands = [...quickStart.matchAll(/-r (\d+) -c (\d+)/g)].map(([, rows, cols]) => [rows, cols]);
+  const stray = [...boards, ...commands].filter(([rows, cols]) => Number(rows) !== rowCount || Number(cols) !== colCount);
+  const errors = stray.map(([rows, cols]) => `README.md shows the ${rows} × ${cols} board; the gallery opens on ${rowCount} × ${colCount}.`);
+
+  if (!boards.length || !commands.length) {
+    errors.push('README.md must show its showcase and quick start on a board.');
+  }
+
+  return errors;
+}
+
 function __main__() {
   const passed = [
     runCheck('the title and abstract of CITATION.cff against README.md', checkCitation),
+    runCheck('the board of the README examples against the gallery default', checkReadmeBoard),
     runCheck('the description of package.json against CITATION.cff', checkPackage),
     runCheck('that package.json is private', checkPrivate),
     runCheck('the OEIS keywords against oeis/', checkKeywords),

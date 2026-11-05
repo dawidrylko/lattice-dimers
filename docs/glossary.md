@@ -56,6 +56,8 @@ The site has the gallery and the benchmarks on its main page and the notebooks o
 | --- | --- | --- | --- |
 | notebook | a note in [`notes/`](../notes/README.md) whose code cells run when the site is built, published as a page of the site | the notes, the site, the README files | "method note" for any of them; the method note was split into the notebooks on 2026-11-05 |
 | menu group | an entry of the header menu that opens a list of notebooks: Dominoes, Domicules and Triangular lattice; on disk a directory of `notes/` and in the URL a path segment named as the label is (`notes/dominoes/`, `notes/triangular-lattice/`) | the header of every page ([`site/chrome.js`](../site/chrome.js)) | a link on the group label itself |
+| Gallery, Benchmarks | the two tabs of the main page, named in the intro of the page and in the README; the gallery draws tilings and the Benchmarks tab shows six tables, chosen by its Pieces and Surface switches | the main page, the README | "Benchmark" in the singular as the label of the tab |
+| Research | the entry of the header menu that opens the one notebook on the research, with no group around it (`notes/00-research.md`, page `notes/research.html`) | the header of every page, the intro of the main page, the README | |
 | Rectangles, Cylinders, Tori | the items of a menu group, one notebook per surface, named in the plural because a notebook covers many boards; the file and the page are named as the label is (`notes/dominoes/01-rectangles.md`, page `notes/dominoes/rectangles.html`), and so is Diagonal pieces (`diagonal-pieces.html`) | the header menu, the notes README | "Square", "Board" for the Rectangles item; a page path in the singular (`rectangle.html`, `cylinder.html`, `torus.html`), which only redirects |
 
 ## Code
