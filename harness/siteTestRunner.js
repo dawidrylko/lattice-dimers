@@ -33,6 +33,7 @@ const CONTENT_TYPES = {
 };
 const VIEWPORT_HEIGHT = 900;
 const MOBILE_TABLE_WIDTH = 720;
+const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGE_COLUMNS = ['Board', 'Tilings', 'BigInt, JavaScript', 'Modular, Rust', 'Modular, Python', 'Modular, JavaScript', 'Runs'];
 const LANGUAGE_ICONS = 'BigInt #icon-javascript | Modular #icon-rust | Modular #icon-python | Modular #icon-javascript';
 const WAIT_TIMEOUT = 20000;
@@ -1221,6 +1222,20 @@ async function checkBenchmark(page, baseUrl, width) {
 
     if (columns.wrapped) {
       problems.push(`#${id} wraps a time onto a second line in ${columns.wrapped} rows`);
+    }
+
+    const wideOverflow = await page.evaluate(`(async () => {
+      const style = document.head.appendChild(document.createElement('style'));
+      style.textContent = '.bench { font-family: ${WIDE_FONT}; }';
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const wrap = document.getElementById('${id}').closest('.table-wrap');
+      const overflow = wrap.scrollWidth - wrap.clientWidth;
+      style.remove();
+      return overflow;
+    })()`);
+
+    if (wideOverflow > 0) {
+      problems.push(`#${id} scrolls ${wideOverflow} px sideways in ${WIDE_FONT}`);
     }
 
     const runsTitle = await page.evaluate(`(() => {
