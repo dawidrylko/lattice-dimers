@@ -7,7 +7,7 @@ pnpm benchmark            # domino solvers: 1,000 runs up to 12 × 12, Formula 1
 pnpm benchmark:domicule   # domicule solvers, 10 runs up to 20 × 20
 pnpm benchmark:periodic   # king's graph tori, 10 runs up to 10 × 10, Modular 10 runs of 12 × 12 and 3 of 14 × 14; cylinders, 10 runs up to 16 × 16
 pnpm benchmark:diagonal   # domicules by the number of diagonal pieces: 10 runs up to 18 × 18, Modular one run of 20 × 20
-pnpm benchmark:all        # every group above one after another, after cargo build --release, plus one BigInt run of the 12 × 12 torus
+pnpm benchmark:all        # every group above, cylinders and tori first, after cargo build --release, plus one BigInt run of the 12 × 12 torus
 ```
 
 `pnpm benchmark:all` takes hours. It is meant for an idle machine, with nothing else running, so that the load averages in the files stay low.
