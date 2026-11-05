@@ -570,7 +570,7 @@ function writeNoteRedirects(notes) {
         `<link rel="canonical" href="${url}">`,
         '<meta name="robots" content="noindex">',
         `<meta http-equiv="refresh" content="0; url=${to}.html">`,
-        `<script>location.replace(${JSON.stringify(moved)}[location.hash.slice(1)] || '${to}.html' + location.hash);</script>`,
+        `<script>const moved = ${JSON.stringify(moved)}; const id = location.hash.slice(1); location.replace(Object.hasOwn(moved, id) ? moved[id] : '${to}.html' + location.hash);</script>`,
         '</head>',
         `<body><p>This page moved to <a href="${to}.html">${url}</a>.</p></body>`,
         '</html>',

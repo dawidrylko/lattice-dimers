@@ -115,7 +115,11 @@ function checkSiteMenu() {
     try {
       renderHeader({ root: '', current: 'home', notes: wrong });
       errors.push(`the header accepts the notes ${wrong.map(({ slug }) => slug).join(', ')}`);
-    } catch {}
+    } catch (error) {
+      if (!/the site navigation misses/.test(error.message)) {
+        errors.push(`the header fails on the notes ${wrong.map(({ slug }) => slug).join(', ')} with ${error.message}`);
+      }
+    }
   });
 
   return errors;
