@@ -1153,9 +1153,23 @@ async function checkBenchmark(page, baseUrl, width) {
         titles: section.querySelectorAll('.bench-group h2, .bench-group h3').length,
         older: section.textContent.split('benchmarks/results/').length !== 2 || /pnpm benchmark/.test(section.textContent),
         rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
+        dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
+          const table = group.querySelector('table');
+          const bigint = [...table.tHead.rows[0].cells].findIndex(th => th.textContent.trim().startsWith('BigInt'));
+          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: i + 2 === bigint })));
+          const noted = [...group.querySelectorAll('.note')].some(note => note.textContent.startsWith('A dash under BigInt'));
+          return [
+            ...(cells.some(cell => cell.dash && !cell.bigint) ? [table.id + ' has a dash outside BigInt'] : []),
+            ...(cells.some(cell => cell.dash) !== noted ? [table.id + (noted ? ' explains dashes it does not show' : ' shows a dash it does not explain')] : []),
+          ];
+        }),
         unnamed: wraps.filter(wrap => !wrap.querySelector('table').getAttribute('aria-label')).length,
       };
     })()`);
+
+    if (state.dashes.length) {
+      problems.push(`#${hash}: ${state.dashes.join(', ')}`);
+    }
 
     if (state.older || state.rule !== 'none') {
       problems.push(`#${hash} lists older benchmark runs or rules off the run note (${state.rule})`);
