@@ -148,8 +148,8 @@ Average time of the count inside each solver, without the start of its process, 
 const { formatTime } = nb.context;
 
 table(
-  ['board', 'formula', 'BigInt'],
-  nb.context.benchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.formula), formatTime(r.bigint)]),
+  ['board', 'formula, Rust', 'formula, Python', 'formula, JavaScript', 'BigInt'],
+  nb.context.benchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.languages.rs), formatTime(r.languages.py), formatTime(r.formula), formatTime(r.bigint)]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 ```

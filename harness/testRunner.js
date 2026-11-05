@@ -49,7 +49,6 @@ const rejectionTestCases = [
   { args: ['js/solvers/dominoTilingSolver.js', '-r', '2abc', '-c', '2'], message: 'Usage' },
   { args: ['harness/testRunner.js', '-m', 'abc'], message: 'Usage' },
   { args: ['harness/testRunner.js', '-m'], message: 'Usage' },
-  { args: ['js/solvers/dominoTilingSolver-Formula.js', '-r', '3', '-c', '3'], message: '2n x 2n boards only' },
   { args: ['js/solvers/domiculeTilingSolver-BigInt.js', '-r', '30', '-c', '30'], message: 'at most 29' },
   {
     args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
@@ -102,6 +101,11 @@ const implementationRejectionTestCases = [
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', '0'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', 'x'], message: 'Usage' },
+  { algorithm: 'domino-tiling-formula', args: ['-r', '3', '-c', '3'], message: '2n x 2n boards only' },
+  { algorithm: 'domino-tiling-formula', args: ['-r', '4', '-c', '6'], message: '2n x 2n boards only' },
+  { algorithm: 'domino-tiling-formula', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-tiling-formula', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-tiling-formula', args: ['-c', '2'], message: 'Usage' },
   { algorithm: 'domicule-tiling-modular', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
   { algorithm: 'domicule-tiling-modular', args: ['-r', '40', '-c', '31'], message: 'because the states are indexed with 32-bit integers' },
   { algorithm: 'domicule-tiling-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
@@ -679,6 +683,10 @@ function executeBenchmarkSurfaceTests() {
       { args: ['--torus', '--lattice', 'square', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-square-torus.txt` },
       { args: ['--cylinder', '--lattice', 'square', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-square-cylinder.txt` },
     ]),
+    ...listImplementations('domino-tiling-formula').map(({ file }) => ({
+      args: ['--only', 'dominoTilingSolver-Formula.js'],
+      file: `${path.basename(file)}_0x0.txt`,
+    })),
     ...listImplementations('domicule-tiling-modular').map(({ file }) => ({
       args: ['--domicule', '--only', 'domiculeTilingSolver-Modular.js'],
       file: `${path.basename(file)}_0x0.txt`,
@@ -918,6 +926,7 @@ function executeBenchmarkRunTest() {
     touch('2000-01', complete);
     touch('2000-02', ['environment.json', 'dominoTilingSolver-Formula.js_0x0.txt']);
     touch('2000-03', complete.filter(file => !['periodic-tiling-modular.rs_14x14-square-torus.txt', 'domicule_tiling_modular.py_20x20.txt'].includes(file)));
+    touch('2000-04', complete.filter(file => file !== 'domino_tiling_formula.py_20x20.txt'));
     const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {
@@ -1089,8 +1098,39 @@ async function executeModuleTests() {
       ['periodic-tiling-modular', fourByFour(testCasesPeriodic)],
       ['domicule-tiling-modular', fourByFour(testCasesDomicule)],
     ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
-    executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6))
+    executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
+    executeLongCountTest()
   );
+}
+
+function executeLongCountTest() {
+  const python = listImplementations('domino-tiling-formula').find(({ language }) => language === 'py');
+  const launcher = exec.launch(python.file);
+  const args = ['-r', '80', '-c', '80'];
+  const expected = spawnSync(process.execPath, ['js/solvers/dominoTilingSolver-Formula.js', ...args], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' }).stdout.trim();
+  const script = [
+    'import runpy, sys',
+    'sys.set_int_max_str_digits(640)',
+    'sys.argv = sys.argv[1:]',
+    'runpy.run_module(sys.argv[0], run_name="__main__", alter_sys=True)',
+  ].join('\n');
+
+  process.stdout.write(`Executing module test for ${python.file} with a count of ${expected.length} digits under a limit of 640... `);
+
+  const { status, stdout, stderr } = spawnSync(launcher[0], ['-I', '-c', script, launcher.at(-1), ...args], {
+    cwd: ROOT_DIRECTORY,
+    encoding: 'utf-8',
+  });
+
+  if (status !== 0 || expected.length <= 640 || stdout.trim() !== expected) {
+    console.error(`Failed! Exit code ${status}: ${(stdout || stderr).trim().slice(-200)}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
 }
 
 function executeScratchTest({ expectedResult, rowCount, colCount }) {
@@ -1281,7 +1321,7 @@ async function __main__() {
     const testCasesToRunBigInt = maxSize ? testCasesBigInt.slice(0, maxSize) : testCasesBigInt;
 
     const allIntTestsPassed = executeTests(filesInt, testCasesToRunInt, verifyInt);
-    const allBigIntTestsPassed = executeTests(filesBigInt, testCasesToRunBigInt, verifyBigInt);
+    const allBigIntTestsPassed = executeTests(filesBigInt, testCasesToRunBigInt, verifyBigInt, testCasesBigInt);
     const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, verifyBigInt);
     const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;
     const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt, testCasesDomicule);

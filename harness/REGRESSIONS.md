@@ -8,6 +8,7 @@ A new fix adds its row here with the check that guards it.
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
+| the Python Formula solver failed to print a count of more than 4300 digits, which Rust and JavaScript print | `31284f3` | `pnpm test`, module test of `domino_tiling_formula.py` under a limit of 640 digits | no `sys.set_int_max_str_digits(0)` in `main` |
 | the renderer refused the 0 × 0 board | `292965f` | `test:render`, command line `0x0` | `size > 0` in the size check |
 | the Number solver refused the 0 × 0 board | `292965f` | `test`, Number solver on `0x0` | `size > 0` in `isValidSize` |
 | the test data started at 1 × 2 instead of a(0) = 1 | `292965f` | `test`, data test "a(0)" | the 0 × 0 case removed |
@@ -49,6 +50,8 @@ A new fix adds its row here with the check that guards it.
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
+| the domino rectangle table scrolled sideways at 721 to 739 px in Verdana, with the 12-digit count of 10 × 10 in full | `00ac79c` | `test:site`, benchmark table at 721 px | counts shortened from 13 digits |
+| the domicule torus table scrolled 12 px sideways at 721 px in DejaVu Sans on CI; Verdana left it 0.3 px | `7f8a607` | `test:site`, benchmark table at 721 px, on CI only | 12 px cell padding at 721 to 860 px |
 | the highlight had a contrast of 3.61:1 on the dark sheet | `2581b18` | `test:site`, highlight contrast (new) | `--hit: #dc2626` in the dark palette |
 | the highlight used a fixed colour | `2581b18` | `test:site`, sheet style switch | `#dc2626` instead of `var(--hit)` |
 | a 49-digit count pushed the time columns off screen | `b485aa3` | `test:site`, benchmark table | `fmt` instead of `num` |
