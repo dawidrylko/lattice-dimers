@@ -134,7 +134,7 @@ const implementationRejectionTestCases = [
   { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
 ];
 
-const parityTestCases = ['domicule-tiling-modular', 'domicule-tiling-bigint'].map(algorithm => ({
+const parityTestCases = ['domicule-tiling-modular', 'domicule-tiling-bigint', 'domicule-diagonal-bigint'].map(algorithm => ({
   algorithm,
   boards: [[0, 5], [5, 0], [1, 1], [1, 2], [2, 1], [10, 1], [1, 40], [3, 3], [2, 31]],
 }));
@@ -200,7 +200,7 @@ function executeParityTests() {
     });
     const counts = new Set(outputs.map(output => output.slice(output.indexOf(': ') + 2)));
 
-    if (counts.size !== 1 || !/^\d+$/.test([...counts][0])) {
+    if (counts.size !== 1 || !/^\d+(,\d+)*$/.test([...counts][0])) {
       console.error(`Failed! ${outputs.join('; ')}`);
 
       return false;
