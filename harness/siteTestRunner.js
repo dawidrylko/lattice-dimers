@@ -1618,6 +1618,36 @@ async function checkBenchmark(page, baseUrl, width) {
   return problems;
 }
 
+const READ_CARD_LINKS = `[...document.querySelectorAll('#benchmark table')].flatMap(table => {
+    const row = table.tBodies[0].rows[0];
+
+    return [...table.tHead.rows[0].cells].flatMap((th, i) => {
+      const link = th.querySelector('a.solver');
+      const card = row.cells[i].querySelector('a.solver');
+
+      if (!link) {
+        return [];
+      }
+
+      if (!card) {
+        return [{ label: table.id + ' ' + th.getAttribute('aria-label'), problem: 'has no link' }];
+      }
+
+      const box = card.getBoundingClientRect();
+      const shown = getComputedStyle(card).display !== 'none' && box.width > 0;
+      const hit = shown && (card.scrollIntoView({ block: 'center' }), card.getBoundingClientRect());
+      const top = hit && document.elementFromPoint(hit.left + hit.width / 2, hit.top + hit.height / 2);
+
+      return [{
+        label: table.id + ' ' + th.getAttribute('aria-label'),
+        problem: card.getAttribute('href') !== link.getAttribute('href') ? 'links ' + card.getAttribute('href') : card.getAttribute('aria-label') !== th.getAttribute('aria-label') ? 'is named ' + card.getAttribute('aria-label') : '',
+        visibleGroup: !!table.closest('.bench-group:not([hidden])'),
+        display: getComputedStyle(card).display,
+        tapped: !!top && (top === card || card.contains(top)),
+      }];
+    });
+  })`;
+
 async function checkBenchmarkCells(page, baseUrl, width) {
   const problems = [];
   await loadSite(page, baseUrl, width, 'benchmark');
@@ -1625,6 +1655,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const surfaces = await page.evaluate("[...document.querySelectorAll('#benchmark-surfaces button')].map(button => button.dataset.surface)");
   const groups = await page.evaluate("[...document.querySelectorAll('#benchmark .bench-group')].map(group => group.dataset.pieces + '/' + group.dataset.surface).sort().join()");
   const views = pieces.flatMap(p => surfaces.map(surface => `${p}/${surface}`));
+  const cardLinks = [];
 
   if (groups !== [...views].sort().join()) {
     problems.push(`the benchmark switches give ${views.join(', ')} but the tables are ${groups}`);
@@ -1639,6 +1670,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       `!document.querySelector('.bench-group[data-pieces=${p}][data-surface=${surface}]').hidden && document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0`,
       `the ${view} rows`,
     );
+    cardLinks.push(await page.evaluate(READ_CARD_LINKS));
     const times = await page.evaluate(
       "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr')].flatMap(row => [...row.cells].slice(2, -1).map(cell => cell.textContent))",
     );
@@ -1695,36 +1727,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   };
   const wrong = headers.filter(({ label, href, problem }) => problem || href !== expected(label));
 
-  const cardLinks = await page.evaluate(`[...document.querySelectorAll('#benchmark table')].flatMap(table => {
-    const row = table.tBodies[0].rows[0];
-
-    return [...table.tHead.rows[0].cells].flatMap((th, i) => {
-      const link = th.querySelector('a.solver');
-      const card = row.cells[i].querySelector('a.solver');
-
-      if (!link) {
-        return [];
-      }
-
-      if (!card) {
-        return [{ label: table.id + ' ' + th.getAttribute('aria-label'), problem: 'has no link' }];
-      }
-
-      const box = card.getBoundingClientRect();
-      const shown = getComputedStyle(card).display !== 'none' && box.width > 0;
-      const hit = shown && (card.scrollIntoView({ block: 'center' }), card.getBoundingClientRect());
-      const top = hit && document.elementFromPoint(hit.left + hit.width / 2, hit.top + hit.height / 2);
-
-      return [{
-        label: table.id + ' ' + th.getAttribute('aria-label'),
-        problem: card.getAttribute('href') !== link.getAttribute('href') ? 'links ' + card.getAttribute('href') : card.getAttribute('aria-label') !== th.getAttribute('aria-label') ? 'is named ' + card.getAttribute('aria-label') : '',
-        visibleGroup: !!table.closest('.bench-group:not([hidden])'),
-        display: getComputedStyle(card).display,
-        tapped: !!top && (top === card || card.contains(top)),
-      }];
-    });
-  })`);
-  const wrongCards = cardLinks.filter(({ problem, visibleGroup, display, tapped }) => problem || (width < 920 ? visibleGroup && (display === 'none' || !tapped) : display !== 'none'));
+  const wrongCards = cardLinks.flat().filter(({ problem, visibleGroup, display, tapped }) => problem || (width < 920 ? visibleGroup && (display === 'none' || !tapped) : display !== 'none'));
 
   if (wrongCards.length) {
     problems.push(`at ${width} px the solver links of the benchmark cards are wrong: ${wrongCards.map(({ label, problem, display, tapped }) => `${label} ${problem || `display ${display}, tapped ${tapped}`}`).join('; ')}`);

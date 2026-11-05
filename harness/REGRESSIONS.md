@@ -81,6 +81,7 @@ A new fix adds its row here with the check that guards it.
 | the gallery named a rectangle sheet a board | #85 | `test:site`, tiling sheets, surface in the sheet name | a build of `bf5b7fd` |
 | the solver headers of the cylinder and torus tables all led to one section, and the notebooks had no common titles or sections | this change | `test:site`, benchmark times, section named after the solver; notes, titles and sections (new) | a build of `ae77034` |
 | the solver labels of the benchmark cards linked nowhere below 920 px | this change | `test:site`, benchmark times, solver links of the cards (new) | a build of `ae77034` |
+| a link to a notebook section put its heading flush with the screen edge | this change | `test:site`, notes, margin above a heading (new) | a build of `ae77034` |
 | the front-page tilings were not square | `f3b5023` | `test:render`, sheet without labels and readme images | `svg.js` and `readme-images.js` from `f3b5023^` |
 
 ## Benchmarks
