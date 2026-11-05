@@ -135,6 +135,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
 .note code { white-space: nowrap; }
 [hidden] { display: none !important; }
 .intro { color: var(--muted); margin: 0 0 20px; overflow-wrap: anywhere; }
+ul.intro { padding-left: 20px; }
+ul.intro li + li { margin-top: 4px; }
 .status { color: var(--muted); margin: 0 0 12px; }
 .status:empty { display: none; }
 .notice { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; }
@@ -150,22 +152,27 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
 <main>
   __SITE_HEADER__
   <p class="intro">
-    Domicule tilings cover a board with pieces that join two cells sharing a side or only a corner; they are the perfect
-    matchings of the king's graph. Its boards with both sides at least 3 have no Pfaffian orientation, so Kasteleyn's
-    method does not count them. The entropy per site is s&nbsp;=&nbsp;__RESEARCH_S__&nbsp;±&nbsp;__RESEARCH_DS__, an estimate
-    extrapolated from transfer matrices on cylinders of circumference up to 25, and is proved to lie between
-    __RESEARCH_LOWER__ and __RESEARCH_UPPER__. The <a href="notes/research.html">research page</a> summarises the
-    <a href="papers/king-entropy.pdf">paper</a> and its <a href="papers/king-entropy-log-convexity.pdf">companion note</a>.
+    This is the site of Lattice Dimers, a research project that counts the ways to cover a board with pieces of two cells.
+    A domino covers two cells sharing a side, a domicule two cells sharing a side or only a corner. A chessboard has
+    __CHESSBOARD_DOMINOES__ domino tilings (<a href="https://oeis.org/A004003">OEIS&nbsp;A004003</a>) and
+    __CHESSBOARD_DOMICULES__ domicule tilings (<a href="https://oeis.org/A239273">OEIS&nbsp;A239273</a>). The code, the data
+    and the <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/oeis">OEIS entries</a> of the project are in the
+    <a href="https://github.com/dawidrylko/lattice-dimers">repository</a>.
   </p>
-  <p class="intro">
-    How many tilings does a 2n&nbsp;×&nbsp;2n board have? With dominoes, which join cells that share a side, the count is
-    <a href="https://oeis.org/A004003">OEIS&nbsp;A004003</a> (a chessboard has __CHESSBOARD_DOMINOES__); with domicules it is
-    <a href="https://oeis.org/A239273">OEIS&nbsp;A239273</a> (__CHESSBOARD_DOMICULES__). Both are counted here exactly up to
-    20&nbsp;×&nbsp;20, together with tilings of cylinders and tori and the domicule tilings sorted by their number of
-    diagonal pieces. The gallery below numbers every tiling of a rectangle, a cylinder or a torus and draws any single one; larger
-    boards are sampled. The repository's contributions to the OEIS are listed in
-    <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/oeis">oeis/</a>.
-  </p>
+  <ul class="intro" id="intro-sections">
+    <li><a href="#gallery" data-tab="gallery">Gallery</a>: numbers the tilings of a rectangle, a cylinder or a torus and draws any
+      one of them; boards too large to number are sampled.</li>
+    <li><a href="#benchmark" data-tab="benchmark">Benchmarks</a>: the exact counts and the running times of the solvers in Rust,
+      Python and JavaScript, on boards up to 20&nbsp;×&nbsp;20.</li>
+    <li>Notebooks, in the menu: the methods for <a href="notes/dominoes/rectangles.html">dominoes</a>,
+      <a href="notes/domicules/rectangles.html">domicules</a> and
+      <a href="notes/triangular-lattice/cylinders.html">the triangular lattice</a>, with code that runs whenever the site is
+      built.</li>
+    <li><a href="notes/research.html">Research</a>: the entropy per site of domicule tilings, estimated at
+      s&nbsp;=&nbsp;__RESEARCH_S__&nbsp;±&nbsp;__RESEARCH_DS__ and proved to lie between __RESEARCH_LOWER__ and
+      __RESEARCH_UPPER__, with the <a href="papers/king-entropy.pdf">paper</a> and its
+      <a href="papers/king-entropy-log-convexity.pdf">companion note</a>.</li>
+  </ul>
   <noscript><p class="intro">The gallery needs JavaScript. The benchmark results are also available in the
     <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/benchmarks/results">repository</a>.</p></noscript>
   <nav class="tabs">
@@ -1016,14 +1023,14 @@ $('benchmark-surfaces').addEventListener('click', e => {
   if (button) switchBenchmark({ surface: button.dataset.surface });
 });
 
-document.querySelector('nav.tabs').addEventListener('click', e => {
-  const link = e.target.closest('a');
+document.querySelectorAll('nav.tabs, #intro-sections').forEach(links => links.addEventListener('click', e => {
+  const link = e.target.closest('a[data-tab]');
   if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
   if (link.hash === location.hash || link.dataset.tab === parseHash().tab) return;
   history.pushState(null, '', link.hash);
   render();
-});
+}));
 window.addEventListener('popstate', render);
 render();
 </script>

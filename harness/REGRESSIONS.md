@@ -80,6 +80,7 @@ A new fix adds its row here with the check that guards it.
 | a notebook tile painted its background over the seam of the tile beside it | #85 | `test:site`, notes, covering tile background (new) | `.tiling .sheet .bg { fill: none; }` removed |
 | the gallery named a rectangle sheet a board | #85 | `test:site`, tiling sheets, surface in the sheet name | a build of `bf5b7fd` |
 | the front-page tilings were not square | `f3b5023` | `test:render`, sheet without labels and readme images | `svg.js` and `readme-images.js` from `f3b5023^` |
+| a tab link in the intro of the main page navigated to its fragment, so it dropped the board the gallery showed | #101 | `test:site`, main page | `#intro-sections` taken out of the tab click handler in a built copy |
 
 ## Benchmarks
 
@@ -92,6 +93,7 @@ A new fix adds its row here with the check that guards it.
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
+| the examples of the README used 10 × 10 and 20 × 20 boards while the gallery opens on 8 × 8 | #101 | `test:metadata`, the board of the README examples | the README from before #101 |
 | `\operatorname`, math in link text and `..` ranges in the OEIS READMEs | `b2eb8b7` | `test:markdown`, the three math checks | the READMEs from `b2eb8b7^` |
 | relative links to `../pari/` after the move to `oeis/` | `b4e82fe` | `test:markdown`, relative links | a link to `../pari/A004003.gp` |
 | `A401670.gp` defined a(n) differently from the entry | `eb30025` | `test:oeis`, `A401670.gp` | the file from `eb30025^` |
