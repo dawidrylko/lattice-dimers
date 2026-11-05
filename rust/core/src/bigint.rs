@@ -2,7 +2,8 @@ use std::cmp::Ordering;
 use std::fmt;
 use std::ops::{Add, AddAssign, Div, Mul, Sub};
 
-/// An integer of any size, for the Chinese remainder theorem and the exact determinants of the formula solver.
+/// An integer of any size, for the Chinese remainder theorem, the exact determinants of the formula solver and the
+/// counts of the BigInt transfer solver.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BigInt {
     negative: bool,
