@@ -254,14 +254,14 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="bench-group" data-pieces="domino" data-surface="rectangle">
       <h2 class="table-title">Dominoes (A004003)</h2>
       <div class="table-wrap">
-        <table role="table" id="domino-benchmark">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader">Formula</th><th role="columnheader">BigInt</th><th role="columnheader">Runs</th></tr></thead>
+        <table role="table" id="domino-benchmark" class="languages">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Formula, Rust" title="Formula, Rust">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></th><th role="columnheader" aria-label="Formula, Python" title="Formula, Python">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></th><th role="columnheader" aria-label="Formula, JavaScript" title="Formula, JavaScript">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domino-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
       <p class="note">
-        Formula evaluates the product formula of Kasteleyn and Fisher as an exact resultant. BigInt counts exactly.
-        Re-run with <code>pnpm benchmark</code>.
+        Formula evaluates the product formula of Kasteleyn and Fisher as an exact resultant, in Rust, Python and
+        JavaScript. BigInt counts exactly, in JavaScript. Re-run with <code>pnpm benchmark</code>.
       </p>
     </div>
     <div class="bench-group" data-pieces="domino" data-surface="cylinder" hidden>
@@ -340,8 +340,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     </div>
     <p class="note run">
       Mean time of the count, as each solver reports it with <code>--time</code>; a time's tooltip gives the process time,
-      start-up included. In the tables without language icons, every solver is JavaScript. Every result file also records the load average of
-      the machine before its board. <span class="environment"></span>
+      start-up included. Every result file also records the load average of the machine before its board.
+      <span class="environment"></span>
       Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
       __OLDER_BENCHMARKS__
     </p>
@@ -944,7 +944,12 @@ $('load-table').addEventListener('click', () => {
   render();
 });
 
-const FORMULA_AND_BIGINT = [{ read: r => r.formula }, { read: r => r.bigint }];
+const FORMULA_LANGUAGES = [
+  { read: r => r.languages.rs },
+  { read: r => r.languages.py },
+  { read: r => r.formula },
+  { read: r => r.bigint },
+];
 const MODULAR_LANGUAGES = [
   { read: r => r.languages.rs },
   { read: r => r.languages.py },
@@ -984,7 +989,7 @@ function renderSolverRows(table, rows, solvers) {
     .join('');
 }
 
-renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_AND_BIGINT);
+renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_LANGUAGES);
 renderSolverRows('domino-torus-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_LANGUAGES);
 renderSolverRows('domino-cylinder-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_LANGUAGES);
 renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, MODULAR_LANGUAGES);

@@ -323,6 +323,7 @@ function buildBenchmark() {
       tilings: tilingsBySize.get(`${rowCount}x${colCount}`) ?? null,
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `dominoTilingSolver-BigInt.js${suffix}`),
       formula: readAverageTime(BENCHMARK_DIRECTORY, `dominoTilingSolver-Formula.js${suffix}`),
+      languages: readLanguages('domino-tiling-formula', suffix),
     };
   });
 }

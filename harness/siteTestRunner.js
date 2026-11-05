@@ -34,14 +34,15 @@ const CONTENT_TYPES = {
 const VIEWPORT_HEIGHT = 900;
 const MOBILE_TABLE_WIDTH = 720;
 const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
-const LANGUAGE_COLUMNS = ['Board', 'Tilings', 'Modular, Rust', 'Modular, Python', 'Modular, JavaScript', 'BigInt, JavaScript', 'Runs'];
-const LANGUAGE_ICONS = 'Modular #icon-rust | Modular #icon-python | Modular #icon-javascript | BigInt #icon-javascript';
+const languageColumns = solver => ['Board', 'Tilings', `${solver}, Rust`, `${solver}, Python`, `${solver}, JavaScript`, 'BigInt, JavaScript', 'Runs'];
+const languageIcons = solver => `${solver} #icon-rust | ${solver} #icon-python | ${solver} #icon-javascript | BigInt #icon-javascript`;
 const LANGUAGE_TABLES = [
-  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121'],
-  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272'],
-  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280'],
-  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649'],
-  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552'],
+  ['domino/rectangle', 'domino-benchmark', 'DATA.benchmark', '36', 'Formula', 'FORMULA_LANGUAGES'],
+  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121', 'Modular', 'MODULAR_LANGUAGES'],
+  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272', 'Modular', 'MODULAR_LANGUAGES'],
+  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'Modular', 'MODULAR_LANGUAGES'],
+  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'Modular', 'MODULAR_LANGUAGES'],
+  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552', 'Modular', 'MODULAR_LANGUAGES'],
 ];
 const SHOWN_BENCHMARK = `(() => {
   const view = group => group.dataset.pieces + '/' + group.dataset.surface;
@@ -1175,21 +1176,15 @@ async function checkBenchmark(page, baseUrl, width) {
   }
 
   await loadSite(page, baseUrl, width, 'benchmark');
-  const dominoColumns = await page.evaluate(`({
-    headers: [...document.querySelectorAll('#domino-benchmark thead th')].map(th => th.textContent).join(),
-    cells: [...document.querySelectorAll('#domino-benchmark-rows tr')].map(row => row.cells.length).filter(count => count !== 5).length,
-    diagonals: Boolean(document.getElementById('diagonal-benchmark')),
-  })`);
+  const diagonals = await page.evaluate(`Boolean(document.getElementById('diagonal-benchmark'))`);
 
-  if (dominoColumns.headers !== 'Board,Tilings,Formula,BigInt,Runs' || dominoColumns.cells) {
-    problems.push(`the domino benchmark has the columns ${dominoColumns.headers} and ${dominoColumns.cells} rows without five cells`);
-  }
-
-  if (dominoColumns.diagonals) {
+  if (diagonals) {
     problems.push('the benchmarks still show the diagonal pieces table');
   }
 
-  for (const [view, id, source, tilings4x4] of LANGUAGE_TABLES) {
+  for (const [view, id, source, tilings4x4, solver, languages] of LANGUAGE_TABLES) {
+    const columnNames = languageColumns(solver);
+    const columnIcons = languageIcons(solver);
     await loadSite(page, baseUrl, width, `benchmark/${view}`);
     await page.waitFor(`document.querySelectorAll('#${id}-rows tr').length > 0`, `the ${view} rows`);
     await page.settle();
@@ -1221,17 +1216,17 @@ async function checkBenchmark(page, baseUrl, width) {
     const wrong = columns.labels.filter(row => row !== names.join(' | '));
     const cards = width <= MOBILE_TABLE_WIDTH;
     const unnamed = cells.slice(2, -1).filter((name, i) => name !== (cards ? `${solvers[i]} ${columns.values[i]}` : columns.values[i]));
-    const cardIcons = cards ? LANGUAGE_ICONS : LANGUAGE_ICONS.replace(/#icon-\w+/g, 'no icon');
+    const cardIcons = cards ? columnIcons : columnIcons.replace(/#icon-\w+/g, 'no icon');
 
     if (columns.tilings4x4 !== tilings4x4) {
       problems.push(`#${id} counts ${columns.tilings4x4} tilings of the 4×4 board instead of ${tilings4x4}`);
     }
 
-    if (columns.headerRows !== 1 || names.join(' | ') !== LANGUAGE_COLUMNS.join(' | ') || columns.titles !== solvers.join(' | ')) {
+    if (columns.headerRows !== 1 || names.join(' | ') !== columnNames.join(' | ') || columns.titles !== solvers.join(' | ')) {
       problems.push(`#${id} has ${columns.headerRows} header rows named ${names.join(' | ')} with the titles ${columns.titles}`);
     }
 
-    if (columns.headers !== LANGUAGE_ICONS) {
+    if (columns.headers !== columnIcons) {
       problems.push(`#${id} shows the solver headers ${columns.headers}`);
     }
 
@@ -1272,12 +1267,12 @@ async function checkBenchmark(page, baseUrl, width) {
     const runsTitle = await page.evaluate(`(() => {
       const row = structuredClone(${source}.find(r => r.bigint && r.languages.rs));
       row.languages.rs.runs += 1;
-      renderSolverRows('${id}', [row], MODULAR_LANGUAGES);
+      renderSolverRows('${id}', [row], ${languages});
       const runs = document.querySelector('#${id}-rows tr').lastElementChild.querySelector('span[title]');
       return runs ? runs.title : 'no tooltip';
     })()`);
 
-    if (runsTitle !== LANGUAGE_COLUMNS.slice(2, -1).join(' / ')) {
+    if (runsTitle !== columnNames.slice(2, -1).join(' / ')) {
       problems.push(`#${id} names the runs of different solvers ${runsTitle}`);
     }
   }
