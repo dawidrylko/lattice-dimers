@@ -37,11 +37,11 @@ const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGE_COLUMNS = ['Board', 'Tilings', 'Modular, Rust', 'Modular, Python', 'Modular, JavaScript', 'BigInt, JavaScript', 'Runs'];
 const LANGUAGE_ICONS = 'Modular #icon-rust | Modular #icon-python | Modular #icon-javascript | BigInt #icon-javascript';
 const LANGUAGE_TABLES = [
-  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')"],
-  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')"],
-  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark'],
-  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')"],
-  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')"],
+  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121'],
+  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272'],
+  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280'],
+  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649'],
+  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552'],
 ];
 const SHOWN_BENCHMARK = `(() => {
   const view = group => group.dataset.pieces + '/' + group.dataset.surface;
@@ -1189,7 +1189,7 @@ async function checkBenchmark(page, baseUrl, width) {
     problems.push('the benchmarks still show the diagonal pieces table');
   }
 
-  for (const [view, id, source] of LANGUAGE_TABLES) {
+  for (const [view, id, source, tilings4x4] of LANGUAGE_TABLES) {
     await loadSite(page, baseUrl, width, `benchmark/${view}`);
     await page.waitFor(`document.querySelectorAll('#${id}-rows tr').length > 0`, `the ${view} rows`);
     await page.settle();
@@ -1198,6 +1198,7 @@ async function checkBenchmark(page, baseUrl, width) {
       const rows = [...document.querySelectorAll('#${id}-rows tr')];
       const shown = icon => icon && icon.getAttribute('aria-hidden') === 'true' && icon.getBoundingClientRect().width > 0 ? icon.querySelector('use').getAttribute('href') : 'no icon';
       return {
+        tilings4x4: rows.filter(row => row.cells[0].textContent === '4×4').map(row => row.cells[1].textContent.trim().replace(/^Tilings/, '')).join(),
         headerRows: document.querySelectorAll('#${id} thead tr').length,
         titles: headers.map(th => th.title).join(' | '),
         headers: headers.map(th => th.textContent.trim() + ' ' + shown(th.querySelector('svg.lang'))).join(' | '),
@@ -1221,6 +1222,10 @@ async function checkBenchmark(page, baseUrl, width) {
     const cards = width <= MOBILE_TABLE_WIDTH;
     const unnamed = cells.slice(2, -1).filter((name, i) => name !== (cards ? `${solvers[i]} ${columns.values[i]}` : columns.values[i]));
     const cardIcons = cards ? LANGUAGE_ICONS : LANGUAGE_ICONS.replace(/#icon-\w+/g, 'no icon');
+
+    if (columns.tilings4x4 !== tilings4x4) {
+      problems.push(`#${id} counts ${columns.tilings4x4} tilings of the 4×4 board instead of ${tilings4x4}`);
+    }
 
     if (columns.headerRows !== 1 || names.join(' | ') !== LANGUAGE_COLUMNS.join(' | ') || columns.titles !== solvers.join(' | ')) {
       problems.push(`#${id} has ${columns.headerRows} header rows named ${names.join(' | ')} with the titles ${columns.titles}`);

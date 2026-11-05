@@ -19,7 +19,7 @@ A lattice says which cells of a board are neighbours, and so which pieces a tili
 
 | term | meaning | where it is used | avoid |
 | --- | --- | --- | --- |
-| square lattice | the graph whose vertices are the cells and whose edges join cells sharing a side; on a rectangle it is the grid graph, and its perfect matchings are the domino tilings | the Cylinders and Tori notebooks, the periodic solvers ([`js/README.md`](../js/README.md)), the controls of the research scripts | |
+| square lattice | the graph whose vertices are the cells and whose edges join cells sharing a side; on a rectangle it is the grid graph, and its perfect matchings are the domino tilings | the Cylinders and Tori notebooks, the benchmark tables Dominoes on cylinders and Dominoes on tori, the periodic solvers ([`js/README.md`](../js/README.md)), the controls of the research scripts | |
 | triangular lattice | the square lattice with one diagonal in every cell, the one that runs down to the right (↘), so a tiling uses dominoes and ↘ diagonal pieces; the project counts it for comparison | the method note, the Cylinders and Tori notebooks, the periodic solvers, the controls of the papers and the research scripts | |
 | king's graph | the square lattice with both diagonals, so every cell is joined to its eight neighbours; its perfect matchings are the domicule tilings | the titles of both papers, the notebooks, the site, the research notes and scripts | "king graph" and "king-graph", "king lattice", also in a list next to the square and triangular lattices |
 

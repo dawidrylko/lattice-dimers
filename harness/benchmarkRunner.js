@@ -293,6 +293,7 @@ function __main__() {
       (maxSize !== undefined && !(maxSize > 0)) ||
       !(offset >= 0) ||
       (only !== null && !groups.some(({ files }) => files.includes(only))) ||
+      argv.some(arg => arg.startsWith('--lattice=')) ||
       (lattice !== null && !(PERIODIC_GROUPS.includes(flags[0]) && Object.hasOwn(LATTICES, lattice)))
     ) {
       throw new Error(USAGE);
