@@ -75,6 +75,29 @@ const NOTE_REDIRECTS = {
   'triangular/torus': { to: 'triangular-lattice/tori' },
 };
 
+const SOLVER_SECTIONS = { 'how-the-counts-are-made': 'the-modular-solver' };
+
+const SECTION_ALIASES = {
+  'dominoes/rectangles': {
+    'the-closed-form': 'the-formula-solver',
+    'transfer-by-rows': 'the-bigint-solver',
+    'numbering-tilings': 'numbering',
+    'three-ways-to-the-same-numbers': 'the-counts',
+  },
+  'dominoes/cylinders': SOLVER_SECTIONS,
+  'dominoes/tori': { ...SOLVER_SECTIONS, 'the-2n-2n-torus-a335586': 'the-counts' },
+  'domicules/rectangles': {
+    'counting-modulo-primes': 'the-modular-solver',
+    'transfer-by-cells': 'the-bigint-solver',
+    'the-sequence-up-to-20-20': 'the-counts',
+  },
+  'domicules/cylinders': SOLVER_SECTIONS,
+  'domicules/tori': { ...SOLVER_SECTIONS, 'the-2n-2n-torus-a401670': 'the-counts' },
+  'domicules/diagonal-pieces': { 'numbering-by-diagonal-pieces': 'numbering', 'the-polynomial': 'the-problem' },
+  'triangular-lattice/cylinders': SOLVER_SECTIONS,
+  'triangular-lattice/tori': { ...SOLVER_SECTIONS, 'the-2n-2n-torus': 'the-counts' },
+};
+
 /**
  * Says where a section of a moved note now lives, as a path from notes/ with its fragment.
  * @param {string} from The old slug, such as 'method'.
@@ -246,4 +269,4 @@ function renderFooter(lines = []) {
   ].join('\n');
 }
 
-module.exports = { THEME_CSS, CHROME_CSS, NAV, NOTE_REDIRECTS, resolveRedirect, renderHeader, renderFooter };
+module.exports = { THEME_CSS, CHROME_CSS, NAV, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect, renderHeader, renderFooter };

@@ -13,15 +13,15 @@ const { svgs, total } = drawTilings({ rowCount: 4, colCount: 4, ranks: 'all' });
 figure(svgs, `All ${total} domino tilings of the 4 × 4 board, numbered as in the gallery.`);
 ```
 
-## The closed form
+## The Formula solver
 
-Kasteleyn [1] and Fisher [2] found in 1961 that a $2n \times 2n$ board has
+The solver evaluates a closed form. Kasteleyn [1] and Fisher [2] found in 1961 that a $2n \times 2n$ board has
 
 ```math
 a(n) = \prod_{j=1}^{n} \prod_{k=1}^{n} \left( 4\cos^2\frac{j\pi}{2n+1} + 4\cos^2\frac{k\pi}{2n+1} \right)
 ```
 
-tilings. Evaluated with floating-point cosines the product loses its last digits from $12 \times 12$ on, so the formula solver evaluates it exactly. The numbers $x_j = 4\cos^2(j\pi/(2n+1))$, $j = 1, \dots, n$, are the roots of a monic integer polynomial $P$ of degree $n$, and the double product over $x_j + x_k$ is, up to sign, the resultant of $P(x)$ and $P(-x)$:
+tilings. Evaluated with floating-point cosines the product loses its last digits from $12 \times 12$ on, so [`dominoTilingSolver-Formula.js`](../../js/solvers/dominoTilingSolver-Formula.js) evaluates it exactly, and so do its Rust and Python implementations, [`domino-tiling-formula.rs`](../../rust/solvers/src/bin/domino-tiling-formula.rs) and [`domino_tiling_formula.py`](../../python/lattice_dimers/solvers/domino_tiling_formula.py). The numbers $x_j = 4\cos^2(j\pi/(2n+1))$, $j = 1, \dots, n$, are the roots of a monic integer polynomial $P$ of degree $n$, and the double product over $x_j + x_k$ is, up to sign, the resultant of $P(x)$ and $P(-x)$:
 
 ```math
 a(n) = (-1)^n \mathrm{Res}\bigl(P(x), P(-x)\bigr), \qquad P(x^2) = U_{2n}(x/2)
@@ -29,48 +29,12 @@ a(n) = (-1)^n \mathrm{Res}\bigl(P(x), P(-x)\bigr), \qquad P(x^2) = U_{2n}(x/2)
 
 where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is the determinant of the Sylvester matrix, an integer matrix of size $2n$, and fraction-free Bareiss elimination [3] keeps every intermediate value an integer. Neither square roots nor floating point are involved, and $20 \times 20$ takes milliseconds. The same formula is a two-line PARI/GP program in [`oeis/A004003/A004003.gp`](../../oeis/A004003/A004003.gp).
 
-## Transfer by rows
-
-Two solvers count tilings directly. They scan the board row by row and keep, for every bitmask of the cells of the current row that a vertical domino from the row above already covers, the number of ways to reach it. A row is filled by a depth-first search that places horizontal dominoes in free pairs and starts vertical ones into the next row. The table has $2^{w}$ entries per row, so the cost grows with the shorter side and the solvers turn the board so that it is the row width. One solver keeps the counts as JavaScript numbers and is exact only while they stay below $2^{53}$ (up to $10 \times 10$); the other, called `BigInt` after the JavaScript type, keeps them as integers of any size and runs in Rust, Python and JavaScript.
-
-## Three ways to the same numbers
-
-The formula solver evaluates the resultant, the two transfer solvers scan the board. The `Number` solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about five minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
-
-```js run
-const formula = require('./js/solvers/dominoTilingSolver-Formula.js');
-const transfer = require('./js/solvers/dominoTilingSolver-BigInt.js');
-const number = require('./js/solvers/dominoTilingSolver.js');
-const known = require('./js/core/cases').testCasesBigInt;
-
-nb.terms = [];
-const rows = [];
-
-for (let n = 0; n <= 10; n++) {
-  const side = 2 * n;
-  const viaFormula = formula.calculateTotalTilingCombinations({ rowCount: side, colCount: side });
-  const viaTransfer = n <= 7 ? transfer.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
-  const viaNumber = n <= 5 ? number.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
-  const expected = known.find(t => t.rowCount === side && t.colCount === side).expectedResult;
-  const methods = ['formula', viaTransfer !== null && 'BigInt', viaNumber !== null && 'Number'].filter(Boolean);
-  const agree = String(viaFormula) === expected && (viaTransfer === null || viaTransfer === viaFormula) && (viaNumber === null || BigInt(viaNumber) === viaFormula);
-
-  if (!agree) {
-    throw new Error(`a(${n}) disagrees with spec/cases/`);
-  }
-
-  nb.terms.push(viaFormula);
-  rows.push([n, `${side}×${side}`, String(viaFormula), String(viaFormula).length, methods.join(', '), 'matches OEIS']);
-}
-
-table(['n', 'board', 'a(n)', 'digits', 'solver', 'status'], rows);
-```
-
-## Why the product needs exact arithmetic
+### Why the product needs exact arithmetic
 
 The closed form as a floating-point product, next to the exact value. The relative error stays near $10^{-16}$, but once the count has more than 16 digits the last ones are wrong.
 
 ```js run
+const formula = require('./js/solvers/dominoTilingSolver-Formula.js');
 const product = n => {
   let value = 1;
   for (let j = 1; j <= n; j++) {
@@ -85,12 +49,14 @@ table(
   ['n', 'rounded float product', 'exact a(n)', 'difference'],
   [4, 5, 6, 7, 8].map(n => {
     const rounded = BigInt(Math.round(product(n)));
-    return [n, String(rounded), String(nb.terms[n]), String(rounded - nb.terms[n])];
+    const exact = formula.calculateTotalTilingCombinations({ rowCount: 2 * n, colCount: 2 * n });
+
+    return [n, String(rounded), String(exact), String(rounded - exact)];
   }),
 );
 ```
 
-## The polynomial behind the resultant
+### The polynomial behind the resultant
 
 $P$ is monic of degree $n$ with integer coefficients, and its roots are $4\cos^2(j\pi/(2n+1))$. The Sylvester matrix of $P(x)$ and $P(-x)$ has size $2n$.
 
@@ -112,7 +78,11 @@ for (let n = 1; n <= 5; n++) {
 }
 ```
 
-## Numbering tilings
+## The BigInt solver
+
+[`dominoTilingSolver-BigInt.js`](../../js/solvers/dominoTilingSolver-BigInt.js) counts tilings directly with a transfer by rows. It scans the board row by row and keeps, for every bitmask of the cells of the current row that a vertical domino from the row above already covers, the number of ways to reach it. A row is filled by a depth-first search that places horizontal dominoes in free pairs and starts vertical ones into the next row. The table has $2^{w}$ entries per row, so the cost grows with the shorter side and the solver turns the board so that it is the row width. Named after the JavaScript type, it keeps the counts as integers of any size, and its Rust and Python implementations, [`domino-tiling-bigint.rs`](../../rust/solvers/src/bin/domino-tiling-bigint.rs) and [`domino_tiling_bigint.py`](../../python/lattice_dimers/solvers/domino_tiling_bigint.py), do the same. [`dominoTilingSolver.js`](../../js/solvers/dominoTilingSolver.js) runs the same scan with JavaScript numbers and is exact only while they stay below $2^{53}$ (up to $10 \times 10$).
+
+## Numbering
 
 To show tiling number $r$ without listing the ones before it, the gallery processes the board one cell at a time in row-major order. The state is the set of covered cells among the next $w$ cells, and a table of completion counts, `table[i][state]`, stores in how many ways the board can be finished from cell $i$ in that state. It has $(hw + 1) \cdot 2^{w}$ entries. Unranking walks the cells, tries a horizontal domino before a vertical one, and moves to the second choice after subtracting the number of tilings the first choice would cover. Every tiling of a board up to $16 \times 16$ can be shown this way in a browser.
 
@@ -134,11 +104,42 @@ table(
 );
 ```
 
-## Sampling with coupling from the past
+### Sampling with coupling from the past
 
 The table for $18 \times 18$ would need about a gigabyte and the one for $20 \times 20$ several, so the gallery samples these boards instead. Domino tilings of a simply connected region form a distributive lattice under the rotation of two parallel dominoes in a $2 \times 2$ square, with a top and a bottom tiling. Monotone coupling from the past [4] runs the same random rotations from the top and the bottom tiling, starting further and further in the past, until both runs meet at time 0. The meeting point is an exactly uniform tiling. No table is needed.
 
 The number of a sampled tiling needs no table either. A scan from the last cell back keeps one row of completion counts, `table[i + 1]`, and wherever the tiling takes a later choice it adds the counts of the earlier ones, as unranking subtracts them. The scan runs modulo primes below $2^{31}$ in `Uint32Array` rows, a few primes per browser worker, and the Chinese remainder theorem rebuilds the number from as many primes as the count of all tilings needs. The same scan ends with that count modulo every prime, which checks the prime against the count the gallery already holds.
+
+## The counts
+
+The formula solver evaluates the resultant, the two transfer solvers scan the board. The `Number` solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about five minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
+
+```js run
+const formula = require('./js/solvers/dominoTilingSolver-Formula.js');
+const transfer = require('./js/solvers/dominoTilingSolver-BigInt.js');
+const number = require('./js/solvers/dominoTilingSolver.js');
+const known = require('./js/core/cases').testCasesBigInt;
+
+const rows = [];
+
+for (let n = 0; n <= 10; n++) {
+  const side = 2 * n;
+  const viaFormula = formula.calculateTotalTilingCombinations({ rowCount: side, colCount: side });
+  const viaTransfer = n <= 7 ? transfer.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
+  const viaNumber = n <= 5 ? number.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
+  const expected = known.find(t => t.rowCount === side && t.colCount === side).expectedResult;
+  const methods = ['formula', viaTransfer !== null && 'BigInt', viaNumber !== null && 'Number'].filter(Boolean);
+  const agree = String(viaFormula) === expected && (viaTransfer === null || viaTransfer === viaFormula) && (viaNumber === null || BigInt(viaNumber) === viaFormula);
+
+  if (!agree) {
+    throw new Error(`a(${n}) disagrees with spec/cases/`);
+  }
+
+  rows.push([n, `${side}×${side}`, String(viaFormula), String(viaFormula).length, methods.join(', '), 'matches OEIS']);
+}
+
+table(['n', 'board', 'a(n)', 'digits', 'solver', 'status'], rows);
+```
 
 ## Running time
 

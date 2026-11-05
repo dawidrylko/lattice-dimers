@@ -108,7 +108,7 @@ th a.solver:hover { color: var(--fg); text-decoration-color: currentColor; }
 th a.solver:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .table-wrap { overflow-x: auto; }
 .lang { width: 16px; height: 16px; vertical-align: -3px; fill: currentColor; }
-td > .lang { display: none; }
+.bench .table-wrap a.card-solver { display: none; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 919px) {
   .bench .table-wrap table { display: block; }
@@ -126,8 +126,10 @@ td > .lang { display: none; }
   .bench .table-wrap table.languages td:last-child { white-space: normal; }
   .bench .table-wrap :is(#domino-benchmark, #domicule-benchmark) td:nth-child(6) { grid-column: 1; }
   .bench .table-wrap td[data-text] { display: grid; grid-template-columns: max-content 1fr; align-items: center; column-gap: 4px; }
-  .bench .table-wrap td[data-text]::before { content: attr(data-text); content: attr(data-text) / attr(data-label); }
-  .bench .table-wrap td > .lang { display: block; color: var(--muted); }
+  .bench .table-wrap td[data-text]::before { content: none; }
+  .bench .table-wrap a.card-solver { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 13px; color: var(--muted); text-decoration: underline 1px var(--muted); text-underline-offset: 3px; grid-column: 1 / -1; }
+  .bench .table-wrap a.card-solver::before { content: attr(data-text); }
+  .bench .table-wrap a.card-solver:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .bench .table-wrap td > .value { grid-column: 1 / -1; }
 }
 .note { color: var(--muted); font-size: 13px; margin-top: 12px; }
@@ -135,6 +137,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
 .note code { white-space: nowrap; }
 [hidden] { display: none !important; }
 .intro { color: var(--muted); margin: 0 0 20px; overflow-wrap: anywhere; }
+ul.intro { padding-left: 20px; }
+ul.intro li + li { margin-top: 4px; }
 .status { color: var(--muted); margin: 0 0 12px; }
 .status:empty { display: none; }
 .notice { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; }
@@ -150,22 +154,27 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
 <main>
   __SITE_HEADER__
   <p class="intro">
-    Domicule tilings cover a board with pieces that join two cells sharing a side or only a corner; they are the perfect
-    matchings of the king's graph. Its boards with both sides at least 3 have no Pfaffian orientation, so Kasteleyn's
-    method does not count them. The entropy per site is s&nbsp;=&nbsp;__RESEARCH_S__&nbsp;±&nbsp;__RESEARCH_DS__, an estimate
-    extrapolated from transfer matrices on cylinders of circumference up to 25, and is proved to lie between
-    __RESEARCH_LOWER__ and __RESEARCH_UPPER__. The <a href="notes/research.html">research page</a> summarises the
-    <a href="papers/king-entropy.pdf">paper</a> and its <a href="papers/king-entropy-log-convexity.pdf">companion note</a>.
+    This is the site of Lattice Dimers, a research project that counts the ways to cover a board with pieces of two cells.
+    A domino covers two cells sharing a side, a domicule two cells sharing a side or only a corner. A chessboard has
+    __CHESSBOARD_DOMINOES__ domino tilings (<a href="https://oeis.org/A004003">OEIS&nbsp;A004003</a>) and
+    __CHESSBOARD_DOMICULES__ domicule tilings (<a href="https://oeis.org/A239273">OEIS&nbsp;A239273</a>). The code, the data
+    and the <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/oeis">OEIS entries</a> of the project are in the
+    <a href="https://github.com/dawidrylko/lattice-dimers">repository</a>.
   </p>
-  <p class="intro">
-    How many tilings does a 2n&nbsp;×&nbsp;2n board have? With dominoes, which join cells that share a side, the count is
-    <a href="https://oeis.org/A004003">OEIS&nbsp;A004003</a> (a chessboard has __CHESSBOARD_DOMINOES__); with domicules it is
-    <a href="https://oeis.org/A239273">OEIS&nbsp;A239273</a> (__CHESSBOARD_DOMICULES__). Both are counted here exactly up to
-    20&nbsp;×&nbsp;20, together with tilings of cylinders and tori and the domicule tilings sorted by their number of
-    diagonal pieces. The gallery below numbers every tiling of a rectangle, a cylinder or a torus and draws any single one; larger
-    boards are sampled. The repository's contributions to the OEIS are listed in
-    <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/oeis">oeis/</a>.
-  </p>
+  <ul class="intro" id="intro-sections">
+    <li><a href="#gallery" data-tab="gallery">Gallery</a>: numbers the tilings of a rectangle, a cylinder or a torus and draws any
+      one of them; boards too large to number are sampled.</li>
+    <li><a href="#benchmark" data-tab="benchmark">Benchmarks</a>: the exact counts and the running times of the solvers in Rust,
+      Python and JavaScript, on boards up to 20&nbsp;×&nbsp;20.</li>
+    <li>Notebooks, in the menu: the methods for <a href="notes/dominoes/rectangles.html">dominoes</a>,
+      <a href="notes/domicules/rectangles.html">domicules</a> and
+      <a href="notes/triangular-lattice/cylinders.html">the triangular lattice</a>, with code that runs whenever the site is
+      built.</li>
+    <li><a href="notes/research.html">Research</a>: the entropy per site of domicule tilings, estimated at
+      s&nbsp;=&nbsp;__RESEARCH_S__&nbsp;±&nbsp;__RESEARCH_DS__ and proved to lie between __RESEARCH_LOWER__ and
+      __RESEARCH_UPPER__, with the <a href="papers/king-entropy.pdf">paper</a> and its
+      <a href="papers/king-entropy-log-convexity.pdf">companion note</a>.</li>
+  </ul>
   <noscript><p class="intro">The gallery needs JavaScript. The benchmark results are also available in the
     <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/benchmarks/results">repository</a>.</p></noscript>
   <nav class="tabs">
@@ -257,7 +266,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="bench-group" data-pieces="domino" data-surface="rectangle">
       <div class="table-wrap">
         <table role="table" id="domino-benchmark" aria-label="Dominoes (A004003)" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Formula, Rust" title="Formula, Rust"><a class="solver" href="notes/dominoes/rectangles.html#the-closed-form" aria-label="Formula, Rust">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Formula, Python" title="Formula, Python"><a class="solver" href="notes/dominoes/rectangles.html#the-closed-form" aria-label="Formula, Python">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Formula, JavaScript" title="Formula, JavaScript"><a class="solver" href="notes/dominoes/rectangles.html#the-closed-form" aria-label="Formula, JavaScript">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/dominoes/rectangles.html#transfer-by-rows" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/dominoes/rectangles.html#transfer-by-rows" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/dominoes/rectangles.html#transfer-by-rows" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Formula, Rust" title="Formula, Rust"><a class="solver" href="notes/dominoes/rectangles.html#the-formula-solver" aria-label="Formula, Rust">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Formula, Python" title="Formula, Python"><a class="solver" href="notes/dominoes/rectangles.html#the-formula-solver" aria-label="Formula, Python">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Formula, JavaScript" title="Formula, JavaScript"><a class="solver" href="notes/dominoes/rectangles.html#the-formula-solver" aria-label="Formula, JavaScript">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/dominoes/rectangles.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/dominoes/rectangles.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/dominoes/rectangles.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domino-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
@@ -265,7 +274,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="bench-group" data-pieces="domino" data-surface="cylinder" hidden>
       <div class="table-wrap">
         <table role="table" id="domino-cylinder-benchmark" aria-label="Dominoes on cylinders" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/dominoes/cylinders.html#how-the-counts-are-made" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/dominoes/cylinders.html#how-the-counts-are-made" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/dominoes/cylinders.html#how-the-counts-are-made" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/dominoes/cylinders.html#how-the-counts-are-made" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/dominoes/cylinders.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/dominoes/cylinders.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/dominoes/cylinders.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/dominoes/cylinders.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domino-cylinder-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
@@ -274,7 +283,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="bench-group" data-pieces="domino" data-surface="torus" hidden>
       <div class="table-wrap">
         <table role="table" id="domino-torus-benchmark" aria-label="Dominoes on tori" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/dominoes/tori.html#how-the-counts-are-made" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/dominoes/tori.html#how-the-counts-are-made" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/dominoes/tori.html#how-the-counts-are-made" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/dominoes/tori.html#how-the-counts-are-made" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/dominoes/tori.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/dominoes/tori.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/dominoes/tori.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/dominoes/tori.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domino-torus-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
@@ -283,7 +292,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="bench-group" data-pieces="domicule" data-surface="rectangle" hidden>
       <div class="table-wrap">
         <table role="table" id="domicule-benchmark" aria-label="Domicules (A239273)" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/rectangles.html#counting-modulo-primes" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/rectangles.html#counting-modulo-primes" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/rectangles.html#counting-modulo-primes" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/domicules/rectangles.html#transfer-by-cells" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/domicules/rectangles.html#transfer-by-cells" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/rectangles.html#transfer-by-cells" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/rectangles.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/rectangles.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/rectangles.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/domicules/rectangles.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/domicules/rectangles.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/rectangles.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domicule-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
@@ -291,7 +300,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="bench-group" data-pieces="domicule" data-surface="cylinder" hidden>
       <div class="table-wrap">
         <table role="table" id="cylinder-benchmark" aria-label="Domicules on cylinders" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/cylinders.html#how-the-counts-are-made" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/cylinders.html#how-the-counts-are-made" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/cylinders.html#how-the-counts-are-made" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/cylinders.html#how-the-counts-are-made" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/cylinders.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/cylinders.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/cylinders.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/cylinders.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="cylinder-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
@@ -300,7 +309,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="bench-group" data-pieces="domicule" data-surface="torus" hidden>
       <div class="table-wrap">
         <table role="table" id="torus-benchmark" aria-label="Domicules on tori (A401670)" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/tori.html#how-the-counts-are-made" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/tori.html#how-the-counts-are-made" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/tori.html#how-the-counts-are-made" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/tori.html#how-the-counts-are-made" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/tori.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/tori.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/tori.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/tori.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="torus-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
@@ -939,13 +948,14 @@ const MODULAR_LANGUAGES = [
 function columnLabel(th) {
   const icon = th.querySelector('svg.lang');
   const text = th.textContent.trim();
+  const link = th.querySelector('a.solver');
 
-  return { name: th.getAttribute('aria-label') || text, text, icon: icon ? icon.outerHTML : null };
+  return { name: th.getAttribute('aria-label') || text, text, icon: icon ? icon.outerHTML : null, href: link ? link.getAttribute('href') : null };
 }
 
-function labelledCell(content, { name, text, icon }) {
+function labelledCell(content, { name, text, icon, href }) {
   return icon
-    ? `<td role="cell" data-label="${name}" data-text="${text}">${icon}<span class="value">${content}</span></td>`
+    ? `<td role="cell" data-label="${name}" data-text="${text}"><a class="solver card-solver" href="${href}" aria-label="${name}" data-text="${text}">${icon}</a><span class="value">${content}</span></td>`
     : `<td role="cell" data-label="${name}">${content}</td>`;
 }
 
@@ -1024,14 +1034,14 @@ $('benchmark-surfaces').addEventListener('click', e => {
   if (button) switchBenchmark({ surface: button.dataset.surface });
 });
 
-document.querySelector('nav.tabs').addEventListener('click', e => {
-  const link = e.target.closest('a');
+document.querySelectorAll('nav.tabs, #intro-sections').forEach(links => links.addEventListener('click', e => {
+  const link = e.target.closest('a[data-tab]');
   if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
   if (link.hash === location.hash || link.dataset.tab === parseHash().tab) return;
   history.pushState(null, '', link.hash);
   render();
-});
+}));
 window.addEventListener('popstate', render);
 render();
 </script>

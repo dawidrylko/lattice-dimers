@@ -17,8 +17,9 @@ const { MAX_CIRCUMFERENCE: PERIODIC_BIGINT_CIRCUMFERENCE } = require('../js/solv
 const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
-const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, resolveRedirect } = require('./chrome');
+const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
 const { readBenchmarkRuns } = require('./benchmarkRuns');
+const { DEFAULT_BOARD } = require('./defaultBoard');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
 const REPOSITORY_TREE_URL = 'https://github.com/dawidrylko/lattice-dimers/tree/master';
@@ -96,7 +97,6 @@ const PERIODIC_PIECES = [
   { pieces: 'domicule', lattice: 'king', suffix: '-diagonal' },
 ];
 const DIAGONAL_FILTER_MAX_SIDE = 10;
-const DEFAULT_BOARD = '8x8';
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const COMPUTED = 'every output on this page was produced during that build from the files of this repository';
 const NOTE_PROVENANCE = {
@@ -470,7 +470,7 @@ function buildJsonLd() {
         description:
           "Code and data on dimers of the square lattice and the king's graph: transfer-matrix scripts, certificates and data for the entropy per site of the king's graph dimers, and exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, OEIS A239273): a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.",
         codeRepository: 'https://github.com/dawidrylko/lattice-dimers',
-        programmingLanguage: ['JavaScript', 'Python'],
+        programmingLanguage: ['Rust', 'Python', 'JavaScript'],
         runtimePlatform: 'Node.js',
         license: 'https://opensource.org/licenses/MIT',
         keywords: "dimer model, king's graph, entropy per site, transfer matrix, domino tiling, domicule tiling, perfect matchings, OEIS A004003, OEIS A239264, OEIS A239273, combinatorics",
@@ -605,6 +605,7 @@ async function buildNotes(notes, context) {
     const { title, description, html, toc, cells } = await renderNote(markdown, {
       resolveLink: target => resolveNoteLink(target, notes, note),
       context,
+      sectionAliases: SECTION_ALIASES[note.slug],
     });
     rendered.push({ ...note, title });
     const tocHtml = toc.length > 2 ? `<nav class="toc" aria-label="Contents"><strong>Contents</strong><ol>${toc.map(item => `<li><a href="#${item.id}">${item.title}</a></li>`).join('')}</ol></nav>` : '';
@@ -681,7 +682,7 @@ async function __main__() {
     ...domiculeBoards.map(b => [`${b.rowCount}x${b.colCount}`, b.total]),
   ]);
   const data = {
-    defaultBoard: DEFAULT_BOARD,
+    defaultBoard: `${DEFAULT_BOARD.rowCount}x${DEFAULT_BOARD.colCount}`,
     boards: [
       ...GALLERY_BOARDS.map(board => ({
         id: `${board.rowCount}x${board.colCount}`,

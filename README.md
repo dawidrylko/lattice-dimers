@@ -10,20 +10,32 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 
 <table>
   <tr>
-    <td align="center"><img src=".github/assets/showcase-domino.svg" alt="A domino tiling of a 10×10 board" width="200"></td>
-    <td align="center"><img src=".github/assets/showcase-domicule.svg" alt="A domicule tiling of a 10×10 board" width="200"></td>
-    <td align="center"><img src=".github/assets/showcase-cylinder.svg" alt="A domicule tiling of the 10×10 cylinder" width="200"></td>
-    <td align="center"><img src=".github/assets/showcase-torus.svg" alt="A domicule tiling of the 10×10 torus" width="200"></td>
+    <td align="center"><img src=".github/assets/showcase-domino.svg" alt="A domino tiling of an 8×8 board" width="200"></td>
+    <td align="center"><img src=".github/assets/showcase-domicule.svg" alt="A domicule tiling of an 8×8 board" width="200"></td>
+    <td align="center"><img src=".github/assets/showcase-cylinder.svg" alt="A domicule tiling of the 8×8 cylinder" width="200"></td>
+    <td align="center"><img src=".github/assets/showcase-torus.svg" alt="A domicule tiling of the 8×8 torus" width="200"></td>
   </tr>
   <tr>
-    <td align="center">dominoes, 10 × 10</td>
-    <td align="center">domicules, 10 × 10</td>
-    <td align="center">domicules, 10 × 10 cylinder</td>
-    <td align="center">domicules, 10 × 10 torus</td>
+    <td align="center">dominoes, 8 × 8</td>
+    <td align="center">domicules, 8 × 8</td>
+    <td align="center">domicules, 8 × 8 cylinder</td>
+    <td align="center">domicules, 8 × 8 torus</td>
   </tr>
 </table>
 
-The [gallery](https://dawidrylko.github.io/lattice-dimers/) numbers every tiling of a rectangle, a cylinder or a torus and draws any single one.
+## Site
+
+A domino covers two cells sharing a side, a domicule two cells sharing a side or only a corner. The [site](https://dawidrylko.github.io/lattice-dimers/) opens on two tabs, and its header menu lists the notebooks.
+
+- [Gallery](https://dawidrylko.github.io/lattice-dimers/#gallery): numbers the tilings of a rectangle, a cylinder or a torus and draws any one of them. It opens on the 8 × 8 board, and it samples the boards too large to number.
+- [Benchmarks](https://dawidrylko.github.io/lattice-dimers/#benchmark): the exact counts and the running times of the solvers in Rust, Python and JavaScript. The Pieces and Surface switches choose one of six tables.
+
+| menu | notebooks |
+| --- | --- |
+| Research | [Research](https://dawidrylko.github.io/lattice-dimers/notes/research.html) |
+| Dominoes | [Rectangles](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/rectangles.html), [Cylinders](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html), [Tori](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/tori.html) |
+| Domicules | [Rectangles](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html), [Cylinders](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html), [Tori](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html), [Diagonal pieces](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html) |
+| Triangular lattice | [Cylinders](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html), [Tori](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori.html) |
 
 ## Results
 
@@ -47,28 +59,31 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | --- | --- |
 | [`research/king-entropy`](research/king-entropy/README.md) | scripts, data, outputs, proofs and papers on the entropy of the king's graph |
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
-| [`notes`](notes/README.md) | notebooks on dominoes and domicules on rectangles, cylinders and tori, on the triangular lattice on cylinders and tori, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
+| [`notes`](notes/README.md) | notebooks on dominoes and domicules on rectangles, cylinders and tori, on diagonal pieces, on the triangular lattice on cylinders and tori, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
 | [`spec`](spec/README.md) | the solver contract, the registry of algorithms and the known counts every implementation and program is checked against |
 | [`rust`](rust/README.md) | the Rust solvers, for the algorithms [`spec/algorithms.json`](spec/algorithms.json) lists with Rust, and the library they share; the workspace manifest is [`Cargo.toml`](Cargo.toml) at the root |
 | [`python`](python/README.md) | the Python package `lattice_dimers`: the Python solvers, for the algorithms `spec/algorithms.json` lists with Python, and the library they share |
 | [`js`](js/README.md) | the JavaScript solvers for rectangles, cylinders and tori, and the renderer that numbers, samples and draws tilings |
-| [`docs`](docs/glossary.md) | the glossary of the words the repository uses for pieces, lattices and surfaces |
+| [`docs`](docs/glossary.md) | the glossary of the words the repository uses for pieces, lattices, surfaces, signs, the site and the code |
 | [`harness`](harness/README.md) | the test runners, the check that keeps the languages in step, and the benchmark runner |
 | [`benchmarks`](benchmarks/README.md) | the benchmark results |
 | `site` | the build of the [site](https://dawidrylko.github.io/lattice-dimers/): the gallery, the benchmark tables and the notebooks |
 
 ## Quick start
 
-Node.js 26 or newer (`.nvmrc`) and pnpm; `pnpm test` also runs the Rust and Python implementations, so it needs Rust 1.99 and Python 3.13 or newer:
+Node.js 26 or newer (`.nvmrc`) and pnpm, with Rust 1.99 and Python 3.13 or newer for the other two languages, which `pnpm test` also runs. Rust is the first language, Python the second and JavaScript the third; [`spec/algorithms.json`](spec/algorithms.json) lists the implementations each algorithm has. The three commands below count the same board, the 8 × 8 rectangle, and each prints 3263262629905 domicule tilings. `pnpm site:build` writes the site to `dist/site`:
 
 ```sh
 git clone https://github.com/dawidrylko/lattice-dimers.git
 cd lattice-dimers
 pnpm install
-node js/solvers/domiculeTilingSolver-Modular.js -r 20 -c 20
+node js/solvers/domiculeTilingSolver-Modular.js -r 8 -c 8
 cargo build --release
+target/release/domicule-tiling-modular -r 8 -c 8
 python3 -m pip install -e python
+python3 -I -m lattice_dimers.solvers.domicule_tiling_modular -r 8 -c 8
 pnpm test
+pnpm site:build
 ```
 
 ## Citation
