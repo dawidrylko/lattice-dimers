@@ -249,6 +249,7 @@ async function runCell(code, notebook) {
  * @param {Object} options
  * @property {function(string): string} options.resolveLink Maps a Markdown link target to the site URL.
  * @property {Object} options.context Values the cells can read as nb.context.
+ * @property {Object<string, string>} [options.sectionAliases] Old section ids of this note, each with the id of the heading that keeps it working.
  * @returns {Promise<{ title: string, description: string, html: string, toc: { id: string, title: string }[], cells: number }>} The rendered note.
  */
 async function renderNote(markdown, { resolveLink, context, sectionAliases = {} }) {

@@ -4,7 +4,7 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-The triangular lattice is the square lattice with one diagonal in every cell, the one that runs down to the right [1], so a tiling uses dominoes and diagonal pieces in that one direction. On a torus a piece may cross the column seam, between the last and the first column, or the row seam, between the last and the first row.
+The triangular lattice [1] is the square lattice with one diagonal in every cell, here the one that runs down to the right, so a tiling uses dominoes and diagonal pieces in that one direction. On a torus a piece may cross the column seam, between the last and the first column, or the row seam, between the last and the first row.
 
 ## The Modular solver
 

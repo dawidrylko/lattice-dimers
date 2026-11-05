@@ -109,6 +109,7 @@ th a.solver:focus-visible { outline: 2px solid var(--accent); outline-offset: 1p
 .table-wrap { overflow-x: auto; }
 .lang { width: 16px; height: 16px; vertical-align: -3px; fill: currentColor; }
 td > .lang { display: none; }
+.bench .table-wrap a.card-solver { display: none; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 919px) {
   .bench .table-wrap table { display: block; }
@@ -126,8 +127,10 @@ td > .lang { display: none; }
   .bench .table-wrap table.languages td:last-child { white-space: normal; }
   .bench .table-wrap #domino-benchmark td:nth-child(6) { grid-column: 1; }
   .bench .table-wrap td[data-text] { display: grid; grid-template-columns: max-content 1fr; align-items: center; column-gap: 4px; }
-  .bench .table-wrap td[data-text]::before { content: attr(data-text); content: attr(data-text) / attr(data-label); }
-  .bench .table-wrap td > .lang { display: block; color: var(--muted); }
+  .bench .table-wrap td[data-text]::before { content: none; }
+  .bench .table-wrap a.card-solver { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 13px; color: var(--muted); text-decoration: underline 1px var(--muted); text-underline-offset: 3px; grid-column: 1 / -1; }
+  .bench .table-wrap a.card-solver::before { content: attr(data-text); }
+  .bench .table-wrap a.card-solver:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   .bench .table-wrap td > .value { grid-column: 1 / -1; }
 }
 .note { color: var(--muted); font-size: 13px; margin-top: 12px; }
@@ -931,13 +934,14 @@ const MODULAR_LANGUAGES = [
 function columnLabel(th) {
   const icon = th.querySelector('svg.lang');
   const text = th.textContent.trim();
+  const link = th.querySelector('a.solver');
 
-  return { name: th.getAttribute('aria-label') || text, text, icon: icon ? icon.outerHTML : null };
+  return { name: th.getAttribute('aria-label') || text, text, icon: icon ? icon.outerHTML : null, href: link ? link.getAttribute('href') : null };
 }
 
-function labelledCell(content, { name, text, icon }) {
+function labelledCell(content, { name, text, icon, href }) {
   return icon
-    ? `<td role="cell" data-label="${name}" data-text="${text}">${icon}<span class="value">${content}</span></td>`
+    ? `<td role="cell" data-label="${name}" data-text="${text}"><a class="solver card-solver" href="${href}" aria-label="${name}" data-text="${text}">${icon}</a><span class="value">${content}</span></td>`
     : `<td role="cell" data-label="${name}">${content}</td>`;
 }
 

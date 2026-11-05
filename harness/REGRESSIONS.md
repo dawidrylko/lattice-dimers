@@ -79,6 +79,8 @@ A new fix adds its row here with the check that guards it.
 | the notebook drawings stayed white in dark mode and greyed their pieces off the dark palette | #85 | `test:site`, notes, dark sheet and `--mute` (new) | a build of `bf5b7fd` |
 | a notebook tile painted its background over the seam of the tile beside it | #85 | `test:site`, notes, covering tile background (new) | `.tiling .sheet .bg { fill: none; }` removed |
 | the gallery named a rectangle sheet a board | #85 | `test:site`, tiling sheets, surface in the sheet name | a build of `bf5b7fd` |
+| the solver headers of the cylinder and torus tables all led to one section, and the notebooks had no common titles or sections | this change | `test:site`, benchmark times, section named after the solver; notes, titles and sections (new) | a build of `ae77034` |
+| the solver labels of the benchmark cards linked nowhere below 920 px | this change | `test:site`, benchmark times, solver links of the cards (new) | a build of `ae77034` |
 | the front-page tilings were not square | `f3b5023` | `test:render`, sheet without labels and readme images | `svg.js` and `readme-images.js` from `f3b5023^` |
 
 ## Benchmarks

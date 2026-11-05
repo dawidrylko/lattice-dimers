@@ -4,7 +4,7 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-The triangular lattice is the square lattice with one diagonal in every cell, the one that runs down to the right [2]. A tiling uses dominoes and diagonal pieces in that one direction, so it lies between a domino tiling, which has no diagonal piece, and a domicule tiling, which may use both diagonals. On a cylinder a piece may cross the seam between the last and the first column.
+The triangular lattice [2] is the square lattice with one diagonal in every cell, here the one that runs down to the right. A tiling uses dominoes and diagonal pieces in that one direction, so it lies between a domino tiling, which has no diagonal piece, and a domicule tiling, which may use both diagonals. On a cylinder a piece may cross the seam between the last and the first column.
 
 ## The Modular solver
 
