@@ -28,7 +28,7 @@ where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only 
 
 ## The BigInt solver
 
-[`domiculeDiagonalSolver-BigInt.js`](../../js/solvers/domiculeDiagonalSolver-BigInt.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, and keeps its coefficients as `BigInt`.
+[`domiculeDiagonalSolver-BigInt.js`](../../js/solvers/domiculeDiagonalSolver-BigInt.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, and keeps its coefficients as `BigInt`, and so do its Rust and Python implementations, [`domicule-diagonal-bigint.rs`](../../rust/solvers/src/bin/domicule-diagonal-bigint.rs) and [`domicule_diagonal_bigint.py`](../../python/lattice_dimers/solvers/domicule_diagonal_bigint.py).
 
 ## Numbering
 
@@ -175,8 +175,11 @@ Average time of the count inside each solver, without the start of its process, 
 const { formatTime } = nb.context;
 
 table(
-  ['board', 'modular', 'BigInt'],
-  nb.context.diagonalBenchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.modular), formatTime(r.bigint)]),
+  ['board', 'modular', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
+  nb.context.diagonalBenchmark.map(r => [
+    `${r.rowCount}×${r.colCount}`,
+    ...[r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
+  ]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 ```

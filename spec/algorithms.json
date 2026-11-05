@@ -4,9 +4,11 @@
     "py": "python/lattice_dimers/solvers",
     "js": "js/solvers"
   },
-  "pendingPorts": 6,
+  "pendingPorts": 4,
   "algorithms": {
     "domicule-diagonal-bigint": {
+      "rs": "rust/solvers/src/bin/domicule-diagonal-bigint.rs",
+      "py": "python/lattice_dimers/solvers/domicule_diagonal_bigint.py",
       "js": "js/solvers/domiculeDiagonalSolver-BigInt.js"
     },
     "domicule-diagonal-modular": {
