@@ -125,10 +125,10 @@ Average time of the count inside each solver on the king's graph, without the st
 const { formatTime } = nb.context;
 
 table(
-  ['board', 'BigInt', 'modular, Rust', 'modular, Python', 'modular, JavaScript'],
+  ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt'],
   nb.context.periodicBenchmark
     .filter(r => r.surface === 'cylinder')
-    .map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.bigint), formatTime(r.languages.rs), formatTime(r.languages.py), formatTime(r.modular)]),
+    .map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.languages.rs), formatTime(r.languages.py), formatTime(r.modular), formatTime(r.bigint)]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 ```

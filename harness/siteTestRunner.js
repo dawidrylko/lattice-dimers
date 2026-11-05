@@ -34,8 +34,23 @@ const CONTENT_TYPES = {
 const VIEWPORT_HEIGHT = 900;
 const MOBILE_TABLE_WIDTH = 720;
 const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
-const LANGUAGE_COLUMNS = ['Board', 'Tilings', 'BigInt, JavaScript', 'Modular, Rust', 'Modular, Python', 'Modular, JavaScript', 'Runs'];
-const LANGUAGE_ICONS = 'BigInt #icon-javascript | Modular #icon-rust | Modular #icon-python | Modular #icon-javascript';
+const LANGUAGE_COLUMNS = ['Board', 'Tilings', 'Modular, Rust', 'Modular, Python', 'Modular, JavaScript', 'BigInt, JavaScript', 'Runs'];
+const LANGUAGE_ICONS = 'Modular #icon-rust | Modular #icon-python | Modular #icon-javascript | BigInt #icon-javascript';
+const LANGUAGE_TABLES = [
+  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121'],
+  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272'],
+  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280'],
+  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649'],
+  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552'],
+];
+const SHOWN_BENCHMARK = `(() => {
+  const view = group => group.dataset.pieces + '/' + group.dataset.surface;
+  const pressed = id => [...document.querySelectorAll('#' + id + ' button[aria-pressed="true"]')];
+  return {
+    shown: [...document.querySelectorAll('#benchmark .bench-group')].filter(group => !group.hidden).map(view).join(),
+    pressed: pressed('benchmark-pieces').map(button => button.dataset.pieces).join() + '/' + pressed('benchmark-surfaces').map(button => button.dataset.surface).join(),
+  };
+})()`;
 const WAIT_TIMEOUT = 20000;
 const COMMAND_TIMEOUT = 30000;
 const LAUNCH_TIMEOUT = 30000;
@@ -1098,25 +1113,31 @@ async function checkChrome(page, baseUrl, width) {
 async function checkBenchmark(page, baseUrl, width) {
   const problems = [];
 
-  for (const [hash, group, rows, complete] of [
-    ['benchmark', 'dominoes', 'benchmark-rows', null],
-    ['benchmark/domicules', 'domicules', 'domicule-benchmark-rows', 'every'],
-    ['benchmark-domicule', 'domicules', 'domicule-benchmark-rows', 'every'],
-    ['benchmark/cylinders', 'cylinders', 'cylinder-benchmark-rows', 'some'],
-    ['benchmark/tori', 'tori', 'torus-benchmark-rows', 'some'],
-    ['benchmark/diagonals', 'diagonals', 'diagonal-benchmark-rows', 'some'],
+  for (const [hash, view, rows, complete] of [
+    ['benchmark', 'domino/rectangle', 'domino-benchmark-rows', null],
+    ['benchmark/domino/cylinder', 'domino/cylinder', 'domino-cylinder-benchmark-rows', 'some'],
+    ['benchmark/domino/torus', 'domino/torus', 'domino-torus-benchmark-rows', 'some'],
+    ['benchmark/domicule/rectangle', 'domicule/rectangle', 'domicule-benchmark-rows', 'every'],
+    ['benchmark/domicule/cylinder', 'domicule/cylinder', 'cylinder-benchmark-rows', 'some'],
+    ['benchmark/domicule/torus', 'domicule/torus', 'torus-benchmark-rows', 'some'],
+    ['benchmark/dominoes', 'domino/rectangle', 'domino-benchmark-rows', null],
+    ['benchmark/domicules', 'domicule/rectangle', 'domicule-benchmark-rows', null],
+    ['benchmark-domicule', 'domicule/rectangle', 'domicule-benchmark-rows', null],
+    ['benchmark/cylinders', 'domicule/cylinder', 'cylinder-benchmark-rows', null],
+    ['benchmark/tori', 'domicule/torus', 'torus-benchmark-rows', null],
+    ['benchmark/diagonals', 'domicule/rectangle', 'domicule-benchmark-rows', null],
+    ['benchmark/domino/hexagon', 'domino/rectangle', 'domino-benchmark-rows', null],
   ]) {
     await loadSite(page, baseUrl, width, hash);
-    await page.waitFor(`document.querySelectorAll('#${rows} tr').length > 0`, `the ${group} rows`);
+    await page.waitFor(`document.querySelectorAll('#${rows} tr').length > 0`, `the ${view} rows`);
     await page.settle();
+    const shown = await page.evaluate(SHOWN_BENCHMARK);
     const state = await page.evaluate(`(() => {
       const section = document.getElementById('benchmark');
-      const shownGroups = [...section.querySelectorAll('.bench-group')].filter(group => !group.hidden).map(group => group.dataset.group);
       const wraps = [...section.querySelectorAll('.bench-group:not([hidden]) .table-wrap')];
       const times = row => [...row.cells].slice(2, -1).map(cell => cell.textContent);
       return {
-        shown: !section.hidden && document.getElementById('gallery').hidden && shownGroups.join() === '${group}',
-        pressed: [...document.querySelectorAll('#benchmark-groups button[aria-pressed="true"]')].map(button => button.dataset.group).join(),
+        shown: !section.hidden && document.getElementById('gallery').hidden,
         overflow: Math.max(...wraps.map(wrap => wrap.scrollWidth - wrap.clientWidth)),
         hidden: wraps.flatMap(wrap => {
           const box = wrap.getBoundingClientRect();
@@ -1136,8 +1157,8 @@ async function checkBenchmark(page, baseUrl, width) {
       };
     })()`);
 
-    if (!state.shown || state.pressed !== group) {
-      problems.push(`#${hash} does not show only the ${group} tables (pressed: ${state.pressed})`);
+    if (!state.shown || shown.shown !== view || shown.pressed !== view) {
+      problems.push(`#${hash} shows ${shown.shown} with ${shown.pressed} pressed instead of ${view}`);
     }
 
     if (state.overflow > 0 || state.hidden) {
@@ -1156,22 +1177,28 @@ async function checkBenchmark(page, baseUrl, width) {
   await loadSite(page, baseUrl, width, 'benchmark');
   const dominoColumns = await page.evaluate(`({
     headers: [...document.querySelectorAll('#domino-benchmark thead th')].map(th => th.textContent).join(),
-    cells: [...document.querySelectorAll('#benchmark-rows tr')].map(row => row.cells.length).filter(count => count !== 5).length,
+    cells: [...document.querySelectorAll('#domino-benchmark-rows tr')].map(row => row.cells.length).filter(count => count !== 5).length,
+    diagonals: Boolean(document.getElementById('diagonal-benchmark')),
   })`);
 
-  if (dominoColumns.headers !== 'Board,Tilings,BigInt,Formula,Runs' || dominoColumns.cells) {
+  if (dominoColumns.headers !== 'Board,Tilings,Formula,BigInt,Runs' || dominoColumns.cells) {
     problems.push(`the domino benchmark has the columns ${dominoColumns.headers} and ${dominoColumns.cells} rows without five cells`);
   }
 
-  for (const [group, id, surface] of [['cylinders', 'cylinder-benchmark', 'cylinder'], ['tori', 'torus-benchmark', 'torus']]) {
-    await loadSite(page, baseUrl, width, `benchmark/${group}`);
-    await page.waitFor(`document.querySelectorAll('#${id}-rows tr').length > 0`, `the ${group} rows`);
+  if (dominoColumns.diagonals) {
+    problems.push('the benchmarks still show the diagonal pieces table');
+  }
+
+  for (const [view, id, source, tilings4x4] of LANGUAGE_TABLES) {
+    await loadSite(page, baseUrl, width, `benchmark/${view}`);
+    await page.waitFor(`document.querySelectorAll('#${id}-rows tr').length > 0`, `the ${view} rows`);
     await page.settle();
     const columns = await page.evaluate(`(() => {
       const headers = [...document.querySelectorAll('#${id} thead th')].slice(2, -1);
       const rows = [...document.querySelectorAll('#${id}-rows tr')];
       const shown = icon => icon && icon.getAttribute('aria-hidden') === 'true' && icon.getBoundingClientRect().width > 0 ? icon.querySelector('use').getAttribute('href') : 'no icon';
       return {
+        tilings4x4: rows.filter(row => row.cells[0].textContent === '4×4').map(row => row.cells[1].textContent.trim().replace(/^Tilings/, '')).join(),
         headerRows: document.querySelectorAll('#${id} thead tr').length,
         titles: headers.map(th => th.title).join(' | '),
         headers: headers.map(th => th.textContent.trim() + ' ' + shown(th.querySelector('svg.lang'))).join(' | '),
@@ -1195,6 +1222,10 @@ async function checkBenchmark(page, baseUrl, width) {
     const cards = width <= MOBILE_TABLE_WIDTH;
     const unnamed = cells.slice(2, -1).filter((name, i) => name !== (cards ? `${solvers[i]} ${columns.values[i]}` : columns.values[i]));
     const cardIcons = cards ? LANGUAGE_ICONS : LANGUAGE_ICONS.replace(/#icon-\w+/g, 'no icon');
+
+    if (columns.tilings4x4 !== tilings4x4) {
+      problems.push(`#${id} counts ${columns.tilings4x4} tilings of the 4×4 board instead of ${tilings4x4}`);
+    }
 
     if (columns.headerRows !== 1 || names.join(' | ') !== LANGUAGE_COLUMNS.join(' | ') || columns.titles !== solvers.join(' | ')) {
       problems.push(`#${id} has ${columns.headerRows} header rows named ${names.join(' | ')} with the titles ${columns.titles}`);
@@ -1239,7 +1270,7 @@ async function checkBenchmark(page, baseUrl, width) {
     }
 
     const runsTitle = await page.evaluate(`(() => {
-      const row = structuredClone(DATA.periodicBenchmark.find(r => r.surface === '${surface}' && r.bigint && r.languages.rs));
+      const row = structuredClone(${source}.find(r => r.bigint && r.languages.rs));
       row.languages.rs.runs += 1;
       renderSolverRows('${id}', [row], MODULAR_LANGUAGES);
       const runs = document.querySelector('#${id}-rows tr').lastElementChild.querySelector('span[title]');
@@ -1252,36 +1283,32 @@ async function checkBenchmark(page, baseUrl, width) {
   }
 
   await loadSite(page, baseUrl, width, 'benchmark');
-  await page.evaluate("document.querySelector('#benchmark-groups button[data-group=cylinders]').click()");
-  await page.waitFor(
-    "location.hash === '#benchmark/cylinders' && !document.querySelector('.bench-group[data-group=cylinders]').hidden",
-    'the switch to cylinders',
-  );
-  const cylinders = await page.evaluate(`({
-    rows: document.querySelectorAll('.bench-group[data-group=cylinders] #cylinder-benchmark-rows tr').length,
-    inTori: Boolean(document.querySelector('.bench-group[data-group=tori] #cylinder-benchmark-rows')),
-    tori: !document.querySelector('.bench-group[data-group=tori]').hidden,
-  })`);
 
-  if (!cylinders.rows || cylinders.inTori || cylinders.tori) {
-    problems.push(`the cylinders group shows ${cylinders.rows} cylinder rows, the tori group ${cylinders.inTori ? 'also holds' : 'does not hold'} the cylinder table and is ${cylinders.tori ? 'shown' : 'hidden'}`);
+  for (const [selector, hash, view] of [
+    ['#benchmark-pieces button[data-pieces=domicule]', '#benchmark/domicule/rectangle', 'domicule/rectangle'],
+    ['#benchmark-surfaces button[data-surface=cylinder]', '#benchmark/domicule/cylinder', 'domicule/cylinder'],
+    ['#benchmark-surfaces button[data-surface=torus]', '#benchmark/domicule/torus', 'domicule/torus'],
+    ['#benchmark-pieces button[data-pieces=domino]', '#benchmark/domino/torus', 'domino/torus'],
+  ]) {
+    await page.evaluate(`document.querySelector('${selector}').click()`);
+    await page.waitFor(`location.hash === '${hash}'`, `the switch to ${view}`);
+    await page.settle();
+    const shown = await page.evaluate(SHOWN_BENCHMARK);
+
+    if (shown.shown !== view || shown.pressed !== view) {
+      problems.push(`${selector} shows ${shown.shown} with ${shown.pressed} pressed instead of ${view}`);
+    }
   }
-
-  await page.evaluate("document.querySelector('#benchmark-groups button[data-group=tori]').click()");
-  await page.waitFor(
-    "location.hash === '#benchmark/tori' && !document.querySelector('.bench-group[data-group=tori]').hidden",
-    'the switch to tori',
-  );
 
   const length = await page.evaluate('history.length');
   await page.evaluate(
-    "document.querySelector('#benchmark-groups button[data-group=tori]').click(); document.querySelector('nav.tabs a[data-tab=benchmark]').click()",
+    "document.querySelector('#benchmark-surfaces button[data-surface=torus]').click(); document.querySelector('#benchmark-pieces button[data-pieces=domino]').click(); document.querySelector('nav.tabs a[data-tab=benchmark]').click()",
   );
   await page.settle();
   const kept = await page.evaluate('({ hash: location.hash, added: history.length - ' + length + ' })');
 
-  if (kept.hash !== '#benchmark/tori' || kept.added) {
-    problems.push(`clicking the open group and the Benchmarks tab moved to ${kept.hash} and added ${kept.added} history entries`);
+  if (kept.hash !== '#benchmark/domino/torus' || kept.added) {
+    problems.push(`clicking the pressed switches and the Benchmarks tab moved to ${kept.hash} and added ${kept.added} history entries`);
   }
 
   return problems;
@@ -1290,17 +1317,23 @@ async function checkBenchmark(page, baseUrl, width) {
 async function checkBenchmarkCells(page, baseUrl, width) {
   const problems = [];
   await loadSite(page, baseUrl, width, 'benchmark');
-  const groups = await page.evaluate("[...document.querySelectorAll('#benchmark-groups button')].map(button => button.dataset.group)");
+  const pieces = await page.evaluate("[...document.querySelectorAll('#benchmark-pieces button')].map(button => button.dataset.pieces)");
+  const surfaces = await page.evaluate("[...document.querySelectorAll('#benchmark-surfaces button')].map(button => button.dataset.surface)");
+  const groups = await page.evaluate("[...document.querySelectorAll('#benchmark .bench-group')].map(group => group.dataset.pieces + '/' + group.dataset.surface).sort().join()");
+  const views = pieces.flatMap(p => surfaces.map(surface => `${p}/${surface}`));
 
-  if (groups.length < 2) {
-    problems.push(`the benchmark switch has ${groups.length} groups`);
+  if (groups !== [...views].sort().join()) {
+    problems.push(`the benchmark switches give ${views.join(', ')} but the tables are ${groups}`);
   }
 
-  for (const group of groups) {
-    await page.evaluate(`document.querySelector('#benchmark-groups button[data-group=${group}]').click()`);
+  for (const view of views) {
+    const [p, surface] = view.split('/');
+    await page.evaluate(
+      `document.querySelector('#benchmark-pieces button[data-pieces=${p}]').click(); document.querySelector('#benchmark-surfaces button[data-surface=${surface}]').click()`,
+    );
     await page.waitFor(
-      `!document.querySelector('.bench-group[data-group=${group}]').hidden && document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0`,
-      `the ${group} rows`,
+      `!document.querySelector('.bench-group[data-pieces=${p}][data-surface=${surface}]').hidden && document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0`,
+      `the ${view} rows`,
     );
     const times = await page.evaluate(
       "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr')].flatMap(row => [...row.cells].slice(2, -1).map(cell => cell.textContent))",
@@ -1311,7 +1344,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     const odd = [...new Set(times.filter(time => !/^(-|\d+\.\d{2} m?s)$/.test(time)))];
 
     if (odd.length || dashes.length) {
-      problems.push(`the ${group} tables show ${[...odd, ...dashes].join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing value -`);
+      problems.push(`the ${view} table shows ${[...odd, ...dashes].join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing value -`);
     }
   }
 

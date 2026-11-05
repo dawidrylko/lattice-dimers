@@ -81,6 +81,11 @@ const rejectionTestCases = [
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--domicule', '--only', 'dominoTilingSolver.js'], message: 'Usage' },
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--only', 'domiculeTilingSolver-BigInt.js'], message: 'Usage' },
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--diagonal'], message: 'Usage' },
+  { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--lattice', 'hexagonal'], message: 'Usage' },
+  { args: ['harness/benchmarkRunner.js', '-n', '1', '--cylinder', '--lattice'], message: 'Usage' },
+  { args: ['harness/benchmarkRunner.js', '-n', '1', '--domicule', '--lattice', 'square'], message: 'Usage' },
+  { args: ['harness/benchmarkRunner.js', '-n', '1', '--lattice', 'square'], message: 'Usage' },
+  { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--lattice=square'], message: 'Usage' },
 ];
 const implementationRejectionTestCases = [
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '25'], message: 'at most 24' },
@@ -667,10 +672,13 @@ function executeBenchmarkSurfaceTests() {
     { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: 'periodicTilingSolver-Modular.js_2x2-king-torus.txt' },
     { args: ['--cylinder', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-king-cylinder.txt' },
     { args: ['--diagonal', '--only', 'domiculeDiagonalSolver-BigInt.js'], file: 'domiculeDiagonalSolver-BigInt.js_0x0.txt' },
-    ...listImplementations('periodic-tiling-modular').map(({ file }) => ({
-      args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'],
-      file: `${path.basename(file)}_2x2-king-torus.txt`,
-    })),
+    { args: ['--cylinder', '--lattice', 'square', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-square-cylinder.txt' },
+    { args: ['--cylinder', '--lattice', 'triangular', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-triangular-cylinder.txt' },
+    ...listImplementations('periodic-tiling-modular').flatMap(({ file }) => [
+      { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-king-torus.txt` },
+      { args: ['--torus', '--lattice', 'square', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-square-torus.txt` },
+      { args: ['--cylinder', '--lattice', 'square', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-square-cylinder.txt` },
+    ]),
     ...listImplementations('domicule-tiling-modular').map(({ file }) => ({
       args: ['--domicule', '--only', 'domiculeTilingSolver-Modular.js'],
       file: `${path.basename(file)}_0x0.txt`,
@@ -678,7 +686,7 @@ function executeBenchmarkSurfaceTests() {
   ];
 
   return cases.every(({ args, file }, index) => {
-    process.stdout.write(`Executing benchmark surface test ${index + 1} of ${cases.length} for ${args[0]}... `);
+    process.stdout.write(`Executing benchmark surface test ${index + 1} of ${cases.length} for ${args.slice(0, -2).join(' ')}... `);
 
     const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
 
@@ -897,7 +905,7 @@ function executeBenchmarkEmptySelectionTest() {
 }
 
 function executeBenchmarkRunTest() {
-  process.stdout.write('Executing benchmark run test 1 of 1 for a partial newer month... ');
+  process.stdout.write('Executing benchmark run test 1 of 1 for partial newer months... ');
 
   const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
   const touch = (run, files) => {
@@ -906,8 +914,10 @@ function executeBenchmarkRunTest() {
   };
 
   try {
-    touch('2000-01', fs.readdirSync(path.join(ROOT_DIRECTORY, 'benchmarks', 'results', readBenchmarkRuns().latest)));
+    const complete = fs.readdirSync(path.join(ROOT_DIRECTORY, 'benchmarks', 'results', readBenchmarkRuns().latest));
+    touch('2000-01', complete);
     touch('2000-02', ['environment.json', 'dominoTilingSolver-Formula.js_0x0.txt']);
+    touch('2000-03', complete.filter(file => !['periodic-tiling-modular.rs_14x14-square-torus.txt', 'domicule_tiling_modular.py_20x20.txt'].includes(file)));
     const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {

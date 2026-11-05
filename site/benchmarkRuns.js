@@ -1,16 +1,20 @@
 const fs = require('fs');
 const path = require('path');
 const { filesInt, testCasesInt, filesBigInt, testCasesBigInt, filesDomicule } = require('../js/core/cases');
-const { listImplementations } = require('../js/core/registry');
+const { listImplementations, algorithmOf } = require('../js/core/registry');
 
 const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
 const LARGEST_PERIODIC_RESULTS = [
   'periodicTilingSolver-BigInt.js_10x10-king-torus.txt',
-  ...listImplementations('periodic-tiling-modular').flatMap(({ file }) => [
-    `${path.basename(file)}_14x14-king-torus.txt`,
-    `${path.basename(file)}_16x16-king-cylinder.txt`,
-  ]),
   'periodicTilingSolver-BigInt.js_12x12-king-cylinder.txt',
+  'periodicTilingSolver-BigInt.js_12x12-square-torus.txt',
+  'periodicTilingSolver-BigInt.js_12x12-square-cylinder.txt',
+  ...listImplementations('periodic-tiling-modular').flatMap(({ file }) =>
+    ['king', 'square'].flatMap(lattice => [
+      `${path.basename(file)}_14x14-${lattice}-torus.txt`,
+      `${path.basename(file)}_16x16-${lattice}-cylinder.txt`,
+    ]),
+  ),
   'domiculeDiagonalSolver-BigInt.js_12x12.txt',
   'domiculeDiagonalSolver-Modular.js_20x20.txt',
 ];
@@ -26,8 +30,9 @@ function isCompleteRun(root, run) {
     'environment.json',
     ...filesInt.map(fileName => resultFileName(fileName, lastInt)),
     ...filesBigInt.map(fileName => resultFileName(fileName, lastBigInt)),
-    ...filesDomicule.map(fileName => resultFileName(fileName, { rowCount: 16, colCount: 16 })),
-    ...filesDomicule.map(fileName => resultFileName(fileName, { rowCount: 20, colCount: 20 })),
+    ...filesDomicule
+      .flatMap(fileName => listImplementations(algorithmOf(fileName)))
+      .flatMap(({ file }) => [16, 20].map(side => resultFileName(path.basename(file), { rowCount: side, colCount: side }))),
     ...LARGEST_PERIODIC_RESULTS,
   ];
 
