@@ -7,8 +7,8 @@ import numpy as np
 from lattice_dimers.core import combine_checked_residues, list_primes, parse_args, run_workers
 
 MAX_CIRCUMFERENCE = 24
-BLOCK_SIZE = 1 << 16
-CACHED_STATES = 1 << 20
+BATCH_COUNTS = 1 << 20
+SCRATCH_COUNTS = BATCH_COUNTS // 2
 LATTICES = {
     "square": {"down_left": False, "down_right": False},
     "triangular": {"down_left": False, "down_right": True},
@@ -54,91 +54,92 @@ def list_moves(cols, c, has_below, lattice, wrap_bit):
 
 def count_modulo(board):
     """Counts the tilings of a cylinder or a torus modulo a prime, cell by cell, like countModulo of
-    js/solvers/periodicTilingSolver-Modular.js, with the same two tables of 32-bit counts. A cell step moves
-    the states block by block, one move at a time: within one move no two states share a target, so the
-    counts are added to their targets at once and reduced modulo the prime as in the JavaScript solver. The
-    sources and targets of each block and move are kept between cells only while 2 * cols * state_count
-    stays within CACHED_STATES."""
+    js/solvers/periodicTilingSolver-Modular.js, with tables of 32-bit counts reduced modulo the prime as there.
+
+    A state is the window of cols + 2 bits and, on the king's graph with cols >= 3, the extra bit above it. Shifting
+    a state by one bit maps a contiguous range of states onto another. So a cell step needs no index arrays. The
+    table is reshaped into views where one axis is the bit a move covers. Every move adds one view of the current
+    table onto one view of the next. The column where the extra bit joins the window only swaps which axis of the
+    next table it lands on. The sums are reduced a slice at a time through a scratch array of SCRATCH_COUNTS counts.
+    A worker thread thus holds the two tables and that array.
+
+    A torus runs one start per rotation class, as in JavaScript, but a batch of starts at once. Each table has one
+    column per start. A batch takes as many starts as fit in BATCH_COUNTS counts, and at least one. The interpreter's
+    work per cell is shared by the whole batch."""
     rows, cols, prime = board["rows"], board["cols"], board["prime"]
     torus, twisted = board["torus"], board["twisted"]
     lattice = LATTICES[board["lattice"]]
     window_bits = cols + 2
-    window_mask = (1 << window_bits) - 1
     wrap_bit = 1 << window_bits
     uses_wrap_bit = lattice["down_left"] and cols >= 3
-    state_count = 1 << (window_bits + (1 if uses_wrap_bit else 0))
-    top_bit = 1 << (window_bits - 1)
+    wraps = 2 if uses_wrap_bit else 1
+    half = 1 << (window_bits - 1)
+    state_count = wraps << window_bits
     moves_below = [list_moves(cols, c, True, lattice, wrap_bit) for c in range(cols)]
     moves_last = [list_moves(cols, c, torus, lattice, wrap_bit) for c in range(cols)]
-    current = np.zeros(state_count, dtype=np.uint32)
-    following = np.zeros(state_count, dtype=np.uint32)
+    modulus = np.uint32(prime)
+    scratch = np.empty(SCRATCH_COUNTS, dtype=np.uint32)
 
-    def shift(values, c):
-        window = (values & window_mask) >> 1
+    def accumulate(target, source, negative):
+        axis = int(np.argmax(target.shape))
+        span = max(1, SCRATCH_COUNTS * target.shape[axis] // target.size)
 
-        if not uses_wrap_bit:
-            return window
+        for low in range(0, target.shape[axis], span):
+            part = (slice(None),) * axis + (slice(low, low + span),)
+            into, values = target[part], source[part]
+            spare = scratch[: into.size].reshape(into.shape) if into.size <= SCRATCH_COUNTS else np.empty_like(into)
 
-        if c == cols - 3:
-            return window | np.where(values & wrap_bit, top_bit, 0)
+            if negative:
+                np.subtract(modulus, values, out=spare)
+                values = spare
 
-        return window | (values & wrap_bit)
+            np.add(into, values, out=into)
+            np.subtract(into, modulus, out=spare)
+            np.minimum(into, spare, out=into)
 
-    def add(targets, counts):
-        sums = following[targets] + counts
-        following[targets] = np.where(sums >= prime, sums - prime, sums)
-
-    def classes(low, c, moves):
-        states = np.arange(low, min(low + BLOCK_SIZE, state_count), dtype=np.int64)
-        occupied = states[(states & 1) == 1]
-        free = states[(states & 1) == 0]
-        found = [(occupied, shift(occupied, c), False)]
+    def step(current, following, c, last, width):
+        moves = moves_last[c] if last else moves_below[c]
+        joins = uses_wrap_bit and c == cols - 3
+        following.fill(0)
+        shifted = following.reshape(wraps, 2, half, width)
+        landing = shifted[0] if joins else shifted[:, 0]
+        accumulate(landing, current.reshape(wraps, half, 2, width)[:, :, 1], False)
 
         for bit, crossing in moves:
-            moved = free[(free & bit) == 0]
-            found.append((moved, shift(moved + bit, c), twisted and crossing))
+            negative = twisted and crossing
 
-        return found
+            if bit == wrap_bit:
+                accumulate(landing[1], current.reshape(wraps, half, 2, width)[0, :, 0], negative)
+                continue
 
-    cache = {} if 2 * cols * state_count <= CACHED_STATES else None
+            block = bit >> 1
+            groups = half // (2 * block)
+            free = current.reshape(wraps, groups, 2, block, 2, width)[:, :, 0, :, 0]
+            target = following.reshape(wraps, 2, groups, 2, block, width)
+            accumulate((target[0] if joins else target[:, 0])[:, :, 1], free, negative)
 
-    def step(c, last):
-        moves = moves_last[c] if last else moves_below[c]
-        following.fill(0)
-
-        for low in range(0, state_count, BLOCK_SIZE):
-            if cache is None:
-                found = classes(low, c, moves)
-            else:
-                if (low, c, last) not in cache:
-                    cache[(low, c, last)] = classes(low, c, moves)
-
-                found = cache[(low, c, last)]
-
-            for sources, targets, negative in found:
-                counts = current[sources]
-                add(targets, prime - counts if negative else counts)
-
-    def run(start):
-        nonlocal current, following
-        current.fill(0)
-        current[start] = 1 % prime
+    def run(starts):
+        width = len(starts)
+        columns = np.arange(width)
+        current = np.zeros(state_count * width, dtype=np.uint32)
+        following = np.zeros_like(current)
+        current.reshape(state_count, width)[starts, columns] = 1 % prime
 
         for cell in range(rows * cols):
-            c = cell % cols
-            step(c, cell >= (rows - 1) * cols)
+            step(current, following, cell % cols, cell >= (rows - 1) * cols, width)
             current, following = following, current
 
-        return int(current[start])
+        return current.reshape(state_count, width)[starts, columns]
 
     if not torus:
-        return 1 % prime if rows == 0 else run(0)
+        return 1 % prime if rows == 0 else int(run(np.array([0]))[0])
 
     def rotate(subset):
         return ((subset << 1) | (subset >> (cols - 1))) & ((1 << cols) - 1)
 
     reduce = not twisted or rows % 2 == 0
-    total = 0
+    starts = []
+    weights = []
 
     for start in range(1 << cols):
         weight = 1
@@ -153,7 +154,15 @@ def count_modulo(board):
             if rotation != start:
                 continue
 
-        total = (total + weight * run(start)) % prime
+        starts.append(start)
+        weights.append(weight)
+
+    batch = max(1, BATCH_COUNTS // state_count)
+    total = 0
+
+    for first in range(0, len(starts), batch):
+        counts = run(np.array(starts[first : first + batch]))
+        total = (total + sum(weight * int(count) for weight, count in zip(weights[first : first + batch], counts))) % prime
 
     return total
 
