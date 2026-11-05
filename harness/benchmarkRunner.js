@@ -4,6 +4,7 @@ const os = require('os');
 const path = require('path');
 const { parseArgs, exec } = require('../js/core');
 const { listImplementations, algorithmOf } = require('../js/core/registry');
+const { LATTICES } = require('../js/solvers/periodicTilingSolver-BigInt.js');
 const {
   filesInt,
   testCasesInt,
@@ -30,14 +31,9 @@ const LANGUAGE_KEYS = { '.rs': 'rust', '.py': 'python' };
 const PERIODIC_CASES = [...testCasesPeriodic, ...testCasesPeriodicModular];
 const DIAGONAL_CASES = [...testCasesDiagonal, ...testCasesDiagonalModular];
 const DOMICULE_BOARDS = [...testCasesDomicule, { rowCount: 20, colCount: 20 }];
-const GROUPS = {
-  '--domicule': [{ files: filesDomicule, testCases: DOMICULE_BOARDS }],
-  '--torus': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 14, { lattice: 'king', torus: true }), PERIODIC_CASES) }],
-  '--cylinder': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 16, { lattice: 'king' }), PERIODIC_CASES) }],
-  '--diagonal': [{ files: filesDiagonal, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
-};
+const PERIODIC_GROUPS = ['--torus', '--cylinder'];
 const USAGE =
-  'Usage: node harness/benchmarkRunner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal] [--force]';
+  'Usage: node harness/benchmarkRunner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal] [--lattice king|triangular|square] [--force]';
 
 function displayPath(file) {
   const relative = path.relative(path.join(__dirname, '..'), file);
@@ -64,8 +60,17 @@ function listSquareBoards(minSide, maxSide, options = {}) {
   }));
 }
 
-function readOnlyArg(argv) {
-  const index = argv.indexOf('--only');
+function listGroups(lattice) {
+  return {
+    '--domicule': [{ files: filesDomicule, testCases: DOMICULE_BOARDS }],
+    '--torus': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 14, { lattice, torus: true }), PERIODIC_CASES) }],
+    '--cylinder': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 16, { lattice }), PERIODIC_CASES) }],
+    '--diagonal': [{ files: filesDiagonal, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
+  };
+}
+
+function readValueArg(argv, flag) {
+  const index = argv.indexOf(flag);
 
   return index === -1 ? null : argv[index + 1] ?? '';
 }
@@ -271,10 +276,12 @@ function __main__() {
       maxSize,
       offset = 0,
     } = parseArgs(argv, argsSchema);
-    const only = readOnlyArg(argv);
-    const flags = Object.keys(GROUPS).filter(flag => argv.includes(flag));
+    const only = readValueArg(argv, '--only');
+    const lattice = readValueArg(argv, '--lattice');
+    const allGroups = listGroups(lattice ?? 'king');
+    const flags = Object.keys(allGroups).filter(flag => argv.includes(flag));
     const groups = flags.length
-      ? GROUPS[flags[0]]
+      ? allGroups[flags[0]]
       : [
           { files: filesInt, testCases: testCasesInt },
           { files: filesBigInt, testCases: testCasesBigInt },
@@ -285,7 +292,8 @@ function __main__() {
       !(numberOfExecutions > 0) ||
       (maxSize !== undefined && !(maxSize > 0)) ||
       !(offset >= 0) ||
-      (only !== null && !groups.some(({ files }) => files.includes(only)))
+      (only !== null && !groups.some(({ files }) => files.includes(only))) ||
+      (lattice !== null && !(PERIODIC_GROUPS.includes(flags[0]) && Object.hasOwn(LATTICES, lattice)))
     ) {
       throw new Error(USAGE);
     }
