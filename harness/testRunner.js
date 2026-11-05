@@ -1109,15 +1109,16 @@ async function executeModuleTests() {
       ['domicule-tiling-modular', fourByFour(testCasesDomicule)],
     ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
     executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
-    executeLongCountTest()
+    executeLongCountTest('domino-tiling-formula', ['-r', '80', '-c', '80']) &&
+    executeLongCountTest('domino-tiling-bigint', ['-r', '2', '-c', '6000'])
   );
 }
 
-function executeLongCountTest() {
-  const python = listImplementations('domino-tiling-formula').find(({ language }) => language === 'py');
+function executeLongCountTest(algorithm, args) {
+  const python = listImplementations(algorithm).find(({ language }) => language === 'py');
+  const javascript = listImplementations(algorithm).find(({ language }) => language === 'js');
   const launcher = exec.launch(python.file);
-  const args = ['-r', '80', '-c', '80'];
-  const expected = spawnSync(process.execPath, ['js/solvers/dominoTilingSolver-Formula.js', ...args], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' }).stdout.trim();
+  const expected = spawnSync(process.execPath, [javascript.file, ...args], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' }).stdout.trim();
   const script = [
     'import runpy, sys',
     'sys.set_int_max_str_digits(640)',
@@ -1338,7 +1339,7 @@ async function __main__() {
         filesBigInt.filter(fileName => !isFormula(fileName)),
         testCasesToRunBigInt,
         verifyBigInt,
-        testCasesBigInt.filter(({ rowCount }) => rowCount <= MAX_PORTED_BIGINT_SIDE),
+        maxSize ? testCasesBigInt.filter(({ rowCount }) => rowCount <= MAX_PORTED_BIGINT_SIDE) : testCasesBigInt,
       );
     const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, verifyBigInt);
     const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;

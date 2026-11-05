@@ -32,7 +32,7 @@ const MOBILE_TABLE_WIDTH = 720;
 const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGES = [['Rust', '#icon-rust'], ['Python', '#icon-python'], ['JavaScript', '#icon-javascript']];
 const solverColumns = (solver, languages) => LANGUAGES.filter(([name]) => languages.includes(name)).map(([name, icon]) => ({ name: `${solver}, ${name}`, icon: `${solver} ${icon}` }));
-const MODULAR_AND_BIGINT = [solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['JavaScript'])];
+const MODULAR_AND_BIGINT = [[...solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), ...solverColumns('BigInt', ['JavaScript'])]];
 const LANGUAGE_TABLES = [
   ['domino/rectangle', 'domino-benchmark', 'DATA.benchmark', '36', 'FORMULA_AND_BIGINT_LANGUAGES', [solverColumns('Formula', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])]],
   ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
@@ -1576,9 +1576,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const expected = label => sections[label.replace(/, .*/, '')] || sections[label.split(' ')[0]];
   const wrong = headers.filter(({ label, href, problem }) => problem || href !== expected(label));
 
-  if (headers.length !== 24 || wrong.length) {
+  if (headers.length !== 26 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 24 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 26 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 
