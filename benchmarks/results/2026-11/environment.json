@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-05",
+  "timing": "solver",
+  "commit": "9d96ff9a84df1c2c389ed36a9076cb5c2c8bde8a",
+  "node": "v26.11.1",
+  "python": "Python 3.14.5",
+  "rust": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "platform": "Darwin 27.2.0 arm64",
+  "cpu": "Apple M4",
+  "cores": 10,
+  "memory": "16 GB"
+}
