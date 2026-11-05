@@ -26,6 +26,10 @@ autobenches = false
 lattice-dimers-core = { path = "rust/core" }
 
 [[bin]]
+name = "domicule-diagonal-bigint"
+path = "rust/solvers/src/bin/domicule-diagonal-bigint.rs"
+
+[[bin]]
 name = "domicule-tiling-bigint"
 path = "rust/solvers/src/bin/domicule-tiling-bigint.rs"
 

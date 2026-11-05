@@ -51,7 +51,6 @@ const rejectionTestCases = [
   },
   { args: ['js/solvers/periodicTilingSolver-BigInt.js', '-r', '4', '-c', '13'], message: 'at most 12' },
   { args: ['js/solvers/periodicTilingSolver-BigInt.js', '-r', '1', '-c', '4', '--torus'], message: 'Usage' },
-  { args: ['js/solvers/domiculeDiagonalSolver-BigInt.js', '-r', '13', '-c', '13'], message: 'at most 12' },
   { args: ['js/solvers/domiculeDiagonalSolver-Modular.js', '-r', '21', '-c', '21'], message: 'at most 20' },
   { args: ['js/solvers/domiculeDiagonalSolver-Modular.js', '-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
   {
@@ -113,6 +112,12 @@ const implementationRejectionTestCases = [
   { algorithm: 'domino-tiling-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
   { algorithm: 'domino-tiling-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
   { algorithm: 'domino-tiling-bigint', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '13', '-c', '13'], message: 'at most 12' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '40', '-c', '13'], message: 'use domiculeDiagonalSolver-Modular.js for larger boards' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-c', '2'], message: 'Usage' },
   { algorithm: 'domicule-tiling-bigint', args: ['-r', '30', '-c', '30'], message: 'at most 29' },
   { algorithm: 'domicule-tiling-bigint', args: ['-r', '40', '-c', '30'], message: 'because a JavaScript array holds fewer than 2^32 states' },
   { algorithm: 'domicule-tiling-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
@@ -686,7 +691,6 @@ function executeBenchmarkSurfaceTests() {
   const cases = [
     { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: 'periodicTilingSolver-Modular.js_2x2-king-torus.txt' },
     { args: ['--cylinder', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-king-cylinder.txt' },
-    { args: ['--diagonal', '--only', 'domiculeDiagonalSolver-BigInt.js'], file: 'domiculeDiagonalSolver-BigInt.js_0x0.txt' },
     { args: ['--cylinder', '--lattice', 'square', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-square-cylinder.txt' },
     { args: ['--cylinder', '--lattice', 'triangular', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-triangular-cylinder.txt' },
     ...listImplementations('periodic-tiling-modular').flatMap(({ file }) => [
@@ -704,6 +708,10 @@ function executeBenchmarkSurfaceTests() {
     })),
     ...listImplementations('domino-tiling-bigint').map(({ file }) => ({
       args: ['--only', 'dominoTilingSolver-BigInt.js'],
+      file: `${path.basename(file)}_0x0.txt`,
+    })),
+    ...listImplementations('domicule-diagonal-bigint').map(({ file }) => ({
+      args: ['--diagonal', '--only', 'domiculeDiagonalSolver-BigInt.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
     ...listImplementations('domicule-tiling-bigint').map(({ file }) => ({
@@ -959,6 +967,7 @@ function executeBenchmarkRunTest() {
     touch('2000-05', complete.filter(file => file !== 'domino-tiling-bigint.rs_20x20.txt'));
     touch('2000-06', complete.filter(file => file !== 'domicule_tiling_bigint.py_20x20.txt'));
     touch('2000-07', complete.filter(file => file !== 'domino-tiling-number.rs_10x10.txt'));
+    touch('2000-08', complete.filter(file => file !== 'domicule_diagonal_bigint.py_12x12.txt'));
     const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {
