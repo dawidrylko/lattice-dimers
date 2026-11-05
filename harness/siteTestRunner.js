@@ -78,16 +78,84 @@ const CONFIRMATION_BOARDS = ['10x10-diagonal-torus?diagonals=20'];
 const SAMPLE_BOARDS = ['18x18', '16x16-diagonal', '20x20'];
 const NOTES = [
   { slug: 'research', cells: 2 },
-  { slug: 'dominoes/rectangles', cells: 7, figures: 1, group: 'Dominoes' },
-  { slug: 'dominoes/cylinders', cells: 4, figures: 1, group: 'Dominoes' },
-  { slug: 'dominoes/tori', cells: 3, figures: 1, group: 'Dominoes' },
-  { slug: 'domicules/rectangles', cells: 9, figures: 2, group: 'Domicules' },
-  { slug: 'domicules/cylinders', cells: 4, figures: 1, group: 'Domicules' },
-  { slug: 'domicules/tori', cells: 7, figures: 1, group: 'Domicules' },
-  { slug: 'domicules/diagonal-pieces', cells: 6, figures: 1, group: 'Domicules' },
-  { slug: 'triangular-lattice/cylinders', cells: 2, group: 'Triangular lattice' },
-  { slug: 'triangular-lattice/tori', cells: 1, group: 'Triangular lattice' },
+  {
+    slug: 'dominoes/rectangles',
+    cells: 7, figures: 1,
+    group: 'Dominoes',
+    h1: 'Dominoes: tilings of the 2n × 2n board (A004003)',
+    sections: ['The problem', 'The Formula solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'References'],
+  },
+  {
+    slug: 'dominoes/cylinders',
+    cells: 4, figures: 1,
+    group: 'Dominoes',
+    h1: 'Dominoes: tilings of cylinders (A000129, A004253, A006253, A003729, A028477, A028478, A028479)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'Verification', 'References'],
+  },
+  {
+    slug: 'dominoes/tori',
+    cells: 3, figures: 1,
+    group: 'Dominoes',
+    h1: 'Dominoes: tilings of the 2n × 2n torus (A335586)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
+  },
+  {
+    slug: 'domicules/rectangles',
+    cells: 9, figures: 2,
+    group: 'Domicules',
+    h1: 'Domicules: tilings of the 2n × 2n board (A239273)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'References'],
+  },
+  {
+    slug: 'domicules/cylinders',
+    cells: 4, figures: 1,
+    group: 'Domicules',
+    h1: 'Domicules: tilings of cylinders (A002532, A062510)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'Verification', 'References'],
+  },
+  {
+    slug: 'domicules/tori',
+    cells: 7, figures: 1,
+    group: 'Domicules',
+    h1: 'Domicules: tilings of the 2n × 2n torus (A401670)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Three lattices on the torus', 'The seam sign', 'Running time', 'PARI/GP', 'Verification', 'References'],
+  },
+  {
+    slug: 'domicules/diagonal-pieces',
+    cells: 6, figures: 1,
+    group: 'Domicules',
+    h1: 'Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Running time', 'PARI/GP', 'Verification', 'References'],
+  },
+  {
+    slug: 'triangular-lattice/cylinders',
+    cells: 2,
+    group: 'Triangular lattice',
+    h1: 'Triangular lattice: tilings of cylinders (A002605)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'The counts', 'What the OEIS has', 'Verification', 'References'],
+  },
+  {
+    slug: 'triangular-lattice/tori',
+    cells: 1,
+    group: 'Triangular lattice',
+    h1: 'Triangular lattice: tilings of the 2n × 2n torus (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'The counts', 'Verification', 'References'],
+  },
 ];
+const SOLVER_SECTION = { 'how-the-counts-are-made': 'the-modular-solver' };
+const OLD_SECTIONS = {
+  'dominoes/rectangles': { 'the-closed-form': 'the-formula-solver', 'transfer-by-rows': 'the-bigint-solver', 'numbering-tilings': 'numbering', 'three-ways-to-the-same-numbers': 'the-counts' },
+  'dominoes/cylinders': SOLVER_SECTION,
+  'dominoes/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus-a335586': 'the-counts' },
+  'domicules/rectangles': { 'counting-modulo-primes': 'the-modular-solver', 'transfer-by-cells': 'the-bigint-solver', 'the-sequence-up-to-20-20': 'the-counts' },
+  'domicules/cylinders': SOLVER_SECTION,
+  'domicules/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus-a401670': 'the-counts' },
+  'domicules/diagonal-pieces': { 'numbering-by-diagonal-pieces': 'numbering', 'the-polynomial': 'the-problem' },
+  'triangular-lattice/cylinders': SOLVER_SECTION,
+  'triangular-lattice/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus': 'the-counts' },
+};
+const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule )?tilings of .+ \((A\d{6}(, A\d{6})*|not in the OEIS)\)$/;
+const NOTEBOOK_SKELETON = ['The problem', 'The Formula solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', '*', 'Running time', 'PARI/GP', 'Verification', 'References'];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes/rectangles'],
   ['a239273', 'domicules/rectangles'],
@@ -994,10 +1062,51 @@ async function checkLanding(page, baseUrl, width) {
   return problems;
 }
 
+function checkNotebookLayout(slug, state, { h1, sections }) {
+  if (!h1) {
+    return [];
+  }
+
+  const problems = [];
+  const order = state.h2.map(title => {
+    const place = NOTEBOOK_SKELETON.indexOf(title);
+
+    return place < 0 ? NOTEBOOK_SKELETON.indexOf('*') : place;
+  });
+  const unlinked = (h1.match(/A\d{6}/g) || []).filter(entry => !state.oeis.some(href => href.endsWith(`/${entry}`)));
+  const aliases = OLD_SECTIONS[slug] || {};
+
+  if (state.h1 !== h1 || !NOTEBOOK_TITLE.test(state.h1)) {
+    problems.push(`${slug} has the h1 "${state.h1}" instead of "${h1}", or one outside the notebook pattern`);
+  }
+
+  if (state.h2.join() !== sections.join()) {
+    problems.push(`${slug} has the sections ${state.h2.join(', ')} instead of ${sections.join(', ')}`);
+  }
+
+  if (order.some((place, i) => i > 0 && place < order[i - 1]) || !['The problem', 'The counts', 'Verification', 'References'].every(title => state.h2.includes(title))) {
+    problems.push(`${slug} leaves the common order of sections: ${state.h2.join(', ')}`);
+  }
+
+  if (state.landing) {
+    problems.push(`${slug} has ${state.landing} headings that land at the very edge of the screen`);
+  }
+
+  if (unlinked.length) {
+    problems.push(`${slug} names ${unlinked.join(', ')} in its h1 and links none of them`);
+  }
+
+  if (Object.keys(aliases).some(alias => state.aliases[alias] !== aliases[alias])) {
+    problems.push(`${slug} keeps its old section addresses as ${JSON.stringify(state.aliases)} instead of ${JSON.stringify(aliases)}`);
+  }
+
+  return problems;
+}
+
 async function checkNotes(page, baseUrl, width) {
   const problems = [];
 
-  for (const { slug, cells, figures = 0 } of NOTES) {
+  for (const { slug, cells, figures = 0, h1, sections } of NOTES) {
     const run = `run=${Date.now()}`;
 
     await page.send('Emulation.setDeviceMetricsOverride', { width, height: VIEWPORT_HEIGHT, deviceScaleFactor: 1, mobile: width < 640 });
@@ -1005,6 +1114,11 @@ async function checkNotes(page, baseUrl, width) {
     await page.waitFor(`location.search === '?${run}' && document.readyState === 'complete'`, `the ${slug} note`);
     await page.settle();
     const state = await page.evaluate(`(() => ({
+      h1: document.querySelector('article h1, h1').textContent.trim(),
+      landing: [...document.querySelectorAll('article h2, article h3, article h2 > span[id], article h3 > span[id]')].filter(heading => getComputedStyle(heading).scrollMarginTop !== '16px').length,
+      h2: [...document.querySelectorAll('article h2')].map(h => h.textContent.trim()),
+      oeis: [...document.querySelectorAll('article a[href*="oeis.org/"]')].map(a => a.href),
+      aliases: Object.fromEntries([...document.querySelectorAll('article h2 > span[id], article h3 > span[id]')].map(span => [span.id, span.parentElement.id])),
       cells: document.querySelectorAll('.cell').length,
       outputs: [...document.querySelectorAll('.output td, pre.output')].map(cell => cell.textContent.trim()),
       sideways: document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -1035,6 +1149,8 @@ async function checkNotes(page, baseUrl, width) {
       };
     })()`);
     await page.send('Emulation.setEmulatedMedia', { features: [] });
+
+    problems.push(...checkNotebookLayout(slug, state, { h1, sections }));
 
     if (figures && !(state.label >= MIN_FIGURE_LABEL)) {
       problems.push(`${slug} labels its tilings at ${state.label.toFixed(1)} px, under ${MIN_FIGURE_LABEL} px`);
@@ -1431,10 +1547,10 @@ async function checkBenchmark(page, baseUrl, width) {
         titles: headers.map(th => th.title).join(' | '),
         headers: headers.map(th => th.textContent.trim() + ' ' + shown(th.querySelector('svg.lang'))).join(' | '),
         values: [...rows[0].cells].slice(2, -1).map(cell => cell.textContent),
-        cards: [...rows[0].cells].slice(2, -1).map(cell => (cell.dataset.text || '') + ' ' + shown(cell.querySelector(':scope > svg.lang'))).join(' | '),
+        cards: [...rows[0].cells].slice(2, -1).map(cell => (cell.dataset.text || '') + ' ' + shown(cell.querySelector(':scope > a > svg.lang'))).join(' | '),
         drifted: rows.flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => {
-          const icon = cell.querySelector(':scope > svg.lang');
-          const first = rows[0].cells[i + 2].querySelector(':scope > svg.lang');
+          const icon = cell.querySelector(':scope > a > svg.lang');
+          const first = rows[0].cells[i + 2].querySelector(':scope > a > svg.lang');
           const offset = (svg, td) => Math.round(svg.getBoundingClientRect().left - td.getBoundingClientRect().left);
           return icon && first && offset(icon, cell) !== offset(first, rows[0].cells[i + 2]) ? row.cells[0].textContent + ' ' + cell.dataset.label : null;
         })).filter(Boolean),
@@ -1542,6 +1658,36 @@ async function checkBenchmark(page, baseUrl, width) {
   return problems;
 }
 
+const READ_CARD_LINKS = `[...document.querySelectorAll('#benchmark table')].flatMap(table => {
+    const row = table.tBodies[0].rows[0];
+
+    return [...table.tHead.rows[0].cells].flatMap((th, i) => {
+      const link = th.querySelector('a.solver');
+      const card = row.cells[i].querySelector('a.solver');
+
+      if (!link) {
+        return [];
+      }
+
+      if (!card) {
+        return [{ label: table.id + ' ' + th.getAttribute('aria-label'), problem: 'has no link' }];
+      }
+
+      const box = card.getBoundingClientRect();
+      const shown = getComputedStyle(card).display !== 'none' && box.width > 0;
+      const hit = shown && (card.scrollIntoView({ block: 'center' }), card.getBoundingClientRect());
+      const top = hit && document.elementFromPoint(hit.left + hit.width / 2, hit.top + hit.height / 2);
+
+      return [{
+        label: table.id + ' ' + th.getAttribute('aria-label'),
+        problem: card.getAttribute('href') !== link.getAttribute('href') ? 'links ' + card.getAttribute('href') : card.getAttribute('aria-label') !== th.getAttribute('aria-label') ? 'is named ' + card.getAttribute('aria-label') : '',
+        visibleGroup: !!table.closest('.bench-group:not([hidden])'),
+        display: getComputedStyle(card).display,
+        tapped: !!top && (top === card || card.contains(top)),
+      }];
+    });
+  })`;
+
 async function checkBenchmarkCells(page, baseUrl, width) {
   const problems = [];
   await loadSite(page, baseUrl, width, 'benchmark');
@@ -1549,6 +1695,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const surfaces = await page.evaluate("[...document.querySelectorAll('#benchmark-surfaces button')].map(button => button.dataset.surface)");
   const groups = await page.evaluate("[...document.querySelectorAll('#benchmark .bench-group')].map(group => group.dataset.pieces + '/' + group.dataset.surface).sort().join()");
   const views = pieces.flatMap(p => surfaces.map(surface => `${p}/${surface}`));
+  const cardLinks = [];
 
   if (groups !== [...views].sort().join()) {
     problems.push(`the benchmark switches give ${views.join(', ')} but the tables are ${groups}`);
@@ -1563,6 +1710,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       `!document.querySelector('.bench-group[data-pieces=${p}][data-surface=${surface}]').hidden && document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0`,
       `the ${view} rows`,
     );
+    cardLinks.push(await page.evaluate(READ_CARD_LINKS));
     const times = await page.evaluate(
       "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr')].flatMap(row => [...row.cells].slice(2, -1).map(cell => cell.textContent))",
     );
@@ -1598,24 +1746,32 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       results.push({
         label,
         href: link.getAttribute('href'),
-        problem: !found || !/^H[23]$/.test(found.tagName) ? 'links no section' : !th.getAttribute('aria-label') || th.getAttribute('aria-label') !== link.getAttribute('aria-label') ? 'names its header and link apart' : shown !== (link.tabIndex >= 0 && getComputedStyle(link).visibility === 'visible') ? 'can take the focus while hidden' : '',
+        problem: !found || !/^H[23]$/.test(found.tagName) ? 'links no section' : !found.textContent.includes('The ' + th.textContent.trim().split(' ')[0] + ' solver') ? 'lands on the section ' + found.textContent : !th.getAttribute('aria-label') || th.getAttribute('aria-label') !== link.getAttribute('aria-label') ? 'names its header and link apart' : shown !== (link.tabIndex >= 0 && getComputedStyle(link).visibility === 'visible') ? 'can take the focus while hidden' : '',
       });
     }
 
     return results;
   })()`);
-  const sections = {
-    'domino-benchmark Formula': 'notes/dominoes/rectangles.html#the-closed-form',
-    'domino-benchmark BigInt': 'notes/dominoes/rectangles.html#transfer-by-rows',
-    'domicule-benchmark Modular': 'notes/domicules/rectangles.html#counting-modulo-primes',
-    'domicule-benchmark BigInt': 'notes/domicules/rectangles.html#transfer-by-cells',
-    'domino-cylinder-benchmark': 'notes/dominoes/cylinders.html#how-the-counts-are-made',
-    'domino-torus-benchmark': 'notes/dominoes/tori.html#how-the-counts-are-made',
-    'cylinder-benchmark': 'notes/domicules/cylinders.html#how-the-counts-are-made',
-    'torus-benchmark': 'notes/domicules/tori.html#how-the-counts-are-made',
+  const pages = {
+    'domino-benchmark': 'dominoes/rectangles',
+    'domino-cylinder-benchmark': 'dominoes/cylinders',
+    'domino-torus-benchmark': 'dominoes/tori',
+    'domicule-benchmark': 'domicules/rectangles',
+    'cylinder-benchmark': 'domicules/cylinders',
+    'torus-benchmark': 'domicules/tori',
   };
-  const expected = label => sections[label.replace(/, .*/, '')] || sections[label.split(' ')[0]];
+  const expected = label => {
+    const [table, solver] = label.split(/[ ,]/);
+
+    return `notes/${pages[table]}.html#the-${solver.toLowerCase()}-solver`;
+  };
   const wrong = headers.filter(({ label, href, problem }) => problem || href !== expected(label));
+
+  const wrongCards = cardLinks.flat().filter(({ problem, visibleGroup, display, tapped }) => problem || (width < 920 ? visibleGroup && (display === 'none' || !tapped) : display !== 'none'));
+
+  if (wrongCards.length) {
+    problems.push(`at ${width} px the solver links of the benchmark cards are wrong: ${wrongCards.map(({ label, problem, display, tapped }) => `${label} ${problem || `display ${display}, tapped ${tapped}`}`).join('; ')}`);
+  }
 
   if (headers.length !== 26 || wrong.length) {
     problems.push(

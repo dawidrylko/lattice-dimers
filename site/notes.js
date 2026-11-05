@@ -249,9 +249,10 @@ async function runCell(code, notebook) {
  * @param {Object} options
  * @property {function(string): string} options.resolveLink Maps a Markdown link target to the site URL.
  * @property {Object} options.context Values the cells can read as nb.context.
+ * @property {Object<string, string>} [options.sectionAliases] Old section ids of this note, each with the id of the heading that keeps it working.
  * @returns {Promise<{ title: string, description: string, html: string, toc: { id: string, title: string }[], cells: number }>} The rendered note.
  */
-async function renderNote(markdown, { resolveLink, context }) {
+async function renderNote(markdown, { resolveLink, context, sectionAliases = {} }) {
   const lines = markdown.replace(/\r\n/g, '\n').split('\n');
   const notebook = { context };
   const html = [];
@@ -307,7 +308,9 @@ async function renderNote(markdown, { resolveLink, context }) {
           toc.push({ id, title: text });
         }
 
-        html.push(`<h${level} id="${id}">${text}</h${level}>`);
+        const aliases = Object.keys(sectionAliases).filter(alias => sectionAliases[alias] === id);
+
+        html.push(`<h${level} id="${id}">${aliases.map(alias => `<span id="${alias}"></span>`).join('')}${text}</h${level}>`);
       }
 
       i++;

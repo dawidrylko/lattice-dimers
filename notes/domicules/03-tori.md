@@ -1,4 +1,4 @@
-# Domicules on tori (A401670)
+# Domicules: tilings of the 2n × 2n torus (A401670)
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html) has the results. It counts the domicule tilings of tori, boards whose opposite edges are glued in both directions; they are the perfect matchings of the king's graph on the torus. It compares the torus count of the king's graph with those of [dominoes](../dominoes/03-tori.md) and of the [triangular lattice](../triangular-lattice/02-tori.md). The [cylinders notebook](02-cylinders.md) glues only the left and right edges.
 
@@ -15,23 +15,25 @@ const { svgs } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', sur
 figure(svgs, `4 of the ${total} domicule tilings of the 4 × 4 torus.`);
 ```
 
-## How the counts are made
+## The Modular solver
 
-Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix.
+[`periodicTilingSolver-Modular.js`](../../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell, like the scan of the [rectangles notebook](01-rectangles.md#the-bigint-solver). Its state holds the next $w + 2$ cells and, with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
 
-[`periodicTilingSolver-Modular.js`](../../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell, like the solver of the [rectangles notebook](01-rectangles.md#transfer-by-cells). Its state holds the next $w + 2$ cells and, with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
+A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`periodic-tiling-modular.rs`](../../rust/solvers/src/bin/periodic-tiling-modular.rs), and in Python, [`periodic_tiling_modular.py`](../../python/lattice_dimers/solvers/periodic_tiling_modular.py).
 
-A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The modular solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
+## The BigInt solver
+
+[`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix.
 
 ## Numbering
 
-The gallery numbers the tilings of the tori up to $10 \times 10$ with the same scan. The tilings are ordered by $S$ and then by the scan. The tilings of $S$ and of its rotations are equally many, so one table per rotation class gives every count, and the table of a single $S$ is rebuilt when a page needs it. The Random button draws a uniformly random number, so the sample is exact. The [Diagonal pieces](04-diagonal-pieces.md#numbering-by-diagonal-pieces) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
+The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-by-cell scan of the modular solver. The tilings are ordered by $S$ and then by the scan. The tilings of $S$ and of its rotations are equally many, so one table per rotation class gives every count, and the table of a single $S$ is rebuilt when a page needs it. The Random button draws a uniformly random number, so the sample is exact. The [Diagonal pieces](04-diagonal-pieces.md#numbering) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
 
-## The 2n × 2n torus: A401670
+## The counts
 
-The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670). The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph tori.
+The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670) [1]. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph tori.
 
-For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in A335586. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `spec/cases/periodicTilingTests-Modular.json`, where it wrote them once.
+For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in [OEIS A335586](https://oeis.org/A335586) [1]. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `spec/cases/periodicTilingTests-Modular.json`, where it wrote them once.
 
 ```js run
 const reference = require('./js/solvers/periodicTilingSolver-BigInt.js');
@@ -84,9 +86,9 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 ## Three lattices on the torus
 
-Since a torus has no boundary, $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site.
+Since a torus has no boundary, $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site [2].
 
-The cell divides the torus count by $e^{sL^2}$ on the king's graph and, for comparison, on the square lattice of the [domino tori](../dominoes/03-tori.md) and on the [triangular lattice](../triangular-lattice/02-tori.md), and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([OEIS A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
+The cell divides the torus count by $e^{sL^2}$ on the king's graph and, for comparison, on the square lattice of the [domino tori](../dominoes/03-tori.md) and on the [triangular lattice](../triangular-lattice/02-tori.md), and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([OEIS A143233](https://oeis.org/A143233) [1], $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
 
 ```js run
 const fs = require('fs');
@@ -222,3 +224,8 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 ## Verification
 
 The two periodic solvers agree with each other up to $8 \times 8$, the modular solver checks every result against an extra prime, and the PARI/GP program runs in CI against the king's graph tori of the test data. `node harness/testRunner.js` runs the king's graph boards of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers.
+
+## References
+
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A401670](https://oeis.org/draft/A401670), [OEIS A335586](https://oeis.org/A335586) and [OEIS A143233](https://oeis.org/A143233). [oeis.org](https://oeis.org)
+2. D. Ryłko. The dimer entropy of the king's graph. Preprint, October 2026. [doi:10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056)
