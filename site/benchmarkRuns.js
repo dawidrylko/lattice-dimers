@@ -29,7 +29,9 @@ function isCompleteRun(root, run) {
   const requiredFiles = [
     'environment.json',
     ...filesInt.map(fileName => resultFileName(fileName, lastInt)),
-    ...filesBigInt.map(fileName => resultFileName(fileName, lastBigInt)),
+    ...filesBigInt
+      .flatMap(fileName => listImplementations(algorithmOf(fileName)))
+      .map(({ file }) => resultFileName(path.basename(file), lastBigInt)),
     ...filesDomicule
       .flatMap(fileName => listImplementations(algorithmOf(fileName)))
       .flatMap(({ file }) => [16, 20].map(side => resultFileName(path.basename(file), { rowCount: side, colCount: side }))),
