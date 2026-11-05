@@ -389,6 +389,7 @@ function buildDiagonalBenchmark(totals) {
         bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
         bigintMissing: `not run: BigInt counts boards with a shorter side up to ${DIAGONAL_BIGINT_SIDE}`,
         modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
+        languages: readLanguages('domicule-diagonal-modular', suffix),
       };
     });
 }

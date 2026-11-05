@@ -16,7 +16,7 @@ const LARGEST_PERIODIC_RESULTS = [
     ]),
   ),
   'domiculeDiagonalSolver-BigInt.js_12x12.txt',
-  'domiculeDiagonalSolver-Modular.js_20x20.txt',
+  ...listImplementations('domicule-diagonal-modular').map(({ file }) => `${path.basename(file)}_20x20.txt`),
 ];
 
 function resultFileName(fileName, { rowCount, colCount }) {
