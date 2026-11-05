@@ -21,7 +21,7 @@ figure(svgs, `4 of the ${total} domicule tilings of the cylinder of circumferenc
 
 ## The BigInt solver
 
-[`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row.
+[`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. The same algorithm is in Rust, [`periodic-tiling-bigint.rs`](../../rust/solvers/src/bin/periodic-tiling-bigint.rs), and in Python, [`periodic_tiling_bigint.py`](../../python/lattice_dimers/solvers/periodic_tiling_bigint.py).
 
 ## Numbering
 
@@ -97,10 +97,13 @@ Average time of the count inside each solver, without the start of its process, 
 const { formatTime } = nb.context;
 
 table(
-  ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt'],
+  ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
   nb.context.periodicBenchmark
     .filter(r => r.surface === 'cylinder')
-    .map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.languages.rs), formatTime(r.languages.py), formatTime(r.modular), formatTime(r.bigint)]),
+    .map(r => [
+      `${r.rowCount}×${r.colCount}`,
+      ...[r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
+    ]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 ```

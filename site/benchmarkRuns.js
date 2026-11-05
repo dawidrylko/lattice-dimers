@@ -5,10 +5,9 @@ const { listImplementations, algorithmOf } = require('../js/core/registry');
 
 const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
 const LARGEST_PERIODIC_RESULTS = [
-  'periodicTilingSolver-BigInt.js_10x10-king-torus.txt',
-  'periodicTilingSolver-BigInt.js_12x12-king-cylinder.txt',
-  'periodicTilingSolver-BigInt.js_12x12-square-torus.txt',
-  'periodicTilingSolver-BigInt.js_12x12-square-cylinder.txt',
+  ...listImplementations('periodic-tiling-bigint').flatMap(({ file }) =>
+    ['10x10-king-torus', '12x12-king-cylinder', '12x12-square-torus', '12x12-square-cylinder'].map(board => `${path.basename(file)}_${board}.txt`),
+  ),
   ...listImplementations('periodic-tiling-modular').flatMap(({ file }) =>
     ['king', 'square'].flatMap(lattice => [
       `${path.basename(file)}_14x14-${lattice}-torus.txt`,

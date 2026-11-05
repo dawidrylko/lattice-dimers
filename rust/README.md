@@ -4,7 +4,7 @@ The Rust implementations of the solvers, the first of the three languages of [`s
 
 | path | holds |
 | --- | --- |
-| [`core`](core/src/lib.rs) | the contract's argument parser, modular arithmetic, primes, the Kahn-Lovász bound, the Chinese remainder theorem, an integer of any size for it, for the exact determinant of `domino-tiling-formula` and for the counts of `domino-tiling-bigint`, and the worker threads |
+| [`core`](core/src/lib.rs) | the contract's argument parser, modular arithmetic, primes, the Kahn-Lovász bound, the Chinese remainder theorem, an integer of any size for it, for the exact determinant of `domino-tiling-formula` and for the counts of `domino-tiling-bigint` and `periodic-tiling-bigint`, and the worker threads |
 | [`solvers/src/bin`](solvers/src/bin/periodic-tiling-modular.rs) | one binary per algorithm, named by its id, each with a `[[bin]]` entry in [`Cargo.toml`](../Cargo.toml) at the root |
 
 ```sh
