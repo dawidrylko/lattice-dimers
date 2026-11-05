@@ -103,7 +103,7 @@ table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nu
 th, td { text-align: right; padding: 8px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; }
 th { color: var(--muted); font-weight: 600; font-size: 13px; }
-th a.solver { color: inherit; text-decoration: underline 1px var(--border); text-underline-offset: 3px; }
+th a.solver { color: inherit; text-decoration: underline 1px var(--muted); text-underline-offset: 3px; }
 th a.solver:hover { color: var(--fg); text-decoration-color: currentColor; }
 th a.solver:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .table-wrap { overflow-x: auto; }
@@ -114,6 +114,7 @@ td > .lang { display: none; }
   .bench .table-wrap table { display: block; }
   .bench .table-wrap tbody { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 16px; }
   .bench .table-wrap thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .bench .table-wrap thead a.solver { visibility: hidden; }
   .bench .table-wrap tr { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(3, 1fr); grid-template-columns: subgrid; row-gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--border); }
   .bench .table-wrap td { padding: 0; border: 0; text-align: left; white-space: normal; }
   .bench .table-wrap td::before { content: attr(data-label); display: block; color: var(--muted); font-weight: 600; font-size: 13px; }
@@ -255,7 +256,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="bench-group" data-pieces="domino" data-surface="rectangle">
       <div class="table-wrap">
         <table role="table" id="domino-benchmark" aria-label="Dominoes (A004003)">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader"><a class="solver" href="notes/dominoes/rectangle.html#the-closed-form">Formula</a></th><th role="columnheader"><a class="solver" href="notes/dominoes/rectangle.html#transfer-by-rows">BigInt</a></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Formula"><a class="solver" href="notes/dominoes/rectangle.html#the-closed-form" aria-label="Formula">Formula</a></th><th role="columnheader" aria-label="BigInt"><a class="solver" href="notes/dominoes/rectangle.html#transfer-by-rows" aria-label="BigInt">BigInt</a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domino-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>

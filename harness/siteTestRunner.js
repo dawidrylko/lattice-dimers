@@ -139,6 +139,7 @@ const siteTestCases = [
   { width: 375, check: 'notes' },
   { width: 375, check: 'chrome' },
   { width: 1440, check: 'cells' },
+  { width: 375, check: 'cells' },
   { width: 1440, check: 'palette' },
   { width: 1440, check: 'links' },
   { width: 1440, check: 'integrity' },
@@ -1524,34 +1525,44 @@ async function checkBenchmarkCells(page, baseUrl, width) {
 
     for (const th of solvers) {
       const link = th.querySelector('a.solver');
-      const table = th.closest('table').id + ' ' + (th.getAttribute('aria-label') || th.textContent.trim());
+      const label = th.closest('table').id + ' ' + (th.getAttribute('aria-label') || th.textContent.trim());
 
       if (!link) {
-        results.push(table + ' links nowhere');
+        results.push({ label, problem: 'links nowhere' });
         continue;
       }
 
       const url = new URL(link.href);
-      const id = url.hash.slice(1);
       pages[url.pathname] = pages[url.pathname] || fetch(url.pathname).then(response => (response.ok ? response.text() : ''));
-      const html = await pages[url.pathname];
-      const found = new DOMParser().parseFromString(html, 'text/html').getElementById(id);
+      const found = new DOMParser().parseFromString(await pages[url.pathname], 'text/html').getElementById(url.hash.slice(1));
+      const shown = getComputedStyle(link).visibility === 'visible' && getComputedStyle(th.closest('thead')).clipPath === 'none';
 
-      if (!id || !found || !/^H[23]$/.test(found.tagName)) {
-        results.push(table + ' links ' + link.getAttribute('href') + ', which is no section');
-      }
-
-      if ((th.getAttribute('aria-label') || '') !== (link.getAttribute('aria-label') || '')) {
-        results.push(table + ' names its link ' + link.getAttribute('aria-label'));
-      }
+      results.push({
+        label,
+        href: link.getAttribute('href'),
+        problem: !found || !/^H[23]$/.test(found.tagName) ? 'links no section' : !th.getAttribute('aria-label') || th.getAttribute('aria-label') !== link.getAttribute('aria-label') ? 'names its header and link apart' : shown !== (link.tabIndex >= 0 && getComputedStyle(link).visibility === 'visible') ? 'can take the focus while hidden' : '',
+      });
     }
 
-    return solvers.length + ' ' + results.join('; ');
+    return results;
   })()`);
-  const [count, ...headerProblems] = headers.split(' ');
+  const sections = {
+    'domino-benchmark Formula': 'notes/dominoes/rectangle.html#the-closed-form',
+    'domino-benchmark BigInt': 'notes/dominoes/rectangle.html#transfer-by-rows',
+    'domicule-benchmark Modular': 'notes/domicules/rectangle.html#counting-modulo-primes',
+    'domicule-benchmark BigInt': 'notes/domicules/rectangle.html#transfer-by-cells',
+    'domino-cylinder-benchmark': 'notes/dominoes/cylinder.html#how-the-counts-are-made',
+    'domino-torus-benchmark': 'notes/dominoes/torus.html#how-the-counts-are-made',
+    'cylinder-benchmark': 'notes/domicules/cylinder.html#how-the-counts-are-made',
+    'torus-benchmark': 'notes/domicules/torus.html#how-the-counts-are-made',
+  };
+  const expected = label => sections[label.replace(/, .*/, '')] || sections[label.split(' ')[0]];
+  const wrong = headers.filter(({ label, href, problem }) => problem || href !== expected(label));
 
-  if (Number(count) !== 22 || headerProblems.join(' ').trim()) {
-    problems.push(`the benchmark tables have ${count} solver headers, 22 expected, each linking a section of a notebook: ${headerProblems.join(' ').trim() || 'they do'}`);
+  if (headers.length !== 22 || wrong.length) {
+    problems.push(
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 22 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+    );
   }
 
   return problems;
