@@ -1555,9 +1555,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const expected = label => sections[label.replace(/, .*/, '')] || sections[label.split(' ')[0]];
   const wrong = headers.filter(({ label, href, problem }) => problem || href !== expected(label));
 
-  if (headers.length !== 22 || wrong.length) {
+  if (headers.length !== 24 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 22 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 24 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 
