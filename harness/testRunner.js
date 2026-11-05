@@ -294,16 +294,24 @@ function executeExecutorTests() {
       'a Rust binary older than the Rust sources',
       rust,
       { CARGO_TARGET_DIR: staleTarget },
-      `an error: Execution failed: ${staleBinary} is older than the Rust sources; rebuild it with cargo build --release.`,
+      `an error: Execution failed: ${staleBinary} is older than the .rs files under rust/; rebuild it with cargo build --release.`,
       true,
     ],
   ];
 
-  fs.mkdirSync(path.dirname(staleBinary));
-  fs.writeFileSync(staleBinary, '', { mode: 0o755 });
-  fs.utimesSync(staleBinary, 0, 0);
+  try {
+    fs.mkdirSync(path.dirname(staleBinary));
+    fs.writeFileSync(staleBinary, '', { mode: 0o755 });
+    fs.utimesSync(staleBinary, 0, 0);
 
-  const passed = cases.every(([name, fileName, environment, expected, run], index) => {
+    return runExecutorTests(cases, command, attempt);
+  } finally {
+    fs.rmSync(staleTarget, { recursive: true, force: true });
+  }
+}
+
+function runExecutorTests(cases, command, attempt) {
+  return cases.every(([name, fileName, environment, expected, run], index) => {
     process.stdout.write(`Executing executor test ${index + 1} of ${cases.length} for ${name}... `);
 
     const saved = Object.fromEntries(Object.keys(environment).map(key => [key, process.env[key]]));
@@ -326,10 +334,6 @@ function executeExecutorTests() {
 
     return true;
   });
-
-  fs.rmSync(staleTarget, { recursive: true, force: true });
-
-  return passed;
 }
 
 function executePortTests() {
@@ -793,21 +797,27 @@ async function executeModuleTests() {
 
 function executeUnknownProcessorCountTest({ expectedResult, rowCount, colCount, lattice, torus }) {
   const python = listImplementations('periodic-tiling-modular').find(({ language }) => language === 'py');
-  const [program, , , module] = exec.launch(python.file);
+  const launcher = exec.launch(python.file);
   const script = [
-    'import os, runpy, sys',
+    'import importlib, os, runpy, sys',
     'os.process_cpu_count = lambda: None',
     'module = sys.argv[1]',
-    'sys.argv = [module] + sys.argv[2:]',
+    'rows, cols, lattice, torus = int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5] == "torus"',
+    'print(importlib.import_module(module).calculate_total_tiling_combinations(rows, cols, lattice, torus), flush=True)',
+    'sys.argv = [module] + sys.argv[6:]',
     'runpy.run_module(module, run_name="__main__", alter_sys=True)',
   ].join('\n');
+  const board = [String(rowCount), String(colCount), lattice, torus ? 'torus' : 'cylinder'];
   const args = ['-r', String(rowCount), '-c', String(colCount), '--lattice', lattice, ...(torus ? ['--torus'] : [])];
 
   process.stdout.write(`Executing module test for ${python.file} when the number of processors is unknown... `);
 
-  const { status, stdout, stderr } = spawnSync(program, ['-I', '-c', script, module, ...args], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
+  const { status, stdout, stderr } = spawnSync(launcher[0], ['-I', '-c', script, launcher.at(-1), ...board, ...args], {
+    cwd: ROOT_DIRECTORY,
+    encoding: 'utf-8',
+  });
 
-  if (status !== 0 || stdout.trim() !== expectedResult) {
+  if (status !== 0 || stdout.trim() !== `${expectedResult}\n${expectedResult}`) {
     console.error(`Failed! Exit code ${status}, expected ${expectedResult}: ${(stdout || stderr).trim()}`);
 
     return false;

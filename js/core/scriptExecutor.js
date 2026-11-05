@@ -4,8 +4,7 @@ const path = require('path');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..', '..');
 const PYTHON_ROOT = path.join(ROOT_DIRECTORY, 'python');
-const RUST_SOURCES = ['Cargo.toml', 'Cargo.lock', 'rust'];
-const RUST_SOURCE_PATTERN = /^(.+\.rs|Cargo\.toml|Cargo\.lock)$/;
+const RUST_DIRECTORY = path.join(ROOT_DIRECTORY, 'rust');
 const LAUNCHERS = {
   '.rs': file => [
     path.join(path.resolve(ROOT_DIRECTORY, process.env.CARGO_TARGET_DIR || 'target'), 'release', path.basename(file, '.rs')),
@@ -41,20 +40,21 @@ function listRustSources(file) {
     return fs.readdirSync(file).flatMap(name => listRustSources(path.join(file, name)));
   }
 
-  return RUST_SOURCE_PATTERN.test(path.basename(file)) ? [file] : [];
+  return file.endsWith('.rs') ? [file] : [];
 }
 
 let rustSourcesModified;
 
 /**
- * Finds when the Rust sources last changed: the newest modification time of the files cargo builds from, every
- * .rs file, Cargo.toml and Cargo.lock at the root and under rust/, read once per process.
+ * Finds when the Rust sources last changed: the newest modification time of a .rs file under rust/, read once per
+ * process. Only .rs files count, because cargo rebuilds when one of them is newer than its last build, so a
+ * binary older than them is always made current by cargo build --release; a touched Cargo.toml or Cargo.lock
+ * is not rebuilt for. The times are those of this checkout, so a $CARGO_TARGET_DIR shared with another checkout
+ * can hold a newer binary built from that checkout's sources.
  * @returns {number} The time in milliseconds since the epoch.
  */
 function rustSourcesModifiedAt() {
-  rustSourcesModified ??= Math.max(
-    ...RUST_SOURCES.flatMap(name => listRustSources(path.join(ROOT_DIRECTORY, name))).map(file => fs.statSync(file).mtimeMs),
-  );
+  rustSourcesModified ??= Math.max(...listRustSources(RUST_DIRECTORY).map(file => fs.statSync(file).mtimeMs));
 
   return rustSourcesModified;
 }
@@ -91,7 +91,7 @@ function generateCommand(fileName, { rowCount, colCount, lattice, torus, twisted
 
 /**
  * Executes one implementation of a solver with the provided options and returns the output. A Rust binary that
- * was not built, or is older than the Rust sources, fails instead of counting with code that is not the repository's.
+ * was not built, or is older than the .rs files under rust/, fails instead of counting with code that is not the repository's.
  * @param {string} fileName The root-relative file of the implementation, or the bare name of a file in js/solvers.
  * @param {Object} options Options to pass to the solver.
  * @property {number} options.rowCount The number of rows.
@@ -108,7 +108,7 @@ function executeSolver(fileName, options) {
     }
 
     if (path.extname(fileName) === '.rs' && fs.statSync(binary).mtimeMs < rustSourcesModifiedAt()) {
-      throw new Error(`${binary} is older than the Rust sources; rebuild it with cargo build --release.`);
+      throw new Error(`${binary} is older than the .rs files under rust/; rebuild it with cargo build --release.`);
     }
 
     const output = execSync(command, {

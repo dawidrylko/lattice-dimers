@@ -41,8 +41,8 @@ A new fix adds its row here with the check that guards it.
 | usage lines named the paths before the move to `src/` | `4a11337` | `test`, usage tests (new) | `Usage: node domiculeTilingSolver-Modular.js` |
 | the modular solver as a module had no worker count | `4a11337` | `test`, module tests (new) | the default of `jobs` removed |
 | a bare argument named like an Object property, such as `constructor`, took the next argument as its value in `js/core/commandLineArgsParser.js` | #88 | `test`, parser test for a bare argument named like an Object property | `schema[currentArg]` in the flag check |
-| a Rust binary left in `target/release` from older sources was run as the repository's code | #89 | `test`, executor test for a binary older than the Rust sources (new) | the age check in `js/core/scriptExecutor.js` removed |
-| the Python solver failed with a `TypeError` when `os.process_cpu_count()` gave `None` | #89 | `test`, module test when the number of processors is unknown (new) | `or 1` removed from both defaults of `jobs` |
+| a Rust binary left in `target/release` from older sources was run as the repository's code | #89 | `test`, executor test for a binary older than the `.rs` files under `rust/` (new) | the age check in `js/core/scriptExecutor.js` removed |
+| the Python solver failed with a `TypeError` when `os.process_cpu_count()` gave `None`, on the command line and as a module without `jobs` | #89 | `test`, module test when the number of processors is unknown (new), which runs both | `or 1` removed from either default of `jobs`, each on its own |
 
 ## Site
 

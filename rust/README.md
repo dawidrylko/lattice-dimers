@@ -13,4 +13,4 @@ target/release/periodic-tiling-modular -r 10 -c 10 --torus
 cargo test
 ```
 
-`cargo test` runs the tests of every package of the workspace. [`harness/testRunner.js`](../harness/testRunner.js) runs the binaries in `target/release` (or `$CARGO_TARGET_DIR/release`) on the boards of [`spec/cases`](../spec/cases/README.md).
+`cargo test` runs the tests of every package of the workspace. [`harness/testRunner.js`](../harness/testRunner.js) runs the binaries in `target/release` (or `$CARGO_TARGET_DIR/release`) on the boards of [`spec/cases`](../spec/cases/README.md), and refuses a binary older than a `.rs` file under `rust/`; `pnpm test` builds them first.
