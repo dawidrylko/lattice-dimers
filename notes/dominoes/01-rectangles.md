@@ -31,7 +31,7 @@ where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is 
 
 ## Transfer by rows
 
-Two solvers count tilings directly. They scan the board row by row and keep, for every bitmask of the cells of the current row that a vertical domino from the row above already covers, the number of ways to reach it. A row is filled by a depth-first search that places horizontal dominoes in free pairs and starts vertical ones into the next row. The table has $2^{w}$ entries per row, so the cost grows with the shorter side and the solvers turn the board so that it is the row width. One solver keeps the counts as JavaScript numbers and is exact only while they stay below $2^{53}$ (up to $10 \times 10$); the other keeps them as `BigInt`.
+Two solvers count tilings directly. They scan the board row by row and keep, for every bitmask of the cells of the current row that a vertical domino from the row above already covers, the number of ways to reach it. A row is filled by a depth-first search that places horizontal dominoes in free pairs and starts vertical ones into the next row. The table has $2^{w}$ entries per row, so the cost grows with the shorter side and the solvers turn the board so that it is the row width. One solver keeps the counts as JavaScript numbers and is exact only while they stay below $2^{53}$ (up to $10 \times 10$); the other keeps them as integers of any size and runs in Rust, Python and JavaScript.
 
 ## Three ways to the same numbers
 
@@ -148,8 +148,11 @@ Average time of the count inside each solver, without the start of its process, 
 const { formatTime } = nb.context;
 
 table(
-  ['board', 'formula, Rust', 'formula, Python', 'formula, JavaScript', 'BigInt'],
-  nb.context.benchmark.map(r => [`${r.rowCount}×${r.colCount}`, formatTime(r.languages.rs), formatTime(r.languages.py), formatTime(r.formula), formatTime(r.bigint)]),
+  ['board', 'formula, Rust', 'formula, Python', 'formula, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
+  nb.context.benchmark.map(r => [
+    `${r.rowCount}×${r.colCount}`,
+    ...[r.languages.rs, r.languages.py, r.formula, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
+  ]),
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 ```

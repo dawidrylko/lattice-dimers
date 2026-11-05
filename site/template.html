@@ -125,6 +125,7 @@ td > .lang { display: none; }
   .bench .table-wrap table.languages td:last-child { grid-area: 1 / 4; }
   .bench .table-wrap table.languages td { white-space: nowrap; font-size: 14px; }
   .bench .table-wrap table.languages td:last-child { white-space: normal; }
+  .bench .table-wrap #domino-benchmark td:nth-child(6) { grid-column: 1; }
   .bench .table-wrap td[data-text] { display: grid; grid-template-columns: max-content 1fr; align-items: center; column-gap: 4px; }
   .bench .table-wrap td[data-text]::before { content: attr(data-text); content: attr(data-text) / attr(data-label); }
   .bench .table-wrap td > .lang { display: block; color: var(--muted); }
@@ -257,7 +258,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     <div class="bench-group" data-pieces="domino" data-surface="rectangle">
       <div class="table-wrap">
         <table role="table" id="domino-benchmark" aria-label="Dominoes (A004003)" class="languages">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Formula, Rust" title="Formula, Rust"><a class="solver" href="notes/dominoes/rectangles.html#the-closed-form" aria-label="Formula, Rust">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Formula, Python" title="Formula, Python"><a class="solver" href="notes/dominoes/rectangles.html#the-closed-form" aria-label="Formula, Python">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Formula, JavaScript" title="Formula, JavaScript"><a class="solver" href="notes/dominoes/rectangles.html#the-closed-form" aria-label="Formula, JavaScript">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/dominoes/rectangles.html#transfer-by-rows" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Formula, Rust" title="Formula, Rust"><a class="solver" href="notes/dominoes/rectangles.html#the-closed-form" aria-label="Formula, Rust">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Formula, Python" title="Formula, Python"><a class="solver" href="notes/dominoes/rectangles.html#the-closed-form" aria-label="Formula, Python">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Formula, JavaScript" title="Formula, JavaScript"><a class="solver" href="notes/dominoes/rectangles.html#the-closed-form" aria-label="Formula, JavaScript">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/dominoes/rectangles.html#transfer-by-rows" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/dominoes/rectangles.html#transfer-by-rows" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/dominoes/rectangles.html#transfer-by-rows" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domino-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
@@ -913,10 +914,12 @@ $('load-table').addEventListener('click', () => {
   render();
 });
 
-const FORMULA_LANGUAGES = [
+const FORMULA_AND_BIGINT_LANGUAGES = [
   { read: r => r.languages.rs },
   { read: r => r.languages.py },
   { read: r => r.formula },
+  { read: r => r.bigintLanguages.rs },
+  { read: r => r.bigintLanguages.py },
   { read: r => r.bigint },
 ];
 const MODULAR_LANGUAGES = [
@@ -958,7 +961,7 @@ function renderSolverRows(table, rows, solvers) {
     .join('');
 }
 
-renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_LANGUAGES);
+renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_AND_BIGINT_LANGUAGES);
 renderSolverRows('domino-torus-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_LANGUAGES);
 renderSolverRows('domino-cylinder-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_LANGUAGES);
 renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, MODULAR_LANGUAGES);

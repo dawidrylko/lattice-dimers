@@ -30,15 +30,16 @@ const CONTENT_TYPES = {
 const VIEWPORT_HEIGHT = 900;
 const MOBILE_TABLE_WIDTH = 720;
 const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
-const languageColumns = solver => ['Board', 'Tilings', `${solver}, Rust`, `${solver}, Python`, `${solver}, JavaScript`, 'BigInt, JavaScript', 'Runs'];
-const languageIcons = solver => `${solver} #icon-rust | ${solver} #icon-python | ${solver} #icon-javascript | BigInt #icon-javascript`;
+const LANGUAGES = [['Rust', '#icon-rust'], ['Python', '#icon-python'], ['JavaScript', '#icon-javascript']];
+const solverColumns = (solver, languages) => LANGUAGES.filter(([name]) => languages.includes(name)).map(([name, icon]) => ({ name: `${solver}, ${name}`, icon: `${solver} ${icon}` }));
+const MODULAR_AND_BIGINT = [solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['JavaScript'])];
 const LANGUAGE_TABLES = [
-  ['domino/rectangle', 'domino-benchmark', 'DATA.benchmark', '36', 'Formula', 'FORMULA_LANGUAGES'],
-  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121', 'Modular', 'MODULAR_LANGUAGES'],
-  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272', 'Modular', 'MODULAR_LANGUAGES'],
-  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'Modular', 'MODULAR_LANGUAGES'],
-  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'Modular', 'MODULAR_LANGUAGES'],
-  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552', 'Modular', 'MODULAR_LANGUAGES'],
+  ['domino/rectangle', 'domino-benchmark', 'DATA.benchmark', '36', 'FORMULA_AND_BIGINT_LANGUAGES', [solverColumns('Formula', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])]],
+  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_LANGUAGES', MODULAR_AND_BIGINT],
 ];
 const SHOWN_BENCHMARK = `(() => {
   const view = group => group.dataset.pieces + '/' + group.dataset.surface;
@@ -1372,9 +1373,10 @@ async function checkBenchmark(page, baseUrl, width) {
     problems.push('the benchmarks still show the diagonal pieces table');
   }
 
-  for (const [view, id, source, tilings4x4, solver, languages] of LANGUAGE_TABLES) {
-    const columnNames = languageColumns(solver);
-    const columnIcons = languageIcons(solver);
+  for (const [view, id, source, tilings4x4, languages, groups] of LANGUAGE_TABLES) {
+    const columnNames = ['Board', 'Tilings', ...groups.flat().map(({ name }) => name), 'Runs'];
+    const columnIcons = groups.flat().map(({ icon }) => icon).join(' | ');
+    const lines = groups.reduce(({ next, all }, group) => ({ next: next + group.length, all: [...all, group.map((_, i) => next + i)] }), { next: 2, all: [] }).all;
     await loadSite(page, baseUrl, width, `benchmark/${view}`);
     await page.waitFor(`document.querySelectorAll('#${id}-rows tr').length > 0`, `the ${view} rows`);
     await page.settle();
@@ -1396,8 +1398,8 @@ async function checkBenchmark(page, baseUrl, width) {
           return icon && first && offset(icon, cell) !== offset(first, rows[0].cells[i + 2]) ? row.cells[0].textContent + ' ' + cell.dataset.label : null;
         })).filter(Boolean),
         labels: rows.map(row => [...row.cells].map(cell => cell.dataset.label).join(' | ')),
-        split: rows.filter(row => new Set([...row.cells].slice(2, 6).map(cell => Math.round(cell.getBoundingClientRect().top))).size > 1).length,
-        wrapped: rows.filter(row => [...row.cells].slice(2, 6).some(cell => cell.getBoundingClientRect().height > row.cells[0].getBoundingClientRect().height + 1)).length,
+        split: rows.filter(row => ${JSON.stringify(lines)}.some(line => new Set(line.map(i => Math.round(row.cells[i].getBoundingClientRect().top))).size > 1)).length,
+        wrapped: rows.filter(row => [...row.cells].slice(2, -1).some(cell => cell.getBoundingClientRect().height > row.cells[0].getBoundingClientRect().height + 1)).length,
       };
     })()`);
     const names = await accessibleNames(page, `#${id} thead th`);
@@ -1433,7 +1435,7 @@ async function checkBenchmark(page, baseUrl, width) {
     }
 
     if (columns.split) {
-      problems.push(`#${id} spreads the four times of ${columns.split} rows over more than one line`);
+      problems.push(`#${id} spreads the times of one solver over more than one line in ${columns.split} rows`);
     }
 
     if (columns.wrapped) {
