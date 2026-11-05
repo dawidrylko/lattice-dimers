@@ -1,36 +1,35 @@
-# Tori: tilings on three lattices (A401670 on the king's graph)
+# Domicules on tori (A401670)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/tori.html) has the results. It counts the tilings of tori, boards whose opposite edges are glued in both directions. There are three lattices: the square lattice (dominoes), the triangular lattice (the square lattice with one diagonal) and the king's graph (domicules). The [cylinders notebook](04-cylinders.md) counts the same lattices with only the left and right edges glued. The method is described in the [method note](01-method.md).
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/torus.html) has the results. It counts the domicule tilings of tori, boards whose opposite edges are glued in both directions; they are the perfect matchings of the king's graph on the torus. It compares the torus count of the king's graph with those of [dominoes](../dominoes/03-torus.md) and of the [triangular lattice](../triangular/02-torus.md). The [cylinders notebook](02-cylinder.md) glues only the left and right edges.
 
 ## The problem
 
-On a torus both pairs of opposite edges of the board are glued, so a piece may cross the column seam, between the last and the first column, or the row seam, between the last and the first row. A piece that crosses a seam is drawn cut, with one half on each side, and the glued edges are marked, one pair with one tick and the other with two. The drawings show tilings of the $4 \times 4$ torus, first with dominoes and then with domicules, spread over the numbering.
+On a torus both pairs of opposite edges of the board are glued, so a domicule may cross the column seam, between the last and the first column, or the row seam, between the last and the first row. A domicule that crosses a seam is drawn cut, with one half on each side, and the glued edges are marked, one pair with one tick and the other with two. The drawings show tilings of the $4 \times 4$ torus, spread over the numbering.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
+const { total } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', surface: 'torus', ranks: [0] });
+const ranks = [0, 1, 2, 3].map(i => Math.floor((Number(total) * i) / 4));
+const { svgs } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', surface: 'torus', ranks });
 
-for (const pieces of ['domino', 'domicule']) {
-  const { total } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'torus', ranks: [0] });
-  const ranks = [0, 1, 2, 3].map(i => Math.floor((Number(total) * i) / 4));
-  const { svgs } = drawTilings({ rowCount: 4, colCount: 4, pieces, surface: 'torus', ranks });
-
-  figure(svgs, `4 of the ${total} ${pieces} tilings of the 4 × 4 torus.`);
-}
+figure(svgs, `4 of the ${total} domicule tilings of the 4 × 4 torus.`);
 ```
 
 ## How the counts are made
 
-Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix.
+Two solvers count the same boards by different methods. [`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix.
 
-[`periodicTilingSolver-Modular.js`](../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell, like the solver of the [domicules notebook](03-domicules.md). Its state holds the next $w + 2$ cells and, on the king's graph with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
+[`periodicTilingSolver-Modular.js`](../../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell, like the solver of the [rectangles notebook](01-rectangle.md#transfer-by-cells). Its state holds the next $w + 2$ cells and, with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
 
 A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The modular solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
-The square lattice checks both solvers against the OEIS. Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A335586), of $C_8 \times C_n$ [OEIS A253678](https://oeis.org/A253678), of $C_{10} \times C_n$ [OEIS A281679](https://oeis.org/A281679). `node harness/testRunner.js` runs these boards and the king's graph and triangular boards of `spec/cases/periodicTilingTests.json` through both solvers. `pnpm test` runs the first seven.
+## Numbering
 
-The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670). The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph or triangular tori.
+The gallery numbers the tilings of the tori up to $10 \times 10$ with the same scan. The tilings are ordered by $S$ and then by the scan. The tilings of $S$ and of its rotations are equally many, so one table per rotation class gives every count, and the table of a single $S$ is rebuilt when a page needs it. The Random button draws a uniformly random number, so the sample is exact. The [Diagonal pieces](04-diagonals.md#numbering-by-diagonal-pieces) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
 
-## The king's graph on the 2n × 2n torus: A401670
+## The 2n × 2n torus: A401670
+
+The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670). The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph tori.
 
 For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in A335586. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `spec/cases/periodicTilingTests-Modular.json`, where it wrote them once.
 
@@ -87,7 +86,7 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 Since a torus has no boundary, $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site.
 
-The cell divides the torus count by $e^{sL^2}$ on all three lattices, and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([OEIS A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
+The cell divides the torus count by $e^{sL^2}$ on the king's graph and, for comparison, on the square lattice of the [domino tori](../dominoes/03-torus.md) and on the [triangular lattice](../triangular/02-torus.md), and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([OEIS A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
 
 ```js run
 const fs = require('fs');
@@ -198,7 +197,7 @@ print(`e^(2/ξ) = ${Math.exp(2 / Number(xi)).toFixed(2)} with ξ = ${nb.context.
 
 ## Running time
 
-Average time of the count inside each solver on the king's graph, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../benchmarks/results).
+Average time of the count inside each solver on the king's graph, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../../benchmarks/results).
 
 ```js run
 const { formatTime } = nb.context;
@@ -214,8 +213,12 @@ print(`Run: ${nb.context.benchmarkRun}`);
 
 ## PARI/GP
 
-The torus count as the trace of the row transfer matrix in [`oeis/A401670/A401670.gp`](../oeis/A401670/A401670.gp), checked in CI against the king's graph tori of the test data up to circumference 8.
+The torus count as the trace of the row transfer matrix in [`oeis/A401670/A401670.gp`](../../oeis/A401670/A401670.gp), checked in CI against the king's graph tori of the test data up to circumference 8.
 
 ```js run
 print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A401670/A401670.gp'), 'utf-8').trim());
 ```
+
+## Verification
+
+The two periodic solvers agree with each other up to $8 \times 8$, the modular solver checks every result against an extra prime, and the PARI/GP program runs in CI against the king's graph tori of the test data. `node harness/testRunner.js` runs the king's graph boards of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers.

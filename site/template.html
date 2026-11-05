@@ -39,7 +39,7 @@ a { color: var(--accent); }
 __CHROME_CSS__
 nav.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
 nav.tabs a { padding: 8px 14px; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-nav.tabs a[aria-current="page"] { color: var(--fg); border-color: var(--accent); font-weight: 600; }
+nav.tabs a[aria-current="true"] { color: var(--fg); border-color: var(--accent); font-weight: 600; }
 .picker { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; min-width: 0; }
 .picker .label { flex: none; }
 .label { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
@@ -870,7 +870,7 @@ function render() {
   const state = parseHash();
 
   document.querySelectorAll('nav.tabs a').forEach(a => {
-    if (a.dataset.tab === state.tab) a.setAttribute('aria-current', 'page');
+    if (a.dataset.tab === state.tab) a.setAttribute('aria-current', 'true');
     else a.removeAttribute('aria-current');
   });
   $('gallery').hidden = state.tab !== 'gallery';

@@ -1,15 +1,48 @@
 const { escapeHtml } = require('./notes');
 
 const REPOSITORY_URL = 'https://github.com/dawidrylko/lattice-dimers';
-const NOTE_LABELS = {
-  research: 'Research',
-  method: 'Method',
-  dominoes: 'Dominoes',
-  domicules: 'Domicules',
-  cylinders: 'Cylinders',
-  tori: 'Tori',
-  diagonals: 'Diagonal pieces',
-};
+const NAV = [
+  { slug: 'research', label: 'Research' },
+  {
+    label: 'Dominoes',
+    items: [
+      { slug: 'dominoes/rectangle', label: 'Rectangles' },
+      { slug: 'dominoes/cylinder', label: 'Cylinders' },
+      { slug: 'dominoes/torus', label: 'Tori' },
+    ],
+  },
+  {
+    label: 'Domicules',
+    items: [
+      { slug: 'domicules/rectangle', label: 'Rectangles' },
+      { slug: 'domicules/cylinder', label: 'Cylinders' },
+      { slug: 'domicules/torus', label: 'Tori' },
+      { slug: 'domicules/diagonals', label: 'Diagonal pieces' },
+    ],
+  },
+  {
+    label: 'Triangular lattice',
+    items: [
+      { slug: 'triangular/cylinder', label: 'Cylinders' },
+      { slug: 'triangular/torus', label: 'Tori' },
+    ],
+  },
+];
+
+const NAV_SCRIPT = `(() => {
+  const menus = [...document.querySelectorAll('.site-nav details')];
+  const close = keep => menus.filter(menu => menu.open && menu !== keep).forEach(menu => { menu.open = false; });
+  menus.forEach(menu => menu.addEventListener('toggle', () => menu.open && close(menu)));
+  document.addEventListener('click', event => close(menus.find(menu => menu.contains(event.target))));
+  document.addEventListener('focusin', event => close(menus.find(menu => menu.contains(event.target))));
+  document.addEventListener('keydown', event => {
+    const open = menus.find(menu => menu.open);
+    if (event.key === 'Escape' && open) {
+      open.open = false;
+      open.querySelector('summary').focus();
+    }
+  });
+})();`;
 
 const THEME_CSS = `
 :root {
@@ -62,18 +95,31 @@ const CHROME_CSS = `
 .brand { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 24px; font-weight: 700; line-height: 1.25; color: var(--fg); text-decoration: none; }
 .brand img { width: 32px; height: 32px; }
 .site-nav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
-.site-nav a { color: var(--muted); text-decoration: none; }
-.site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--fg); }
-.site-nav a[aria-current="page"] { text-decoration: underline 2px var(--accent); text-underline-offset: 6px; }
+.site-nav a, .site-nav summary { color: var(--muted); text-decoration: none; }
+.site-nav a:hover, .site-nav a[aria-current="page"], .site-nav summary:hover, .site-nav summary[data-current], .site-nav details[open] summary { color: var(--fg); }
+.site-nav a[aria-current="page"], .site-nav summary[data-current] { text-decoration: underline 2px var(--accent); text-underline-offset: 6px; }
+.site-nav details { position: relative; }
+.site-nav summary { cursor: pointer; list-style: none; }
+.site-nav summary::-webkit-details-marker { display: none; }
+.site-nav summary::after { content: ""; display: inline-block; margin-left: 6px; border: 4px solid transparent; border-top-color: currentColor; border-bottom-width: 0; vertical-align: middle; }
+.site-nav details[open] summary::after { border-top-width: 0; border-bottom: 4px solid currentColor; }
+.site-nav .menu { position: absolute; top: calc(100% + 6px); left: -12px; z-index: 10; display: flex; flex-direction: column; gap: 4px; min-width: max-content; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+.site-nav .menu a { padding: 2px 0; }
+@media (max-width: 640px) {
+  .site-nav { position: relative; }
+  .site-nav details { position: static; }
+  .site-nav .menu { left: 0; right: 0; min-width: 0; }
+}
 .site-footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font: 13px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
 .site-footer p { margin: 0 0 4px; }
 .site-footer .site-provenance { margin: 0 0 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 `.trim();
 
 /**
- * Renders the header every page shares: the site name and the site navigation.
+ * Renders the header every page shares: the site name and the site navigation, where the notes of one kind
+ * of piece or lattice sit in a menu that opens from its label.
  * @param {Object} options
- * @property {string} options.root The path from the page to the site root ('' or '../').
+ * @property {string} options.root The path from the page to the site root ('', '../' or '../../').
  * @property {string} options.current The slug of the page: 'home' or a note slug.
  * @property {{ slug: string }[]} options.notes The notes in reading order.
  * @returns {string} The HTML.
@@ -82,13 +128,29 @@ function renderHeader({ root, current, notes }) {
   const home = root || './';
   const logo = `<img src="${root}dimer.svg" alt="" width="32" height="32">Lattice Dimers`;
   const brand = current === 'home' ? `<h1 class="brand">${logo}</h1>` : `<a class="brand" href="${home}">${logo}</a>`;
-  const links = [
-    { slug: 'home', href: home, label: 'Home' },
-    ...notes.map(({ slug }) => ({ slug, href: `${root}notes/${slug}.html`, label: NOTE_LABELS[slug] || slug })),
-  ];
-  const nav = links
-    .map(({ slug, href, label }) => `<a href="${href}"${slug === current ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a>`)
-    .join('\n      ');
+  const listed = NAV.flatMap(entry => entry.items || [entry]).map(({ slug }) => slug);
+  const unlisted = notes.map(({ slug }) => slug).filter(slug => !listed.includes(slug));
+  const missing = listed.filter(slug => !notes.some(note => note.slug === slug));
+
+  if (unlisted.length || missing.length) {
+    throw new Error(`the site navigation misses ${unlisted.join(', ') || 'no note'} and names ${missing.join(', ') || 'no missing note'}`);
+  }
+
+  const link = (slug, href, label) => `<a href="${href}"${slug === current ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a>`;
+  const note = ({ slug, label }) => link(slug, `${root}notes/${slug}.html`, label);
+  const nav = [
+    link('home', home, 'Home'),
+    ...NAV.map(entry =>
+      entry.items
+        ? [
+            '<details>',
+            `        <summary${entry.items.some(({ slug }) => slug === current) ? ' data-current' : ''}>${escapeHtml(entry.label)}</summary>`,
+            `        <div class="menu">${entry.items.map(note).join('')}</div>`,
+            '      </details>',
+          ].join('\n')
+        : note(entry),
+    ),
+  ].join('\n      ');
 
   return [
     '<header class="site-header">',
@@ -96,6 +158,7 @@ function renderHeader({ root, current, notes }) {
     '    <nav class="site-nav" aria-label="Site">',
     `      ${nav}`,
     '    </nav>',
+    `    <script>${NAV_SCRIPT}</script>`,
     '  </header>',
   ].join('\n');
 }

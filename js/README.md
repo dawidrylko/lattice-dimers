@@ -1,6 +1,6 @@
 # Solvers and renderer
 
-The [method note](../notes/01-method.md) explains how each count is made; this page lists the programs and how to run them.
+The notebooks in [`notes`](../notes/README.md) explain how each count is made, the [dominoes](../notes/dominoes/01-rectangle.md) and [domicules](../notes/domicules/01-rectangle.md) notebooks also how the gallery numbers and samples the tilings; this page lists the programs and how to run them.
 
 ## Solvers
 
