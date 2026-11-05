@@ -1,6 +1,6 @@
 # Solver contract
 
-Every algorithm is to be kept in three languages, Rust first, Python second and JavaScript third. A change to an algorithm lands in Rust, and the Python and JavaScript implementations follow it in the same pull request. Today `periodic-tiling-modular`, `domicule-tiling-modular`, `domino-tiling-formula`, `domino-tiling-bigint` and `domicule-tiling-bigint` have all three and every other algorithm only its JavaScript implementation; [`algorithms.json`](algorithms.json) shows which languages each one has. The BigInt solvers stay the reference of their Modular twins in every language; "reference" never names the Rust implementation.
+Every algorithm is to be kept in three languages, Rust first, Python second and JavaScript third. A change to an algorithm lands in Rust, and the Python and JavaScript implementations follow it in the same pull request. Today `periodic-tiling-modular`, `domicule-tiling-modular`, `domino-tiling-formula`, `domino-tiling-bigint`, `domicule-tiling-bigint` and `domino-tiling-number` have all three and every other algorithm only its JavaScript implementation; [`algorithms.json`](algorithms.json) shows which languages each one has. The BigInt solvers stay the reference of their Modular twins in every language; "reference" never names the Rust implementation.
 
 ## Layout
 
@@ -21,7 +21,7 @@ An implementation takes `-r <rowCount> -c <colCount>`, and where the algorithm h
 
 ## Output
 
-One line on standard output: the count in decimal, or for the diagonal solvers the counts with 0, 1, 2 and more diagonal pieces separated by commas. Nothing else goes to standard output. With `--time` an implementation also writes `time <milliseconds> ms` to standard error, with three decimals: the time from the end of the argument checks to the moment the count is known, on a monotonic clock. It covers the worker threads and the Chinese remainder theorem, and leaves out the start of the process and the loading of the program (`js/core/timer.js`, `rust/core/src/timer.rs`, `python/lattice_dimers/core/timer.py`).
+One line on standard output: the count in decimal, or for the diagonal solvers the counts with 0, 1, 2 and more diagonal pieces separated by commas. Nothing else goes to standard output. `domino-tiling-number` counts in doubles in every language and writes the count as JavaScript writes a `Number`: above 2^53 the value is rounded, from 10^21 it takes an exponent (`7.049252476708914e+22`) and past the range of a double it is `Infinity`, the same text in all three languages. Every count above 2^53 also writes a warning to standard error, with exit code 0. With `--time` an implementation also writes `time <milliseconds> ms` to standard error, with three decimals: the time from the end of the argument checks to the moment the count is known, on a monotonic clock. It covers the worker threads and the Chinese remainder theorem, and leaves out the start of the process and the loading of the program (`js/core/timer.js`, `rust/core/src/timer.rs`, `python/lattice_dimers/core/timer.py`).
 
 ## Errors and limits
 
