@@ -4,7 +4,7 @@ import sys
 
 import numpy as np
 
-from lattice_dimers.core import combine_checked_residues, list_primes, parse_args, run_workers
+from lattice_dimers.core import combine_checked_residues, list_primes, parse_args, run_workers, start_timer
 
 MAX_CIRCUMFERENCE = 24
 BATCH_COUNTS = 1 << 20
@@ -237,12 +237,15 @@ def main(argv):
         )
         return 1
 
+    stop_timer = start_timer(argv)
+
     try:
         result = calculate_total_tiling_combinations(row_count, col_count, lattice, torus, twisted, jobs)
     except ValueError as error:
         print(error, file=sys.stderr)
         return 1
 
+    stop_timer()
     print(result)
     return 0
 

@@ -2,7 +2,7 @@ use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{BigInt, combine_checked_residues, list_primes, parse_args, run_workers};
+use lattice_dimers_core::{BigInt, Timer, combine_checked_residues, list_primes, parse_args, run_workers};
 
 const MAX_CIRCUMFERENCE: u64 = 24;
 const USAGE: &str = "Usage: periodic-tiling-modular -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows.";
@@ -236,9 +236,11 @@ fn main() -> ExitCode {
     }
 
     let jobs = usize::try_from(jobs).unwrap_or(usize::MAX);
+    let timer = Timer::start(&argv);
 
     match calculate_total_tiling_combinations(row_count as usize, col_count as usize, lattice, torus, twisted, jobs) {
         Ok(result) => {
+            timer.stop();
             println!("{result}");
             ExitCode::SUCCESS
         }

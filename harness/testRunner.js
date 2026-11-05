@@ -8,7 +8,7 @@ const periodicModular = require('../js/solvers/periodicTilingSolver-Modular.js')
 const { capThreads } = require('../js/solvers/domiculeDiagonalSolver-Modular.js');
 const { readBenchmarkRuns } = require('../site/benchmarkRuns.js');
 const { readRepository, listPortErrors } = require('./portCheck.js');
-const { listImplementations, algorithmOf } = require('../js/core/registry.js');
+const { registry, listImplementations, algorithmOf } = require('../js/core/registry.js');
 const {
   filesInt,
   testCasesInt,
@@ -511,6 +511,10 @@ function executeBenchmarkSurfaceTests() {
     { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: 'periodicTilingSolver-Modular.js_2x2-king-torus.txt' },
     { args: ['--cylinder', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-king-cylinder.txt' },
     { args: ['--diagonal', '--only', 'domiculeDiagonalSolver-BigInt.js'], file: 'domiculeDiagonalSolver-BigInt.js_0x0.txt' },
+    ...listImplementations('periodic-tiling-modular').map(({ file }) => ({
+      args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'],
+      file: `${path.basename(file)}_2x2-king-torus.txt`,
+    })),
   ];
 
   return cases.every(({ args, file }, index) => {
@@ -534,6 +538,55 @@ function executeBenchmarkSurfaceTests() {
       }
     } finally {
       fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+    }
+
+    console.log('Passed!');
+
+    return true;
+  });
+}
+
+function executeBenchmarkTimeTest() {
+  process.stdout.write('Executing benchmark time test 1 of 1 for the time of the count and of the process... ');
+
+  const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
+
+  try {
+    const { status, stderr } = runBenchmark(benchmarkRoot, []);
+    const [month] = fs.readdirSync(benchmarkRoot);
+    const content = fs.readFileSync(path.join(benchmarkRoot, month, 'dominoTilingSolver-Formula.js_0x0.txt'), 'utf-8');
+    const environment = JSON.parse(fs.readFileSync(path.join(benchmarkRoot, month, 'environment.json'), 'utf-8'));
+    const count = Number(content.match(/^Average Execution Time: ([\d.]+) ms$/m)?.[1]);
+    const whole = Number(content.match(/^Average Process Time: ([\d.]+) ms$/m)?.[1]);
+
+    if (status !== 0 || !(count >= 0) || !(whole > count) || !/^Load Average Before: /m.test(content) || environment.timing !== 'solver') {
+      console.error(`Failed! Exit code ${status}, count ${count} ms, process ${whole} ms, timing ${environment.timing}: ${stderr.trim()}`);
+
+      return false;
+    }
+  } finally {
+    fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function executeTimeFlagTests() {
+  const runs = Object.keys(registry.algorithms).flatMap(algorithm => listImplementations(algorithm).map(({ file }) => file));
+
+  return runs.every((file, index) => {
+    process.stdout.write(`Executing time flag test ${index + 1} of ${runs.length} for ${file}... `);
+
+    const command = [...exec.launch(file), '-r', '2', '-c', '2'];
+    const plain = spawnSync(command[0], command.slice(1), { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
+    const timed = spawnSync(command[0], [...command.slice(1), '--time'], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
+
+    if (plain.status !== 0 || timed.status !== 0 || timed.stdout !== plain.stdout || !/^time \d+\.\d{3} ms$/m.test(timed.stderr)) {
+      console.error(`Failed! Exit codes ${plain.status} and ${timed.status}, output ${timed.stdout.trim()} and ${plain.stdout.trim()}: ${timed.stderr.trim()}`);
+
+      return false;
     }
 
     console.log('Passed!');
@@ -920,6 +973,8 @@ async function __main__() {
     const researchPathTestPassed = executeResearchPathTest();
     const benchmarkGuardTestPassed = executeBenchmarkGuardTest();
     const benchmarkSurfaceTestsPassed = executeBenchmarkSurfaceTests();
+    const benchmarkTimeTestPassed = executeBenchmarkTimeTest();
+    const timeFlagTestsPassed = executeTimeFlagTests();
     const precisionWarningTestsPassed = executePrecisionWarningTests();
     const benchmarkEmptySelectionTestPassed = executeBenchmarkEmptySelectionTest();
     const benchmarkRunTestPassed = executeBenchmarkRunTest();
@@ -950,6 +1005,8 @@ async function __main__() {
       researchPathTestPassed &&
       benchmarkGuardTestPassed &&
       benchmarkSurfaceTestsPassed &&
+      benchmarkTimeTestPassed &&
+      timeFlagTestsPassed &&
       precisionWarningTestsPassed &&
       benchmarkEmptySelectionTestPassed &&
       benchmarkRunTestPassed &&

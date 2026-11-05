@@ -13,6 +13,8 @@ const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domiculeTilingSolver-Modular.js');
 const periodicModular = require('../js/solvers/periodicTilingSolver-Modular.js');
 const diagonalReference = require('../js/solvers/domiculeDiagonalSolver-BigInt.js');
+const { MAX_CIRCUMFERENCE: PERIODIC_BIGINT_CIRCUMFERENCE } = require('../js/solvers/periodicTilingSolver-BigInt.js');
+const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter } = require('./chrome');
@@ -25,6 +27,7 @@ const OUTPUT_DIRECTORY = path.join(ROOT_DIRECTORY, 'dist', 'site');
 const BENCHMARK_ROOT = 'benchmarks/results';
 const RESULT_FILE = /_(\d+)x(\d+)\.txt$/;
 const PERIODIC_RESULT_FILE = /_(\d+)x(\d+)-king-(torus|cylinder)\.txt$/;
+const DIAGONAL_BIGINT_SIDE = diagonalReference.MAX_SHORTER_SIDE;
 const { runs: BENCHMARK_RUNS, latest: BENCHMARK_RUN } = readBenchmarkRuns();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
 const BROWSER_SCRIPTS = ['js/renderer/svg.js', 'js/renderer/rank.js'];
@@ -282,9 +285,11 @@ function readAverageTime(directory, fileName) {
 
   const lines = fs.readFileSync(file, 'utf-8').split('\n');
   const match = lines[0].match(/Average Execution Time: ([\d.]+) ms/);
+  const process = lines.find(line => line.startsWith('Average Process Time:'))?.match(/([\d.]+) ms/);
 
   return {
     average: match ? Number(match[1]) : null,
+    process: process ? Number(process[1]) : null,
     runs: lines.filter(line => /^\d+\. Execution Time/.test(line)).length,
   };
 }
@@ -371,7 +376,12 @@ async function buildPeriodicBenchmark() {
       surface,
       tilings: await countPeriodicTilings({ rowCount, colCount, lattice: 'king', torus: surface === 'torus' }),
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
+      bigintMissing:
+        colCount > PERIODIC_BIGINT_CIRCUMFERENCE
+          ? `BigInt counts circumferences up to ${PERIODIC_BIGINT_CIRCUMFERENCE}`
+          : `not run: BigInt runs all 2^${colCount} sets of first-row cells of the torus`,
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
+      languages: readLanguages('periodic-tiling-modular', suffix),
     });
   }
 
@@ -397,9 +407,18 @@ function buildDiagonalBenchmark(totals) {
         colCount,
         tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
         bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
+        bigintMissing: `BigInt counts boards with a shorter side up to ${DIAGONAL_BIGINT_SIDE}`,
         modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
       };
     });
+}
+
+function readLanguages(algorithm, suffix) {
+  return Object.fromEntries(
+    listImplementations(algorithm)
+      .filter(({ language }) => language !== 'js')
+      .map(({ language, file }) => [language, readAverageTime(BENCHMARK_DIRECTORY, `${path.basename(file)}${suffix}`)]),
+  );
 }
 
 function readEnvironment(directory) {

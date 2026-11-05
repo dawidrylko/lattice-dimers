@@ -1,4 +1,4 @@
-const { parseArgs } = require('../core');
+const { parseArgs, startTimer } = require('../core');
 
 const MAX_SHORTER_SIDE = 12;
 
@@ -84,11 +84,14 @@ function __main__() {
     process.exit(1);
   }
 
-  console.log(calculateDiagonalPolynomial(options).join(','));
+  const stopTimer = startTimer();
+  const coefficients = calculateDiagonalPolynomial(options);
+  stopTimer();
+  console.log(coefficients.join(','));
 }
 
 if (require.main === module) {
   __main__();
 }
 
-module.exports = { calculateDiagonalPolynomial };
+module.exports = { calculateDiagonalPolynomial, MAX_SHORTER_SIDE };

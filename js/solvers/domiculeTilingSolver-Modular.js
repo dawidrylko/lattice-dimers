@@ -1,6 +1,6 @@
 const os = require('os');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
-const { parseArgs } = require('../core');
+const { parseArgs, startTimer } = require('../core');
 const { listPrimes, calculateLog2Bound, combineResidues } = require('../core/modular');
 
 const MAX_SHORTER_SIDE = 30;
@@ -144,7 +144,9 @@ async function __main__() {
     process.exit(1);
   }
 
+  const stopTimer = startTimer();
   const result = await calculateTotalTilingCombinations({ ...options, jobs });
+  stopTimer();
   console.log(result.toString());
 }
 

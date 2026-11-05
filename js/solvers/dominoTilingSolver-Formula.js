@@ -1,4 +1,4 @@
-const { parseArgs } = require('../core');
+const { parseArgs, startTimer } = require('../core');
 
 /**
  * Multiplies two polynomials given as coefficient arrays, from the constant term up.
@@ -142,7 +142,9 @@ function __main__() {
     process.exit(1);
   }
 
+  const stopTimer = startTimer();
   const result = calculateTotalTilingCombinations(options);
+  stopTimer();
   console.log(result.toString());
 }
 
