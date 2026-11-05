@@ -319,6 +319,7 @@ function buildDomiculeBenchmark(totals) {
         bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
         modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
         languages: readLanguages('domicule-tiling-modular', suffix),
+        bigintLanguages: readLanguages('domicule-tiling-bigint', suffix),
       };
     });
 }
