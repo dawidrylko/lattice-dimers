@@ -587,6 +587,13 @@ async function buildNotes(notes, context) {
   const directory = path.join(OUTPUT_DIRECTORY, 'notes');
   const today = new Date().toISOString().slice(0, 10);
   const rendered = [];
+  const slugs = notes.map(({ slug }) => slug).sort().join();
+
+  [['NOTE_SUMMARIES', NOTE_SUMMARIES], ['NOTE_PROVENANCE', NOTE_PROVENANCE]].forEach(([name, map]) => {
+    if (Object.keys(map).sort().join() !== slugs) {
+      throw new Error(`${name} names ${Object.keys(map).sort().join(', ')} and the notes are ${slugs}`);
+    }
+  });
 
   fs.mkdirSync(directory, { recursive: true });
 
