@@ -1,3 +1,4 @@
+import math
 from concurrent.futures import ThreadPoolExecutor
 
 LARGEST_PRIME_BOUND = 2**31
@@ -26,6 +27,28 @@ def list_primes(count):
         n -= 2
 
     return primes
+
+
+def calculate_log2_bound(rows, cols):
+    """Bounds log2 of the number of perfect matchings of the king's graph of a rows x cols board with the Kahn-Lovasz
+    theorem, like calculateLog2Bound of js/core/modular.js: a graph has at most Prod_v (d(v)!)^(1/(2 d(v))) perfect
+    matchings, where d(v) is the degree of the vertex v."""
+    bound = 0.0
+
+    for r in range(rows):
+        for c in range(cols):
+            height = min(r + 1, rows - 1) - max(r - 1, 0) + 1
+            width = min(c + 1, cols - 1) - max(c - 1, 0) + 1
+            degree = height * width - 1
+            log2_factorial = 0.0
+
+            for k in range(2, degree + 1):
+                log2_factorial += math.log2(k)
+
+            if degree:
+                bound += log2_factorial / (2 * degree)
+
+    return bound
 
 
 def combine_residues(residues, primes):

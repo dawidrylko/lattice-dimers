@@ -4,7 +4,7 @@ The Python implementations of the solvers, the second of the three languages of 
 
 | path | holds |
 | --- | --- |
-| [`lattice_dimers/core`](lattice_dimers/core/__init__.py) | the contract's argument parser, primes, the Chinese remainder theorem and the worker threads |
+| [`lattice_dimers/core`](lattice_dimers/core/__init__.py) | the contract's argument parser, primes, the Kahn-Lovász bound, the Chinese remainder theorem and the worker threads |
 | [`lattice_dimers/solvers`](lattice_dimers/solvers/periodic_tiling_modular.py) | one module per algorithm, named by its id with underscores |
 
 ```sh

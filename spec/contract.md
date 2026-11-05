@@ -1,12 +1,12 @@
 # Solver contract
 
-Every algorithm is to be kept in three languages, Rust first, Python second and JavaScript third. A change to an algorithm lands in Rust, and the Python and JavaScript implementations follow it in the same pull request. Today `periodic-tiling-modular` has all three and every other algorithm only its JavaScript implementation; [`algorithms.json`](algorithms.json) shows which languages each one has. The BigInt solvers stay the reference of their Modular twins in every language; "reference" never names the Rust implementation.
+Every algorithm is to be kept in three languages, Rust first, Python second and JavaScript third. A change to an algorithm lands in Rust, and the Python and JavaScript implementations follow it in the same pull request. Today `periodic-tiling-modular` and `domicule-tiling-modular` have all three and every other algorithm only its JavaScript implementation; [`algorithms.json`](algorithms.json) shows which languages each one has. The BigInt solvers stay the reference of their Modular twins in every language; "reference" never names the Rust implementation.
 
 ## Layout
 
 | directory | language | holds |
 | --- | --- | --- |
-| [`rust/core`](../rust/core/src/lib.rs) | Rust | the library every Rust solver uses: this contract's argument parser, modular arithmetic, primes and the Chinese remainder theorem |
+| [`rust/core`](../rust/core/src/lib.rs) | Rust | the library every Rust solver uses: this contract's argument parser, modular arithmetic, primes, the Kahn-Lovász bound and the Chinese remainder theorem |
 | [`rust/solvers/src/bin`](../rust/solvers/src/bin/periodic-tiling-modular.rs) | Rust | one binary per algorithm, named by its id: `periodic-tiling-modular.rs` |
 | [`python/lattice_dimers/core`](../python/lattice_dimers/core/__init__.py) | Python | the same library as `rust/core` |
 | [`python/lattice_dimers/solvers`](../python/lattice_dimers/solvers/periodic_tiling_modular.py) | Python | one module per algorithm, named by its id with underscores: `periodic_tiling_modular.py` |

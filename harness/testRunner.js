@@ -51,8 +51,6 @@ const rejectionTestCases = [
   { args: ['harness/testRunner.js', '-m'], message: 'Usage' },
   { args: ['js/solvers/dominoTilingSolver-Formula.js', '-r', '3', '-c', '3'], message: '2n x 2n boards only' },
   { args: ['js/solvers/domiculeTilingSolver-BigInt.js', '-r', '30', '-c', '30'], message: 'at most 29' },
-  { args: ['js/solvers/domiculeTilingSolver-Modular.js', '-r', '31', '-c', '31'], message: 'at most 30' },
-  { args: ['js/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
   {
     args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
@@ -99,6 +97,14 @@ const implementationRejectionTestCases = [
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', '0'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', 'x'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '40', '-c', '31'], message: 'because the states are indexed with 32-bit integers' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
+  { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
 ];
 
 const MEMORY_TEST_BYTES = 256 * 2 ** 20;
@@ -536,6 +542,10 @@ function executeBenchmarkSurfaceTests() {
       args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'],
       file: `${path.basename(file)}_2x2-king-torus.txt`,
     })),
+    ...listImplementations('domicule-tiling-modular').map(({ file }) => ({
+      args: ['--domicule', '--only', 'domiculeTilingSolver-Modular.js'],
+      file: `${path.basename(file)}_0x0.txt`,
+    })),
   ];
 
   return cases.every(({ args, file }, index) => {
@@ -934,23 +944,29 @@ async function executeModuleTests() {
     console.log('Passed!');
   }
 
-  return passed && executeUnknownProcessorCountTest(fourByFour(testCasesPeriodic));
+  return (
+    passed &&
+    [
+      ['periodic-tiling-modular', fourByFour(testCasesPeriodic)],
+      ['domicule-tiling-modular', fourByFour(testCasesDomicule)],
+    ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase))
+  );
 }
 
-function executeUnknownProcessorCountTest({ expectedResult, rowCount, colCount, lattice, torus }) {
-  const python = listImplementations('periodic-tiling-modular').find(({ language }) => language === 'py');
+function executeUnknownProcessorCountTest(algorithm, { expectedResult, rowCount, colCount, lattice, torus }) {
+  const python = listImplementations(algorithm).find(({ language }) => language === 'py');
   const launcher = exec.launch(python.file);
   const script = [
-    'import importlib, os, runpy, sys',
+    'import importlib, json, os, runpy, sys',
     'os.process_cpu_count = lambda: None',
     'module = sys.argv[1]',
-    'rows, cols, lattice, torus = int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5] == "torus"',
-    'print(importlib.import_module(module).calculate_total_tiling_combinations(rows, cols, lattice, torus), flush=True)',
-    'sys.argv = [module] + sys.argv[6:]',
+    'print(importlib.import_module(module).calculate_total_tiling_combinations(**json.loads(sys.argv[2])), flush=True)',
+    'sys.argv = [module] + sys.argv[3:]',
     'runpy.run_module(module, run_name="__main__", alter_sys=True)',
   ].join('\n');
-  const board = [String(rowCount), String(colCount), lattice, torus ? 'torus' : 'cylinder'];
-  const args = ['-r', String(rowCount), '-c', String(colCount), '--lattice', lattice, ...(torus ? ['--torus'] : [])];
+  const surface = lattice ? { lattice, torus: Boolean(torus) } : {};
+  const board = [JSON.stringify({ row_count: rowCount, col_count: colCount, ...surface })];
+  const args = ['-r', String(rowCount), '-c', String(colCount), ...(lattice ? ['--lattice', lattice] : []), ...(torus ? ['--torus'] : [])];
 
   process.stdout.write(`Executing module test for ${python.file} when the number of processors is unknown... `);
 
@@ -1100,7 +1116,7 @@ async function __main__() {
     const allBigIntTestsPassed = executeTests(filesBigInt, testCasesToRunBigInt, verifyBigInt);
     const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, verifyBigInt);
     const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;
-    const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt);
+    const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt, testCasesDomicule);
     const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, verifyBigInt);
     const testCasesToRunPeriodic = maxSize ? testCasesPeriodic.slice(0, maxSize) : testCasesPeriodic;
     const allPeriodicTestsPassed = executeTests(filesPeriodic, testCasesToRunPeriodic, verifyBigInt, testCasesPeriodic);
