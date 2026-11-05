@@ -1110,6 +1110,7 @@ const READ_MENUS = `(() => {
         left: menu.left,
         right: menu.right,
         onTop: Boolean(top && links[0].contains(top)),
+        shadow: getComputedStyle(details.querySelector('.menu')).boxShadow,
         focus: details.contains(focused) ? focused.tagName + ' ' + focused.textContent.trim() : '',
       };
     }),
@@ -1150,6 +1151,10 @@ async function checkMenus(page, width) {
 
     if (menu.left < 0 || menu.right > opened.width || !menu.onTop) {
       problems.push(`at ${width} px the ${label} menu spans ${Math.round(menu.left)} to ${Math.round(menu.right)} px of ${opened.width} or lies under the page`);
+    }
+
+    if (!/rgba?\(/.test(menu.shadow)) {
+      problems.push(`at ${width} px the ${label} menu casts no shadow over the page: ${menu.shadow}`);
     }
 
     if (opened.height !== before.height) {
