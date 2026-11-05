@@ -68,7 +68,7 @@ if (combined !== exact || combined % BigInt(primes[2]) !== BigInt(residues[2])) 
 
 ## The BigInt solver
 
-A domicule tiling is counted with a cell-by-cell scan, the transfer by cells. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the one of the [domino scan](../dominoes/01-rectangles.md#numbering). [`domiculeTilingSolver-BigInt.js`](../../js/solvers/domiculeTilingSolver-BigInt.js) keeps the counts as `BigInt` and is the reference. The same scan is in [`oeis/A239264/A239264.gp`](../../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../../oeis/A239273/A239273.gp), where `a(n)` is A239273.
+A domicule tiling is counted with a cell-by-cell scan, the transfer by cells. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the one of the [domino scan](../dominoes/01-rectangles.md#numbering). [`domiculeTilingSolver-BigInt.js`](../../js/solvers/domiculeTilingSolver-BigInt.js) keeps the counts as `BigInt` and is the reference, and its Rust and Python implementations, [`domicule-tiling-bigint.rs`](../../rust/solvers/src/bin/domicule-tiling-bigint.rs) and [`domicule_tiling_bigint.py`](../../python/lattice_dimers/solvers/domicule_tiling_bigint.py), count the same way. The same scan is in [`oeis/A239264/A239264.gp`](../../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../../oeis/A239273/A239273.gp), where `a(n)` is A239273.
 
 ### The state of the transfer
 
