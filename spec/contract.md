@@ -1,12 +1,12 @@
 # Solver contract
 
-Every algorithm is to be kept in three languages, Rust first, Python second and JavaScript third. A change to an algorithm lands in Rust, and the Python and JavaScript implementations follow it in the same pull request. Today `periodic-tiling-modular` has all three and every other algorithm only its JavaScript implementation; [`algorithms.json`](algorithms.json) shows which languages each one has. The BigInt solvers stay the reference of their Modular twins in every language; "reference" never names the Rust implementation.
+Every algorithm is to be kept in three languages, Rust first, Python second and JavaScript third. A change to an algorithm lands in Rust, and the Python and JavaScript implementations follow it in the same pull request. Today `periodic-tiling-modular` and `domicule-tiling-modular` have all three and every other algorithm only its JavaScript implementation; [`algorithms.json`](algorithms.json) shows which languages each one has. The BigInt solvers stay the reference of their Modular twins in every language; "reference" never names the Rust implementation.
 
 ## Layout
 
 | directory | language | holds |
 | --- | --- | --- |
-| [`rust/core`](../rust/core/src/lib.rs) | Rust | the library every Rust solver uses: this contract's argument parser, modular arithmetic, primes and the Chinese remainder theorem |
+| [`rust/core`](../rust/core/src/lib.rs) | Rust | the library every Rust solver uses: this contract's argument parser, modular arithmetic, primes, the Kahn-Lovász bound and the Chinese remainder theorem |
 | [`rust/solvers/src/bin`](../rust/solvers/src/bin/periodic-tiling-modular.rs) | Rust | one binary per algorithm, named by its id: `periodic-tiling-modular.rs` |
 | [`python/lattice_dimers/core`](../python/lattice_dimers/core/__init__.py) | Python | the same library as `rust/core` |
 | [`python/lattice_dimers/solvers`](../python/lattice_dimers/solvers/periodic_tiling_modular.py) | Python | one module per algorithm, named by its id with underscores: `periodic_tiling_modular.py` |
@@ -29,7 +29,7 @@ An implementation rejects arguments it cannot use, and a board it cannot count, 
 
 ## Running
 
-[`js/core/scriptExecutor.js`](../js/core/scriptExecutor.js) runs a Rust implementation as the release binary of the same name in `target/release` (or `$CARGO_TARGET_DIR/release`), built with `cargo build --release`, and fails the test when it was not built or is older than a `.rs` file under `rust/`; a Python one as a module of the installed package with `python3 -I -m` (or the interpreter at `$PYTHON`); a JavaScript one with the running Node.js.
+[`js/core/scriptExecutor.js`](../js/core/scriptExecutor.js) runs a Rust implementation as the release binary of the same name in `target/release` (or `$CARGO_TARGET_DIR/release`), built with `cargo build --release`, and fails the test when it was not built or is older than a `.rs` file it is built from: its own file in `rust/solvers/src/bin` or any `.rs` file under `rust/` outside that directory; a Python one as a module of the installed package with `python3 -I -m` (or the interpreter at `$PYTHON`); a JavaScript one with the running Node.js.
 
 ## The registry
 

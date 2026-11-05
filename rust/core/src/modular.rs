@@ -55,6 +55,28 @@ fn pow_mod(base: u64, mut exponent: u64, modulus: u64) -> u64 {
     result
 }
 
+/// Bounds log2 of the number of perfect matchings of the king's graph of a rows x cols board with the Kahn-Lovasz
+/// theorem, like calculateLog2Bound of js/core/modular.js: a graph has at most Prod_v (d(v)!)^(1/(2 d(v))) perfect
+/// matchings, where d(v) is the degree of the vertex v.
+pub fn calculate_log2_bound(rows: usize, cols: usize) -> f64 {
+    let mut bound = 0.0;
+
+    for r in 0..rows {
+        for c in 0..cols {
+            let height = (r + 1).min(rows - 1) - r.saturating_sub(1) + 1;
+            let width = (c + 1).min(cols - 1) - c.saturating_sub(1) + 1;
+            let degree = height * width - 1;
+            let log2_factorial: f64 = (2..=degree).map(|k| (k as f64).log2()).sum();
+
+            if degree > 0 {
+                bound += log2_factorial / (2 * degree) as f64;
+            }
+        }
+    }
+
+    bound
+}
+
 /// Rebuilds the non-negative integer below the product of the primes from its residues.
 pub fn combine_residues(residues: &[u32], primes: &[u32]) -> BigInt {
     let mut result = BigInt::zero();
@@ -131,6 +153,14 @@ mod tests {
 
     fn residues_of(value: i64, primes: &[u32]) -> Vec<u32> {
         primes.iter().map(|prime| value.rem_euclid(i64::from(*prime)) as u32).collect()
+    }
+
+    #[test]
+    fn bounds_the_king_graph_like_the_javascript_core() {
+        assert_eq!(calculate_log2_bound(0, 0), 0.0);
+        assert_eq!(calculate_log2_bound(1, 2), 0.0);
+        assert!((calculate_log2_bound(2, 2) - 4.0 * (1.0 + 3f64.log2()) / 6.0).abs() < 1e-12);
+        assert!(calculate_log2_bound(4, 4) >= 280f64.log2());
     }
 
     #[test]
