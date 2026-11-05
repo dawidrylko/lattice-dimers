@@ -28,7 +28,7 @@ const BENCHMARK_ROOT = 'benchmarks/results';
 const RESULT_FILE = /_(\d+)x(\d+)\.txt$/;
 const PERIODIC_RESULT_FILE = /_(\d+)x(\d+)-(\w+)-(torus|cylinder)\.txt$/;
 const DIAGONAL_BIGINT_SIDE = diagonalReference.MAX_SHORTER_SIDE;
-const { runs: BENCHMARK_RUNS, latest: BENCHMARK_RUN } = readBenchmarkRuns();
+const { latest: BENCHMARK_RUN } = readBenchmarkRuns();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
 const BROWSER_SCRIPTS = ['js/renderer/svg.js', 'js/renderer/rank.js'];
 const WORKER_SCRIPTS = [
@@ -123,44 +123,6 @@ const NOTE_SUMMARIES = {
   'triangular/cylinder': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
   'triangular/torus': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
 };
-
-function describeRun(run) {
-  const directory = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, run);
-  const environment = readEnvironment(directory) || {};
-  const runs = fs
-    .readdirSync(directory)
-    .filter(fileName => RESULT_FILE.test(fileName) || PERIODIC_RESULT_FILE.test(fileName))
-    .map(fileName => readAverageTime(directory, fileName).runs);
-  const most = Math.max(...runs);
-  const month = new Date(`${run}-01T00:00:00Z`).toLocaleString('en-US', {
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  });
-
-  return [
-    environment.date || month,
-    `${runs.every(count => count === most) ? '' : 'up to '}${most.toLocaleString('en-US')} runs per board`,
-    environment.node && `Node.js ${environment.node}`,
-    environment.cpu || 'machine not recorded',
-  ]
-    .filter(Boolean)
-    .join(', ');
-}
-
-function buildOlderBenchmarks() {
-  const links = BENCHMARK_RUNS.filter(run => run !== BENCHMARK_RUN).map(
-    run => `<a href="${REPOSITORY_TREE_URL}/${BENCHMARK_ROOT}/${run}">${BENCHMARK_ROOT}/${run}</a> (${describeRun(run)})`,
-  );
-
-  if (!links.length) {
-    return '';
-  }
-
-  const list = links.length === 1 ? links[0] : `${links.slice(0, -1).join(', ')} and ${links[links.length - 1]}`;
-
-  return `Other measurements are kept in ${list}.`;
-}
 
 function countTilings(board) {
   const testCase = testCasesBigInt.find(
@@ -758,7 +720,6 @@ async function __main__() {
     .replace('__JSON_LD__', () => JSON.stringify(buildJsonLd()).replace(/</g, '\\u003c'))
     .replace(/__SITE_URL__/g, SITE_URL)
     .replace(/__BENCHMARK_DIRECTORY__/g, `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`)
-    .replace('__OLDER_BENCHMARKS__', () => buildOlderBenchmarks())
     .replace(/__DOMICULE_SWEEPS__/g, DOMICULE_SWEEPS.toLocaleString('en-US'))
     .replace('__THEME_CSS__', () => THEME_CSS)
     .replace('__CHROME_CSS__', () => CHROME_CSS)

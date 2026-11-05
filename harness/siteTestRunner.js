@@ -13,10 +13,6 @@ const MIN_HIT_CONTRAST = 4.5;
 const MIN_FIGURE_LABEL = 11;
 const FIGURE_NAME = /^(Domino|Domicule) tiling number \d+( with \d+ diagonal pieces?)? of a \d+ by \d+ (rectangle|cylinder|torus)$/;
 const MIN_SEAM_DISTANCE = 40;
-const ARCHIVES = [
-  ['benchmarks/results/2024-03', 'March 2024, up to 1,000 runs per board, machine not recorded'],
-  ['benchmarks/results/2024-04', 'April 2024, 100,000 runs per board, Intel(R) Core(TM) i7-8700'],
-];
 const CHROME_CANDIDATES = [
   '/usr/bin/google-chrome',
   '/usr/bin/chromium',
@@ -1301,8 +1297,34 @@ async function checkBenchmark(page, baseUrl, width) {
             .map(row => row.cells[0].textContent),
         ),
         environment: section.querySelector('.environment').textContent,
+        titles: section.querySelectorAll('.bench-group h2, .bench-group h3').length,
+        older: section.textContent.split('benchmarks/results/').length !== 2 || /pnpm benchmark/.test(section.textContent),
+        rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
+        dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
+          const table = group.querySelector('table');
+          const bigint = [...table.tHead.rows[0].cells].findIndex(th => th.textContent.trim().startsWith('BigInt'));
+          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: i + 2 === bigint })));
+          const noted = [...group.querySelectorAll('.note')].some(note => note.textContent.startsWith('A dash under BigInt'));
+          return [
+            ...(cells.some(cell => cell.dash && !cell.bigint) ? [table.id + ' has a dash outside BigInt'] : []),
+            ...(cells.some(cell => cell.dash) !== noted ? [table.id + (noted ? ' explains dashes it does not show' : ' shows a dash it does not explain')] : []),
+          ];
+        }),
+        unnamed: wraps.filter(wrap => !wrap.querySelector('table').getAttribute('aria-label')).length,
       };
     })()`);
+
+    if (state.dashes.length) {
+      problems.push(`#${hash}: ${state.dashes.join(', ')}`);
+    }
+
+    if (state.older || state.rule !== 'none') {
+      problems.push(`#${hash} lists older benchmark runs or rules off the run note (${state.rule})`);
+    }
+
+    if (state.titles || state.unnamed) {
+      problems.push(`#${hash} shows ${state.titles} table headings and ${state.unnamed} tables without a name`);
+    }
 
     if (!state.shown || shown.shown !== view || shown.pressed !== view) {
       problems.push(`#${hash} shows ${shown.shown} with ${shown.pressed} pressed instead of ${view}`);
@@ -1316,7 +1338,7 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${hash} has no time for ${state.missing.join(', ')} and no rows in ${state.empty.join(', ')}`);
     }
 
-    if (!state.environment.startsWith('Measured with Node.js')) {
+    if (!/^Run on \d{4}-\d{2}-\d{2} on .+ with Node\.js /.test(state.environment)) {
       problems.push(`#${hash} has no environment`);
     }
   }
@@ -1615,9 +1637,6 @@ async function checkGeneratedText() {
   const chain = `a Markov chain of ${DOMICULE_SWEEPS.toLocaleString('en-US')} steps per cell`;
 
   return [
-    ...ARCHIVES.filter(([run, description]) => !text.includes(`${run} (${description}`)).map(
-      ([run, description]) => `the main page does not describe ${run} as "${description}"`,
-    ),
     ...(text.includes(chain) ? [] : [`the main page does not say "${chain}", the chain length of js/renderer`]),
   ];
 }
