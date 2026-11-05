@@ -23,19 +23,19 @@ Research code, data and papers on dimer coverings of two lattices: the square la
   </tr>
 </table>
 
-## Site
+## Solvers
 
-A domino covers two cells sharing a side, a domicule two cells sharing a side or only a corner. The [site](https://dawidrylko.github.io/lattice-dimers/) opens on two tabs, and its header menu lists the notebooks.
-
-- [Gallery](https://dawidrylko.github.io/lattice-dimers/#gallery): numbers the tilings of a rectangle, a cylinder or a torus and draws any one of them. It opens on the 8 × 8 board, and it samples the boards too large to number.
-- [Benchmarks](https://dawidrylko.github.io/lattice-dimers/#benchmark): the exact counts and the running times of the solvers in Rust, Python and JavaScript. The Pieces and Surface switches choose one of six tables.
-
-| menu | notebooks |
-| --- | --- |
-| Research | [Research](https://dawidrylko.github.io/lattice-dimers/notes/research.html) |
-| Dominoes | [Rectangles](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/rectangles.html), [Cylinders](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html), [Tori](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/tori.html) |
-| Domicules | [Rectangles](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html), [Cylinders](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html), [Tori](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html), [Diagonal pieces](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html) |
-| Triangular lattice | [Cylinders](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html), [Tori](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori.html) |
+| solver | Rust | Python | JS |
+| --- | --- | --- | --- |
+| `domino-tiling-formula` | [rs](rust/solvers/src/bin/domino-tiling-formula.rs) | [py](python/lattice_dimers/solvers/domino_tiling_formula.py) | [js](js/solvers/dominoTilingSolver-Formula.js) |
+| `domino-tiling-bigint` | [rs](rust/solvers/src/bin/domino-tiling-bigint.rs) | [py](python/lattice_dimers/solvers/domino_tiling_bigint.py) | [js](js/solvers/dominoTilingSolver-BigInt.js) |
+| `domino-tiling-number` | - | - | [js](js/solvers/dominoTilingSolver.js) |
+| `domicule-tiling-modular` | [rs](rust/solvers/src/bin/domicule-tiling-modular.rs) | [py](python/lattice_dimers/solvers/domicule_tiling_modular.py) | [js](js/solvers/domiculeTilingSolver-Modular.js) |
+| `domicule-tiling-bigint` | - | - | [js](js/solvers/domiculeTilingSolver-BigInt.js) |
+| `domicule-diagonal-modular` | - | - | [js](js/solvers/domiculeDiagonalSolver-Modular.js) |
+| `domicule-diagonal-bigint` | - | - | [js](js/solvers/domiculeDiagonalSolver-BigInt.js) |
+| `periodic-tiling-modular` | [rs](rust/solvers/src/bin/periodic-tiling-modular.rs) | [py](python/lattice_dimers/solvers/periodic_tiling_modular.py) | [js](js/solvers/periodicTilingSolver-Modular.js) |
+| `periodic-tiling-bigint` | - | - | [js](js/solvers/periodicTilingSolver-BigInt.js) |
 
 ## Results
 

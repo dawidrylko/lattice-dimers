@@ -216,8 +216,43 @@ function checkReadmeBoard() {
   return errors;
 }
 
+function checkReadmeSolvers() {
+  const { languages, algorithms } = JSON.parse(read('spec/algorithms.json'));
+  const expected = Object.keys(languages);
+  const header = `| solver | Rust | Python | JS |`;
+  const lines = read('README.md').split('\n');
+  const start = lines.indexOf(header);
+
+  if (start === -1 || expected.join() !== 'rs,py,js') {
+    return [`README.md must have the table ${header}, with the languages of spec/algorithms.json.`];
+  }
+
+  const rows = lines.slice(start + 2, lines.findIndex((line, index) => index > start && !line.startsWith('|')));
+  const listed = rows.map(row => row.split('|').map(cell => cell.trim()).slice(1, -1));
+  const names = listed.map(([name]) => name.replaceAll('`', ''));
+  const errors = [
+    ...Object.keys(algorithms).filter(name => !names.includes(name)).map(name => `The solvers table of README.md does not list ${name}.`),
+    ...names.filter(name => !Object.hasOwn(algorithms, name)).map(name => `The solvers table of README.md lists ${name}, which spec/algorithms.json does not.`),
+  ];
+
+  for (const [name, ...cells] of listed) {
+    const entry = algorithms[name.replaceAll('`', '')] ?? {};
+
+    expected.forEach((language, index) => {
+      const cell = entry[language] ? `[${language}](${entry[language]})` : '-';
+
+      if (Object.keys(entry).length && cells[index] !== cell) {
+        errors.push(`The solvers table of README.md has ${cells[index]} for ${name} in ${language} instead of ${cell}.`);
+      }
+    });
+  }
+
+  return errors;
+}
+
 function __main__() {
   const passed = [
+    runCheck('the solvers table of README.md against spec/algorithms.json', checkReadmeSolvers),
     runCheck('the title and abstract of CITATION.cff against README.md', checkCitation),
     runCheck('the board of the README examples against the gallery default', checkReadmeBoard),
     runCheck('the description of package.json against CITATION.cff', checkPackage),
