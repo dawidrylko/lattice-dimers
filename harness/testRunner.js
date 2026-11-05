@@ -1098,8 +1098,39 @@ async function executeModuleTests() {
       ['periodic-tiling-modular', fourByFour(testCasesPeriodic)],
       ['domicule-tiling-modular', fourByFour(testCasesDomicule)],
     ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
-    executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6))
+    executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
+    executeLongCountTest()
   );
+}
+
+function executeLongCountTest() {
+  const python = listImplementations('domino-tiling-formula').find(({ language }) => language === 'py');
+  const launcher = exec.launch(python.file);
+  const args = ['-r', '80', '-c', '80'];
+  const expected = spawnSync(process.execPath, ['js/solvers/dominoTilingSolver-Formula.js', ...args], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' }).stdout.trim();
+  const script = [
+    'import runpy, sys',
+    'sys.set_int_max_str_digits(640)',
+    'sys.argv = sys.argv[1:]',
+    'runpy.run_module(sys.argv[0], run_name="__main__", alter_sys=True)',
+  ].join('\n');
+
+  process.stdout.write(`Executing module test for ${python.file} with a count of ${expected.length} digits under a limit of 640... `);
+
+  const { status, stdout, stderr } = spawnSync(launcher[0], ['-I', '-c', script, launcher.at(-1), ...args], {
+    cwd: ROOT_DIRECTORY,
+    encoding: 'utf-8',
+  });
+
+  if (status !== 0 || expected.length <= 640 || stdout.trim() !== expected) {
+    console.error(`Failed! Exit code ${status}: ${(stdout || stderr).trim().slice(-200)}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
 }
 
 function executeScratchTest({ expectedResult, rowCount, colCount }) {

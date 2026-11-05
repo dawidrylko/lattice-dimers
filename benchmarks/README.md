@@ -3,7 +3,7 @@
 [`harness/benchmarkRunner.js`](../harness/benchmarkRunner.js) runs every implementation of the solvers, in Rust, Python and JavaScript ([`spec/algorithms.json`](../spec/algorithms.json)), on the boards of [`spec/cases/`](../spec/cases/README.md) and writes one file per implementation and board to `results/<year-month>/`.
 
 ```sh
-pnpm benchmark            # domino solvers: 10 runs up to 20 × 20
+pnpm benchmark            # domino solvers: 10 runs of every board, up to 10 × 10 for Number and 20 × 20 for Formula and BigInt
 pnpm benchmark:domicule   # domicule solvers, 10 runs up to 20 × 20
 pnpm benchmark:periodic   # king's graph tori, 10 runs up to 10 × 10, Modular 10 runs of 12 × 12 and 3 of 14 × 14; cylinders, 10 runs up to 16 × 16; then the same surfaces on the square lattice (dominoes): tori, 10 runs up to 12 × 12 and Modular 3 of 14 × 14, cylinders, 10 runs up to 16 × 16
 pnpm benchmark:diagonal   # domicules by the number of diagonal pieces: 10 runs up to 18 × 18, Modular one run of 20 × 20

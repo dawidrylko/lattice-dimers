@@ -114,7 +114,7 @@ impl BigInt {
         (quotient, remainder as u32)
     }
 
-    /// Divides the absolute value by a larger divisor with Knuth's algorithm D, the long division of
+    /// Divides the absolute value by a non-zero divisor with Knuth's algorithm D, the long division of
     /// Hacker's Delight (divmnu), and returns the absolute values of the quotient and the remainder.
     fn div_rem_magnitude_big(&self, divisor: &Self) -> (Self, Self) {
         assert!(!divisor.is_zero(), "division by zero");
@@ -369,6 +369,21 @@ mod tests {
         assert_eq!((&BigInt::from_i64(20) / &seven.negated()).to_string(), "-2");
         assert_eq!((&BigInt::from_i64(-20) / &seven.negated()).to_string(), "2");
         assert_eq!((&BigInt::from_i64(6) / &seven).to_string(), "0");
+    }
+
+    #[test]
+    fn divides_and_subtracts_long_values_with_signs() {
+        let mut seed = 7;
+        let a = pseudo_random(&mut seed, 5);
+        let b = pseudo_random(&mut seed, 3);
+        let product = &a * &b;
+
+        assert_eq!(&product.negated() / &b, a.negated());
+        assert_eq!(&product / &b.negated(), a.negated());
+        assert_eq!(&product.negated() / &b.negated(), a);
+        assert_eq!(&(&product.negated() + &BigInt::from_i64(-5)) / &b, a.negated());
+        assert_eq!(&b - &product, (&product - &b).negated());
+        assert_eq!(&(&b.negated() - &product) + &product, b.negated());
     }
 
     #[test]

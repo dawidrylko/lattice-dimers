@@ -99,6 +99,7 @@ def is_valid_size(size):
 
 
 def main(argv):
+    sys.set_int_max_str_digits(0)
     options = parse_args(argv, {"-r": "rowCount", "-c": "colCount"})
     row_count = options.get("rowCount")
     col_count = options.get("colCount")
