@@ -30,5 +30,9 @@ name = "domicule-tiling-modular"
 path = "rust/solvers/src/bin/domicule-tiling-modular.rs"
 
 [[bin]]
+name = "domino-tiling-formula"
+path = "rust/solvers/src/bin/domino-tiling-formula.rs"
+
+[[bin]]
 name = "periodic-tiling-modular"
 path = "rust/solvers/src/bin/periodic-tiling-modular.rs"

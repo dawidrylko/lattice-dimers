@@ -107,6 +107,7 @@ th a.solver { color: inherit; text-decoration: underline 1px var(--muted); text-
 th a.solver:hover { color: var(--fg); text-decoration-color: currentColor; }
 th a.solver:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .table-wrap { overflow-x: auto; }
+@media (min-width: 721px) and (max-width: 860px) { .bench .table-wrap table.languages :is(th, td) { padding-left: 8px; padding-right: 8px; } }
 .lang { width: 16px; height: 16px; vertical-align: -3px; fill: currentColor; }
 td > .lang { display: none; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -255,8 +256,8 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
     </div>
     <div class="bench-group" data-pieces="domino" data-surface="rectangle">
       <div class="table-wrap">
-        <table role="table" id="domino-benchmark" aria-label="Dominoes (A004003)">
-          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Formula"><a class="solver" href="notes/dominoes/rectangle.html#the-closed-form" aria-label="Formula">Formula</a></th><th role="columnheader" aria-label="BigInt"><a class="solver" href="notes/dominoes/rectangle.html#transfer-by-rows" aria-label="BigInt">BigInt</a></th><th role="columnheader">Runs</th></tr></thead>
+        <table role="table" id="domino-benchmark" aria-label="Dominoes (A004003)" class="languages">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Formula, Rust" title="Formula, Rust"><a class="solver" href="notes/dominoes/rectangle.html#the-closed-form" aria-label="Formula, Rust">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Formula, Python" title="Formula, Python"><a class="solver" href="notes/dominoes/rectangle.html#the-closed-form" aria-label="Formula, Python">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Formula, JavaScript" title="Formula, JavaScript"><a class="solver" href="notes/dominoes/rectangle.html#the-closed-form" aria-label="Formula, JavaScript">Formula <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/dominoes/rectangle.html#transfer-by-rows" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="domino-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
@@ -331,7 +332,7 @@ const ONE = BigInt(1);
 const $ = id => document.getElementById(id);
 const fmt = n => BigInt(n).toLocaleString('en-US');
 const SUPERSCRIPT = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
-const isLong = n => String(BigInt(n)).length > 12;
+const isLong = n => String(BigInt(n)).length > 11;
 const short = n => {
   const digits = String(BigInt(n));
   if (!isLong(n)) return fmt(n);
@@ -912,7 +913,12 @@ $('load-table').addEventListener('click', () => {
   render();
 });
 
-const FORMULA_AND_BIGINT = [{ read: r => r.formula }, { read: r => r.bigint }];
+const FORMULA_LANGUAGES = [
+  { read: r => r.languages.rs },
+  { read: r => r.languages.py },
+  { read: r => r.formula },
+  { read: r => r.bigint },
+];
 const MODULAR_LANGUAGES = [
   { read: r => r.languages.rs },
   { read: r => r.languages.py },
@@ -952,7 +958,7 @@ function renderSolverRows(table, rows, solvers) {
     .join('');
 }
 
-renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_AND_BIGINT);
+renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_LANGUAGES);
 renderSolverRows('domino-torus-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_LANGUAGES);
 renderSolverRows('domino-cylinder-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_LANGUAGES);
 renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, MODULAR_LANGUAGES);
