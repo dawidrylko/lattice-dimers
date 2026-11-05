@@ -959,12 +959,28 @@ async function checkLanding(page, baseUrl, width) {
     problems.push('intro lacks the chessboard counts');
   }
 
+  await page.evaluate(`window.introNavigations = 0;
+    addEventListener('hashchange', () => { introNavigations += 1; });
+    document.querySelector('#intro-sections a[href="#gallery"]').click()`);
+  await page.settle();
+
+  if ((await page.evaluate('location.hash')) !== '#gallery/4x4/1') {
+    problems.push('the Gallery link of the intro leaves the board the gallery shows');
+  }
+
   await page.evaluate(`document.querySelector('#intro-sections a[href="#benchmark"]').click()`);
   await page.settle();
-  const benchmarkShown = await page.evaluate(`!document.getElementById('benchmark').hidden && location.hash === '#benchmark'`);
+  const opened = await page.evaluate(`({
+    shown: !document.getElementById('benchmark').hidden && location.hash === '#benchmark',
+    navigations: introNavigations,
+  })`);
 
-  if (!benchmarkShown) {
+  if (!opened.shown) {
     problems.push('the Benchmarks link of the intro does not open the tab');
+  }
+
+  if (opened.navigations) {
+    problems.push(`the links of the intro navigate to a fragment ${opened.navigations} times, so the browser may scroll to the section`);
   }
 
   if (state.leftovers.length) {

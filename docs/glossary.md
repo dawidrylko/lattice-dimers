@@ -1,6 +1,6 @@
 # Glossary
 
-The words this repository uses for its pieces, lattices, surfaces, signs and code, in the README files, the notes, the site, the research notes, the papers and the code comments. Use these words and avoid the ones listed against them. A new term, or a correction to one, is added here in the same change that introduces it.
+The words this repository uses for its pieces, lattices, surfaces, signs, site and code, in the README files, the notes, the site, the research notes, the papers and the code comments. Use these words and avoid the ones listed against them. A new term, or a correction to one, is added here in the same change that introduces it.
 
 Three exceptions. The OEIS entry texts in [`oeis/`](../oeis) are quoted as they stand on the OEIS, so they keep the OEIS wording ("diagonal domicule", the link text of a `%H` line). An avoided name is avoided as the name of one notebook, page or tab; a section that describes two surfaces together may name both. Text that a script prints into a recorded output keeps its wording until the output is recomputed, so [`research/king-entropy/src/cw.py`](../research/king-entropy/src/cw.py) still prints "king lattice" into `out/out_cw.txt`.
 

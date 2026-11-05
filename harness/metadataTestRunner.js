@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { DEFAULT_BOARD } = require('../site/defaultBoard');
+const { testCasesDomicule } = require('../js/core/cases');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const NAME = 'Lattice Dimers';
@@ -189,15 +190,27 @@ function runCheck(name, check) {
 function checkReadmeBoard() {
   const { rowCount, colCount } = DEFAULT_BOARD;
   const readme = read('README.md');
-  const showcase = readme.slice(readme.indexOf('<table>'), readme.indexOf('</table>'));
+  const showcase = readme.slice(readme.indexOf('<table>'), readme.indexOf('## Results'));
   const quickStart = readme.slice(readme.indexOf('## Quick start'), readme.indexOf('## Citation'));
-  const boards = [...showcase.matchAll(/(\d+) ?× ?(\d+)/g)].map(([, rows, cols]) => [rows, cols]);
-  const commands = [...quickStart.matchAll(/-r (\d+) -c (\d+)/g)].map(([, rows, cols]) => [rows, cols]);
-  const stray = [...boards, ...commands].filter(([rows, cols]) => Number(rows) !== rowCount || Number(cols) !== colCount);
-  const errors = stray.map(([rows, cols]) => `README.md shows the ${rows} × ${cols} board; the gallery opens on ${rowCount} × ${colCount}.`);
+  const sheets = read('js/README.md')
+    .split('\n')
+    .filter(line => line.includes('.github/assets/gallery-'))
+    .join('\n');
+  const pairs = (text, pattern) => [...text.matchAll(pattern)].map(([, rows, cols]) => [rows, cols]);
+  const boards = pairs(showcase, /(\d+) ?× ?(\d+)/g);
+  const prose = pairs(quickStart, /(\d+) × (\d+)/g);
+  const commands = pairs(quickStart, /-r (\d+) -c (\d+)/g);
+  const drawn = pairs(sheets, /(\d+) ?× ?(\d+)/g);
+  const stray = [...boards, ...prose, ...commands, ...drawn].filter(([rows, cols]) => Number(rows) !== rowCount || Number(cols) !== colCount);
+  const errors = [...new Set(stray.map(([rows, cols]) => `The README files show the ${rows} × ${cols} board; the gallery opens on ${rowCount} × ${colCount}.`))];
+  const { expectedResult } = testCasesDomicule.find(testCase => testCase.rowCount === rowCount && testCase.colCount === colCount);
 
-  if (!boards.length || !commands.length) {
-    errors.push('README.md must show its showcase and quick start on a board.');
+  if (!boards.length || !prose.length || !commands.length || !drawn.length) {
+    errors.push('The README files must show the showcase, the quick start and the gallery sheets on a board.');
+  }
+
+  if (!quickStart.includes(expectedResult)) {
+    errors.push(`The quick start of README.md must print the count of that board, ${expectedResult}.`);
   }
 
   return errors;

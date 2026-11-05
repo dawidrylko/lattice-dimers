@@ -25,7 +25,7 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 
 ## Site
 
-The [site](https://dawidrylko.github.io/lattice-dimers/) opens on two tabs, and its header menu lists the notebooks.
+A domino covers two cells sharing a side, a domicule two cells sharing a side or only a corner. The [site](https://dawidrylko.github.io/lattice-dimers/) opens on two tabs, and its header menu lists the notebooks.
 
 - [Gallery](https://dawidrylko.github.io/lattice-dimers/#gallery): numbers the tilings of a rectangle, a cylinder or a torus and draws any one of them. It opens on the 8 × 8 board, and it samples the boards too large to number.
 - [Benchmarks](https://dawidrylko.github.io/lattice-dimers/#benchmark): the exact counts and the running times of the solvers in Rust, Python and JavaScript. The Pieces and Surface switches choose one of six tables.
@@ -59,7 +59,7 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | --- | --- |
 | [`research/king-entropy`](research/king-entropy/README.md) | scripts, data, outputs, proofs and papers on the entropy of the king's graph |
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
-| [`notes`](notes/README.md) | notebooks on dominoes and domicules on rectangles, cylinders and tori, on the triangular lattice on cylinders and tori, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
+| [`notes`](notes/README.md) | notebooks on dominoes and domicules on rectangles, cylinders and tori, on diagonal pieces, on the triangular lattice on cylinders and tori, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
 | [`spec`](spec/README.md) | the solver contract, the registry of algorithms and the known counts every implementation and program is checked against |
 | [`rust`](rust/README.md) | the Rust solvers, for the algorithms [`spec/algorithms.json`](spec/algorithms.json) lists with Rust, and the library they share; the workspace manifest is [`Cargo.toml`](Cargo.toml) at the root |
 | [`python`](python/README.md) | the Python package `lattice_dimers`: the Python solvers, for the algorithms `spec/algorithms.json` lists with Python, and the library they share |
@@ -71,7 +71,7 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 
 ## Quick start
 
-Node.js 26 or newer (`.nvmrc`) and pnpm, with Rust 1.99 and Python 3.13 or newer for the other two languages, which `pnpm test` also runs. Rust is the first language, Python the second and JavaScript the third; [`spec/algorithms.json`](spec/algorithms.json) lists the implementations each algorithm has. The three commands below count the same board, the 8 × 8 rectangle, and each prints 3263262629905 domicule tilings:
+Node.js 26 or newer (`.nvmrc`) and pnpm, with Rust 1.99 and Python 3.13 or newer for the other two languages, which `pnpm test` also runs. Rust is the first language, Python the second and JavaScript the third; [`spec/algorithms.json`](spec/algorithms.json) lists the implementations each algorithm has. The three commands below count the same board, the 8 × 8 rectangle, and each prints 3263262629905 domicule tilings. `pnpm site:build` writes the site to `dist/site`:
 
 ```sh
 git clone https://github.com/dawidrylko/lattice-dimers.git
