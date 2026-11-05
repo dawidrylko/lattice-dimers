@@ -227,10 +227,17 @@ function checkReadmeSolvers() {
     return [`README.md must have the table ${header}, with the languages of spec/algorithms.json.`];
   }
 
-  const rows = lines.slice(start + 2, lines.findIndex((line, index) => index > start && !line.startsWith('|')));
+  if (lines[start + 1] !== '| --- | --- | --- | --- |') {
+    return [`The solvers table of README.md must have the separator line under its header.`];
+  }
+
+  const end = lines.findIndex((line, index) => index > start && !line.startsWith('|'));
+  const rows = lines.slice(start + 2, end === -1 ? lines.length : end);
   const listed = rows.map(row => row.split('|').map(cell => cell.trim()).slice(1, -1));
   const names = listed.map(([name]) => name.replaceAll('`', ''));
   const errors = [
+    ...listed.filter(([name, ...cells]) => !/^`[^`]+`$/.test(name) || cells.length !== expected.length).map(([name]) => `The solvers table of README.md has a malformed row for ${name}.`),
+    ...names.filter((name, index) => names.indexOf(name) !== index).map(name => `The solvers table of README.md lists ${name} twice.`),
     ...Object.keys(algorithms).filter(name => !names.includes(name)).map(name => `The solvers table of README.md does not list ${name}.`),
     ...names.filter(name => !Object.hasOwn(algorithms, name)).map(name => `The solvers table of README.md lists ${name}, which spec/algorithms.json does not.`),
   ];
