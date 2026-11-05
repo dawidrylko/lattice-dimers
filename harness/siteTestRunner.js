@@ -1144,6 +1144,20 @@ async function checkBenchmark(page, baseUrl, width) {
     problems.push(`the domino benchmark has the columns ${dominoColumns.headers} and ${dominoColumns.cells} rows without five cells`);
   }
 
+  const languageColumns = await page.evaluate(`['cylinder-benchmark', 'torus-benchmark'].map(id => ({
+    id,
+    icons: [...document.querySelectorAll('#' + id + ' thead th')].filter(th => th.querySelector('svg.lang use')).map(th => th.title).join(),
+    labels: [...document.querySelectorAll('#' + id + '-rows tr')].map(row => [...row.cells].map(cell => cell.dataset.label).join()),
+  }))`);
+
+  for (const { id, icons, labels } of languageColumns) {
+    const wrong = labels.filter(row => row !== 'Board,Tilings,BigInt,Rust,Python,JavaScript,Runs');
+
+    if (icons !== 'Modular, Rust,Modular, Python,Modular, JavaScript' || !labels.length || wrong.length) {
+      problems.push(`#${id} has the language headers ${icons || 'none'} and ${wrong.length} of ${labels.length} rows without one cell per language`);
+    }
+  }
+
   await loadSite(page, baseUrl, width, 'benchmark');
   await page.evaluate("document.querySelector('#benchmark-groups button[data-group=cylinders]').click()");
   await page.waitFor(

@@ -105,7 +105,9 @@ th, td { text-align: right; padding: 8px 12px; border-bottom: 1px solid var(--bo
 th:first-child, td:first-child { text-align: left; }
 th { color: var(--muted); font-weight: 600; font-size: 13px; }
 .table-wrap { overflow-x: auto; }
-th[colspan] { text-align: center; padding-bottom: 0; border-bottom: 0; }
+thead th[rowspan] { vertical-align: bottom; }
+thead tr + tr th:first-child { text-align: right; }
+th[colspan] { text-align: center; padding-bottom: 4px; }
 .lang { width: 16px; height: 16px; vertical-align: -3px; fill: currentColor; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 720px) {
@@ -120,6 +122,7 @@ th[colspan] { text-align: center; padding-bottom: 0; border-bottom: 0; }
 .note { color: var(--muted); font-size: 13px; margin-top: 12px; }
 .table-title { font-size: 15px; margin: 0 0 8px; }
 code { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 13px; }
+.note code { white-space: nowrap; }
 [hidden] { display: none !important; }
 .intro { color: var(--muted); margin: 0 0 20px; overflow-wrap: anywhere; }
 .status { color: var(--muted); margin: 0 0 12px; }
@@ -917,9 +920,9 @@ const BIGINT_AND_MODULAR = [
 ];
 const MODULAR_LANGUAGES = [
   { label: 'BigInt', read: r => r.bigint, missing: r => r.bigintMissing },
-  { label: 'Modular, Rust', read: r => r.languages.rs },
-  { label: 'Modular, Python', read: r => r.languages.py },
-  { label: 'Modular, JavaScript', read: r => r.modular },
+  { label: 'Rust', read: r => r.languages.rs },
+  { label: 'Python', read: r => r.languages.py },
+  { label: 'JavaScript', read: r => r.modular },
 ];
 
 function renderSolverRows(table, rows, solvers) {
@@ -947,7 +950,7 @@ renderSolverRows('diagonal-benchmark', DATA.diagonalBenchmark, BIGINT_AND_MODULA
 
 if (DATA.environment) {
   const { date, node, python, rust, commit, cpu, platform, cores, memory } = DATA.environment;
-  const runtimes = [`Node.js ${node}`, python, rust].filter(Boolean);
+  const runtimes = [`Node.js ${node}`, python, rust && rust.replace(/^rustc (\S+).*$/, 'Rust $1')].filter(Boolean);
   const runtimeList = runtimes.length > 1 ? `${runtimes.slice(0, -1).join(', ')} and ${runtimes.at(-1)}` : runtimes[0];
   document.querySelectorAll('.environment').forEach(
     span =>
