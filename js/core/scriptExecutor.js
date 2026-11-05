@@ -5,6 +5,7 @@ const path = require('path');
 const ROOT_DIRECTORY = path.join(__dirname, '..', '..');
 const PYTHON_ROOT = path.join(ROOT_DIRECTORY, 'python');
 const RUST_DIRECTORY = path.join(ROOT_DIRECTORY, 'rust');
+const RUST_BINARY_DIRECTORY = path.join('solvers', 'src', 'bin');
 const LAUNCHERS = {
   '.rs': file => [
     path.join(path.resolve(ROOT_DIRECTORY, process.env.CARGO_TARGET_DIR || 'target'), 'release', path.basename(file, '.rs')),
@@ -43,20 +44,30 @@ function listRustSources(file) {
   return file.endsWith('.rs') ? [file] : [];
 }
 
-let rustSourcesModified;
+const rustSourcesModified = new Map();
 
 /**
- * Finds when the Rust sources last changed: the newest modification time of a .rs file under rust/, read once per
- * process. Only .rs files count, because cargo rebuilds when a .rs file it compiles is newer than its last build,
- * so cargo build --release makes the binary current; a touched Cargo.toml or Cargo.lock is not rebuilt for, and a
- * .rs file under rust/ that no crate compiles would keep the binary refused. The times are those of this checkout, so a $CARGO_TARGET_DIR shared with another checkout
- * can hold a newer binary built from that checkout's sources.
+ * Finds when the sources of one Rust binary last changed: the newest modification time of its own file in
+ * rust/solvers/src/bin and of every .rs file under rust/ outside that directory, read once per binary and process.
+ * The other files in rust/solvers/src/bin are the roots of other binaries, which cargo does not rebuild this one
+ * for. Only .rs files count, because cargo rebuilds when a .rs file it compiles is newer than its last build, so
+ * cargo build --release makes the binary current; a touched Cargo.toml or Cargo.lock is not rebuilt for, and a .rs
+ * file under rust/ that no crate compiles would keep the binary refused. The times are those of this checkout, so a
+ * $CARGO_TARGET_DIR shared with another checkout can hold a newer binary built from that checkout's sources.
+ * @param {string} source The absolute path of the binary's own file in rust/solvers/src/bin.
+ * @param {string} [directory] The rust/ directory.
  * @returns {number} The time in milliseconds since the epoch.
  */
-function rustSourcesModifiedAt() {
-  rustSourcesModified ??= Math.max(...listRustSources(RUST_DIRECTORY).map(file => fs.statSync(file).mtimeMs));
+function rustSourcesModifiedAt(source, directory = RUST_DIRECTORY) {
+  const key = `${directory}\0${source}`;
 
-  return rustSourcesModified;
+  if (!rustSourcesModified.has(key)) {
+    const binaries = path.join(directory, RUST_BINARY_DIRECTORY);
+    const sources = listRustSources(directory).filter(file => path.dirname(file) !== binaries || file === source);
+    rustSourcesModified.set(key, Math.max(...sources.map(file => fs.statSync(file).mtimeMs)));
+  }
+
+  return rustSourcesModified.get(key);
 }
 
 function describeLanguages() {
@@ -91,7 +102,7 @@ function generateCommand(fileName, { rowCount, colCount, lattice, torus, twisted
 
 /**
  * Executes one implementation of a solver with the provided options and returns the output. A Rust binary that
- * was not built, or is older than the .rs files under rust/, fails instead of counting with code that is not the repository's.
+ * was not built, or is older than the .rs files it is built from, fails instead of counting with code that is not the repository's.
  * @param {string} fileName The root-relative file of the implementation, or the bare name of a file in js/solvers.
  * @param {Object} options Options to pass to the solver.
  * @property {number} options.rowCount The number of rows.
@@ -107,8 +118,8 @@ function executeSolver(fileName, options) {
       throw new Error(`${binary} does not exist; build it with cargo build --release.`);
     }
 
-    if (path.extname(fileName) === '.rs' && fs.statSync(binary).mtimeMs < rustSourcesModifiedAt()) {
-      throw new Error(`${binary} is older than the .rs files under rust/; rebuild it with cargo build --release.`);
+    if (path.extname(fileName) === '.rs' && fs.statSync(binary).mtimeMs < rustSourcesModifiedAt(resolve(fileName))) {
+      throw new Error(`${binary} is older than the .rs files it is built from; rebuild it with cargo build --release.`);
     }
 
     const output = execSync(command, {
@@ -122,4 +133,4 @@ function executeSolver(fileName, options) {
   }
 }
 
-module.exports = Object.assign(executeSolver, { generateCommand, launch, LANGUAGES: Object.keys(LAUNCHERS).map(name => name.slice(1)) });
+module.exports = Object.assign(executeSolver, { generateCommand, launch, rustSourcesModifiedAt, LANGUAGES: Object.keys(LAUNCHERS).map(name => name.slice(1)) });

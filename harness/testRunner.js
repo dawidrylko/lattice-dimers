@@ -300,7 +300,7 @@ function executeExecutorTests() {
       'a Rust binary older than the Rust sources',
       rust,
       { CARGO_TARGET_DIR: staleTarget },
-      `an error: Execution failed: ${staleBinary} is older than the .rs files under rust/; rebuild it with cargo build --release.`,
+      `an error: Execution failed: ${staleBinary} is older than the .rs files it is built from; rebuild it with cargo build --release.`,
       true,
     ],
   ];
@@ -310,9 +310,49 @@ function executeExecutorTests() {
     fs.writeFileSync(staleBinary, '', { mode: 0o755 });
     fs.utimesSync(staleBinary, 0, 0);
 
-    return runExecutorTests(cases, command, attempt);
+    return runExecutorTests(cases, command, attempt) && executeRustSourceTests();
   } finally {
     fs.rmSync(staleTarget, { recursive: true, force: true });
+  }
+}
+
+function executeRustSourceTests() {
+  const rust = fs.mkdtempSync(path.join(os.tmpdir(), 'rust-sources-'));
+  const file = name => path.join(rust, ...name.split('/'));
+  const sources = [
+    ['core/src/lib.rs', 3000],
+    ['solvers/src/bin/first.rs', 2000],
+    ['solvers/src/bin/second.rs', 4000],
+  ];
+  const cases = [
+    ['a binary whose shared source is newer than its own file, not the newer root of another binary', 'solvers/src/bin/first.rs', 3000],
+    ['a binary whose own file is the newest', 'solvers/src/bin/second.rs', 4000],
+  ];
+
+  try {
+    for (const [name, seconds] of sources) {
+      fs.mkdirSync(path.dirname(file(name)), { recursive: true });
+      fs.writeFileSync(file(name), '');
+      fs.utimesSync(file(name), seconds, seconds);
+    }
+
+    return cases.every(([name, source, seconds], index) => {
+      process.stdout.write(`Executing Rust source test ${index + 1} of ${cases.length} for ${name}... `);
+
+      const actual = exec.rustSourcesModifiedAt(file(source), rust);
+
+      if (actual !== seconds * 1000) {
+        console.error(`Failed! Expected: ${seconds * 1000}, Actual: ${actual}`);
+
+        return false;
+      }
+
+      console.log('Passed!');
+
+      return true;
+    });
+  } finally {
+    fs.rmSync(rust, { recursive: true, force: true });
   }
 }
 
