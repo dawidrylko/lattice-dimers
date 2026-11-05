@@ -39,6 +39,8 @@
     "computer-assisted-proof",
     "svg",
     "visualization",
+    "rust",
+    "python",
     "javascript",
     "nodejs"
   ],
@@ -65,7 +67,7 @@
     "benchmark:domicule": "node harness/benchmarkRunner.js --domicule -n 10 -m 9 && node harness/benchmarkRunner.js --domicule -n 1 -o 9 --only domiculeTilingSolver-Modular.js && node harness/benchmarkRunner.js --domicule -n 1 -o 9 --only domiculeTilingSolver-BigInt.js",
     "benchmark:periodic": "node harness/benchmarkRunner.js --torus -n 10 -m 4 && node harness/benchmarkRunner.js --torus -n 10 -o 4 -m 1 --only periodicTilingSolver-Modular.js && node harness/benchmarkRunner.js --torus -n 1 -o 4 -m 1 --only periodicTilingSolver-BigInt.js && node harness/benchmarkRunner.js --torus -n 1 -o 5 --only periodicTilingSolver-Modular.js && node harness/benchmarkRunner.js --cylinder -n 10 -m 6 && node harness/benchmarkRunner.js --cylinder -n 10 -o 6 --only periodicTilingSolver-Modular.js",
     "benchmark:diagonal": "node harness/benchmarkRunner.js --diagonal -n 10 -m 7 && node harness/benchmarkRunner.js --diagonal -n 10 -o 7 -m 2 --only domiculeDiagonalSolver-Modular.js && node harness/benchmarkRunner.js --diagonal -n 1 -o 9 --only domiculeDiagonalSolver-Modular.js",
-    "test": "node harness/testRunner.js -m 7",
+    "test": "cargo build --release --locked && node harness/testRunner.js -m 7",
     "render": "node js/dominoTilingRenderer.js",
     "test:render": "node harness/renderTestRunner.js",
     "test:pari": "node harness/pariTestRunner.js",

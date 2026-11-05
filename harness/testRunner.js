@@ -254,6 +254,8 @@ function executeExecutorTests() {
   const command = fileName => guard(() => exec.generateCommand(fileName, board));
   const attempt = fileName => guard(() => exec(fileName, board));
   const absoluteTarget = path.join(os.tmpdir(), 'cargo-target');
+  const staleTarget = fs.mkdtempSync(path.join(os.tmpdir(), 'stale-target-'));
+  const staleBinary = path.join(staleTarget, 'release', 'domino-tiling-number');
   const javaScript = path.join(ROOT_DIRECTORY, 'js', 'solvers', 'dominoTilingSolver.js');
   const python = 'python/lattice_dimers/solvers/domino_tiling_number.py';
   const rust = 'rust/solvers/src/bin/domino-tiling-number.rs';
@@ -288,8 +290,27 @@ function executeExecutorTests() {
       `an error: Execution failed: ${path.join(absoluteTarget, 'release', 'domino-tiling-number')} does not exist; build it with cargo build --release.`,
       true,
     ],
+    [
+      'a Rust binary older than the Rust sources',
+      rust,
+      { CARGO_TARGET_DIR: staleTarget },
+      `an error: Execution failed: ${staleBinary} is older than the .rs files under rust/; rebuild it with cargo build --release.`,
+      true,
+    ],
   ];
 
+  try {
+    fs.mkdirSync(path.dirname(staleBinary));
+    fs.writeFileSync(staleBinary, '', { mode: 0o755 });
+    fs.utimesSync(staleBinary, 0, 0);
+
+    return runExecutorTests(cases, command, attempt);
+  } finally {
+    fs.rmSync(staleTarget, { recursive: true, force: true });
+  }
+}
+
+function runExecutorTests(cases, command, attempt) {
   return cases.every(([name, fileName, environment, expected, run], index) => {
     process.stdout.write(`Executing executor test ${index + 1} of ${cases.length} for ${name}... `);
 
@@ -771,7 +792,40 @@ async function executeModuleTests() {
     console.log('Passed!');
   }
 
-  return passed;
+  return passed && executeUnknownProcessorCountTest(fourByFour(testCasesPeriodic));
+}
+
+function executeUnknownProcessorCountTest({ expectedResult, rowCount, colCount, lattice, torus }) {
+  const python = listImplementations('periodic-tiling-modular').find(({ language }) => language === 'py');
+  const launcher = exec.launch(python.file);
+  const script = [
+    'import importlib, os, runpy, sys',
+    'os.process_cpu_count = lambda: None',
+    'module = sys.argv[1]',
+    'rows, cols, lattice, torus = int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5] == "torus"',
+    'print(importlib.import_module(module).calculate_total_tiling_combinations(rows, cols, lattice, torus), flush=True)',
+    'sys.argv = [module] + sys.argv[6:]',
+    'runpy.run_module(module, run_name="__main__", alter_sys=True)',
+  ].join('\n');
+  const board = [String(rowCount), String(colCount), lattice, torus ? 'torus' : 'cylinder'];
+  const args = ['-r', String(rowCount), '-c', String(colCount), '--lattice', lattice, ...(torus ? ['--torus'] : [])];
+
+  process.stdout.write(`Executing module test for ${python.file} when the number of processors is unknown... `);
+
+  const { status, stdout, stderr } = spawnSync(launcher[0], ['-I', '-c', script, launcher.at(-1), ...board, ...args], {
+    cwd: ROOT_DIRECTORY,
+    encoding: 'utf-8',
+  });
+
+  if (status !== 0 || stdout.trim() !== `${expectedResult}\n${expectedResult}`) {
+    console.error(`Failed! Exit code ${status}, expected ${expectedResult}: ${(stdout || stderr).trim()}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
 }
 
 function executeParserTests() {
@@ -862,10 +916,14 @@ function runTest(testCase, verifyResult) {
   return true;
 }
 
-function executeTests(files, testCases, verifyResult) {
-  const implementations = files.flatMap(fileName => listImplementations(algorithmOf(fileName)).map(({ file }) => file));
-  const pairs = implementations.flatMap(fileName =>
-    testCases.map((testCase, index) => ({ index, fileName, ...testCase })),
+function executeTests(files, testCases, verifyResult, portedTestCases = testCases) {
+  const implementations = files.flatMap(fileName => {
+    const all = listImplementations(algorithmOf(fileName));
+
+    return all.map(({ file }) => ({ file, cases: all.length > 1 ? portedTestCases : testCases }));
+  });
+  const pairs = implementations.flatMap(({ file, cases }) =>
+    cases.map((testCase, index) => ({ index, fileName: file, ...testCase })),
   );
   const allPassed = pairs.every((testCase, index) => {
     process.stdout.write(
@@ -903,7 +961,7 @@ async function __main__() {
     const allDomiculeTestsPassed = executeTests(filesDomicule, testCasesToRunDomicule, verifyBigInt);
     const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, verifyBigInt);
     const testCasesToRunPeriodic = maxSize ? testCasesPeriodic.slice(0, maxSize) : testCasesPeriodic;
-    const allPeriodicTestsPassed = executeTests(filesPeriodic, testCasesToRunPeriodic, verifyBigInt);
+    const allPeriodicTestsPassed = executeTests(filesPeriodic, testCasesToRunPeriodic, verifyBigInt, testCasesPeriodic);
     const testCasesToRunPeriodicModular = maxSize ? testCasesPeriodicModular.slice(0, maxSize) : testCasesPeriodicModular;
     const allPeriodicModularTestsPassed = executeTests(filesPeriodicModular, testCasesToRunPeriodicModular, verifyBigInt);
     const allDiagonalTestsPassed = executeTests(filesDiagonal, testCasesDiagonal, verifyList);

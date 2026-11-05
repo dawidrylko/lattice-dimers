@@ -184,7 +184,7 @@ def calculate_total_tiling_combinations(row_count, col_count, lattice="king", to
     prime_count = math.ceil((calculate_log2_bound(rows, cols, lattice, torus) + 2) / 30) + 1
     primes = list_primes(prime_count)
     tasks = [{"rows": rows, "cols": cols, "lattice": lattice, "torus": torus, "twisted": twisted, "prime": prime} for prime in primes]
-    residues = run_workers(count_modulo, tasks, jobs or os.process_cpu_count())
+    residues = run_workers(count_modulo, tasks, jobs or os.process_cpu_count() or 1)
 
     return combine_checked_residues(residues, primes, twisted)
 
@@ -212,7 +212,7 @@ def main(argv):
     lattice = read_lattice(argv)
     torus = "--torus" in argv
     twisted = "--twisted" in argv
-    jobs = options.get("jobs", os.process_cpu_count())
+    jobs = options.get("jobs", os.process_cpu_count() or 1)
     row_count = options.get("rowCount")
     col_count = options.get("colCount")
 
