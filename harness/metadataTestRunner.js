@@ -246,7 +246,7 @@ function checkReadmeSolvers() {
     const entry = algorithms[name.replaceAll('`', '')] ?? {};
 
     expected.forEach((language, index) => {
-      const cell = entry[language] ? `[${language}](${entry[language]})` : '-';
+      const cell = entry[language] ? `[✅](${entry[language]})` : '-';
 
       if (Object.keys(entry).length && cells[index] !== cell) {
         errors.push(`The solvers table of README.md has ${cells[index]} for ${name} in ${language} instead of ${cell}.`);

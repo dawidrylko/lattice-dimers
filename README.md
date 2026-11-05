@@ -27,15 +27,15 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 
 | solver | Rust | Python | JS |
 | --- | --- | --- | --- |
-| `domino-tiling-formula` | [rs](rust/solvers/src/bin/domino-tiling-formula.rs) | [py](python/lattice_dimers/solvers/domino_tiling_formula.py) | [js](js/solvers/dominoTilingSolver-Formula.js) |
-| `domino-tiling-bigint` | [rs](rust/solvers/src/bin/domino-tiling-bigint.rs) | [py](python/lattice_dimers/solvers/domino_tiling_bigint.py) | [js](js/solvers/dominoTilingSolver-BigInt.js) |
-| `domino-tiling-number` | - | - | [js](js/solvers/dominoTilingSolver.js) |
-| `domicule-tiling-modular` | [rs](rust/solvers/src/bin/domicule-tiling-modular.rs) | [py](python/lattice_dimers/solvers/domicule_tiling_modular.py) | [js](js/solvers/domiculeTilingSolver-Modular.js) |
-| `domicule-tiling-bigint` | - | - | [js](js/solvers/domiculeTilingSolver-BigInt.js) |
-| `domicule-diagonal-modular` | - | - | [js](js/solvers/domiculeDiagonalSolver-Modular.js) |
-| `domicule-diagonal-bigint` | - | - | [js](js/solvers/domiculeDiagonalSolver-BigInt.js) |
-| `periodic-tiling-modular` | [rs](rust/solvers/src/bin/periodic-tiling-modular.rs) | [py](python/lattice_dimers/solvers/periodic_tiling_modular.py) | [js](js/solvers/periodicTilingSolver-Modular.js) |
-| `periodic-tiling-bigint` | - | - | [js](js/solvers/periodicTilingSolver-BigInt.js) |
+| `domino-tiling-formula` | [✅](rust/solvers/src/bin/domino-tiling-formula.rs) | [✅](python/lattice_dimers/solvers/domino_tiling_formula.py) | [✅](js/solvers/dominoTilingSolver-Formula.js) |
+| `domino-tiling-bigint` | [✅](rust/solvers/src/bin/domino-tiling-bigint.rs) | [✅](python/lattice_dimers/solvers/domino_tiling_bigint.py) | [✅](js/solvers/dominoTilingSolver-BigInt.js) |
+| `domino-tiling-number` | - | - | [✅](js/solvers/dominoTilingSolver.js) |
+| `domicule-tiling-modular` | [✅](rust/solvers/src/bin/domicule-tiling-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_tiling_modular.py) | [✅](js/solvers/domiculeTilingSolver-Modular.js) |
+| `domicule-tiling-bigint` | [✅](rust/solvers/src/bin/domicule-tiling-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_tiling_bigint.py) | [✅](js/solvers/domiculeTilingSolver-BigInt.js) |
+| `domicule-diagonal-modular` | - | - | [✅](js/solvers/domiculeDiagonalSolver-Modular.js) |
+| `domicule-diagonal-bigint` | - | - | [✅](js/solvers/domiculeDiagonalSolver-BigInt.js) |
+| `periodic-tiling-modular` | [✅](rust/solvers/src/bin/periodic-tiling-modular.rs) | [✅](python/lattice_dimers/solvers/periodic_tiling_modular.py) | [✅](js/solvers/periodicTilingSolver-Modular.js) |
+| `periodic-tiling-bigint` | - | - | [✅](js/solvers/periodicTilingSolver-BigInt.js) |
 
 ## Results
 
