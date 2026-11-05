@@ -50,13 +50,14 @@ A new fix adds its row here with the check that guards it.
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
-| the domino rectangle table scrolled sideways at 721 to 739 px in Verdana, with the 12-digit count of 10 × 10 in full | `00ac79c` | `test:site`, benchmark table at 721 px | counts shortened from 13 digits |
-| the domicule torus table scrolled 12 px sideways at 721 px in DejaVu Sans on CI; Verdana left it 0.3 px | `7f8a607` | `test:site`, benchmark table at 721 px, on CI only | 12 px cell padding at 721 to 860 px |
+| the domino rectangle table scrolled sideways at 721 to 739 px in Verdana, with the 12-digit count of 10 × 10 in full | `00ac79c` | `test:site`, benchmark table at 920 px | counts shortened from 13 digits |
+| the domicule torus table scrolled 12 px sideways at 721 px in DejaVu Sans on CI, and the nine columns of the domino rectangle table up to 118 px at 721 to 919 px in Verdana | `fd3de8d` | `test:site`, benchmark table at 919 and 920 px | the 919 px media query back at 720 px |
+| on a card the BigInt times of the domino rectangle table followed the Formula ones on the same line | `fd3de8d` | `test:site`, benchmark table at 375, 786 and 919 px | `#domino-benchmark td:nth-child(6)` removed |
 | the highlight had a contrast of 3.61:1 on the dark sheet | `2581b18` | `test:site`, highlight contrast (new) | `--hit: #dc2626` in the dark palette |
 | the highlight used a fixed colour | `2581b18` | `test:site`, sheet style switch | `#dc2626` instead of `var(--hit)` |
 | a 49-digit count pushed the time columns off screen | `b485aa3` | `test:site`, benchmark table | `fmt` instead of `num` |
 | missing times showed an em dash | `d09e393` | `test:site`, benchmark times (new) | `'—'` for a missing time |
-| the benchmark did not turn into cards on narrow screens | `e75d200` | `test:site`, benchmark table at 375 px | the 720 px media query disabled |
+| the benchmark did not turn into cards on narrow screens | `e75d200` | `test:site`, benchmark table at 375 px | the 919 px media query disabled |
 | the pager worked before the 18 × 18 table was confirmed | `edb10cf` | `test:site`, diagonal filter confirmation, the table that still asks first since #79 replaced 18 × 18 by numbered samples | `locked = false` |
 | the board picker and the sheet were wider than the page | `96b696f` | `test:site`, board picker, tiling sheets, and cylinders and tori at 375 px | `overflow-x: auto`; `max-width: none`; columns for a fixed width of 1040 px |
 | benchmark headers too long for 786 px | `e23920e` | `test:site`, benchmark table, whose column names #80 pins | "(mean)" in every header |

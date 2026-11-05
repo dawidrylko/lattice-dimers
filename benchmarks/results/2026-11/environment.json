@@ -1,7 +1,7 @@
 {
   "date": "2026-11-05",
   "timing": "solver",
-  "commit": "cf814b1525966143557e977afe9d58b98a971bfd",
+  "commit": "2e408a6dd60a1b0616c2675c6851a52cc4c19b5d",
   "dirty": false,
   "node": "v26.11.1",
   "python": "Python 3.14.5",

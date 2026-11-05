@@ -3,6 +3,11 @@
   "testCases": [
     {
       "rowCount": 3,
+      "colCount": 3,
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 3,
       "colCount": 4,
       "expectedResult": "11"
     },
