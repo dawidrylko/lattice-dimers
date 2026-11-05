@@ -310,7 +310,7 @@ code { background: var(--surface); border: 1px solid var(--border); border-radiu
       </p>
     </div>
     <p class="note run">
-      Mean time of the count, as each solver reports it with <code>--time</code>; a time's tooltip gives the whole process,
+      Mean time of the count, as each solver reports it with <code>--time</code>; a time's tooltip gives the process time,
       start-up included. Solvers without a language icon are JavaScript. <span class="environment"></span>
       Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
       __OLDER_BENCHMARKS__
@@ -354,7 +354,7 @@ const ms = (result, missing = null) =>
       : '-'
     : result.process === null
       ? seconds(result.average)
-      : `<span title="whole process ${seconds(result.process)}">${seconds(result.average)}</span>`;
+      : `<span title="process time ${seconds(result.process)}">${seconds(result.average)}</span>`;
 const confirmedBoards = new Set();
 const pending = new Map();
 let worker = null;

@@ -1,3 +1,0 @@
-Average Execution Time: 236577 ms
----
-1. Execution Time: 236577 ms
