@@ -27,7 +27,7 @@ function __main__() {
   const passed = argv.filter(arg => arg !== '--force-load' && arg !== '--noise');
 
   if (noise && passed.length) {
-    fail('Usage: pnpm benchmark:noise [--force-load]');
+    fail('Usage: pnpm -C js benchmark:noise [--force-load]');
   }
 
   const commit = git('rev-parse', 'HEAD');

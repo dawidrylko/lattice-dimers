@@ -1,8 +1,8 @@
 .git
 .claude
-node_modules
+js/node_modules
 dist
-target
+rust/target
 benchmarks/results
 research
 notes
