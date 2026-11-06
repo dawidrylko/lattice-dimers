@@ -3,18 +3,18 @@
 One command measures everything, in one container with pinned Node.js, Python and Rust ([`Dockerfile`](Dockerfile)):
 
 ```sh
-pnpm benchmark                           # every solver
-pnpm benchmark domino-rectangle-bigint   # one solver, in every language
-pnpm benchmark:compare <run directory> <run directory>
+pnpm -C js benchmark                           # every solver
+pnpm -C js benchmark domino-rectangle-bigint   # one solver, in every language
+pnpm -C js benchmark:compare <run directory> <run directory>
 ```
 
-`pnpm benchmark` ([`harness/benchmarkContainer.js`](../harness/benchmarkContainer.js)) builds the image from the current commit and refuses uncommitted changes. It also refuses to start while the host load is above 2, unless given `--force-load`, and samples the host load every minute to `results/host-load-<commit>.txt`, because a container only sees the load of its own virtual machine.
+`pnpm -C js benchmark` ([`harness/benchmarkContainer.js`](../harness/benchmarkContainer.js)) builds the image from the current commit and refuses uncommitted changes. It also refuses to start while the host load is above 2, unless given `--force-load`, and samples the host load every minute to `results/host-load-<commit>.txt`, because a container only sees the load of its own virtual machine.
 
 Inside it, [`harness/benchmarkFull.js`](../harness/benchmarkFull.js) runs every implementation of every solver 10 times on each board up to 20 × 20, cheapest board first. It estimates a board from the one before: the last growth seen, but at least the growth of the state count. Boards of the largest solvers would take years, so `--board-budget-hours <hours>` caps one board in one language. A board whose 10 runs would exceed it is not started, and `plan.json` records it with its estimate. Without it the command starts every board. A board that runs out of memory or time is recorded there too; any other failure, such as a wrong count, stops the run and leaves it incomplete. A rerun of the same commit and toolchains resumes, so a higher budget only adds boards. A resume keeps its directory after a change of Docker's memory, and `--force` accepts another machine.
 
 ## Batches
 
-A measurement can take days, so it can run in parts from the same commit. `pnpm benchmark <solver>` measures one solver, and `--stop-after-hours <hours>` starts no new board after that time. Stopping loses at most the board in progress, since a result file is written after its 10 runs. The next command continues in the same directory, and the run is complete once every board of every solver is measured or recorded in `plan.json`. A new commit starts a new directory, so keep a checkout at one commit for the whole measurement.
+A measurement can take days, so it can run in parts from the same commit. `pnpm -C js benchmark <solver>` measures one solver, and `--stop-after-hours <hours>` starts no new board after that time. Stopping loses at most the board in progress, since a result file is written after its 10 runs. The next command continues in the same directory, and the run is complete once every board of every solver is measured or recorded in `plan.json`. A new commit starts a new directory, so keep a checkout at one commit for the whole measurement.
 
 ## Results
 
@@ -28,9 +28,9 @@ Each result file holds two times per run. The time of the count is what the solv
 
 ## Wall times
 
-Wall times compare only on the same machine. Measured on an Apple M4 on 2026-11-06, the container does not isolate a run from the host: medians rose 44 to 79 % under a 10-core load. Close other work before a run, keep the machine on power and give Docker enough memory, since a board that does not fit is recorded as failed. `pnpm benchmark:noise` shows how much noise is left on a machine: it builds the image and measures the same code twice ([`measureVariance.js`](measureVariance.js), 30 rounds each, about 30 minutes, in random order, the Modular boards with 4 threads). It prints the difference of the medians and the variation of each board. They are one sample of the noise, so take the largest as the floor: a smaller change between two runs is no evidence of a regression. The results stay in `results/noise-<commit>/`, outside git.
+Wall times compare only on the same machine. Measured on an Apple M4 on 2026-11-06, the container does not isolate a run from the host: medians rose 44 to 79 % under a 10-core load. Close other work before a run, keep the machine on power and give Docker enough memory, since a board that does not fit is recorded as failed. `pnpm -C js benchmark:noise` shows how much noise is left on a machine: it builds the image and measures the same code twice ([`measureVariance.js`](measureVariance.js), 30 rounds each, about 30 minutes, in random order, the Modular boards with 4 threads). It prints the difference of the medians and the variation of each board. They are one sample of the noise, so take the largest as the floor: a smaller change between two runs is no evidence of a regression. The results stay in `results/noise-<commit>/`, outside git.
 
-`--torus` and `--cylinder` of [`harness/benchmarkRunner.js`](../harness/benchmarkRunner.js) count the king's graph unless `--lattice square` (or `triangular`) names another lattice; the lattice is part of the name of every result file of these groups. `pnpm start` runs a few boards outside the container and never replaces a complete run.
+`--torus` and `--cylinder` of [`harness/benchmarkRunner.js`](../harness/benchmarkRunner.js) count the king's graph unless `--lattice square` (or `triangular`) names another lattice; the lattice is part of the name of every result file of these groups. `pnpm -C js start` runs a few boards outside the container and never replaces a complete run.
 
 ## Preparing a Mac
 
@@ -41,7 +41,7 @@ Wall times need a machine with nothing else to do, and cutting the network alone
 3. Connect the power supply and turn off Low Power Mode. Keep the lid of a laptop open: a closed lid can put it to sleep.
 4. Pause Time Machine and turn off Spotlight indexing with `sudo mdutil -a -i off`; `sudo mdutil -a -i on` restores it after the run.
 5. Wait until `uptime` shows a load below 1.
-6. Run `pnpm benchmark:noise` alone, then `pnpm benchmark <solver>` for each solver, never both at once and all from one commit.
+6. Run `pnpm -C js benchmark:noise` alone, then `pnpm -C js benchmark <solver>` for each solver, never both at once and all from one commit.
 
 macOS can still start its own background work on an idle machine, which is why the host load is recorded with the results.
 

@@ -62,20 +62,20 @@
     "node": ">=26"
   },
   "scripts": {
-    "start": "node harness/benchmarkRunner.js -n 10 -m 7",
-    "benchmark": "node harness/benchmarkContainer.js",
-    "benchmark:compare": "node harness/benchmarkFull.js compare",
-    "benchmark:noise": "node harness/benchmarkContainer.js --noise",
-    "test": "cargo build --release --locked && node harness/testRunner.js -m 7",
-    "render": "node js/dominoTilingRenderer.js",
-    "test:render": "node harness/renderTestRunner.js",
-    "test:pari": "node harness/pariTestRunner.js",
-    "test:oeis": "node oeis/buildBFiles.js --check && node harness/oeisTestRunner.js",
-    "test:markdown": "node harness/markdownTestRunner.js",
-    "test:numbers": "node harness/numbersTestRunner.js",
-    "test:metadata": "node harness/metadataTestRunner.js",
-    "test:site": "node harness/siteTestRunner.js",
-    "site:build": "node site/build.js",
-    "readme:images": "node site/readme-images.js"
+    "start": "cd .. && node harness/benchmarkRunner.js -n 10 -m 7",
+    "benchmark": "cd .. && node harness/benchmarkContainer.js",
+    "benchmark:compare": "cd .. && node harness/benchmarkFull.js compare",
+    "benchmark:noise": "cd .. && node harness/benchmarkContainer.js --noise",
+    "test": "cd ../rust && cargo build --release --locked && cd .. && node harness/testRunner.js -m 7",
+    "render": "cd .. && node js/dominoTilingRenderer.js",
+    "test:render": "cd .. && node harness/renderTestRunner.js",
+    "test:pari": "cd .. && node harness/pariTestRunner.js",
+    "test:oeis": "cd .. && node oeis/buildBFiles.js --check && node harness/oeisTestRunner.js",
+    "test:markdown": "cd .. && node harness/markdownTestRunner.js",
+    "test:numbers": "cd .. && node harness/numbersTestRunner.js",
+    "test:metadata": "cd .. && node harness/metadataTestRunner.js",
+    "test:site": "cd .. && node harness/siteTestRunner.js",
+    "site:build": "cd .. && node site/build.js",
+    "readme:images": "cd .. && node site/readme-images.js"
   }
 }

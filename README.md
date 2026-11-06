@@ -61,30 +61,13 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
 | [`notes`](notes/README.md) | notebooks on dominoes and domicules on rectangles, cylinders and tori, on diagonal pieces, on the triangular lattice on cylinders and tori, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
 | [`spec`](spec/README.md) | the solver contract, the registry of algorithms and the known counts every implementation and program is checked against |
-| [`rust`](rust/README.md) | the Rust solvers, for the algorithms [`spec/algorithms.json`](spec/algorithms.json) lists with Rust, and the library they share; the workspace manifest is [`Cargo.toml`](Cargo.toml) at the root |
-| [`python`](python/README.md) | the Python package `lattice_dimers`: the Python solvers, for the algorithms `spec/algorithms.json` lists with Python, and the library they share |
-| [`js`](js/README.md) | the JavaScript solvers for rectangles, cylinders and tori, and the renderer that numbers, samples and draws tilings |
+| [`rust`](rust/README.md) | the Rust solvers, for the algorithms [`spec/algorithms.json`](spec/algorithms.json) lists with Rust, and the library they share; its manifest is [`Cargo.toml`](rust/Cargo.toml) |
+| [`python`](python/README.md) | the Python package `lattice_dimers`: the Python solvers, for the algorithms `spec/algorithms.json` lists with Python, and the library they share; its manifest is [`pyproject.toml`](python/pyproject.toml) |
+| [`js`](js/README.md) | the JavaScript solvers for rectangles, cylinders and tori, and the renderer that numbers, samples and draws tilings; its manifest is [`package.json`](js/package.json), which also holds the commands of the test runners and the site |
 | [`docs`](docs/glossary.md) | the glossary of the words the repository uses for pieces, lattices, surfaces, signs, the site and the code |
 | [`harness`](harness/README.md) | the test runners, the check that keeps the languages in step, and the benchmark runner |
 | [`benchmarks`](benchmarks/README.md) | the benchmark results |
 | `site` | the build of the [site](https://dawidrylko.github.io/lattice-dimers/): the gallery, the benchmark tables and the notebooks |
-
-## Quick start
-
-Node.js 26 or newer (`.nvmrc`) and pnpm, with Rust 1.99 and Python 3.13 or newer for the other two languages, which `pnpm test` also runs. Rust is the first language, Python the second and JavaScript the third; [`spec/algorithms.json`](spec/algorithms.json) lists the implementations each algorithm has. The three commands below count the same board, the 8 × 8 rectangle, and each prints 3263262629905 domicule tilings. `pnpm site:build` writes the site to `dist/site`:
-
-```sh
-git clone https://github.com/dawidrylko/lattice-dimers.git
-cd lattice-dimers
-pnpm install
-node js/solvers/domicule-rectangle-modular.js -r 8 -c 8
-cargo build --release
-target/release/domicule-rectangle-modular -r 8 -c 8
-python3 -m pip install -e python
-python3 -I -m lattice_dimers.solvers.domicule_rectangle_modular -r 8 -c 8
-pnpm test
-pnpm site:build
-```
 
 ## Citation
 

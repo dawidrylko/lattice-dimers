@@ -64,13 +64,13 @@ function checkCitation() {
 function checkPackage() {
   const subtitle = readCitation().title.slice(`${NAME}: `.length);
   const expected = `${subtitle.charAt(0).toUpperCase()}${subtitle.slice(1)}: `;
-  const { description } = JSON.parse(read('package.json'));
+  const { description } = JSON.parse(read('js/package.json'));
 
-  return description.startsWith(expected) ? [] : [`The description in package.json must start with "${expected}", the title of CITATION.cff.`];
+  return description.startsWith(expected) ? [] : [`The description in js/package.json must start with "${expected}", the title of CITATION.cff.`];
 }
 
 function checkPrivate() {
-  return JSON.parse(read('package.json')).private === true ? [] : ['package.json must stay private, so pnpm publish cannot release it to npm.'];
+  return JSON.parse(read('js/package.json')).private === true ? [] : ['js/package.json must stay private, so pnpm publish cannot release it to npm.'];
 }
 
 function checkKeywords() {
@@ -78,14 +78,14 @@ function checkKeywords() {
   const citation = readCitation()
     .keywords.filter(keyword => /^OEIS A\d{6}$/.test(keyword))
     .map(keyword => keyword.slice('OEIS '.length));
-  const packageKeywords = JSON.parse(read('package.json'))
+  const packageKeywords = JSON.parse(read('js/package.json'))
     .keywords.filter(keyword => /^a\d{6}$/.test(keyword))
     .map(keyword => keyword.toUpperCase());
   const errors = [];
 
   for (const [file, listed] of [
     ['CITATION.cff', citation],
-    ['package.json', packageKeywords],
+    ['js/package.json', packageKeywords],
   ]) {
     if ([...listed].sort().join(',') !== entries.join(',')) {
       errors.push(`The OEIS keywords of ${file} are ${listed.join(', ')}, the entries in oeis/ are ${entries.join(', ')}.`);
@@ -191,7 +191,12 @@ function checkReadmeBoard() {
   const { rowCount, colCount } = DEFAULT_BOARD;
   const readme = read('README.md');
   const showcase = readme.slice(readme.indexOf('<table>'), readme.indexOf('## Results'));
-  const quickStart = readme.slice(readme.indexOf('## Quick start'), readme.indexOf('## Citation'));
+  const quickStarts = ['rust/README.md', 'python/README.md', 'js/README.md'].map(file => {
+    const [, section = ''] = read(file).split(/^## Quick start$/m);
+
+    return [file, section.split(/^## /m)[0]];
+  });
+  const quickStart = quickStarts.map(([, section]) => section).join('\n');
   const sheets = read('js/README.md')
     .split('\n')
     .filter(line => line.includes('.github/assets/gallery-'))
@@ -209,8 +214,10 @@ function checkReadmeBoard() {
     errors.push('The README files must show the showcase, the quick start and the gallery sheets on a board.');
   }
 
-  if (!quickStart.includes(expectedResult)) {
-    errors.push(`The quick start of README.md must print the count of that board, ${expectedResult}.`);
+  for (const [file, section] of quickStarts) {
+    if (!section.includes(expectedResult) || !/-r \d+ -c \d+/.test(section)) {
+      errors.push(`The quick start of ${file} must run that board and print its count, ${expectedResult}.`);
+    }
   }
 
   return errors;
@@ -262,8 +269,8 @@ function __main__() {
     runCheck('the solvers table of README.md against spec/algorithms.json', checkReadmeSolvers),
     runCheck('the title and abstract of CITATION.cff against README.md', checkCitation),
     runCheck('the board of the README examples against the gallery default', checkReadmeBoard),
-    runCheck('the description of package.json against CITATION.cff', checkPackage),
-    runCheck('that package.json is private', checkPrivate),
+    runCheck('the description of js/package.json against CITATION.cff', checkPackage),
+    runCheck('that js/package.json is private', checkPrivate),
     runCheck('the OEIS keywords against oeis/', checkKeywords),
     runCheck('the notes against the site menu', checkSiteMenu),
     runCheck('the links of oeis/ to the notes and the redirects', checkOeisLinks),

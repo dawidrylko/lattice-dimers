@@ -7,15 +7,15 @@ There is one file per algorithm, `<id>.json` with the id of [`algorithms.json`](
 | file | boards |
 | --- | --- |
 | [`domino-rectangle-formula.json`](domino-rectangle-formula.json) | domino squares up to 20 × 20 (A004003) |
-| [`domino-rectangle-bigint.json`](domino-rectangle-bigint.json) | the same squares (up to 16 × 16 in `pnpm test`) and domino rectangles |
+| [`domino-rectangle-bigint.json`](domino-rectangle-bigint.json) | the same squares (up to 16 × 16 in `pnpm -C js test`) and domino rectangles |
 | [`domino-rectangle-number.json`](domino-rectangle-number.json) | domino squares up to 10 × 10 and domino rectangles |
-| [`domicule-rectangle-bigint.json`](domicule-rectangle-bigint.json) | domicule squares up to 18 × 18 (A239273, up to 16 × 16 in `pnpm test`) and domicule rectangles (A239264) |
+| [`domicule-rectangle-bigint.json`](domicule-rectangle-bigint.json) | domicule squares up to 18 × 18 (A239273, up to 16 × 16 in `pnpm -C js test`) and domicule rectangles (A239264) |
 | [`domicule-rectangle-modular.json`](domicule-rectangle-modular.json) | the same boards |
-| [`all-lattices-cylinder-torus-bigint.json`](all-lattices-cylinder-torus-bigint.json) | cylinders and tori on three lattices up to 10 × 10 (tori up to 8 × 8 in `pnpm test`) |
-| [`all-lattices-cylinder-torus-modular.json`](all-lattices-cylinder-torus-modular.json) | larger cylinders and tori, up to the 16 × 16 torus (the first seven in `pnpm test`), then the boards of its BigInt twin |
+| [`all-lattices-cylinder-torus-bigint.json`](all-lattices-cylinder-torus-bigint.json) | cylinders and tori on three lattices up to 10 × 10 (tori up to 8 × 8 in `pnpm -C js test`) |
+| [`all-lattices-cylinder-torus-modular.json`](all-lattices-cylinder-torus-modular.json) | larger cylinders and tori, up to the 16 × 16 torus (the first seven in `pnpm -C js test`), then the boards of its BigInt twin |
 | [`diagonal-pieces-bigint.json`](diagonal-pieces-bigint.json) | domicule boards by diagonal pieces up to 12 × 12 |
-| [`diagonal-pieces-modular.json`](diagonal-pieces-modular.json) | the squares up to 20 × 20 (the first seven in `pnpm test`), then the other boards of its BigInt twin |
+| [`diagonal-pieces-modular.json`](diagonal-pieces-modular.json) | the squares up to 20 × 20 (the first seven in `pnpm -C js test`), then the other boards of its BigInt twin |
 
-Twin algorithms, whose ids differ only in the method, repeat the boards they share. `pnpm test` fails when twins hold different counts for a board ([`harness/portCheck.js`](../../harness/portCheck.js)). The OEIS programs and the research scripts read one file each: the modular file for tori and diagonal pieces, `domicule-rectangle-bigint.json` for domicules.
+Twin algorithms, whose ids differ only in the method, repeat the boards they share. `pnpm -C js test` fails when twins hold different counts for a board ([`harness/portCheck.js`](../../harness/portCheck.js)). The OEIS programs and the research scripts read one file each: the modular file for tori and diagonal pieces, `domicule-rectangle-bigint.json` for domicules.
 
 A count that only the modular solvers reach was checked with one prime more than the Chinese remainder theorem needs. The b-files of the domicule entries in [`oeis/`](../../oeis/README.md) are rebuilt from these files and from the strip counts in [`research/king-entropy/data/zex`](../../research/king-entropy/data/zex).

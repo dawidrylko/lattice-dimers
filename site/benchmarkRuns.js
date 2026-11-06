@@ -62,7 +62,7 @@ function isCompleteRun(root, run) {
 
 /**
  * Lists the benchmark runs, newest first, and picks the newest complete one: a partial run in a
- * new month, such as pnpm start, must not replace the full table.
+ * new month, such as pnpm -C js start, must not replace the full table.
  * @param {string} [root] The directory of the run directories.
  * @returns {{runs: string[], latest: string}} Every run and the newest complete one.
  */
