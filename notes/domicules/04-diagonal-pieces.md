@@ -4,14 +4,14 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-A diagonal piece covers two cells that share only a corner, and on the $2n \times 2n$ board every tiling has an even number of them, anywhere from 0 to $2n^2$. For each possible number of diagonal pieces the drawing shows the first tiling of the $4 \times 4$ board in the gallery's numbering, with the straight pieces greyed out.
+A diagonal piece covers two cells that share only a corner, and on the $2n \times 2n$ board every tiling has an even number of them, anywhere from 0 to $2n^2$. The drawing shows the first tiling of the $8 \times 8$ board in the gallery's numbering for $k = 0, 8, 16$ and $32$ diagonal pieces, with the straight pieces greyed out. Only one tiling has $k = 32$.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
-const counts = [0, 2, 4, 6, 8];
-const svgs = counts.flatMap(k => drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', diagonals: k, ranks: [0] }).svgs);
+const counts = [0, 8, 16, 32];
+const svgs = counts.flatMap(k => drawTilings({ rowCount: 8, colCount: 8, pieces: 'domicule', diagonals: k, ranks: [0] }).svgs);
 
-figure(svgs, 'Tilings of the 4 × 4 board with k = 0, 2, 4, 6 and 8 diagonal pieces.', { highlight: true });
+figure(svgs, 'Tilings of the 8 × 8 board with k = 0, 8, 16 and 32 diagonal pieces.', { highlight: true });
 ```
 
 Give every diagonal piece the weight $x$. The weighted count of the $h \times w$ board is a polynomial,

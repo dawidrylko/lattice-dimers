@@ -894,12 +894,14 @@ const figureTestCases = [
         [{ pieces: 'domicule', surface: 'cylinder' }, 2649n],
         [{ pieces: 'domino', surface: 'torus' }, 272n],
         [{ pieces: 'domicule', surface: 'torus' }, 17552n],
+        [{ lattice: 'triangular', surface: 'cylinder' }, 412n],
+        [{ lattice: 'triangular', surface: 'torus' }, 1920n],
       ].every(([options, expected]) => drawTilings({ rowCount: 4, colCount: 4, ranks: [0], ...options }).total === expected),
   },
   {
     name: 'every domino tiling of the 4 x 4 board',
     run: async () => {
-      const { svgs, total } = drawTilings({ rowCount: 4, colCount: 4, ranks: 'all' });
+      const { svgs, total } = drawTilings({ rowCount: 4, colCount: 4, spread: 36 });
 
       return (
         total === 36n &&
@@ -915,7 +917,70 @@ const figureTestCases = [
         [{ pieces: 'domicule', surface: 'cylinder', ranks: [661] }, 'Domicule tiling number 662 of a 4 by 4 cylinder'],
         [{ pieces: 'domino', surface: 'torus', ranks: [0] }, 'Domino tiling number 1 of a 4 by 4 torus'],
         [{ pieces: 'domicule', diagonals: 8, ranks: [0] }, 'Domicule tiling number 1 with 8 diagonal pieces of a 4 by 4 rectangle'],
+        [{ lattice: 'triangular', surface: 'torus', ranks: [0] }, 'Triangular lattice tiling number 1 of a 4 by 4 torus'],
       ].every(([options, name]) => drawTilings({ rowCount: 4, colCount: 4, ...options }).svgs[0].includes(`aria-label="${name}"`)),
+  },
+  {
+    name: 'evenly spaced drawings number exactly past 2^53',
+    run: async () => {
+      const { svgs, total } = drawTilings({ rowCount: 8, colCount: 8, pieces: 'domicule', surface: 'torus', spread: 4 });
+
+      return (
+        total === 10460530355843328n &&
+        ['1', '2615132588960833', '5230265177921665', '7845397766882497'].every((number, i) => svgs[i].includes(`aria-label="Domicule tiling number ${number} of an 8 by 8 torus"`) && svgs[i].includes(`>#${number}<`))
+      );
+    },
+  },
+  {
+    name: 'more evenly spaced drawings than tilings',
+    run: async () => {
+      try {
+        drawTilings({ rowCount: 2, colCount: 2, spread: 4 });
+        return false;
+      } catch (error) {
+        return error.message.includes('cannot spread 4 drawings over 2 tilings');
+      }
+    },
+  },
+  {
+    name: 'neither or both of ranks and spread, or a spread that is not a whole number',
+    run: async () =>
+      [{}, { ranks: [0], spread: 4 }, { spread: 0 }, { spread: 1.5 }].every(options => {
+        try {
+          drawTilings({ rowCount: 4, colCount: 4, ...options });
+          return false;
+        } catch (error) {
+          return error.message.includes('either a list of ranks or a whole number spread');
+        }
+      }),
+  },
+  {
+    name: 'pieces and a lattice together',
+    run: async () => {
+      try {
+        drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', lattice: 'triangular', surface: 'torus', ranks: [0] });
+        return false;
+      } catch (error) {
+        return error.message.includes('pieces or lattice');
+      }
+    },
+  },
+  {
+    name: 'the article in the name of a drawing',
+    run: async () =>
+      drawTilings({ rowCount: 8, colCount: 8, lattice: 'triangular', surface: 'cylinder', ranks: [0] }).svgs[0].includes('of an 8 by 8 cylinder') &&
+      drawTilings({ rowCount: 4, colCount: 4, ranks: [0] }).svgs[0].includes('of a 4 by 4 rectangle'),
+  },
+  {
+    name: 'the triangular lattice on a rectangle',
+    run: async () => {
+      try {
+        drawTilings({ rowCount: 4, colCount: 4, lattice: 'triangular', ranks: [0] });
+        return false;
+      } catch (error) {
+        return error.message.includes('cylinder or a torus only');
+      }
+    },
   },
   {
     name: 'diagonal pieces counted on a torus',

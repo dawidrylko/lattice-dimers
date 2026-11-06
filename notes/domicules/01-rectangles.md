@@ -4,16 +4,13 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-A domicule covers two cells that share either a side, as a straight piece, or only a corner, as a diagonal piece. Its tilings are the perfect matchings of the king's graph, where every cell is joined to its eight neighbours. Of the 3 tilings of the $2 \times 2$ board, two use straight pieces and the third uses two diagonal pieces that cross. The $4 \times 4$ board has 280 tilings, and the second drawing shows 8 of them, spread over the numbering.
+A domicule covers two cells that share either a side, as a straight piece, or only a corner, as a diagonal piece. Its tilings are the perfect matchings of the king's graph, where every cell is joined to its eight neighbours. Of the 3 tilings of the $2 \times 2$ board, two use straight pieces and the third uses two diagonal pieces that cross. The $8 \times 8$ board has 3,263,262,629,905 tilings, and the drawing shows 4 of them, spread over the numbering.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
-const small = drawTilings({ rowCount: 2, colCount: 2, pieces: 'domicule', ranks: 'all' });
-const ranks = Array.from({ length: 8 }, (_, i) => 35 * i);
-const board = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', ranks });
+const { svgs, total } = drawTilings({ rowCount: 8, colCount: 8, pieces: 'domicule', spread: 4 });
 
-figure(small.svgs, `All ${small.total} domicule tilings of the 2 × 2 board.`);
-figure(board.svgs, `8 of the ${board.total} domicule tilings of the 4 × 4 board.`);
+figure(svgs, `4 of the ${total} domicule tilings of the 8 × 8 board.`);
 ```
 
 ## The Modular solver
