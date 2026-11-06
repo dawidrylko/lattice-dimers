@@ -19,7 +19,7 @@ const { filesInt, testCasesInt, filesBigInt, testCasesBigInt } = require('../js/
 
 const RUNS = 10;
 const DEFAULT_JOBS = 4;
-const USAGE = 'Usage: node harness/benchmarkFull.js --budget-hours <hours> [--jobs <threads>] [--skip-instructions]';
+const USAGE = 'Usage: node harness/benchmarkFull.js --board-budget-hours <hours> [--jobs <threads>] [--skip-instructions] [--force]';
 const STATE_GROWTH = 4.4;
 const TORUS_GROWTH = 16;
 const GROWTH_FLOORS = [
@@ -43,6 +43,8 @@ const INSTRUCTION_BOARDS = [
   { id: 'all-lattices-cylinder-torus-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'king'] },
 ];
 const INSTRUCTION_RUNS = 3;
+const MIN_RUN_TIMEOUT_SECONDS = 60;
+const OUT_OF_REACH = /ETIMEDOUT|exit code (null|134|137)|memory|Invalid array length|allocation/i;
 
 function growthFloor(seriesName) {
   return GROWTH_FLOORS.find(([pattern]) => pattern.test(seriesName))?.[1] ?? STATE_GROWTH;
@@ -77,7 +79,7 @@ function listSeries(jobs) {
     });
   const numberBoards = [
     ...testCasesInt,
-    ...listSquareBoards(14, 20).filter(({ rowCount }) => !testCasesInt.some(known => known.rowCount === rowCount && known.colCount === rowCount)),
+    ...listSquareBoards(12, 20).filter(({ rowCount }) => !testCasesInt.some(known => known.rowCount === rowCount && known.colCount === rowCount)),
   ];
 
   add(filesInt, numberBoards);
@@ -121,7 +123,7 @@ function saveState(state) {
 function measureBoard(board, budgetSeconds) {
   const executionTimes = [];
   const processTimes = [];
-  const timeout = Math.ceil((budgetSeconds / RUNS) * 2 * 1000);
+  const timeout = Math.ceil(Math.max((budgetSeconds / RUNS) * 2, MIN_RUN_TIMEOUT_SECONDS) * 1000);
 
   for (let i = 0; i < RUNS; i++) {
     const { execution, process: processTime } = measure({ ...board, timeout });
@@ -130,7 +132,7 @@ function measureBoard(board, budgetSeconds) {
     processTimes.push(processTime);
   }
 
-  saveExecutionResults({ ...board, executionTimes, processTimes, load: 'see host-load.txt' });
+  saveExecutionResults({ ...board, executionTimes, processTimes, load: `see host-load-${String(ENVIRONMENT.commit).slice(0, 12)}.txt` });
 
   return executionTimes;
 }
@@ -140,7 +142,7 @@ function runPlan(budgetSeconds, jobs) {
   const state = { budgetHours: budgetSeconds / 3600, runs: RUNS, jobs, measured: 0, notMeasured: [] };
   const stop = (head, reason, estimateSeconds) => {
     head.boards.slice(head.index).forEach(({ rowCount, colCount }, i) =>
-      state.notMeasured.push({ series: head.name, board: `${rowCount}x${colCount}`, reason, ...(i === 0 && estimateSeconds ? { estimateTenRunsHours: Number((estimateSeconds * RUNS / 3600).toFixed(2)) } : {}) }),
+      state.notMeasured.push({ series: head.name, board: `${rowCount}x${colCount}`, reason, ...(i === 0 && estimateSeconds ? { estimateTenRunsHours: Number((estimateSeconds * RUNS / 3600).toPrecision(3)) } : {}) }),
     );
     head.index = head.boards.length;
   };
@@ -172,6 +174,10 @@ function runPlan(budgetSeconds, jobs) {
       head.previousSeconds = median(times) / 1000;
       head.index++;
     } catch (error) {
+      if (!OUT_OF_REACH.test(error.message)) {
+        throw new Error(`${board.fileName}: ${error.message}`);
+      }
+
       stop(head, `failed: ${error.message}`.slice(0, 200));
     }
 
@@ -182,6 +188,12 @@ function runPlan(budgetSeconds, jobs) {
 }
 
 function runInstructions() {
+  const file = path.join(BENCHMARK_DIRECTORY, 'instructions.json');
+
+  if (fs.existsSync(file)) {
+    return;
+  }
+
   const results = INSTRUCTION_BOARDS.flatMap(({ id, args }) =>
     listImplementations(id).map(({ file }) => {
       const counts = [];
@@ -189,14 +201,26 @@ function runInstructions() {
       for (let i = 0; i < INSTRUCTION_RUNS; i++) {
         const [program, ...launchArgs] = exec.launch(file);
         const { stderr } = spawnSync('valgrind', ['--tool=cachegrind', '--cache-sim=no', '--cachegrind-out-file=/dev/null', program, ...launchArgs, ...args], { encoding: 'utf-8', maxBuffer: 2 ** 26 });
-        counts.push(parseInstructionCount(stderr));
+        const count = parseInstructionCount(stderr);
+
+        if (count === null) {
+          throw new Error(`Cachegrind gave no count for ${file}: ${stderr.trim().slice(-200)}`);
+        }
+
+        counts.push(count);
       }
 
       return { file: path.basename(file), board: args.join(' '), counts, instructions: median(counts) };
     }),
   );
 
-  fs.writeFileSync(path.join(BENCHMARK_DIRECTORY, 'instructions.json'), `${JSON.stringify(results, null, 2)}\n`);
+  fs.writeFileSync(file, `${JSON.stringify(results, null, 2)}\n`);
+}
+
+function readValgrind() {
+  const { status, stdout } = spawnSync('valgrind', ['--version'], { encoding: 'utf-8' });
+
+  return status === 0 ? stdout.trim() : null;
 }
 
 function compareRuns(before, after) {
@@ -229,26 +253,30 @@ function __main__() {
     return;
   }
 
-  const budgetHours = Number(read('--budget-hours'));
+  const budgetHours = Number(read('--board-budget-hours'));
   const jobs = Number(read('--jobs') ?? DEFAULT_JOBS);
 
   if (!(budgetHours > 0) || !Number.isInteger(jobs) || jobs < 1) {
     throw new Error(USAGE);
   }
 
+  if (!ENVIRONMENT.rust || !ENVIRONMENT.python) {
+    throw new Error('A full run needs readable Rust and Python versions (rustc, $PYTHON or python3).');
+  }
+
   if (ENVIRONMENT.dirty) {
     throw new Error('A full run needs a clean checkout: its commit must identify the code.');
   }
 
-  checkDirectory(ENVIRONMENT, false);
-  saveEnvironment({ ...ENVIRONMENT, complete: false });
+  checkDirectory(ENVIRONMENT, argv.includes('--force'));
+  saveEnvironment({ ...ENVIRONMENT, valgrind: readValgrind(), complete: false });
 
   if (!argv.includes('--skip-instructions')) {
     runInstructions();
   }
 
   runPlan(budgetHours * 3600, jobs);
-  saveEnvironment({ ...ENVIRONMENT, complete: true });
+  saveEnvironment({ ...ENVIRONMENT, valgrind: readValgrind(), complete: true });
 }
 
 if (require.main === module) {

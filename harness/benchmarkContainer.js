@@ -21,9 +21,14 @@ function __main__() {
   const argv = process.argv.slice(2);
   const force = argv.includes('--force-load');
   const passed = argv.filter(arg => arg !== '--force-load');
+
+  if (!(Number(passed[passed.indexOf('--board-budget-hours') + 1]) > 0) || !passed.includes('--board-budget-hours')) {
+    fail('Usage: pnpm benchmark --board-budget-hours <hours> [--jobs <threads>] [--skip-instructions] [--force] [--force-load]');
+  }
+
   const commit = git('rev-parse', 'HEAD');
 
-  if (git('status', '--porcelain')) {
+  if (git('status', '--porcelain', '--', '.', ':!benchmarks/results')) {
     fail('Commit first: the image is built from the commit, so uncommitted changes would not be measured.');
   }
 
@@ -36,6 +41,9 @@ function __main__() {
   const build = spawn('docker', ['build', '-f', 'benchmarks/Dockerfile', '-t', image, '-'], { stdio: ['pipe', 'inherit', 'inherit'] });
 
   archive.stdout.pipe(build.stdin);
+  archive.on('close', status => status === 0 || fail('git archive failed.'));
+  [archive, build].forEach(child => child.on('error', error => fail(error.message)));
+  build.stdin.on('error', error => fail(error.message));
   build.on('close', status => {
     if (status !== 0) {
       fail('The image did not build.');
@@ -49,10 +57,11 @@ function __main__() {
     const host = `${os.type()} ${os.release()} ${os.arch()}, ${os.cpus()[0]?.model}, ${os.cpus().length} cores, ${Math.round(os.totalmem() / 2 ** 30)} GB`;
     const run = spawn(
       'docker',
-      ['run', '--rm', '--name', `lattice-dimers-benchmark-${commit.slice(0, 12)}`, '-e', `BENCHMARK_COMMIT=${commit}`, '-e', `BENCHMARK_HOST=${host}`, '-e', `BENCHMARK_IMAGE=${image}`, '-e', 'BENCHMARK_ROOT=/results', '-v', `${RESULTS_DIRECTORY}:/results`, image, 'node', 'harness/benchmarkFull.js', ...passed],
+      ['run', '--rm', '--init', '--name', `lattice-dimers-benchmark-${commit.slice(0, 12)}`, '-e', `BENCHMARK_COMMIT=${commit}`, '-e', `BENCHMARK_HOST=${host}`, '-e', `BENCHMARK_IMAGE=${image}`, '-e', 'BENCHMARK_ROOT=/results', '-v', `${RESULTS_DIRECTORY}:/results`, image, 'node', 'harness/benchmarkFull.js', ...passed],
       { stdio: 'inherit' },
     );
 
+    run.on('error', error => fail(error.message));
     run.on('close', code => {
       clearInterval(sampler);
       process.exit(code ?? 1);

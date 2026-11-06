@@ -33,6 +33,7 @@ function describeEnvironment() {
     python: readVersion(process.env.PYTHON || 'python3', ['--version']),
     rust: readVersion('rustc', ['--version']),
     platform: `${os.type()} ${os.release()} ${os.arch()}`,
+    architecture: os.arch(),
     cpu: cpus.length ? cpus[0].model.trim() : null,
     cores: cpus.length || null,
     memory: `${Math.round(os.totalmem() / 2 ** 30)} GB`,

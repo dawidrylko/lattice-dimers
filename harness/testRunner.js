@@ -918,6 +918,60 @@ function executeBenchmarkPlanTests() {
   return true;
 }
 
+function executeBenchmarkFullRunTests() {
+  process.stdout.write('Executing full benchmark run tests 1 of 1... ');
+
+  const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
+  const run = env =>
+    spawnSync(process.execPath, ['harness/benchmarkFull.js', '--board-budget-hours', '0.0001', '--skip-instructions'], {
+      cwd: ROOT_DIRECTORY,
+      encoding: 'utf-8',
+      env: { ...process.env, BENCHMARK_ROOT: benchmarkRoot, BENCHMARK_COMMIT: 'fullruntest0', ...env },
+    });
+  const directoryOf = () => path.join(benchmarkRoot, fs.readdirSync(benchmarkRoot).find(name => name.startsWith('fullruntest0')));
+  const failures = [];
+
+  try {
+    const first = run({});
+    const directory = directoryOf();
+    const environment = JSON.parse(fs.readFileSync(path.join(directory, 'environment.json'), 'utf-8'));
+    const plan = JSON.parse(fs.readFileSync(path.join(directory, 'plan.json'), 'utf-8'));
+    const kept = path.join(directory, 'domino-rectangle-bigint.js_2x2.txt');
+    const before = fs.statSync(kept).mtimeMs;
+
+    if (first.status !== 0 || environment.complete !== true || !plan.notMeasured.some(({ reason, estimateTenRunsHours }) => reason === 'over budget' && estimateTenRunsHours > 0)) {
+      failures.push(`a budgeted run must finish and record what it left out: ${first.stderr.trim()}`);
+    }
+
+    run({});
+
+    if (fs.statSync(kept).mtimeMs !== before) {
+      failures.push('a rerun must keep the boards it already measured');
+    }
+
+    fs.rmSync(directory, { recursive: true, force: true });
+
+    const wrong = run({ PYTHON: path.join(ROOT_DIRECTORY, 'harness', 'fixtures', 'wrongCount.js') });
+    const recorded = JSON.parse(fs.readFileSync(path.join(directoryOf(), 'environment.json'), 'utf-8'));
+
+    if (wrong.status === 0 || recorded.complete !== false) {
+      failures.push('a wrong count must stop the run and leave it incomplete');
+    }
+  } finally {
+    fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+  }
+
+  if (failures.length) {
+    console.error(`Failed! ${failures.join('; ')}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
 function executeBenchmarkToolchainTest() {
   process.stdout.write('Executing benchmark toolchain test 1 of 1 for a Python whose version cannot be read... ');
 
@@ -1569,6 +1623,7 @@ async function __main__() {
     const timeSpanTestsPassed = executeTimeSpanTests();
     const benchmarkCountTestPassed = executeBenchmarkCountTest();
     const benchmarkPlanTestsPassed = executeBenchmarkPlanTests();
+    const benchmarkFullRunTestsPassed = executeBenchmarkFullRunTests();
     const benchmarkToolchainTestPassed = executeBenchmarkToolchainTest();
     const precisionWarningTestsPassed = executePrecisionWarningTests();
     const benchmarkEmptySelectionTestPassed = executeBenchmarkEmptySelectionTest();
@@ -1606,6 +1661,7 @@ async function __main__() {
       timeSpanTestsPassed &&
       benchmarkCountTestPassed &&
       benchmarkPlanTestsPassed &&
+      benchmarkFullRunTestsPassed &&
       benchmarkToolchainTestPassed &&
       precisionWarningTestsPassed &&
       benchmarkEmptySelectionTestPassed &&

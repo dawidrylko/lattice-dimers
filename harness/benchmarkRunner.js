@@ -23,7 +23,7 @@ const {
 
 const ENVIRONMENT = describeEnvironment();
 const BENCHMARK_DIRECTORY = path.join(RESULTS_DIRECTORY, runDirectoryName(ENVIRONMENT));
-const MACHINE_KEYS = ['platform', 'cpu', 'cores', 'memory', 'timing'];
+const MACHINE_KEYS = ['architecture', 'cpu', 'host', 'timing'];
 const SOLVER_TIME = /^time ([\d.]+) ms$/m;
 const LANGUAGE_KEYS = { '.rs': 'rust', '.py': 'python' };
 const PERIODIC_CASES = [...testCasesPeriodic, ...testCasesPeriodicModular];
@@ -145,9 +145,10 @@ function checkDirectory(environment, force) {
 
 function saveEnvironment(environment) {
   const file = path.join(BENCHMARK_DIRECTORY, 'environment.json');
+  const recorded = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf-8')) : {};
 
   ensureDirectoryExists(BENCHMARK_DIRECTORY);
-  fs.writeFileSync(file, `${JSON.stringify(environment, null, 2)}\n`);
+  fs.writeFileSync(file, `${JSON.stringify({ complete: recorded.complete === true, ...environment }, null, 2)}\n`);
 }
 
 function selectTestCases(testCases, offset, maxSize) {

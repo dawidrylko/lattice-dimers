@@ -25,7 +25,11 @@ function resultFileName(fileName, { rowCount, colCount }) {
 function readRunEnvironment(root, run) {
   const file = path.join(root, run, 'environment.json');
 
-  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf-8') || '{}') : {};
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf-8'));
+  } catch {
+    return {};
+  }
 }
 
 function isMonthRun(run) {
@@ -61,7 +65,7 @@ function isCompleteRun(root, run) {
 /**
  * Lists the benchmark runs, newest first, and picks the newest complete one: a partial run in a
  * new month, such as pnpm start, must not replace the full table.
- * @param {string} [root] The directory of the YYYY-MM run directories.
+ * @param {string} [root] The directory of the run directories.
  * @returns {{runs: string[], latest: string}} Every run and the newest complete one.
  */
 function readBenchmarkRuns(root = RESULTS_DIRECTORY) {
