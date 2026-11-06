@@ -4,13 +4,13 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-A domino covers two cells that share a side, and a tiling lays dominoes on the board so that every cell is covered exactly once. The dimer drawing turns each cell into a vertex and each domino into an edge between two of them, which makes a tiling a perfect matching of the grid graph. The questions are how many tilings a board of $h \times w$ cells has, what the tiling with a given number looks like, and how to draw a tiling uniformly at random when there are too many to number. The $4 \times 4$ board has 36 tilings, the value $a(2)$ in the table below, and the drawing shows all of them.
+A domino covers two cells that share a side, and a tiling lays dominoes on the board so that every cell is covered exactly once. The dimer drawing turns each cell into a vertex and each domino into an edge between two of them, which makes a tiling a perfect matching of the grid graph. The questions are how many tilings a board of $h \times w$ cells has, what the tiling with a given number looks like, and how to draw a tiling uniformly at random when there are too many to number. The $8 \times 8$ board has 12,988,816 tilings, the value $a(4)$ in the table below, and the drawing shows 4 of them, spread over the numbering.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
-const { svgs, total } = drawTilings({ rowCount: 4, colCount: 4, ranks: 'all' });
+const { svgs, total } = drawTilings({ rowCount: 8, colCount: 8, spread: 4 });
 
-figure(svgs, `All ${total} domino tilings of the 4 × 4 board, numbered as in the gallery.`);
+figure(svgs, `4 of the ${total} domino tilings of the 8 × 8 board, numbered as in the gallery.`);
 ```
 
 ## The Formula solver

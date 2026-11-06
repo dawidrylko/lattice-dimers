@@ -11,7 +11,9 @@ const REPOSITORY_LINK = /https:\/\/github\.com\/dawidrylko\/lattice-dimers\/(?:t
 const EXTERNAL_RESOURCE = /<script\b[^>]*\bsrc="https?:[^>]*>|<link\b(?=[^>]*\brel="stylesheet")[^>]*\bhref="https?:[^>]*>/g;
 const MIN_HIT_CONTRAST = 4.5;
 const MIN_FIGURE_LABEL = 11;
-const FIGURE_NAME = /^(Domino|Domicule) tiling number \d+( with \d+ diagonal pieces?)? of a \d+ by \d+ (rectangle|cylinder|torus)$/;
+const FIGURE_DRAWINGS = 4;
+const FIGURE_BOARD = ' of an 8 by 8 ';
+const FIGURE_NAME = /^(Domino|Domicule|Triangular lattice) tiling number \d+( with \d+ diagonal pieces?)? of an? \d+ by \d+ (rectangle|cylinder|torus)$/;
 const MIN_SEAM_DISTANCE = 40;
 const CHROME_CANDIDATES = [
   '/usr/bin/google-chrome',
@@ -101,7 +103,7 @@ const NOTES = [
   },
   {
     slug: 'domicules/rectangles',
-    cells: 9, figures: 2,
+    cells: 9, figures: 1,
     group: 'Domicules',
     h1: 'Domicules: tilings of the 2n × 2n board (A239273)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'References'],
@@ -129,14 +131,14 @@ const NOTES = [
   },
   {
     slug: 'triangular-lattice/cylinders',
-    cells: 2,
+    cells: 3, figures: 1,
     group: 'Triangular lattice',
     h1: 'Triangular lattice: tilings of cylinders (A002605)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'The counts', 'What the OEIS has', 'Verification', 'References'],
   },
   {
     slug: 'triangular-lattice/tori',
-    cells: 1,
+    cells: 2, figures: 1,
     group: 'Triangular lattice',
     h1: 'Triangular lattice: tilings of the 2n × 2n torus (not in the OEIS)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'The counts', 'Verification', 'References'],
@@ -1127,6 +1129,8 @@ async function checkNotes(page, baseUrl, width) {
       katex: document.querySelectorAll('.katex').length,
       chartFont: [...document.querySelectorAll('figure.chart svg text')].map(text => getComputedStyle(text).fontFamily).filter(font => /monospace/.test(font)).length,
       figures: [...document.querySelectorAll('figure.tiling')].filter(figure => { const svgs = [...figure.querySelectorAll('svg:not(svg svg)')]; return svgs.length > 0 && svgs.every(svg => svg.getBoundingClientRect().width > 0 && svg.getBoundingClientRect().right <= document.documentElement.clientWidth + 0.5); }).length,
+      drawings: [...document.querySelectorAll('figure.tiling svg:not(svg svg)')].map(svg => svg.getAttribute('aria-label') || ''),
+      rows: [...document.querySelectorAll('figure.tiling')].map(figure => { const tops = [...figure.querySelectorAll('svg:not(svg svg)')].map(svg => Math.round(svg.getBoundingClientRect().top)); return [...new Set(tops)].map(top => tops.filter(other => other === top).length).join(); }),
       charts: [...document.querySelectorAll('figure.chart')].map(figure => [...figure.querySelectorAll('svg')].filter(svg => getComputedStyle(svg).display !== 'none').length),
       label: Math.min(...[...document.querySelectorAll('figure.tiling svg text')].map(text => {
         const svg = text.closest('figure.tiling svg:not(svg svg)');
@@ -1153,7 +1157,7 @@ async function checkNotes(page, baseUrl, width) {
     problems.push(...checkNotebookLayout(slug, state, { h1, sections }));
 
     if (figures && !(state.label >= MIN_FIGURE_LABEL)) {
-      problems.push(`${slug} labels its tilings at ${state.label.toFixed(1)} px, under ${MIN_FIGURE_LABEL} px`);
+      problems.push(`${slug} labels its tilings at ${Number(state.label).toFixed(1)} px, under ${MIN_FIGURE_LABEL} px`);
     }
 
     if (state.covering) {
@@ -1174,6 +1178,14 @@ async function checkNotes(page, baseUrl, width) {
 
     if (state.chartFont) {
       problems.push(`${slug} draws ${state.chartFont} chart labels in the monospace of a tiling drawing`);
+    }
+
+    if (figures && (state.drawings.length !== FIGURE_DRAWINGS || !state.drawings.every(name => name.includes(FIGURE_BOARD)))) {
+      problems.push(`${slug} draws ${state.drawings.length} tilings, ${state.drawings.filter(name => name.includes(FIGURE_BOARD)).length} of them${FIGURE_BOARD.trimEnd()}, instead of ${FIGURE_DRAWINGS}`);
+    }
+
+    if (figures && !state.rows.every(rows => ['4', '2,2'].includes(rows))) {
+      problems.push(`${slug} lays its drawings out in rows of ${state.rows.join(' and ')} at ${width} px instead of 4 or 2,2`);
     }
 
     if (state.figures !== figures) {

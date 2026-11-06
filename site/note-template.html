@@ -67,7 +67,8 @@ blockquote { margin: 0 0 14px; padding-left: 14px; border-left: 3px solid var(--
 .tiling .sheet { display: flex; flex-wrap: wrap; width: fit-content; max-width: 100%; overflow: hidden; padding: 0 calc(var(--scale) * var(--pad)) calc(var(--scale) * var(--pad)) 0; }
 .tiling .sheet > svg { width: calc(var(--scale) * var(--width)); margin: 0 calc(-1 * var(--scale) * var(--pad)) calc(-1 * var(--scale) * var(--pad)) 0; }
 .tiling .sheet .bg { fill: none; }
-@media (max-width: 560px) { .tiling { --scale: 1; } }
+@media (max-width: 910px) { .tiling { --scale: 1; } }
+@media (max-width: 625px) { .tiling .sheet { max-width: min(100%, calc(2 * var(--width) - var(--pad) + 2px)); } }
 .tiling figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .chart svg.narrow { display: none; max-width: 480px; }
 @media (max-width: 560px) {

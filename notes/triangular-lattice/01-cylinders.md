@@ -4,7 +4,14 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-The triangular lattice [2] is the square lattice with one diagonal in every cell, here the one that runs down to the right. A tiling uses dominoes and diagonal pieces in that one direction, so it lies between a domino tiling, which has no diagonal piece, and a domicule tiling, which may use both diagonals. On a cylinder a piece may cross the seam between the last and the first column.
+The triangular lattice [2] is the square lattice with one diagonal in every cell, here the one that runs down to the right. A tiling uses dominoes and diagonal pieces in that one direction, so it lies between a domino tiling, which has no diagonal piece, and a domicule tiling, which may use both diagonals. On a cylinder a piece may cross the seam between the last and the first column. The drawings mark the glued edges and draw a piece that crosses the seam cut, with one half on each side. They show 4 tilings of the cylinder of circumference 8 and height 8, spread over the numbering.
+
+```js run
+const { drawTilings } = require('./site/notes.js');
+const { svgs, total } = drawTilings({ rowCount: 8, colCount: 8, lattice: 'triangular', surface: 'cylinder', spread: 4 });
+
+figure(svgs, `4 of the ${total} tilings of the triangular lattice on the cylinder of circumference 8 and height 8.`);
+```
 
 ## The Modular solver
 
