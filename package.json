@@ -65,6 +65,7 @@
     "start": "node harness/benchmarkRunner.js -n 10 -m 7",
     "benchmark": "node harness/benchmarkContainer.js",
     "benchmark:compare": "node harness/benchmarkFull.js compare",
+    "benchmark:noise": "node harness/benchmarkContainer.js --noise",
     "test": "cargo build --release --locked && node harness/testRunner.js -m 7",
     "render": "node js/dominoTilingRenderer.js",
     "test:render": "node harness/renderTestRunner.js",

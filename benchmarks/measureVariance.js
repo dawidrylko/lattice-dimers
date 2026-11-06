@@ -60,6 +60,16 @@ function summarize(times) {
   };
 }
 
+function compareSeries(first, second) {
+  return first.results.flatMap(({ board, id, language, median, cv }) => {
+    const other = second.results.find(result => result.id === id && result.language === language && result.board === board);
+
+    return other
+      ? [{ board: `${id} ${board}`, language, difference: Number((100 * Math.abs(median - other.median) / Math.min(median, other.median)).toFixed(2)), cv: Math.max(cv, other.cv) }]
+      : [];
+  });
+}
+
 function __main__() {
   const series = readValue('--series', 'unnamed');
   const runs = Number(readValue('--runs', '15'));
@@ -95,4 +105,8 @@ function __main__() {
   }
 }
 
-__main__();
+if (require.main === module) {
+  __main__();
+}
+
+module.exports = { compareSeries };
