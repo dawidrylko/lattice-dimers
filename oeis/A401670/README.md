@@ -15,7 +15,7 @@ Proposed 1 November 2026, revision #3 of the draft.
 | file | content |
 | --- | --- |
 | [A401670.txt](A401670.txt) | the full entry text, reconstructed from the draft page |
-| [b401670.txt](b401670.txt) | $n = 0, \dots, 8$, the terms of the data line, from [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) and [`spec/cases/periodicTilingTests-Modular.json`](../../spec/cases/periodicTilingTests-Modular.json); not submitted |
+| [b401670.txt](b401670.txt) | $n = 0, \dots, 8$, the terms of the data line, from [`spec/cases/all-lattices-cylinder-torus-modular.json`](../../spec/cases/all-lattices-cylinder-torus-modular.json); not submitted |
 | [A401670.gp](A401670.gp) | the program of the `%o` lines, with `T(h, w)` for the $h \times w$ torus |
 
 ## Notes

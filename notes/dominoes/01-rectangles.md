@@ -118,7 +118,7 @@ The formula solver evaluates the resultant, the two transfer solvers scan the bo
 const formula = require('./js/solvers/domino-rectangle-formula.js');
 const transfer = require('./js/solvers/domino-rectangle-bigint.js');
 const number = require('./js/solvers/domino-rectangle-number.js');
-const known = require('./js/core/cases').testCasesBigInt;
+const known = require('./js/core/cases').testCasesOf('domino-rectangle-formula');
 
 const rows = [];
 

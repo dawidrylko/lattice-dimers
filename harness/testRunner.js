@@ -11,32 +11,26 @@ const { describeEnvironment, runDirectoryName } = require('./benchmarkEnvironmen
 const { estimateBoard, parseInstructionCount, compareRuns } = require('./benchmarkFull');
 const { compareSeries } = require('../benchmarks/measureVariance');
 const { readRepository, listPortErrors } = require('./portCheck.js');
-const { registry, listImplementations, algorithmOf } = require('../js/core/registry.js');
-const {
-  filesInt,
-  testCasesInt,
-  filesBigInt,
-  testCasesBigInt,
-  filesRectangles,
-  testCasesRectangles,
-  filesDomicule,
-  testCasesDomicule,
-  filesDomiculeRectangles,
-  testCasesDomiculeRectangles,
-  filesPeriodic,
-  testCasesPeriodic,
-  filesPeriodicModular,
-  testCasesPeriodicModular,
-  filesDiagonal,
-  testCasesDiagonal,
-  filesDiagonalModular,
-  testCasesDiagonalModular,
-} = require('../js/core/cases');
+const { registry, listImplementations } = require('../js/core/registry.js');
+const { testCasesOf, boardKeyOf, isEvenSquare } = require('../js/core/cases');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const REJECTION_TIMEOUT = 30000;
 const MAX_PORTED_BIGINT_SIDE = 16;
 const MAX_PORTED_BIGINT_TORUS_SIDE = 8;
+const isSquareWithinPortedSide = ({ rowCount, colCount }) => rowCount !== colCount || rowCount <= MAX_PORTED_BIGINT_SIDE;
+const heldByTwinOrAmongFirst = twin => {
+  const held = new Set(testCasesOf(twin).map(boardKeyOf));
+
+  return (testCase, index, maxSize) => index < maxSize || held.has(boardKeyOf(testCase));
+};
+const CAPPED_CASES = {
+  'all-lattices-cylinder-torus-bigint': ({ torus, colCount }) => !torus || colCount <= MAX_PORTED_BIGINT_TORUS_SIDE,
+  'all-lattices-cylinder-torus-modular': heldByTwinOrAmongFirst('all-lattices-cylinder-torus-bigint'),
+  'diagonal-pieces-modular': heldByTwinOrAmongFirst('diagonal-pieces-bigint'),
+  'domicule-rectangle-bigint': isSquareWithinPortedSide,
+  'domino-rectangle-bigint': isSquareWithinPortedSide,
+};
 const parserTestCases = [
   { value: '12', expectedResult: 12 },
   { value: '0', expectedResult: 0 },
@@ -308,13 +302,13 @@ function executeLimitTests() {
 function executeDiagonalAnchorTests() {
   const find = (testCases, rowCount, colCount) =>
     testCases.find(t => (t.rowCount === rowCount && t.colCount === colCount) || (t.rowCount === colCount && t.colCount === rowCount));
-  const anchored = [...testCasesDiagonal, ...testCasesDiagonalModular]
+  const anchored = testCasesOf('diagonal-pieces-modular')
     .map(({ rowCount, colCount, expectedResult }) => ({
       rowCount,
       colCount,
       coefficients: expectedResult.split(',').map(BigInt),
-      domicule: find([...testCasesDomicule, ...testCasesDomiculeRectangles], rowCount, colCount),
-      domino: find([...testCasesBigInt, ...testCasesRectangles], rowCount, colCount),
+      domicule: find(testCasesOf('domicule-rectangle-bigint'), rowCount, colCount),
+      domino: find(testCasesOf('domino-rectangle-bigint'), rowCount, colCount),
     }))
     .filter(({ domicule, domino }) => domicule && domino);
 
@@ -540,6 +534,18 @@ function runExecutorTests(cases, command, attempt) {
 
 function executePortTests() {
   const repository = readRepository();
+  const portTestCase = { rowCount: 2, colCount: 2, expectedResult: '2' };
+  const mutatedBoard = { rowCount: 4, colCount: 4 };
+  const mutateFirstTwinCount = caseFile =>
+    caseFile.algorithm === 'domino-rectangle-formula'
+      ? {
+          ...caseFile,
+          testCases: caseFile.testCases.map(testCase =>
+            testCase.rowCount === mutatedBoard.rowCount && testCase.colCount === mutatedBoard.colCount ? { ...testCase, expectedResult: '37' } : testCase,
+          ),
+        }
+      : caseFile;
+  const firstTwinDisagreement = 'domino-rectangle-bigint and domino-rectangle-formula disagree on the 4 x 4 board 4|4||false|false: 36 against 37.';
   const languages = { rs: 'rust/solvers/src/bin', py: 'python/lattice_dimers/solvers', js: 'js/solvers' };
   const complete = { rs: 'rust/solvers/src/bin/a.rs', py: 'python/lattice_dimers/solvers/a.py', js: 'js/solvers/a.js' };
   const countPending = algorithms =>
@@ -548,13 +554,12 @@ function executePortTests() {
     algorithms = { a: complete },
     pendingPorts = countPending(algorithms),
     files = Object.values(complete),
-    caseFiles = [{ name: 'a.json', algorithms: ['a'] }],
+    caseFiles = [{ name: 'a.json', algorithm: 'a', testCases: [portTestCase] }],
     ...rest
   } = {}) => ({
     registry: { languages, pendingPorts, algorithms },
     files,
     caseFiles,
-    loadedCaseFiles: ['a.json'],
     runnableLanguages: ['rs', 'py', 'js'],
     ...rest,
   });
@@ -564,7 +569,7 @@ function executePortTests() {
     ['an algorithm still waiting for its ports', state({ algorithms: { a: { js: complete.js } }, files: [complete.js] }), []],
     [
       'a new algorithm with one language',
-      state({ algorithms: { a: complete, b: { js: 'js/solvers/b.js' } }, pendingPorts: 0, files: [...Object.values(complete), 'js/solvers/b.js'], caseFiles: [{ name: 'a.json', algorithms: ['a', 'b'] }] }),
+      state({ algorithms: { a: complete, b: { js: 'js/solvers/b.js' } }, pendingPorts: 0, files: [...Object.values(complete), 'js/solvers/b.js'], caseFiles: [{ name: 'a.json', algorithm: 'a', testCases: [portTestCase] }, { name: 'b.json', algorithm: 'b', testCases: [portTestCase] }] }),
       ['2 implementations are missing, but spec/algorithms.json allows 0 pending ports; an algorithm added from now on comes with all three.'],
     ],
     [
@@ -582,7 +587,7 @@ function executePortTests() {
       state({
         algorithms: { 'a-b': { py: 'python/lattice_dimers/solvers/a-b.py', js: 'js/solvers/a-b.js' } },
         files: ['python/lattice_dimers/solvers/a-b.py', 'js/solvers/a-b.js'],
-        caseFiles: [{ name: 'a.json', algorithms: ['a-b'] }],
+        caseFiles: [{ name: 'a-b.json', algorithm: 'a-b', testCases: [portTestCase] }],
       }),
       ['spec/algorithms.json names the py implementation of a-b a-b.py, not a_b.py.'],
     ],
@@ -622,19 +627,51 @@ function executePortTests() {
       ['js/solvers/b.js is not registered in spec/algorithms.json.'],
     ],
     [
-      'a case file that js/core/cases.js does not load',
-      state({ caseFiles: [{ name: 'c.json', algorithms: ['a'] }] }),
-      ['spec/cases/c.json is not loaded by js/core/cases.js, so no test runs it.', 'a is checked by no file in spec/cases.'],
+      'a case file named after no algorithm',
+      state({ caseFiles: [{ name: 'a.json', algorithm: 'a', testCases: [portTestCase] }, { name: 'c.json', algorithm: 'c', testCases: [portTestCase] }] }),
+      ['spec/cases/c.json is not named after an algorithm of spec/algorithms.json, so no test runs it.'],
     ],
     [
-      'a case file naming an unknown algorithm',
-      state({ caseFiles: [{ name: 'a.json', algorithms: ['a', 'b'] }] }),
-      ['spec/cases/a.json checks b, which is not an algorithm of spec/algorithms.json.'],
+      'a case file holding the cases of another algorithm',
+      state({ caseFiles: [{ name: 'a.json', algorithm: 'b', testCases: [portTestCase] }] }),
+      ['spec/cases/a.json holds the cases of b; the file of an algorithm is named <id>.json.'],
+    ],
+    [
+      'a case file in the old shape',
+      state({ caseFiles: [{ name: 'a.json', algorithms: ['a'], testCases: [portTestCase] }] }),
+      ['spec/cases/a.json holds the cases of undefined; the file of an algorithm is named <id>.json.'],
+    ],
+    [
+      'a case file holding one board twice',
+      state({ caseFiles: [{ name: 'a.json', algorithm: 'a', testCases: [{ rowCount: 2, colCount: 2, expectedResult: '2' }, { rowCount: 2, colCount: 2, expectedResult: '2' }] }] }),
+      ['spec/cases/a.json holds the board 2|2||false|false more than once.'],
     ],
     [
       'an algorithm no case file checks',
       state({ algorithms: { a: complete, b: { js: 'js/solvers/b.js' } }, files: [...Object.values(complete), 'js/solvers/b.js'] }),
-      ['b is checked by no file in spec/cases.'],
+      ['b has no file in spec/cases.'],
+    ],
+    [
+      'a case file without test cases',
+      state({ caseFiles: [{ name: 'a.json', algorithm: 'a', testCases: [] }] }),
+      ['spec/cases/a.json holds no test cases.'],
+    ],
+    [
+      'a copy of the case files where a modular file lacks a board of its twin',
+      {
+        ...repository,
+        caseFiles: repository.caseFiles.map(caseFile =>
+          caseFile.algorithm === 'diagonal-pieces-modular'
+            ? { ...caseFile, testCases: caseFile.testCases.filter(({ rowCount, colCount }) => rowCount !== 5 || colCount !== 6) }
+            : caseFile,
+        ),
+      },
+      ['spec/cases/diagonal-pieces-modular.json lacks the board 5|6||false|false of diagonal-pieces-bigint.'],
+    ],
+    [
+      'a mutated copy of the case files, where twin algorithms disagree on a count',
+      { ...repository, caseFiles: repository.caseFiles.map(mutateFirstTwinCount) },
+      [firstTwinDisagreement],
     ],
   ];
 
@@ -1198,22 +1235,29 @@ function executeBenchmarkRunTest() {
 }
 
 function executeDataTests() {
-  const exact = new Map(testCasesBigInt.map(({ rowCount, colCount, expectedResult }) => [`${rowCount}x${colCount}`, expectedResult]));
+  const testCasesNumber = testCasesOf('domino-rectangle-number').filter(isEvenSquare);
+  const testCasesFormula = testCasesOf('domino-rectangle-formula');
+  const exact = new Map(testCasesFormula.map(({ rowCount, colCount, expectedResult }) => [`${rowCount}x${colCount}`, expectedResult]));
   const cases = [
-    ...testCasesInt.map(({ rowCount, colCount, expectedResult }) => ({
+    ...testCasesNumber.map(({ rowCount, colCount, expectedResult }) => ({
       name: `the Number count of ${rowCount}x${colCount}`,
       passed: Number.isSafeInteger(expectedResult) && String(expectedResult) === exact.get(`${rowCount}x${colCount}`),
       detail: `${expectedResult} against the BigInt count ${exact.get(`${rowCount}x${colCount}`)}`,
     })),
     ...[
-      ['Number', testCasesInt],
-      ['BigInt', testCasesBigInt],
-      ['domicule', testCasesDomicule],
+      ['Number', testCasesNumber],
+      ['BigInt', testCasesFormula],
+      ['domicule', testCasesOf('domicule-rectangle-bigint')],
     ].map(([group, testCases]) => ({
       name: `a(0) of the ${group} squares`,
       passed: testCases[0].rowCount === 0 && testCases[0].colCount === 0 && String(testCases[0].expectedResult) === '1',
       detail: `the first case is ${testCases[0].rowCount}x${testCases[0].colCount} with ${testCases[0].expectedResult}`,
     })),
+    {
+      name: 'a count written without quotes outside domino-rectangle-number',
+      passed: verifierOf({ expectedResult: 1e30 }, 'all-lattices-cylinder-torus-modular') === verifyBigInt,
+      detail: 'verifyInt compares such a count as a float, so a wrong result would pass',
+    },
   ];
 
   return cases.every(({ name, passed, detail }, index) => {
@@ -1318,11 +1362,11 @@ function executeUsageTests() {
 }
 
 async function executeModuleTests() {
-  const fourByFour = testCases => testCases.find(({ rowCount, colCount }) => rowCount === 4 && colCount === 4);
+  const fourByFour = algorithm => testCasesOf(algorithm).find(({ rowCount, colCount }) => rowCount === 4 && colCount === 4);
   const modules = [
-    ['domicule-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour(testCasesDomicule)],
-    ['all-lattices-cylinder-torus-modular.js', 'calculateTotalTilingCombinations', fourByFour(testCasesPeriodic)],
-    ['diagonal-pieces-modular.js', 'calculateDiagonalPolynomial', fourByFour(testCasesDiagonal)],
+    ['domicule-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('domicule-rectangle-modular')],
+    ['all-lattices-cylinder-torus-modular.js', 'calculateTotalTilingCombinations', fourByFour('all-lattices-cylinder-torus-bigint')],
+    ['diagonal-pieces-modular.js', 'calculateDiagonalPolynomial', fourByFour('diagonal-pieces-bigint')],
   ];
   let passed = true;
 
@@ -1345,12 +1389,12 @@ async function executeModuleTests() {
   return (
     passed &&
     [
-      ['all-lattices-cylinder-torus-modular', fourByFour(testCasesPeriodic)],
-      ['domicule-rectangle-modular', fourByFour(testCasesDomicule)],
+      ['all-lattices-cylinder-torus-modular', fourByFour('all-lattices-cylinder-torus-bigint')],
+      ['domicule-rectangle-modular', fourByFour('domicule-rectangle-modular')],
     ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
-    executeUnknownProcessorCountTest('diagonal-pieces-modular', fourByFour(testCasesDiagonal), 'calculate_diagonal_polynomial') &&
-    executeScratchTest('domicule-rectangle-modular', testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
-    executeScratchTest('diagonal-pieces-modular', testCasesDiagonal.find(({ rowCount, colCount }) => rowCount === 5 && colCount === 6), 'calculate_diagonal_polynomial') &&
+    executeUnknownProcessorCountTest('diagonal-pieces-modular', fourByFour('diagonal-pieces-bigint'), 'calculate_diagonal_polynomial') &&
+    executeScratchTest('domicule-rectangle-modular', testCasesOf('domicule-rectangle-modular').find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
+    executeScratchTest('diagonal-pieces-modular', testCasesOf('diagonal-pieces-bigint').find(({ rowCount, colCount }) => rowCount === 5 && colCount === 6), 'calculate_diagonal_polynomial') &&
     executeLongCountTest('domino-rectangle-formula', ['-r', '80', '-c', '80']) &&
     executeLongCountTest('domino-rectangle-bigint', ['-r', '2', '-c', '6000']) &&
     executeLongCountTest('domicule-rectangle-bigint', ['-r', '2', '-c', '6000']) &&
@@ -1567,26 +1611,36 @@ function runTest(testCase, verifyResult) {
   return true;
 }
 
-function executeTests(files, testCases, verifyResult, portedTestCases = testCases) {
-  const implementations = files.flatMap(fileName => {
-    const all = listImplementations(algorithmOf(fileName));
+function listTestCasesToRun(algorithm, maxSize) {
+  const testCases = testCasesOf(algorithm);
+  const keep = CAPPED_CASES[algorithm];
 
-    return all.map(({ file }) => ({ file, cases: all.length > 1 ? portedTestCases : testCases }));
-  });
-  const pairs = implementations.flatMap(({ file, cases }) =>
-    cases.map((testCase, index) => ({ index, fileName: file, ...testCase })),
+  return maxSize && keep ? testCases.filter((testCase, index) => keep(testCase, index, maxSize)) : testCases;
+}
+
+function verifierOf({ expectedResult }, algorithm) {
+  if (algorithm.startsWith('diagonal-pieces-')) {
+    return verifyList;
+  }
+
+  return algorithm === 'domino-rectangle-number' && typeof expectedResult === 'number' ? verifyInt : verifyBigInt;
+}
+
+function executeTests(algorithm, maxSize) {
+  const testCases = listTestCasesToRun(algorithm, maxSize);
+  const pairs = listImplementations(algorithm).flatMap(({ file }) =>
+    testCases.map((testCase, index) => ({ index, fileName: file, ...testCase })),
   );
-  const allPassed = pairs.every((testCase, index) => {
+
+  return pairs.every((testCase, index) => {
     process.stdout.write(
       `Executing test ${index + 1} of ${pairs.length} for ${
         testCase.fileName
       }... `,
     );
 
-    return runTest(testCase, verifyResult);
+    return runTest(testCase, verifierOf(testCase, algorithm));
   });
-
-  return allPassed;
 }
 
 async function __main__() {
@@ -1602,46 +1656,9 @@ async function __main__() {
       `Starting test execution with ${maxSize || 'all available'} test cases per solver group...`,
     );
 
-    const testCasesToRunInt = maxSize ? testCasesInt.slice(0, maxSize) : testCasesInt;
-    const testCasesToRunBigInt = maxSize ? testCasesBigInt.slice(0, maxSize) : testCasesBigInt;
-
-    const allIntTestsPassed = executeTests(filesInt, testCasesToRunInt, verifyInt);
-    const isFormula = fileName => algorithmOf(fileName) === 'domino-rectangle-formula';
-    const allBigIntTestsPassed =
-      executeTests(filesBigInt.filter(isFormula), testCasesToRunBigInt, verifyBigInt, testCasesBigInt) &&
-      executeTests(
-        filesBigInt.filter(fileName => !isFormula(fileName)),
-        testCasesToRunBigInt,
-        verifyBigInt,
-        maxSize ? testCasesBigInt.filter(({ rowCount }) => rowCount <= MAX_PORTED_BIGINT_SIDE) : testCasesBigInt,
-      );
-    const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, verifyBigInt);
-    const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;
-    const isBigIntSolver = fileName => algorithmOf(fileName) === 'domicule-rectangle-bigint';
-    const allDomiculeTestsPassed =
-      executeTests(filesDomicule.filter(fileName => !isBigIntSolver(fileName)), testCasesToRunDomicule, verifyBigInt, testCasesDomicule) &&
-      executeTests(
-        filesDomicule.filter(isBigIntSolver),
-        testCasesToRunDomicule,
-        verifyBigInt,
-        maxSize ? testCasesDomicule.filter(({ rowCount }) => rowCount <= MAX_PORTED_BIGINT_SIDE) : testCasesDomicule,
-      );
-    const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, verifyBigInt);
-    const testCasesToRunPeriodic = maxSize ? testCasesPeriodic.slice(0, maxSize) : testCasesPeriodic;
-    const isPeriodicBigInt = fileName => algorithmOf(fileName) === 'all-lattices-cylinder-torus-bigint';
-    const allPeriodicTestsPassed =
-      executeTests(filesPeriodic.filter(fileName => !isPeriodicBigInt(fileName)), testCasesToRunPeriodic, verifyBigInt, testCasesPeriodic) &&
-      executeTests(
-        filesPeriodic.filter(isPeriodicBigInt),
-        testCasesToRunPeriodic,
-        verifyBigInt,
-        maxSize ? testCasesPeriodic.filter(({ torus, colCount }) => !torus || colCount <= MAX_PORTED_BIGINT_TORUS_SIDE) : testCasesPeriodic,
-      );
-    const testCasesToRunPeriodicModular = maxSize ? testCasesPeriodicModular.slice(0, maxSize) : testCasesPeriodicModular;
-    const allPeriodicModularTestsPassed = executeTests(filesPeriodicModular, testCasesToRunPeriodicModular, verifyBigInt);
-    const allDiagonalTestsPassed = executeTests(filesDiagonal, testCasesDiagonal, verifyList);
-    const testCasesToRunDiagonalModular = maxSize ? testCasesDiagonalModular.slice(0, maxSize) : testCasesDiagonalModular;
-    const allDiagonalModularTestsPassed = executeTests(filesDiagonalModular, testCasesToRunDiagonalModular, verifyList);
+    const caseTestsPassed = Object.keys(registry.algorithms)
+      .map(algorithm => executeTests(algorithm, maxSize))
+      .every(Boolean);
     const checkPrimeTestsPassed = executeCheckPrimeTests();
     const diagonalAnchorTestsPassed = executeDiagonalAnchorTests();
     const limitTestsPassed = executeLimitTests();
@@ -1671,15 +1688,7 @@ async function __main__() {
     const moduleTestsPassed = await executeModuleTests();
 
     if (
-      allIntTestsPassed &&
-      allBigIntTestsPassed &&
-      allRectangleTestsPassed &&
-      allDomiculeTestsPassed &&
-      allDomiculeRectangleTestsPassed &&
-      allPeriodicTestsPassed &&
-      allPeriodicModularTestsPassed &&
-      allDiagonalTestsPassed &&
-      allDiagonalModularTestsPassed &&
+      caseTestsPassed &&
       checkPrimeTestsPassed &&
       diagonalAnchorTestsPassed &&
       limitTestsPassed &&

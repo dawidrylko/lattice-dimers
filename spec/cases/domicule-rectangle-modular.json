@@ -1,5 +1,5 @@
 {
-  "algorithms": ["domicule-rectangle-bigint", "domicule-rectangle-modular"],
+  "algorithm": "domicule-rectangle-modular",
   "testCases": [
     {
       "rowCount": 0,
@@ -50,6 +50,41 @@
       "rowCount": 18,
       "colCount": 18,
       "expectedResult": "1458834332808489549111708247664894524221330758005874053074138540424018259"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 5,
+      "expectedResult": "1563"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "expectedResult": "1563"
+    },
+    {
+      "rowCount": 7,
+      "colCount": 6,
+      "expectedResult": "55263473"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 1,
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 22,
+      "expectedResult": "23114817718082715"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 40,
+      "expectedResult": "733007751851"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 2,
+      "expectedResult": "733007751851"
     }
   ]
 }

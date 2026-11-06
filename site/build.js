@@ -1,14 +1,12 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const {
-  testCasesBigInt,
-  testCasesDomicule,
-  testCasesPeriodic,
-  testCasesPeriodicModular,
-  testCasesDiagonal,
-  testCasesDiagonalModular,
-} = require('../js/core/cases');
+const { testCasesOf, isEvenSquare } = require('../js/core/cases');
+
+const testCasesDomino = testCasesOf('domino-rectangle-formula');
+const testCasesDomicule = testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare);
+const testCasesPeriodic = testCasesOf('all-lattices-cylinder-torus-modular');
+const testCasesDiagonal = testCasesOf('diagonal-pieces-modular');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
 const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
@@ -125,7 +123,7 @@ const NOTE_SUMMARIES = {
 };
 
 function countTilings(board) {
-  const testCase = testCasesBigInt.find(
+  const testCase = testCasesDomino.find(
     t => t.rowCount === board.rowCount && t.colCount === board.colCount,
   );
 
@@ -152,7 +150,7 @@ function countPeriodicTilings({ rowCount, colCount, lattice, torus }) {
   const key = `${rowCount}x${colCount}-${lattice}-${torus ? 'torus' : 'cylinder'}`;
 
   if (!periodicCounts.has(key)) {
-    const known = [...testCasesPeriodic, ...testCasesPeriodicModular].find(
+    const known = testCasesPeriodic.find(
       t => t.rowCount === rowCount && t.colCount === colCount && t.lattice === lattice && !t.torus === !torus && !t.twisted,
     );
 
@@ -177,7 +175,7 @@ function countPeriodicTilings({ rowCount, colCount, lattice, torus }) {
  * @returns {string[]} The coefficients, from 0 diagonal pieces up.
  */
 function countDiagonalTilings({ rowCount, colCount }, total) {
-  const known = [...testCasesDiagonal, ...testCasesDiagonalModular].find(t => t.rowCount === rowCount && t.colCount === colCount);
+  const known = testCasesDiagonal.find(t => t.rowCount === rowCount && t.colCount === colCount);
   const coefficients = known
     ? known.expectedResult.split(',')
     : diagonalReference.calculateDiagonalPolynomial({ rowCount, colCount }).map(String);
@@ -266,7 +264,7 @@ function readAverageTime(directory, fileName) {
 function buildBenchmark() {
   const prefix = 'domino-rectangle-';
   const tilingsBySize = new Map(
-    testCasesBigInt.map(t => [`${t.rowCount}x${t.colCount}`, t.expectedResult]),
+    testCasesDomino.map(t => [`${t.rowCount}x${t.colCount}`, t.expectedResult]),
   );
   const sizes = listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
     .map(fileName => fileName.match(RESULT_FILE))
@@ -722,7 +720,7 @@ async function __main__() {
     .replaceAll('__RESEARCH_DS__', research.ds)
     .replaceAll('__RESEARCH_LOWER__', research.lower)
     .replaceAll('__RESEARCH_UPPER__', research.upper)
-    .replaceAll('__CHESSBOARD_DOMINOES__', chessboard(testCasesBigInt))
+    .replaceAll('__CHESSBOARD_DOMINOES__', chessboard(testCasesDomino))
     .replaceAll('__CHESSBOARD_DOMICULES__', chessboard(testCasesDomicule))
     .replace('__SCRIPTS__', () => scripts)
     .replace('__DATA__', () => JSON.stringify(data))

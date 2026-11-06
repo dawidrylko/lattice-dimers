@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const { filesInt, testCasesInt, filesBigInt, testCasesBigInt, filesDomicule } = require('../js/core/cases');
-const { listImplementations, algorithmOf } = require('../js/core/registry');
+const { testCasesOf, isEvenSquare } = require('../js/core/cases');
+const { listImplementations } = require('../js/core/registry');
 
 const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
 const LARGEST_PERIODIC_RESULTS = [
@@ -43,18 +43,16 @@ function isCompleteRun(root, run) {
     return complete === true && dirty === false;
   }
 
-  const lastInt = testCasesInt[testCasesInt.length - 1];
-  const lastBigInt = testCasesBigInt[testCasesBigInt.length - 1];
+  const lastNumber = testCasesOf('domino-rectangle-number').filter(isEvenSquare).at(-1);
+  const lastBigInt = testCasesOf('domino-rectangle-formula').at(-1);
   const requiredFiles = [
     'environment.json',
-    ...filesInt
-      .flatMap(fileName => listImplementations(algorithmOf(fileName)))
-      .map(({ file }) => resultFileName(path.basename(file), lastInt)),
-    ...filesBigInt
-      .flatMap(fileName => listImplementations(algorithmOf(fileName)))
+    ...listImplementations('domino-rectangle-number').map(({ file }) => resultFileName(path.basename(file), lastNumber)),
+    ...['domino-rectangle-bigint', 'domino-rectangle-formula']
+      .flatMap(listImplementations)
       .map(({ file }) => resultFileName(path.basename(file), lastBigInt)),
-    ...filesDomicule
-      .flatMap(fileName => listImplementations(algorithmOf(fileName)))
+    ...['domicule-rectangle-bigint', 'domicule-rectangle-modular']
+      .flatMap(listImplementations)
       .flatMap(({ file }) => [16, 20].map(side => resultFileName(path.basename(file), { rowCount: side, colCount: side }))),
     ...LARGEST_PERIODIC_RESULTS,
   ];

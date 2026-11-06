@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { DEFAULT_BOARD } = require('../site/defaultBoard');
-const { testCasesDomicule } = require('../js/core/cases');
+const { testCasesOf } = require('../js/core/cases');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const NAME = 'Lattice Dimers';
@@ -208,7 +208,7 @@ function checkReadmeBoard() {
   const drawn = pairs(sheets, /(\d+) ?× ?(\d+)/g);
   const stray = [...boards, ...prose, ...commands, ...drawn].filter(([rows, cols]) => Number(rows) !== rowCount || Number(cols) !== colCount);
   const errors = [...new Set(stray.map(([rows, cols]) => `The README files show the ${rows} × ${cols} board; the gallery opens on ${rowCount} × ${colCount}.`))];
-  const { expectedResult } = testCasesDomicule.find(testCase => testCase.rowCount === rowCount && testCase.colCount === colCount);
+  const { expectedResult } = testCasesOf('domicule-rectangle-bigint').find(testCase => testCase.rowCount === rowCount && testCase.colCount === colCount);
 
   if (!boards.length || !prose.length || !commands.length || !drawn.length) {
     errors.push('The README files must show the showcase, the quick start and the gallery sheets on a board.');

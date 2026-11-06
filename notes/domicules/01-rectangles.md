@@ -124,7 +124,7 @@ In this table the `BigInt` solver counts the boards up to $16 \times 16$, the mo
 
 ```js run
 const reference = require('./js/solvers/domicule-rectangle-bigint.js');
-const known = require('./js/core/cases').testCasesDomicule;
+const known = require('./js/core/cases').testCasesOf('domicule-rectangle-bigint');
 const bFile = { 10: '974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427' };
 
 const rows = [];

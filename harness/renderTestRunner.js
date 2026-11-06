@@ -27,13 +27,7 @@ const { createRandom } = require('../js/renderer/cftp');
 const fs = require('fs');
 const { buildReadmeImages } = require('../site/readme-images');
 const { renderChart, renderNote, drawTilings, formatTime, logCount } = require('../site/notes');
-const {
-  testCasesBigInt,
-  testCasesDomicule,
-  testCasesDomiculeRectangles,
-  testCasesDiagonal,
-  testCasesDiagonalModular,
-} = require('../js/core/cases');
+const { testCasesOf } = require('../js/core/cases');
 
 const MAX_CELLS = 36;
 const UNRANK_SAMPLE_SIZE = 1000;
@@ -220,7 +214,7 @@ const diagonalUnrankTestCases = [
   { rowCount: 6, colCount: 6 },
 ].map(board => ({
   ...board,
-  expectedResult: [...testCasesDiagonal, ...testCasesDiagonalModular].find(
+  expectedResult: testCasesOf('diagonal-pieces-modular').find(
     t => t.rowCount === board.rowCount && t.colCount === board.colCount,
   ).expectedResult,
 }));
@@ -1361,16 +1355,16 @@ function runSuite(name, testCases, run) {
 }
 
 async function __main__() {
-  const testCases = testCasesBigInt.filter(
+  const testCases = testCasesOf('domino-rectangle-formula').filter(
     ({ rowCount, colCount }) => rowCount * colCount <= MAX_CELLS,
   );
 
-  const unrankTestCases = testCasesBigInt.filter(
+  const unrankTestCases = testCasesOf('domino-rectangle-formula').filter(
     ({ rowCount, colCount }) =>
       rowCount * colCount > MAX_CELLS && canUnrank({ rowCount, colCount }),
   );
 
-  const domiculeTestCases = [...testCasesDomicule, ...testCasesDomiculeRectangles].filter(canUnrankDomicule);
+  const domiculeTestCases = testCasesOf('domicule-rectangle-bigint').filter(canUnrankDomicule);
   const total = [
     testCases,
     unrankTestCases,
