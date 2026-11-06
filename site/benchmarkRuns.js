@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { testCasesOf, isEvenSquare } = require('../js/core/cases');
-const { listImplementations, algorithmOf } = require('../js/core/registry');
+const { listImplementations } = require('../js/core/registry');
 
 const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
 const LARGEST_PERIODIC_RESULTS = [
