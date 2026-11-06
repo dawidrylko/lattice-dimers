@@ -3,10 +3,10 @@ use std::process::ExitCode;
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
 const MAX_SHORTER_SIDE: u64 = 12;
-const USAGE: &str = "Usage: domicule-diagonal-bigint -r <rowCount> -c <colCount>";
+const USAGE: &str = "Usage: diagonal-pieces-bigint -r <rowCount> -c <colCount>";
 
 /// Lists the moves of a free cell in column c, like the moves in calculateDiagonalPolynomial of
-/// js/solvers/domiculeDiagonalSolver-BigInt.js: the bit its partner covers and the power of x the piece adds, for the
+/// js/solvers/diagonal-pieces-bigint.js: the bit its partner covers and the power of x the piece adds, for the
 /// right, down-left, down and down-right neighbours.
 fn list_moves(cols: usize, c: usize, has_below: bool) -> Vec<(usize, usize)> {
     let has_right = c + 1 < cols;
@@ -41,7 +41,7 @@ fn add(target: &mut Option<Vec<BigInt>>, polynomial: &[BigInt], diagonal: usize)
 }
 
 /// Counts the domicule tilings by the number of diagonal pieces with the transfer of
-/// js/solvers/domiculeDiagonalSolver-BigInt.js: bit i of a state tells whether the cell i places ahead of the current
+/// js/solvers/diagonal-pieces-bigint.js: bit i of a state tells whether the cell i places ahead of the current
 /// one is already covered, and a state holds a polynomial whose coefficient of x^k counts the partial tilings with k
 /// diagonal pieces.
 fn calculate_diagonal_polynomial(row_count: usize, col_count: usize) -> Vec<BigInt> {
@@ -94,7 +94,7 @@ fn main() -> ExitCode {
 
     if row_count.min(col_count) > MAX_SHORTER_SIDE {
         eprintln!(
-            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}; use domiculeDiagonalSolver-Modular.js for larger boards."
+            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}; use diagonal-pieces-modular.js for larger boards."
         );
         return ExitCode::FAILURE;
     }

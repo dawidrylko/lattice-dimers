@@ -8,19 +8,19 @@ The triangular lattice [1] is the square lattice with one diagonal in every cell
 
 ## The Modular solver
 
-[`periodicTilingSolver-Modular.js`](../../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell with a state of the next $w + 2$ cells. A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`periodic-tiling-modular.rs`](../../rust/solvers/src/bin/periodic-tiling-modular.rs), and in Python, [`periodic_tiling_modular.py`](../../python/lattice_dimers/solvers/periodic_tiling_modular.py).
+[`all-lattices-cylinder-torus-modular.js`](../../js/solvers/all-lattices-cylinder-torus-modular.js) goes cell by cell with a state of the next $w + 2$ cells. A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`all-lattices-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs), and in Python, [`all_lattices_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py).
 
 ## The BigInt solver
 
-[`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix. The same algorithm is in Rust, [`periodic-tiling-bigint.rs`](../../rust/solvers/src/bin/periodic-tiling-bigint.rs), and in Python, [`periodic_tiling_bigint.py`](../../python/lattice_dimers/solvers/periodic_tiling_bigint.py).
+[`all-lattices-cylinder-torus-bigint.js`](../../js/solvers/all-lattices-cylinder-torus-bigint.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix. The same algorithm is in Rust, [`all-lattices-cylinder-torus-bigint.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs), and in Python, [`all_lattices_cylinder_torus_bigint.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py).
 
 ## The counts
 
 For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate piece. Boards up to $8 \times 8$ go through both solvers, $10 \times 10$ and $12 \times 12$ through the modular one, and every count that `spec/cases/` stores is compared with it. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for triangular tori.
 
 ```js run
-const reference = require('./js/solvers/periodicTilingSolver-BigInt.js');
-const modular = require('./js/solvers/periodicTilingSolver-Modular.js');
+const reference = require('./js/solvers/all-lattices-cylinder-torus-bigint.js');
+const modular = require('./js/solvers/all-lattices-cylinder-torus-modular.js');
 const { testCasesPeriodic, testCasesPeriodicModular } = require('./js/core/cases');
 const stored = side =>
   [...testCasesPeriodic, ...testCasesPeriodicModular].find(
@@ -50,7 +50,7 @@ table(['n', 'board', 'count', 'digits', 'solver', 'status'], rows);
 
 ## Verification
 
-The two periodic solvers agree with each other up to $8 \times 8$, and the modular solver checks every result against an extra prime. `node harness/testRunner.js` runs the triangular tori of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers and those of `spec/cases/periodicTilingTests-Modular.json` through the modular one.
+The two cylinder and torus solvers agree with each other up to $8 \times 8$, and the modular solver checks every result against an extra prime. `node harness/testRunner.js` runs the triangular tori of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers and those of `spec/cases/periodicTilingTests-Modular.json` through the modular one.
 
 ## References
 

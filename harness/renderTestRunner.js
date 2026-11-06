@@ -21,7 +21,7 @@ const {
   combineRanks,
 } = require('../js/renderer');
 const { PERIODIC_LATTICES, countPeriodicDiagonals } = require('../js/renderer/periodic');
-const periodicReference = require('../js/solvers/periodicTilingSolver-BigInt.js');
+const periodicReference = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
 const crypto = require('crypto');
 const { createRandom } = require('../js/renderer/cftp');
 const fs = require('fs');

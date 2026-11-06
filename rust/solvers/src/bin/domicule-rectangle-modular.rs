@@ -5,10 +5,10 @@ use std::thread;
 use lattice_dimers_core::{BigInt, Timer, calculate_log2_bound, combine_checked_residues, list_primes, parse_args, run_workers};
 
 const MAX_SHORTER_SIDE: u64 = 30;
-const USAGE: &str = "Usage: domicule-tiling-modular -r <rowCount> -c <colCount> [-j <jobs>]";
+const USAGE: &str = "Usage: domicule-rectangle-modular -r <rowCount> -c <colCount> [-j <jobs>]";
 
 /// Lists the bits a free cell in column c can cover with its partner, like the offsets in countModulo of
-/// js/solvers/domiculeTilingSolver-Modular.js: right, down-left, down and down-right.
+/// js/solvers/domicule-rectangle-modular.js: right, down-left, down and down-right.
 fn list_offsets(cols: usize, c: usize, has_below: bool) -> Vec<usize> {
     let has_right = c + 1 < cols;
     let mut offsets = Vec::new();
@@ -38,7 +38,7 @@ fn add(next: &mut [u32], target: usize, count: u32, prime: u32) {
 }
 
 /// Counts the domicule tilings modulo a prime with the broken-profile dynamic programming of countModulo in
-/// js/solvers/domiculeTilingSolver-Modular.js. Bit i of a state tells whether the cell i places ahead of the
+/// js/solvers/domicule-rectangle-modular.js. Bit i of a state tells whether the cell i places ahead of the
 /// current one is already covered; a state has cols + 2 bits, and the counts are kept in tables of u32.
 fn count_modulo(rows: usize, cols: usize, prime: u32) -> u32 {
     let state_count = 1usize << (cols + 2);
@@ -74,7 +74,7 @@ fn count_modulo(rows: usize, cols: usize, prime: u32) -> u32 {
     current[0]
 }
 
-/// Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/domiculeTilingSolver-Modular.js:
+/// Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/domicule-rectangle-modular.js:
 /// enough primes for the Kahn-Lovasz bound, plus one more prime that the result is checked against.
 fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, jobs: usize) -> Result<BigInt, String> {
     let rows = row_count.max(col_count);

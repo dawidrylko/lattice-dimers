@@ -18,7 +18,7 @@ figure(board.svgs, `8 of the ${board.total} domicule tilings of the 4 × 4 board
 
 ## The Modular solver
 
-The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domiculeTilingSolver-Modular.js`](../../js/solvers/domiculeTilingSolver-Modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. Its Rust and Python implementations, [`domicule-tiling-modular.rs`](../../rust/solvers/src/bin/domicule-tiling-modular.rs) and [`domicule_tiling_modular.py`](../../python/lattice_dimers/solvers/domicule_tiling_modular.py), do the same. It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [1], bounds the number of perfect matchings of a graph with degrees $d(v)$:
+The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domicule-rectangle-modular.js`](../../js/solvers/domicule-rectangle-modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. Its Rust and Python implementations, [`domicule-rectangle-modular.rs`](../../rust/solvers/src/bin/domicule-rectangle-modular.rs) and [`domicule_rectangle_modular.py`](../../python/lattice_dimers/solvers/domicule_rectangle_modular.py), do the same. It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [1], bounds the number of perfect matchings of a graph with degrees $d(v)$:
 
 ```math
 \#\text{perfect matchings} \le \prod_{v} \bigl(d(v)!\bigr)^{1/(2d(v))}
@@ -31,7 +31,7 @@ Every prime contributes at least 30 bits, so $\lceil (\log_2 B + 1)/30 \rceil$ p
 The bound gives $\log_2$ of the count from above. Each prime below $2^{31}$ adds at least 30 bits, and one more prime checks the result.
 
 ```js run
-const { calculateLog2Bound } = require('./js/solvers/domiculeTilingSolver-Modular.js');
+const { calculateLog2Bound } = require('./js/solvers/domicule-rectangle-modular.js');
 
 table(
   ['board', 'log2 of the bound', 'log2 of a(n)', 'primes for the CRT', 'check primes'],
@@ -50,7 +50,7 @@ table(
 The $8 \times 8$ board counted modulo the two largest primes below $2^{31}$, combined, and checked against a third.
 
 ```js run
-const { listPrimes, countModulo, combineResidues } = require('./js/solvers/domiculeTilingSolver-Modular.js');
+const { listPrimes, countModulo, combineResidues } = require('./js/solvers/domicule-rectangle-modular.js');
 const primes = listPrimes(3);
 const residues = primes.map(p => countModulo(8, 8, p));
 const combined = combineResidues(residues.slice(0, 2), primes.slice(0, 2));
@@ -68,7 +68,7 @@ if (combined !== exact || combined % BigInt(primes[2]) !== BigInt(residues[2])) 
 
 ## The BigInt solver
 
-A domicule tiling is counted with a cell-by-cell scan, the transfer by cells. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the one of the [domino scan](../dominoes/01-rectangles.md#numbering). [`domiculeTilingSolver-BigInt.js`](../../js/solvers/domiculeTilingSolver-BigInt.js) keeps the counts as `BigInt`, and so do its Rust and Python implementations, [`domicule-tiling-bigint.rs`](../../rust/solvers/src/bin/domicule-tiling-bigint.rs) and [`domicule_tiling_bigint.py`](../../python/lattice_dimers/solvers/domicule_tiling_bigint.py). In every language this solver is the reference of the modular one. The same scan is in [`oeis/A239264/A239264.gp`](../../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../../oeis/A239273/A239273.gp), where `a(n)` is A239273.
+A domicule tiling is counted with a cell-by-cell scan, the transfer by cells. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. The table is four times wider than the one of the [domino scan](../dominoes/01-rectangles.md#numbering). [`domicule-rectangle-bigint.js`](../../js/solvers/domicule-rectangle-bigint.js) keeps the counts as `BigInt`, and so do its Rust and Python implementations, [`domicule-rectangle-bigint.rs`](../../rust/solvers/src/bin/domicule-rectangle-bigint.rs) and [`domicule_rectangle_bigint.py`](../../python/lattice_dimers/solvers/domicule_rectangle_bigint.py). In every language this solver is the reference of the modular one. The same scan is in [`oeis/A239264/A239264.gp`](../../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../../oeis/A239273/A239273.gp), where `a(n)` is A239273.
 
 ### The state of the transfer
 
@@ -126,7 +126,7 @@ if (counts.size !== 280 || chiSquared > 357.8) {
 In this table the `BigInt` solver counts the boards up to $16 \times 16$, the modular one $18 \times 18$ and $20 \times 20$. The data section of the OEIS entry lists the terms up to $a(9)$; the [OEIS A239273 b-file](https://oeis.org/A239273/b239273.txt) continues to $a(12)$ ($24 \times 24$), beyond the solvers here, and $a(10)$ is checked against it.
 
 ```js run
-const reference = require('./js/solvers/domiculeTilingSolver-BigInt.js');
+const reference = require('./js/solvers/domicule-rectangle-bigint.js');
 const known = require('./js/core/cases').testCasesDomicule;
 const bFile = { 10: '974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427' };
 
@@ -155,7 +155,7 @@ table(['n', 'board', 'a(n)', 'digits', 'solver', 'status'], rows);
 `T(h, w)` counts the domicule tilings of an $h \times w$ board. The table is symmetric, and its diagonal of even sides is A239273.
 
 ```js run
-const { calculateTotalTilingCombinations } = require('./js/solvers/domiculeTilingSolver-BigInt.js');
+const { calculateTotalTilingCombinations } = require('./js/solvers/domicule-rectangle-bigint.js');
 const sides = [1, 2, 3, 4, 5, 6, 7, 8];
 
 table(

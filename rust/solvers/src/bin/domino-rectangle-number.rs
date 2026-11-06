@@ -5,10 +5,10 @@ use lattice_dimers_core::{Timer, parse_args};
 const MAX_SHORTER_SIDE: u64 = 30;
 const MAX_EXACT_COUNT: f64 = 9_007_199_254_740_991.0;
 const FIRST_EXPONENT_COUNT: f64 = 1e21;
-const USAGE: &str = "Usage: domino-tiling-number -r <rowCount> -c <colCount>";
+const USAGE: &str = "Usage: domino-rectangle-number -r <rowCount> -c <colCount>";
 
 /// Fills the free cells of one row from col_index on, like searchTileArrangements of
-/// js/solvers/dominoTilingSolver.js. The counts are doubles added in the order of the JavaScript solver, so a
+/// js/solvers/domino-rectangle-number.js. The counts are doubles added in the order of the JavaScript solver, so a
 /// count above 2^53 rounds to the same value.
 fn search_tile_arrangements(
     current_row: &[f64],
@@ -90,7 +90,7 @@ fn main() -> ExitCode {
     println!("{}", format_count(result));
 
     if result > MAX_EXACT_COUNT {
-        eprintln!("Warning: the result is above 2^53, so it is not exact. Use domino-tiling-bigint for this board.");
+        eprintln!("Warning: the result is above 2^53, so it is not exact. Use domino-rectangle-bigint for this board.");
     }
 
     ExitCode::SUCCESS

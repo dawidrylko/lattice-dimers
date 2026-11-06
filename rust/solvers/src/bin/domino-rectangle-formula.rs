@@ -2,7 +2,7 @@ use std::process::ExitCode;
 
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
-const USAGE: &str = "Usage: domino-tiling-formula -r <rowCount> -c <colCount>";
+const USAGE: &str = "Usage: domino-rectangle-formula -r <rowCount> -c <colCount>";
 const SQUARE_BOARDS_ONLY: &str =
     "The formula covers 2n x 2n boards only (OEIS A004003); rowCount and colCount must be equal and even.";
 
@@ -27,7 +27,7 @@ fn subtract_polynomials(p: &[BigInt], q: &[BigInt]) -> Vec<BigInt> {
 }
 
 /// Builds the monic polynomial whose roots are 4*cos(j*Pi/(2n+1))^2 for j = 1..n, like createRootPolynomial of
-/// js/solvers/dominoTilingSolver-Formula.js: with z = x - 2 these are the roots of Q_n(z), where Q_0 = 1,
+/// js/solvers/domino-rectangle-formula.js: with z = x - 2 these are the roots of Q_n(z), where Q_0 = 1,
 /// Q_1 = z + 1 and Q_k = z * Q_{k-1} - Q_{k-2}.
 fn create_root_polynomial(n: usize) -> Vec<BigInt> {
     let z = [BigInt::from_i64(-2), BigInt::from_i64(1)];

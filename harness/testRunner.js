@@ -4,8 +4,8 @@ const os = require('os');
 const path = require('path');
 const { exec, parseArgs, verifyInt, verifyBigInt } = require('../js/core');
 const { listPrimes, combineCheckedResidues } = require('../js/core/modular');
-const periodicModular = require('../js/solvers/periodicTilingSolver-Modular.js');
-const { capThreads } = require('../js/solvers/domiculeDiagonalSolver-Modular.js');
+const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
+const { capThreads } = require('../js/solvers/diagonal-pieces-modular.js');
 const { readBenchmarkRuns } = require('../site/benchmarkRuns.js');
 const { readRepository, listPortErrors } = require('./portCheck.js');
 const { registry, listImplementations, algorithmOf } = require('../js/core/registry.js');
@@ -47,29 +47,29 @@ const rejectionTestCases = [
   { args: ['harness/testRunner.js', '-m', 'abc'], message: 'Usage' },
   { args: ['harness/testRunner.js', '-m'], message: 'Usage' },
   {
-    args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
+    args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/domicule-rectangle-modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
   },
   {
-    args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/periodicTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
+    args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/all-lattices-cylinder-torus-modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
   },
   {
-    args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/domiculeDiagonalSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
+    args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/diagonal-pieces-modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
   },
   {
-    args: ['-e', "require('./js/solvers/periodicTilingSolver-BigInt.js').calculateTotalTilingCombinations({ rowCount: 1, colCount: 4, torus: true })"],
+    args: ['-e', "require('./js/solvers/all-lattices-cylinder-torus-bigint.js').calculateTotalTilingCombinations({ rowCount: 1, colCount: 4, torus: true })"],
     message: 'a torus needs at least 2 rows',
   },
   {
-    args: ['-e', "require('./js/solvers/periodicTilingSolver-Modular.js').calculateTotalTilingCombinations({ rowCount: 4, colCount: 1 }).catch(error => { console.error(error.message); process.exit(1); })"],
+    args: ['-e', "require('./js/solvers/all-lattices-cylinder-torus-modular.js').calculateTotalTilingCombinations({ rowCount: 4, colCount: 1 }).catch(error => { console.error(error.message); process.exit(1); })"],
     message: 'circumference must be at least 2',
   },
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--only', 'missing.js'], message: 'Usage' },
   { args: ['harness/benchmarkRunner.js', '-n', '1', '-o', '99'], message: 'No test cases' },
-  { args: ['harness/benchmarkRunner.js', '-n', '1', '--domicule', '--only', 'dominoTilingSolver.js'], message: 'Usage' },
-  { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--only', 'domiculeTilingSolver-BigInt.js'], message: 'Usage' },
+  { args: ['harness/benchmarkRunner.js', '-n', '1', '--domicule', '--only', 'domino-rectangle-number.js'], message: 'Usage' },
+  { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--only', 'domicule-rectangle-bigint.js'], message: 'Usage' },
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--diagonal'], message: 'Usage' },
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--lattice', 'hexagonal'], message: 'Usage' },
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--cylinder', '--lattice'], message: 'Usage' },
@@ -78,87 +78,87 @@ const rejectionTestCases = [
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--lattice=square'], message: 'Usage' },
 ];
 const implementationRejectionTestCases = [
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '13'], message: 'at most 12' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '13', '-c', '13', '--torus', '--twisted'], message: 'at most 12' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '1'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '1', '-c', '13', '--torus'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '13', '--lattice', 'hexagonal'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '1', '-c', '4', '--torus'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '2abc', '-c', '4'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '9007199254740992', '-c', '4'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-c', '4'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '25'], message: 'at most 24' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '25', '-c', '25', '--torus'], message: 'at most 24' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '25', '--torus', '--twisted'], message: 'at most 24' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '1'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '1', '-c', '4', '--torus'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '2abc', '-c', '4'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '+4', '-c', '4'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '9007199254740992', '-c', '4'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '9'.repeat(5000), '-c', '4'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-c', '4'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', '0'], message: 'Usage' },
-  { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '4', '-j', 'x'], message: 'Usage' },
-  { algorithm: 'domino-tiling-formula', args: ['-r', '3', '-c', '3'], message: '2n x 2n boards only' },
-  { algorithm: 'domino-tiling-formula', args: ['-r', '4', '-c', '6'], message: '2n x 2n boards only' },
-  { algorithm: 'domino-tiling-formula', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-formula', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-formula', args: ['-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-number', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
-  { algorithm: 'domino-tiling-number', args: ['-r', '40', '-c', '31'], message: 'the rows are indexed with 32-bit integers' },
-  { algorithm: 'domino-tiling-number', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-number', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-number', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-number', args: ['-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-bigint', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
-  { algorithm: 'domino-tiling-bigint', args: ['-r', '40', '-c', '31'], message: 'the rows are indexed with 32-bit integers' },
-  { algorithm: 'domino-tiling-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domino-tiling-bigint', args: ['-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-modular', args: ['-r', '21', '-c', '21'], message: 'at most 20' },
-  { algorithm: 'domicule-diagonal-modular', args: ['-r', '40', '-c', '21'], message: 'because every worker thread keeps half the polynomial of every state in memory' },
-  { algorithm: 'domicule-diagonal-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-modular', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-modular', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-modular', args: ['-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-modular', args: ['-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-modular', args: ['-r', '9007199254740991', '-c', '1'], message: 'Invalid array length' },
-  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '13', '-c', '13'], message: 'at most 12' },
-  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '40', '-c', '13'], message: 'use domiculeDiagonalSolver-Modular.js for larger boards' },
-  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-diagonal-bigint', args: ['-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-bigint', args: ['-r', '30', '-c', '30'], message: 'at most 29' },
-  { algorithm: 'domicule-tiling-bigint', args: ['-r', '40', '-c', '30'], message: 'because a JavaScript array holds fewer than 2^32 states' },
-  { algorithm: 'domicule-tiling-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-bigint', args: ['-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-modular', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
-  { algorithm: 'domicule-tiling-modular', args: ['-r', '40', '-c', '31'], message: 'because the states are indexed with 32-bit integers' },
-  { algorithm: 'domicule-tiling-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-modular', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-modular', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-modular', args: ['-c', '2'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
-  { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '4', '-c', '13'], message: 'at most 12' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '13', '-c', '13', '--torus', '--twisted'], message: 'at most 12' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '4', '-c', '1'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '1', '-c', '13', '--torus'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '4', '-c', '13', '--lattice', 'hexagonal'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '1', '-c', '4', '--torus'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '2abc', '-c', '4'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '9007199254740992', '-c', '4'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-c', '4'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '4', '-c', '25'], message: 'at most 24' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '25', '-c', '25', '--torus'], message: 'at most 24' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '4', '-c', '25', '--torus', '--twisted'], message: 'at most 24' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '4', '-c', '1'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '1', '-c', '4', '--torus'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '2abc', '-c', '4'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '+4', '-c', '4'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '9007199254740992', '-c', '4'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '9'.repeat(5000), '-c', '4'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-c', '4'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '4', '-c', '4', '-j', '0'], message: 'Usage' },
+  { algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '4', '-c', '4', '-j', 'x'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-formula', args: ['-r', '3', '-c', '3'], message: '2n x 2n boards only' },
+  { algorithm: 'domino-rectangle-formula', args: ['-r', '4', '-c', '6'], message: '2n x 2n boards only' },
+  { algorithm: 'domino-rectangle-formula', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-formula', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-formula', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-number', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
+  { algorithm: 'domino-rectangle-number', args: ['-r', '40', '-c', '31'], message: 'the rows are indexed with 32-bit integers' },
+  { algorithm: 'domino-rectangle-number', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-number', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-number', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-number', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-bigint', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
+  { algorithm: 'domino-rectangle-bigint', args: ['-r', '40', '-c', '31'], message: 'the rows are indexed with 32-bit integers' },
+  { algorithm: 'domino-rectangle-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domino-rectangle-bigint', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-modular', args: ['-r', '21', '-c', '21'], message: 'at most 20' },
+  { algorithm: 'diagonal-pieces-modular', args: ['-r', '40', '-c', '21'], message: 'because every worker thread keeps half the polynomial of every state in memory' },
+  { algorithm: 'diagonal-pieces-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-modular', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-modular', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-modular', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-modular', args: ['-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-modular', args: ['-r', '9007199254740991', '-c', '1'], message: 'Invalid array length' },
+  { algorithm: 'diagonal-pieces-bigint', args: ['-r', '13', '-c', '13'], message: 'at most 12' },
+  { algorithm: 'diagonal-pieces-bigint', args: ['-r', '40', '-c', '13'], message: 'use diagonal-pieces-modular.js for larger boards' },
+  { algorithm: 'diagonal-pieces-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'diagonal-pieces-bigint', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-bigint', args: ['-r', '30', '-c', '30'], message: 'at most 29' },
+  { algorithm: 'domicule-rectangle-bigint', args: ['-r', '40', '-c', '30'], message: 'because a JavaScript array holds fewer than 2^32 states' },
+  { algorithm: 'domicule-rectangle-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-bigint', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-modular', args: ['-r', '31', '-c', '31'], message: 'at most 30' },
+  { algorithm: 'domicule-rectangle-modular', args: ['-r', '40', '-c', '31'], message: 'because the states are indexed with 32-bit integers' },
+  { algorithm: 'domicule-rectangle-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-modular', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-modular', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-modular', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-modular', args: ['-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
+  { algorithm: 'domicule-rectangle-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
 ];
 
-const parityTestCases = ['domicule-tiling-modular', 'domicule-tiling-bigint', 'domicule-diagonal-modular', 'domicule-diagonal-bigint'].map(algorithm => ({
+const parityTestCases = ['domicule-rectangle-modular', 'domicule-rectangle-bigint', 'diagonal-pieces-modular', 'diagonal-pieces-bigint'].map(algorithm => ({
   algorithm,
   boards: [[0, 5], [5, 0], [1, 1], [1, 2], [2, 1], [10, 1], [1, 40], [3, 3], [2, 31]],
 }));
 
 const MEMORY_TEST_BYTES = 256 * 2 ** 20;
 const MEMORY_TEST_TIMEOUT = 120000;
-const memoryTestCases = [{ algorithm: 'periodic-tiling-modular', args: ['-r', '2', '-c', '18', '-j', '1'], expectedResult: '524289' }];
+const memoryTestCases = [{ algorithm: 'all-lattices-cylinder-torus-modular', args: ['-r', '2', '-c', '18', '-j', '1'], expectedResult: '524289' }];
 
 function executeMemoryTests() {
   const measure = [
@@ -263,7 +263,7 @@ function executeCheckPrimeTests() {
 }
 
 function capPythonThreads(...args) {
-  const python = listImplementations('domicule-diagonal-modular').find(({ language }) => language === 'py');
+  const python = listImplementations('diagonal-pieces-modular').find(({ language }) => language === 'py');
   const launcher = exec.launch(python.file);
   const script = `import importlib, sys; print(importlib.import_module(sys.argv[1]).cap_threads(${args.join(', ')}))`;
 
@@ -351,39 +351,39 @@ function executeExecutorTests() {
   const attempt = fileName => guard(() => exec(fileName, board));
   const absoluteTarget = path.join(os.tmpdir(), 'cargo-target');
   const staleTarget = fs.mkdtempSync(path.join(os.tmpdir(), 'stale-target-'));
-  const staleBinary = path.join(staleTarget, 'release', 'domino-tiling-number');
-  const javaScript = path.join(ROOT_DIRECTORY, 'js', 'solvers', 'dominoTilingSolver.js');
-  const python = 'python/lattice_dimers/solvers/domino_tiling_number.py';
-  const rust = 'rust/solvers/src/bin/domino-tiling-number.rs';
+  const staleBinary = path.join(staleTarget, 'release', 'domino-rectangle-number');
+  const javaScript = path.join(ROOT_DIRECTORY, 'js', 'solvers', 'domino-rectangle-number.js');
+  const python = 'python/lattice_dimers/solvers/domino_rectangle_number.py';
+  const rust = 'rust/solvers/src/bin/domino-rectangle-number.rs';
   const cases = [
-    ['a bare name in js/solvers', 'dominoTilingSolver.js', {}, `"${process.execPath}" "${javaScript}" -r 2 -c 2`],
-    ['a root-relative JavaScript file', 'js/solvers/dominoTilingSolver.js', {}, `"${process.execPath}" "${javaScript}" -r 2 -c 2`],
-    ['python3', python, { PYTHON: undefined }, '"python3" "-I" "-m" "lattice_dimers.solvers.domino_tiling_number" -r 2 -c 2'],
-    ['$PYTHON', python, { PYTHON: '/opt/python' }, '"/opt/python" "-I" "-m" "lattice_dimers.solvers.domino_tiling_number" -r 2 -c 2'],
+    ['a bare name in js/solvers', 'domino-rectangle-number.js', {}, `"${process.execPath}" "${javaScript}" -r 2 -c 2`],
+    ['a root-relative JavaScript file', 'js/solvers/domino-rectangle-number.js', {}, `"${process.execPath}" "${javaScript}" -r 2 -c 2`],
+    ['python3', python, { PYTHON: undefined }, '"python3" "-I" "-m" "lattice_dimers.solvers.domino_rectangle_number" -r 2 -c 2'],
+    ['$PYTHON', python, { PYTHON: '/opt/python' }, '"/opt/python" "-I" "-m" "lattice_dimers.solvers.domino_rectangle_number" -r 2 -c 2'],
     [
       'the Rust binary in target',
       rust,
       { CARGO_TARGET_DIR: undefined },
-      `"${path.join(ROOT_DIRECTORY, 'target', 'release', 'domino-tiling-number')}" -r 2 -c 2`,
+      `"${path.join(ROOT_DIRECTORY, 'target', 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
     ],
     [
       'a relative $CARGO_TARGET_DIR',
       rust,
       { CARGO_TARGET_DIR: 'build' },
-      `"${path.join(ROOT_DIRECTORY, 'build', 'release', 'domino-tiling-number')}" -r 2 -c 2`,
+      `"${path.join(ROOT_DIRECTORY, 'build', 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
     ],
     [
       'an absolute $CARGO_TARGET_DIR',
       rust,
       { CARGO_TARGET_DIR: absoluteTarget },
-      `"${path.join(absoluteTarget, 'release', 'domino-tiling-number')}" -r 2 -c 2`,
+      `"${path.join(absoluteTarget, 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
     ],
-    ['an unknown language', 'dominoTilingSolver.ts', {}, 'an error: dominoTilingSolver.ts is not a .rs, .py or .js implementation.'],
+    ['an unknown language', 'domino-rectangle-number.ts', {}, 'an error: domino-rectangle-number.ts is not a .rs, .py or .js implementation.'],
     [
       'a Rust binary that was not built',
       rust,
       { CARGO_TARGET_DIR: absoluteTarget },
-      `an error: Execution failed: ${path.join(absoluteTarget, 'release', 'domino-tiling-number')} does not exist; build it with cargo build --release.`,
+      `an error: Execution failed: ${path.join(absoluteTarget, 'release', 'domino-rectangle-number')} does not exist; build it with cargo build --release.`,
       true,
     ],
     [
@@ -669,7 +669,7 @@ function executeResearchPathTest() {
 function runBenchmark(benchmarkRoot, extraArgs) {
   return spawnSync(
     process.execPath,
-    ['harness/benchmarkRunner.js', '-n', '1', '-m', '1', '--only', 'dominoTilingSolver-Formula.js', ...extraArgs],
+    ['harness/benchmarkRunner.js', '-n', '1', '-m', '1', '--only', 'domino-rectangle-formula.js', ...extraArgs],
     {
       cwd: ROOT_DIRECTORY,
       encoding: 'utf-8',
@@ -693,7 +693,7 @@ function executeBenchmarkGuardTest() {
     const refused = runBenchmark(benchmarkRoot, []);
     const kept = JSON.parse(fs.readFileSync(path.join(directory, 'environment.json'), 'utf-8'));
     const forced = runBenchmark(benchmarkRoot, ['--force']);
-    const written = fs.existsSync(path.join(directory, 'dominoTilingSolver-Formula.js_0x0.txt'));
+    const written = fs.existsSync(path.join(directory, 'domino-rectangle-formula.js_0x0.txt'));
 
     if (refused.status === 0 || !refused.stderr.includes('--force') || kept.cpu !== foreign.cpu) {
       console.error(`Failed! The run was not refused: ${refused.stderr.trim()}`);
@@ -717,44 +717,44 @@ function executeBenchmarkGuardTest() {
 
 function executeBenchmarkSurfaceTests() {
   const cases = [
-    { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: 'periodicTilingSolver-Modular.js_2x2-king-torus.txt' },
-    ...listImplementations('periodic-tiling-bigint').flatMap(({ file }) => [
-      { args: ['--cylinder', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-king-cylinder.txt` },
-      { args: ['--cylinder', '--lattice', 'square', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-square-cylinder.txt` },
-      { args: ['--cylinder', '--lattice', 'triangular', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-triangular-cylinder.txt` },
-      { args: ['--torus', '--lattice', 'square', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-square-torus.txt` },
+    { args: ['--torus', '--only', 'all-lattices-cylinder-torus-modular.js'], file: 'all-lattices-cylinder-torus-modular.js_2x2-king-torus.txt' },
+    ...listImplementations('all-lattices-cylinder-torus-bigint').flatMap(({ file }) => [
+      { args: ['--cylinder', '--only', 'all-lattices-cylinder-torus-bigint.js'], file: `${path.basename(file)}_2x2-king-cylinder.txt` },
+      { args: ['--cylinder', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-bigint.js'], file: `${path.basename(file)}_2x2-square-cylinder.txt` },
+      { args: ['--cylinder', '--lattice', 'triangular', '--only', 'all-lattices-cylinder-torus-bigint.js'], file: `${path.basename(file)}_2x2-triangular-cylinder.txt` },
+      { args: ['--torus', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-bigint.js'], file: `${path.basename(file)}_2x2-square-torus.txt` },
     ]),
-    ...listImplementations('periodic-tiling-modular').flatMap(({ file }) => [
-      { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-king-torus.txt` },
-      { args: ['--torus', '--lattice', 'square', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-square-torus.txt` },
-      { args: ['--cylinder', '--lattice', 'square', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-square-cylinder.txt` },
+    ...listImplementations('all-lattices-cylinder-torus-modular').flatMap(({ file }) => [
+      { args: ['--torus', '--only', 'all-lattices-cylinder-torus-modular.js'], file: `${path.basename(file)}_2x2-king-torus.txt` },
+      { args: ['--torus', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-modular.js'], file: `${path.basename(file)}_2x2-square-torus.txt` },
+      { args: ['--cylinder', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-modular.js'], file: `${path.basename(file)}_2x2-square-cylinder.txt` },
     ]),
-    ...listImplementations('domino-tiling-formula').map(({ file }) => ({
-      args: ['--only', 'dominoTilingSolver-Formula.js'],
+    ...listImplementations('domino-rectangle-formula').map(({ file }) => ({
+      args: ['--only', 'domino-rectangle-formula.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
-    ...listImplementations('domino-tiling-number').map(({ file }) => ({
-      args: ['--only', 'dominoTilingSolver.js'],
+    ...listImplementations('domino-rectangle-number').map(({ file }) => ({
+      args: ['--only', 'domino-rectangle-number.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
-    ...listImplementations('domino-tiling-bigint').map(({ file }) => ({
-      args: ['--only', 'dominoTilingSolver-BigInt.js'],
+    ...listImplementations('domino-rectangle-bigint').map(({ file }) => ({
+      args: ['--only', 'domino-rectangle-bigint.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
-    ...listImplementations('domicule-diagonal-bigint').map(({ file }) => ({
-      args: ['--diagonal', '--only', 'domiculeDiagonalSolver-BigInt.js'],
+    ...listImplementations('diagonal-pieces-bigint').map(({ file }) => ({
+      args: ['--diagonal', '--only', 'diagonal-pieces-bigint.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
-    ...listImplementations('domicule-tiling-bigint').map(({ file }) => ({
-      args: ['--domicule', '--only', 'domiculeTilingSolver-BigInt.js'],
+    ...listImplementations('domicule-rectangle-bigint').map(({ file }) => ({
+      args: ['--domicule', '--only', 'domicule-rectangle-bigint.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
-    ...listImplementations('domicule-diagonal-modular').map(({ file }) => ({
-      args: ['--diagonal', '--only', 'domiculeDiagonalSolver-Modular.js'],
+    ...listImplementations('diagonal-pieces-modular').map(({ file }) => ({
+      args: ['--diagonal', '--only', 'diagonal-pieces-modular.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
-    ...listImplementations('domicule-tiling-modular').map(({ file }) => ({
-      args: ['--domicule', '--only', 'domiculeTilingSolver-Modular.js'],
+    ...listImplementations('domicule-rectangle-modular').map(({ file }) => ({
+      args: ['--domicule', '--only', 'domicule-rectangle-modular.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
   ];
@@ -796,7 +796,7 @@ function executeBenchmarkTimeTest() {
   try {
     const { status, stderr } = runBenchmark(benchmarkRoot, []);
     const [month] = fs.readdirSync(benchmarkRoot);
-    const content = fs.readFileSync(path.join(benchmarkRoot, month, 'dominoTilingSolver-Formula.js_0x0.txt'), 'utf-8');
+    const content = fs.readFileSync(path.join(benchmarkRoot, month, 'domino-rectangle-formula.js_0x0.txt'), 'utf-8');
     const environment = JSON.parse(fs.readFileSync(path.join(benchmarkRoot, month, 'environment.json'), 'utf-8'));
     const count = Number(content.match(/^Average Execution Time: ([\d.]+) ms$/m)?.[1]);
     const whole = Number(content.match(/^Average Process Time: ([\d.]+) ms$/m)?.[1]);
@@ -823,7 +823,7 @@ function executeBenchmarkCountTest() {
   try {
     const { status, stderr } = spawnSync(
       process.execPath,
-      ['harness/benchmarkRunner.js', '-n', '1', '-m', '1', '--torus', '--only', 'periodicTilingSolver-Modular.js'],
+      ['harness/benchmarkRunner.js', '-n', '1', '-m', '1', '--torus', '--only', 'all-lattices-cylinder-torus-modular.js'],
       {
         cwd: ROOT_DIRECTORY,
         encoding: 'utf-8',
@@ -854,7 +854,7 @@ function executeBenchmarkToolchainTest() {
   try {
     const { status, stderr } = spawnSync(
       process.execPath,
-      ['harness/benchmarkRunner.js', '-n', '1', '-m', '1', '--torus', '--only', 'periodicTilingSolver-Modular.js'],
+      ['harness/benchmarkRunner.js', '-n', '1', '-m', '1', '--torus', '--only', 'all-lattices-cylinder-torus-modular.js'],
       {
         cwd: ROOT_DIRECTORY,
         encoding: 'utf-8',
@@ -878,7 +878,7 @@ function executeBenchmarkToolchainTest() {
 }
 
 function executeTimeSpanTests() {
-  const runs = listImplementations('periodic-tiling-modular').map(({ file }) => file);
+  const runs = listImplementations('all-lattices-cylinder-torus-modular').map(({ file }) => file);
 
   return runs.every((file, index) => {
     process.stdout.write(`Executing time span test ${index + 1} of ${runs.length} for ${file} on the 10 × 10 torus... `);
@@ -937,7 +937,7 @@ function executePrecisionWarningTests() {
     { rowCount: 2, colCount: 110, expected: '7.049252476708914e+22', warns: true },
     { rowCount: 2, colCount: 1500, expected: 'Infinity', warns: true },
   ];
-  const runs = cases.flatMap(testCase => listImplementations('domino-tiling-number').map(({ file }) => ({ ...testCase, file })));
+  const runs = cases.flatMap(testCase => listImplementations('domino-rectangle-number').map(({ file }) => ({ ...testCase, file })));
 
   return runs.every(({ file, rowCount, colCount, expected, warns }, index) => {
     process.stdout.write(`Executing precision warning test ${index + 1} of ${runs.length} for ${file} on ${rowCount}x${colCount}... `);
@@ -996,16 +996,16 @@ function executeBenchmarkRunTest() {
   try {
     const complete = fs.readdirSync(path.join(ROOT_DIRECTORY, 'benchmarks', 'results', readBenchmarkRuns().latest));
     touch('2000-01', complete);
-    touch('2000-02', ['environment.json', 'dominoTilingSolver-Formula.js_0x0.txt']);
-    touch('2000-03', complete.filter(file => !['periodic-tiling-modular.rs_14x14-square-torus.txt', 'domicule_tiling_modular.py_20x20.txt'].includes(file)));
-    touch('2000-04', complete.filter(file => file !== 'domino_tiling_formula.py_20x20.txt'));
-    touch('2000-05', complete.filter(file => file !== 'domino-tiling-bigint.rs_20x20.txt'));
-    touch('2000-06', complete.filter(file => file !== 'domicule_tiling_bigint.py_20x20.txt'));
-    touch('2000-07', complete.filter(file => file !== 'domino-tiling-number.rs_10x10.txt'));
-    touch('2000-08', complete.filter(file => file !== 'domicule_diagonal_bigint.py_12x12.txt'));
-    touch('2000-09', complete.filter(file => file !== 'domicule-diagonal-modular.rs_20x20.txt'));
-    touch('2000-10', complete.filter(file => file !== 'periodic-tiling-bigint.rs_10x10-king-torus.txt'));
-    touch('2000-11', complete.filter(file => file !== 'periodic_tiling_bigint.py_12x12-square-torus.txt'));
+    touch('2000-02', ['environment.json', 'domino-rectangle-formula.js_0x0.txt']);
+    touch('2000-03', complete.filter(file => !['all-lattices-cylinder-torus-modular.rs_14x14-square-torus.txt', 'domicule_rectangle_modular.py_20x20.txt'].includes(file)));
+    touch('2000-04', complete.filter(file => file !== 'domino_rectangle_formula.py_20x20.txt'));
+    touch('2000-05', complete.filter(file => file !== 'domino-rectangle-bigint.rs_20x20.txt'));
+    touch('2000-06', complete.filter(file => file !== 'domicule_rectangle_bigint.py_20x20.txt'));
+    touch('2000-07', complete.filter(file => file !== 'domino-rectangle-number.rs_10x10.txt'));
+    touch('2000-08', complete.filter(file => file !== 'diagonal_pieces_bigint.py_12x12.txt'));
+    touch('2000-09', complete.filter(file => file !== 'diagonal-pieces-modular.rs_20x20.txt'));
+    touch('2000-10', complete.filter(file => file !== 'all-lattices-cylinder-torus-bigint.rs_10x10-king-torus.txt'));
+    touch('2000-11', complete.filter(file => file !== 'all_lattices_cylinder_torus_bigint.py_12x12-square-torus.txt'));
     const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {
@@ -1149,9 +1149,9 @@ function executeUsageTests() {
 async function executeModuleTests() {
   const fourByFour = testCases => testCases.find(({ rowCount, colCount }) => rowCount === 4 && colCount === 4);
   const modules = [
-    ['domiculeTilingSolver-Modular.js', 'calculateTotalTilingCombinations', fourByFour(testCasesDomicule)],
-    ['periodicTilingSolver-Modular.js', 'calculateTotalTilingCombinations', fourByFour(testCasesPeriodic)],
-    ['domiculeDiagonalSolver-Modular.js', 'calculateDiagonalPolynomial', fourByFour(testCasesDiagonal)],
+    ['domicule-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour(testCasesDomicule)],
+    ['all-lattices-cylinder-torus-modular.js', 'calculateTotalTilingCombinations', fourByFour(testCasesPeriodic)],
+    ['diagonal-pieces-modular.js', 'calculateDiagonalPolynomial', fourByFour(testCasesDiagonal)],
   ];
   let passed = true;
 
@@ -1174,22 +1174,22 @@ async function executeModuleTests() {
   return (
     passed &&
     [
-      ['periodic-tiling-modular', fourByFour(testCasesPeriodic)],
-      ['domicule-tiling-modular', fourByFour(testCasesDomicule)],
+      ['all-lattices-cylinder-torus-modular', fourByFour(testCasesPeriodic)],
+      ['domicule-rectangle-modular', fourByFour(testCasesDomicule)],
     ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
-    executeUnknownProcessorCountTest('domicule-diagonal-modular', fourByFour(testCasesDiagonal), 'calculate_diagonal_polynomial') &&
-    executeScratchTest('domicule-tiling-modular', testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
-    executeScratchTest('domicule-diagonal-modular', testCasesDiagonal.find(({ rowCount, colCount }) => rowCount === 5 && colCount === 6), 'calculate_diagonal_polynomial') &&
-    executeLongCountTest('domino-tiling-formula', ['-r', '80', '-c', '80']) &&
-    executeLongCountTest('domino-tiling-bigint', ['-r', '2', '-c', '6000']) &&
-    executeLongCountTest('domicule-tiling-bigint', ['-r', '2', '-c', '6000']) &&
+    executeUnknownProcessorCountTest('diagonal-pieces-modular', fourByFour(testCasesDiagonal), 'calculate_diagonal_polynomial') &&
+    executeScratchTest('domicule-rectangle-modular', testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
+    executeScratchTest('diagonal-pieces-modular', testCasesDiagonal.find(({ rowCount, colCount }) => rowCount === 5 && colCount === 6), 'calculate_diagonal_polynomial') &&
+    executeLongCountTest('domino-rectangle-formula', ['-r', '80', '-c', '80']) &&
+    executeLongCountTest('domino-rectangle-bigint', ['-r', '2', '-c', '6000']) &&
+    executeLongCountTest('domicule-rectangle-bigint', ['-r', '2', '-c', '6000']) &&
     executeLongCoefficientTest() &&
-    executeLongCountTest('periodic-tiling-bigint', ['-r', '1200', '-c', '2'])
+    executeLongCountTest('all-lattices-cylinder-torus-bigint', ['-r', '1200', '-c', '2'])
   );
 }
 
 function executeLongCoefficientTest() {
-  const python = listImplementations('domicule-diagonal-modular').find(({ language }) => language === 'py');
+  const python = listImplementations('diagonal-pieces-modular').find(({ language }) => language === 'py');
   const launcher = exec.launch(python.file);
   const long = `1${'0'.repeat(700)}`;
   const script = [
@@ -1435,7 +1435,7 @@ async function __main__() {
     const testCasesToRunBigInt = maxSize ? testCasesBigInt.slice(0, maxSize) : testCasesBigInt;
 
     const allIntTestsPassed = executeTests(filesInt, testCasesToRunInt, verifyInt);
-    const isFormula = fileName => algorithmOf(fileName) === 'domino-tiling-formula';
+    const isFormula = fileName => algorithmOf(fileName) === 'domino-rectangle-formula';
     const allBigIntTestsPassed =
       executeTests(filesBigInt.filter(isFormula), testCasesToRunBigInt, verifyBigInt, testCasesBigInt) &&
       executeTests(
@@ -1446,7 +1446,7 @@ async function __main__() {
       );
     const allRectangleTestsPassed = executeTests(filesRectangles, testCasesRectangles, verifyBigInt);
     const testCasesToRunDomicule = maxSize ? testCasesDomicule.slice(0, maxSize) : testCasesDomicule;
-    const isBigIntSolver = fileName => algorithmOf(fileName) === 'domicule-tiling-bigint';
+    const isBigIntSolver = fileName => algorithmOf(fileName) === 'domicule-rectangle-bigint';
     const allDomiculeTestsPassed =
       executeTests(filesDomicule.filter(fileName => !isBigIntSolver(fileName)), testCasesToRunDomicule, verifyBigInt, testCasesDomicule) &&
       executeTests(
@@ -1457,7 +1457,7 @@ async function __main__() {
       );
     const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, verifyBigInt);
     const testCasesToRunPeriodic = maxSize ? testCasesPeriodic.slice(0, maxSize) : testCasesPeriodic;
-    const isPeriodicBigInt = fileName => algorithmOf(fileName) === 'periodic-tiling-bigint';
+    const isPeriodicBigInt = fileName => algorithmOf(fileName) === 'all-lattices-cylinder-torus-bigint';
     const allPeriodicTestsPassed =
       executeTests(filesPeriodic.filter(fileName => !isPeriodicBigInt(fileName)), testCasesToRunPeriodic, verifyBigInt, testCasesPeriodic) &&
       executeTests(

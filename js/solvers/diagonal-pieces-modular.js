@@ -8,7 +8,7 @@ const UNREACHED = 2;
 
 /**
  * Counts the domicule tilings by the number of diagonal pieces modulo a prime, with the
- * transfer of domiculeDiagonalSolver-BigInt.js. A domino covers a black and a white cell of
+ * transfer of diagonal-pieces-bigint.js. A domino covers a black and a white cell of
  * the chessboard and a diagonal piece two cells of one colour, so the covered cells of a state
  * fix the difference between the diagonal pieces on black and on white cells, and with it the
  * parity of their number. Every state therefore keeps only the coefficients of x^k with k of
@@ -119,7 +119,7 @@ function capThreads(jobs, cols, degree, memory = os.totalmem()) {
 
 /**
  * Counts the tilings by the number of diagonal pieces exactly: every coefficient is at most
- * the number of tilings, so the Kahn-Lovasz bound of domiculeTilingSolver-Modular.js sets the
+ * the number of tilings, so the Kahn-Lovasz bound of domicule-rectangle-modular.js sets the
  * number of primes, and one more prime checks every coefficient. The number of worker threads
  * is capped so that their tables fit in half the memory of the machine.
  * @param {Object} options The board and the number of worker threads.
@@ -156,7 +156,7 @@ async function __main__() {
   const jobs = options.jobs ?? os.availableParallelism();
 
   if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !(jobs > 0)) {
-    console.error('Usage: node js/solvers/domiculeDiagonalSolver-Modular.js -r <rowCount> -c <colCount> [-j <jobs>]');
+    console.error('Usage: node js/solvers/diagonal-pieces-modular.js -r <rowCount> -c <colCount> [-j <jobs>]');
     process.exit(1);
   }
 

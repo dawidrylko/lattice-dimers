@@ -5,7 +5,7 @@ use std::thread;
 use lattice_dimers_core::{BigInt, Timer, combine_checked_residues, list_primes, parse_args, run_workers};
 
 const MAX_CIRCUMFERENCE: u64 = 24;
-const USAGE: &str = "Usage: periodic-tiling-modular -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows.";
+const USAGE: &str = "Usage: all-lattices-cylinder-torus-modular -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows.";
 
 #[derive(Clone, Copy)]
 struct Lattice {
@@ -36,7 +36,7 @@ fn lattice_of(name: &str) -> Option<Lattice> {
     }
 }
 
-/// Lists the moves of a free cell in column c, like listMoves of js/solvers/periodicTilingSolver-Modular.js.
+/// Lists the moves of a free cell in column c, like listMoves of js/solvers/all-lattices-cylinder-torus-modular.js.
 fn list_moves(cols: usize, c: usize, has_below: bool, lattice: Lattice, wrap_bit: u32) -> Vec<Move> {
     let at = |offset: usize, crossing: bool| Move { bit: 1 << offset, crossing };
     let mut moves = Vec::new();
@@ -79,7 +79,7 @@ fn add(next: &mut [u32], target: u32, count: u32, negative: bool, prime: u32) {
 }
 
 /// Counts the tilings of a cylinder or a torus modulo a prime, cell by cell, like countModulo of
-/// js/solvers/periodicTilingSolver-Modular.js.
+/// js/solvers/all-lattices-cylinder-torus-modular.js.
 fn count_modulo(board: &Board, prime: u32) -> u32 {
     let Board { rows, cols, lattice, torus, twisted } = *board;
     let window_bits = cols + 2;
@@ -170,7 +170,7 @@ fn count_modulo(board: &Board, prime: u32) -> u32 {
     total as u32
 }
 
-/// Bounds log2 of the number of tilings, like calculateLog2Bound of js/solvers/periodicTilingSolver-Modular.js.
+/// Bounds log2 of the number of tilings, like calculateLog2Bound of js/solvers/all-lattices-cylinder-torus-modular.js.
 fn calculate_log2_bound(board: &Board) -> f64 {
     let wrap_bit = 1u32 << (board.cols + 2);
     let most = (0..board.cols)
@@ -182,7 +182,7 @@ fn calculate_log2_bound(board: &Board) -> f64 {
 }
 
 /// Counts the tilings exactly with the Chinese remainder theorem, like calculateTotalTilingCombinations of
-/// js/solvers/periodicTilingSolver-Modular.js. The board is valid and within the circumference limit.
+/// js/solvers/all-lattices-cylinder-torus-modular.js. The board is valid and within the circumference limit.
 fn calculate_total_tiling_combinations(
     row_count: usize,
     col_count: usize,

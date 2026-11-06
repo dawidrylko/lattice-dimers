@@ -8,7 +8,7 @@ A new fix adds its row here with the check that guards it.
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
-| the Python Formula solver failed to print a count of more than 4300 digits, which Rust and JavaScript print | `31284f3` | `pnpm test`, module test of `domino_tiling_formula.py` under a limit of 640 digits | no `sys.set_int_max_str_digits(0)` in `main` |
+| the Python Formula solver failed to print a count of more than 4300 digits, which Rust and JavaScript print | `31284f3` | `pnpm test`, module test of `domino_rectangle_formula.py` under a limit of 640 digits | no `sys.set_int_max_str_digits(0)` in `main` |
 | the renderer refused the 0 × 0 board | `292965f` | `test:render`, command line `0x0` | `size > 0` in the size check |
 | the Number solver refused the 0 × 0 board | `292965f` | `test`, Number solver on `0x0` | `size > 0` in `isValidSize` |
 | the test data started at 1 × 2 instead of a(0) = 1 | `292965f` | `test`, data test "a(0)" | the 0 × 0 case removed |
@@ -39,7 +39,7 @@ A new fix adds its row here with the check that guards it.
 | the domicule BigInt solver accepted a shorter side of 30 | `93f74fe` | `test`, rejection of 30 × 30 | the cap raised to 30 |
 | domicule styles changed the domino SVG | `106a9df` | `test:render`, domino output hash | diagonal styles in every sheet |
 | no hint to turn a domicule board | `106a9df` | `test:render`, `2x20 --domicule` | the hint removed |
-| usage lines named the paths before the move to `src/` | `4a11337` | `test`, usage tests (new) | `Usage: node domiculeTilingSolver-Modular.js` |
+| usage lines named the paths before the move to `src/` | `4a11337` | `test`, usage tests (new) | `Usage: node domicule-rectangle-modular.js` |
 | the modular solver as a module had no worker count | `4a11337` | `test`, module tests (new) | the default of `jobs` removed |
 | a bare argument named like an Object property, such as `constructor`, took the next argument as its value in `js/core/commandLineArgsParser.js` | #88 | `test`, parser test for a bare argument named like an Object property | `schema[currentArg]` in the flag check |
 | a Rust binary left in `target/release` from older sources was run as the repository's code | #89 | `test`, executor test for a binary older than the `.rs` files under `rust/` (new) | the age check in `js/core/scriptExecutor.js` removed |

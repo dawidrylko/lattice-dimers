@@ -3,15 +3,15 @@ import sys
 from lattice_dimers.core import parse_args, start_timer
 
 MAX_SHORTER_SIDE = 12
-USAGE = "Usage: python3 -m lattice_dimers.solvers.domicule_diagonal_bigint -r <rowCount> -c <colCount>"
+USAGE = "Usage: python3 -m lattice_dimers.solvers.diagonal_pieces_bigint -r <rowCount> -c <colCount>"
 SHORTER_SIDE_TOO_LONG = (
-    f"The shorter side of the board can be at most {MAX_SHORTER_SIDE}; use domiculeDiagonalSolver-Modular.js for larger boards."
+    f"The shorter side of the board can be at most {MAX_SHORTER_SIDE}; use diagonal-pieces-modular.js for larger boards."
 )
 
 
 def list_moves(cols, c, has_below):
     """Lists the moves of a free cell in column c, like the moves in calculateDiagonalPolynomial of
-    js/solvers/domiculeDiagonalSolver-BigInt.js: the bit its partner covers and the power of x the piece adds, for the
+    js/solvers/diagonal-pieces-bigint.js: the bit its partner covers and the power of x the piece adds, for the
     right, down-left, down and down-right neighbours."""
     has_right = c + 1 < cols
     moves = []
@@ -44,7 +44,7 @@ def add(following, target, polynomial, diagonal):
 
 def calculate_diagonal_polynomial(row_count, col_count):
     """Counts the domicule tilings by the number of diagonal pieces with the transfer of
-    js/solvers/domiculeDiagonalSolver-BigInt.js: bit i of a state tells whether the cell i places ahead of the current
+    js/solvers/diagonal-pieces-bigint.js: bit i of a state tells whether the cell i places ahead of the current
     one is already covered, and a state holds a polynomial whose coefficient of x^k counts the partial tilings with k
     diagonal pieces."""
     rows = max(row_count, col_count)

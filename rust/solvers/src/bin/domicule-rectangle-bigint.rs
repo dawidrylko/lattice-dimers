@@ -3,10 +3,10 @@ use std::process::ExitCode;
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
 const MAX_SHORTER_SIDE: u64 = 29;
-const USAGE: &str = "Usage: domicule-tiling-bigint -r <rowCount> -c <colCount>";
+const USAGE: &str = "Usage: domicule-rectangle-bigint -r <rowCount> -c <colCount>";
 
 /// Lists the bits a free cell in column c can cover with its partner, like the offsets in
-/// calculateTotalTilingCombinations of js/solvers/domiculeTilingSolver-BigInt.js: right, down-left, down and
+/// calculateTotalTilingCombinations of js/solvers/domicule-rectangle-bigint.js: right, down-left, down and
 /// down-right.
 fn list_offsets(cols: usize, c: usize, has_below: bool) -> Vec<usize> {
     let has_right = c + 1 < cols;
@@ -31,7 +31,7 @@ fn list_offsets(cols: usize, c: usize, has_below: bool) -> Vec<usize> {
     offsets.into_iter().map(|offset| 1 << offset).collect()
 }
 
-/// Counts the domicule tilings with the broken-profile method of js/solvers/domiculeTilingSolver-BigInt.js. Bit i
+/// Counts the domicule tilings with the broken-profile method of js/solvers/domicule-rectangle-bigint.js. Bit i
 /// of a state tells whether the cell i places ahead of the current one is already covered, and a state has
 /// cols + 2 bits.
 fn calculate_total_tiling_combinations(row_count: usize, col_count: usize) -> BigInt {

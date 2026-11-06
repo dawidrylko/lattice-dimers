@@ -1,5 +1,5 @@
 {
-  "algorithms": ["periodic-tiling-modular"],
+  "algorithms": ["all-lattices-cylinder-torus-modular"],
   "testCases": [
     {
       "rowCount": 10,

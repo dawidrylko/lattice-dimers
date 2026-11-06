@@ -3,10 +3,10 @@ use std::process::ExitCode;
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
 const MAX_SHORTER_SIDE: u64 = 30;
-const USAGE: &str = "Usage: domino-tiling-bigint -r <rowCount> -c <colCount>";
+const USAGE: &str = "Usage: domino-rectangle-bigint -r <rowCount> -c <colCount>";
 
 /// Fills the free cells of one row from col_index on, like searchTileArrangements of
-/// js/solvers/dominoTilingSolver-BigInt.js: a cell covered from the row above is skipped, a free cell starts a
+/// js/solvers/domino-rectangle-bigint.js: a cell covered from the row above is skipped, a free cell starts a
 /// vertical domino into the next row, and two free cells side by side take a horizontal one.
 fn search_tile_arrangements(
     current_row: &[BigInt],

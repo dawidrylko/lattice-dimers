@@ -17,11 +17,11 @@ figure(svgs, `4 of the ${total} domino tilings of the cylinder of circumference 
 
 ## The Modular solver
 
-[`periodicTilingSolver-Modular.js`](../../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell, from the empty state to the empty state, with a state of the next $w + 2$ cells. It counts modulo primes below $2^{31}$, the Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`periodic-tiling-modular.rs`](../../rust/solvers/src/bin/periodic-tiling-modular.rs), and in Python, [`periodic_tiling_modular.py`](../../python/lattice_dimers/solvers/periodic_tiling_modular.py).
+[`all-lattices-cylinder-torus-modular.js`](../../js/solvers/all-lattices-cylinder-torus-modular.js) goes cell by cell, from the empty state to the empty state, with a state of the next $w + 2$ cells. It counts modulo primes below $2^{31}$, the Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`all-lattices-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs), and in Python, [`all_lattices_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py).
 
 ## The BigInt solver
 
-[`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. The same algorithm is in Rust, [`periodic-tiling-bigint.rs`](../../rust/solvers/src/bin/periodic-tiling-bigint.rs), and in Python, [`periodic_tiling_bigint.py`](../../python/lattice_dimers/solvers/periodic_tiling_bigint.py).
+[`all-lattices-cylinder-torus-bigint.js`](../../js/solvers/all-lattices-cylinder-torus-bigint.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. The same algorithm is in Rust, [`all-lattices-cylinder-torus-bigint.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs), and in Python, [`all_lattices_cylinder_torus_bigint.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py).
 
 ## Numbering
 
@@ -34,8 +34,8 @@ Two solvers count the same boards by different methods, and the cell below compa
 Circumference 2 has multiple edges, because on a ring of two cells a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate domino, so one row of two cells has 2 tilings. A row of odd circumference has an odd number of cells, so the counts vanish at odd heights.
 
 ```js run
-const { calculateTotalTilingCombinations } = require('./js/solvers/periodicTilingSolver-BigInt.js');
-const modular = require('./js/solvers/periodicTilingSolver-Modular.js');
+const { calculateTotalTilingCombinations } = require('./js/solvers/all-lattices-cylinder-torus-bigint.js');
+const modular = require('./js/solvers/all-lattices-cylinder-torus-modular.js');
 
 nb.heights = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 nb.widths = [2, 3, 4, 5, 6, 7, 8];

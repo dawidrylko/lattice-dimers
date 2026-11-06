@@ -5,7 +5,7 @@ const MAX_SHORTER_SIDE = 12;
 /**
  * Counts the domicule tilings of a board by the number of diagonal pieces, the pieces that
  * join two cells sharing only a corner. The transfer is the one of
- * domiculeTilingSolver-BigInt.js, with a polynomial instead of a number in every state:
+ * domicule-rectangle-bigint.js, with a polynomial instead of a number in every state:
  * the coefficient of x^k counts the partial tilings with k diagonal pieces, and a piece to
  * the down-left or down-right neighbour multiplies by x. At x = 1 the polynomial gives
  * A239264, at x = 0 the domino tilings (A099390).
@@ -73,13 +73,13 @@ function __main__() {
   const options = parseArgs(process.argv.slice(2), argsSchema);
 
   if (!isValidSize(options.rowCount) || !isValidSize(options.colCount)) {
-    console.error('Usage: node js/solvers/domiculeDiagonalSolver-BigInt.js -r <rowCount> -c <colCount>');
+    console.error('Usage: node js/solvers/diagonal-pieces-bigint.js -r <rowCount> -c <colCount>');
     process.exit(1);
   }
 
   if (Math.min(options.rowCount, options.colCount) > MAX_SHORTER_SIDE) {
     console.error(
-      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}; use domiculeDiagonalSolver-Modular.js for larger boards.`,
+      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}; use diagonal-pieces-modular.js for larger boards.`,
     );
     process.exit(1);
   }

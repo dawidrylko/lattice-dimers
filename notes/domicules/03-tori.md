@@ -17,13 +17,13 @@ figure(svgs, `4 of the ${total} domicule tilings of the 4 × 4 torus.`);
 
 ## The Modular solver
 
-[`periodicTilingSolver-Modular.js`](../../js/solvers/periodicTilingSolver-Modular.js) goes cell by cell, like the scan of the [rectangles notebook](01-rectangles.md#the-bigint-solver). Its state holds the next $w + 2$ cells and, with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
+[`all-lattices-cylinder-torus-modular.js`](../../js/solvers/all-lattices-cylinder-torus-modular.js) goes cell by cell, like the scan of the [rectangles notebook](01-rectangles.md#the-bigint-solver). Its state holds the next $w + 2$ cells and, with $w \ge 3$, one more bit. A domicule from the first column to the last column of the next row lies $2w - 1$ cells ahead, outside the window, so the extra bit holds it until the window gets there.
 
-A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`periodic-tiling-modular.rs`](../../rust/solvers/src/bin/periodic-tiling-modular.rs), and in Python, [`periodic_tiling_modular.py`](../../python/lattice_dimers/solvers/periodic_tiling_modular.py).
+A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`all-lattices-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs), and in Python, [`all_lattices_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py).
 
 ## The BigInt solver
 
-[`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix. The same algorithm is in Rust, [`periodic-tiling-bigint.rs`](../../rust/solvers/src/bin/periodic-tiling-bigint.rs), and in Python, [`periodic_tiling_bigint.py`](../../python/lattice_dimers/solvers/periodic_tiling_bigint.py).
+[`all-lattices-cylinder-torus-bigint.js`](../../js/solvers/all-lattices-cylinder-torus-bigint.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix. The same algorithm is in Rust, [`all-lattices-cylinder-torus-bigint.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs), and in Python, [`all_lattices_cylinder_torus_bigint.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py).
 
 ## Numbering
 
@@ -36,8 +36,8 @@ The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670
 For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in [OEIS A335586](https://oeis.org/A335586) [1]. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `spec/cases/periodicTilingTests-Modular.json`, where it wrote them once.
 
 ```js run
-const reference = require('./js/solvers/periodicTilingSolver-BigInt.js');
-const modular = require('./js/solvers/periodicTilingSolver-Modular.js');
+const reference = require('./js/solvers/all-lattices-cylinder-torus-bigint.js');
+const modular = require('./js/solvers/all-lattices-cylinder-torus-modular.js');
 const known = require('./js/core/cases').testCasesPeriodicModular;
 const stored = (side, twisted) =>
   known.find(t => t.lattice === 'king' && t.torus && !t.twisted === !twisted && t.rowCount === side && t.colCount === side);
@@ -93,7 +93,7 @@ The cell divides the torus count by $e^{sL^2}$ on the king's graph and, for comp
 ```js run
 const fs = require('fs');
 const path = require('path');
-const modular = require('./js/solvers/periodicTilingSolver-Modular.js');
+const modular = require('./js/solvers/all-lattices-cylinder-torus-modular.js');
 const root = nb.context.root;
 const validate = fs.readFileSync(path.join(root, 'research/king-entropy/out/out_validate.txt'), 'utf-8');
 const [, triangular] = validate.match(/Kasteleyn Bloch average, 64x64 grid: s_tri = ([0-9.]+)/);
@@ -226,7 +226,7 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 ## Verification
 
-The two periodic solvers agree with each other up to $8 \times 8$, the modular solver checks every result against an extra prime, and the PARI/GP program runs in CI against the king's graph tori of the test data. `node harness/testRunner.js` runs the king's graph boards of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers.
+The two cylinder and torus solvers agree with each other up to $8 \times 8$, the modular solver checks every result against an extra prime, and the PARI/GP program runs in CI against the king's graph tori of the test data. `node harness/testRunner.js` runs the king's graph boards of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers.
 
 ## References
 

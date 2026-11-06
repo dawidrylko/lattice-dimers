@@ -27,15 +27,15 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 
 | solver | Rust | Python | JS |
 | --- | --- | --- | --- |
-| `domino-tiling-formula` | [✅](rust/solvers/src/bin/domino-tiling-formula.rs) | [✅](python/lattice_dimers/solvers/domino_tiling_formula.py) | [✅](js/solvers/dominoTilingSolver-Formula.js) |
-| `domino-tiling-bigint` | [✅](rust/solvers/src/bin/domino-tiling-bigint.rs) | [✅](python/lattice_dimers/solvers/domino_tiling_bigint.py) | [✅](js/solvers/dominoTilingSolver-BigInt.js) |
-| `domino-tiling-number` | [✅](rust/solvers/src/bin/domino-tiling-number.rs) | [✅](python/lattice_dimers/solvers/domino_tiling_number.py) | [✅](js/solvers/dominoTilingSolver.js) |
-| `domicule-tiling-modular` | [✅](rust/solvers/src/bin/domicule-tiling-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_tiling_modular.py) | [✅](js/solvers/domiculeTilingSolver-Modular.js) |
-| `domicule-tiling-bigint` | [✅](rust/solvers/src/bin/domicule-tiling-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_tiling_bigint.py) | [✅](js/solvers/domiculeTilingSolver-BigInt.js) |
-| `domicule-diagonal-modular` | [✅](rust/solvers/src/bin/domicule-diagonal-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_diagonal_modular.py) | [✅](js/solvers/domiculeDiagonalSolver-Modular.js) |
-| `domicule-diagonal-bigint` | [✅](rust/solvers/src/bin/domicule-diagonal-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_diagonal_bigint.py) | [✅](js/solvers/domiculeDiagonalSolver-BigInt.js) |
-| `periodic-tiling-modular` | [✅](rust/solvers/src/bin/periodic-tiling-modular.rs) | [✅](python/lattice_dimers/solvers/periodic_tiling_modular.py) | [✅](js/solvers/periodicTilingSolver-Modular.js) |
-| `periodic-tiling-bigint` | [✅](rust/solvers/src/bin/periodic-tiling-bigint.rs) | [✅](python/lattice_dimers/solvers/periodic_tiling_bigint.py) | [✅](js/solvers/periodicTilingSolver-BigInt.js) |
+| `domino-rectangle-formula` | [✅](rust/solvers/src/bin/domino-rectangle-formula.rs) | [✅](python/lattice_dimers/solvers/domino_rectangle_formula.py) | [✅](js/solvers/domino-rectangle-formula.js) |
+| `domino-rectangle-bigint` | [✅](rust/solvers/src/bin/domino-rectangle-bigint.rs) | [✅](python/lattice_dimers/solvers/domino_rectangle_bigint.py) | [✅](js/solvers/domino-rectangle-bigint.js) |
+| `domino-rectangle-number` | [✅](rust/solvers/src/bin/domino-rectangle-number.rs) | [✅](python/lattice_dimers/solvers/domino_rectangle_number.py) | [✅](js/solvers/domino-rectangle-number.js) |
+| `domicule-rectangle-modular` | [✅](rust/solvers/src/bin/domicule-rectangle-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_modular.py) | [✅](js/solvers/domicule-rectangle-modular.js) |
+| `domicule-rectangle-bigint` | [✅](rust/solvers/src/bin/domicule-rectangle-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_bigint.py) | [✅](js/solvers/domicule-rectangle-bigint.js) |
+| `diagonal-pieces-modular` | [✅](rust/solvers/src/bin/diagonal-pieces-modular.rs) | [✅](python/lattice_dimers/solvers/diagonal_pieces_modular.py) | [✅](js/solvers/diagonal-pieces-modular.js) |
+| `diagonal-pieces-bigint` | [✅](rust/solvers/src/bin/diagonal-pieces-bigint.rs) | [✅](python/lattice_dimers/solvers/diagonal_pieces_bigint.py) | [✅](js/solvers/diagonal-pieces-bigint.js) |
+| `all-lattices-cylinder-torus-modular` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py) | [✅](js/solvers/all-lattices-cylinder-torus-modular.js) |
+| `all-lattices-cylinder-torus-bigint` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py) | [✅](js/solvers/all-lattices-cylinder-torus-bigint.js) |
 
 ## Results
 
@@ -77,11 +77,11 @@ Node.js 26 or newer (`.nvmrc`) and pnpm, with Rust 1.99 and Python 3.13 or newer
 git clone https://github.com/dawidrylko/lattice-dimers.git
 cd lattice-dimers
 pnpm install
-node js/solvers/domiculeTilingSolver-Modular.js -r 8 -c 8
+node js/solvers/domicule-rectangle-modular.js -r 8 -c 8
 cargo build --release
-target/release/domicule-tiling-modular -r 8 -c 8
+target/release/domicule-rectangle-modular -r 8 -c 8
 python3 -m pip install -e python
-python3 -I -m lattice_dimers.solvers.domicule_tiling_modular -r 8 -c 8
+python3 -I -m lattice_dimers.solvers.domicule_rectangle_modular -r 8 -c 8
 pnpm test
 pnpm site:build
 ```

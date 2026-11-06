@@ -7,7 +7,7 @@ const MAX_SHORTER_SIDE = 30;
 
 /**
  * Counts the domicule tilings modulo a prime with the same broken-profile dynamic
- * programming as domiculeTilingSolver-BigInt.js. Bit i of a state tells whether the cell
+ * programming as domicule-rectangle-bigint.js. Bit i of a state tells whether the cell
  * i places ahead of the current one is already covered; a state has cols + 2 bits.
  * Only additions are needed, so the counts are kept in Uint32Array tables.
  * @param {number} rows The number of rows (the longer side).
@@ -132,7 +132,7 @@ async function __main__() {
 
   if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !(jobs > 0)) {
     console.error(
-      'Usage: node js/solvers/domiculeTilingSolver-Modular.js -r <rowCount> -c <colCount> [-j <jobs>]',
+      'Usage: node js/solvers/domicule-rectangle-modular.js -r <rowCount> -c <colCount> [-j <jobs>]',
     );
     process.exit(1);
   }

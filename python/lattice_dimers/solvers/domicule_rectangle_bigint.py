@@ -3,7 +3,7 @@ import sys
 from lattice_dimers.core import parse_args, start_timer
 
 MAX_SHORTER_SIDE = 29
-USAGE = "Usage: python3 -m lattice_dimers.solvers.domicule_tiling_bigint -r <rowCount> -c <colCount>"
+USAGE = "Usage: python3 -m lattice_dimers.solvers.domicule_rectangle_bigint -r <rowCount> -c <colCount>"
 SHORTER_SIDE_TOO_LONG = (
     f"The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because a JavaScript array holds fewer than 2^32 states."
 )
@@ -11,7 +11,7 @@ SHORTER_SIDE_TOO_LONG = (
 
 def list_offsets(cols, c, has_below):
     """Lists the bits a free cell in column c can cover with its partner, like the offsets in
-    calculateTotalTilingCombinations of js/solvers/domiculeTilingSolver-BigInt.js: right, down-left, down and
+    calculateTotalTilingCombinations of js/solvers/domicule-rectangle-bigint.js: right, down-left, down and
     down-right."""
     has_right = c + 1 < cols
     offsets = []
@@ -32,7 +32,7 @@ def list_offsets(cols, c, has_below):
 
 
 def calculate_total_tiling_combinations(row_count, col_count):
-    """Counts the domicule tilings with the broken-profile method of js/solvers/domiculeTilingSolver-BigInt.js. Bit i
+    """Counts the domicule tilings with the broken-profile method of js/solvers/domicule-rectangle-bigint.js. Bit i
     of a state tells whether the cell i places ahead of the current one is already covered, and a state has
     cols + 2 bits."""
     rows = max(row_count, col_count)

@@ -8,22 +8,22 @@ Each solver is a command-line program that prints the number of tilings of one b
 
 | file | what it counts | method |
 | --- | --- | --- |
-| [`dominoTilingSolver.js`](solvers/dominoTilingSolver.js) | domino tilings | transfer by rows, `Number` (exact up to 10 × 10) |
-| [`dominoTilingSolver-BigInt.js`](solvers/dominoTilingSolver-BigInt.js) | domino tilings | transfer by rows, `BigInt` |
-| [`dominoTilingSolver-Formula.js`](solvers/dominoTilingSolver-Formula.js) | domino tilings of the 2n × 2n square | the product formula as a resultant |
-| [`domiculeTilingSolver-BigInt.js`](solvers/domiculeTilingSolver-BigInt.js) | domicule tilings | transfer by cells, `BigInt` (reference) |
-| [`domiculeTilingSolver-Modular.js`](solvers/domiculeTilingSolver-Modular.js) | domicule tilings | transfer by cells modulo primes, worker threads, Chinese remainder theorem |
-| [`periodicTilingSolver-BigInt.js`](solvers/periodicTilingSolver-BigInt.js) | cylinders and tori on the square lattice, the triangular lattice and the king's graph | transfer by rows, `BigInt` (reference) |
-| [`periodicTilingSolver-Modular.js`](solvers/periodicTilingSolver-Modular.js) | the same | transfer by cells modulo primes |
-| [`domiculeDiagonalSolver-BigInt.js`](solvers/domiculeDiagonalSolver-BigInt.js) | domicule tilings by the number of diagonal pieces | transfer by cells, `BigInt` (reference) |
-| [`domiculeDiagonalSolver-Modular.js`](solvers/domiculeDiagonalSolver-Modular.js) | the same | transfer by cells modulo primes |
+| [`domino-rectangle-number.js`](solvers/domino-rectangle-number.js) | domino tilings | transfer by rows, `Number` (exact up to 10 × 10) |
+| [`domino-rectangle-bigint.js`](solvers/domino-rectangle-bigint.js) | domino tilings | transfer by rows, `BigInt` |
+| [`domino-rectangle-formula.js`](solvers/domino-rectangle-formula.js) | domino tilings of the 2n × 2n square | the product formula as a resultant |
+| [`domicule-rectangle-bigint.js`](solvers/domicule-rectangle-bigint.js) | domicule tilings | transfer by cells, `BigInt` (reference) |
+| [`domicule-rectangle-modular.js`](solvers/domicule-rectangle-modular.js) | domicule tilings | transfer by cells modulo primes, worker threads, Chinese remainder theorem |
+| [`all-lattices-cylinder-torus-bigint.js`](solvers/all-lattices-cylinder-torus-bigint.js) | cylinders and tori on the square lattice, the triangular lattice and the king's graph | transfer by rows, `BigInt` (reference) |
+| [`all-lattices-cylinder-torus-modular.js`](solvers/all-lattices-cylinder-torus-modular.js) | the same | transfer by cells modulo primes |
+| [`diagonal-pieces-bigint.js`](solvers/diagonal-pieces-bigint.js) | domicule tilings by the number of diagonal pieces | transfer by cells, `BigInt` (reference) |
+| [`diagonal-pieces-modular.js`](solvers/diagonal-pieces-modular.js) | the same | transfer by cells modulo primes |
 
 ```sh
-node js/solvers/dominoTilingSolver-Formula.js -r 20 -c 20
-node js/solvers/domiculeTilingSolver-Modular.js -r 20 -c 20 -j 8                # -j sets the number of worker threads
-node js/solvers/periodicTilingSolver-Modular.js -r 12 -c 12 --torus             # the king's graph on the 12 × 12 torus
-node js/solvers/periodicTilingSolver-Modular.js -r 8 -c 6 --lattice triangular  # a triangular cylinder of circumference 6
-node js/solvers/domiculeDiagonalSolver-Modular.js -r 16 -c 16                   # 20 × 20 needs 3.4 GB per thread
+node js/solvers/domino-rectangle-formula.js -r 20 -c 20
+node js/solvers/domicule-rectangle-modular.js -r 20 -c 20 -j 8                            # -j sets the number of worker threads
+node js/solvers/all-lattices-cylinder-torus-modular.js -r 12 -c 12 --torus                # the king's graph on the 12 × 12 torus
+node js/solvers/all-lattices-cylinder-torus-modular.js -r 8 -c 6 --lattice triangular     # a triangular cylinder of circumference 6
+node js/solvers/diagonal-pieces-modular.js -r 16 -c 16                                    # 20 × 20 needs 3.4 GB per thread
 ```
 
 ## Implementations

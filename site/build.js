@@ -10,10 +10,10 @@ const {
   testCasesDiagonalModular,
 } = require('../js/core/cases');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
-const domiculeModular = require('../js/solvers/domiculeTilingSolver-Modular.js');
-const periodicModular = require('../js/solvers/periodicTilingSolver-Modular.js');
-const diagonalReference = require('../js/solvers/domiculeDiagonalSolver-BigInt.js');
-const { MAX_CIRCUMFERENCE: PERIODIC_BIGINT_CIRCUMFERENCE } = require('../js/solvers/periodicTilingSolver-BigInt.js');
+const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
+const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
+const diagonalReference = require('../js/solvers/diagonal-pieces-bigint.js');
+const { MAX_CIRCUMFERENCE: PERIODIC_BIGINT_CIRCUMFERENCE } = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
 const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
@@ -264,12 +264,13 @@ function readAverageTime(directory, fileName) {
 }
 
 function buildBenchmark() {
+  const prefix = 'domino-rectangle-';
   const tilingsBySize = new Map(
     testCasesBigInt.map(t => [`${t.rowCount}x${t.colCount}`, t.expectedResult]),
   );
   const sizes = fs
     .readdirSync(BENCHMARK_DIRECTORY)
-    .filter(fileName => fileName.startsWith('dominoTilingSolver'))
+    .filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'))
     .map(fileName => fileName.match(RESULT_FILE))
     .filter(Boolean)
     .map(([, rowCount, colCount]) => ({
@@ -290,20 +291,20 @@ function buildBenchmark() {
       rowCount,
       colCount,
       tilings: tilingsBySize.get(`${rowCount}x${colCount}`) ?? null,
-      bigint: readAverageTime(BENCHMARK_DIRECTORY, `dominoTilingSolver-BigInt.js${suffix}`),
-      formula: readAverageTime(BENCHMARK_DIRECTORY, `dominoTilingSolver-Formula.js${suffix}`),
-      languages: readLanguages('domino-tiling-formula', suffix),
-      bigintLanguages: readLanguages('domino-tiling-bigint', suffix),
+      bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
+      formula: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}formula.js${suffix}`),
+      languages: readLanguages('domino-rectangle-formula', suffix),
+      bigintLanguages: readLanguages('domino-rectangle-bigint', suffix),
     };
   });
 }
 
 function buildDomiculeBenchmark(totals) {
-  const prefix = 'domiculeTilingSolver-';
+  const prefix = 'domicule-rectangle-';
 
   return fs
     .readdirSync(BENCHMARK_DIRECTORY)
-    .filter(fileName => fileName.startsWith(prefix))
+    .filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'))
     .map(fileName => fileName.match(RESULT_FILE))
     .filter(Boolean)
     .map(([, rowCount, colCount]) => `${rowCount}x${colCount}`)
@@ -316,24 +317,24 @@ function buildDomiculeBenchmark(totals) {
         rowCount,
         colCount,
         tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
-        bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
-        modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
-        languages: readLanguages('domicule-tiling-modular', suffix),
-        bigintLanguages: readLanguages('domicule-tiling-bigint', suffix),
+        bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
+        modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
+        languages: readLanguages('domicule-rectangle-modular', suffix),
+        bigintLanguages: readLanguages('domicule-rectangle-bigint', suffix),
       };
     });
 }
 
 /**
- * Reads the times of the periodic solvers on the cylinders and tori of one lattice.
+ * Reads the times of the cylinder and torus solvers on one lattice.
  * @param {string} lattice The lattice of the result files: king for the domicules, square for the dominoes.
  * @returns {Promise<Object[]>} One row per board, the tori first.
  */
 async function buildPeriodicBenchmark(lattice) {
-  const prefix = 'periodicTilingSolver-';
+  const prefix = 'all-lattices-cylinder-torus-';
   const boards = fs
     .readdirSync(BENCHMARK_DIRECTORY)
-    .filter(fileName => fileName.startsWith(prefix))
+    .filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'))
     .map(fileName => fileName.match(PERIODIC_RESULT_FILE))
     .filter(match => match && match[3] === lattice)
     .map(([, rowCount, colCount, , surface]) => `${surface}/${rowCount}x${colCount}`)
@@ -353,16 +354,16 @@ async function buildPeriodicBenchmark(lattice) {
       colCount,
       surface,
       tilings: await countPeriodicTilings({ rowCount, colCount, lattice, torus: surface === 'torus' }),
-      bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
+      bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
       bigintMissing:
         colCount > PERIODIC_BIGINT_CIRCUMFERENCE
           ? `not run: BigInt counts circumferences up to ${PERIODIC_BIGINT_CIRCUMFERENCE}`
           : surface === 'torus'
             ? `not run: BigInt would run all 2^${colCount} sets of first-row cells`
             : 'not run in this benchmark',
-      modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
-      languages: readLanguages('periodic-tiling-modular', suffix),
-      bigintLanguages: readLanguages('periodic-tiling-bigint', suffix),
+      modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
+      languages: readLanguages('all-lattices-cylinder-torus-modular', suffix),
+      bigintLanguages: readLanguages('all-lattices-cylinder-torus-bigint', suffix),
     });
   }
 
@@ -370,11 +371,11 @@ async function buildPeriodicBenchmark(lattice) {
 }
 
 function buildDiagonalBenchmark(totals) {
-  const prefix = 'domiculeDiagonalSolver-';
+  const prefix = 'diagonal-pieces-';
 
   return fs
     .readdirSync(BENCHMARK_DIRECTORY)
-    .filter(fileName => fileName.startsWith(prefix))
+    .filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'))
     .map(fileName => fileName.match(RESULT_FILE))
     .filter(Boolean)
     .map(([, rowCount, colCount]) => `${rowCount}x${colCount}`)
@@ -387,11 +388,11 @@ function buildDiagonalBenchmark(totals) {
         rowCount,
         colCount,
         tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
-        bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}BigInt.js${suffix}`),
+        bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
         bigintMissing: `not run: BigInt counts boards with a shorter side up to ${DIAGONAL_BIGINT_SIDE}`,
-        bigintLanguages: readLanguages('domicule-diagonal-bigint', suffix),
-        modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
-        languages: readLanguages('domicule-diagonal-modular', suffix),
+        bigintLanguages: readLanguages('diagonal-pieces-bigint', suffix),
+        modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
+        languages: readLanguages('diagonal-pieces-modular', suffix),
       };
     });
 }

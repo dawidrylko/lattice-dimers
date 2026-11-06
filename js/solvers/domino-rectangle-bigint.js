@@ -85,7 +85,7 @@ function __main__() {
 
   if (!isValidSize(options.rowCount) || !isValidSize(options.colCount)) {
     console.error(
-      'Usage: node js/solvers/dominoTilingSolver-BigInt.js -r <rowCount> -c <colCount>',
+      'Usage: node js/solvers/domino-rectangle-bigint.js -r <rowCount> -c <colCount>',
     );
     process.exit(1);
   }
