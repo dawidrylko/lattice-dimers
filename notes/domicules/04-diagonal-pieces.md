@@ -43,8 +43,8 @@ A diagonal piece joins two cells of the same colour of the chessboard and a domi
 ```js run
 const reference = require('./js/solvers/diagonal-pieces-bigint.js');
 const data = require('./js/core/cases');
-const stored = side => data.testCasesDiagonalModular.find(t => t.rowCount === side && t.colCount === side);
-const domino = side => data.testCasesBigInt.find(t => t.rowCount === side && t.colCount === side).expectedResult;
+const stored = side => data.testCasesOf('diagonal-pieces-modular').find(t => t.rowCount === side && t.colCount === side);
+const domino = side => data.testCasesOf('domino-rectangle-formula').find(t => t.rowCount === side && t.colCount === side).expectedResult;
 
 nb.rows = {};
 const rows = [];

@@ -40,7 +40,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/tm2.py` | float64 power iteration on `T^2` separately in each parity sector; writes `data/sec/sec_<lat>_<bc>_<w0>_<w1>.json` |
 | `src/cylw.py` | one width and one sector per run with `src/tmfast.py`, convergence check, Collatz-Wielandt bracket, time and peak RSS; writes `data/eig/eig_<lat>_<bc>_w<w>_p<p>.json` |
 | `src/summary.py` | reads the four `data/sec/sec_*.json`, prints estimators and bounds (first pass) |
-| `src/fitsq.py` | fits on the exact L x L counts in `../../spec/cases/domiculeTilingTests.json` |
+| `src/fitsq.py` | fits on the exact L x L counts in `../../spec/cases/domicule-rectangle-bigint.json` |
 | `src/validate.py` | brute force, repo data, square-lattice closed forms, triangular Kasteleyn, free-strip ratios |
 | `src/crosscheck.py` | exact-integer ratios (w = 9, 11, 12, 13) and ARPACK on the full w = 20 transfer vs the power iteration |
 | `src/bounds.py` | certified Fekete lower bounds, open-strip upper bounds, Kahn-Lovasz, Calkin-Wilf hypothesis checks |

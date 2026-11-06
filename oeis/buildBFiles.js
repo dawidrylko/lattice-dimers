@@ -9,14 +9,14 @@ const LAST_ANTIDIAGONAL = 46;
 const LAST_SQUARE = 12;
 const LAST_TORUS = 8;
 const LAST_DIAGONAL_ROW = 10;
-const TORUS_FILES = ['periodicTilingTests.json', 'periodicTilingTests-Modular.json'];
-const DIAGONAL_FILES = ['domiculeDiagonalTests.json', 'domiculeDiagonalTests-Modular.json'];
+const TORUS_FILE = 'spec/cases/all-lattices-cylinder-torus-modular.json';
+const DIAGONAL_FILE = 'spec/cases/diagonal-pieces-modular.json';
 const SOURCES = {
   'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
   'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A239273/b239273.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
-  'A401670/b401670.txt': TORUS_FILES.map(name => `spec/cases/${name}`).join(' and '),
-  'A401673/b401673.txt': DIAGONAL_FILES.map(name => `spec/cases/${name}`).join(' and '),
+  'A401670/b401670.txt': TORUS_FILE,
+  'A401673/b401673.txt': DIAGONAL_FILE,
 };
 
 function readStrips() {
@@ -71,30 +71,24 @@ function countTilings(strips, rows, columns) {
   return counts[length];
 }
 
+function readTestCases(file) {
+  return JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8')).testCases;
+}
+
 function readTori() {
   const tori = new Map([[0, '1']]);
 
-  for (const name of TORUS_FILES) {
-    const { testCases } = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'spec', 'cases', name), 'utf-8'));
-
-    for (const { rowCount, colCount, lattice, torus, twisted, expectedResult } of testCases) {
-      if (lattice !== 'king' || !torus || twisted || rowCount !== colCount || rowCount % 2 === 1) {
-        continue;
-      }
-
-      const known = tori.get(rowCount / 2);
-
-      if (known && known !== expectedResult) {
-        throw new Error(`The ${rowCount} X ${rowCount} torus counts disagree between the files in spec/cases/.`);
-      }
-
-      tori.set(rowCount / 2, expectedResult);
+  for (const { rowCount, colCount, lattice, torus, twisted, expectedResult } of readTestCases(TORUS_FILE)) {
+    if (lattice !== 'king' || !torus || twisted || rowCount !== colCount || rowCount % 2 === 1) {
+      continue;
     }
+
+    tori.set(rowCount / 2, expectedResult);
   }
 
   return Array.from({ length: LAST_TORUS + 1 }, (_, n) => {
     if (!tori.has(n)) {
-      throw new Error(`No count for the ${2 * n} X ${2 * n} torus in spec/cases/.`);
+      throw new Error(`No count for the ${2 * n} X ${2 * n} torus in ${TORUS_FILE}.`);
     }
 
     return tori.get(n);
@@ -104,39 +98,30 @@ function readTori() {
 function readDiagonalRows() {
   const rows = new Map();
 
-  for (const name of DIAGONAL_FILES) {
-    const { testCases } = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'spec', 'cases', name), 'utf-8'));
-
-    for (const { rowCount, colCount, expectedResult } of testCases) {
-      if (rowCount !== colCount || rowCount % 2 === 1) {
-        continue;
-      }
-
-      const coefficients = expectedResult.split(',');
-
-      if (coefficients.some((coefficient, index) => index % 2 === 1 && coefficient !== '0')) {
-        throw new Error(`An odd number of diagonal pieces has tilings on the ${rowCount} X ${rowCount} board in spec/cases/${name}.`);
-      }
-
-      const row = coefficients.filter((_, index) => index % 2 === 0);
-      const length = (rowCount / 2) ** 2 + 1;
-
-      if (row.length !== length) {
-        throw new Error(`The ${rowCount} X ${rowCount} board has ${row.length} diagonal counts in spec/cases/${name} instead of ${length}.`);
-      }
-      const known = rows.get(rowCount / 2);
-
-      if (known && known.join(',') !== row.join(',')) {
-        throw new Error(`The diagonal counts of the ${rowCount} X ${rowCount} board disagree between the files in spec/cases/.`);
-      }
-
-      rows.set(rowCount / 2, row);
+  for (const { rowCount, colCount, expectedResult } of readTestCases(DIAGONAL_FILE)) {
+    if (rowCount !== colCount || rowCount % 2 === 1) {
+      continue;
     }
+
+    const coefficients = expectedResult.split(',');
+
+    if (coefficients.some((coefficient, index) => index % 2 === 1 && coefficient !== '0')) {
+      throw new Error(`An odd number of diagonal pieces has tilings on the ${rowCount} X ${rowCount} board in ${DIAGONAL_FILE}.`);
+    }
+
+    const row = coefficients.filter((_, index) => index % 2 === 0);
+    const length = (rowCount / 2) ** 2 + 1;
+
+    if (row.length !== length) {
+      throw new Error(`The ${rowCount} X ${rowCount} board has ${row.length} diagonal counts in ${DIAGONAL_FILE} instead of ${length}.`);
+    }
+
+    rows.set(rowCount / 2, row);
   }
 
   return Array.from({ length: LAST_DIAGONAL_ROW + 1 }, (_, n) => {
     if (!rows.has(n)) {
-      throw new Error(`No diagonal counts for the ${2 * n} X ${2 * n} board in spec/cases/.`);
+      throw new Error(`No diagonal counts for the ${2 * n} X ${2 * n} board in ${DIAGONAL_FILE}.`);
     }
 
     return rows.get(n);

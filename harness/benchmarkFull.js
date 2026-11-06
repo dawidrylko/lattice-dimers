@@ -5,7 +5,9 @@ const { exec } = require('../js/core');
 const { listImplementations, algorithmOf } = require('../js/core/registry');
 const {
   BENCHMARK_DIRECTORY,
+  DOMINO_GROUP,
   ENVIRONMENT,
+  NUMBER_GROUP,
   checkDirectory,
   generateFileName,
   listGroups,
@@ -15,7 +17,6 @@ const {
   saveExecutionResults,
 } = require('./benchmarkRunner');
 const { RESULTS_DIRECTORY } = require('./benchmarkEnvironment');
-const { filesInt, testCasesInt, filesBigInt, testCasesBigInt } = require('../js/core/cases');
 
 const RUNS = 10;
 const DEFAULT_JOBS = 4;
@@ -78,12 +79,12 @@ function listSeries(jobs) {
       });
     });
   const numberBoards = [
-    ...testCasesInt,
-    ...listSquareBoards(12, 20).filter(({ rowCount }) => !testCasesInt.some(known => known.rowCount === rowCount && known.colCount === rowCount)),
+    ...NUMBER_GROUP.testCases,
+    ...listSquareBoards(12, 20).filter(({ rowCount }) => !NUMBER_GROUP.testCases.some(known => known.rowCount === rowCount && known.colCount === rowCount)),
   ];
 
-  add(filesInt, numberBoards);
-  add(filesBigInt, testCasesBigInt);
+  add(NUMBER_GROUP.files, numberBoards);
+  add(DOMINO_GROUP.files, DOMINO_GROUP.testCases);
 
   const king = listGroups('king');
   const square = listGroups('square');

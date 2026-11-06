@@ -1,38 +1,34 @@
-const { javaScriptFileOf } = require('./registry');
+const { registry } = require('./registry');
 
-function load(name) {
-  const { algorithms, testCases } = require(`../../spec/cases/${name}`);
+/**
+ * Reads the known counts of one algorithm from spec/cases/<algorithm>.json.
+ * @param {string} algorithm The id of the algorithm in spec/algorithms.json.
+ * @returns {Object[]} The test cases of the file, in its order.
+ */
+function testCasesOf(algorithm) {
+  if (!Object.hasOwn(registry.algorithms, algorithm)) {
+    throw new Error(`${algorithm} is not an algorithm of spec/algorithms.json.`);
+  }
 
-  return { files: algorithms.map(javaScriptFileOf), testCases };
+  return require(`../../spec/cases/${algorithm}.json`).testCases;
 }
 
-const { files: filesInt, testCases: testCasesInt } = load('dominoTilingTests.json');
-const { files: filesBigInt, testCases: testCasesBigInt } = load('dominoTilingTests-BigInt.json');
-const { files: filesRectangles, testCases: testCasesRectangles } = load('dominoTilingTests-Rectangles.json');
-const { files: filesDomicule, testCases: testCasesDomicule } = load('domiculeTilingTests.json');
-const { files: filesDomiculeRectangles, testCases: testCasesDomiculeRectangles } = load('domiculeTilingTests-Rectangles.json');
-const { files: filesPeriodic, testCases: testCasesPeriodic } = load('periodicTilingTests.json');
-const { files: filesPeriodicModular, testCases: testCasesPeriodicModular } = load('periodicTilingTests-Modular.json');
-const { files: filesDiagonal, testCases: testCasesDiagonal } = load('domiculeDiagonalTests.json');
-const { files: filesDiagonalModular, testCases: testCasesDiagonalModular } = load('domiculeDiagonalTests-Modular.json');
+/**
+ * Names the board of a test case, so two cases can be compared across the files of spec/cases.
+ * @param {Object} testCase The test case.
+ * @returns {string} The same text for the same board of one family of algorithms.
+ */
+function boardKeyOf({ rowCount, colCount, lattice, torus, twisted }) {
+  return [rowCount, colCount, lattice ?? '', Boolean(torus), Boolean(twisted)].join('|');
+}
 
-module.exports = {
-  filesInt,
-  testCasesInt,
-  filesBigInt,
-  testCasesBigInt,
-  filesRectangles,
-  testCasesRectangles,
-  filesDomicule,
-  testCasesDomicule,
-  filesDomiculeRectangles,
-  testCasesDomiculeRectangles,
-  filesPeriodic,
-  testCasesPeriodic,
-  filesPeriodicModular,
-  testCasesPeriodicModular,
-  filesDiagonal,
-  testCasesDiagonal,
-  filesDiagonalModular,
-  testCasesDiagonalModular,
-};
+/**
+ * Tells the 2n x 2n boards from the other rectangles.
+ * @param {Object} testCase The test case.
+ * @returns {boolean} Whether the board is a square with an even side.
+ */
+function isEvenSquare({ rowCount, colCount }) {
+  return rowCount === colCount && rowCount % 2 === 0;
+}
+
+module.exports = { testCasesOf, boardKeyOf, isEvenSquare };

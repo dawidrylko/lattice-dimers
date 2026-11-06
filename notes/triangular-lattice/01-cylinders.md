@@ -64,7 +64,7 @@ table(['board', 'OEIS', 'checked at'], [['w = 2', 'A002605', `h = ${nb.heights.j
 
 ## Verification
 
-The `BigInt` solver agrees with A002605 and the modular solver with the `BigInt` one at $h = 8$, and `node harness/testRunner.js` runs the triangular cylinders of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both of them.
+The `BigInt` solver agrees with A002605 and the modular solver with the `BigInt` one at $h = 8$, and `node harness/testRunner.js` runs the triangular cylinders of [`spec/cases/all-lattices-cylinder-torus-bigint.json`](../../spec/cases/all-lattices-cylinder-torus-bigint.json) through both of them.
 
 ## References
 

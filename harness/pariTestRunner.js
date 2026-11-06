@@ -1,13 +1,7 @@
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const {
-  testCasesBigInt,
-  testCasesDomicule,
-  testCasesDomiculeRectangles,
-  testCasesPeriodic,
-  testCasesDiagonal,
-} = require('../js/core/cases');
+const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OEIS_DIRECTORY = path.join(ROOT_DIRECTORY, 'oeis');
@@ -20,19 +14,18 @@ const MAX_DIAGONAL_SIDE = 8;
 const PROGRAMS = [
   {
     files: ['oeis/A004003/A004003.gp'],
-    testCases: testCasesBigInt
+    testCases: testCasesOf('domino-rectangle-formula')
       .filter(({ rowCount, colCount }) => rowCount === colCount && rowCount % 2 === 0)
       .map(({ rowCount, expectedResult }) => ({ call: `a(${rowCount / 2})`, expectedResult })),
   },
   {
     files: ['oeis/A239264/A239264.gp'],
-    testCases: [
-      ...testCasesDomicule.filter(({ rowCount }) => rowCount <= MAX_DOMICULE_SQUARE_SIDE),
-      ...testCasesDomiculeRectangles,
-    ].map(({ rowCount, colCount, expectedResult }) => ({
-      call: `T(${Math.max(rowCount, colCount)}, ${Math.min(rowCount, colCount)})`,
-      expectedResult,
-    })),
+    testCases: testCasesOf('domicule-rectangle-bigint')
+      .filter(testCase => !isEvenSquare(testCase) || testCase.rowCount <= MAX_DOMICULE_SQUARE_SIDE)
+      .map(({ rowCount, colCount, expectedResult }) => ({
+        call: `T(${Math.max(rowCount, colCount)}, ${Math.min(rowCount, colCount)})`,
+        expectedResult,
+      })),
   },
   {
     files: ['oeis/A239264/A239264.gp', 'oeis/A239273/A239273.gp'],
@@ -43,14 +36,14 @@ const PROGRAMS = [
   },
   {
     files: ['oeis/A401670/A401670.gp'],
-    testCases: testCasesPeriodic
+    testCases: testCasesOf('all-lattices-cylinder-torus-modular')
       .filter(({ lattice, torus, twisted, colCount }) => lattice === 'king' && torus && !twisted && colCount <= MAX_TORUS_CIRCUMFERENCE)
       .map(({ rowCount, colCount, expectedResult }) => ({ call: `T(${rowCount}, ${colCount})`, expectedResult }))
       .concat({ call: 'a(2)', expectedResult: '17552' }),
   },
   {
     files: ['oeis/A401673/A401673.gp'],
-    testCases: testCasesDiagonal
+    testCases: testCasesOf('diagonal-pieces-modular')
       .filter(({ rowCount, colCount }) => Math.max(rowCount, colCount) <= MAX_DIAGONAL_SIDE)
       .map(({ rowCount, colCount, expectedResult }) => ({
         call: `(q -> vector(${rowCount * colCount}\\2 + 1, k, polcoef(q, k-1)))(P(${rowCount}, ${colCount}))`,

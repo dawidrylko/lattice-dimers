@@ -33,12 +33,12 @@ The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-b
 
 The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670) [1]. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph tori.
 
-For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in [OEIS A335586](https://oeis.org/A335586) [1]. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `spec/cases/periodicTilingTests-Modular.json`, where it wrote them once.
+For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in [OEIS A335586](https://oeis.org/A335586) [1]. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `spec/cases/all-lattices-cylinder-torus-modular.json`, where it wrote them once.
 
 ```js run
 const reference = require('./js/solvers/all-lattices-cylinder-torus-bigint.js');
 const modular = require('./js/solvers/all-lattices-cylinder-torus-modular.js');
-const known = require('./js/core/cases').testCasesPeriodicModular;
+const known = require('./js/core/cases').testCasesOf('all-lattices-cylinder-torus-modular');
 const stored = (side, twisted) =>
   known.find(t => t.lattice === 'king' && t.torus && !t.twisted === !twisted && t.rowCount === side && t.colCount === side);
 
@@ -226,7 +226,7 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 ## Verification
 
-The two cylinder and torus solvers agree with each other up to $8 \times 8$, the modular solver checks every result against an extra prime, and the PARI/GP program runs in CI against the king's graph tori of the test data. `node harness/testRunner.js` runs the king's graph boards of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers.
+The two cylinder and torus solvers agree with each other up to $8 \times 8$, the modular solver checks every result against an extra prime, and the PARI/GP program runs in CI against the king's graph tori of the test data. `node harness/testRunner.js` runs the king's graph boards of [`spec/cases/all-lattices-cylinder-torus-bigint.json`](../../spec/cases/all-lattices-cylinder-torus-bigint.json) through both solvers.
 
 ## References
 

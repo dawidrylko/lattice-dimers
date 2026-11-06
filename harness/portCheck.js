@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { LANGUAGES } = require('../js/core/scriptExecutor.js');
+const { boardKeyOf } = require('../js/core/cases.js');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const EXTENSIONS = { rs: '.rs', py: '.py', js: '.js' };
@@ -16,6 +17,39 @@ function listFiles(directory) {
     : [];
 }
 
+function familyOf(algorithm) {
+  return algorithm.slice(0, algorithm.lastIndexOf('-'));
+}
+
+/**
+ * Lists every board on which two twin algorithms hold different counts. Twins are the algorithms of one family,
+ * whose ids differ only in the method, so they count the same boards.
+ * @param {{algorithm: string, testCases: Object[]}[]} caseFiles The files of spec/cases.
+ * @returns {string[]} One message per disagreement.
+ */
+function listTwinDisagreements(caseFiles) {
+  const errors = [];
+  const counts = new Map();
+
+  for (const { algorithm, testCases } of caseFiles) {
+    for (const testCase of testCases ?? []) {
+      const key = `${familyOf(algorithm)}|${boardKeyOf(testCase)}`;
+      const known = counts.get(key);
+      const count = String(testCase.expectedResult);
+
+      if (!known) {
+        counts.set(key, { algorithm, count });
+      } else if (known.count !== count) {
+        errors.push(
+          `${known.algorithm} and ${algorithm} disagree on the ${testCase.rowCount} x ${testCase.colCount} board ${boardKeyOf(testCase)}: ${known.count} against ${count}.`,
+        );
+      }
+    }
+  }
+
+  return errors;
+}
+
 function readRepository() {
   const registry = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'spec', 'algorithms.json'), 'utf-8'));
   const casesDirectory = path.join(ROOT_DIRECTORY, 'spec', 'cases');
@@ -27,10 +61,7 @@ function readRepository() {
       .readdirSync(casesDirectory)
       .filter(name => name.endsWith('.json'))
       .sort()
-      .map(name => ({ name, algorithms: JSON.parse(fs.readFileSync(path.join(casesDirectory, name), 'utf-8')).algorithms })),
-    loadedCaseFiles: [
-      ...fs.readFileSync(path.join(ROOT_DIRECTORY, 'js', 'core', 'cases.js'), 'utf-8').matchAll(/load\('([^']+\.json)'\)/g),
-    ].map(([, name]) => name),
+      .map(name => ({ name, ...JSON.parse(fs.readFileSync(path.join(casesDirectory, name), 'utf-8')) })),
     runnableLanguages: LANGUAGES,
   };
 }
@@ -41,12 +72,11 @@ function readRepository() {
  * @property {{languages: Object<string, string>, pendingPorts: number, algorithms: Object<string, Object<string, string>>}} repository.registry
  *   The contents of spec/algorithms.json.
  * @property {string[]} repository.files The root-relative files in the directories of the languages.
- * @property {{name: string, algorithms: string[]}[]} repository.caseFiles The files of spec/cases with the algorithms each checks.
- * @property {string[]} repository.loadedCaseFiles The files of spec/cases that js/core/cases.js loads.
+ * @property {{name: string, algorithm: string, testCases: Object[]}[]} repository.caseFiles The files of spec/cases.
  * @property {string[]} repository.runnableLanguages The languages the executor can run.
  * @returns {string[]} One message per disagreement.
  */
-function listPortErrors({ registry, files, caseFiles, loadedCaseFiles, runnableLanguages }) {
+function listPortErrors({ registry, files, caseFiles, runnableLanguages }) {
   const errors = [];
   const registered = new Set();
 
@@ -105,23 +135,29 @@ function listPortErrors({ registry, files, caseFiles, loadedCaseFiles, runnableL
     errors.push(`${file} is not registered in spec/algorithms.json.`);
   }
 
-  for (const { name } of caseFiles.filter(({ name }) => !loadedCaseFiles.includes(name))) {
-    errors.push(`spec/cases/${name} is not loaded by js/core/cases.js, so no test runs it.`);
-  }
+  for (const { name, algorithm, testCases } of caseFiles) {
+    if (name !== `${algorithm}.json`) {
+      errors.push(`spec/cases/${name} holds the cases of ${algorithm}; the file of an algorithm is named <id>.json.`);
+    }
 
-  const loaded = caseFiles.filter(({ name }) => loadedCaseFiles.includes(name));
+    if (!Object.hasOwn(registry.algorithms, name.slice(0, -'.json'.length))) {
+      errors.push(`spec/cases/${name} is not named after an algorithm of spec/algorithms.json, so no test runs it.`);
+    }
 
-  for (const { name, algorithms } of loaded) {
-    for (const algorithm of algorithms.filter(algorithm => !Object.hasOwn(registry.algorithms, algorithm))) {
-      errors.push(`spec/cases/${name} checks ${algorithm}, which is not an algorithm of spec/algorithms.json.`);
+    const keys = (testCases ?? []).map(boardKeyOf);
+
+    for (const key of new Set(keys.filter((key, index) => keys.indexOf(key) !== index))) {
+      errors.push(`spec/cases/${name} holds the board ${key} more than once.`);
     }
   }
 
-  const checked = new Set(loaded.flatMap(({ algorithms }) => algorithms));
+  const checked = new Set(caseFiles.map(({ name }) => name));
 
-  for (const algorithm of Object.keys(registry.algorithms).filter(algorithm => !checked.has(algorithm))) {
-    errors.push(`${algorithm} is checked by no file in spec/cases.`);
+  for (const algorithm of Object.keys(registry.algorithms).filter(algorithm => !checked.has(`${algorithm}.json`))) {
+    errors.push(`${algorithm} has no file in spec/cases.`);
   }
+
+  errors.push(...listTwinDisagreements(caseFiles));
 
   return errors;
 }

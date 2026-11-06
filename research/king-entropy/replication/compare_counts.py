@@ -1,6 +1,6 @@
 """Claim 1, part 2: own exact counts against the committed counts of the
 repository (data/zex/*.json of research/king-entropy and the test data of the
-JavaScript solvers in spec/cases/domiculeTiling*.json at the repository root).
+JavaScript solvers in spec/cases/domicule-rectangle-bigint.json at the repository root).
 
 For each zex file the same (lattice, bc, m, K) is recomputed with kd.c + CRT
 (the number of primes chosen from the size of the counts; one extra prime
@@ -46,19 +46,18 @@ def main():
 
     js = 0
     jbad = 0
-    for name in ("domiculeTilingTests.json", "domiculeTilingTests-Rectangles.json"):
-        for tc in json.load(open(os.path.join(REPO, "spec", "cases", name)))["testCases"]:
-            K, L, z = tc["rowCount"], tc["colCount"], int(tc["expectedResult"])
-            if K == 0 or L == 0:
-                mine = 1
-            elif K <= 36 and L <= 24 and K < len(own_free.get(L, [])):
-                mine = own_free[L][K]
-            elif L <= 36 and K <= 24 and L < len(own_free.get(K, [])):
-                mine = own_free[K][L]
-            else:
-                continue
-            js += 1
-            jbad += mine != z
+    for tc in json.load(open(os.path.join(REPO, "spec", "cases", "domicule-rectangle-bigint.json")))["testCases"]:
+        K, L, z = tc["rowCount"], tc["colCount"], int(tc["expectedResult"])
+        if K == 0 or L == 0:
+            mine = 1
+        elif K <= 36 and L <= 24 and K < len(own_free.get(L, [])):
+            mine = own_free[L][K]
+        elif L <= 36 and K <= 24 and L < len(own_free.get(K, [])):
+            mine = own_free[K][L]
+        else:
+            continue
+        js += 1
+        jbad += mine != z
     print(f"JavaScript solver test data (repository root spec/cases/): {js} boards compared, mismatches {jbad}")
     print("TOTAL MISMATCHES:", nbad + jbad)
 

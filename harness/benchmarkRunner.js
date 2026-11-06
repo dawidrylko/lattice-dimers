@@ -4,31 +4,26 @@ const os = require('os');
 const path = require('path');
 const { parseArgs, exec } = require('../js/core');
 const { RESULTS_DIRECTORY, describeEnvironment, runDirectoryName } = require('./benchmarkEnvironment');
-const { listImplementations, algorithmOf } = require('../js/core/registry');
+const { listImplementations, algorithmOf, javaScriptFileOf } = require('../js/core/registry');
 const { LATTICES } = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
-const {
-  filesInt,
-  testCasesInt,
-  filesBigInt,
-  testCasesBigInt,
-  filesDomicule,
-  testCasesDomicule,
-  filesPeriodic,
-  testCasesPeriodic,
-  testCasesPeriodicModular,
-  filesDiagonal,
-  testCasesDiagonal,
-  testCasesDiagonalModular,
-} = require('../js/core/cases');
+const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 
 const ENVIRONMENT = describeEnvironment();
 const BENCHMARK_DIRECTORY = path.join(RESULTS_DIRECTORY, runDirectoryName(ENVIRONMENT));
 const MACHINE_KEYS = ['architecture', 'cpu', 'host', 'timing'];
 const SOLVER_TIME = /^time ([\d.]+) ms$/m;
 const LANGUAGE_KEYS = { '.rs': 'rust', '.py': 'python' };
-const PERIODIC_CASES = [...testCasesPeriodic, ...testCasesPeriodicModular];
-const DIAGONAL_CASES = [...testCasesDiagonal, ...testCasesDiagonalModular];
-const DOMICULE_BOARDS = [...testCasesDomicule, { rowCount: 20, colCount: 20 }];
+const NUMBER_GROUP = { files: [javaScriptFileOf('domino-rectangle-number')], testCases: testCasesOf('domino-rectangle-number').filter(isEvenSquare) };
+const DOMINO_GROUP = {
+  files: ['domino-rectangle-bigint', 'domino-rectangle-formula'].map(javaScriptFileOf),
+  testCases: testCasesOf('domino-rectangle-formula'),
+};
+const DOMICULE_FILES = ['domicule-rectangle-bigint', 'domicule-rectangle-modular'].map(javaScriptFileOf);
+const PERIODIC_FILES = ['all-lattices-cylinder-torus-bigint', 'all-lattices-cylinder-torus-modular'].map(javaScriptFileOf);
+const DIAGONAL_FILES = ['diagonal-pieces-bigint', 'diagonal-pieces-modular'].map(javaScriptFileOf);
+const PERIODIC_CASES = testCasesOf('all-lattices-cylinder-torus-modular');
+const DIAGONAL_CASES = testCasesOf('diagonal-pieces-modular');
+const DOMICULE_BOARDS = [...testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare), { rowCount: 20, colCount: 20 }];
 const PERIODIC_GROUPS = ['--torus', '--cylinder'];
 const USAGE =
   'Usage: node harness/benchmarkRunner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal] [--lattice king|triangular|square] [--force]';
@@ -60,10 +55,10 @@ function listSquareBoards(minSide, maxSide, options = {}) {
 
 function listGroups(lattice) {
   return {
-    '--domicule': [{ files: filesDomicule, testCases: DOMICULE_BOARDS }],
-    '--torus': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice, torus: true }), PERIODIC_CASES) }],
-    '--cylinder': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice }), PERIODIC_CASES) }],
-    '--diagonal': [{ files: filesDiagonal, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
+    '--domicule': [{ files: DOMICULE_FILES, testCases: DOMICULE_BOARDS }],
+    '--torus': [{ files: PERIODIC_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice, torus: true }), PERIODIC_CASES) }],
+    '--cylinder': [{ files: PERIODIC_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice }), PERIODIC_CASES) }],
+    '--diagonal': [{ files: DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
   };
 }
 
@@ -255,10 +250,7 @@ function __main__() {
     const flags = Object.keys(allGroups).filter(flag => argv.includes(flag));
     const groups = flags.length
       ? allGroups[flags[0]]
-      : [
-          { files: filesInt, testCases: testCasesInt },
-          { files: filesBigInt, testCases: testCasesBigInt },
-        ];
+      : [NUMBER_GROUP, DOMINO_GROUP];
 
     if (
       flags.length > 1 ||
@@ -317,6 +309,8 @@ if (require.main === module) {
 }
 
 module.exports = {
+  DOMINO_GROUP,
+  NUMBER_GROUP,
   BENCHMARK_DIRECTORY,
   ENVIRONMENT,
   checkDirectory,

@@ -1,5 +1,5 @@
 {
-  "algorithms": ["diagonal-pieces-bigint", "diagonal-pieces-modular"],
+  "algorithm": "diagonal-pieces-bigint",
   "testCases": [
     {
       "rowCount": 0,

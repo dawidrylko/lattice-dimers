@@ -105,14 +105,14 @@ def count_crt(h, w, lat='king', bc='free'):
 
 
 root = pathlib.Path(__file__).resolve().parents[3] / 'spec' / 'cases'
-for fn in ('domiculeTilingTests.json', 'domiculeTilingTests-Rectangles.json'):
-    for t in json.load(open(root / fn))['testCases']:
-        h, w = t['rowCount'], t.get('colCount', t['rowCount'])
-        if h == 0 or w == 0:
-            continue
-        hh, ww = (h, w) if w <= h else (w, h)       # put the short side across
-        got = tm.count(hh, ww) if ww <= 12 else count_crt(hh, ww)
-        check(f'{fn} {h}x{w}', got == int(t['expectedResult']), f'= {got}')
+fn = 'domicule-rectangle-bigint.json'
+for t in json.load(open(root / fn))['testCases']:
+    h, w = t['rowCount'], t.get('colCount', t['rowCount'])
+    if h == 0 or w == 0:
+        continue
+    hh, ww = (h, w) if w <= h else (w, h)       # put the short side across
+    got = tm.count(hh, ww) if ww <= 12 else count_crt(hh, ww)
+    check(f'{fn} {h}x{w}', got == int(t['expectedResult']), f'= {got}')
 z20 = int('974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427')
 got = count_crt(20, 20)
 check('README 20x20 (used by fitsq.py)', got == z20, f'= {got}')

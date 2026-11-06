@@ -1,8 +1,8 @@
 import json, pathlib, numpy as np
 from mpmath import mp, mpf, log
 mp.dps = 40
-d = json.load(open(pathlib.Path(__file__).resolve().parents[3] / 'spec' / 'cases' / 'domiculeTilingTests.json'))['testCases']
-Z = {t['rowCount']: int(t['expectedResult']) for t in d if t['rowCount'] > 0}
+d = json.load(open(pathlib.Path(__file__).resolve().parents[3] / 'spec' / 'cases' / 'domicule-rectangle-bigint.json'))['testCases']
+Z = {t['rowCount']: int(t['expectedResult']) for t in d if t['rowCount'] > 0 and t['rowCount'] == t['colCount']}
 Z[20] = int('974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427')  # README, repo-claimed
 Ls = sorted(Z)
 lz = {L: log(mpf(Z[L])) for L in Ls}

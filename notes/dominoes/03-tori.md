@@ -34,9 +34,9 @@ Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A
 ```js run
 const reference = require('./js/solvers/all-lattices-cylinder-torus-bigint.js');
 const modular = require('./js/solvers/all-lattices-cylinder-torus-modular.js');
-const { testCasesPeriodic, testCasesPeriodicModular } = require('./js/core/cases');
+const { testCasesOf } = require('./js/core/cases');
 const stored = side =>
-  [...testCasesPeriodic, ...testCasesPeriodicModular].find(
+  testCasesOf('all-lattices-cylinder-torus-modular').find(
     t => t.lattice === 'square' && t.torus && !t.twisted && t.oeis === 'A335586' && t.rowCount === side && t.colCount === side,
   );
 const rows = [];
@@ -84,7 +84,7 @@ print(`Run: ${nb.context.benchmarkRun}`);
 
 ## Verification
 
-The two cylinder and torus solvers agree with each other and with [OEIS A335586](https://oeis.org/A335586) and [OEIS A253678](https://oeis.org/A253678), and the modular solver also with [OEIS A281679](https://oeis.org/A281679). `node harness/testRunner.js` runs the tori of [`spec/cases/periodicTilingTests.json`](../../spec/cases/periodicTilingTests.json) through both solvers and those of `spec/cases/periodicTilingTests-Modular.json` through the modular one.
+The two cylinder and torus solvers agree with each other and with [OEIS A335586](https://oeis.org/A335586) and [OEIS A253678](https://oeis.org/A253678), and the modular solver also with [OEIS A281679](https://oeis.org/A281679). `node harness/testRunner.js` runs the tori of [`spec/cases/all-lattices-cylinder-torus-bigint.json`](../../spec/cases/all-lattices-cylinder-torus-bigint.json) through both solvers and those of `spec/cases/all-lattices-cylinder-torus-modular.json` through the modular one.
 
 ## References
 
