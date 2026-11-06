@@ -4,9 +4,11 @@
     "py": "python/lattice_dimers/solvers",
     "js": "js/solvers"
   },
-  "pendingPorts": 6,
+  "pendingPorts": 2,
   "algorithms": {
     "domicule-diagonal-bigint": {
+      "rs": "rust/solvers/src/bin/domicule-diagonal-bigint.rs",
+      "py": "python/lattice_dimers/solvers/domicule_diagonal_bigint.py",
       "js": "js/solvers/domiculeDiagonalSolver-BigInt.js"
     },
     "domicule-diagonal-modular": {
@@ -35,6 +37,8 @@
       "js": "js/solvers/dominoTilingSolver-Formula.js"
     },
     "domino-tiling-number": {
+      "rs": "rust/solvers/src/bin/domino-tiling-number.rs",
+      "py": "python/lattice_dimers/solvers/domino_tiling_number.py",
       "js": "js/solvers/dominoTilingSolver.js"
     },
     "periodic-tiling-bigint": {

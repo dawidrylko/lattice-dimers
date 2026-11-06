@@ -15,7 +15,7 @@ const LARGEST_PERIODIC_RESULTS = [
       `${path.basename(file)}_16x16-${lattice}-cylinder.txt`,
     ]),
   ),
-  'domiculeDiagonalSolver-BigInt.js_12x12.txt',
+  ...listImplementations('domicule-diagonal-bigint').map(({ file }) => `${path.basename(file)}_12x12.txt`),
   ...listImplementations('domicule-diagonal-modular').map(({ file }) => `${path.basename(file)}_20x20.txt`),
 ];
 
@@ -28,7 +28,9 @@ function isCompleteRun(root, run) {
   const lastBigInt = testCasesBigInt[testCasesBigInt.length - 1];
   const requiredFiles = [
     'environment.json',
-    ...filesInt.map(fileName => resultFileName(fileName, lastInt)),
+    ...filesInt
+      .flatMap(fileName => listImplementations(algorithmOf(fileName)))
+      .map(({ file }) => resultFileName(path.basename(file), lastInt)),
     ...filesBigInt
       .flatMap(fileName => listImplementations(algorithmOf(fileName)))
       .map(({ file }) => resultFileName(path.basename(file), lastBigInt)),
