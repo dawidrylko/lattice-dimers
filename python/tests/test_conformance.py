@@ -96,6 +96,11 @@ def case_id(algorithm, case):
     return "-".join(parts)
 
 
+def test_every_algorithm_runs_at_least_one_known_count():
+    assert PYTHON_IDS
+    assert not [algorithm for algorithm in PYTHON_IDS if not any(case.values[0] == algorithm for case in listed_cases())]
+
+
 def listed_cases():
     full = os.environ.get("FULL_CASES") == "1"
 

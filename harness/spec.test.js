@@ -236,3 +236,32 @@ test('research/king-entropy reads its counts from spec/cases', () => {
 
   assert.deepEqual(stale, [], 'These files still read the counts from data/ at the repository root, which moved to spec/cases.');
 });
+
+describe('the shared test data', () => {
+  const read = file => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'spec', file), 'utf-8'));
+  const { algorithms } = read('algorithms.json');
+  const limits = read('limits.json');
+  const cli = read('cli.json');
+  const ids = Object.keys(algorithms);
+
+  test('every rule of spec/limits.json has one known key and names known algorithms', () => {
+    assert.ok(limits.firstCases > 0);
+
+    for (const [id, rule] of Object.entries(limits.algorithms)) {
+      const [key, value, ...rest] = Object.entries(rule).flat();
+
+      assert.ok(ids.includes(id), id);
+      assert.deepEqual(rest, [], id);
+      assert.ok(['maxTorusSide', 'maxSquareSide', 'firstCasesPlusBoardsOf'].includes(key), id);
+      assert.ok(key !== 'firstCasesPlusBoardsOf' || ids.includes(value), id);
+    }
+  });
+
+  test('every entry of spec/cli.json names a known algorithm, and every algorithm has rejections', () => {
+    const named = ['rejections', 'parity', 'memory', 'longCounts'].flatMap(group => cli[group].map(({ algorithm }) => algorithm));
+
+    assert.deepEqual(named.filter(id => !ids.includes(id)), []);
+    assert.deepEqual(ids.filter(id => !cli.rejections.some(({ algorithm }) => algorithm === id)), []);
+    assert.ok(ids.includes(cli.timeSpan.algorithm));
+  });
+});

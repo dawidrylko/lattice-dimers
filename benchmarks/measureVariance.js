@@ -34,7 +34,7 @@ function languageOf(file) {
 }
 
 function runOnce(file, args) {
-  const [program, ...launchArgs] = exec.launch(file);
+  const [program, ...launchArgs] = exec.launchBuilt(file);
   const { status, stderr } = spawnSync(program, [...launchArgs, ...args, '--time'], { encoding: 'utf-8' });
   const reported = (stderr || '').match(SOLVER_TIME);
 

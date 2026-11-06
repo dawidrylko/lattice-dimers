@@ -171,7 +171,7 @@ function saveExecutionResults(options) {
  * @throws {Error} When the solver fails, reports no time or prints another count.
  */
 function measure(testCase) {
-  const [program, ...launchArgs] = exec.launch(testCase.fileName);
+  const [program, ...launchArgs] = exec.launchBuilt(testCase.fileName);
   const start = process.hrtime.bigint();
   const { status, stdout, stderr, error } = spawnSync(program, [...launchArgs, ...listSolverArguments(testCase)], {
     encoding: 'utf-8',

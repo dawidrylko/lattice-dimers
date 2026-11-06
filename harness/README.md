@@ -1,6 +1,10 @@
 # Tests
 
-Every command below runs in CI on each pull request, in the order listed. Each language tests itself on the shared data: [`spec/cases/`](../spec/cases/README.md), which boards a short run takes in [`spec/limits.json`](../spec/limits.json), and the arguments and outputs of [`spec/cli.json`](../spec/cli.json). A short run stops `domino-rectangle-bigint` and `domicule-rectangle-bigint` at the 16 × 16 square, `all-lattices-cylinder-torus-bigint` at the 8 × 8 torus, and runs of `all-lattices-cylinder-torus-modular` and `diagonal-pieces-modular` the first seven cases and the boards of their BigInt twins. Every test is selectable by name, with `--test-name-pattern` in `node --test`, `-k` in pytest and a filter in `cargo test`.
+Each language tests itself on the shared data: [`spec/cases/`](../spec/cases/README.md), [`spec/limits.json`](../spec/limits.json) and [`spec/cli.json`](../spec/cli.json). The tests take a short run by default, and `FULL_CASES=1` runs every known term.
+
+A short run stops `domino-rectangle-bigint` and `domicule-rectangle-bigint` at the 16 × 16 square and `all-lattices-cylinder-torus-bigint` at the 8 × 8 torus. `all-lattices-cylinder-torus-modular` and `diagonal-pieces-modular` run their first seven cases and the boards of their BigInt twins.
+
+The commands below run in CI on each pull request, in this order, apart from `pnpm -C js test:render`, which is part of `pnpm -C js test` and runs alone only on macOS. CI also runs `cargo clippy --workspace --all-targets -- -D warnings`. `pnpm -C js test:benchmarks` needs the Rust binaries of `cargo test --release` and the Python package. To pick tests, use `--test-name-pattern` in `node --test` and `-k` in pytest; a filter in `cargo test` picks a whole group of the Rust tests.
 
 | command | runner | what it checks |
 | --- | --- | --- |

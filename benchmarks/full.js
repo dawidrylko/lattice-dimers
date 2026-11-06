@@ -227,7 +227,7 @@ function runInstructions() {
       const counts = [];
 
       for (let i = 0; i < INSTRUCTION_RUNS; i++) {
-        const [program, ...launchArgs] = exec.launch(file);
+        const [program, ...launchArgs] = exec.launchBuilt(file);
         const { stderr } = spawnSync('valgrind', ['--tool=cachegrind', '--cache-sim=no', '--cachegrind-out-file=/dev/null', program, ...launchArgs, ...args], { encoding: 'utf-8', maxBuffer: 2 ** 26 });
         const count = parseInstructionCount(stderr);
 

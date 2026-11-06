@@ -213,6 +213,8 @@ fn assert_no_failures(group: &str, total: usize, failures: Vec<String>) {
 
 #[test]
 fn cases() {
+    assert!(!rust_algorithms().is_empty());
+    assert_eq!(rust_algorithms().iter().filter(|id| cases_to_run(id).is_empty()).count(), 0);
     let jobs: Vec<(String, Value)> = rust_algorithms().iter().flat_map(|id| cases_to_run(id).into_iter().map(move |case| (id.clone(), case))).collect();
     let failures = failures_of(&jobs, |(id, case)| {
         let args = board_args(case);

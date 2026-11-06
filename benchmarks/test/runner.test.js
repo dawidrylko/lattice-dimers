@@ -146,3 +146,12 @@ describe('a run', () => {
     assert.deepEqual(fs.readdirSync(benchmarkRoot), []);
   });
 });
+
+test('the runner refuses a Rust binary that was not built', t => {
+  const benchmarkRoot = makeTemporaryDirectory(t, 'not-built-root-');
+  const target = makeTemporaryDirectory(t, 'not-built-target-');
+  const { status, stderr } = runRunner(benchmarkRoot, ['-n', '1', '-m', '1', '--only', 'domino-rectangle-formula.js'], { CARGO_TARGET_DIR: target });
+
+  assert.notEqual(status, 0);
+  assert.match(stderr, /does not exist; build it with cargo build --release in rust\//);
+});

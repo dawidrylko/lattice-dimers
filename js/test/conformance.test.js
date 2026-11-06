@@ -18,6 +18,11 @@ function verifierOf({ expectedResult }, algorithm) {
   return algorithm === 'domino-rectangle-number' && typeof expectedResult === 'number' ? verifyInt : verifyBigInt;
 }
 
+test('every algorithm in JavaScript runs at least one known count', () => {
+  assert.ok(listJavaScriptAlgorithms().length > 0);
+  assert.deepEqual(listJavaScriptAlgorithms().filter(algorithm => !selectCases(algorithm).length), []);
+});
+
 describe('known counts', () => {
   for (const algorithm of listJavaScriptAlgorithms()) {
     describe(algorithm, () => {

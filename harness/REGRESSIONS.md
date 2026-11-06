@@ -4,7 +4,7 @@ Every defect fixed in this repository, the check that fails if it comes back, an
 
 A new fix adds its row here with the check that guards it.
 
-A row that names `test` was shown against `harness/testRunner.js`, which each language has since replaced with its own tests of the same data (see [README.md](README.md)); the runners named `test:*` moved to `node:test` under the same commands.
+A row that names `test` was shown against `harness/testRunner.js`, which is gone. Its checks now live in `rust/tests`, `python/tests`, `js/test`, `benchmarks/test` and `harness/spec.test.js`, as [README.md](README.md) lists them. The runners named `test:*` moved to `node:test` under the same commands.
 
 ## Solvers and command line
 
@@ -44,7 +44,8 @@ A row that names `test` was shown against `harness/testRunner.js`, which each la
 | usage lines named the paths before the move to `src/` | `4a11337` | `test`, usage tests (new) | `Usage: node domicule-rectangle-modular.js` |
 | the modular solver as a module had no worker count | `4a11337` | `test`, module tests (new) | the default of `jobs` removed |
 | a bare argument named like an Object property, such as `constructor`, took the next argument as its value in `js/core/commandLineArgsParser.js` | #88 | `test`, parser test for a bare argument named like an Object property | `schema[currentArg]` in the flag check |
-| a Rust binary left in `target/release` from older sources was run as the repository's code | #89 | `test:benchmarks`, executor test for a binary older than the `.rs` files under `rust/` (new) | the age check in `js/core/scriptExecutor.js` removed |
+| a Rust binary left in `target/release` from older sources was run as the repository's code | #89 | `test:benchmarks`, executor test for a binary older than the `.rs` files under `rust/` (new) | the age check of the executor removed |
+| the benchmark runner measured a Rust binary older than its sources, since only the test executor checked its age | #115 | `test:benchmarks`, the runner refuses a Rust binary that was not built (new) | `launchBuilt` made to return `launch` |
 | the Python solver failed with a `TypeError` when `os.process_cpu_count()` gave `None`, on the command line and as a module without `jobs` | #89 | `test`, module test when the number of processors is unknown (new), which runs both | `or 1` removed from either default of `jobs`, each on its own |
 | with two Rust binaries, an edit to the root of one in `rust/solvers/src/bin` made the executor refuse the other, which cargo does not rebuild for it | #92 | `test`, Rust source tests and the executor test for a binary older than only its own root (new) | `rustSourcesModifiedAt` taking every `.rs` file under `rust/` again (the source tests), or `fileName` passed for `resolve(fileName)` in `executeSolver` (the executor test) |
 

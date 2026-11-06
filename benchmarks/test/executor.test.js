@@ -113,6 +113,7 @@ describe('the newest Rust source of a binary', () => {
     ['solvers/src/bin/second.rs', 4000],
     ['target/release/build/generated.rs', 5000],
     ['build/release/build/generated.rs', 6000],
+    ['tests/conformance.rs', 7000],
   ];
   const cases = [
     ['a binary whose shared source is newer than its own file, not the newer root of another binary', 'solvers/src/bin/first.rs', 3000],
@@ -135,4 +136,10 @@ describe('the newest Rust source of a binary', () => {
       assert.equal(actual, seconds * 1000);
     });
   }
+});
+
+test('the executor runs exactly the languages of spec/algorithms.json', () => {
+  const { languages } = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'spec', 'algorithms.json'), 'utf-8'));
+
+  assert.deepEqual(Object.keys(executor.LAUNCHERS).sort(), Object.keys(languages).map(language => `.${language}`).sort());
 });

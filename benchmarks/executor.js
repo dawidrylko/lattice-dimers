@@ -46,7 +46,7 @@ function listRustSources(file, buildDirectories) {
 
 /**
  * Finds when the sources of one Rust binary last changed: the newest modification time of its own file in
- * rust/solvers/src/bin and of every .rs file under rust/ outside that directory and outside the build directories,
+ * rust/solvers/src/bin and of every .rs file under rust/ outside that directory, the tests and the build directories,
  * read at every run of the binary.
  * The other files in rust/solvers/src/bin are the roots of other binaries, which cargo does not rebuild this one
  * for. Only .rs files count, because cargo rebuilds when a .rs file it compiles is newer than its last build, so
@@ -59,7 +59,7 @@ function listRustSources(file, buildDirectories) {
  */
 function rustSourcesModifiedAt(source, directory = RUST_DIRECTORY) {
   const binaries = path.join(directory, RUST_BINARY_DIRECTORY);
-  const buildDirectories = [path.join(directory, 'target'), path.resolve(directory, process.env.CARGO_TARGET_DIR || 'target')];
+  const buildDirectories = [path.join(directory, 'tests'), path.join(directory, 'target'), path.resolve(directory, process.env.CARGO_TARGET_DIR || 'target')];
   const sources = listRustSources(directory, buildDirectories).filter(file => path.dirname(file) !== binaries || file === source);
 
   return Math.max(...sources.map(file => fs.statSync(file).mtimeMs));
@@ -96,6 +96,27 @@ function generateCommand(fileName, { rowCount, colCount, lattice, torus, twisted
 }
 
 /**
+ * Lists what launch lists, after refusing a Rust binary that was not built or is older than the .rs files it is
+ * built from, so that a benchmark never measures code that is not the repository's.
+ * @param {string} fileName The root-relative file of the implementation, or the bare name of a file in js/solvers.
+ * @returns {string[]} The program, then its arguments.
+ */
+function launchBuilt(fileName) {
+  const launcher = launch(fileName);
+  const [binary] = launcher;
+
+  if (path.extname(fileName) === '.rs' && !fs.existsSync(binary)) {
+    throw new Error(`${binary} does not exist; build it with cargo build --release in rust/.`);
+  }
+
+  if (path.extname(fileName) === '.rs' && fs.statSync(binary).mtimeMs < rustSourcesModifiedAt(resolve(fileName))) {
+    throw new Error(`${binary} is older than the .rs files it is built from; rebuild it with cargo build --release in rust/.`);
+  }
+
+  return launcher;
+}
+
+/**
  * Executes one implementation of a solver with the provided options and returns the output. A Rust binary that
  * was not built, or is older than the .rs files it is built from, fails instead of counting with code that is not the repository's.
  * @param {string} fileName The root-relative file of the implementation, or the bare name of a file in js/solvers.
@@ -106,17 +127,9 @@ function generateCommand(fileName, { rowCount, colCount, lattice, torus, twisted
  */
 function executeSolver(fileName, options) {
   try {
+    launchBuilt(fileName);
+
     const command = generateCommand(fileName, options);
-    const [binary] = launch(fileName);
-
-    if (path.extname(fileName) === '.rs' && !fs.existsSync(binary)) {
-      throw new Error(`${binary} does not exist; build it with cargo build --release in rust/.`);
-    }
-
-    if (path.extname(fileName) === '.rs' && fs.statSync(binary).mtimeMs < rustSourcesModifiedAt(resolve(fileName))) {
-      throw new Error(`${binary} is older than the .rs files it is built from; rebuild it with cargo build --release in rust/.`);
-    }
-
     const output = execSync(command, {
       stdio: 'pipe',
       encoding: 'utf-8',
@@ -128,4 +141,4 @@ function executeSolver(fileName, options) {
   }
 }
 
-module.exports = Object.assign(executeSolver, { generateCommand, launch, rustSourcesModifiedAt });
+module.exports = Object.assign(executeSolver, { LAUNCHERS, generateCommand, launch, launchBuilt, rustSourcesModifiedAt });
