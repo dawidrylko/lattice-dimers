@@ -1,5 +1,7 @@
+const assert = require('node:assert/strict');
 const { spawnSync } = require('child_process');
 const path = require('path');
+const { test } = require('node:test');
 const {
   enumerateTilings,
   renderSheet,
@@ -19,15 +21,16 @@ const {
   listRankPrimes,
   rankTilingsModulo,
   combineRanks,
-} = require('../js/renderer');
-const { PERIODIC_LATTICES, countPeriodicDiagonals } = require('../js/renderer/periodic');
-const periodicReference = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
+} = require('../renderer');
+const { PERIODIC_LATTICES, countPeriodicDiagonals } = require('../renderer/periodic');
+const periodicReference = require('../solvers/all-lattices-cylinder-torus-bigint.js');
 const crypto = require('crypto');
-const { createRandom } = require('../js/renderer/cftp');
+const { createRandom } = require('../renderer/cftp');
 const fs = require('fs');
-const { buildReadmeImages } = require('../site/readme-images');
-const { renderChart, renderNote, drawTilings, formatTime, logCount } = require('../site/notes');
-const { testCasesOf } = require('../js/core/cases');
+const { buildReadmeImages } = require('../../site/readme-images');
+const { renderChart, renderNote, drawTilings, formatTime, logCount } = require('../../site/notes');
+const { testCasesOf } = require('../core/cases');
+const { ROOT_DIRECTORY } = require('./support');
 
 const MAX_CELLS = 36;
 const UNRANK_SAMPLE_SIZE = 1000;
@@ -330,18 +333,14 @@ function runTest(testCase) {
     const error = findCoverageError(tiling, testCase);
 
     if (error) {
-      console.error(`Failed! Invalid tiling: ${error}`);
-
-      return false;
+      assert.fail(`Invalid tiling: ${error}`);
     }
 
     const serialized = serializeTiling(tiling);
     const rank = BigInt(seen.size);
 
     if (serializeTiling(unrankTiling(unranker, rank)) !== serialized) {
-      console.error(`Failed! Unranked tiling #${rank + BigInt(1)} differs from the enumerated one.`);
-
-      return false;
+      assert.fail(`Unranked tiling #${rank + BigInt(1)} differs from the enumerated one.`);
     }
 
     seen.add(serialized);
@@ -349,15 +348,11 @@ function runTest(testCase) {
   }
 
   if (unranker.total !== BigInt(seen.size)) {
-    console.error(`Failed! Unranker total: ${unranker.total}, enumerated: ${seen.size}`);
-
-    return false;
+    assert.fail(`Unranker total: ${unranker.total}, enumerated: ${seen.size}`);
   }
 
   if (BigInt(seen.size) !== BigInt(expectedResult)) {
-    console.error(`Failed! Expected: ${expectedResult}, Actual: ${seen.size}`);
-
-    return false;
+    assert.fail(`Expected: ${expectedResult}, Actual: ${seen.size}`);
   }
 
   if (firstTiling) {
@@ -365,15 +360,9 @@ function runTest(testCase) {
     const ascii = renderAscii(firstTiling, testCase);
 
     if (!svg.startsWith('<svg') || ascii.includes('.')) {
-      console.error('Failed! Rendering produced invalid output.');
-
-      return false;
+      assert.fail('Rendering produced invalid output.');
     }
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runUnrankTest(testCase) {
@@ -381,9 +370,7 @@ function runUnrankTest(testCase) {
   const unranker = createUnranker(testCase);
 
   if (unranker.total !== BigInt(expectedResult)) {
-    console.error(`Failed! Expected: ${expectedResult}, Actual: ${unranker.total}`);
-
-    return false;
+    assert.fail(`Expected: ${expectedResult}, Actual: ${unranker.total}`);
   }
 
   let rank = BigInt(0);
@@ -394,9 +381,7 @@ function runUnrankTest(testCase) {
     }
 
     if (serializeTiling(unrankTiling(unranker, rank)) !== serializeTiling(tiling)) {
-      console.error(`Failed! Unranked tiling #${rank + BigInt(1)} differs from the enumerated one.`);
-
-      return false;
+      assert.fail(`Unranked tiling #${rank + BigInt(1)} differs from the enumerated one.`);
     }
 
     rank++;
@@ -406,14 +391,8 @@ function runUnrankTest(testCase) {
   const error = findCoverageError(lastTiling, testCase);
 
   if (error) {
-    console.error(`Failed! Invalid last tiling: ${error}`);
-
-    return false;
+    assert.fail(`Invalid last tiling: ${error}`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runRankTest(testCase) {
@@ -422,10 +401,9 @@ function runRankTest(testCase) {
   const unrank = domino ? unrankTiling : unrankDomiculeTiling;
 
   if (unranker.total === BigInt(0)) {
-    const passed = listRankPrimes(unranker.total).length === 0;
-    console.log(passed ? 'Passed!' : 'Failed! Primes listed for a board without tilings.');
+    assert.equal(listRankPrimes(unranker.total).length, 0, 'Primes listed for a board without tilings.');
 
-    return passed;
+    return;
   }
 
   const ranks = [...new Set([0, 1, 2, 3, 5, 7].map(i => (unranker.total * BigInt(i)) / BigInt(8)).concat(unranker.total - BigInt(1)))];
@@ -436,14 +414,8 @@ function runRankTest(testCase) {
   const found = combineRanks(results.map(({ ranks: residues }) => residues), primes);
 
   if (!totals || found.some((rank, i) => rank !== ranks[i])) {
-    console.error(`Failed! Ranks ${ranks.join(', ')} came back as ${found.join(', ')}${totals ? '' : ', and the totals differ'}.`);
-
-    return false;
+    assert.fail(`Ranks ${ranks.join(', ')} came back as ${found.join(', ')}${totals ? '' : ', and the totals differ'}.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runRandomUniformityTest(testCase) {
@@ -457,9 +429,7 @@ function runRandomUniformityTest(testCase) {
     const error = findCoverageError(tiling, testCase);
 
     if (error) {
-      console.error(`Failed! Invalid random tiling: ${error}`);
-
-      return false;
+      assert.fail(`Invalid random tiling: ${error}`);
     }
 
     const key = serializeTiling(tiling);
@@ -473,16 +443,8 @@ function runRandomUniformityTest(testCase) {
   );
 
   if (frequencies.size !== expectedResult || chiSquared > criticalValue) {
-    console.error(
-      `Failed! Distinct: ${frequencies.size}/${expectedResult}, chi-squared: ${chiSquared.toFixed(2)} (limit ${criticalValue})`,
-    );
-
-    return false;
+    assert.fail(`Distinct: ${frequencies.size}/${expectedResult}, chi-squared: ${chiSquared.toFixed(2)} (limit ${criticalValue})`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runRandomValidityTest(testCase) {
@@ -490,29 +452,19 @@ function runRandomValidityTest(testCase) {
   const error = findCoverageError(tiling, testCase);
 
   if (error) {
-    console.error(`Failed! Invalid random tiling: ${error}`);
-
-    return false;
+    assert.fail(`Invalid random tiling: ${error}`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runDomiculeUnrankTest(testCase) {
   const unranker = createDomiculeUnranker(testCase);
 
   if (unranker.total !== BigInt(testCase.expectedResult)) {
-    console.error(`Failed! Expected: ${testCase.expectedResult}, Actual: ${unranker.total}`);
-
-    return false;
+    assert.fail(`Expected: ${testCase.expectedResult}, Actual: ${unranker.total}`);
   }
 
   if (unranker.total === BigInt(0)) {
-    console.log('Passed!');
-
-    return true;
+    return;
   }
 
   const ranks =
@@ -526,32 +478,22 @@ function runDomiculeUnrankTest(testCase) {
     const error = findDomiculeCoverageError(tiling, testCase);
 
     if (error) {
-      console.error(`Failed! Invalid tiling #${rank + BigInt(1)}: ${error}`);
-
-      return false;
+      assert.fail(`Invalid tiling #${rank + BigInt(1)}: ${error}`);
     }
 
     seen.add(serializeDomiculeTiling(tiling));
   }
 
   if (seen.size !== new Set([...ranks, unranker.total - BigInt(1)]).size) {
-    console.error(`Failed! ${seen.size} distinct tilings for ${new Set(ranks).size} ranks.`);
-
-    return false;
+    assert.fail(`${seen.size} distinct tilings for ${new Set(ranks).size} ranks.`);
   }
 
   const svg = renderSheet([unrankDomiculeTiling(unranker, unranker.total - BigInt(1))], 1, testCase);
   const ascii = renderAscii(unrankDomiculeTiling(unranker, unranker.total - BigInt(1)), testCase);
 
   if (!svg.startsWith('<svg') || (testCase.rowCount * testCase.colCount && ascii.includes('.'))) {
-    console.error('Failed! Rendering produced invalid output.');
-
-    return false;
+    assert.fail('Rendering produced invalid output.');
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runDomiculeUniformityTest(testCase) {
@@ -565,9 +507,7 @@ function runDomiculeUniformityTest(testCase) {
     const error = findDomiculeCoverageError(tiling, testCase);
 
     if (error) {
-      console.error(`Failed! Invalid random tiling: ${error}`);
-
-      return false;
+      assert.fail(`Invalid random tiling: ${error}`);
     }
 
     const key = serializeDomiculeTiling(tiling);
@@ -581,30 +521,16 @@ function runDomiculeUniformityTest(testCase) {
   );
 
   if (frequencies.size !== expectedResult || chiSquared > criticalValue) {
-    console.error(
-      `Failed! Distinct: ${frequencies.size}/${expectedResult}, chi-squared: ${chiSquared.toFixed(2)} (limit ${criticalValue})`,
-    );
-
-    return false;
+    assert.fail(`Distinct: ${frequencies.size}/${expectedResult}, chi-squared: ${chiSquared.toFixed(2)} (limit ${criticalValue})`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runDomiculeValidityTest(testCase) {
   const error = findDomiculeCoverageError(sampleDomiculeTiling(testCase, createRandom(RANDOM_SEED)), testCase);
 
   if (error) {
-    console.error(`Failed! Invalid random tiling: ${error}`);
-
-    return false;
+    assert.fail(`Invalid random tiling: ${error}`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runDominoOutputTest() {
@@ -615,14 +541,8 @@ function runDominoOutputTest() {
   const ascii = hash(tilings.map(tiling => renderAscii(tiling, options)).join('\n'));
 
   if (svg !== DOMINO_OUTPUT_HASHES.svg || ascii !== DOMINO_OUTPUT_HASHES.ascii) {
-    console.error(`Failed! Domino output changed: svg ${svg}, ascii ${ascii}`);
-
-    return false;
+    assert.fail(`Domino output changed: svg ${svg}, ascii ${ascii}`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runDomiculeShapeTest({ piece, svg, rotation, ascii, ...options }) {
@@ -630,14 +550,8 @@ function runDomiculeShapeTest({ piece, svg, rotation, ascii, ...options }) {
   const text = renderAscii([piece], options);
 
   if (!sheet.includes(svg) || !sheet.includes(rotation) || !sheet.includes('.d{fill') || text !== ascii) {
-    console.error(`Failed! Diagonal ${piece.dc > 0 ? 'down-right' : 'down-left'} renders as ${JSON.stringify(text)}.`);
-
-    return false;
+    assert.fail(`Diagonal ${piece.dc > 0 ? 'down-right' : 'down-left'} renders as ${JSON.stringify(text)}.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runStyleTest({ style, markers, ...options }) {
@@ -649,31 +563,21 @@ function runStyleTest({ style, markers, ...options }) {
   const others = renderSheet.STYLES.filter(other => other !== style);
 
   if (missing.length || others.some(other => sheet.includes(`class="${other}"`))) {
-    console.error(`Failed! The ${style} sheet lacks ${missing.join(', ') || 'nothing'} or names another style.`);
-
-    return false;
+    assert.fail(`The ${style} sheet lacks ${missing.join(', ') || 'nothing'} or names another style.`);
   }
 
   if (style === renderSheet.STYLES[0] && renderSheet([STYLE_TEST_TILING], 1, options) !== sheet) {
-    console.error(`Failed! A sheet without a style is not drawn as ${style}.`);
-
-    return false;
+    assert.fail(`A sheet without a style is not drawn as ${style}.`);
   }
 
   try {
     renderSheet([STYLE_TEST_TILING], 1, { ...options, style: `${style}-unknown` });
-    console.error('Failed! An unknown style was accepted.');
-
-    return false;
+    assert.fail('An unknown style was accepted.');
   } catch (error) {
     if (!error.message.startsWith('Unknown style')) {
       throw error;
     }
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function readStrokeWidth(sheet, selector) {
@@ -699,9 +603,7 @@ function runEngravingContainmentTest({ tiling: fixed, ...options }) {
   const kinds = new Set(cells.map(cell => cell.kind));
 
   if (![outline, widths.hatch, widths.axis].every(Number.isFinite) || (fixed && kinds.size !== 2)) {
-    console.error(`Failed! Engraving widths ${JSON.stringify({ outline, ...widths })} or cell kinds ${[...kinds]} are missing.`);
-
-    return false;
+    assert.fail(`Engraving widths ${JSON.stringify({ outline, ...widths })} or cell kinds ${[...kinds]} are missing.`);
   }
 
   for (const [, kinds, d] of sheet.matchAll(/<path class="([da](?: k)?)" d="([^"]+)"/g)) {
@@ -726,14 +628,8 @@ function runEngravingContainmentTest({ tiling: fixed, ...options }) {
   }
 
   if (!cells.length || escaped.length) {
-    console.error(`Failed! ${escaped.length} engraving strokes leave their cell, e.g. ${escaped[0]}.`);
-
-    return false;
+    assert.fail(`${escaped.length} engraving strokes leave their cell, e.g. ${escaped[0]}.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runLabelWidthTest({ first, label: custom, ...options }) {
@@ -745,14 +641,8 @@ function runLabelWidthTest({ first, label: custom, ...options }) {
   const visible = shown && shown.replace(/&(amp|lt|gt|quot);/g, '_');
 
   if (!shown || title !== escaped || attribute !== escaped || [...visible].length * renderSheet.LABEL_CHAR_WIDTH > boardWidth || !escaped.endsWith(shown.split('…').pop())) {
-    console.error(`Failed! Label ${label} renders as ${JSON.stringify(shown)} with title ${JSON.stringify(title)}.`);
-
-    return false;
+    assert.fail(`Label ${label} renders as ${JSON.stringify(shown)} with title ${JSON.stringify(title)}.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runShortLabelTest({ label, ...options }) {
@@ -761,31 +651,19 @@ function runShortLabelTest({ label, ...options }) {
   const shown = (sheet.match(/<text [^>]*>([^<]*)<\/text>/) || [])[1];
 
   if (shown !== escaped || sheet.includes('<title>')) {
-    console.error(`Failed! Label ${label} renders as ${JSON.stringify(shown)}.`);
-
-    return false;
+    assert.fail(`Label ${label} renders as ${JSON.stringify(shown)}.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runReadmeImagesTest() {
   const stale = Object.entries(buildReadmeImages()).filter(([file, svg]) => {
-    const target = path.join(__dirname, '..', file);
+    const target = path.join(ROOT_DIRECTORY, file);
     return !fs.existsSync(target) || fs.readFileSync(target, 'utf-8') !== svg;
   });
 
   if (stale.length) {
-    console.error(`Failed! ${stale.map(([file]) => file).join(', ')} out of date with the renderer; run pnpm -C js readme:images.`);
-
-    return false;
+    assert.fail(`${stale.map(([file]) => file).join(', ')} out of date with the renderer; run pnpm -C js readme:images.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 const CHART = {
@@ -803,38 +681,26 @@ const chartTestCases = [
   { name: 'a value above the axis', series: [{ ...CHART.series[0], points: [[0, 2]] }], expected: 'outside its axes' },
 ];
 
-function runChartTests() {
-  return chartTestCases.every(({ name, series, expected }, index) => {
-    process.stdout.write(`Executing chart test ${index + 1} of ${chartTestCases.length} for ${name}... `);
+function runChartTest({ series, expected }) {
+  let actual;
 
-    let actual;
+  try {
+    const html = renderChart({ ...CHART, series });
+    const wide = html.match(/<svg class="wide".*?<\/svg>/s)[0];
+    const narrow = html.match(/<svg class="narrow".*?<\/svg>/s)[0];
+    const labels = svg => (svg.match(/fill="var\(--fg\)"/g) || []).length;
+    const escaped = !html.includes('a <b>') && html.includes('a &lt;b&gt;');
+    const apart = [...wide.matchAll(/<text x="\d+(?:\.\d)?" y="([\d.]+)" fill="var\(--fg\)"/g)].map(match => Number(match[1]));
 
-    try {
-      const html = renderChart({ ...CHART, series });
-      const wide = html.match(/<svg class="wide".*?<\/svg>/s)[0];
-      const narrow = html.match(/<svg class="narrow".*?<\/svg>/s)[0];
-      const labels = svg => (svg.match(/fill="var\(--fg\)"/g) || []).length;
-      const escaped = !html.includes('a <b>') && html.includes('a &lt;b&gt;');
-      const apart = [...wide.matchAll(/<text x="\d+(?:\.\d)?" y="([\d.]+)" fill="var\(--fg\)"/g)].map(match => Number(match[1]));
+    actual =
+      labels(wide) === 2 && labels(narrow) === 0 && escaped && Math.abs(apart[0] - apart[1]) >= 16
+        ? 'drawn'
+        : `labels ${labels(wide)}/${labels(narrow)}, escaped ${escaped}, label rows ${apart.join(', ')}`;
+  } catch (error) {
+    actual = error.message.includes(expected) ? expected : error.message;
+  }
 
-      actual =
-        labels(wide) === 2 && labels(narrow) === 0 && escaped && Math.abs(apart[0] - apart[1]) >= 16
-          ? 'drawn'
-          : `labels ${labels(wide)}/${labels(narrow)}, escaped ${escaped}, label rows ${apart.join(', ')}`;
-    } catch (error) {
-      actual = error.message.includes(expected) ? expected : error.message;
-    }
-
-    if (actual !== expected) {
-      console.error(`Failed! Expected: ${expected}, Actual: ${actual}`);
-
-      return false;
-    }
-
-    console.log('Passed!');
-
-    return true;
-  });
+  assert.equal(actual, expected);
 }
 
 const notebookHelperTestCases = [
@@ -924,38 +790,12 @@ const figureTestCases = [
   },
 ];
 
-async function runFigureTests() {
-  for (const [index, { name, run }] of figureTestCases.entries()) {
-    process.stdout.write(`Executing figure test ${index + 1} of ${figureTestCases.length} for ${name}... `);
-
-    if (!(await run())) {
-      console.error('Failed!');
-
-      return false;
-    }
-
-    console.log('Passed!');
-  }
-
-  return true;
+async function runFigureTest({ name, run }) {
+  assert.ok(await run(), `The figure cell for ${name} did not produce the expected result.`);
 }
 
-function runNotebookHelperTests() {
-  return notebookHelperTestCases.every(({ name, actual, expected }, index) => {
-    process.stdout.write(`Executing notebook helper test ${index + 1} of ${notebookHelperTestCases.length} for ${name}... `);
-
-    const value = actual();
-
-    if (value !== expected) {
-      console.error(`Failed! Expected: ${expected}, Actual: ${value}`);
-
-      return false;
-    }
-
-    console.log('Passed!');
-
-    return true;
-  });
+function runNotebookHelperTest({ actual, expected }) {
+  assert.equal(actual(), expected);
 }
 
 function runDomiculeReachTest(testCase) {
@@ -968,32 +808,20 @@ function runDomiculeReachTest(testCase) {
   }
 
   if (seen.size !== testCase.expectedResult) {
-    console.error(`Failed! The chain reached ${seen.size} of ${testCase.expectedResult} tilings.`);
-
-    return false;
+    assert.fail(`The chain reached ${seen.size} of ${testCase.expectedResult} tilings.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runCliTest({ rowCount, colCount, args, env = {}, status, output }) {
   const result = spawnSync(
     process.execPath,
     ['js/dominoTilingRenderer.js', '-r', String(rowCount), '-c', String(colCount), ...args],
-    { cwd: path.join(__dirname, '..'), encoding: 'utf-8', timeout: CLI_TIMEOUT, env: { ...process.env, ...env } },
+    { cwd: ROOT_DIRECTORY, encoding: 'utf-8', timeout: CLI_TIMEOUT, env: { ...process.env, ...env } },
   );
 
   if (result.status !== status || !`${result.stdout}${result.stderr}`.includes(output)) {
-    console.error(`Failed! Exit code ${result.status}: ${(result.stderr || result.stdout).trim()}`);
-
-    return false;
+    assert.fail(`Exit code ${result.status}: ${(result.stderr || result.stdout).trim()}`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function findPeriodicCoverageError(tiling, { rowCount, colCount, lattice, torus }) {
@@ -1039,15 +867,11 @@ function runPeriodicDiagonalTest(testCase) {
   const squareCount = periodicReference.calculateTotalTilingCombinations({ ...testCase, lattice: 'square' });
 
   if (coefficients[0] !== squareCount) {
-    console.error(`Failed! ${surface}: ${coefficients[0]} tilings without diagonal pieces, ${squareCount} on the square lattice`);
-
-    return false;
+    assert.fail(`${surface}: ${coefficients[0]} tilings without diagonal pieces, ${squareCount} on the square lattice`);
   }
 
   if (coefficients.map(String).join() !== expected) {
-    console.error(`Failed! ${surface}: counted ${coefficients.join()}, enumerated ${expected}`);
-
-    return false;
+    assert.fail(`${surface}: counted ${coefficients.join()}, enumerated ${expected}`);
   }
 
   for (let k = 0; k < coefficients.length; k++) {
@@ -1055,9 +879,7 @@ function runPeriodicDiagonalTest(testCase) {
     const all = new Set();
 
     if (filtered.total !== coefficients[k]) {
-      console.error(`Failed! ${surface} with ${k} diagonal pieces: ${filtered.total} tilings, not ${coefficients[k]}`);
-
-      return false;
+      assert.fail(`${surface} with ${k} diagonal pieces: ${filtered.total} tilings, not ${coefficients[k]}`);
     }
 
     for (let rank = BigInt(0); rank < filtered.total; rank++) {
@@ -1065,24 +887,16 @@ function runPeriodicDiagonalTest(testCase) {
       const error = findPeriodicCoverageError(tiling, testCase);
 
       if (error || countDiagonalPieces(tiling) !== k) {
-        console.error(`Failed! ${surface} #${rank + BigInt(1)} with ${k} diagonal pieces: ${error || `${countDiagonalPieces(tiling)} diagonal pieces`}`);
-
-        return false;
+        assert.fail(`${surface} #${rank + BigInt(1)} with ${k} diagonal pieces: ${error || `${countDiagonalPieces(tiling)} diagonal pieces`}`);
       }
 
       all.add(JSON.stringify(tiling));
     }
 
     if (BigInt(all.size) !== filtered.total) {
-      console.error(`Failed! ${surface} with ${k} diagonal pieces: ${all.size} distinct tilings of ${filtered.total}`);
-
-      return false;
+      assert.fail(`${surface} with ${k} diagonal pieces: ${all.size} distinct tilings of ${filtered.total}`);
     }
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runPeriodicUnrankTest(testCase) {
@@ -1090,9 +904,7 @@ function runPeriodicUnrankTest(testCase) {
   const expected = periodicReference.calculateTotalTilingCombinations(testCase);
 
   if (unranker.total !== expected) {
-    console.error(`Failed! ${testCase.lattice} ${testCase.torus ? 'torus' : 'cylinder'}: expected ${expected}, actual ${unranker.total}`);
-
-    return false;
+    assert.fail(`${testCase.lattice} ${testCase.torus ? 'torus' : 'cylinder'}: expected ${expected}, actual ${unranker.total}`);
   }
 
   const ranks =
@@ -1106,34 +918,24 @@ function runPeriodicUnrankTest(testCase) {
     const error = findPeriodicCoverageError(tiling, testCase);
 
     if (error) {
-      console.error(`Failed! Invalid tiling #${rank + BigInt(1)}: ${error}`);
-
-      return false;
+      assert.fail(`Invalid tiling #${rank + BigInt(1)}: ${error}`);
     }
 
     seen.add(JSON.stringify(tiling));
   }
 
   if (seen.size !== new Set(ranks).size) {
-    console.error(`Failed! ${seen.size} distinct tilings for ${new Set(ranks).size} ranks.`);
-
-    return false;
+    assert.fail(`${seen.size} distinct tilings for ${new Set(ranks).size} ranks.`);
   }
 
   try {
     unrankPeriodicTiling(unranker, unranker.total);
-    console.error('Failed! A rank past the last tiling was accepted.');
-
-    return false;
+    assert.fail('A rank past the last tiling was accepted.');
   } catch (error) {
     if (!(error instanceof RangeError)) {
       throw error;
     }
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runSeamGeometryTest() {
@@ -1141,14 +943,8 @@ function runSeamGeometryTest() {
   const wrong = Object.entries(SEAM_PATHS).filter(([className, d]) => !sheet.includes(`<path class="${className}" d="${d}"/>`));
 
   if (wrong.length) {
-    console.error(`Failed! Glued edge marks differ for ${wrong.map(([className]) => className).join(', ')}.`);
-
-    return false;
+    assert.fail(`Glued edge marks differ for ${wrong.map(([className]) => className).join(', ')}.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runPeriodicSheetTest({ tiling, copies, edges, ...options }) {
@@ -1161,15 +957,11 @@ function runPeriodicSheetTest({ tiling, copies, edges, ...options }) {
   const plain = renderSheet([tiling], 1, { rowCount: options.rowCount, colCount: options.colCount });
 
   if (!nested || nested[5] !== `${nested[1]} ${nested[2]} ${nested[3]} ${nested[4]}`) {
-    console.error('Failed! The pieces are not clipped to the board.');
-
-    return false;
+    assert.fail('The pieces are not clipped to the board.');
   }
 
   if (Object.keys(copies).some(kind => counts[kind] !== copies[kind])) {
-    console.error(`Failed! Pieces drawn: ${JSON.stringify(counts)}, expected ${JSON.stringify(copies)}.`);
-
-    return false;
+    assert.fail(`Pieces drawn: ${JSON.stringify(counts)}, expected ${JSON.stringify(copies)}.`);
   }
 
   if (
@@ -1181,20 +973,12 @@ function runPeriodicSheetTest({ tiling, copies, edges, ...options }) {
     !sheet.includes('.s,.t{fill:none') ||
     !sheet.includes('.t,.u{stroke:')
   ) {
-    console.error(`Failed! Glued edges drawn: ${JSON.stringify(seams)}, expected ${edges} edges with one tick on each side and two on each end.`);
-
-    return false;
+    assert.fail(`Glued edges drawn: ${JSON.stringify(seams)}, expected ${edges} edges with one tick on each side and two on each end.`);
   }
 
   if (!/<text class="n" x="[\d.]+" y="[\d.]+">2<\/text>/.test(sheet) || plain.includes('class="s"') || plain.includes('<svg x=')) {
-    console.error('Failed! The second label line or the free board drawing is wrong.');
-
-    return false;
+    assert.fail('The second label line or the free board drawing is wrong.');
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runSublabelTest({ choices, shown, ...options }) {
@@ -1203,14 +987,8 @@ function runSublabelTest({ choices, shown, ...options }) {
   const title = sheet.match(/<title>([^<]*)<\/title><text class="n"/);
 
   if (!sublabel || (title ? title[1] : sublabel[1]) !== shown) {
-    console.error(`Failed! The second label line reads ${sublabel ? sublabel[1] : 'nothing'}, expected ${shown}.`);
-
-    return false;
+    assert.fail(`The second label line reads ${sublabel ? sublabel[1] : 'nothing'}, expected ${shown}.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runUnlabelledTest(options) {
@@ -1218,14 +996,8 @@ function runUnlabelledTest(options) {
   const [, width, height] = sheet.match(/width="([\d.]+)" height="([\d.]+)"/);
 
   if (width !== height || sheet.includes('<text')) {
-    console.error(`Failed! A sheet without labels is ${width} x ${height}${sheet.includes('<text') ? ' and has text' : ''}.`);
-
-    return false;
+    assert.fail(`A sheet without labels is ${width} x ${height}${sheet.includes('<text') ? ' and has text' : ''}.`);
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
 function runDiagonalUnrankTest({ expectedResult, order, ...board }) {
@@ -1233,9 +1005,7 @@ function runDiagonalUnrankTest({ expectedResult, order, ...board }) {
   const totals = coefficients.map((_, diagonals) => createDiagonalUnranker({ ...board, diagonals }).total);
 
   if (totals.join(',') !== coefficients.join(',')) {
-    console.error(`Failed! Expected ${expectedResult}, actual ${totals.join(',')}`);
-
-    return false;
+    assert.fail(`Expected ${expectedResult}, actual ${totals.join(',')}`);
   }
 
   for (let diagonals = 0; diagonals < coefficients.length; diagonals++) {
@@ -1247,9 +1017,7 @@ function runDiagonalUnrankTest({ expectedResult, order, ...board }) {
       const error = findDomiculeCoverageError(tiling, board);
 
       if (error || count !== diagonals) {
-        console.error(`Failed! Tiling #${rank + BigInt(1)} with ${diagonals} diagonal pieces: ${error || `${count} diagonal pieces`}`);
-
-        return false;
+        assert.fail(`Tiling #${rank + BigInt(1)} with ${diagonals} diagonal pieces: ${error || `${count} diagonal pieces`}`);
       }
     }
   }
@@ -1266,106 +1034,48 @@ function runDiagonalUnrankTest({ expectedResult, order, ...board }) {
     );
 
     if (filtered.join('\n') !== byCount.join('\n')) {
-      console.error('Failed! The numbering by diagonal pieces does not keep the order of the full numbering.');
-
-      return false;
+      assert.fail('The numbering by diagonal pieces does not keep the order of the full numbering.');
     }
   }
-
-  console.log('Passed!');
-
-  return true;
 }
 
-function runSuite(name, testCases, run) {
-  return testCases.every((testCase, index) => {
-    const { rowCount, colCount } = testCase;
-
-    process.stdout.write(
-      `Executing ${name} test ${index + 1} of ${testCases.length} for ${rowCount}x${colCount}... `,
-    );
-
-    return run(testCase);
+function suite(name, testCases, run, describe = ({ rowCount, colCount }) => `${rowCount}x${colCount}`) {
+  testCases.forEach((testCase, index) => {
+    test(`${name} test ${index + 1} of ${testCases.length} for ${describe(testCase)}`, () => run(testCase));
   });
 }
 
-async function __main__() {
-  const testCases = testCasesOf('domino-rectangle-formula').filter(
-    ({ rowCount, colCount }) => rowCount * colCount <= MAX_CELLS,
-  );
+const testCases = testCasesOf('domino-rectangle-formula').filter(({ rowCount, colCount }) => rowCount * colCount <= MAX_CELLS);
+const unrankTestCases = testCasesOf('domino-rectangle-formula').filter(
+  ({ rowCount, colCount }) => rowCount * colCount > MAX_CELLS && canUnrank({ rowCount, colCount }),
+);
+const domiculeTestCases = testCasesOf('domicule-rectangle-bigint').filter(canUnrankDomicule);
+const named = ({ name }) => name;
 
-  const unrankTestCases = testCasesOf('domino-rectangle-formula').filter(
-    ({ rowCount, colCount }) =>
-      rowCount * colCount > MAX_CELLS && canUnrank({ rowCount, colCount }),
-  );
-
-  const domiculeTestCases = testCasesOf('domicule-rectangle-bigint').filter(canUnrankDomicule);
-  const total = [
-    testCases,
-    unrankTestCases,
-    randomTestCases,
-    randomValidityTestCases,
-    domiculeTestCases,
-    domiculeRandomTestCases,
-    domiculeRandomValidityTestCases,
-    domiculeReachTestCases,
-    domiculeShapeTestCases,
-    rankTestCases,
-    periodicUnrankTestCases,
-    periodicDiagonalTestCases,
-    periodicSheetTestCases,
-    sublabelTestCases,
-    diagonalUnrankTestCases,
-    styleTestCases,
-    engravingContainmentTestCases,
-    labelWidthTestCases,
-    shortLabelTestCases,
-    cliTestCases,
-    chartTestCases,
-  ].reduce(
-    (sum, suite) => sum + suite.length,
-    0,
-  );
-
-  console.log(`Starting renderer test execution with ${total} tests...`);
-
-  const results = [
-    runSuite('renderer', testCases, runTest),
-    runSuite('unrank', unrankTestCases, runUnrankTest),
-    runSuite('rank', rankTestCases, runRankTest),
-    runSuite('random uniformity', randomTestCases, runRandomUniformityTest),
-    runSuite('random validity', randomValidityTestCases, runRandomValidityTest),
-    runSuite('domicule unrank', domiculeTestCases, runDomiculeUnrankTest),
-    runSuite('domicule random uniformity', domiculeRandomTestCases, runDomiculeUniformityTest),
-    runSuite('domicule random validity', domiculeRandomValidityTestCases, runDomiculeValidityTest),
-    runSuite('domicule chain reach', domiculeReachTestCases, runDomiculeReachTest),
-    runSuite('domicule shape', domiculeShapeTestCases, runDomiculeShapeTest),
-    runSuite('periodic unrank', periodicUnrankTestCases, runPeriodicUnrankTest),
-    runSuite('periodic diagonal pieces', periodicDiagonalTestCases, runPeriodicDiagonalTest),
-    runSuite('periodic sheet', periodicSheetTestCases, runPeriodicSheetTest),
-    runSuite('glued edge marks', [{ rowCount: 2, colCount: 4 }], runSeamGeometryTest),
-    runSuite('second label line', sublabelTestCases, runSublabelTest),
-    runSuite('sheet without labels', unlabelledTestCases, runUnlabelledTest),
-    runSuite('diagonal unrank', diagonalUnrankTestCases, runDiagonalUnrankTest),
-    runSuite('sheet style', styleTestCases, runStyleTest),
-    runSuite('engraving containment', engravingContainmentTestCases, runEngravingContainmentTest),
-    runSuite('domino output', [{ rowCount: 4, colCount: 4 }], runDominoOutputTest),
-    runSuite('label width', labelWidthTestCases, runLabelWidthTest),
-    runSuite('short label', shortLabelTestCases, runShortLabelTest),
-    runSuite('readme images', [{ rowCount: 8, colCount: 8 }], runReadmeImagesTest),
-    runSuite('command line', cliTestCases, runCliTest),
-    runChartTests(),
-    runNotebookHelperTests(),
-    await runFigureTests(),
-  ];
-
-  if (results.every(Boolean)) {
-    console.log('All renderer tests completed successfully.');
-    process.exit(0);
-  } else {
-    console.error('Some renderer tests failed.');
-    process.exit(1);
-  }
-}
-
-__main__();
+suite('renderer', testCases, runTest);
+suite('unrank', unrankTestCases, runUnrankTest);
+suite('rank', rankTestCases, runRankTest);
+suite('random uniformity', randomTestCases, runRandomUniformityTest);
+suite('random validity', randomValidityTestCases, runRandomValidityTest);
+suite('domicule unrank', domiculeTestCases, runDomiculeUnrankTest);
+suite('domicule random uniformity', domiculeRandomTestCases, runDomiculeUniformityTest);
+suite('domicule random validity', domiculeRandomValidityTestCases, runDomiculeValidityTest);
+suite('domicule chain reach', domiculeReachTestCases, runDomiculeReachTest);
+suite('domicule shape', domiculeShapeTestCases, runDomiculeShapeTest);
+suite('periodic unrank', periodicUnrankTestCases, runPeriodicUnrankTest);
+suite('periodic diagonal pieces', periodicDiagonalTestCases, runPeriodicDiagonalTest);
+suite('periodic sheet', periodicSheetTestCases, runPeriodicSheetTest);
+suite('glued edge marks', [{ rowCount: 2, colCount: 4 }], runSeamGeometryTest);
+suite('second label line', sublabelTestCases, runSublabelTest);
+suite('sheet without labels', unlabelledTestCases, runUnlabelledTest);
+suite('diagonal unrank', diagonalUnrankTestCases, runDiagonalUnrankTest);
+suite('sheet style', styleTestCases, runStyleTest);
+suite('engraving containment', engravingContainmentTestCases, runEngravingContainmentTest);
+suite('domino output', [{ rowCount: 4, colCount: 4 }], runDominoOutputTest);
+suite('label width', labelWidthTestCases, runLabelWidthTest);
+suite('short label', shortLabelTestCases, runShortLabelTest);
+suite('readme images', [{ rowCount: 8, colCount: 8 }], runReadmeImagesTest);
+suite('command line', cliTestCases, runCliTest);
+suite('chart', chartTestCases, runChartTest, named);
+suite('notebook helper', notebookHelperTestCases, runNotebookHelperTest, named);
+suite('figure', figureTestCases, runFigureTest, named);

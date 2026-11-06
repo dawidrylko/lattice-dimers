@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { LANGUAGES } = require('../js/core/scriptExecutor.js');
 const { boardKeyOf } = require('../js/core/cases.js');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
@@ -62,7 +61,7 @@ function readRepository() {
       .filter(name => name.endsWith('.json'))
       .sort()
       .map(name => ({ name, ...JSON.parse(fs.readFileSync(path.join(casesDirectory, name), 'utf-8')) })),
-    runnableLanguages: LANGUAGES,
+    knownLanguages: Object.keys(EXTENSIONS),
   };
 }
 
@@ -73,15 +72,15 @@ function readRepository() {
  *   The contents of spec/algorithms.json.
  * @property {string[]} repository.files The root-relative files in the directories of the languages.
  * @property {{name: string, algorithm: string, testCases: Object[]}[]} repository.caseFiles The files of spec/cases.
- * @property {string[]} repository.runnableLanguages The languages the executor can run.
+ * @property {string[]} repository.knownLanguages The languages this check knows the file extension of.
  * @returns {string[]} One message per disagreement.
  */
-function listPortErrors({ registry, files, caseFiles, runnableLanguages }) {
+function listPortErrors({ registry, files, caseFiles, knownLanguages }) {
   const errors = [];
   const registered = new Set();
 
-  for (const language of Object.keys(registry.languages).filter(language => !runnableLanguages.includes(language))) {
-    errors.push(`spec/algorithms.json names ${language}, which js/core/scriptExecutor.js cannot run.`);
+  for (const language of Object.keys(registry.languages).filter(language => !knownLanguages.includes(language))) {
+    errors.push(`spec/algorithms.json names ${language}, which harness/portCheck.js has no file extension for.`);
   }
 
   for (const [algorithm, entry] of Object.entries(registry.algorithms)) {

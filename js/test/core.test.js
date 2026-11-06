@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { describe, test } = require('node:test');
-const { parseArgs } = require('../core');
+const { parseArgs, exec } = require('../core');
 const { listPrimes, combineCheckedResidues } = require('../core/modular');
 const { testCasesOf } = require('../core/cases');
 const periodicModular = require('../solvers/all-lattices-cylinder-torus-modular.js');
@@ -183,4 +183,27 @@ describe('modules without a worker count', () => {
       assert.equal([].concat(result).map(String).join(), expectedResult);
     });
   }
+});
+
+describe('exec', () => {
+  const board = { rowCount: 2, colCount: 2 };
+
+  test('a bare name in js/solvers', () => {
+    assert.equal(exec('domino-rectangle-number.js', board), '2');
+  });
+
+  test('a root-relative file', () => {
+    assert.equal(exec('js/solvers/domino-rectangle-bigint.js', board), '2');
+  });
+
+  test('the command names the running Node.js and the board', () => {
+    assert.equal(
+      exec.generateCommand('domino-rectangle-number.js', board),
+      `"${process.execPath}" "${path.join(SOLVERS_DIRECTORY, 'domino-rectangle-number.js')}" -r 2 -c 2`,
+    );
+  });
+
+  test('a file of another language', () => {
+    assert.throws(() => exec('python/lattice_dimers/solvers/domino_rectangle_number.py', board), /is not a \.js implementation/);
+  });
 });

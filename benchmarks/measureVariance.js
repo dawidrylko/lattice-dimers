@@ -2,7 +2,7 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { exec } = require('../js/core');
+const exec = require('./executor');
 const { listImplementations } = require('../js/core/registry');
 
 const BOARDS = [

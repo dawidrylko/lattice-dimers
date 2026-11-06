@@ -1,11 +1,13 @@
+const assert = require('node:assert/strict');
 const fs = require('fs');
 const http = require('http');
 const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
-const { DOMICULE_SWEEPS } = require('../js/renderer');
+const { after, before, describe, test } = require('node:test');
+const { DOMICULE_SWEEPS } = require('../../js/renderer');
 
-const ROOT_DIRECTORY = path.join(__dirname, '..');
+const ROOT_DIRECTORY = path.join(__dirname, '..', '..');
 const SITE_DIRECTORY = path.resolve(process.env.SITE_DIRECTORY || path.join(ROOT_DIRECTORY, 'dist', 'site'));
 const REPOSITORY_LINK = /https:\/\/github\.com\/dawidrylko\/lattice-dimers\/(?:tree|blob)\/master\/([^"'#?\s<>)]+)/g;
 const EXTERNAL_RESOURCE = /<script\b[^>]*\bsrc="https?:[^>]*>|<link\b(?=[^>]*\brel="stylesheet")[^>]*\bhref="https?:[^>]*>/g;
@@ -1934,63 +1936,41 @@ async function runTest(page, baseUrl, { width, check }) {
     problems.push(`page scrolls ${sideways} px sideways`);
   }
 
-  if (problems.length) {
-    console.error(`Failed! ${problems.join('; ')}`);
-
-    return false;
-  }
-
-  console.log('Passed!');
-
-  return true;
+  assert.deepEqual(problems, []);
 }
 
-async function __main__() {
-  if (!fs.existsSync(path.join(SITE_DIRECTORY, 'index.html'))) {
-    console.error(`No site in ${SITE_DIRECTORY}. Run pnpm -C js site:build first.`);
-    process.exit(1);
-  }
-
-  const server = await serveSite();
-  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+describe('site', () => {
+  let server = null;
   let browser = null;
-  let passed = true;
+  let page = null;
+  let baseUrl = null;
 
-  try {
+  before(async () => {
+    assert.ok(fs.existsSync(path.join(SITE_DIRECTORY, 'index.html')), `No site in ${SITE_DIRECTORY}. Run pnpm -C js site:build first.`);
+
+    server = await serveSite();
+    baseUrl = `http://127.0.0.1:${server.address().port}`;
     browser = await launchChrome();
-    const page = await openPage(browser.host);
-    console.log(`Starting site test execution with ${siteTestCases.length} tests...`);
+    page = await openPage(browser.host);
+  });
 
-    for (const [index, testCase] of siteTestCases.entries()) {
-      process.stdout.write(
-        `Executing site test ${index + 1} of ${siteTestCases.length} for ${CHECKS[testCase.check].label} at ${testCase.width} px... `,
-      );
-      passed = (await runTest(page, baseUrl, testCase).catch(error => {
-        console.error(`Failed! ${error.message}`);
-        return false;
-      })) && passed;
+  after(async () => {
+    if (page) {
+      page.socket.close();
     }
 
-    page.socket.close();
-  } catch (error) {
-    console.error(error.message);
-    passed = false;
-  } finally {
     if (browser) {
       await stopChrome(browser.chrome);
       removeProfile(browser.profile);
     }
 
-    server.close();
-  }
+    if (server) {
+      server.close();
+    }
+  });
 
-  if (passed) {
-    console.log('All site tests completed successfully.');
-    process.exit(0);
-  } else {
-    console.error('Some site tests failed.');
-    process.exit(1);
-  }
-}
-
-__main__();
+  siteTestCases.forEach((testCase, index) => {
+    test(`site test ${index + 1} of ${siteTestCases.length} for ${CHECKS[testCase.check].label} at ${testCase.width} px`, () =>
+      runTest(page, baseUrl, testCase));
+  });
+});

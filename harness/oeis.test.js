@@ -1,6 +1,8 @@
+const assert = require('node:assert/strict');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { test } = require('node:test');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OEIS_DIRECTORY = path.join(ROOT_DIRECTORY, 'oeis');
@@ -532,46 +534,24 @@ function checkDraftLinks() {
   return errors;
 }
 
-function runCheck(name, check) {
-  process.stdout.write(`Checking ${name}... `);
-  const errors = check();
+const checks = [
+  ['the layout of oeis/', checkLayout],
+  ['the table of oeis/README.md', checkTable],
+  ...listEntries().flatMap(entry => {
+    const { text, bFile, program } = entryFiles(entry);
 
-  if (errors.length > 0) {
-    console.error(`Failed!\n${errors.map(error => `  ${error}`).join('\n')}`);
+    return [
+      [`oeis/${entry}/README.md`, () => checkEntryReadme(entry)],
+      [`oeis/${entry}/${text}`, () => checkEntryText(entry)],
+      ...(exists(entry, bFile) ? [[`oeis/${entry}/${bFile}`, () => [...checkBFile(entry), ...checkBFileFacts(entry)]]] : []),
+      ...(exists(entry, program) ? [[`oeis/${entry}/${program}`, () => checkProgram(entry)]] : []),
+    ];
+  }),
+  ['links to approved entries and drafts', checkDraftLinks],
+];
 
-    return false;
-  }
-
-  console.log('Passed!');
-
-  return true;
+for (const [name, check] of checks) {
+  test(name, () => {
+    assert.deepEqual(check(), []);
+  });
 }
-
-function __main__() {
-  const checks = [
-    ['the layout of oeis/', checkLayout],
-    ['the table of oeis/README.md', checkTable],
-    ...listEntries().flatMap(entry => {
-      const { text, bFile, program } = entryFiles(entry);
-
-      return [
-        [`oeis/${entry}/README.md`, () => checkEntryReadme(entry)],
-        [`oeis/${entry}/${text}`, () => checkEntryText(entry)],
-        ...(exists(entry, bFile) ? [[`oeis/${entry}/${bFile}`, () => [...checkBFile(entry), ...checkBFileFacts(entry)]]] : []),
-        ...(exists(entry, program) ? [[`oeis/${entry}/${program}`, () => checkProgram(entry)]] : []),
-      ];
-    }),
-    ['links to approved entries and drafts', checkDraftLinks],
-  ];
-  const passed = checks.map(([name, check]) => runCheck(name, check)).every(Boolean);
-
-  if (passed) {
-    console.log('All OEIS tests completed successfully.');
-    process.exit(0);
-  }
-
-  console.error('Some OEIS tests failed.');
-  process.exit(1);
-}
-
-__main__();

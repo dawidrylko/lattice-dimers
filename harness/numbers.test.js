@@ -1,5 +1,7 @@
+const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
+const { test } = require('node:test');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const RESEARCH_DIRECTORY = path.join(ROOT_DIRECTORY, 'research', 'king-entropy');
@@ -166,36 +168,14 @@ function checkEntropyEntry(constants) {
   return errors;
 }
 
-function runCheck(name, check) {
-  process.stdout.write(`Checking ${name}... `);
-  const errors = check();
+test('the results table of README.md against research/king-entropy', () => {
+  assert.deepEqual(checkReadmeTable(readConstants()), []);
+});
 
-  if (errors.length > 0) {
-    console.error(`Failed!\n${errors.map(error => `  ${error}`).join('\n')}`);
+test(`the constants in ${SUMMARY_FILES.length} summary files`, () => {
+  assert.deepEqual(checkSummaryCopies(readConstants()), []);
+});
 
-    return false;
-  }
-
-  console.log('Passed!');
-
-  return true;
-}
-
-function __main__() {
-  const constants = readConstants();
-  const passed = [
-    runCheck('the results table of README.md against research/king-entropy', () => checkReadmeTable(constants)),
-    runCheck(`the constants in ${SUMMARY_FILES.length} summary files`, () => checkSummaryCopies(constants)),
-    runCheck('the digits and comments of A401669.txt', () => checkEntropyEntry(constants)),
-  ].every(Boolean);
-
-  if (passed) {
-    console.log('All number tests completed successfully.');
-    process.exit(0);
-  }
-
-  console.error('Some number tests failed.');
-  process.exit(1);
-}
-
-__main__();
+test('the digits and comments of A401669.txt', () => {
+  assert.deepEqual(checkEntropyEntry(readConstants()), []);
+});

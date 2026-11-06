@@ -1,5 +1,7 @@
+const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
+const { test } = require('node:test');
 const { DEFAULT_BOARD } = require('../site/defaultBoard');
 const { testCasesOf } = require('../js/core/cases');
 
@@ -172,21 +174,6 @@ function checkOeisLinks() {
   return errors;
 }
 
-function runCheck(name, check) {
-  process.stdout.write(`Checking ${name}... `);
-  const errors = check();
-
-  if (errors.length > 0) {
-    console.error(`Failed!\n${errors.map(error => `  ${error}`).join('\n')}`);
-
-    return false;
-  }
-
-  console.log('Passed!');
-
-  return true;
-}
-
 function checkReadmeBoard() {
   const { rowCount, colCount } = DEFAULT_BOARD;
   const readme = read('README.md');
@@ -264,25 +251,17 @@ function checkReadmeSolvers() {
   return errors;
 }
 
-function __main__() {
-  const passed = [
-    runCheck('the solvers table of README.md against spec/algorithms.json', checkReadmeSolvers),
-    runCheck('the title and abstract of CITATION.cff against README.md', checkCitation),
-    runCheck('the board of the README examples against the gallery default', checkReadmeBoard),
-    runCheck('the description of js/package.json against CITATION.cff', checkPackage),
-    runCheck('that js/package.json is private', checkPrivate),
-    runCheck('the OEIS keywords against oeis/', checkKeywords),
-    runCheck('the notes against the site menu', checkSiteMenu),
-    runCheck('the links of oeis/ to the notes and the redirects', checkOeisLinks),
-  ].every(Boolean);
-
-  if (passed) {
-    console.log('All metadata tests completed successfully.');
-    process.exit(0);
-  }
-
-  console.error('Some metadata tests failed.');
-  process.exit(1);
+function runCheck(name, check) {
+  test(name, () => {
+    assert.deepEqual(check(), []);
+  });
 }
 
-__main__();
+runCheck('the solvers table of README.md against spec/algorithms.json', checkReadmeSolvers);
+runCheck('the title and abstract of CITATION.cff against README.md', checkCitation);
+runCheck('the board of the README examples against the gallery default', checkReadmeBoard);
+runCheck('the description of js/package.json against CITATION.cff', checkPackage);
+runCheck('that js/package.json is private', checkPrivate);
+runCheck('the OEIS keywords against oeis/', checkKeywords);
+runCheck('the notes against the site menu', checkSiteMenu);
+runCheck('the links of oeis/ to the notes and the redirects', checkOeisLinks);
