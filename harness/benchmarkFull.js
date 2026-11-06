@@ -19,7 +19,7 @@ const { filesInt, testCasesInt, filesBigInt, testCasesBigInt } = require('../js/
 
 const RUNS = 10;
 const DEFAULT_JOBS = 4;
-const USAGE = 'Usage: node harness/benchmarkFull.js --board-budget-hours <hours> [--jobs <threads>] [--skip-instructions] [--force]';
+const USAGE = 'Usage: node harness/benchmarkFull.js --board-budget-hours <hours> [--solver <id>] [--stop-after-hours <hours>] [--jobs <threads>] [--skip-instructions] [--force]';
 const STATE_GROWTH = 4.4;
 const TORUS_GROWTH = 16;
 const GROWTH_FLOORS = [
@@ -116,6 +116,22 @@ function median(times) {
   return [...times].sort((a, b) => a - b)[Math.floor(times.length / 2)];
 }
 
+function solverOf(seriesName) {
+  return seriesName.split('.')[0].replaceAll('_', '-');
+}
+
+function readState() {
+  const file = path.join(BENCHMARK_DIRECTORY, 'plan.json');
+
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf-8')) : { notMeasured: [] };
+}
+
+function isEverySeriesSettled(series, notMeasured) {
+  return series.every(({ name, boards }) =>
+    boards.every(board => fs.existsSync(generateFileName({ directory: BENCHMARK_DIRECTORY, ...board })) || notMeasured.some(entry => entry.series === name && entry.board === `${board.rowCount}x${board.colCount}`)),
+  );
+}
+
 function saveState(state) {
   fs.writeFileSync(path.join(BENCHMARK_DIRECTORY, 'plan.json'), `${JSON.stringify(state, null, 2)}\n`);
 }
@@ -137,9 +153,17 @@ function measureBoard(board, budgetSeconds) {
   return executionTimes;
 }
 
-function runPlan(budgetSeconds, jobs) {
-  const heads = listSeries(jobs).map(series => ({ ...series, index: 0, previousSeconds: null, earlierSeconds: 0 }));
-  const state = { budgetHours: budgetSeconds / 3600, runs: RUNS, jobs, measured: 0, notMeasured: [] };
+function runPlan(budgetSeconds, jobs, solver, stopAfterSeconds) {
+  const started = Date.now();
+  const selected = listSeries(jobs).filter(({ name }) => solver === null || solverOf(name) === solver);
+  const selectedNames = new Set(selected.map(({ name }) => name));
+  const heads = selected.map(series => ({ ...series, index: 0, previousSeconds: null, earlierSeconds: 0 }));
+  const state = {
+    budgetHours: budgetSeconds / 3600,
+    runs: RUNS,
+    jobs,
+    notMeasured: readState().notMeasured.filter(({ series }) => !selectedNames.has(series)),
+  };
   const stop = (head, reason, estimateSeconds) => {
     head.boards.slice(head.index).forEach(({ rowCount, colCount }, i) =>
       state.notMeasured.push({ series: head.name, board: `${rowCount}x${colCount}`, reason, ...(i === 0 && estimateSeconds ? { estimateTenRunsHours: Number((estimateSeconds * RUNS / 3600).toPrecision(3)) } : {}) }),
@@ -152,6 +176,10 @@ function runPlan(budgetSeconds, jobs) {
 
     if (!open.length) {
       break;
+    }
+
+    if (Date.now() - started > stopAfterSeconds * 1000) {
+      return { ...state, stopped: true };
     }
 
     const estimates = open.map(head => ({ head, estimate: estimateBoard({ seriesName: head.name, previousSeconds: head.previousSeconds, earlierSeconds: head.earlierSeconds }) }));
@@ -169,7 +197,6 @@ function runPlan(budgetSeconds, jobs) {
 
     try {
       times = times ?? measureBoard(board, budgetSeconds);
-      state.measured++;
       head.earlierSeconds = head.previousSeconds ?? 0;
       head.previousSeconds = median(times) / 1000;
       head.index++;
@@ -275,8 +302,22 @@ function __main__() {
     runInstructions();
   }
 
-  runPlan(budgetHours * 3600, jobs);
-  saveEnvironment({ ...ENVIRONMENT, valgrind: readValgrind(), complete: true });
+  const solver = read('--solver');
+  const stopAfterHours = Number(read('--stop-after-hours') ?? Infinity);
+
+  if (solver !== null && !listSeries(jobs).some(({ name }) => solverOf(name) === solver)) {
+    throw new Error(`No solver ${solver}. ${USAGE}`);
+  }
+
+  if (!(stopAfterHours > 0)) {
+    throw new Error(USAGE);
+  }
+
+  const { notMeasured } = runPlan(budgetHours * 3600, jobs, solver, stopAfterHours * 3600);
+  const complete = isEverySeriesSettled(listSeries(jobs), notMeasured);
+
+  saveEnvironment({ ...ENVIRONMENT, valgrind: readValgrind(), complete });
+  console.log(complete ? 'Every board is measured or recorded in plan.json.' : 'The run is not complete yet: run the command again for the rest.');
 }
 
 if (require.main === module) {

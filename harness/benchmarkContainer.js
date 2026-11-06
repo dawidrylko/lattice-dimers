@@ -23,7 +23,7 @@ function __main__() {
   const passed = argv.filter(arg => arg !== '--force-load');
 
   if (!(Number(passed[passed.indexOf('--board-budget-hours') + 1]) > 0) || !passed.includes('--board-budget-hours')) {
-    fail('Usage: pnpm benchmark --board-budget-hours <hours> [--jobs <threads>] [--skip-instructions] [--force] [--force-load]');
+    fail('Usage: pnpm benchmark --board-budget-hours <hours> [--solver <id>] [--stop-after-hours <hours>] [--jobs <threads>] [--skip-instructions] [--force] [--force-load]');
   }
 
   const commit = git('rev-parse', 'HEAD');

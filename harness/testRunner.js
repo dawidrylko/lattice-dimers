@@ -922,8 +922,8 @@ function executeBenchmarkFullRunTests() {
   process.stdout.write('Executing full benchmark run tests 1 of 1... ');
 
   const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
-  const run = env =>
-    spawnSync(process.execPath, ['harness/benchmarkFull.js', '--board-budget-hours', '0.0001', '--skip-instructions'], {
+  const run = (env, extra = []) =>
+    spawnSync(process.execPath, ['harness/benchmarkFull.js', '--board-budget-hours', '0.0001', '--skip-instructions', ...extra], {
       cwd: ROOT_DIRECTORY,
       encoding: 'utf-8',
       env: { ...process.env, BENCHMARK_ROOT: benchmarkRoot, BENCHMARK_COMMIT: 'fullruntest0', ...env },
@@ -932,6 +932,23 @@ function executeBenchmarkFullRunTests() {
   const failures = [];
 
   try {
+    const batch = run({}, ['--solver', 'domino-rectangle-formula']);
+    const batchEnvironment = JSON.parse(fs.readFileSync(path.join(directoryOf(), 'environment.json'), 'utf-8'));
+
+    if (batch.status !== 0 || batchEnvironment.complete !== false || fs.existsSync(path.join(directoryOf(), 'domino-rectangle-bigint.js_2x2.txt'))) {
+      failures.push(`one solver must not complete a run or measure another solver: ${batch.stderr.trim()}`);
+    }
+
+    const stopped = run({}, ['--solver', 'domino-rectangle-bigint', '--stop-after-hours', '0.0000001']);
+
+    if (stopped.status !== 0 || fs.existsSync(path.join(directoryOf(), 'domino-rectangle-bigint.js_8x8.txt'))) {
+      failures.push(`a night limit must stop before the next board: ${stopped.stderr.trim()}`);
+    }
+
+    if (run({}, ['--solver', 'no-such-solver']).status === 0) {
+      failures.push('an unknown solver must be refused');
+    }
+
     const first = run({});
     const directory = directoryOf();
     const environment = JSON.parse(fs.readFileSync(path.join(directory, 'environment.json'), 'utf-8'));
