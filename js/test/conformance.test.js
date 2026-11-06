@@ -15,7 +15,7 @@ function verifierOf({ expectedResult }, algorithm) {
     return (expected, actual) => expected === actual;
   }
 
-  return typeof expectedResult === 'number' ? verifyInt : verifyBigInt;
+  return algorithm === 'domino-rectangle-number' && typeof expectedResult === 'number' ? verifyInt : verifyBigInt;
 }
 
 describe('known counts', () => {
@@ -112,4 +112,8 @@ describe('time', () => {
       assert.match(timed.stderr, /^time \d+\.\d{3} ms$/m);
     });
   }
+});
+
+test('a count written without quotes outside domino-rectangle-number compares as an exact integer', () => {
+  assert.equal(verifierOf({ expectedResult: 1e30 }, 'all-lattices-cylinder-torus-modular'), verifyBigInt);
 });

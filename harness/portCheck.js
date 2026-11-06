@@ -16,6 +16,14 @@ function listFiles(directory) {
     : [];
 }
 
+const HOLDS_THE_BOARDS_OF = {
+  'all-lattices-cylinder-torus-modular': ['all-lattices-cylinder-torus-bigint'],
+  'diagonal-pieces-modular': ['diagonal-pieces-bigint'],
+  'domicule-rectangle-bigint': ['domicule-rectangle-modular'],
+  'domicule-rectangle-modular': ['domicule-rectangle-bigint'],
+  'domino-rectangle-bigint': ['domino-rectangle-formula', 'domino-rectangle-number'],
+};
+
 function familyOf(algorithm) {
   return algorithm.slice(0, algorithm.lastIndexOf('-'));
 }
@@ -30,7 +38,7 @@ function listTwinDisagreements(caseFiles) {
   const errors = [];
   const counts = new Map();
 
-  for (const { algorithm, testCases } of caseFiles) {
+  for (const { algorithm, testCases } of caseFiles.filter(({ algorithm }) => typeof algorithm === 'string')) {
     for (const testCase of testCases ?? []) {
       const key = `${familyOf(algorithm)}|${boardKeyOf(testCase)}`;
       const known = counts.get(key);
@@ -47,6 +55,26 @@ function listTwinDisagreements(caseFiles) {
   }
 
   return errors;
+}
+
+/**
+ * Lists every board of a twin that the algorithm which is to reach it does not hold, so no solver loses a board
+ * its twin is checked on.
+ * @param {{algorithm: string, testCases: Object[]}[]} caseFiles The files of spec/cases.
+ * @returns {string[]} One message per missing board.
+ */
+function listMissingTwinBoards(caseFiles) {
+  const boardsOf = algorithm => caseFiles.find(caseFile => caseFile.algorithm === algorithm)?.testCases ?? [];
+
+  return Object.entries(HOLDS_THE_BOARDS_OF).flatMap(([algorithm, twins]) => {
+    const held = new Set(boardsOf(algorithm).map(boardKeyOf));
+
+    return twins.flatMap(twin =>
+      boardsOf(twin)
+        .filter(testCase => !held.has(boardKeyOf(testCase)))
+        .map(testCase => `spec/cases/${algorithm}.json lacks the board ${boardKeyOf(testCase)} of ${twin}.`),
+    );
+  });
 }
 
 function readRepository() {
@@ -143,6 +171,10 @@ function listPortErrors({ registry, files, caseFiles, knownLanguages }) {
       errors.push(`spec/cases/${name} is not named after an algorithm of spec/algorithms.json, so no test runs it.`);
     }
 
+    if (!Array.isArray(testCases) || !testCases.length) {
+      errors.push(`spec/cases/${name} holds no test cases.`);
+    }
+
     const keys = (testCases ?? []).map(boardKeyOf);
 
     for (const key of new Set(keys.filter((key, index) => keys.indexOf(key) !== index))) {
@@ -156,7 +188,7 @@ function listPortErrors({ registry, files, caseFiles, knownLanguages }) {
     errors.push(`${algorithm} has no file in spec/cases.`);
   }
 
-  errors.push(...listTwinDisagreements(caseFiles));
+  errors.push(...listTwinDisagreements(caseFiles), ...listMissingTwinBoards(caseFiles));
 
   return errors;
 }

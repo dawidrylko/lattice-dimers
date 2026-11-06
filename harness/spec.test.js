@@ -62,6 +62,7 @@ describe('diagonal anchors', () => {
 
 describe('ports', () => {
   const repository = readRepository();
+  const portTestCase = { rowCount: 2, colCount: 2, expectedResult: '2' };
   const mutatedBoard = { rowCount: 4, colCount: 4 };
   const mutateFirstTwinCount = caseFile =>
     caseFile.algorithm === 'domino-rectangle-formula'
@@ -81,7 +82,7 @@ describe('ports', () => {
     algorithms = { a: complete },
     pendingPorts = countPending(algorithms),
     files = Object.values(complete),
-    caseFiles = [{ name: 'a.json', algorithm: 'a', testCases: [] }],
+    caseFiles = [{ name: 'a.json', algorithm: 'a', testCases: [portTestCase] }],
     ...rest
   } = {}) => ({
     registry: { languages, pendingPorts, algorithms },
@@ -100,7 +101,7 @@ describe('ports', () => {
         algorithms: { a: complete, b: { js: 'js/solvers/b.js' } },
         pendingPorts: 0,
         files: [...Object.values(complete), 'js/solvers/b.js'],
-        caseFiles: [{ name: 'a.json', algorithm: 'a', testCases: [] }, { name: 'b.json', algorithm: 'b', testCases: [] }],
+        caseFiles: [{ name: 'a.json', algorithm: 'a', testCases: [portTestCase] }, { name: 'b.json', algorithm: 'b', testCases: [portTestCase] }],
       }),
       ['2 implementations are missing, but spec/algorithms.json allows 0 pending ports; an algorithm added from now on comes with all three.'],
     ],
@@ -119,7 +120,7 @@ describe('ports', () => {
       state({
         algorithms: { 'a-b': { py: 'python/lattice_dimers/solvers/a-b.py', js: 'js/solvers/a-b.js' } },
         files: ['python/lattice_dimers/solvers/a-b.py', 'js/solvers/a-b.js'],
-        caseFiles: [{ name: 'a-b.json', algorithm: 'a-b', testCases: [] }],
+        caseFiles: [{ name: 'a-b.json', algorithm: 'a-b', testCases: [portTestCase] }],
       }),
       ['spec/algorithms.json names the py implementation of a-b a-b.py, not a_b.py.'],
     ],
@@ -160,17 +161,17 @@ describe('ports', () => {
     ],
     [
       'a case file named after no algorithm',
-      state({ caseFiles: [{ name: 'a.json', algorithm: 'a', testCases: [] }, { name: 'c.json', algorithm: 'c', testCases: [] }] }),
+      state({ caseFiles: [{ name: 'a.json', algorithm: 'a', testCases: [portTestCase] }, { name: 'c.json', algorithm: 'c', testCases: [portTestCase] }] }),
       ['spec/cases/c.json is not named after an algorithm of spec/algorithms.json, so no test runs it.'],
     ],
     [
       'a case file holding the cases of another algorithm',
-      state({ caseFiles: [{ name: 'a.json', algorithm: 'b', testCases: [] }] }),
+      state({ caseFiles: [{ name: 'a.json', algorithm: 'b', testCases: [portTestCase] }] }),
       ['spec/cases/a.json holds the cases of b; the file of an algorithm is named <id>.json.'],
     ],
     [
       'a case file in the old shape',
-      state({ caseFiles: [{ name: 'a.json', algorithms: ['a'], testCases: [] }] }),
+      state({ caseFiles: [{ name: 'a.json', algorithms: ['a'], testCases: [portTestCase] }] }),
       ['spec/cases/a.json holds the cases of undefined; the file of an algorithm is named <id>.json.'],
     ],
     [
@@ -184,6 +185,23 @@ describe('ports', () => {
       'an algorithm no case file checks',
       state({ algorithms: { a: complete, b: { js: 'js/solvers/b.js' } }, files: [...Object.values(complete), 'js/solvers/b.js'] }),
       ['b has no file in spec/cases.'],
+    ],
+    [
+      'a case file without test cases',
+      state({ caseFiles: [{ name: 'a.json', algorithm: 'a', testCases: [] }] }),
+      ['spec/cases/a.json holds no test cases.'],
+    ],
+    [
+      'a copy of the case files where a modular file lacks a board of its twin',
+      {
+        ...repository,
+        caseFiles: repository.caseFiles.map(caseFile =>
+          caseFile.algorithm === 'diagonal-pieces-modular'
+            ? { ...caseFile, testCases: caseFile.testCases.filter(({ rowCount, colCount }) => rowCount !== 5 || colCount !== 6) }
+            : caseFile,
+        ),
+      },
+      ['spec/cases/diagonal-pieces-modular.json lacks the board 5|6||false|false of diagonal-pieces-bigint.'],
     ],
     [
       'a mutated copy of the case files, where twin algorithms disagree on a count',
