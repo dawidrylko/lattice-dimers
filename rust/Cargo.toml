@@ -61,6 +61,10 @@ path = "solvers/src/bin/domino-rectangle-formula.rs"
 name = "domino-rectangle-number"
 path = "solvers/src/bin/domino-rectangle-number.rs"
 
+[[test]]
+name = "conformance"
+path = "tests/conformance.rs"
+
 [dev-dependencies]
 libc = "0.2.191"
 serde_json = "1.0.154"
