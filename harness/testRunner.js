@@ -50,9 +50,6 @@ const rejectionTestCases = [
     args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
   },
-  { args: ['js/solvers/domiculeDiagonalSolver-BigInt.js', '-r', '13', '-c', '13'], message: 'at most 12' },
-  { args: ['js/solvers/domiculeDiagonalSolver-Modular.js', '-r', '21', '-c', '21'], message: 'at most 20' },
-  { args: ['js/solvers/domiculeDiagonalSolver-Modular.js', '-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
   {
     args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/periodicTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
@@ -123,6 +120,21 @@ const implementationRejectionTestCases = [
   { algorithm: 'domino-tiling-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
   { algorithm: 'domino-tiling-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
   { algorithm: 'domino-tiling-bigint', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-r', '21', '-c', '21'], message: 'at most 20' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-r', '40', '-c', '21'], message: 'because every worker thread keeps half the polynomial of every state in memory' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-r', '9007199254740991', '-c', '1'], message: 'Invalid array length' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '13', '-c', '13'], message: 'at most 12' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '40', '-c', '13'], message: 'use domiculeDiagonalSolver-Modular.js for larger boards' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-bigint', args: ['-c', '2'], message: 'Usage' },
   { algorithm: 'domicule-tiling-bigint', args: ['-r', '30', '-c', '30'], message: 'at most 29' },
   { algorithm: 'domicule-tiling-bigint', args: ['-r', '40', '-c', '30'], message: 'because a JavaScript array holds fewer than 2^32 states' },
   { algorithm: 'domicule-tiling-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
@@ -139,7 +151,7 @@ const implementationRejectionTestCases = [
   { algorithm: 'domicule-tiling-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
 ];
 
-const parityTestCases = ['domicule-tiling-modular', 'domicule-tiling-bigint'].map(algorithm => ({
+const parityTestCases = ['domicule-tiling-modular', 'domicule-tiling-bigint', 'domicule-diagonal-modular', 'domicule-diagonal-bigint'].map(algorithm => ({
   algorithm,
   boards: [[0, 5], [5, 0], [1, 1], [1, 2], [2, 1], [10, 1], [1, 40], [3, 3], [2, 31]],
 }));
@@ -205,7 +217,7 @@ function executeParityTests() {
     });
     const counts = new Set(outputs.map(output => output.slice(output.indexOf(': ') + 2)));
 
-    if (counts.size !== 1 || !/^\d+$/.test([...counts][0])) {
+    if (counts.size !== 1 || !/^\d+(,\d+)*$/.test([...counts][0])) {
       console.error(`Failed! ${outputs.join('; ')}`);
 
       return false;
@@ -250,6 +262,14 @@ function executeCheckPrimeTests() {
   });
 }
 
+function capPythonThreads(...args) {
+  const python = listImplementations('domicule-diagonal-modular').find(({ language }) => language === 'py');
+  const launcher = exec.launch(python.file);
+  const script = `import importlib, sys; print(importlib.import_module(sys.argv[1]).cap_threads(${args.join(', ')}))`;
+
+  return Number(spawnSync(launcher[0], ['-I', '-c', script, launcher.at(-1)], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' }).stdout);
+}
+
 function executeLimitTests() {
   const gigabytes = 2 ** 30;
   const board = { rows: 6, cols: 4, lattice: 'king' };
@@ -262,6 +282,9 @@ function executeLimitTests() {
     { name: 'threads for 20x20 on 16 GB', actual: capThreads(10, 20, 200, 16 * gigabytes), expected: 2 },
     { name: 'threads for 6x6 on 16 GB', actual: capThreads(4, 6, 18, 16 * gigabytes), expected: 4 },
     { name: 'threads for 20x20 on 1 GB', actual: capThreads(3, 20, 200, gigabytes), expected: 1 },
+    { name: 'Python threads for 20x20 on 16 GB', actual: capPythonThreads(10, 20, 200, 16 * gigabytes), expected: 2 },
+    { name: 'Python threads for 6x6 on 16 GB', actual: capPythonThreads(4, 6, 18, 16 * gigabytes), expected: 4 },
+    { name: 'Python threads for 20x20 on 1 GB', actual: capPythonThreads(3, 20, 200, gigabytes), expected: 1 },
   ];
 
   return cases.every(({ name, actual, expected }, index) => {
@@ -695,7 +718,6 @@ function executeBenchmarkGuardTest() {
 function executeBenchmarkSurfaceTests() {
   const cases = [
     { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: 'periodicTilingSolver-Modular.js_2x2-king-torus.txt' },
-    { args: ['--diagonal', '--only', 'domiculeDiagonalSolver-BigInt.js'], file: 'domiculeDiagonalSolver-BigInt.js_0x0.txt' },
     ...listImplementations('periodic-tiling-bigint').flatMap(({ file }) => [
       { args: ['--cylinder', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-king-cylinder.txt` },
       { args: ['--cylinder', '--lattice', 'square', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-square-cylinder.txt` },
@@ -719,8 +741,16 @@ function executeBenchmarkSurfaceTests() {
       args: ['--only', 'dominoTilingSolver-BigInt.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
+    ...listImplementations('domicule-diagonal-bigint').map(({ file }) => ({
+      args: ['--diagonal', '--only', 'domiculeDiagonalSolver-BigInt.js'],
+      file: `${path.basename(file)}_0x0.txt`,
+    })),
     ...listImplementations('domicule-tiling-bigint').map(({ file }) => ({
       args: ['--domicule', '--only', 'domiculeTilingSolver-BigInt.js'],
+      file: `${path.basename(file)}_0x0.txt`,
+    })),
+    ...listImplementations('domicule-diagonal-modular').map(({ file }) => ({
+      args: ['--diagonal', '--only', 'domiculeDiagonalSolver-Modular.js'],
       file: `${path.basename(file)}_0x0.txt`,
     })),
     ...listImplementations('domicule-tiling-modular').map(({ file }) => ({
@@ -972,8 +1002,10 @@ function executeBenchmarkRunTest() {
     touch('2000-05', complete.filter(file => file !== 'domino-tiling-bigint.rs_20x20.txt'));
     touch('2000-06', complete.filter(file => file !== 'domicule_tiling_bigint.py_20x20.txt'));
     touch('2000-07', complete.filter(file => file !== 'domino-tiling-number.rs_10x10.txt'));
-    touch('2000-08', complete.filter(file => file !== 'periodic-tiling-bigint.rs_10x10-king-torus.txt'));
-    touch('2000-09', complete.filter(file => file !== 'periodic_tiling_bigint.py_12x12-square-torus.txt'));
+    touch('2000-08', complete.filter(file => file !== 'domicule_diagonal_bigint.py_12x12.txt'));
+    touch('2000-09', complete.filter(file => file !== 'domicule-diagonal-modular.rs_20x20.txt'));
+    touch('2000-10', complete.filter(file => file !== 'periodic-tiling-bigint.rs_10x10-king-torus.txt'));
+    touch('2000-11', complete.filter(file => file !== 'periodic_tiling_bigint.py_12x12-square-torus.txt'));
     const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {
@@ -1145,12 +1177,42 @@ async function executeModuleTests() {
       ['periodic-tiling-modular', fourByFour(testCasesPeriodic)],
       ['domicule-tiling-modular', fourByFour(testCasesDomicule)],
     ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
-    executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
+    executeUnknownProcessorCountTest('domicule-diagonal-modular', fourByFour(testCasesDiagonal), 'calculate_diagonal_polynomial') &&
+    executeScratchTest('domicule-tiling-modular', testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
+    executeScratchTest('domicule-diagonal-modular', testCasesDiagonal.find(({ rowCount, colCount }) => rowCount === 5 && colCount === 6), 'calculate_diagonal_polynomial') &&
     executeLongCountTest('domino-tiling-formula', ['-r', '80', '-c', '80']) &&
     executeLongCountTest('domino-tiling-bigint', ['-r', '2', '-c', '6000']) &&
     executeLongCountTest('domicule-tiling-bigint', ['-r', '2', '-c', '6000']) &&
+    executeLongCoefficientTest() &&
     executeLongCountTest('periodic-tiling-bigint', ['-r', '1200', '-c', '2'])
   );
+}
+
+function executeLongCoefficientTest() {
+  const python = listImplementations('domicule-diagonal-modular').find(({ language }) => language === 'py');
+  const launcher = exec.launch(python.file);
+  const long = `1${'0'.repeat(700)}`;
+  const script = [
+    'import importlib, sys',
+    'sys.set_int_max_str_digits(640)',
+    'module = importlib.import_module(sys.argv[1])',
+    'module.combine_checked_residues = lambda *_: 10 ** 700',
+    'sys.exit(module.main(["-r", "2", "-c", "2"]))',
+  ].join('\n');
+
+  process.stdout.write(`Executing module test for ${python.file} with a coefficient of ${long.length} digits under a limit of 640... `);
+
+  const { status, stdout, stderr } = spawnSync(launcher[0], ['-I', '-c', script, launcher.at(-1)], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
+
+  if (status !== 0 || stdout.trim() !== [long, long, long].join(',')) {
+    console.error(`Failed! Exit code ${status}: ${(stdout || stderr).trim().slice(-200)}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
 }
 
 function executeLongCountTest(algorithm, args) {
@@ -1183,14 +1245,15 @@ function executeLongCountTest(algorithm, args) {
   return true;
 }
 
-function executeScratchTest({ expectedResult, rowCount, colCount }) {
-  const python = listImplementations('domicule-tiling-modular').find(({ language }) => language === 'py');
+function executeScratchTest(algorithm, { expectedResult, rowCount, colCount }, method = 'calculate_total_tiling_combinations') {
+  const python = listImplementations(algorithm).find(({ language }) => language === 'py');
   const launcher = exec.launch(python.file);
   const script = [
     'import importlib, sys',
     'solver = importlib.import_module(sys.argv[1])',
     'solver.SCRATCH_COUNTS = 1',
-    'print(solver.calculate_total_tiling_combinations(int(sys.argv[2]), int(sys.argv[3]), 2))',
+    `result = solver.${method}(int(sys.argv[2]), int(sys.argv[3]), 2)`,
+    'print(",".join(map(str, result)) if isinstance(result, list) else result)',
   ].join('\n');
 
   process.stdout.write(`Executing module test for ${python.file} with a scratch array of one count... `);
@@ -1211,14 +1274,15 @@ function executeScratchTest({ expectedResult, rowCount, colCount }) {
   return true;
 }
 
-function executeUnknownProcessorCountTest(algorithm, { expectedResult, rowCount, colCount, lattice, torus }) {
+function executeUnknownProcessorCountTest(algorithm, { expectedResult, rowCount, colCount, lattice, torus }, method = 'calculate_total_tiling_combinations') {
   const python = listImplementations(algorithm).find(({ language }) => language === 'py');
   const launcher = exec.launch(python.file);
   const script = [
     'import importlib, json, os, runpy, sys',
     'os.process_cpu_count = lambda: None',
     'module = sys.argv[1]',
-    'print(importlib.import_module(module).calculate_total_tiling_combinations(**json.loads(sys.argv[2])), flush=True)',
+    `result = importlib.import_module(module).${method}(**json.loads(sys.argv[2]))`,
+    'print(",".join(map(str, result)) if isinstance(result, list) else result, flush=True)',
     'sys.argv = [module] + sys.argv[3:]',
     'runpy.run_module(module, run_name="__main__", alter_sys=True)',
   ].join('\n');
