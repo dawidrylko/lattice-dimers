@@ -4,15 +4,13 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-On a cylinder the left and right edges of the board are glued, so a domino may cross the seam between the last and the first column. The drawings mark the glued edges and draw a domino that crosses the seam cut, with one half on each side. They show tilings of the cylinder of circumference 4 and height 4, spread over the numbering.
+On a cylinder the left and right edges of the board are glued, so a domino may cross the seam between the last and the first column. The drawings mark the glued edges and draw a domino that crosses the seam cut, with one half on each side. They show 4 tilings of the cylinder of circumference 8 and height 8, spread over the numbering.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
-const { total } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domino', surface: 'cylinder', ranks: [0] });
-const ranks = [0, 1, 2, 3].map(i => Math.floor((Number(total) * i) / 4));
-const { svgs } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domino', surface: 'cylinder', ranks });
+const { svgs, total } = drawTilings({ rowCount: 8, colCount: 8, pieces: 'domino', surface: 'cylinder', spread: 4 });
 
-figure(svgs, `4 of the ${total} domino tilings of the cylinder of circumference 4 and height 4.`);
+figure(svgs, `4 of the ${total} domino tilings of the cylinder of circumference 8 and height 8.`);
 ```
 
 ## The Modular solver

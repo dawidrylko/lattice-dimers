@@ -4,7 +4,14 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-The triangular lattice [1] is the square lattice with one diagonal in every cell, here the one that runs down to the right, so a tiling uses dominoes and diagonal pieces in that one direction. On a torus a piece may cross the column seam, between the last and the first column, or the row seam, between the last and the first row.
+The triangular lattice [1] is the square lattice with one diagonal in every cell, here the one that runs down to the right, so a tiling uses dominoes and diagonal pieces in that one direction. On a torus a piece may cross the column seam, between the last and the first column, or the row seam, between the last and the first row. A piece that crosses a seam is drawn cut, with one half on each side, and the glued edges are marked, one pair with one tick and the other with two. The drawings show 4 tilings of the $8 \times 8$ torus, spread over the numbering.
+
+```js run
+const { drawTilings } = require('./site/notes.js');
+const { svgs, total } = drawTilings({ rowCount: 8, colCount: 8, lattice: 'triangular', surface: 'torus', spread: 4 });
+
+figure(svgs, `4 of the ${total} tilings of the triangular lattice on the 8 × 8 torus.`);
+```
 
 ## The Modular solver
 
