@@ -784,7 +784,7 @@ function runReadmeImagesTest() {
   });
 
   if (stale.length) {
-    console.error(`Failed! ${stale.map(([file]) => file).join(', ')} out of date with the renderer; run pnpm readme:images.`);
+    console.error(`Failed! ${stale.map(([file]) => file).join(', ')} out of date with the renderer; run pnpm -C js readme:images.`);
 
     return false;
   }

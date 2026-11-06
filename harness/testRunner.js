@@ -364,16 +364,16 @@ function executeExecutorTests() {
     ['python3', python, { PYTHON: undefined }, '"python3" "-I" "-m" "lattice_dimers.solvers.domino_rectangle_number" -r 2 -c 2'],
     ['$PYTHON', python, { PYTHON: '/opt/python' }, '"/opt/python" "-I" "-m" "lattice_dimers.solvers.domino_rectangle_number" -r 2 -c 2'],
     [
-      'the Rust binary in target',
+      'the Rust binary in rust/target',
       rust,
       { CARGO_TARGET_DIR: undefined },
-      `"${path.join(ROOT_DIRECTORY, 'target', 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
+      `"${path.join(ROOT_DIRECTORY, 'rust', 'target', 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
     ],
     [
       'a relative $CARGO_TARGET_DIR',
       rust,
       { CARGO_TARGET_DIR: 'build' },
-      `"${path.join(ROOT_DIRECTORY, 'build', 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
+      `"${path.join(ROOT_DIRECTORY, 'rust', 'build', 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
     ],
     [
       'an absolute $CARGO_TARGET_DIR',
@@ -386,14 +386,14 @@ function executeExecutorTests() {
       'a Rust binary that was not built',
       rust,
       { CARGO_TARGET_DIR: absoluteTarget },
-      `an error: Execution failed: ${path.join(absoluteTarget, 'release', 'domino-rectangle-number')} does not exist; build it with cargo build --release.`,
+      `an error: Execution failed: ${path.join(absoluteTarget, 'release', 'domino-rectangle-number')} does not exist; build it with cargo build --release in rust/.`,
       true,
     ],
     [
       'a Rust binary older than the Rust sources',
       rust,
       { CARGO_TARGET_DIR: staleTarget },
-      `an error: Execution failed: ${staleBinary} is older than the .rs files it is built from; rebuild it with cargo build --release.`,
+      `an error: Execution failed: ${staleBinary} is older than the .rs files it is built from; rebuild it with cargo build --release in rust/.`,
       true,
     ],
   ];
@@ -412,7 +412,7 @@ function executeExecutorTests() {
 function executeOwnRootTest() {
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'own-root-')));
   const file = name => path.join(root, ...name.split('/'));
-  const binary = file('target/release/solver');
+  const binary = file('rust/target/release/solver');
   const now = Date.now() / 1000;
   const write = (name, seconds, mode) => {
     fs.mkdirSync(path.dirname(file(name)), { recursive: true });
@@ -420,7 +420,7 @@ function executeOwnRootTest() {
     fs.utimesSync(file(name), seconds, seconds);
   };
   const target = process.env.CARGO_TARGET_DIR;
-  const expected = `Execution failed: ${binary} is older than the .rs files it is built from; rebuild it with cargo build --release.`;
+  const expected = `Execution failed: ${binary} is older than the .rs files it is built from; rebuild it with cargo build --release in rust/.`;
 
   process.stdout.write('Executing executor test for a Rust binary older than only its own root... ');
 
@@ -430,7 +430,7 @@ function executeOwnRootTest() {
     write('rust/core/src/lib.rs', now - 60);
     write('rust/solvers/src/bin/solver.rs', now + 60);
     write('rust/solvers/src/bin/other.rs', now - 60);
-    write('target/release/solver', now, 0o755);
+    write('rust/target/release/solver', now, 0o755);
     delete process.env.CARGO_TARGET_DIR;
 
     let actual;
@@ -468,13 +468,17 @@ function executeRustSourceTests() {
     ['core/src/lib.rs', 3000],
     ['solvers/src/bin/first.rs', 2000],
     ['solvers/src/bin/second.rs', 4000],
+    ['target/release/build/generated.rs', 5000],
   ];
+  const target = process.env.CARGO_TARGET_DIR;
   const cases = [
     ['a binary whose shared source is newer than its own file, not the newer root of another binary', 'solvers/src/bin/first.rs', 3000],
     ['a binary whose own file is the newest', 'solvers/src/bin/second.rs', 4000],
   ];
 
   try {
+    delete process.env.CARGO_TARGET_DIR;
+
     for (const [name, seconds] of sources) {
       fs.mkdirSync(path.dirname(file(name)), { recursive: true });
       fs.writeFileSync(file(name), '');
@@ -497,6 +501,10 @@ function executeRustSourceTests() {
       return true;
     });
   } finally {
+    if (target !== undefined) {
+      process.env.CARGO_TARGET_DIR = target;
+    }
+
     fs.rmSync(rust, { recursive: true, force: true });
   }
 }

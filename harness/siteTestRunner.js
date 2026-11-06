@@ -1478,7 +1478,7 @@ async function checkBenchmark(page, baseUrl, width) {
         ),
         environment: section.querySelector('.environment').textContent,
         titles: section.querySelectorAll('.bench-group h2, .bench-group h3').length,
-        older: section.textContent.split('benchmarks/results/').length !== 2 || /pnpm benchmark/.test(section.textContent),
+        older: section.textContent.split('benchmarks/results/').length !== 2 || /pnpm/.test(section.textContent),
         rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
@@ -1947,7 +1947,7 @@ async function runTest(page, baseUrl, { width, check }) {
 
 async function __main__() {
   if (!fs.existsSync(path.join(SITE_DIRECTORY, 'index.html'))) {
-    console.error(`No site in ${SITE_DIRECTORY}. Run pnpm site:build first.`);
+    console.error(`No site in ${SITE_DIRECTORY}. Run pnpm -C js site:build first.`);
     process.exit(1);
   }
 
