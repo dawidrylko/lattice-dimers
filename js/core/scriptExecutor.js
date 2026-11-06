@@ -77,9 +77,9 @@ function describeLanguages() {
  * @param {Object} options Options including row and column counts.
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
- * @property {string} [options.lattice] The lattice of the periodic solvers.
- * @property {boolean} [options.torus] Whether a periodic board is a torus.
- * @property {boolean} [options.twisted] Whether a periodic board is counted with the seam sign.
+ * @property {string} [options.lattice] The lattice of the cylinder and torus solvers.
+ * @property {boolean} [options.torus] Whether a cylinder or torus board is a torus.
+ * @property {boolean} [options.twisted] Whether a cylinder or torus board is counted with the seam sign.
  * @returns {string} The generated command string.
  * @throws {Error} When the file name has no extension of a known language.
  */

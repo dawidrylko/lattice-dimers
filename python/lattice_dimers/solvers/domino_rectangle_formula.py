@@ -2,7 +2,7 @@ import sys
 
 from lattice_dimers.core import parse_args, start_timer
 
-USAGE = "Usage: python3 -m lattice_dimers.solvers.domino_tiling_formula -r <rowCount> -c <colCount>"
+USAGE = "Usage: python3 -m lattice_dimers.solvers.domino_rectangle_formula -r <rowCount> -c <colCount>"
 SQUARE_BOARDS_ONLY = (
     "The formula covers 2n x 2n boards only (OEIS A004003); rowCount and colCount must be equal and even."
 )
@@ -26,7 +26,7 @@ def subtract_polynomials(p, q):
 
 def create_root_polynomial(n):
     """Builds the monic polynomial whose roots are 4*cos(j*Pi/(2n+1))^2 for j = 1..n, like createRootPolynomial of
-    js/solvers/dominoTilingSolver-Formula.js: with z = x - 2 these are the roots of Q_n(z), where Q_0 = 1,
+    js/solvers/domino-rectangle-formula.js: with z = x - 2 these are the roots of Q_n(z), where Q_0 = 1,
     Q_1 = z + 1 and Q_k = z * Q_{k-1} - Q_{k-2}."""
     z = [-2, 1]
     previous = [1]

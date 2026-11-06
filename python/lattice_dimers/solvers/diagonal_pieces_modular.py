@@ -8,12 +8,12 @@ from lattice_dimers.core import calculate_log2_bound, combine_checked_residues, 
 
 MAX_SHORTER_SIDE = 20
 SCRATCH_COUNTS = 1 << 19
-USAGE = "Usage: python3 -m lattice_dimers.solvers.domicule_diagonal_modular -r <rowCount> -c <colCount> [-j <jobs>]"
+USAGE = "Usage: python3 -m lattice_dimers.solvers.diagonal_pieces_modular -r <rowCount> -c <colCount> [-j <jobs>]"
 
 
 def list_moves(cols, c, has_below):
     """Lists the bit index and the diagonal flag of every partner a free cell in column c can cover, like the moves in
-    countModulo of js/solvers/domiculeDiagonalSolver-Modular.js: right, down-left, down and down-right."""
+    countModulo of js/solvers/diagonal-pieces-modular.js: right, down-left, down and down-right."""
     has_right = c + 1 < cols
     moves = []
 
@@ -34,7 +34,7 @@ def list_moves(cols, c, has_below):
 
 def count_modulo(task):
     """Counts the domicule tilings by the number of diagonal pieces modulo a prime, with the transfer of countModulo in
-    js/solvers/domiculeDiagonalSolver-Modular.js and tables of 32-bit counts reduced modulo the prime as there.
+    js/solvers/diagonal-pieces-modular.js and tables of 32-bit counts reduced modulo the prime as there.
 
     The covered cells of a state fix the difference between the diagonal pieces on black and on white cells. So instead
     of the parity of the JavaScript solver, entry j of a state's block counts the tilings with j diagonal pieces on
@@ -44,7 +44,7 @@ def count_modulo(task):
     once per white cell, so before cell p only the entries up to ceil(p / 2) are visited.
 
     A state has cols + 2 bits, but the top one is clear before every cell step, so the tables hold the 2^(cols + 1)
-    states below it. As in domicule_tiling_modular, a state is 2k plus its bit 0, a covered cell moves the block of
+    states below it. As in domicule_rectangle_modular, a state is 2k plus its bit 0, a covered cell moves the block of
     2k + 1 to k, and a free cell that covers bit b moves the block of 2k to k + 2^(b - 1) when bit b - 1 of k is clear:
     views of the two tables, one axis for each of these bits and the last axis for the block. The sums are reduced a
     slice at a time through a scratch array of SCRATCH_COUNTS counts."""
@@ -112,7 +112,7 @@ def physical_memory():
 
 
 def cap_threads(jobs, cols, degree, memory):
-    """Caps the number of worker threads like capThreads of js/solvers/domiculeDiagonalSolver-Modular.js, with its
+    """Caps the number of worker threads like capThreads of js/solvers/diagonal-pieces-modular.js, with its
     table sizes, so that every language runs the same number of threads, although the tables here take half of that."""
     bytes_per_worker = 2 ** (cols + 2) * (2 * 4 * (degree // 2 + 1) + 2)
 

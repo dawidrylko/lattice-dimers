@@ -7,7 +7,7 @@ const PERIODIC_LATTICES = {
 };
 
 /**
- * Lists the moves of a free cell in column c, in the order of periodicTilingSolver-Modular.js:
+ * Lists the moves of a free cell in column c, in the order of all-lattices-cylinder-torus-modular.js:
  * the state bit of the cell it is matched with, and the piece as drawn. A piece that crosses
  * the seam keeps its partner outside the board (column -1 or colCount, row rowCount on a torus),
  * and the horizontal piece across the seam is anchored in the last column.
@@ -230,7 +230,7 @@ function canUnrankPeriodic({ rowCount, colCount, lattice = 'king' }) {
 
 /**
  * Prepares the numbering of the tilings of a cylinder (periodic across the width) or a torus,
- * scanned cell by cell as in periodicTilingSolver-Modular.js. A torus tiling has one set S of
+ * scanned cell by cell as in all-lattices-cylinder-torus-modular.js. A torus tiling has one set S of
  * first-row cells covered from the last row; the tilings are ordered by S, and those of one S
  * by the scan. The count of every S is the count of its smallest rotation, so one table per
  * rotation class gives the totals, and the table of an S is rebuilt when a rank needs it.

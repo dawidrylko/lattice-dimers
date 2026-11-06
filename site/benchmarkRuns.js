@@ -5,17 +5,17 @@ const { listImplementations, algorithmOf } = require('../js/core/registry');
 
 const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
 const LARGEST_PERIODIC_RESULTS = [
-  ...listImplementations('periodic-tiling-bigint').flatMap(({ file }) =>
+  ...listImplementations('all-lattices-cylinder-torus-bigint').flatMap(({ file }) =>
     ['10x10-king-torus', '12x12-king-cylinder', '12x12-square-torus', '12x12-square-cylinder'].map(board => `${path.basename(file)}_${board}.txt`),
   ),
-  ...listImplementations('periodic-tiling-modular').flatMap(({ file }) =>
+  ...listImplementations('all-lattices-cylinder-torus-modular').flatMap(({ file }) =>
     ['king', 'square'].flatMap(lattice => [
       `${path.basename(file)}_14x14-${lattice}-torus.txt`,
       `${path.basename(file)}_16x16-${lattice}-cylinder.txt`,
     ]),
   ),
-  ...listImplementations('domicule-diagonal-bigint').map(({ file }) => `${path.basename(file)}_12x12.txt`),
-  ...listImplementations('domicule-diagonal-modular').map(({ file }) => `${path.basename(file)}_20x20.txt`),
+  ...listImplementations('diagonal-pieces-bigint').map(({ file }) => `${path.basename(file)}_12x12.txt`),
+  ...listImplementations('diagonal-pieces-modular').map(({ file }) => `${path.basename(file)}_20x20.txt`),
 ];
 
 function resultFileName(fileName, { rowCount, colCount }) {
@@ -65,4 +65,15 @@ function readBenchmarkRuns(root = RESULTS_DIRECTORY) {
   return { runs, latest };
 }
 
-module.exports = { readBenchmarkRuns };
+/**
+ * Lists the result files of the JavaScript implementations of the solvers a prefix names, which
+ * set the boards of a benchmark table: a board only another language ran adds no row.
+ * @param {string} directory The directory of one run.
+ * @param {string} prefix The start of the solver id.
+ * @returns {string[]} The result file names.
+ */
+function listJavaScriptResults(directory, prefix) {
+  return fs.readdirSync(directory).filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'));
+}
+
+module.exports = { readBenchmarkRuns, listJavaScriptResults };

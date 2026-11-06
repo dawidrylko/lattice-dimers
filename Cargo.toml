@@ -26,37 +26,37 @@ autobenches = false
 lattice-dimers-core = { path = "rust/core" }
 
 [[bin]]
-name = "domicule-diagonal-bigint"
-path = "rust/solvers/src/bin/domicule-diagonal-bigint.rs"
+name = "all-lattices-cylinder-torus-bigint"
+path = "rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs"
 
 [[bin]]
-name = "domicule-diagonal-modular"
-path = "rust/solvers/src/bin/domicule-diagonal-modular.rs"
+name = "all-lattices-cylinder-torus-modular"
+path = "rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs"
 
 [[bin]]
-name = "domicule-tiling-bigint"
-path = "rust/solvers/src/bin/domicule-tiling-bigint.rs"
+name = "diagonal-pieces-bigint"
+path = "rust/solvers/src/bin/diagonal-pieces-bigint.rs"
 
 [[bin]]
-name = "domicule-tiling-modular"
-path = "rust/solvers/src/bin/domicule-tiling-modular.rs"
+name = "diagonal-pieces-modular"
+path = "rust/solvers/src/bin/diagonal-pieces-modular.rs"
 
 [[bin]]
-name = "domino-tiling-bigint"
-path = "rust/solvers/src/bin/domino-tiling-bigint.rs"
+name = "domicule-rectangle-bigint"
+path = "rust/solvers/src/bin/domicule-rectangle-bigint.rs"
 
 [[bin]]
-name = "domino-tiling-formula"
-path = "rust/solvers/src/bin/domino-tiling-formula.rs"
+name = "domicule-rectangle-modular"
+path = "rust/solvers/src/bin/domicule-rectangle-modular.rs"
 
 [[bin]]
-name = "domino-tiling-number"
-path = "rust/solvers/src/bin/domino-tiling-number.rs"
+name = "domino-rectangle-bigint"
+path = "rust/solvers/src/bin/domino-rectangle-bigint.rs"
 
 [[bin]]
-name = "periodic-tiling-bigint"
-path = "rust/solvers/src/bin/periodic-tiling-bigint.rs"
+name = "domino-rectangle-formula"
+path = "rust/solvers/src/bin/domino-rectangle-formula.rs"
 
 [[bin]]
-name = "periodic-tiling-modular"
-path = "rust/solvers/src/bin/periodic-tiling-modular.rs"
+name = "domino-rectangle-number"
+path = "rust/solvers/src/bin/domino-rectangle-number.rs"

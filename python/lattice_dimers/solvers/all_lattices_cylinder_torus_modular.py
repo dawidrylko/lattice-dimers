@@ -15,7 +15,7 @@ LATTICES = {
     "king": {"down_left": True, "down_right": True},
 }
 USAGE = (
-    "Usage: python3 -m lattice_dimers.solvers.periodic_tiling_modular -r <rowCount> -c <circumference> "
+    "Usage: python3 -m lattice_dimers.solvers.all_lattices_cylinder_torus_modular -r <rowCount> -c <circumference> "
     "[--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\n"
     "The circumference is at least 2, and a torus has at least 2 rows."
 )
@@ -23,7 +23,7 @@ USAGE = (
 
 def list_moves(cols, c, has_below, lattice, wrap_bit):
     """Lists the moves of a free cell in column c as (bit, crossing) pairs, like listMoves of
-    js/solvers/periodicTilingSolver-Modular.js."""
+    js/solvers/all-lattices-cylinder-torus-modular.js."""
     moves = []
 
     if c + 1 < cols:
@@ -54,7 +54,7 @@ def list_moves(cols, c, has_below, lattice, wrap_bit):
 
 def count_modulo(board):
     """Counts the tilings of a cylinder or a torus modulo a prime, cell by cell, like countModulo of
-    js/solvers/periodicTilingSolver-Modular.js, with tables of 32-bit counts reduced modulo the prime as there.
+    js/solvers/all-lattices-cylinder-torus-modular.js, with tables of 32-bit counts reduced modulo the prime as there.
 
     A state is the window of cols + 2 bits and, on the king's graph with cols >= 3, the extra bit above it. Shifting
     a state by one bit maps a contiguous range of states onto another. So a cell step needs no index arrays. The
@@ -168,7 +168,7 @@ def count_modulo(board):
 
 
 def calculate_log2_bound(rows, cols, lattice, torus):
-    """Bounds log2 of the number of tilings, like calculateLog2Bound of js/solvers/periodicTilingSolver-Modular.js."""
+    """Bounds log2 of the number of tilings, like calculateLog2Bound of js/solvers/all-lattices-cylinder-torus-modular.js."""
     wrap_bit = 1 << (cols + 2)
     most = max(len(list_moves(cols, c, rows > 1 or torus, LATTICES[lattice], wrap_bit)) for c in range(cols))
 
@@ -177,7 +177,7 @@ def calculate_log2_bound(rows, cols, lattice, torus):
 
 def calculate_total_tiling_combinations(row_count, col_count, lattice="king", torus=False, twisted=False, jobs=None):
     """Counts the tilings exactly with the Chinese remainder theorem, like calculateTotalTilingCombinations of
-    js/solvers/periodicTilingSolver-Modular.js."""
+    js/solvers/all-lattices-cylinder-torus-modular.js."""
     if not is_valid_board(row_count, col_count, torus) or lattice not in LATTICES:
         raise ValueError(
             "The circumference must be at least 2, a torus needs at least 2 rows, and the lattice is square, triangular or king."

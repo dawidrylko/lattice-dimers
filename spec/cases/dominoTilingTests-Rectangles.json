@@ -1,5 +1,5 @@
 {
-  "algorithms": ["domino-tiling-number", "domino-tiling-bigint"],
+  "algorithms": ["domino-rectangle-number", "domino-rectangle-bigint"],
   "testCases": [
     {
       "rowCount": 3,

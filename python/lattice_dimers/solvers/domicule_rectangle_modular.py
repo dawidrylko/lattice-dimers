@@ -8,12 +8,12 @@ from lattice_dimers.core import calculate_log2_bound, combine_checked_residues, 
 
 MAX_SHORTER_SIDE = 30
 SCRATCH_COUNTS = 1 << 19
-USAGE = "Usage: python3 -m lattice_dimers.solvers.domicule_tiling_modular -r <rowCount> -c <colCount> [-j <jobs>]"
+USAGE = "Usage: python3 -m lattice_dimers.solvers.domicule_rectangle_modular -r <rowCount> -c <colCount> [-j <jobs>]"
 
 
 def list_offsets(cols, c, has_below):
     """Lists the bits a free cell in column c can cover with its partner, by their index, like the offsets in
-    countModulo of js/solvers/domiculeTilingSolver-Modular.js: right, down-left, down and down-right."""
+    countModulo of js/solvers/domicule-rectangle-modular.js: right, down-left, down and down-right."""
     has_right = c + 1 < cols
     offsets = []
 
@@ -34,7 +34,7 @@ def list_offsets(cols, c, has_below):
 
 def count_modulo(task):
     """Counts the domicule tilings modulo a prime with the broken-profile dynamic programming of countModulo in
-    js/solvers/domiculeTilingSolver-Modular.js, with tables of 32-bit counts reduced modulo the prime as there.
+    js/solvers/domicule-rectangle-modular.js, with tables of 32-bit counts reduced modulo the prime as there.
 
     Bit i of a state tells whether the cell i places ahead of the current one is already covered. A state has
     cols + 2 bits, but the top one is clear before every cell step, since a step shifts the state right after
@@ -87,7 +87,7 @@ def count_modulo(task):
 
 
 def calculate_total_tiling_combinations(row_count, col_count, jobs=None):
-    """Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/domiculeTilingSolver-Modular.js:
+    """Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/domicule-rectangle-modular.js:
     enough primes for the Kahn-Lovasz bound, plus one more prime that the result is checked against."""
     if not is_valid_size(row_count) or not is_valid_size(col_count):
         raise ValueError("The sides of the board must be non-negative integers.")

@@ -68,7 +68,7 @@ function listPortErrors({ registry, files, caseFiles, loadedCaseFiles, runnableL
       }
 
       const stem = path.basename(file, EXTENSIONS[language]);
-      const named = { rs: algorithm, py: algorithm.replaceAll('-', '_') }[language];
+      const named = { rs: algorithm, py: algorithm.replaceAll('-', '_'), js: algorithm }[language];
 
       if (named && stem !== named) {
         errors.push(`spec/algorithms.json names the ${language} implementation of ${algorithm} ${path.basename(file)}, not ${named}${EXTENSIONS[language]}.`);

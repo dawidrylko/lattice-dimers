@@ -21,7 +21,7 @@ The solver evaluates a closed form. Kasteleyn [1] and Fisher [2] found in 1961 t
 a(n) = \prod_{j=1}^{n} \prod_{k=1}^{n} \left( 4\cos^2\frac{j\pi}{2n+1} + 4\cos^2\frac{k\pi}{2n+1} \right)
 ```
 
-tilings. Evaluated with floating-point cosines the product loses its last digits from $12 \times 12$ on, so [`dominoTilingSolver-Formula.js`](../../js/solvers/dominoTilingSolver-Formula.js) evaluates it exactly, and so do its Rust and Python implementations, [`domino-tiling-formula.rs`](../../rust/solvers/src/bin/domino-tiling-formula.rs) and [`domino_tiling_formula.py`](../../python/lattice_dimers/solvers/domino_tiling_formula.py). The numbers $x_j = 4\cos^2(j\pi/(2n+1))$, $j = 1, \dots, n$, are the roots of a monic integer polynomial $P$ of degree $n$, and the double product over $x_j + x_k$ is, up to sign, the resultant of $P(x)$ and $P(-x)$:
+tilings. Evaluated with floating-point cosines the product loses its last digits from $12 \times 12$ on, so [`domino-rectangle-formula.js`](../../js/solvers/domino-rectangle-formula.js) evaluates it exactly, and so do its Rust and Python implementations, [`domino-rectangle-formula.rs`](../../rust/solvers/src/bin/domino-rectangle-formula.rs) and [`domino_rectangle_formula.py`](../../python/lattice_dimers/solvers/domino_rectangle_formula.py). The numbers $x_j = 4\cos^2(j\pi/(2n+1))$, $j = 1, \dots, n$, are the roots of a monic integer polynomial $P$ of degree $n$, and the double product over $x_j + x_k$ is, up to sign, the resultant of $P(x)$ and $P(-x)$:
 
 ```math
 a(n) = (-1)^n \mathrm{Res}\bigl(P(x), P(-x)\bigr), \qquad P(x^2) = U_{2n}(x/2)
@@ -34,7 +34,7 @@ where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is 
 The closed form as a floating-point product, next to the exact value. The relative error stays near $10^{-16}$, but once the count has more than 16 digits the last ones are wrong.
 
 ```js run
-const formula = require('./js/solvers/dominoTilingSolver-Formula.js');
+const formula = require('./js/solvers/domino-rectangle-formula.js');
 const product = n => {
   let value = 1;
   for (let j = 1; j <= n; j++) {
@@ -61,7 +61,7 @@ table(
 $P$ is monic of degree $n$ with integer coefficients, and its roots are $4\cos^2(j\pi/(2n+1))$. The Sylvester matrix of $P(x)$ and $P(-x)$ has size $2n$.
 
 ```js run
-const { createRootPolynomial, calculateResultant } = require('./js/solvers/dominoTilingSolver-Formula.js');
+const { createRootPolynomial, calculateResultant } = require('./js/solvers/domino-rectangle-formula.js');
 
 for (let n = 1; n <= 5; n++) {
   const p = createRootPolynomial(n);
@@ -80,7 +80,7 @@ for (let n = 1; n <= 5; n++) {
 
 ## The BigInt solver
 
-[`dominoTilingSolver-BigInt.js`](../../js/solvers/dominoTilingSolver-BigInt.js) counts tilings directly with a transfer by rows. It scans the board row by row and keeps, for every bitmask of the cells of the current row that a vertical domino from the row above already covers, the number of ways to reach it. A row is filled by a depth-first search that places horizontal dominoes in free pairs and starts vertical ones into the next row. The table has $2^{w}$ entries per row, so the cost grows with the shorter side and the solver turns the board so that it is the row width. Named after the JavaScript type, it keeps the counts as integers of any size, and its Rust and Python implementations, [`domino-tiling-bigint.rs`](../../rust/solvers/src/bin/domino-tiling-bigint.rs) and [`domino_tiling_bigint.py`](../../python/lattice_dimers/solvers/domino_tiling_bigint.py), do the same. [`dominoTilingSolver.js`](../../js/solvers/dominoTilingSolver.js) runs the same scan with JavaScript numbers and is exact only while they stay below $2^{53}$ (up to $10 \times 10$); [`domino-tiling-number.rs`](../../rust/solvers/src/bin/domino-tiling-number.rs) and [`domino_tiling_number.py`](../../python/lattice_dimers/solvers/domino_tiling_number.py) use the same doubles and round to the same values.
+[`domino-rectangle-bigint.js`](../../js/solvers/domino-rectangle-bigint.js) counts tilings directly with a transfer by rows. It scans the board row by row and keeps, for every bitmask of the cells of the current row that a vertical domino from the row above already covers, the number of ways to reach it. A row is filled by a depth-first search that places horizontal dominoes in free pairs and starts vertical ones into the next row. The table has $2^{w}$ entries per row, so the cost grows with the shorter side and the solver turns the board so that it is the row width. Named after the JavaScript type, it keeps the counts as integers of any size, and its Rust and Python implementations, [`domino-rectangle-bigint.rs`](../../rust/solvers/src/bin/domino-rectangle-bigint.rs) and [`domino_rectangle_bigint.py`](../../python/lattice_dimers/solvers/domino_rectangle_bigint.py), do the same. [`domino-rectangle-number.js`](../../js/solvers/domino-rectangle-number.js) runs the same scan with JavaScript numbers and is exact only while they stay below $2^{53}$ (up to $10 \times 10$); [`domino-rectangle-number.rs`](../../rust/solvers/src/bin/domino-rectangle-number.rs) and [`domino_rectangle_number.py`](../../python/lattice_dimers/solvers/domino_rectangle_number.py) use the same doubles and round to the same values.
 
 ## Numbering
 
@@ -115,9 +115,9 @@ The number of a sampled tiling needs no table either. A scan from the last cell 
 The formula solver evaluates the resultant, the two transfer solvers scan the board. The `Number` solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about five minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
 
 ```js run
-const formula = require('./js/solvers/dominoTilingSolver-Formula.js');
-const transfer = require('./js/solvers/dominoTilingSolver-BigInt.js');
-const number = require('./js/solvers/dominoTilingSolver.js');
+const formula = require('./js/solvers/domino-rectangle-formula.js');
+const transfer = require('./js/solvers/domino-rectangle-bigint.js');
+const number = require('./js/solvers/domino-rectangle-number.js');
 const known = require('./js/core/cases').testCasesBigInt;
 
 const rows = [];

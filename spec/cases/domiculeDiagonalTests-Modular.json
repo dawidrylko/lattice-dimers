@@ -1,5 +1,5 @@
 {
-  "algorithms": ["domicule-diagonal-modular"],
+  "algorithms": ["diagonal-pieces-modular"],
   "testCases": [
     {
       "rowCount": 0,

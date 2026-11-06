@@ -6,50 +6,50 @@
   },
   "pendingPorts": 0,
   "algorithms": {
-    "domicule-diagonal-bigint": {
-      "rs": "rust/solvers/src/bin/domicule-diagonal-bigint.rs",
-      "py": "python/lattice_dimers/solvers/domicule_diagonal_bigint.py",
-      "js": "js/solvers/domiculeDiagonalSolver-BigInt.js"
+    "all-lattices-cylinder-torus-bigint": {
+      "rs": "rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs",
+      "py": "python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py",
+      "js": "js/solvers/all-lattices-cylinder-torus-bigint.js"
     },
-    "domicule-diagonal-modular": {
-      "rs": "rust/solvers/src/bin/domicule-diagonal-modular.rs",
-      "py": "python/lattice_dimers/solvers/domicule_diagonal_modular.py",
-      "js": "js/solvers/domiculeDiagonalSolver-Modular.js"
+    "all-lattices-cylinder-torus-modular": {
+      "rs": "rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs",
+      "py": "python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py",
+      "js": "js/solvers/all-lattices-cylinder-torus-modular.js"
     },
-    "domicule-tiling-bigint": {
-      "rs": "rust/solvers/src/bin/domicule-tiling-bigint.rs",
-      "py": "python/lattice_dimers/solvers/domicule_tiling_bigint.py",
-      "js": "js/solvers/domiculeTilingSolver-BigInt.js"
+    "diagonal-pieces-bigint": {
+      "rs": "rust/solvers/src/bin/diagonal-pieces-bigint.rs",
+      "py": "python/lattice_dimers/solvers/diagonal_pieces_bigint.py",
+      "js": "js/solvers/diagonal-pieces-bigint.js"
     },
-    "domicule-tiling-modular": {
-      "rs": "rust/solvers/src/bin/domicule-tiling-modular.rs",
-      "py": "python/lattice_dimers/solvers/domicule_tiling_modular.py",
-      "js": "js/solvers/domiculeTilingSolver-Modular.js"
+    "diagonal-pieces-modular": {
+      "rs": "rust/solvers/src/bin/diagonal-pieces-modular.rs",
+      "py": "python/lattice_dimers/solvers/diagonal_pieces_modular.py",
+      "js": "js/solvers/diagonal-pieces-modular.js"
     },
-    "domino-tiling-bigint": {
-      "rs": "rust/solvers/src/bin/domino-tiling-bigint.rs",
-      "py": "python/lattice_dimers/solvers/domino_tiling_bigint.py",
-      "js": "js/solvers/dominoTilingSolver-BigInt.js"
+    "domicule-rectangle-bigint": {
+      "rs": "rust/solvers/src/bin/domicule-rectangle-bigint.rs",
+      "py": "python/lattice_dimers/solvers/domicule_rectangle_bigint.py",
+      "js": "js/solvers/domicule-rectangle-bigint.js"
     },
-    "domino-tiling-formula": {
-      "rs": "rust/solvers/src/bin/domino-tiling-formula.rs",
-      "py": "python/lattice_dimers/solvers/domino_tiling_formula.py",
-      "js": "js/solvers/dominoTilingSolver-Formula.js"
+    "domicule-rectangle-modular": {
+      "rs": "rust/solvers/src/bin/domicule-rectangle-modular.rs",
+      "py": "python/lattice_dimers/solvers/domicule_rectangle_modular.py",
+      "js": "js/solvers/domicule-rectangle-modular.js"
     },
-    "domino-tiling-number": {
-      "rs": "rust/solvers/src/bin/domino-tiling-number.rs",
-      "py": "python/lattice_dimers/solvers/domino_tiling_number.py",
-      "js": "js/solvers/dominoTilingSolver.js"
+    "domino-rectangle-bigint": {
+      "rs": "rust/solvers/src/bin/domino-rectangle-bigint.rs",
+      "py": "python/lattice_dimers/solvers/domino_rectangle_bigint.py",
+      "js": "js/solvers/domino-rectangle-bigint.js"
     },
-    "periodic-tiling-bigint": {
-      "rs": "rust/solvers/src/bin/periodic-tiling-bigint.rs",
-      "py": "python/lattice_dimers/solvers/periodic_tiling_bigint.py",
-      "js": "js/solvers/periodicTilingSolver-BigInt.js"
+    "domino-rectangle-formula": {
+      "rs": "rust/solvers/src/bin/domino-rectangle-formula.rs",
+      "py": "python/lattice_dimers/solvers/domino_rectangle_formula.py",
+      "js": "js/solvers/domino-rectangle-formula.js"
     },
-    "periodic-tiling-modular": {
-      "rs": "rust/solvers/src/bin/periodic-tiling-modular.rs",
-      "py": "python/lattice_dimers/solvers/periodic_tiling_modular.py",
-      "js": "js/solvers/periodicTilingSolver-Modular.js"
+    "domino-rectangle-number": {
+      "rs": "rust/solvers/src/bin/domino-rectangle-number.rs",
+      "py": "python/lattice_dimers/solvers/domino_rectangle_number.py",
+      "js": "js/solvers/domino-rectangle-number.js"
     }
   }
 }

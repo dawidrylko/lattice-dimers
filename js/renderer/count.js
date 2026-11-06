@@ -30,7 +30,7 @@ function countTilings(options) {
   }
 
   try {
-    return exec('dominoTilingSolver-BigInt.js', options);
+    return exec('domino-rectangle-bigint.js', options);
   } catch {
     return null;
   }

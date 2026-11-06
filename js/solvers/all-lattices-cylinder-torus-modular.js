@@ -235,7 +235,7 @@ async function __main__() {
 
   if (!isValidBoard(options, torus) || !Object.hasOwn(LATTICES, lattice) || !(jobs > 0)) {
     console.error(
-      'Usage: node js/solvers/periodicTilingSolver-Modular.js -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\n' +
+      'Usage: node js/solvers/all-lattices-cylinder-torus-modular.js -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\n' +
         'The circumference is at least 2, and a torus has at least 2 rows.',
     );
     process.exit(1);

@@ -4,7 +4,7 @@ const os = require('os');
 const path = require('path');
 const { parseArgs, exec } = require('../js/core');
 const { listImplementations, algorithmOf } = require('../js/core/registry');
-const { LATTICES } = require('../js/solvers/periodicTilingSolver-BigInt.js');
+const { LATTICES } = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
 const {
   filesInt,
   testCasesInt,

@@ -128,14 +128,14 @@ function __main__() {
 
   if (!isValidBoard(options, torus) || !Object.hasOwn(LATTICES, lattice)) {
     console.error(
-      'Usage: node js/solvers/periodicTilingSolver-BigInt.js -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square]\n' +
+      'Usage: node js/solvers/all-lattices-cylinder-torus-bigint.js -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square]\n' +
         'The circumference is at least 2, and a torus has at least 2 rows.',
     );
     process.exit(1);
   }
 
   if (options.colCount > MAX_CIRCUMFERENCE) {
-    console.error(`The circumference can be at most ${MAX_CIRCUMFERENCE}; use periodicTilingSolver-Modular.js for larger boards.`);
+    console.error(`The circumference can be at most ${MAX_CIRCUMFERENCE}; use all-lattices-cylinder-torus-modular.js for larger boards.`);
     process.exit(1);
   }
 

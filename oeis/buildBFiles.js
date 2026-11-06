@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { calculateTotalTilingCombinations } = require('../js/solvers/dominoTilingSolver-Formula');
+const { calculateTotalTilingCombinations } = require('../js/solvers/domino-rectangle-formula');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const ZEX_DIRECTORY = path.join(ROOT_DIRECTORY, 'research', 'king-entropy', 'data', 'zex');
@@ -12,7 +12,7 @@ const LAST_DIAGONAL_ROW = 10;
 const TORUS_FILES = ['periodicTilingTests.json', 'periodicTilingTests-Modular.json'];
 const DIAGONAL_FILES = ['domiculeDiagonalTests.json', 'domiculeDiagonalTests-Modular.json'];
 const SOURCES = {
-  'A004003/b004003.txt': 'js/solvers/dominoTilingSolver-Formula.js',
+  'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
   'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A239273/b239273.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A401670/b401670.txt': TORUS_FILES.map(name => `spec/cases/${name}`).join(' and '),
