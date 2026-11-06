@@ -33,6 +33,7 @@ const {
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const REJECTION_TIMEOUT = 30000;
 const MAX_PORTED_BIGINT_SIDE = 16;
+const MAX_PORTED_BIGINT_TORUS_SIDE = 8;
 const parserTestCases = [
   { value: '12', expectedResult: 12 },
   { value: '0', expectedResult: 0 },
@@ -49,8 +50,6 @@ const rejectionTestCases = [
     args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/domiculeTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
   },
-  { args: ['js/solvers/periodicTilingSolver-BigInt.js', '-r', '4', '-c', '13'], message: 'at most 12' },
-  { args: ['js/solvers/periodicTilingSolver-BigInt.js', '-r', '1', '-c', '4', '--torus'], message: 'Usage' },
   {
     args: ['--require', './harness/fixtures/exitingWorker.js', 'js/solvers/periodicTilingSolver-Modular.js', '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
@@ -79,6 +78,17 @@ const rejectionTestCases = [
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--lattice=square'], message: 'Usage' },
 ];
 const implementationRejectionTestCases = [
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '13'], message: 'at most 12' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '13', '-c', '13', '--torus', '--twisted'], message: 'at most 12' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '1'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '1', '-c', '13', '--torus'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '13', '--lattice', 'hexagonal'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '1', '-c', '4', '--torus'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '2abc', '-c', '4'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '9007199254740992', '-c', '4'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-c', '4'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '4', '--lattice', 'hexagonal'], message: 'Usage' },
+  { algorithm: 'periodic-tiling-bigint', args: ['-r', '4', '-c', '4', '--lattice'], message: 'Usage' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '25'], message: 'at most 24' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '25', '-c', '25', '--torus'], message: 'at most 24' },
   { algorithm: 'periodic-tiling-modular', args: ['-r', '4', '-c', '25', '--torus', '--twisted'], message: 'at most 24' },
@@ -708,9 +718,12 @@ function executeBenchmarkGuardTest() {
 function executeBenchmarkSurfaceTests() {
   const cases = [
     { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: 'periodicTilingSolver-Modular.js_2x2-king-torus.txt' },
-    { args: ['--cylinder', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-king-cylinder.txt' },
-    { args: ['--cylinder', '--lattice', 'square', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-square-cylinder.txt' },
-    { args: ['--cylinder', '--lattice', 'triangular', '--only', 'periodicTilingSolver-BigInt.js'], file: 'periodicTilingSolver-BigInt.js_2x2-triangular-cylinder.txt' },
+    ...listImplementations('periodic-tiling-bigint').flatMap(({ file }) => [
+      { args: ['--cylinder', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-king-cylinder.txt` },
+      { args: ['--cylinder', '--lattice', 'square', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-square-cylinder.txt` },
+      { args: ['--cylinder', '--lattice', 'triangular', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-triangular-cylinder.txt` },
+      { args: ['--torus', '--lattice', 'square', '--only', 'periodicTilingSolver-BigInt.js'], file: `${path.basename(file)}_2x2-square-torus.txt` },
+    ]),
     ...listImplementations('periodic-tiling-modular').flatMap(({ file }) => [
       { args: ['--torus', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-king-torus.txt` },
       { args: ['--torus', '--lattice', 'square', '--only', 'periodicTilingSolver-Modular.js'], file: `${path.basename(file)}_2x2-square-torus.txt` },
@@ -991,6 +1004,8 @@ function executeBenchmarkRunTest() {
     touch('2000-07', complete.filter(file => file !== 'domino-tiling-number.rs_10x10.txt'));
     touch('2000-08', complete.filter(file => file !== 'domicule_diagonal_bigint.py_12x12.txt'));
     touch('2000-09', complete.filter(file => file !== 'domicule-diagonal-modular.rs_20x20.txt'));
+    touch('2000-10', complete.filter(file => file !== 'periodic-tiling-bigint.rs_10x10-king-torus.txt'));
+    touch('2000-11', complete.filter(file => file !== 'periodic_tiling_bigint.py_12x12-square-torus.txt'));
     const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {
@@ -1168,7 +1183,8 @@ async function executeModuleTests() {
     executeLongCountTest('domino-tiling-formula', ['-r', '80', '-c', '80']) &&
     executeLongCountTest('domino-tiling-bigint', ['-r', '2', '-c', '6000']) &&
     executeLongCountTest('domicule-tiling-bigint', ['-r', '2', '-c', '6000']) &&
-    executeLongCoefficientTest()
+    executeLongCoefficientTest() &&
+    executeLongCountTest('periodic-tiling-bigint', ['-r', '1200', '-c', '2'])
   );
 }
 
@@ -1441,7 +1457,15 @@ async function __main__() {
       );
     const allDomiculeRectangleTestsPassed = executeTests(filesDomiculeRectangles, testCasesDomiculeRectangles, verifyBigInt);
     const testCasesToRunPeriodic = maxSize ? testCasesPeriodic.slice(0, maxSize) : testCasesPeriodic;
-    const allPeriodicTestsPassed = executeTests(filesPeriodic, testCasesToRunPeriodic, verifyBigInt, testCasesPeriodic);
+    const isPeriodicBigInt = fileName => algorithmOf(fileName) === 'periodic-tiling-bigint';
+    const allPeriodicTestsPassed =
+      executeTests(filesPeriodic.filter(fileName => !isPeriodicBigInt(fileName)), testCasesToRunPeriodic, verifyBigInt, testCasesPeriodic) &&
+      executeTests(
+        filesPeriodic.filter(isPeriodicBigInt),
+        testCasesToRunPeriodic,
+        verifyBigInt,
+        maxSize ? testCasesPeriodic.filter(({ torus, colCount }) => !torus || colCount <= MAX_PORTED_BIGINT_TORUS_SIDE) : testCasesPeriodic,
+      );
     const testCasesToRunPeriodicModular = maxSize ? testCasesPeriodicModular.slice(0, maxSize) : testCasesPeriodicModular;
     const allPeriodicModularTestsPassed = executeTests(filesPeriodicModular, testCasesToRunPeriodicModular, verifyBigInt);
     const allDiagonalTestsPassed = executeTests(filesDiagonal, testCasesDiagonal, verifyList);

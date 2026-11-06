@@ -12,7 +12,7 @@ The triangular lattice [2] is the square lattice with one diagonal in every cell
 
 ## The BigInt solver
 
-[`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row.
+[`periodicTilingSolver-BigInt.js`](../../js/solvers/periodicTilingSolver-BigInt.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. The same algorithm is in Rust, [`periodic-tiling-bigint.rs`](../../rust/solvers/src/bin/periodic-tiling-bigint.rs), and in Python, [`periodic_tiling_bigint.py`](../../python/lattice_dimers/solvers/periodic_tiling_bigint.py).
 
 ## The counts
 

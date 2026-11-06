@@ -35,7 +35,7 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 | `domicule-diagonal-modular` | [✅](rust/solvers/src/bin/domicule-diagonal-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_diagonal_modular.py) | [✅](js/solvers/domiculeDiagonalSolver-Modular.js) |
 | `domicule-diagonal-bigint` | [✅](rust/solvers/src/bin/domicule-diagonal-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_diagonal_bigint.py) | [✅](js/solvers/domiculeDiagonalSolver-BigInt.js) |
 | `periodic-tiling-modular` | [✅](rust/solvers/src/bin/periodic-tiling-modular.rs) | [✅](python/lattice_dimers/solvers/periodic_tiling_modular.py) | [✅](js/solvers/periodicTilingSolver-Modular.js) |
-| `periodic-tiling-bigint` | - | - | [✅](js/solvers/periodicTilingSolver-BigInt.js) |
+| `periodic-tiling-bigint` | [✅](rust/solvers/src/bin/periodic-tiling-bigint.rs) | [✅](python/lattice_dimers/solvers/periodic_tiling_bigint.py) | [✅](js/solvers/periodicTilingSolver-BigInt.js) |
 
 ## Results
 

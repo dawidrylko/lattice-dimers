@@ -54,5 +54,9 @@ name = "domino-tiling-number"
 path = "rust/solvers/src/bin/domino-tiling-number.rs"
 
 [[bin]]
+name = "periodic-tiling-bigint"
+path = "rust/solvers/src/bin/periodic-tiling-bigint.rs"
+
+[[bin]]
 name = "periodic-tiling-modular"
 path = "rust/solvers/src/bin/periodic-tiling-modular.rs"

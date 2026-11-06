@@ -362,6 +362,7 @@ async function buildPeriodicBenchmark(lattice) {
             : 'not run in this benchmark',
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}Modular.js${suffix}`),
       languages: readLanguages('periodic-tiling-modular', suffix),
+      bigintLanguages: readLanguages('periodic-tiling-bigint', suffix),
     });
   }
 
