@@ -26,6 +26,10 @@ function __main__() {
   const noise = argv.includes('--noise');
   const passed = argv.filter(arg => arg !== '--force-load' && arg !== '--noise');
 
+  if (noise && passed.length) {
+    fail('Usage: pnpm benchmark:noise [--force-load]');
+  }
+
   const commit = git('rev-parse', 'HEAD');
 
   if (git('status', '--porcelain', '--', '.', ':!benchmarks/results')) {
@@ -50,9 +54,9 @@ function __main__() {
     }
 
     const short = commit.slice(0, 12);
-    const loadFile = path.join(RESULTS_DIRECTORY, `host-load-${short}.txt`);
+    const loadFile = noise ? path.join(RESULTS_DIRECTORY, `noise-${short}`, 'host-load.txt') : path.join(RESULTS_DIRECTORY, `host-load-${short}.txt`);
 
-    fs.mkdirSync(RESULTS_DIRECTORY, { recursive: true });
+    fs.mkdirSync(path.dirname(loadFile), { recursive: true });
 
     const sampler = setInterval(() => fs.appendFileSync(loadFile, `${new Date().toISOString()} ${os.loadavg().join(' ')}\n`), LOAD_SAMPLE_MILLISECONDS);
     const host = `${os.type()} ${os.release()} ${os.arch()}, ${os.cpus()[0]?.model}, ${os.cpus().length} cores, ${Math.round(os.totalmem() / 2 ** 30)} GB`;
@@ -74,7 +78,7 @@ function __main__() {
 
       const [first, second] = NOISE_SERIES.map(series => JSON.parse(fs.readFileSync(path.join(RESULTS_DIRECTORY, `noise-${short}`, `${series}.json`), 'utf-8')));
 
-      console.log('The same code measured twice, the difference of the medians is the noise floor:');
+      console.log('The same code measured twice. One sample of the noise: read the largest difference and the cv, not a single line.');
       compareSeries(first, second).forEach(({ board, language, difference, cv }) => console.log(`${difference}%\tcv ${cv}%\t${language}\t${board}`));
     };
 
