@@ -141,4 +141,4 @@ function executeSolver(fileName, options) {
   }
 }
 
-module.exports = Object.assign(executeSolver, { LAUNCHERS, generateCommand, launch, launchBuilt, rustSourcesModifiedAt });
+module.exports = Object.assign(executeSolver, { LAUNCHERS, generateCommand, launchBuilt, rustSourcesModifiedAt });

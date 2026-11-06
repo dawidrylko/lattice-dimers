@@ -245,7 +245,7 @@ describe('the shared test data', () => {
   const ids = Object.keys(algorithms);
 
   test('every rule of spec/limits.json has one known key and names known algorithms', () => {
-    assert.ok(limits.firstCases > 0);
+    assert.ok(Number.isInteger(limits.firstCases) && limits.firstCases > 0);
 
     for (const [id, rule] of Object.entries(limits.algorithms)) {
       const [key, value, ...rest] = Object.entries(rule).flat();
@@ -253,7 +253,7 @@ describe('the shared test data', () => {
       assert.ok(ids.includes(id), id);
       assert.deepEqual(rest, [], id);
       assert.ok(['maxTorusSide', 'maxSquareSide', 'firstCasesPlusBoardsOf'].includes(key), id);
-      assert.ok(key !== 'firstCasesPlusBoardsOf' || ids.includes(value), id);
+      assert.ok(key === 'firstCasesPlusBoardsOf' ? ids.includes(value) && value !== id : Number.isInteger(value) && value > 0, id);
     }
   });
 
