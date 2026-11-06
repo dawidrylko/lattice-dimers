@@ -39,7 +39,7 @@ function listTwinDisagreements(caseFiles) {
   const errors = [];
   const counts = new Map();
 
-  for (const { algorithm, testCases } of caseFiles) {
+  for (const { algorithm, testCases } of caseFiles.filter(({ algorithm }) => typeof algorithm === 'string')) {
     for (const testCase of testCases ?? []) {
       const key = `${familyOf(algorithm)}|${boardKeyOf(testCase)}`;
       const known = counts.get(key);
