@@ -3,23 +3,18 @@
 One command measures everything, in one container with pinned Node.js, Python and Rust ([`Dockerfile`](Dockerfile)):
 
 ```sh
-pnpm benchmark --board-budget-hours 24
+pnpm benchmark                           # every solver
+pnpm benchmark domino-rectangle-bigint   # one solver, in every language
 pnpm benchmark:compare <run directory> <run directory>
 ```
 
 `pnpm benchmark` ([`harness/benchmarkContainer.js`](../harness/benchmarkContainer.js)) builds the image from the current commit and refuses uncommitted changes. It also refuses to start while the host load is above 2, unless given `--force-load`, and samples the host load every minute to `results/host-load-<commit>.txt`, because a container only sees the load of its own virtual machine.
 
-Inside it, [`harness/benchmarkFull.js`](../harness/benchmarkFull.js) runs every implementation of every solver 10 times on each board up to 20 × 20, cheapest board first. It estimates a board from the one before: the last growth seen, but at least the growth of the state count. The budget caps one board in one language, not the whole run. A board whose 10 runs would exceed it is not started, and `plan.json` records it with its estimate. A board that runs out of memory or time is recorded there too; any other failure, such as a wrong count, stops the run and leaves it incomplete. A rerun of the same commit and toolchains resumes, so a higher budget only adds boards. A resume keeps its directory after a change of Docker's memory, and `--force` accepts another machine.
+Inside it, [`harness/benchmarkFull.js`](../harness/benchmarkFull.js) runs every implementation of every solver 10 times on each board up to 20 × 20, cheapest board first. It estimates a board from the one before: the last growth seen, but at least the growth of the state count. Boards of the largest solvers would take years, so `--board-budget-hours <hours>` caps one board in one language. A board whose 10 runs would exceed it is not started, and `plan.json` records it with its estimate. Without it the command starts every board. A board that runs out of memory or time is recorded there too; any other failure, such as a wrong count, stops the run and leaves it incomplete. A rerun of the same commit and toolchains resumes, so a higher budget only adds boards. A resume keeps its directory after a change of Docker's memory, and `--force` accepts another machine.
 
 ## Batches
 
-A full measurement can take days, so it can run in parts, each from the same commit:
-
-```sh
-pnpm benchmark --board-budget-hours 8 --solver domino-rectangle-bigint --stop-after-hours 8
-```
-
-`--solver` measures one solver in every language, and `--stop-after-hours` starts no new board after that time. Stopping loses at most the board in progress, since a result file is written after its 10 runs. The next command continues in the same directory, and the run is complete once every board of every solver is measured or recorded in `plan.json`. A new commit starts a new directory, so keep a checkout at one commit for the whole measurement.
+A measurement can take days, so it can run in parts from the same commit. `pnpm benchmark <solver>` measures one solver, and `--stop-after-hours <hours>` starts no new board after that time. Stopping loses at most the board in progress, since a result file is written after its 10 runs. The next command continues in the same directory, and the run is complete once every board of every solver is measured or recorded in `plan.json`. A new commit starts a new directory, so keep a checkout at one commit for the whole measurement.
 
 ## Results
 

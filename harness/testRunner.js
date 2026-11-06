@@ -932,20 +932,20 @@ function executeBenchmarkFullRunTests() {
   const failures = [];
 
   try {
-    const batch = run({}, ['--solver', 'domino-rectangle-formula']);
+    const batch = run({}, ['domino-rectangle-formula']);
     const batchEnvironment = JSON.parse(fs.readFileSync(path.join(directoryOf(), 'environment.json'), 'utf-8'));
 
     if (batch.status !== 0 || batchEnvironment.complete !== false || fs.existsSync(path.join(directoryOf(), 'domino-rectangle-bigint.js_2x2.txt'))) {
       failures.push(`one solver must not complete a run or measure another solver: ${batch.stderr.trim()}`);
     }
 
-    const stopped = run({}, ['--solver', 'domino-rectangle-bigint', '--stop-after-hours', '0.0000001']);
+    const stopped = run({}, ['domino-rectangle-bigint', '--stop-after-hours', '0.0000001']);
 
     if (stopped.status !== 0 || fs.existsSync(path.join(directoryOf(), 'domino-rectangle-bigint.js_8x8.txt'))) {
       failures.push(`a night limit must stop before the next board: ${stopped.stderr.trim()}`);
     }
 
-    if (run({}, ['--solver', 'no-such-solver']).status === 0) {
+    if (run({}, ['no-such-solver']).status === 0) {
       failures.push('an unknown solver must be refused');
     }
 

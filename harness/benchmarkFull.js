@@ -19,7 +19,7 @@ const { filesInt, testCasesInt, filesBigInt, testCasesBigInt } = require('../js/
 
 const RUNS = 10;
 const DEFAULT_JOBS = 4;
-const USAGE = 'Usage: node harness/benchmarkFull.js --board-budget-hours <hours> [--solver <id>] [--stop-after-hours <hours>] [--jobs <threads>] [--skip-instructions] [--force]';
+const USAGE = 'Usage: node harness/benchmarkFull.js [<solver id>] [--board-budget-hours <hours>] [--stop-after-hours <hours>] [--jobs <threads>] [--skip-instructions] [--force]';
 const STATE_GROWTH = 4.4;
 const TORUS_GROWTH = 16;
 const GROWTH_FLOORS = [
@@ -139,7 +139,7 @@ function saveState(state) {
 function measureBoard(board, budgetSeconds) {
   const executionTimes = [];
   const processTimes = [];
-  const timeout = Math.ceil(Math.max((budgetSeconds / RUNS) * 2, MIN_RUN_TIMEOUT_SECONDS) * 1000);
+  const timeout = Number.isFinite(budgetSeconds) ? Math.ceil(Math.max((budgetSeconds / RUNS) * 2, MIN_RUN_TIMEOUT_SECONDS) * 1000) : undefined;
 
   for (let i = 0; i < RUNS; i++) {
     const { execution, process: processTime } = measure({ ...board, timeout });
@@ -159,7 +159,7 @@ function runPlan(budgetSeconds, jobs, solver, stopAfterSeconds) {
   const selectedNames = new Set(selected.map(({ name }) => name));
   const heads = selected.map(series => ({ ...series, index: 0, previousSeconds: null, earlierSeconds: 0 }));
   const state = {
-    budgetHours: budgetSeconds / 3600,
+    budgetHours: Number.isFinite(budgetSeconds) ? budgetSeconds / 3600 : null,
     runs: RUNS,
     jobs,
     notMeasured: readState().notMeasured.filter(({ series }) => !selectedNames.has(series)),
@@ -271,6 +271,8 @@ function compareRuns(before, after) {
 function __main__() {
   const argv = process.argv.slice(2);
   const read = flag => (argv.includes(flag) ? argv[argv.indexOf(flag) + 1] : null);
+  const optionsWithValue = ['--board-budget-hours', '--stop-after-hours', '--jobs'];
+  const positional = argv.filter((arg, i) => !arg.startsWith('--') && !optionsWithValue.includes(argv[i - 1]));
 
   if (argv[0] === 'compare') {
     const [before, after] = argv.slice(1).map(name => path.join(RESULTS_DIRECTORY, name));
@@ -280,7 +282,7 @@ function __main__() {
     return;
   }
 
-  const budgetHours = Number(read('--board-budget-hours'));
+  const budgetHours = Number(read('--board-budget-hours') ?? Infinity);
   const jobs = Number(read('--jobs') ?? DEFAULT_JOBS);
 
   if (!(budgetHours > 0) || !Number.isInteger(jobs) || jobs < 1) {
@@ -302,11 +304,11 @@ function __main__() {
     runInstructions();
   }
 
-  const solver = read('--solver');
+  const solver = positional[0] ?? null;
   const stopAfterHours = Number(read('--stop-after-hours') ?? Infinity);
 
   if (solver !== null && !listSeries(jobs).some(({ name }) => solverOf(name) === solver)) {
-    throw new Error(`No solver ${solver}. ${USAGE}`);
+    throw new Error(`No solver ${solver}. The solvers: ${[...new Set(listSeries(jobs).map(({ name }) => solverOf(name)))].join(', ')}.`);
   }
 
   if (!(stopAfterHours > 0)) {
