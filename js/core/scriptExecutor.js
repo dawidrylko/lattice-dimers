@@ -32,13 +32,13 @@ function launch(fileName) {
   return LAUNCHERS[path.extname(fileName)](resolve(fileName));
 }
 
-function listRustSources(file, buildDirectory) {
-  if (!fs.existsSync(file) || file === buildDirectory) {
+function listRustSources(file, buildDirectories) {
+  if (!fs.existsSync(file) || buildDirectories.includes(file)) {
     return [];
   }
 
   if (fs.statSync(file).isDirectory()) {
-    return fs.readdirSync(file).flatMap(name => listRustSources(path.join(file, name), buildDirectory));
+    return fs.readdirSync(file).flatMap(name => listRustSources(path.join(file, name), buildDirectories));
   }
 
   return file.endsWith('.rs') ? [file] : [];
@@ -46,7 +46,7 @@ function listRustSources(file, buildDirectory) {
 
 /**
  * Finds when the sources of one Rust binary last changed: the newest modification time of its own file in
- * rust/solvers/src/bin and of every .rs file under rust/ outside that directory and outside the build directory,
+ * rust/solvers/src/bin and of every .rs file under rust/ outside that directory and outside the build directories,
  * read at every run of the binary.
  * The other files in rust/solvers/src/bin are the roots of other binaries, which cargo does not rebuild this one
  * for. Only .rs files count, because cargo rebuilds when a .rs file it compiles is newer than its last build, so
@@ -59,8 +59,8 @@ function listRustSources(file, buildDirectory) {
  */
 function rustSourcesModifiedAt(source, directory = RUST_DIRECTORY) {
   const binaries = path.join(directory, RUST_BINARY_DIRECTORY);
-  const buildDirectory = path.resolve(directory, process.env.CARGO_TARGET_DIR || 'target');
-  const sources = listRustSources(directory, buildDirectory).filter(file => path.dirname(file) !== binaries || file === source);
+  const buildDirectories = [path.join(directory, 'target'), path.resolve(directory, process.env.CARGO_TARGET_DIR || 'target')];
+  const sources = listRustSources(directory, buildDirectories).filter(file => path.dirname(file) !== binaries || file === source);
 
   return Math.max(...sources.map(file => fs.statSync(file).mtimeMs));
 }

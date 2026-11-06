@@ -29,7 +29,7 @@ An implementation rejects arguments it cannot use, and a board it cannot count, 
 
 ## Running
 
-[`js/core/scriptExecutor.js`](../js/core/scriptExecutor.js) runs a Rust implementation as the release binary of the same name in `rust/target/release` (or `$CARGO_TARGET_DIR/release`, relative to `rust/`), built with `cargo build --release` in `rust/`, and fails the test when it was not built or is older than a `.rs` file it is built from: its own file in `rust/solvers/src/bin` or any `.rs` file under `rust/` outside that directory; a Python one as a module of the installed package with `python3 -I -m` (or the interpreter at `$PYTHON`); a JavaScript one with the running Node.js.
+[`js/core/scriptExecutor.js`](../js/core/scriptExecutor.js) runs a Rust implementation as the release binary of the same name in `rust/target/release` (or `$CARGO_TARGET_DIR/release`, relative to `rust/`), built with `cargo build --release` in `rust/`, and fails the test when it was not built or is older than a `.rs` file it is built from: its own file in `rust/solvers/src/bin` or any `.rs` file under `rust/` outside that directory and the build directories; a Python one as a module of the installed package with `python3 -I -m` (or the interpreter at `$PYTHON`); a JavaScript one with the running Node.js.
 
 ## The registry
 

@@ -469,6 +469,7 @@ function executeRustSourceTests() {
     ['solvers/src/bin/first.rs', 2000],
     ['solvers/src/bin/second.rs', 4000],
     ['target/release/build/generated.rs', 5000],
+    ['build/release/build/generated.rs', 6000],
   ];
   const target = process.env.CARGO_TARGET_DIR;
   const cases = [
@@ -477,7 +478,7 @@ function executeRustSourceTests() {
   ];
 
   try {
-    delete process.env.CARGO_TARGET_DIR;
+    process.env.CARGO_TARGET_DIR = 'build';
 
     for (const [name, seconds] of sources) {
       fs.mkdirSync(path.dirname(file(name)), { recursive: true });
@@ -501,7 +502,9 @@ function executeRustSourceTests() {
       return true;
     });
   } finally {
-    if (target !== undefined) {
+    if (target === undefined) {
+      delete process.env.CARGO_TARGET_DIR;
+    } else {
       process.env.CARGO_TARGET_DIR = target;
     }
 

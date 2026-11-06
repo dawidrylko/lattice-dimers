@@ -25,4 +25,4 @@ cargo test
 target/release/all-lattices-cylinder-torus-modular -r 10 -c 10 --torus
 ```
 
-`cargo test` runs the tests of every package of the workspace. [`harness/testRunner.js`](../harness/testRunner.js) runs the binaries in `rust/target/release` (or `$CARGO_TARGET_DIR/release`, relative to `rust/`) on the boards of [`spec/cases`](../spec/cases/README.md), and refuses a binary older than its own file in `solvers/src/bin` or a `.rs` file under `rust/` outside that directory, since cargo rebuilds only the binaries whose sources changed; `pnpm -C js test` builds them first.
+`cargo test` runs the tests of every package of the workspace. [`harness/testRunner.js`](../harness/testRunner.js) runs the binaries in `rust/target/release` (or `$CARGO_TARGET_DIR/release`, relative to `rust/`) on the boards of [`spec/cases`](../spec/cases/README.md), and refuses a binary older than its own file in `solvers/src/bin` or a `.rs` file under `rust/` outside that directory and the build directories, since cargo rebuilds only the binaries whose sources changed; `pnpm -C js test` builds them first.
