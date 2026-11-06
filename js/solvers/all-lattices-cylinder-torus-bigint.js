@@ -1,6 +1,6 @@
 const { parseArgs, startTimer } = require('../core');
 
-const MAX_CIRCUMFERENCE = 12;
+const MAX_CIRCUMFERENCE = 20;
 const LATTICES = {
   square: [0],
   triangular: [0, 1],

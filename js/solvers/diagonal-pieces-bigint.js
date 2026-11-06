@@ -1,6 +1,6 @@
 const { parseArgs, startTimer } = require('../core');
 
-const MAX_SHORTER_SIDE = 12;
+const MAX_SHORTER_SIDE = 20;
 
 /**
  * Counts the domicule tilings of a board by the number of diagonal pieces, the pieces that

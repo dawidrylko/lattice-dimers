@@ -22,7 +22,23 @@ function resultFileName(fileName, { rowCount, colCount }) {
   return `${fileName}_${rowCount}x${colCount}.txt`;
 }
 
+function readRunEnvironment(root, run) {
+  const file = path.join(root, run, 'environment.json');
+
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf-8') || '{}') : {};
+}
+
+function isMonthRun(run) {
+  return /^\d{4}-\d{2}$/.test(run);
+}
+
 function isCompleteRun(root, run) {
+  if (!isMonthRun(run)) {
+    const { complete, dirty } = readRunEnvironment(root, run);
+
+    return complete === true && dirty === false;
+  }
+
   const lastInt = testCasesInt[testCasesInt.length - 1];
   const lastBigInt = testCasesBigInt[testCasesBigInt.length - 1];
   const requiredFiles = [
@@ -51,14 +67,15 @@ function isCompleteRun(root, run) {
 function readBenchmarkRuns(root = RESULTS_DIRECTORY) {
   const runs = fs
     .readdirSync(root)
-    .filter(name => /^\d{4}-\d{2}$/.test(name))
-    .sort()
-    .reverse();
+    .filter(name => isMonthRun(name) || fs.existsSync(path.join(root, name, 'environment.json')))
+    .map(name => ({ name, date: isMonthRun(name) ? name : readRunEnvironment(root, name).date || '' }))
+    .sort((a, b) => b.date.localeCompare(a.date) || b.name.localeCompare(a.name))
+    .map(({ name }) => name);
   const latest = runs.find(run => isCompleteRun(root, run));
 
   if (!latest) {
     throw new Error(
-      `No complete benchmarks/results/YYYY-MM directory: one needs environment.json and every solver's largest board.`,
+      `No complete run in benchmarks/results: a run directory needs environment.json with complete: true.`,
     );
   }
 

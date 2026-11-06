@@ -1,0 +1,11 @@
+.git
+.claude
+node_modules
+dist
+target
+benchmarks/results
+research
+notes
+oeis
+docs
+site

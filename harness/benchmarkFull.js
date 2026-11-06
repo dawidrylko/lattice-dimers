@@ -1,0 +1,263 @@
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
+const { exec } = require('../js/core');
+const { listImplementations, algorithmOf } = require('../js/core/registry');
+const {
+  BENCHMARK_DIRECTORY,
+  ENVIRONMENT,
+  checkDirectory,
+  generateFileName,
+  listGroups,
+  listSquareBoards,
+  measure,
+  saveEnvironment,
+  saveExecutionResults,
+} = require('./benchmarkRunner');
+const { RESULTS_DIRECTORY } = require('./benchmarkEnvironment');
+const { filesInt, testCasesInt, filesBigInt, testCasesBigInt } = require('../js/core/cases');
+
+const RUNS = 10;
+const DEFAULT_JOBS = 4;
+const USAGE = 'Usage: node harness/benchmarkFull.js --budget-hours <hours> [--jobs <threads>] [--skip-instructions]';
+const STATE_GROWTH = 4.4;
+const TORUS_GROWTH = 16;
+const GROWTH_FLOORS = [
+  [/^all[-_]lattices.*bigint.*king-torus/, 51],
+  [/^all[-_]lattices.*bigint.*square-torus/, 23],
+  [/^all[-_]lattices.*bigint.*king-cylinder/, 12.87],
+  [/^all[-_]lattices.*bigint.*square-cylinder/, 5.83],
+  [/^all[-_]lattices.*torus$/, TORUS_GROWTH],
+  [/^diagonal[-_]pieces[-_]bigint/, 10],
+  [/^diagonal[-_]pieces[-_]modular/, 5],
+];
+const INSTRUCTION_BOARDS = [
+  { id: 'domino-rectangle-formula', args: ['-r', '20', '-c', '20'] },
+  { id: 'domino-rectangle-number', args: ['-r', '8', '-c', '8'] },
+  { id: 'domino-rectangle-bigint', args: ['-r', '8', '-c', '8'] },
+  { id: 'domicule-rectangle-modular', args: ['-r', '8', '-c', '8', '-j', '1'] },
+  { id: 'domicule-rectangle-bigint', args: ['-r', '8', '-c', '8'] },
+  { id: 'diagonal-pieces-modular', args: ['-r', '6', '-c', '6', '-j', '1'] },
+  { id: 'diagonal-pieces-bigint', args: ['-r', '6', '-c', '6'] },
+  { id: 'all-lattices-cylinder-torus-modular', args: ['-r', '8', '-c', '8', '--lattice', 'king', '-j', '1'] },
+  { id: 'all-lattices-cylinder-torus-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'king'] },
+];
+const INSTRUCTION_RUNS = 3;
+
+function growthFloor(seriesName) {
+  return GROWTH_FLOORS.find(([pattern]) => pattern.test(seriesName))?.[1] ?? STATE_GROWTH;
+}
+
+function estimateBoard({ seriesName, previousSeconds, earlierSeconds }) {
+  if (previousSeconds === null) {
+    return 0;
+  }
+
+  const observed = earlierSeconds > 0 ? previousSeconds / earlierSeconds : 0;
+
+  return previousSeconds * Math.max(growthFloor(seriesName), observed);
+}
+
+function parseInstructionCount(output) {
+  const match = output.match(/I\s+refs:\s+([\d,]+)/);
+
+  return match ? Number(match[1].replaceAll(',', '')) : null;
+}
+
+function listSeries(jobs) {
+  const series = [];
+  const add = (files, boards, suffix = '') =>
+    files.flatMap(fileName => listImplementations(algorithmOf(fileName))).forEach(({ file }) => {
+      const modular = /modular/.test(path.basename(file));
+
+      series.push({
+        name: `${path.basename(file)}${suffix}`,
+        boards: boards.map(board => ({ ...board, fileName: file, numberOfExecutions: RUNS, ...(modular ? { jobs } : {}) })),
+      });
+    });
+  const numberBoards = [
+    ...testCasesInt,
+    ...listSquareBoards(14, 20).filter(({ rowCount }) => !testCasesInt.some(known => known.rowCount === rowCount && known.colCount === rowCount)),
+  ];
+
+  add(filesInt, numberBoards);
+  add(filesBigInt, testCasesBigInt);
+
+  const king = listGroups('king');
+  const square = listGroups('square');
+
+  king['--domicule'].forEach(({ files, testCases }) => add(files, testCases));
+  king['--diagonal'].forEach(({ files, testCases }) => add(files, testCases));
+  [
+    ['king', 'torus', king['--torus']],
+    ['king', 'cylinder', king['--cylinder']],
+    ['square', 'torus', square['--torus']],
+    ['square', 'cylinder', square['--cylinder']],
+  ].forEach(([lattice, surface, groups]) =>
+    groups.forEach(({ files, testCases }) => add(files, testCases, `-${lattice}-${surface}`)),
+  );
+
+  return series;
+}
+
+function readRecordedTimes(file, runs) {
+  if (!fs.existsSync(file)) {
+    return null;
+  }
+
+  const times = [...fs.readFileSync(file, 'utf-8').matchAll(/^\d+\. Execution Time: ([\d.]+) ms/gm)].map(match => Number(match[1]));
+
+  return times.length >= runs ? times : null;
+}
+
+function median(times) {
+  return [...times].sort((a, b) => a - b)[Math.floor(times.length / 2)];
+}
+
+function saveState(state) {
+  fs.writeFileSync(path.join(BENCHMARK_DIRECTORY, 'plan.json'), `${JSON.stringify(state, null, 2)}\n`);
+}
+
+function measureBoard(board, budgetSeconds) {
+  const executionTimes = [];
+  const processTimes = [];
+  const timeout = Math.ceil((budgetSeconds / RUNS) * 2 * 1000);
+
+  for (let i = 0; i < RUNS; i++) {
+    const { execution, process: processTime } = measure({ ...board, timeout });
+
+    executionTimes.push(execution);
+    processTimes.push(processTime);
+  }
+
+  saveExecutionResults({ ...board, executionTimes, processTimes, load: 'see host-load.txt' });
+
+  return executionTimes;
+}
+
+function runPlan(budgetSeconds, jobs) {
+  const heads = listSeries(jobs).map(series => ({ ...series, index: 0, previousSeconds: null, earlierSeconds: 0 }));
+  const state = { budgetHours: budgetSeconds / 3600, runs: RUNS, jobs, measured: 0, notMeasured: [] };
+  const stop = (head, reason, estimateSeconds) => {
+    head.boards.slice(head.index).forEach(({ rowCount, colCount }, i) =>
+      state.notMeasured.push({ series: head.name, board: `${rowCount}x${colCount}`, reason, ...(i === 0 && estimateSeconds ? { estimateTenRunsHours: Number((estimateSeconds * RUNS / 3600).toFixed(2)) } : {}) }),
+    );
+    head.index = head.boards.length;
+  };
+
+  for (;;) {
+    const open = heads.filter(head => head.index < head.boards.length);
+
+    if (!open.length) {
+      break;
+    }
+
+    const estimates = open.map(head => ({ head, estimate: estimateBoard({ seriesName: head.name, previousSeconds: head.previousSeconds, earlierSeconds: head.earlierSeconds }) }));
+    const { head, estimate } = estimates.reduce((best, next) => (next.estimate < best.estimate ? next : best));
+
+    if (estimate * RUNS > budgetSeconds) {
+      stop(head, 'over budget', estimate);
+      saveState(state);
+      continue;
+    }
+
+    const board = head.boards[head.index];
+    const file = generateFileName({ directory: BENCHMARK_DIRECTORY, ...board });
+    let times = readRecordedTimes(file, RUNS);
+
+    try {
+      times = times ?? measureBoard(board, budgetSeconds);
+      state.measured++;
+      head.earlierSeconds = head.previousSeconds ?? 0;
+      head.previousSeconds = median(times) / 1000;
+      head.index++;
+    } catch (error) {
+      stop(head, `failed: ${error.message}`.slice(0, 200));
+    }
+
+    saveState(state);
+  }
+
+  return state;
+}
+
+function runInstructions() {
+  const results = INSTRUCTION_BOARDS.flatMap(({ id, args }) =>
+    listImplementations(id).map(({ file }) => {
+      const counts = [];
+
+      for (let i = 0; i < INSTRUCTION_RUNS; i++) {
+        const [program, ...launchArgs] = exec.launch(file);
+        const { stderr } = spawnSync('valgrind', ['--tool=cachegrind', '--cache-sim=no', '--cachegrind-out-file=/dev/null', program, ...launchArgs, ...args], { encoding: 'utf-8', maxBuffer: 2 ** 26 });
+        counts.push(parseInstructionCount(stderr));
+      }
+
+      return { file: path.basename(file), board: args.join(' '), counts, instructions: median(counts) };
+    }),
+  );
+
+  fs.writeFileSync(path.join(BENCHMARK_DIRECTORY, 'instructions.json'), `${JSON.stringify(results, null, 2)}\n`);
+}
+
+function compareRuns(before, after) {
+  const read = directory =>
+    Object.fromEntries(
+      fs.existsSync(directory)
+        ? fs.readdirSync(directory)
+            .filter(name => name.endsWith('.txt') && name !== 'host-load.txt')
+            .map(name => [name, median([...fs.readFileSync(path.join(directory, name), 'utf-8').matchAll(/^\d+\. Execution Time: ([\d.]+) ms/gm)].map(match => Number(match[1])))])
+        : [],
+    );
+  const beforeTimes = read(before);
+  const afterTimes = read(after);
+
+  return Object.keys(afterTimes)
+    .filter(name => beforeTimes[name] > 0 && afterTimes[name] > 0)
+    .map(name => ({ name, before: beforeTimes[name], after: afterTimes[name], ratio: Number((afterTimes[name] / beforeTimes[name]).toFixed(3)) }))
+    .sort((a, b) => b.ratio - a.ratio);
+}
+
+function __main__() {
+  const argv = process.argv.slice(2);
+  const read = flag => (argv.includes(flag) ? argv[argv.indexOf(flag) + 1] : null);
+
+  if (argv[0] === 'compare') {
+    const [before, after] = argv.slice(1).map(name => path.join(RESULTS_DIRECTORY, name));
+
+    compareRuns(before, after).forEach(({ name, before: a, after: b, ratio }) => console.log(`${ratio}\t${a} ms\t${b} ms\t${name}`));
+
+    return;
+  }
+
+  const budgetHours = Number(read('--budget-hours'));
+  const jobs = Number(read('--jobs') ?? DEFAULT_JOBS);
+
+  if (!(budgetHours > 0) || !Number.isInteger(jobs) || jobs < 1) {
+    throw new Error(USAGE);
+  }
+
+  if (ENVIRONMENT.dirty) {
+    throw new Error('A full run needs a clean checkout: its commit must identify the code.');
+  }
+
+  checkDirectory(ENVIRONMENT, false);
+  saveEnvironment({ ...ENVIRONMENT, complete: false });
+
+  if (!argv.includes('--skip-instructions')) {
+    runInstructions();
+  }
+
+  runPlan(budgetHours * 3600, jobs);
+  saveEnvironment({ ...ENVIRONMENT, complete: true });
+}
+
+if (require.main === module) {
+  try {
+    __main__();
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
+}
+
+module.exports = { estimateBoard, parseInstructionCount, compareRuns, listSeries, growthFloor };

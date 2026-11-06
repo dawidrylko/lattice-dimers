@@ -2,7 +2,7 @@ import sys
 
 from lattice_dimers.core import parse_args, start_timer
 
-MAX_CIRCUMFERENCE = 12
+MAX_CIRCUMFERENCE = 20
 LATTICES = {
     "square": (0,),
     "triangular": (0, 1),

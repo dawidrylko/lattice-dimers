@@ -2,7 +2,7 @@ use std::process::ExitCode;
 
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
-const MAX_SHORTER_SIDE: u64 = 12;
+const MAX_SHORTER_SIDE: u64 = 20;
 const USAGE: &str = "Usage: diagonal-pieces-bigint -r <rowCount> -c <colCount>";
 
 /// Lists the moves of a free cell in column c, like the moves in calculateDiagonalPolynomial of
