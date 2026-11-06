@@ -30,6 +30,10 @@ name = "domicule-diagonal-bigint"
 path = "rust/solvers/src/bin/domicule-diagonal-bigint.rs"
 
 [[bin]]
+name = "domicule-diagonal-modular"
+path = "rust/solvers/src/bin/domicule-diagonal-modular.rs"
+
+[[bin]]
 name = "domicule-tiling-bigint"
 path = "rust/solvers/src/bin/domicule-tiling-bigint.rs"
 
