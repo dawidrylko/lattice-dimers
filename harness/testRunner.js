@@ -9,6 +9,7 @@ const { capThreads } = require('../js/solvers/diagonal-pieces-modular.js');
 const { readBenchmarkRuns, listJavaScriptResults } = require('../site/benchmarkRuns.js');
 const { describeEnvironment, runDirectoryName } = require('./benchmarkEnvironment');
 const { estimateBoard, parseInstructionCount, compareRuns } = require('./benchmarkFull');
+const { compareSeries } = require('../benchmarks/measureVariance');
 const { readRepository, listPortErrors } = require('./portCheck.js');
 const { registry, listImplementations, algorithmOf } = require('../js/core/registry.js');
 const {
@@ -886,6 +887,13 @@ function executeBenchmarkPlanTests() {
 
     if (runDirectoryName({ commit: 'abcdef1234567890', dirty: true, node: 'v26.11.1', python: 'Python 3.14.5', rust: null }) !== 'abcdef123456-node26.11.1-python3.14.5-rustnone-dirty') {
       failures.push('the run directory is misnamed');
+    }
+
+    const series = medians => ({ results: medians.map(median => ({ id: 'x', board: String(median), language: 'js', median, cv: 1 })) });
+    const noise = compareSeries({ results: [{ id: 'x', board: 'b', language: 'js', median: 100, cv: 1 }, { id: 'y', board: 'b', language: 'js', median: 5, cv: 1 }] }, { results: [{ id: 'x', board: 'b', language: 'js', median: 90, cv: 3 }] });
+
+    if (noise.length !== 1 || noise[0].difference !== 11.11 || noise[0].cv !== 3 || compareSeries(series([1]), series([2])).length) {
+      failures.push('the noise floor is misread');
     }
 
     write('a', 'x.js_2x2.txt', '1. Execution Time: 10 ms, Process Time: 11 ms\n2. Execution Time: 12 ms, Process Time: 13 ms\n');
