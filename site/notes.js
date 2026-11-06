@@ -4,7 +4,7 @@ const { createRequire } = require('module');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const NOTES_DIRECTORY = path.join(ROOT_DIRECTORY, 'notes');
-const repositoryRequire = createRequire(path.join(ROOT_DIRECTORY, 'package.json'));
+const repositoryRequire = createRequire(path.join(ROOT_DIRECTORY, path.sep));
 const AsyncFunction = (async () => {}).constructor;
 
 function escapeHtml(text) {

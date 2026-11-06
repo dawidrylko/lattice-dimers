@@ -8,7 +8,7 @@ const RUST_DIRECTORY = path.join(ROOT_DIRECTORY, 'rust');
 const RUST_BINARY_DIRECTORY = path.join('solvers', 'src', 'bin');
 const LAUNCHERS = {
   '.rs': file => [
-    path.join(path.resolve(ROOT_DIRECTORY, process.env.CARGO_TARGET_DIR || 'target'), 'release', path.basename(file, '.rs')),
+    path.join(path.resolve(RUST_DIRECTORY, process.env.CARGO_TARGET_DIR || 'target'), 'release', path.basename(file, '.rs')),
   ],
   '.py': file => [
     process.env.PYTHON || 'python3',
@@ -32,13 +32,13 @@ function launch(fileName) {
   return LAUNCHERS[path.extname(fileName)](resolve(fileName));
 }
 
-function listRustSources(file) {
-  if (!fs.existsSync(file)) {
+function listRustSources(file, buildDirectories) {
+  if (!fs.existsSync(file) || buildDirectories.includes(file)) {
     return [];
   }
 
   if (fs.statSync(file).isDirectory()) {
-    return fs.readdirSync(file).flatMap(name => listRustSources(path.join(file, name)));
+    return fs.readdirSync(file).flatMap(name => listRustSources(path.join(file, name), buildDirectories));
   }
 
   return file.endsWith('.rs') ? [file] : [];
@@ -46,7 +46,8 @@ function listRustSources(file) {
 
 /**
  * Finds when the sources of one Rust binary last changed: the newest modification time of its own file in
- * rust/solvers/src/bin and of every .rs file under rust/ outside that directory, read at every run of the binary.
+ * rust/solvers/src/bin and of every .rs file under rust/ outside that directory and outside the build directories,
+ * read at every run of the binary.
  * The other files in rust/solvers/src/bin are the roots of other binaries, which cargo does not rebuild this one
  * for. Only .rs files count, because cargo rebuilds when a .rs file it compiles is newer than its last build, so
  * cargo build --release makes the binary current; a touched Cargo.toml or Cargo.lock is not rebuilt for, and a .rs
@@ -58,7 +59,8 @@ function listRustSources(file) {
  */
 function rustSourcesModifiedAt(source, directory = RUST_DIRECTORY) {
   const binaries = path.join(directory, RUST_BINARY_DIRECTORY);
-  const sources = listRustSources(directory).filter(file => path.dirname(file) !== binaries || file === source);
+  const buildDirectories = [path.join(directory, 'target'), path.resolve(directory, process.env.CARGO_TARGET_DIR || 'target')];
+  const sources = listRustSources(directory, buildDirectories).filter(file => path.dirname(file) !== binaries || file === source);
 
   return Math.max(...sources.map(file => fs.statSync(file).mtimeMs));
 }
@@ -71,7 +73,7 @@ function describeLanguages() {
 
 /**
  * Generates the command string that runs one implementation of a solver: a .rs file as its release binary in
- * target/release (or $CARGO_TARGET_DIR/release), a .py file as a module of the lattice_dimers package with
+ * rust/target/release (or $CARGO_TARGET_DIR/release, relative to rust/), a .py file as a module of the lattice_dimers package with
  * python3 -I -m (or $PYTHON), a .js file with the running Node.js binary.
  * @param {string} fileName The root-relative file of the implementation, or the bare name of a file in js/solvers.
  * @param {Object} options Options including row and column counts.
@@ -108,11 +110,11 @@ function executeSolver(fileName, options) {
     const [binary] = launch(fileName);
 
     if (path.extname(fileName) === '.rs' && !fs.existsSync(binary)) {
-      throw new Error(`${binary} does not exist; build it with cargo build --release.`);
+      throw new Error(`${binary} does not exist; build it with cargo build --release in rust/.`);
     }
 
     if (path.extname(fileName) === '.rs' && fs.statSync(binary).mtimeMs < rustSourcesModifiedAt(resolve(fileName))) {
-      throw new Error(`${binary} is older than the .rs files it is built from; rebuild it with cargo build --release.`);
+      throw new Error(`${binary} is older than the .rs files it is built from; rebuild it with cargo build --release in rust/.`);
     }
 
     const output = execSync(command, {

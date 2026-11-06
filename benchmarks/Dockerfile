@@ -11,4 +11,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev v
 WORKDIR /work
 COPY . .
 
-RUN cargo build --release --locked && python -m pip install --no-cache-dir ./python
+RUN cargo build --manifest-path rust/Cargo.toml --release --locked && python -m pip install --no-cache-dir ./python

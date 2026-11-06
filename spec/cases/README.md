@@ -7,11 +7,11 @@ Each file names the algorithms it checks in `algorithms`, by their ids in [`algo
 | file | boards | checks |
 | --- | --- | --- |
 | [`dominoTilingTests.json`](dominoTilingTests.json) | domino squares up to 10 × 10 | `domino-rectangle-number` |
-| [`dominoTilingTests-BigInt.json`](dominoTilingTests-BigInt.json) | domino squares up to 20 × 20 (A004003) | `domino-rectangle-bigint` (up to 16 × 16 in `pnpm test`), `domino-rectangle-formula` |
+| [`dominoTilingTests-BigInt.json`](dominoTilingTests-BigInt.json) | domino squares up to 20 × 20 (A004003) | `domino-rectangle-bigint` (up to 16 × 16 in `pnpm -C js test`), `domino-rectangle-formula` |
 | [`dominoTilingTests-Rectangles.json`](dominoTilingTests-Rectangles.json) | domino rectangles | `domino-rectangle-number`, `domino-rectangle-bigint` |
-| [`domiculeTilingTests.json`](domiculeTilingTests.json) | domicule squares up to 18 × 18 (A239273) | `domicule-rectangle-bigint` (up to 16 × 16 in `pnpm test`), `domicule-rectangle-modular` |
+| [`domiculeTilingTests.json`](domiculeTilingTests.json) | domicule squares up to 18 × 18 (A239273) | `domicule-rectangle-bigint` (up to 16 × 16 in `pnpm -C js test`), `domicule-rectangle-modular` |
 | [`domiculeTilingTests-Rectangles.json`](domiculeTilingTests-Rectangles.json) | domicule rectangles (A239264) | `domicule-rectangle-bigint`, `domicule-rectangle-modular` |
-| [`periodicTilingTests.json`](periodicTilingTests.json) | cylinders and tori on three lattices up to 10 × 10 | `all-lattices-cylinder-torus-bigint` (tori up to 8 × 8 in `pnpm test`), `all-lattices-cylinder-torus-modular` |
+| [`periodicTilingTests.json`](periodicTilingTests.json) | cylinders and tori on three lattices up to 10 × 10 | `all-lattices-cylinder-torus-bigint` (tori up to 8 × 8 in `pnpm -C js test`), `all-lattices-cylinder-torus-modular` |
 | [`periodicTilingTests-Modular.json`](periodicTilingTests-Modular.json) | larger cylinders and tori, up to the 16 × 16 torus | `all-lattices-cylinder-torus-modular` |
 | [`domiculeDiagonalTests.json`](domiculeDiagonalTests.json) | domicule boards by diagonal pieces up to 12 × 12 | `diagonal-pieces-bigint`, `diagonal-pieces-modular` |
 | [`domiculeDiagonalTests-Modular.json`](domiculeDiagonalTests-Modular.json) | the same up to 20 × 20 | `diagonal-pieces-modular` |

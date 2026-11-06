@@ -2,6 +2,19 @@
 
 The notebooks in [`notes`](../notes/README.md) explain how each count is made, the [dominoes](../notes/dominoes/01-rectangles.md) and [domicules](../notes/domicules/01-rectangles.md) notebooks also how the gallery numbers and samples the tilings; this page lists the programs and how to run them.
 
+## Quick start
+
+Node.js 26 or newer ([`.nvmrc`](.nvmrc)) and pnpm ([`package.json`](package.json)). The commands run at the root of the repository, and the solver prints 3263262629905, the domicule tilings of the 8 × 8 rectangle. `pnpm -C js test` runs all three languages, so it also needs [Rust](../rust/README.md) and [Python](../python/README.md). `pnpm -C js site:build` writes the site to `dist/site`:
+
+```sh
+git clone https://github.com/dawidrylko/lattice-dimers.git
+cd lattice-dimers
+pnpm -C js install
+node js/solvers/domicule-rectangle-modular.js -r 8 -c 8
+pnpm -C js test
+pnpm -C js site:build
+```
+
 ## Solvers
 
 Each solver is a command-line program that prints the number of tilings of one board; the diagonal solvers print one count for each number of diagonal pieces.
@@ -35,11 +48,11 @@ These are the JavaScript implementations, the third of three languages. The cont
 [`renderer/`](renderer) numbers tilings, rebuilds any tiling from its number without listing the ones before, samples domino tilings exactly with coupling from the past and domicule tilings with a Markov chain, and draws them as SVG or ASCII. [`dominoTilingRenderer.js`](dominoTilingRenderer.js) is its command line:
 
 ```sh
-pnpm render -r 8 -c 8 -o 5000 -l 200              # tilings 5001-5200 of 12,988,816, as SVG sheets in output/8x8/
-pnpm render -r 12 -c 12 -i 1000000000000 --ascii  # one tiling, printed in the terminal
-pnpm render -r 20 -c 20 --random -l 12            # 12 uniformly random tilings
-pnpm render -r 4 -c 4 --domicule --all            # all 280 domicule tilings of the 4 × 4 board
-pnpm render -r 20 -c 20 --domicule --random -l 6  # six approximately uniform domicule tilings
+pnpm -C js render -r 8 -c 8 -o 5000 -l 200              # tilings 5001-5200 of 12,988,816, as SVG sheets in output/8x8/
+pnpm -C js render -r 12 -c 12 -i 1000000000000 --ascii  # one tiling, printed in the terminal
+pnpm -C js render -r 20 -c 20 --random -l 12            # 12 uniformly random tilings
+pnpm -C js render -r 4 -c 4 --domicule --all            # all 280 domicule tilings of the 4 × 4 board
+pnpm -C js render -r 20 -c 20 --domicule --random -l 6  # six approximately uniform domicule tilings
 ```
 
 `-l` limits the number of tilings (default 1000), `-o` skips tilings, `-i` draws one tiling by its 1-based number, `--random` samples, `--all` lifts the limit on boards with at most 100,000 tilings, and `--ascii` prints instead of writing SVG. The command line numbers boards whose table has at most 4 million entries: dominoes up to 14 × 14 and domicules up to 12 × 12. The [gallery](https://dawidrylko.github.io/lattice-dimers/) numbers dominoes up to 16 × 16, domicules up to 14 × 14, cylinders and tori up to 10 × 10, and domicule tilings with a given number of diagonal pieces up to 10 × 10. It samples larger boards and finds the number of every sample with `rank.js`, which keeps one row of completion counts instead of the table.
@@ -58,4 +71,4 @@ A tiling is drawn in one of three styles. The same four 8 × 8 domicule tilings:
 
 ![The same four tilings drawn as an engraving](../.github/assets/gallery-engraving.svg)
 
-`pnpm readme:images` regenerates these images and the four on the front page; `pnpm test:render` fails when they no longer match the renderer.
+`pnpm -C js readme:images` regenerates these images and the four on the front page; `pnpm -C js test:render` fails when they no longer match the renderer.

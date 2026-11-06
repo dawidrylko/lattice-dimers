@@ -1,6 +1,6 @@
 [workspace]
-members = ["rust/core"]
-default-members = [".", "rust/core"]
+members = ["core"]
+default-members = [".", "core"]
 resolver = "3"
 
 [workspace.package]
@@ -23,40 +23,40 @@ autotests = false
 autobenches = false
 
 [dependencies]
-lattice-dimers-core = { path = "rust/core" }
+lattice-dimers-core = { path = "core" }
 
 [[bin]]
 name = "all-lattices-cylinder-torus-bigint"
-path = "rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs"
+path = "solvers/src/bin/all-lattices-cylinder-torus-bigint.rs"
 
 [[bin]]
 name = "all-lattices-cylinder-torus-modular"
-path = "rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs"
+path = "solvers/src/bin/all-lattices-cylinder-torus-modular.rs"
 
 [[bin]]
 name = "diagonal-pieces-bigint"
-path = "rust/solvers/src/bin/diagonal-pieces-bigint.rs"
+path = "solvers/src/bin/diagonal-pieces-bigint.rs"
 
 [[bin]]
 name = "diagonal-pieces-modular"
-path = "rust/solvers/src/bin/diagonal-pieces-modular.rs"
+path = "solvers/src/bin/diagonal-pieces-modular.rs"
 
 [[bin]]
 name = "domicule-rectangle-bigint"
-path = "rust/solvers/src/bin/domicule-rectangle-bigint.rs"
+path = "solvers/src/bin/domicule-rectangle-bigint.rs"
 
 [[bin]]
 name = "domicule-rectangle-modular"
-path = "rust/solvers/src/bin/domicule-rectangle-modular.rs"
+path = "solvers/src/bin/domicule-rectangle-modular.rs"
 
 [[bin]]
 name = "domino-rectangle-bigint"
-path = "rust/solvers/src/bin/domino-rectangle-bigint.rs"
+path = "solvers/src/bin/domino-rectangle-bigint.rs"
 
 [[bin]]
 name = "domino-rectangle-formula"
-path = "rust/solvers/src/bin/domino-rectangle-formula.rs"
+path = "solvers/src/bin/domino-rectangle-formula.rs"
 
 [[bin]]
 name = "domino-rectangle-number"
-path = "rust/solvers/src/bin/domino-rectangle-number.rs"
+path = "solvers/src/bin/domino-rectangle-number.rs"
