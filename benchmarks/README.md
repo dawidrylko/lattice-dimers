@@ -32,6 +32,23 @@ Wall times compare only on the same machine. Measured on an Apple M4 on 2026-11-
 
 `--torus` and `--cylinder` of [`harness/benchmarkRunner.js`](../harness/benchmarkRunner.js) count the king's graph unless `--lattice square` (or `triangular`) names another lattice; the lattice is part of the name of every result file of these groups. `pnpm start` runs a few boards outside the container and never replaces a complete run.
 
+## Preparing a Mac
+
+Wall times need a machine with nothing else to do, and cutting the network alone does not give that:
+
+1. Give Docker about 12 GB of memory in the settings of Docker Desktop.
+2. Close every other program, agent sessions included.
+3. Connect the power supply and turn off Low Power Mode. Keep the lid of a laptop open: a closed lid can put it to sleep.
+4. Pause Time Machine and turn off Spotlight indexing with `sudo mdutil -a -i off`; `sudo mdutil -a -i on` restores it after the run.
+5. Wait until `uptime` shows a load below 1.
+6. Run `pnpm benchmark:noise` alone, then `pnpm benchmark <solver>` for each solver, never both at once and all from one commit.
+
+macOS can still start its own background work on an idle machine, which is why the host load is recorded with the results.
+
+## A Linux machine later
+
+This setup is a stopgap. The final environment will be a dedicated Linux machine with fixed frequency and isolated cores, which a Mac cannot offer. At current hardware prices that part of the experiment is postponed.
+
 ## Runs before this setup
 
 The `results/<year-month>` directories predate the container and were measured on a machine doing other work.
