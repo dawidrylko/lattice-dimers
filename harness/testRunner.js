@@ -6,7 +6,7 @@ const { exec, parseArgs, verifyInt, verifyBigInt } = require('../js/core');
 const { listPrimes, combineCheckedResidues } = require('../js/core/modular');
 const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
 const { capThreads } = require('../js/solvers/diagonal-pieces-modular.js');
-const { readBenchmarkRuns } = require('../site/benchmarkRuns.js');
+const { readBenchmarkRuns, listJavaScriptResults } = require('../site/benchmarkRuns.js');
 const { readRepository, listPortErrors } = require('./portCheck.js');
 const { registry, listImplementations, algorithmOf } = require('../js/core/registry.js');
 const {
@@ -566,11 +566,16 @@ function executePortTests() {
     [
       'a Python module not named by its id',
       state({
-        algorithms: { 'a-b': { py: 'python/lattice_dimers/solvers/a-b.py', js: 'js/solvers/a.js' } },
-        files: ['python/lattice_dimers/solvers/a-b.py', 'js/solvers/a.js'],
+        algorithms: { 'a-b': { py: 'python/lattice_dimers/solvers/a-b.py', js: 'js/solvers/a-b.js' } },
+        files: ['python/lattice_dimers/solvers/a-b.py', 'js/solvers/a-b.js'],
         caseFiles: [{ name: 'a.json', algorithms: ['a-b'] }],
       }),
       ['spec/algorithms.json names the py implementation of a-b a-b.py, not a_b.py.'],
+    ],
+    [
+      'a JavaScript script not named by its id',
+      state({ algorithms: { a: { ...complete, js: 'js/solvers/b.js' } }, files: [complete.rs, complete.py, 'js/solvers/b.js'] }),
+      ['spec/algorithms.json names the js implementation of a b.js, not a.js.'],
     ],
     [
       'an algorithm without its JavaScript solver',
@@ -1006,6 +1011,15 @@ function executeBenchmarkRunTest() {
     touch('2000-09', complete.filter(file => file !== 'diagonal-pieces-modular.rs_20x20.txt'));
     touch('2000-10', complete.filter(file => file !== 'all-lattices-cylinder-torus-bigint.rs_10x10-king-torus.txt'));
     touch('2000-11', complete.filter(file => file !== 'all_lattices_cylinder_torus_bigint.py_12x12-square-torus.txt'));
+    touch('tables', ['a-b-bigint.js_2x2.txt', 'a-b-bigint.rs_4x4.txt', 'a_b_bigint.py_6x6.txt', 'c-d-bigint.js_8x8.txt']);
+    const tableFiles = listJavaScriptResults(path.join(benchmarkRoot, 'tables'), 'a-b-');
+
+    if (tableFiles.join() !== 'a-b-bigint.js_2x2.txt') {
+      console.error(`Failed! A benchmark table would read ${tableFiles.join()} instead of the JavaScript results only.`);
+
+      return false;
+    }
+
     const chosen = readBenchmarkRuns(benchmarkRoot).latest;
 
     if (chosen !== '2000-01') {

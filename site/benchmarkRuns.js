@@ -65,4 +65,15 @@ function readBenchmarkRuns(root = RESULTS_DIRECTORY) {
   return { runs, latest };
 }
 
-module.exports = { readBenchmarkRuns };
+/**
+ * Lists the result files of the JavaScript implementations of the solvers a prefix names, which
+ * set the boards of a benchmark table: a board only another language ran adds no row.
+ * @param {string} directory The directory of one run.
+ * @param {string} prefix The start of the solver id.
+ * @returns {string[]} The result file names.
+ */
+function listJavaScriptResults(directory, prefix) {
+  return fs.readdirSync(directory).filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'));
+}
+
+module.exports = { readBenchmarkRuns, listJavaScriptResults };

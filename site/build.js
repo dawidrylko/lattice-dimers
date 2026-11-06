@@ -18,7 +18,7 @@ const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
-const { readBenchmarkRuns } = require('./benchmarkRuns');
+const { readBenchmarkRuns, listJavaScriptResults } = require('./benchmarkRuns');
 const { DEFAULT_BOARD } = require('./defaultBoard');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -268,9 +268,7 @@ function buildBenchmark() {
   const tilingsBySize = new Map(
     testCasesBigInt.map(t => [`${t.rowCount}x${t.colCount}`, t.expectedResult]),
   );
-  const sizes = fs
-    .readdirSync(BENCHMARK_DIRECTORY)
-    .filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'))
+  const sizes = listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
     .map(fileName => fileName.match(RESULT_FILE))
     .filter(Boolean)
     .map(([, rowCount, colCount]) => ({
@@ -302,9 +300,7 @@ function buildBenchmark() {
 function buildDomiculeBenchmark(totals) {
   const prefix = 'domicule-rectangle-';
 
-  return fs
-    .readdirSync(BENCHMARK_DIRECTORY)
-    .filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'))
+  return listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
     .map(fileName => fileName.match(RESULT_FILE))
     .filter(Boolean)
     .map(([, rowCount, colCount]) => `${rowCount}x${colCount}`)
@@ -332,9 +328,7 @@ function buildDomiculeBenchmark(totals) {
  */
 async function buildPeriodicBenchmark(lattice) {
   const prefix = 'all-lattices-cylinder-torus-';
-  const boards = fs
-    .readdirSync(BENCHMARK_DIRECTORY)
-    .filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'))
+  const boards = listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
     .map(fileName => fileName.match(PERIODIC_RESULT_FILE))
     .filter(match => match && match[3] === lattice)
     .map(([, rowCount, colCount, , surface]) => `${surface}/${rowCount}x${colCount}`)
@@ -373,9 +367,7 @@ async function buildPeriodicBenchmark(lattice) {
 function buildDiagonalBenchmark(totals) {
   const prefix = 'diagonal-pieces-';
 
-  return fs
-    .readdirSync(BENCHMARK_DIRECTORY)
-    .filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'))
+  return listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
     .map(fileName => fileName.match(RESULT_FILE))
     .filter(Boolean)
     .map(([, rowCount, colCount]) => `${rowCount}x${colCount}`)
