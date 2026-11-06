@@ -3,6 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { parseArgs, exec } = require('../js/core');
+const { RESULTS_DIRECTORY, describeEnvironment, runDirectoryName } = require('./benchmarkEnvironment');
 const { listImplementations, algorithmOf } = require('../js/core/registry');
 const { LATTICES } = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
 const {
@@ -20,13 +21,10 @@ const {
   testCasesDiagonalModular,
 } = require('../js/core/cases');
 
-const RUN_DATE = new Date().toISOString().slice(0, 10);
-const BENCHMARK_ROOT = process.env.BENCHMARK_ROOT || path.join(__dirname, '..', 'benchmarks', 'results');
-const BENCHMARK_DIRECTORY = path.join(BENCHMARK_ROOT, RUN_DATE.slice(0, 7));
-const MACHINE_KEYS = ['node', 'python', 'rust', 'platform', 'cpu', 'timing'];
-const TOOLCHAIN_KEYS = ['python', 'rust'];
+const ENVIRONMENT = describeEnvironment();
+const BENCHMARK_DIRECTORY = path.join(RESULTS_DIRECTORY, runDirectoryName(ENVIRONMENT));
+const MACHINE_KEYS = ['architecture', 'cpu', 'host', 'timing'];
 const SOLVER_TIME = /^time ([\d.]+) ms$/m;
-const ROOT_DIRECTORY = path.join(__dirname, '..');
 const LANGUAGE_KEYS = { '.rs': 'rust', '.py': 'python' };
 const PERIODIC_CASES = [...testCasesPeriodic, ...testCasesPeriodicModular];
 const DIAGONAL_CASES = [...testCasesDiagonal, ...testCasesDiagonalModular];
@@ -63,8 +61,8 @@ function listSquareBoards(minSide, maxSide, options = {}) {
 function listGroups(lattice) {
   return {
     '--domicule': [{ files: filesDomicule, testCases: DOMICULE_BOARDS }],
-    '--torus': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 14, { lattice, torus: true }), PERIODIC_CASES) }],
-    '--cylinder': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 16, { lattice }), PERIODIC_CASES) }],
+    '--torus': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice, torus: true }), PERIODIC_CASES) }],
+    '--cylinder': [{ files: filesPeriodic, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice }), PERIODIC_CASES) }],
     '--diagonal': [{ files: filesDiagonal, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
   };
 }
@@ -87,13 +85,7 @@ function calculateAverageTime(times) {
   return Number((times.reduce((sum, time) => sum + time, 0) / times.length).toFixed(3));
 }
 
-function readVersion(program, args) {
-  const { status, stdout, stderr } = spawnSync(program, args, { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
-
-  return status === 0 ? `${stdout}${stderr}`.trim() : null;
-}
-
-function listSolverArguments({ rowCount, colCount, lattice, torus, twisted }) {
+function listSolverArguments({ rowCount, colCount, lattice, torus, twisted, jobs }) {
   return [
     '-r',
     String(rowCount),
@@ -102,6 +94,7 @@ function listSolverArguments({ rowCount, colCount, lattice, torus, twisted }) {
     ...(lattice ? ['--lattice', lattice] : []),
     ...(torus ? ['--torus'] : []),
     ...(twisted ? ['--twisted'] : []),
+    ...(jobs ? ['-j', String(jobs)] : []),
     '--time',
   ];
 }
@@ -131,24 +124,6 @@ function generateContent({ executionTimes, processTimes, load }) {
   ].join('\n');
 }
 
-function describeMachine() {
-  const cpus = os.cpus();
-
-  return {
-    date: RUN_DATE,
-    timing: 'solver',
-    commit: readVersion('git', ['rev-parse', 'HEAD']),
-    dirty: readVersion('git', ['status', '--porcelain', '--', '.', ':!benchmarks/results']) !== '',
-    node: process.version,
-    python: readVersion(process.env.PYTHON || 'python3', ['--version']),
-    rust: readVersion('rustc', ['--version']),
-    platform: `${os.type()} ${os.release()} ${os.arch()}`,
-    cpu: cpus.length ? cpus[0].model.trim() : null,
-    cores: cpus.length || null,
-    memory: `${Math.round(os.totalmem() / 2 ** 30)} GB`,
-  };
-}
-
 function checkDirectory(environment, force) {
   const file = path.join(BENCHMARK_DIRECTORY, 'environment.json');
 
@@ -157,13 +132,11 @@ function checkDirectory(environment, force) {
   }
 
   const recorded = JSON.parse(fs.readFileSync(file, 'utf-8'));
-  const differences = MACHINE_KEYS.filter(
-    key => recorded[key] !== environment[key] && !(TOOLCHAIN_KEYS.includes(key) && recorded[key] && environment[key] === null),
-  );
+  const differences = MACHINE_KEYS.filter(key => recorded[key] !== environment[key]);
 
   if (differences.length) {
     throw new Error(
-      `${displayPath(BENCHMARK_DIRECTORY)} holds results measured on another machine or toolchain (${differences
+      `${displayPath(BENCHMARK_DIRECTORY)} holds results measured on another machine (${differences
         .map(key => `${key} ${recorded[key] ?? 'not recorded'} instead of ${environment[key] ?? 'not found'}`)
         .join(', ')}). Run with --force to overwrite them.`,
     );
@@ -173,10 +146,9 @@ function checkDirectory(environment, force) {
 function saveEnvironment(environment) {
   const file = path.join(BENCHMARK_DIRECTORY, 'environment.json');
   const recorded = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf-8')) : {};
-  const kept = Object.fromEntries(TOOLCHAIN_KEYS.filter(key => environment[key] === null && recorded[key]).map(key => [key, recorded[key]]));
 
   ensureDirectoryExists(BENCHMARK_DIRECTORY);
-  fs.writeFileSync(file, `${JSON.stringify({ ...environment, ...kept }, null, 2)}\n`);
+  fs.writeFileSync(file, `${JSON.stringify({ complete: recorded.complete === true, ...environment }, null, 2)}\n`);
 }
 
 function selectTestCases(testCases, offset, maxSize) {
@@ -208,6 +180,7 @@ function measure(testCase) {
   const { status, stdout, stderr, error } = spawnSync(program, [...launchArgs, ...listSolverArguments(testCase)], {
     encoding: 'utf-8',
     maxBuffer: 2 ** 26,
+    ...(testCase.timeout ? { timeout: testCase.timeout } : {}),
   });
   const processTime = Number(process.hrtime.bigint() - start) / 1e6;
   const reported = (stderr || '').match(SOLVER_TIME);
@@ -313,7 +286,7 @@ function __main__() {
       `Starting benchmark execution with ${numberOfExecutions} executions each for ${maxSize || 'all available'} test cases from test case ${offset + 1}...`,
     );
 
-    const environment = describeMachine();
+    const environment = ENVIRONMENT;
     const missing = [...new Set(runs.flatMap(({ files }) => files.flatMap(listBenchmarkedFiles)).map(file => LANGUAGE_KEYS[path.extname(file)]))]
       .filter(key => key && environment[key] === null);
 
@@ -339,4 +312,19 @@ function __main__() {
   }
 }
 
-__main__();
+if (require.main === module) {
+  __main__();
+}
+
+module.exports = {
+  BENCHMARK_DIRECTORY,
+  ENVIRONMENT,
+  checkDirectory,
+  generateFileName,
+  listGroups,
+  measure,
+  saveEnvironment,
+  saveExecutionResults,
+  withKnownCounts,
+  listSquareBoards,
+};

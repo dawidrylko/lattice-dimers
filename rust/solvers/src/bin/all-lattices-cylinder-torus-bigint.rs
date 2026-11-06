@@ -2,7 +2,7 @@ use std::process::ExitCode;
 
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
-const MAX_CIRCUMFERENCE: u64 = 12;
+const MAX_CIRCUMFERENCE: u64 = 20;
 const USAGE: &str = "Usage: all-lattices-cylinder-torus-bigint -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square]\nThe circumference is at least 2, and a torus has at least 2 rows.";
 
 #[derive(Clone, Copy)]

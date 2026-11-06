@@ -2,7 +2,7 @@ import sys
 
 from lattice_dimers.core import parse_args, start_timer
 
-MAX_SHORTER_SIDE = 12
+MAX_SHORTER_SIDE = 20
 USAGE = "Usage: python3 -m lattice_dimers.solvers.diagonal_pieces_bigint -r <rowCount> -c <colCount>"
 SHORTER_SIDE_TOO_LONG = (
     f"The shorter side of the board can be at most {MAX_SHORTER_SIDE}; use diagonal-pieces-modular.js for larger boards."

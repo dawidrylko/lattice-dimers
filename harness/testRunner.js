@@ -7,6 +7,8 @@ const { listPrimes, combineCheckedResidues } = require('../js/core/modular');
 const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
 const { capThreads } = require('../js/solvers/diagonal-pieces-modular.js');
 const { readBenchmarkRuns, listJavaScriptResults } = require('../site/benchmarkRuns.js');
+const { describeEnvironment, runDirectoryName } = require('./benchmarkEnvironment');
+const { estimateBoard, parseInstructionCount, compareRuns } = require('./benchmarkFull');
 const { readRepository, listPortErrors } = require('./portCheck.js');
 const { registry, listImplementations, algorithmOf } = require('../js/core/registry.js');
 const {
@@ -78,8 +80,8 @@ const rejectionTestCases = [
   { args: ['harness/benchmarkRunner.js', '-n', '1', '--torus', '--lattice=square'], message: 'Usage' },
 ];
 const implementationRejectionTestCases = [
-  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '4', '-c', '13'], message: 'at most 12' },
-  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '13', '-c', '13', '--torus', '--twisted'], message: 'at most 12' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '4', '-c', '21'], message: 'at most 20' },
+  { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '21', '-c', '21', '--torus', '--twisted'], message: 'at most 20' },
   { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '4', '-c', '1'], message: 'Usage' },
   { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '1', '-c', '13', '--torus'], message: 'Usage' },
   { algorithm: 'all-lattices-cylinder-torus-bigint', args: ['-r', '4', '-c', '13', '--lattice', 'hexagonal'], message: 'Usage' },
@@ -129,8 +131,8 @@ const implementationRejectionTestCases = [
   { algorithm: 'diagonal-pieces-modular', args: ['-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
   { algorithm: 'diagonal-pieces-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
   { algorithm: 'diagonal-pieces-modular', args: ['-r', '9007199254740991', '-c', '1'], message: 'Invalid array length' },
-  { algorithm: 'diagonal-pieces-bigint', args: ['-r', '13', '-c', '13'], message: 'at most 12' },
-  { algorithm: 'diagonal-pieces-bigint', args: ['-r', '40', '-c', '13'], message: 'use diagonal-pieces-modular.js for larger boards' },
+  { algorithm: 'diagonal-pieces-bigint', args: ['-r', '21', '-c', '21'], message: 'at most 20' },
+  { algorithm: 'diagonal-pieces-bigint', args: ['-r', '40', '-c', '21'], message: 'use diagonal-pieces-modular.js for larger boards' },
   { algorithm: 'diagonal-pieces-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
   { algorithm: 'diagonal-pieces-bigint', args: ['-r', '-2', '-c', '2'], message: 'Usage' },
   { algorithm: 'diagonal-pieces-bigint', args: ['-r', '9007199254740992', '-c', '2'], message: 'Usage' },
@@ -688,7 +690,7 @@ function executeBenchmarkGuardTest() {
   process.stdout.write('Executing benchmark guard test 1 of 1 for another machine... ');
 
   const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
-  const directory = path.join(benchmarkRoot, new Date().toISOString().slice(0, 7));
+  const directory = path.join(benchmarkRoot, runDirectoryName(describeEnvironment()));
   const foreign = { date: null, node: 'v0.0.0', platform: 'Other 0 x0', cpu: 'Other CPU', cores: 1, memory: null };
 
   try {
@@ -844,6 +846,142 @@ function executeBenchmarkCountTest() {
     }
   } finally {
     fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function executeBenchmarkPlanTests() {
+  process.stdout.write('Executing benchmark plan tests 1 of 1... ');
+
+  const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
+  const write = (run, name, text) => {
+    fs.mkdirSync(path.join(benchmarkRoot, run), { recursive: true });
+    fs.writeFileSync(path.join(benchmarkRoot, run, name), text);
+  };
+  const failures = [];
+
+  try {
+    if (estimateBoard({ seriesName: 'a-king-torus', previousSeconds: null, earlierSeconds: 0 }) !== 0) {
+      failures.push('a first board must have no estimate');
+    }
+
+    if (estimateBoard({ seriesName: 'domino-rectangle-bigint.rs', previousSeconds: 2, earlierSeconds: 1 }) !== 2 * 4.4) {
+      failures.push('the state count must bound a low observed growth from below');
+    }
+
+    if (estimateBoard({ seriesName: 'domino-rectangle-bigint.rs', previousSeconds: 20, earlierSeconds: 1 }) !== 400) {
+      failures.push('a higher observed growth must win over the floor');
+    }
+
+    if (estimateBoard({ seriesName: 'all-lattices-cylinder-torus-modular.js-king-cylinder', previousSeconds: 1, earlierSeconds: 0 }) !== 4.4) {
+      failures.push('the name of a solver must not make a cylinder a torus');
+    }
+
+    if (parseInstructionCount('==76== I refs:        68,784,200\n') !== 68784200 || parseInstructionCount('no count') !== null) {
+      failures.push('the instruction count is misread');
+    }
+
+    if (runDirectoryName({ commit: 'abcdef1234567890', dirty: true, node: 'v26.11.1', python: 'Python 3.14.5', rust: null }) !== 'abcdef123456-node26.11.1-python3.14.5-rustnone-dirty') {
+      failures.push('the run directory is misnamed');
+    }
+
+    write('a', 'x.js_2x2.txt', '1. Execution Time: 10 ms, Process Time: 11 ms\n2. Execution Time: 12 ms, Process Time: 13 ms\n');
+    write('b', 'x.js_2x2.txt', '1. Execution Time: 24 ms, Process Time: 25 ms\n');
+
+    if (compareRuns(path.join(benchmarkRoot, 'a'), path.join(benchmarkRoot, 'b'))[0]?.ratio !== 2) {
+      failures.push('a comparison must give the ratio of the medians');
+    }
+
+    write('2000-01', 'environment.json', '{}');
+    write('c1-new', 'environment.json', JSON.stringify({ date: '2026-12-01', dirty: false, complete: false }));
+    write('c2-dirty', 'environment.json', JSON.stringify({ date: '2026-12-02', dirty: true, complete: true }));
+    write('c3-done', 'environment.json', JSON.stringify({ date: '2026-11-30', dirty: false, complete: true }));
+
+    if (readBenchmarkRuns(benchmarkRoot).latest !== 'c3-done') {
+      failures.push('the site must read the newest complete and clean run');
+    }
+  } finally {
+    fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+  }
+
+  if (failures.length) {
+    console.error(`Failed! ${failures.join('; ')}`);
+
+    return false;
+  }
+
+  console.log('Passed!');
+
+  return true;
+}
+
+function executeBenchmarkFullRunTests() {
+  process.stdout.write('Executing full benchmark run tests 1 of 1... ');
+
+  const benchmarkRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'domino-benchmark-'));
+  const run = (env, extra = []) =>
+    spawnSync(process.execPath, ['harness/benchmarkFull.js', '--board-budget-hours', '0.0001', '--skip-instructions', ...extra], {
+      cwd: ROOT_DIRECTORY,
+      encoding: 'utf-8',
+      env: { ...process.env, BENCHMARK_ROOT: benchmarkRoot, BENCHMARK_COMMIT: 'fullruntest0', ...env },
+    });
+  const directoryOf = () => path.join(benchmarkRoot, fs.readdirSync(benchmarkRoot).find(name => name.startsWith('fullruntest0')));
+  const failures = [];
+
+  try {
+    const batch = run({}, ['domino-rectangle-formula']);
+    const batchEnvironment = JSON.parse(fs.readFileSync(path.join(directoryOf(), 'environment.json'), 'utf-8'));
+
+    if (batch.status !== 0 || batchEnvironment.complete !== false || fs.existsSync(path.join(directoryOf(), 'domino-rectangle-bigint.js_2x2.txt'))) {
+      failures.push(`one solver must not complete a run or measure another solver: ${batch.stderr.trim()}`);
+    }
+
+    const stopped = run({}, ['domino-rectangle-bigint', '--stop-after-hours', '0.0000001']);
+
+    if (stopped.status !== 0 || fs.existsSync(path.join(directoryOf(), 'domino-rectangle-bigint.js_8x8.txt'))) {
+      failures.push(`a night limit must stop before the next board: ${stopped.stderr.trim()}`);
+    }
+
+    if (run({}, ['no-such-solver']).status === 0) {
+      failures.push('an unknown solver must be refused');
+    }
+
+    const first = run({});
+    const directory = directoryOf();
+    const environment = JSON.parse(fs.readFileSync(path.join(directory, 'environment.json'), 'utf-8'));
+    const plan = JSON.parse(fs.readFileSync(path.join(directory, 'plan.json'), 'utf-8'));
+    const kept = path.join(directory, 'domino-rectangle-bigint.js_2x2.txt');
+    const before = fs.statSync(kept).mtimeMs;
+
+    if (first.status !== 0 || environment.complete !== true || !plan.notMeasured.some(({ reason, estimateTenRunsHours }) => reason === 'over budget' && estimateTenRunsHours > 0)) {
+      failures.push(`a budgeted run must finish and record what it left out: ${first.stderr.trim()}`);
+    }
+
+    run({});
+
+    if (fs.statSync(kept).mtimeMs !== before) {
+      failures.push('a rerun must keep the boards it already measured');
+    }
+
+    fs.rmSync(directory, { recursive: true, force: true });
+
+    const wrong = run({ PYTHON: path.join(ROOT_DIRECTORY, 'harness', 'fixtures', 'wrongCount.js') });
+    const recorded = JSON.parse(fs.readFileSync(path.join(directoryOf(), 'environment.json'), 'utf-8'));
+
+    if (wrong.status === 0 || recorded.complete !== false) {
+      failures.push('a wrong count must stop the run and leave it incomplete');
+    }
+  } finally {
+    fs.rmSync(benchmarkRoot, { recursive: true, force: true });
+  }
+
+  if (failures.length) {
+    console.error(`Failed! ${failures.join('; ')}`);
+
+    return false;
   }
 
   console.log('Passed!');
@@ -1501,6 +1639,8 @@ async function __main__() {
     const timeFlagTestsPassed = executeTimeFlagTests();
     const timeSpanTestsPassed = executeTimeSpanTests();
     const benchmarkCountTestPassed = executeBenchmarkCountTest();
+    const benchmarkPlanTestsPassed = executeBenchmarkPlanTests();
+    const benchmarkFullRunTestsPassed = executeBenchmarkFullRunTests();
     const benchmarkToolchainTestPassed = executeBenchmarkToolchainTest();
     const precisionWarningTestsPassed = executePrecisionWarningTests();
     const benchmarkEmptySelectionTestPassed = executeBenchmarkEmptySelectionTest();
@@ -1537,6 +1677,8 @@ async function __main__() {
       timeFlagTestsPassed &&
       timeSpanTestsPassed &&
       benchmarkCountTestPassed &&
+      benchmarkPlanTestsPassed &&
+      benchmarkFullRunTestsPassed &&
       benchmarkToolchainTestPassed &&
       precisionWarningTestsPassed &&
       benchmarkEmptySelectionTestPassed &&

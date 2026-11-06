@@ -63,11 +63,8 @@
   },
   "scripts": {
     "start": "node harness/benchmarkRunner.js -n 10 -m 7",
-    "benchmark": "node harness/benchmarkRunner.js -n 10",
-    "benchmark:domicule": "node harness/benchmarkRunner.js --domicule -n 10",
-    "benchmark:cylinder-torus": "node harness/benchmarkRunner.js --torus -n 10 -m 5 && node harness/benchmarkRunner.js --torus -n 10 -o 5 -m 1 --only all-lattices-cylinder-torus-modular.js && node harness/benchmarkRunner.js --torus -n 3 -o 6 --only all-lattices-cylinder-torus-modular.js && node harness/benchmarkRunner.js --cylinder -n 10 -m 6 && node harness/benchmarkRunner.js --cylinder -n 10 -o 6 --only all-lattices-cylinder-torus-modular.js && node harness/benchmarkRunner.js --torus --lattice square -n 10 -m 6 && node harness/benchmarkRunner.js --torus --lattice square -n 3 -o 6 --only all-lattices-cylinder-torus-modular.js && node harness/benchmarkRunner.js --cylinder --lattice square -n 10 -m 6 && node harness/benchmarkRunner.js --cylinder --lattice square -n 10 -o 6 --only all-lattices-cylinder-torus-modular.js",
-    "benchmark:diagonal": "node harness/benchmarkRunner.js --diagonal -n 10 -m 7 && node harness/benchmarkRunner.js --diagonal -n 10 -o 7 -m 3 --only diagonal-pieces-modular.js && node harness/benchmarkRunner.js --diagonal -n 1 -o 10 --only diagonal-pieces-modular.js",
-    "benchmark:all": "cargo build --release --locked && pnpm benchmark:cylinder-torus && pnpm benchmark && pnpm benchmark:domicule && pnpm benchmark:diagonal",
+    "benchmark": "node harness/benchmarkContainer.js",
+    "benchmark:compare": "node harness/benchmarkFull.js compare",
     "test": "cargo build --release --locked && node harness/testRunner.js -m 7",
     "render": "node js/dominoTilingRenderer.js",
     "test:render": "node harness/renderTestRunner.js",
