@@ -2,7 +2,7 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { exec } = require('../js/core');
+const exec = require('./executor');
 const { listImplementations } = require('../js/core/registry');
 
 const BOARDS = [
@@ -34,7 +34,7 @@ function languageOf(file) {
 }
 
 function runOnce(file, args) {
-  const [program, ...launchArgs] = exec.launch(file);
+  const [program, ...launchArgs] = exec.launchBuilt(file);
   const { status, stderr } = spawnSync(program, [...launchArgs, ...args, '--time'], { encoding: 'utf-8' });
   const reported = (stderr || '').match(SOLVER_TIME);
 

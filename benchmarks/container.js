@@ -2,7 +2,7 @@ const { spawnSync, spawn } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { compareSeries } = require('../benchmarks/measureVariance');
+const { compareSeries } = require('./measureVariance');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const RESULTS_DIRECTORY = path.join(ROOT_DIRECTORY, 'benchmarks', 'results');
@@ -82,7 +82,7 @@ function __main__() {
       compareSeries(first, second).forEach(({ board, language, difference, cv }) => console.log(`${difference}%\tcv ${cv}%\t${language}\t${board}`));
     };
 
-    (noise ? measureNoise() : runInImage('harness/benchmarkFull.js', ...passed))
+    (noise ? measureNoise() : runInImage('benchmarks/full.js', ...passed))
       .then(() => {
         clearInterval(sampler);
         process.exit(0);

@@ -65,7 +65,7 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | [`python`](python/README.md) | the Python package `lattice_dimers`: the Python solvers, for the algorithms `spec/algorithms.json` lists with Python, and the library they share; its manifest is [`pyproject.toml`](python/pyproject.toml) |
 | [`js`](js/README.md) | the JavaScript solvers for rectangles, cylinders and tori, and the renderer that numbers, samples and draws tilings; its manifest is [`package.json`](js/package.json), which also holds the commands of the test runners and the site |
 | [`docs`](docs/glossary.md) | the glossary of the words the repository uses for pieces, lattices, surfaces, signs, the site and the code |
-| [`harness`](harness/README.md) | the test runners, the check that keeps the languages in step, and the benchmark runner |
+| [`harness`](harness/README.md) | the checks of the whole repository: its data, its Markdown, its metadata and the check that keeps the languages in step; each language has its own tests |
 | [`benchmarks`](benchmarks/README.md) | the benchmark results |
 | `site` | the build of the [site](https://dawidrylko.github.io/lattice-dimers/): the gallery, the benchmark tables and the notebooks |
 

@@ -1,0 +1,1062 @@
+{
+  "rejections": [
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "21"
+      ],
+      "message": "at most 20"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "21",
+        "-c",
+        "21",
+        "--torus",
+        "--twisted"
+      ],
+      "message": "at most 20"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "1",
+        "-c",
+        "13",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "13",
+        "--lattice",
+        "hexagonal"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "1",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "hexagonal"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "25"
+      ],
+      "message": "at most 24"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "25",
+        "-c",
+        "25",
+        "--torus"
+      ],
+      "message": "at most 24"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "25",
+        "--torus",
+        "--twisted"
+      ],
+      "message": "at most 24"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "1",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "+4",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "hexagonal"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "0"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "x"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "3",
+        "-c",
+        "3"
+      ],
+      "message": "2n x 2n boards only"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "6"
+      ],
+      "message": "2n x 2n boards only"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-number",
+      "args": [
+        "-r",
+        "31",
+        "-c",
+        "31"
+      ],
+      "message": "at most 30"
+    },
+    {
+      "algorithm": "domino-rectangle-number",
+      "args": [
+        "-r",
+        "40",
+        "-c",
+        "31"
+      ],
+      "message": "the rows are indexed with 32-bit integers"
+    },
+    {
+      "algorithm": "domino-rectangle-number",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-number",
+      "args": [
+        "-r",
+        "-2",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-number",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-number",
+      "args": [
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "31",
+        "-c",
+        "31"
+      ],
+      "message": "at most 30"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "40",
+        "-c",
+        "31"
+      ],
+      "message": "the rows are indexed with 32-bit integers"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "-2",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "args": [
+        "-r",
+        "21",
+        "-c",
+        "21"
+      ],
+      "message": "at most 20"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "args": [
+        "-r",
+        "40",
+        "-c",
+        "21"
+      ],
+      "message": "because every worker thread keeps half the polynomial of every state in memory"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "args": [
+        "-r",
+        "-2",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "args": [
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "args": [
+        "-r",
+        "2",
+        "-c",
+        "2",
+        "-j",
+        "0"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "args": [
+        "-r",
+        "2",
+        "-c",
+        "2",
+        "-j",
+        "x"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "args": [
+        "-r",
+        "9007199254740991",
+        "-c",
+        "1"
+      ],
+      "message": "Invalid array length"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "args": [
+        "-r",
+        "21",
+        "-c",
+        "21"
+      ],
+      "message": "at most 20"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "args": [
+        "-r",
+        "40",
+        "-c",
+        "21"
+      ],
+      "message": "use diagonal-pieces-modular.js for larger boards"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "args": [
+        "-r",
+        "-2",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "args": [
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "30",
+        "-c",
+        "30"
+      ],
+      "message": "at most 29"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "40",
+        "-c",
+        "30"
+      ],
+      "message": "because a JavaScript array holds fewer than 2^32 states"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "-2",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "31",
+        "-c",
+        "31"
+      ],
+      "message": "at most 30"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "40",
+        "-c",
+        "31"
+      ],
+      "message": "because the states are indexed with 32-bit integers"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "-2",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-c",
+        "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "2",
+        "-c",
+        "2",
+        "-j",
+        "0"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "2",
+        "-c",
+        "2",
+        "-j",
+        "x"
+      ],
+      "message": "Usage"
+    }
+  ],
+  "parity": [
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "rowCount": 0,
+      "colCount": 5,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "rowCount": 5,
+      "colCount": 0,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "rowCount": 1,
+      "colCount": 1,
+      "expectedResult": "0"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "rowCount": 1,
+      "colCount": 2,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "rowCount": 2,
+      "colCount": 1,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "rowCount": 10,
+      "colCount": 1,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "rowCount": 1,
+      "colCount": 40,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "rowCount": 3,
+      "colCount": 3,
+      "expectedResult": "0"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "rowCount": 2,
+      "colCount": 31,
+      "expectedResult": "1431655765"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "rowCount": 0,
+      "colCount": 5,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "rowCount": 5,
+      "colCount": 0,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "rowCount": 1,
+      "colCount": 1,
+      "expectedResult": "0"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "rowCount": 1,
+      "colCount": 2,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "rowCount": 2,
+      "colCount": 1,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "rowCount": 10,
+      "colCount": 1,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "rowCount": 1,
+      "colCount": 40,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "rowCount": 3,
+      "colCount": 3,
+      "expectedResult": "0"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "rowCount": 2,
+      "colCount": 31,
+      "expectedResult": "1431655765"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "rowCount": 0,
+      "colCount": 5,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "rowCount": 5,
+      "colCount": 0,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "rowCount": 1,
+      "colCount": 1,
+      "expectedResult": "0"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "rowCount": 1,
+      "colCount": 2,
+      "expectedResult": "1,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "rowCount": 2,
+      "colCount": 1,
+      "expectedResult": "1,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "rowCount": 10,
+      "colCount": 1,
+      "expectedResult": "1,0,0,0,0,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "rowCount": 1,
+      "colCount": 40,
+      "expectedResult": "1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "rowCount": 3,
+      "colCount": 3,
+      "expectedResult": "0,0,0,0,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-modular",
+      "rowCount": 2,
+      "colCount": 31,
+      "expectedResult": "2178309,0,18394910,0,71501422,0,169457708,0,273381350,0,317354740,0,273163100,0,176975160,0,86666790,0,31915300,0,8705060,0,1710280,0,230932,0,19768,0,920,0,16,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "rowCount": 0,
+      "colCount": 5,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "rowCount": 5,
+      "colCount": 0,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "rowCount": 1,
+      "colCount": 1,
+      "expectedResult": "0"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "rowCount": 1,
+      "colCount": 2,
+      "expectedResult": "1,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "rowCount": 2,
+      "colCount": 1,
+      "expectedResult": "1,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "rowCount": 10,
+      "colCount": 1,
+      "expectedResult": "1,0,0,0,0,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "rowCount": 1,
+      "colCount": 40,
+      "expectedResult": "1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "rowCount": 3,
+      "colCount": 3,
+      "expectedResult": "0,0,0,0,0"
+    },
+    {
+      "algorithm": "diagonal-pieces-bigint",
+      "rowCount": 2,
+      "colCount": 31,
+      "expectedResult": "2178309,0,18394910,0,71501422,0,169457708,0,273381350,0,317354740,0,273163100,0,176975160,0,86666790,0,31915300,0,8705060,0,1710280,0,230932,0,19768,0,920,0,16,0"
+    }
+  ],
+  "precision": [
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "expected": "258584046368",
+      "warns": false
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "expected": "53060477521960020",
+      "warns": true
+    },
+    {
+      "rowCount": 2,
+      "colCount": 90,
+      "expected": "4660046610375530000",
+      "warns": true
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "expected": "1.122022087760361e+23",
+      "warns": true
+    },
+    {
+      "rowCount": 2,
+      "colCount": 100,
+      "expected": "573147844013817200000",
+      "warns": true
+    },
+    {
+      "rowCount": 2,
+      "colCount": 102,
+      "expected": "1.5005205362068963e+21",
+      "warns": true
+    },
+    {
+      "rowCount": 2,
+      "colCount": 110,
+      "expected": "7.049252476708914e+22",
+      "warns": true
+    },
+    {
+      "rowCount": 2,
+      "colCount": 1500,
+      "expected": "Infinity",
+      "warns": true
+    }
+  ],
+  "memory": [
+    {
+      "algorithm": "all-lattices-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "2",
+        "-c",
+        "18",
+        "-j",
+        "1"
+      ],
+      "expectedResult": "524289"
+    }
+  ],
+  "timeSpan": {
+    "algorithm": "all-lattices-cylinder-torus-modular",
+    "args": [
+      "-r",
+      "10",
+      "-c",
+      "10",
+      "--torus"
+    ]
+  },
+  "longCounts": [
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "80",
+        "-c",
+        "80"
+      ],
+      "digits": 801,
+      "sha256": "d35ae40b1d845d2ba32964975caa89940446ae4a582acccb093acbd7b4cbd4a1"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "2",
+        "-c",
+        "6000"
+      ],
+      "digits": 1254,
+      "sha256": "200ecaea49148410773a62d05c379a0affb6393e3c02c7da3dc4572dc17de755"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "2",
+        "-c",
+        "6000"
+      ],
+      "digits": 1807,
+      "sha256": "6488b667ff760a16bfc85a7c521694eb9426dc95693031e846465b1d4be17d1d"
+    },
+    {
+      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "1200",
+        "-c",
+        "2"
+      ],
+      "digits": 646,
+      "sha256": "c5383b3d8e3b655a376b1163dee796fc63bcdcb27bff6e167da2f72c61e560e5"
+    }
+  ]
+}

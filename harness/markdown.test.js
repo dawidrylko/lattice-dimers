@@ -1,6 +1,8 @@
+const assert = require('node:assert/strict');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { test } = require('node:test');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const GITHUB_DISALLOWED_MACROS = ['operatorname', 'DeclareMathOperator', 'newcommand', 'renewcommand', 'def'];
@@ -100,38 +102,16 @@ function checkRelativeLinks(file) {
     .map(target => `${file} links to ${target}, which does not exist.`);
 }
 
-function runCheck(name, files, check) {
-  process.stdout.write(`Checking ${files.length} Markdown files for ${name}... `);
-  const errors = files.flatMap(check);
+const files = listMarkdownFiles();
 
-  if (errors.length > 0) {
-    console.error(`Failed!\n${errors.map(error => `  ${error}`).join('\n')}`);
-
-    return false;
-  }
-
-  console.log('Passed!');
-
-  return true;
+function runCheck(name, check) {
+  test(`${files.length} Markdown files have no ${name}`, () => {
+    assert.deepEqual(files.flatMap(check), []);
+  });
 }
 
-function __main__() {
-  const files = listMarkdownFiles();
-  const passed = [
-    runCheck('math macros GitHub does not render', files, checkMathMacros),
-    runCheck('math in link text', files, checkMathInLinks),
-    runCheck('ranges written as .. in math', files, checkMathRanges),
-    runCheck('relative links to missing files', files, checkRelativeLinks),
-    runCheck('links to OEIS entries', files, checkOeisLinks),
-  ].every(Boolean);
-
-  if (passed) {
-    console.log('All Markdown tests completed successfully.');
-    process.exit(0);
-  }
-
-  console.error('Some Markdown tests failed.');
-  process.exit(1);
-}
-
-__main__();
+runCheck('math macros GitHub does not render', checkMathMacros);
+runCheck('math in link text', checkMathInLinks);
+runCheck('ranges written as .. in math', checkMathRanges);
+runCheck('relative links to missing files', checkRelativeLinks);
+runCheck('links to OEIS entries that break the rules', checkOeisLinks);

@@ -16,7 +16,7 @@ git clone https://github.com/dawidrylko/lattice-dimers.git
 cd lattice-dimers/rust
 cargo build --release
 target/release/domicule-rectangle-modular -r 8 -c 8
-cargo test
+cargo test --release
 ```
 
 ## Running and testing
@@ -25,4 +25,4 @@ cargo test
 target/release/all-lattices-cylinder-torus-modular -r 10 -c 10 --torus
 ```
 
-`cargo test` runs the tests of every package of the workspace. [`harness/testRunner.js`](../harness/testRunner.js) runs the binaries in `rust/target/release` (or `$CARGO_TARGET_DIR/release`, relative to `rust/`) on the boards of [`spec/cases`](../spec/cases/README.md), and refuses a binary older than its own file in `solvers/src/bin` or a `.rs` file under `rust/` outside that directory and the build directories, since cargo rebuilds only the binaries whose sources changed; `pnpm -C js test` builds them first.
+`cargo test --release` runs the binaries on the boards of [`spec/cases`](../spec/cases/README.md), within [`spec/limits.json`](../spec/limits.json) unless `FULL_CASES=1`, and the unit tests of `core`. Its test data is read with `serde_json` and the peak memory with `libc`, both dependencies of the tests only. [`benchmarks/executor.js`](../benchmarks/executor.js) runs the binaries in `rust/target/release` (or `$CARGO_TARGET_DIR/release`, relative to `rust/`) and refuses a binary older than its own file in `solvers/src/bin` or a `.rs` file under `rust/` outside that directory, `tests` and the build directories.

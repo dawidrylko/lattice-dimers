@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
-const { exec } = require('../js/core');
+const exec = require('./executor');
 const { listImplementations, algorithmOf } = require('../js/core/registry');
 const {
   BENCHMARK_DIRECTORY,
@@ -15,12 +15,12 @@ const {
   measure,
   saveEnvironment,
   saveExecutionResults,
-} = require('./benchmarkRunner');
-const { RESULTS_DIRECTORY } = require('./benchmarkEnvironment');
+} = require('./runner');
+const { RESULTS_DIRECTORY } = require('./environment');
 
 const RUNS = 10;
 const DEFAULT_JOBS = 4;
-const USAGE = 'Usage: node harness/benchmarkFull.js [<solver id>] [--board-budget-hours <hours>] [--stop-after-hours <hours>] [--jobs <threads>] [--skip-instructions] [--force]';
+const USAGE = 'Usage: node benchmarks/full.js [<solver id>] [--board-budget-hours <hours>] [--stop-after-hours <hours>] [--jobs <threads>] [--skip-instructions] [--force]';
 const STATE_GROWTH = 4.4;
 const TORUS_GROWTH = 16;
 const GROWTH_FLOORS = [
@@ -227,7 +227,7 @@ function runInstructions() {
       const counts = [];
 
       for (let i = 0; i < INSTRUCTION_RUNS; i++) {
-        const [program, ...launchArgs] = exec.launch(file);
+        const [program, ...launchArgs] = exec.launchBuilt(file);
         const { stderr } = spawnSync('valgrind', ['--tool=cachegrind', '--cache-sim=no', '--cachegrind-out-file=/dev/null', program, ...launchArgs, ...args], { encoding: 'utf-8', maxBuffer: 2 ** 26 });
         const count = parseInstructionCount(stderr);
 

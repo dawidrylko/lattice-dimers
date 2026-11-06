@@ -1,6 +1,8 @@
+const assert = require('node:assert/strict');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { test } = require('node:test');
 const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
@@ -69,40 +71,19 @@ function runGp(programs, calls) {
   });
 
   if (error || status !== 0 || stderr.split('\n').some(line => line.includes('***') && !line.includes('Warning'))) {
-    console.error(
+    throw new Error(
       `Failed to run PARI/GP (${GP}): ${error ? error.message : stderr.trim()}. Install it (apt install pari-gp, brew install pari) or set GP_PATH.`,
     );
-
-    return null;
   }
 
   return stdout.slice(stdout.indexOf(`${OUTPUT_MARKER}\n`) + OUTPUT_MARKER.length + 1).trim().split('\n');
 }
 
-function executeGpTests({ files, testCases }) {
-  const file = files[files.length - 1];
-  const results = runGp(
+function runProgramCalls({ files, testCases }) {
+  return runGp(
     files.map(name => `read("${path.join(ROOT_DIRECTORY, name).replace(/\\/g, '/')}");`),
     testCases.map(({ call }) => call),
   );
-
-  if (!results) {
-    return false;
-  }
-
-  return testCases.every(({ call, expectedResult }, index) => {
-    process.stdout.write(`Executing PARI/GP test ${index + 1} of ${testCases.length} for ${file}: ${call}... `);
-
-    if (results[index] !== expectedResult) {
-      console.error(`Failed! Expected: ${expectedResult}, Actual: ${results[index]}`);
-
-      return false;
-    }
-
-    console.log('Passed!');
-
-    return true;
-  });
 }
 
 function readEntryProgram(entry) {
@@ -124,7 +105,7 @@ function readEntryProgram(entry) {
   return program;
 }
 
-function executeProgramListTest() {
+function checkProgramList() {
   const tested = new Set(PROGRAMS.flatMap(({ files }) => files));
   const untested = fs
     .readdirSync(OEIS_DIRECTORY)
@@ -132,83 +113,48 @@ function executeProgramListTest() {
     .map(entry => `oeis/${entry}/${entry}.gp`)
     .filter(file => fs.existsSync(path.join(ROOT_DIRECTORY, file)) && !tested.has(file));
 
-  process.stdout.write('Executing the test that every program in oeis/ is run... ');
+  assert.deepEqual(untested, [], 'No test in harness/pari.test.js runs these programs.');
+}
 
-  if (untested.length > 0) {
-    console.error(`Failed! No test in harness/pariTestRunner.js runs ${untested.join(', ')}.`);
+function checkEntryProgram(entry, program) {
+  assert.ok(
+    fs.existsSync(path.join(OEIS_DIRECTORY, entry, `b${entry.slice(1)}.txt`)),
+    `${entry}.txt has a PARI program and oeis/${entry} has no b-file to check it against.`,
+  );
+  assert.ok(ENTRY_PROGRAMS[entry], `${entry}.txt has a PARI program with no test in harness/pari.test.js.`);
 
-    return false;
+  const dependencies = [...program.join('\n').matchAll(/defined in (A\d{6})/g)].flatMap(([, other]) => readEntryProgram(other));
+  const results = runGp([...dependencies, ...program], [ENTRY_PROGRAMS[entry]]);
+  const actual = results[0].replace(/^\[|\]$/g, '').split(', ');
+  const expected = fs
+    .readFileSync(path.join(OEIS_DIRECTORY, entry, `b${entry.slice(1)}.txt`), 'utf-8')
+    .split('\n')
+    .slice(0, actual.length)
+    .map(line => line.split(' ')[1]);
+
+  assert.deepEqual(actual, expected);
+}
+
+for (const program of PROGRAMS) {
+  const file = program.files[program.files.length - 1];
+  let results;
+
+  program.testCases.forEach(({ call, expectedResult }, index) => {
+    test(`PARI/GP test ${index + 1} of ${program.testCases.length} for ${file}: ${call}`, () => {
+      results ??= runProgramCalls(program);
+      assert.equal(results[index], expectedResult);
+    });
+  });
+}
+
+test('every program in oeis/ is run', checkProgramList);
+
+for (const entry of fs.readdirSync(OEIS_DIRECTORY).filter(name => /^A\d{6}$/.test(name)).sort()) {
+  const program = readEntryProgram(entry);
+
+  if (program.length > 0) {
+    test(`the PARI program of ${entry}.txt against b${entry.slice(1)}.txt`, () => {
+      checkEntryProgram(entry, program);
+    });
   }
-
-  console.log('Passed!');
-
-  return true;
 }
-
-function executeEntryProgramTests() {
-  const entries = fs.readdirSync(OEIS_DIRECTORY).filter(name => /^A\d{6}$/.test(name)).sort();
-
-  return entries
-    .map(entry => {
-      const program = readEntryProgram(entry);
-
-      if (program.length === 0) {
-        return true;
-      }
-
-      process.stdout.write(`Executing the PARI program of ${entry}.txt against b${entry.slice(1)}.txt... `);
-
-      if (!fs.existsSync(path.join(OEIS_DIRECTORY, entry, `b${entry.slice(1)}.txt`))) {
-        console.error(`Failed! ${entry}.txt has a PARI program and oeis/${entry} has no b-file to check it against.`);
-
-        return false;
-      }
-
-      if (!ENTRY_PROGRAMS[entry]) {
-        console.error(`Failed! ${entry}.txt has a PARI program with no test in harness/pariTestRunner.js.`);
-
-        return false;
-      }
-
-      const dependencies = [...program.join('\n').matchAll(/defined in (A\d{6})/g)].flatMap(([, other]) => readEntryProgram(other));
-      const results = runGp([...dependencies, ...program], [ENTRY_PROGRAMS[entry]]);
-
-      if (!results) {
-        return false;
-      }
-
-      const actual = results[0].replace(/^\[|\]$/g, '').split(', ');
-      const expected = fs
-        .readFileSync(path.join(OEIS_DIRECTORY, entry, `b${entry.slice(1)}.txt`), 'utf-8')
-        .split('\n')
-        .slice(0, actual.length)
-        .map(line => line.split(' ')[1]);
-
-      if (actual.join(',') !== expected.join(',')) {
-        console.error(`Failed! Expected: ${expected.join(', ')}, Actual: ${actual.join(', ')}`);
-
-        return false;
-      }
-
-      console.log(`Passed! (${actual.length} terms)`);
-
-      return true;
-    })
-    .every(Boolean);
-}
-
-function __main__() {
-  const gpTestsPassed = PROGRAMS.map(executeGpTests).every(Boolean);
-  const programListPassed = executeProgramListTest();
-  const entryTestsPassed = executeEntryProgramTests();
-
-  if (gpTestsPassed && programListPassed && entryTestsPassed) {
-    console.log('All PARI/GP tests completed successfully.');
-    process.exit(0);
-  }
-
-  console.error('Some PARI/GP tests failed.');
-  process.exit(1);
-}
-
-__main__();

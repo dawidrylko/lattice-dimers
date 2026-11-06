@@ -10,5 +10,8 @@ license = "MIT"
 requires-python = ">=3.13"
 dependencies = ["numpy==2.5.4"]
 
+[project.optional-dependencies]
+test = ["pytest==9.2.0"]
+
 [tool.setuptools.packages.find]
 include = ["lattice_dimers*"]

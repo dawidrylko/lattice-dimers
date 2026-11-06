@@ -24,4 +24,4 @@ python3 -I -m lattice_dimers.solvers.domicule_rectangle_modular -r 8 -c 8
 python3 -I -m lattice_dimers.solvers.all_lattices_cylinder_torus_modular -r 10 -c 10 --torus
 ```
 
-[`harness/testRunner.js`](../harness/testRunner.js) runs the modules with `python3 -I -m` (or the interpreter at `$PYTHON`) on the boards of [`spec/cases`](../spec/cases/README.md).
+`python -m pip install -e "python[test]"` adds pytest, and `python -m pytest python/tests` runs the modules with `python -I -m` on the boards of [`spec/cases`](../spec/cases/README.md), within [`spec/limits.json`](../spec/limits.json) unless `FULL_CASES=1`.

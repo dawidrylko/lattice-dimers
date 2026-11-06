@@ -2,8 +2,9 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { parseArgs, exec } = require('../js/core');
-const { RESULTS_DIRECTORY, describeEnvironment, runDirectoryName } = require('./benchmarkEnvironment');
+const { parseArgs } = require('../js/core');
+const exec = require('./executor');
+const { RESULTS_DIRECTORY, describeEnvironment, runDirectoryName } = require('./environment');
 const { listImplementations, algorithmOf, javaScriptFileOf } = require('../js/core/registry');
 const { LATTICES } = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
 const { testCasesOf, isEvenSquare } = require('../js/core/cases');
@@ -26,7 +27,7 @@ const DIAGONAL_CASES = testCasesOf('diagonal-pieces-modular');
 const DOMICULE_BOARDS = [...testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare), { rowCount: 20, colCount: 20 }];
 const PERIODIC_GROUPS = ['--torus', '--cylinder'];
 const USAGE =
-  'Usage: node harness/benchmarkRunner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal] [--lattice king|triangular|square] [--force]';
+  'Usage: node benchmarks/runner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal] [--lattice king|triangular|square] [--force]';
 
 function displayPath(file) {
   const relative = path.relative(path.join(__dirname, '..'), file);
@@ -170,7 +171,7 @@ function saveExecutionResults(options) {
  * @throws {Error} When the solver fails, reports no time or prints another count.
  */
 function measure(testCase) {
-  const [program, ...launchArgs] = exec.launch(testCase.fileName);
+  const [program, ...launchArgs] = exec.launchBuilt(testCase.fileName);
   const start = process.hrtime.bigint();
   const { status, stdout, stderr, error } = spawnSync(program, [...launchArgs, ...listSolverArguments(testCase)], {
     encoding: 'utf-8',
