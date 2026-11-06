@@ -4,7 +4,7 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-A diagonal piece covers two cells that share only a corner, and on the $2n \times 2n$ board every tiling has an even number of them, anywhere from 0 to $2n^2$. The drawing shows the first tiling of the $8 \times 8$ board in the gallery's numbering for $k = 0$, 8, 16 and 32 diagonal pieces, with the straight pieces greyed out. Only one tiling has $k = 32$.
+A diagonal piece covers two cells that share only a corner, and on the $2n \times 2n$ board every tiling has an even number of them, anywhere from 0 to $2n^2$. The drawing shows the first tiling of the $8 \times 8$ board in the gallery's numbering for $k = 0, 8, 16$ and $32$ diagonal pieces, with the straight pieces greyed out. Only one tiling has $k = 32$.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');

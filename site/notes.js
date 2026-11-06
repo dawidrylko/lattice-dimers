@@ -400,7 +400,7 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
  * @property {string} [options.surface] 'rectangle', 'cylinder' or 'torus'.
  * @property {number} [options.diagonals] Only the domicule tilings of a rectangle with this many diagonal pieces, as the
  * gallery's Diagonal pieces filter numbers them; the label under each tiling then gives that number.
- * @property {Array<number|bigint>|'all'} [options.ranks] The 0-based numbers of the tilings to draw.
+ * @property {Array<number|bigint>} [options.ranks] The 0-based numbers of the tilings to draw.
  * @property {number} [options.spread] In place of ranks: this many tilings, evenly spaced over the numbering.
  * @returns {{ svgs: string[], total: bigint }} The drawings and the number of tilings they choose from.
  */
@@ -409,8 +409,16 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', lattice, surface =
     throw new Error(`drawTilings() takes pieces domino or domicule and surface rectangle, cylinder or torus, not ${pieces} on a ${surface}.`);
   }
 
-  if (lattice !== undefined && (lattice !== 'triangular' || pieces !== 'domino' || surface === 'rectangle')) {
+  if (lattice !== undefined && (lattice !== 'triangular' || surface === 'rectangle')) {
     throw new Error(`drawTilings() takes lattice triangular on a cylinder or a torus only, not ${lattice} on a ${surface}.`);
+  }
+
+  if (lattice !== undefined && pieces !== 'domino') {
+    throw new Error(`drawTilings() takes pieces or lattice, not ${pieces} and ${lattice}.`);
+  }
+
+  if ((ranks === undefined) === (spread === undefined) || (spread !== undefined && !(Number.isInteger(spread) && spread >= 1))) {
+    throw new Error('drawTilings() takes either a list of ranks or a whole number spread of at least 1.');
   }
 
   if (diagonals !== undefined && (pieces !== 'domicule' || surface !== 'rectangle')) {
@@ -439,13 +447,11 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', lattice, surface =
     throw new RangeError(`drawTilings() cannot spread ${spread} drawings over ${unranker.total} tilings.`);
   }
 
-  const chosen = spread !== undefined
-    ? Array.from({ length: spread }, (_, i) => (unranker.total * BigInt(i)) / BigInt(spread))
-    : ranks === 'all' ? Array.from({ length: Number(unranker.total) }, (_, i) => BigInt(i)) : ranks.map(BigInt);
+  const chosen = ranks ? ranks.map(BigInt) : Array.from({ length: spread }, (_, i) => (unranker.total * BigInt(i)) / BigInt(spread));
   const filter = diagonals === undefined ? '' : ` with ${diagonals} diagonal piece${diagonals === 1 ? '' : 's'}`;
   const svgs = chosen.map(rank => {
     const kind = lattice === 'triangular' ? 'Triangular lattice' : pieces === 'domicule' ? 'Domicule' : 'Domino';
-    const name = `${kind} tiling number ${rank + 1n}${filter} of ${/^(8|11|18)/.test(rowCount) ? 'an' : 'a'} ${rowCount} by ${colCount} ${surface}`;
+    const name = `${kind} tiling number ${rank + 1n}${filter} of ${/^(8\d*|1[18])$/.test(rowCount) ? 'an' : 'a'} ${rowCount} by ${colCount} ${surface}`;
     const svg = renderer.renderSheet([unrank(unranker, rank)], 1, {
       rowCount,
       colCount,

@@ -4,7 +4,6 @@ const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
-const { DEFAULT_BOARD } = require('../site/defaultBoard');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const SITE_DIRECTORY = path.resolve(process.env.SITE_DIRECTORY || path.join(ROOT_DIRECTORY, 'dist', 'site'));
@@ -13,7 +12,7 @@ const EXTERNAL_RESOURCE = /<script\b[^>]*\bsrc="https?:[^>]*>|<link\b(?=[^>]*\br
 const MIN_HIT_CONTRAST = 4.5;
 const MIN_FIGURE_LABEL = 11;
 const FIGURE_DRAWINGS = 4;
-const FIGURE_BOARD = ` of an ${DEFAULT_BOARD.rowCount} by ${DEFAULT_BOARD.colCount} `;
+const FIGURE_BOARD = ' of an 8 by 8 ';
 const FIGURE_NAME = /^(Domino|Domicule|Triangular lattice) tiling number \d+( with \d+ diagonal pieces?)? of an? \d+ by \d+ (rectangle|cylinder|torus)$/;
 const MIN_SEAM_DISTANCE = 40;
 const CHROME_CANDIDATES = [
