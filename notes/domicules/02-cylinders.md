@@ -108,7 +108,7 @@ print(`Run: ${nb.context.benchmarkRun}`);
 
 ## Verification
 
-The `BigInt` solver agrees with the OEIS entries above and the modular solver with the `BigInt` one at $h = 8$, and `node harness/testRunner.js` runs the king's graph cylinders of [`spec/cases/all-lattices-cylinder-torus-bigint.json`](../../spec/cases/all-lattices-cylinder-torus-bigint.json) through both of them.
+The `BigInt` solver agrees with the OEIS entries above and the modular solver with the `BigInt` one at $h = 8$, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the king's graph cylinders of [`spec/cases/all-lattices-cylinder-torus-bigint.json`](../../spec/cases/all-lattices-cylinder-torus-bigint.json) through both of them.
 
 ## References
 

@@ -4,6 +4,8 @@ Every defect fixed in this repository, the check that fails if it comes back, an
 
 A new fix adds its row here with the check that guards it.
 
+A row that names `test` was shown against `harness/testRunner.js`, which each language has since replaced with its own tests of the same data (see [README.md](README.md)); the runners named `test:*` moved to `node:test` under the same commands.
+
 ## Solvers and command line
 
 | defect | fixed in | check that fails | undone as |
@@ -16,7 +18,7 @@ A new fix adds its row here with the check that guards it.
 | `benchmarkRunner.js` ignored `-m` | `292965f` | `test`, benchmark surface tests | `-m` removed from the parser |
 | a row was a mask of the column count, so 2 × 33 gave 0 | `9993875` | `test`, Number solver on 2 × 33 | rows along the given sides |
 | the parser accepted `2abc` and `-2` | `9993875` | `test`, parser tests | `parseInt` |
-| `testRunner.js -m abc` ran every test | `9993875` | `test`, rejection of `-m abc` | the `-m` check removed |
+| `testRunner.js -m abc` ran every test | `9993875` | none: the option left with the runner | the `-m` check removed |
 | `--random` on an odd board divided by zero | `63abcd4` | `test:render`, `3x3 --random` | the empty-board return removed |
 | `-l 0` was accepted | `63abcd4` | `test:render`, `-l 0` | the limit check removed |
 | a flag without a value gave `undefined` | `106bb36` | `test`, parser test for a missing value | the flag skipped when no value follows |
@@ -35,14 +37,14 @@ A new fix adds its row here with the check that guards it.
 | the enumerator recursed once per domino and overflowed on 2 × 20000 | `0fd7e3d` | `test:render`, `2x20000` | `renderer/enumerator.js` from `0fd7e3d^` |
 | counting 5 × 100000 crashed V8 | `0fd7e3d` | `test:render`, `2x100000` at 128 MB | the `try` around the count removed |
 | `process.exit` after printing cut a piped result on macOS | `0fd7e3d` | `test`, exit test (new); job `macOS`, `test:render` `2x20000` | `process.exit(0)` after the last line; `process.exit(1)` for `process.exitCode = 1` in the renderer |
-| a worker that exited without a result left exit code 0 and no output | `93f74fe` | `test`, rejection with `fixtures/exitingWorker.js` | the `exit` listener removed |
+| a worker that exited without a result left exit code 0 and no output | `93f74fe` | `test`, rejection with `js/test/fixtures/exitingWorker.js` | the `exit` listener removed |
 | the domicule BigInt solver accepted a shorter side of 30 | `93f74fe` | `test`, rejection of 30 × 30 | the cap raised to 30 |
 | domicule styles changed the domino SVG | `106a9df` | `test:render`, domino output hash | diagonal styles in every sheet |
 | no hint to turn a domicule board | `106a9df` | `test:render`, `2x20 --domicule` | the hint removed |
 | usage lines named the paths before the move to `src/` | `4a11337` | `test`, usage tests (new) | `Usage: node domicule-rectangle-modular.js` |
 | the modular solver as a module had no worker count | `4a11337` | `test`, module tests (new) | the default of `jobs` removed |
 | a bare argument named like an Object property, such as `constructor`, took the next argument as its value in `js/core/commandLineArgsParser.js` | #88 | `test`, parser test for a bare argument named like an Object property | `schema[currentArg]` in the flag check |
-| a Rust binary left in `target/release` from older sources was run as the repository's code | #89 | `test`, executor test for a binary older than the `.rs` files under `rust/` (new) | the age check in `js/core/scriptExecutor.js` removed |
+| a Rust binary left in `target/release` from older sources was run as the repository's code | #89 | `test:benchmarks`, executor test for a binary older than the `.rs` files under `rust/` (new) | the age check in `js/core/scriptExecutor.js` removed |
 | the Python solver failed with a `TypeError` when `os.process_cpu_count()` gave `None`, on the command line and as a module without `jobs` | #89 | `test`, module test when the number of processors is unknown (new), which runs both | `or 1` removed from either default of `jobs`, each on its own |
 | with two Rust binaries, an edit to the root of one in `rust/solvers/src/bin` made the executor refuse the other, which cargo does not rebuild for it | #92 | `test`, Rust source tests and the executor test for a binary older than only its own root (new) | `rustSourcesModifiedAt` taking every `.rs` file under `rust/` again (the source tests), or `fileName` passed for `resolve(fileName)` in `executeSolver` (the executor test) |
 

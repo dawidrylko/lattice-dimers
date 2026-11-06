@@ -57,7 +57,7 @@ table(['n', 'board', 'count', 'digits', 'solver', 'status'], rows);
 
 ## Verification
 
-The two cylinder and torus solvers agree with each other up to $8 \times 8$, and the modular solver checks every result against an extra prime. `node harness/testRunner.js` runs the triangular tori of [`spec/cases/all-lattices-cylinder-torus-bigint.json`](../../spec/cases/all-lattices-cylinder-torus-bigint.json) through both solvers and those of `spec/cases/all-lattices-cylinder-torus-modular.json` through the modular one.
+The two cylinder and torus solvers agree with each other up to $8 \times 8$, and the modular solver checks every result against an extra prime. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular tori of [`spec/cases/all-lattices-cylinder-torus-bigint.json`](../../spec/cases/all-lattices-cylinder-torus-bigint.json) through both solvers and those of `spec/cases/all-lattices-cylinder-torus-modular.json` through the modular one.
 
 ## References
 

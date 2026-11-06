@@ -4,7 +4,7 @@ The notebooks in [`notes`](../notes/README.md) explain how each count is made, t
 
 ## Quick start
 
-Node.js 26 or newer ([`.nvmrc`](.nvmrc)) and pnpm ([`package.json`](package.json)). The commands run at the root of the repository, and the solver prints 3263262629905, the domicule tilings of the 8 × 8 rectangle. `pnpm -C js test` runs all three languages, so it also needs [Rust](../rust/README.md) and [Python](../python/README.md). `pnpm -C js site:build` writes the site to `dist/site`:
+Node.js 26 or newer ([`.nvmrc`](.nvmrc)) and pnpm ([`package.json`](package.json)). The commands run at the root of the repository, and the solver prints 3263262629905, the domicule tilings of the 8 × 8 rectangle. `pnpm -C js test` runs the JavaScript tests in [`test`](test/conformance.test.js), so it needs neither of the other two languages. `pnpm -C js site:build` writes the site to `dist/site`:
 
 ```sh
 git clone https://github.com/dawidrylko/lattice-dimers.git
