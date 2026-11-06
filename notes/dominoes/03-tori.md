@@ -4,15 +4,13 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-On a torus both pairs of opposite edges of the board are glued, so a domino may cross the column seam, between the last and the first column, or the row seam, between the last and the first row. A domino that crosses a seam is drawn cut, with one half on each side, and the glued edges are marked, one pair with one tick and the other with two. The drawings show tilings of the $4 \times 4$ torus, spread over the numbering.
+On a torus both pairs of opposite edges of the board are glued, so a domino may cross the column seam, between the last and the first column, or the row seam, between the last and the first row. A domino that crosses a seam is drawn cut, with one half on each side, and the glued edges are marked, one pair with one tick and the other with two. The drawings show 4 tilings of the $8 \times 8$ torus, spread over the numbering.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
-const { total } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domino', surface: 'torus', ranks: [0] });
-const ranks = [0, 1, 2, 3].map(i => Math.floor((Number(total) * i) / 4));
-const { svgs } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domino', surface: 'torus', ranks });
+const { svgs, total } = drawTilings({ rowCount: 8, colCount: 8, pieces: 'domino', surface: 'torus', spread: 4 });
 
-figure(svgs, `4 of the ${total} domino tilings of the 4 × 4 torus.`);
+figure(svgs, `4 of the ${total} domino tilings of the 8 × 8 torus.`);
 ```
 
 ## The Modular solver

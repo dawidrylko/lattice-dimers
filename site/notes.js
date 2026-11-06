@@ -396,15 +396,21 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
  * @property {number} options.rowCount The height.
  * @property {number} options.colCount The width or circumference.
  * @property {string} [options.pieces] 'domino' or 'domicule'.
+ * @property {string} [options.lattice] 'triangular' in place of pieces, on a cylinder or a torus only.
  * @property {string} [options.surface] 'rectangle', 'cylinder' or 'torus'.
  * @property {number} [options.diagonals] Only the domicule tilings of a rectangle with this many diagonal pieces, as the
  * gallery's Diagonal pieces filter numbers them; the label under each tiling then gives that number.
- * @property {number[]|'all'} options.ranks The 0-based numbers of the tilings to draw.
+ * @property {Array<number|bigint>|'all'} [options.ranks] The 0-based numbers of the tilings to draw.
+ * @property {number} [options.spread] In place of ranks: this many tilings, evenly spaced over the numbering.
  * @returns {{ svgs: string[], total: bigint }} The drawings and the number of tilings they choose from.
  */
-function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectangle', diagonals, ranks }) {
+function drawTilings({ rowCount, colCount, pieces = 'domino', lattice, surface = 'rectangle', diagonals, ranks, spread }) {
   if (!['domino', 'domicule'].includes(pieces) || !['rectangle', 'cylinder', 'torus'].includes(surface)) {
     throw new Error(`drawTilings() takes pieces domino or domicule and surface rectangle, cylinder or torus, not ${pieces} on a ${surface}.`);
+  }
+
+  if (lattice !== undefined && (lattice !== 'triangular' || pieces !== 'domino' || surface === 'rectangle')) {
+    throw new Error(`drawTilings() takes lattice triangular on a cylinder or a torus only, not ${lattice} on a ${surface}.`);
   }
 
   if (diagonals !== undefined && (pieces !== 'domicule' || surface !== 'rectangle')) {
@@ -419,7 +425,7 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectang
     unranker = renderer.createDiagonalUnranker({ rowCount, colCount, diagonals });
     unrank = renderer.unrankDiagonalTiling;
   } else if (surface !== 'rectangle') {
-    unranker = renderer.createPeriodicUnranker({ rowCount, colCount, lattice: pieces === 'domino' ? 'square' : 'king', torus: surface === 'torus' });
+    unranker = renderer.createPeriodicUnranker({ rowCount, colCount, lattice: lattice ?? (pieces === 'domino' ? 'square' : 'king'), torus: surface === 'torus' });
     unrank = renderer.unrankPeriodicTiling;
   } else if (pieces === 'domino') {
     unranker = renderer.createUnranker({ rowCount, colCount });
@@ -429,15 +435,22 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', surface = 'rectang
     unrank = renderer.unrankDomiculeTiling;
   }
 
-  const chosen = ranks === 'all' ? Array.from({ length: Number(unranker.total) }, (_, i) => i) : ranks;
+  if (spread !== undefined && BigInt(spread) > unranker.total) {
+    throw new RangeError(`drawTilings() cannot spread ${spread} drawings over ${unranker.total} tilings.`);
+  }
+
+  const chosen = spread !== undefined
+    ? Array.from({ length: spread }, (_, i) => (unranker.total * BigInt(i)) / BigInt(spread))
+    : ranks === 'all' ? Array.from({ length: Number(unranker.total) }, (_, i) => BigInt(i)) : ranks.map(BigInt);
   const filter = diagonals === undefined ? '' : ` with ${diagonals} diagonal piece${diagonals === 1 ? '' : 's'}`;
   const svgs = chosen.map(rank => {
-    const name = `${pieces === 'domicule' ? 'Domicule' : 'Domino'} tiling number ${rank + 1}${filter} of a ${rowCount} by ${colCount} ${surface}`;
-    const svg = renderer.renderSheet([unrank(unranker, BigInt(rank))], 1, {
+    const kind = lattice === 'triangular' ? 'Triangular lattice' : pieces === 'domicule' ? 'Domicule' : 'Domino';
+    const name = `${kind} tiling number ${rank + 1n}${filter} of ${/^(8|11|18)/.test(rowCount) ? 'an' : 'a'} ${rowCount} by ${colCount} ${surface}`;
+    const svg = renderer.renderSheet([unrank(unranker, rank)], 1, {
       rowCount,
       colCount,
       style: 'dimer',
-      labels: [diagonals === undefined ? `#${rank + 1}` : `k = ${diagonals}`],
+      labels: [diagonals === undefined ? `#${rank + 1n}` : `k = ${diagonals}`],
       ...(surface !== 'rectangle' && { surface }),
     });
 
