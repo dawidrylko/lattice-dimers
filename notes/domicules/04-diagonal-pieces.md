@@ -24,7 +24,7 @@ where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only 
 
 ## The Modular solver
 
-[`domiculeDiagonalSolver-Modular.js`](../../js/solvers/domiculeDiagonalSolver-Modular.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, modulo primes, one prime per worker thread. [`domicule-diagonal-modular.rs`](../../rust/solvers/src/bin/domicule-diagonal-modular.rs) and [`domicule_diagonal_modular.py`](../../python/lattice_dimers/solvers/domicule_diagonal_modular.py) count the same polynomial. Rust keeps the parity of every state as JavaScript does. Python numbers the entries of a state by the diagonal pieces on white cells, so a cell step needs no table of parities and moves whole views of the table.
+[`domiculeDiagonalSolver-Modular.js`](../../js/solvers/domiculeDiagonalSolver-Modular.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, modulo primes, one prime per worker thread. [`domicule-diagonal-modular.rs`](../../rust/solvers/src/bin/domicule-diagonal-modular.rs) and [`domicule_diagonal_modular.py`](../../python/lattice_dimers/solvers/domicule_diagonal_modular.py) count the same polynomial. Rust keeps the parity of every state as JavaScript does. Python numbers the entries of a state by the diagonal pieces on white cells, so a cell step needs no table of parities and moves whole views of the table. Its tables take half the memory of the other two, but all three cap the worker threads by the same formula, so the running times below compare the same number of threads.
 
 ## The BigInt solver
 

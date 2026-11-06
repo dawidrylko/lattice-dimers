@@ -118,6 +118,7 @@ const implementationRejectionTestCases = [
   { algorithm: 'domicule-diagonal-modular', args: ['-c', '2'], message: 'Usage' },
   { algorithm: 'domicule-diagonal-modular', args: ['-r', '2', '-c', '2', '-j', '0'], message: 'Usage' },
   { algorithm: 'domicule-diagonal-modular', args: ['-r', '2', '-c', '2', '-j', 'x'], message: 'Usage' },
+  { algorithm: 'domicule-diagonal-modular', args: ['-r', '9007199254740991', '-c', '1'], message: 'Invalid array length' },
   { algorithm: 'domicule-diagonal-bigint', args: ['-r', '13', '-c', '13'], message: 'at most 12' },
   { algorithm: 'domicule-diagonal-bigint', args: ['-r', '40', '-c', '13'], message: 'use domiculeDiagonalSolver-Modular.js for larger boards' },
   { algorithm: 'domicule-diagonal-bigint', args: ['-r', '2abc', '-c', '2'], message: 'Usage' },
@@ -1162,7 +1163,8 @@ async function executeModuleTests() {
       ['domicule-tiling-modular', fourByFour(testCasesDomicule)],
     ].every(([algorithm, testCase]) => executeUnknownProcessorCountTest(algorithm, testCase)) &&
     executeUnknownProcessorCountTest('domicule-diagonal-modular', fourByFour(testCasesDiagonal), 'calculate_diagonal_polynomial') &&
-    executeScratchTest(testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
+    executeScratchTest('domicule-tiling-modular', testCasesDomiculeRectangles.find(({ rowCount, colCount }) => rowCount === 7 && colCount === 6)) &&
+    executeScratchTest('domicule-diagonal-modular', testCasesDiagonal.find(({ rowCount, colCount }) => rowCount === 5 && colCount === 6), 'calculate_diagonal_polynomial') &&
     executeLongCountTest('domino-tiling-formula', ['-r', '80', '-c', '80']) &&
     executeLongCountTest('domino-tiling-bigint', ['-r', '2', '-c', '6000']) &&
     executeLongCountTest('domicule-tiling-bigint', ['-r', '2', '-c', '6000']) &&
@@ -1227,14 +1229,15 @@ function executeLongCountTest(algorithm, args) {
   return true;
 }
 
-function executeScratchTest({ expectedResult, rowCount, colCount }) {
-  const python = listImplementations('domicule-tiling-modular').find(({ language }) => language === 'py');
+function executeScratchTest(algorithm, { expectedResult, rowCount, colCount }, method = 'calculate_total_tiling_combinations') {
+  const python = listImplementations(algorithm).find(({ language }) => language === 'py');
   const launcher = exec.launch(python.file);
   const script = [
     'import importlib, sys',
     'solver = importlib.import_module(sys.argv[1])',
     'solver.SCRATCH_COUNTS = 1',
-    'print(solver.calculate_total_tiling_combinations(int(sys.argv[2]), int(sys.argv[3]), 2))',
+    `result = solver.${method}(int(sys.argv[2]), int(sys.argv[3]), 2)`,
+    'print(",".join(map(str, result)) if isinstance(result, list) else result)',
   ].join('\n');
 
   process.stdout.write(`Executing module test for ${python.file} with a scratch array of one count... `);

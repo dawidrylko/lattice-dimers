@@ -1,3 +1,4 @@
+use std::ffi::{c_int, c_long};
 use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
@@ -9,14 +10,14 @@ const UNREACHED: u8 = 2;
 const USAGE: &str = "Usage: domicule-diagonal-modular -r <rowCount> -c <colCount> [-j <jobs>]";
 
 #[cfg(target_os = "macos")]
-const SYSCONF_NAMES: Option<(i32, i32)> = Some((200, 29));
+const SYSCONF_NAMES: Option<(c_int, c_int)> = Some((200, 29));
 #[cfg(target_os = "linux")]
-const SYSCONF_NAMES: Option<(i32, i32)> = Some((85, 30));
+const SYSCONF_NAMES: Option<(c_int, c_int)> = Some((85, 30));
 #[cfg(not(any(target_os = "macos", target_os = "linux")))]
-const SYSCONF_NAMES: Option<(i32, i32)> = None;
+const SYSCONF_NAMES: Option<(c_int, c_int)> = None;
 
 unsafe extern "C" {
-    fn sysconf(name: i32) -> i64;
+    fn sysconf(name: c_int) -> c_long;
 }
 
 /// Reads the memory of the machine in bytes, or 0 when it is not known, which leaves one worker thread.
@@ -161,7 +162,10 @@ fn calculate_diagonal_polynomial(row_count: usize, col_count: usize, jobs: u64) 
     let degree = rows * cols / 2;
 
     if !(rows * cols).is_multiple_of(2) {
-        return Ok(vec!["0".to_string(); degree + 1]);
+        let mut zeros = Vec::new();
+        zeros.try_reserve_exact(degree + 1).map_err(|_| "Invalid array length".to_string())?;
+        zeros.resize(degree + 1, "0".to_string());
+        return Ok(zeros);
     }
 
     let prime_count = ((calculate_log2_bound(rows, cols) + 1.0) / 30.0).ceil() as usize + 1;
@@ -240,5 +244,15 @@ mod tests {
     #[test]
     fn reads_the_memory_of_the_machine() {
         assert!(physical_memory() > 0);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn reads_the_memory_the_kernel_reports() {
+        let meminfo = std::fs::read_to_string("/proc/meminfo").unwrap();
+        let line = meminfo.lines().find(|line| line.starts_with("MemTotal:")).unwrap();
+        let kilobytes: u64 = line.split_whitespace().nth(1).unwrap().parse().unwrap();
+
+        assert_eq!(physical_memory() / 1024 / 1024, kilobytes / 1024);
     }
 }

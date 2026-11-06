@@ -173,7 +173,10 @@ def main(argv):
 
     try:
         coefficients = calculate_diagonal_polynomial(row_count, col_count, jobs)
-    except (MemoryError, ValueError) as error:
+    except MemoryError:
+        print("Invalid array length", file=sys.stderr)
+        return 1
+    except ValueError as error:
         print(error, file=sys.stderr)
         return 1
 
