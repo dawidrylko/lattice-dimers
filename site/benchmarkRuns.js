@@ -1,26 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const { testCasesOf, isEvenSquare } = require('../js/core/cases');
-const { listImplementations } = require('../js/core/registry');
 
 const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
-const LARGEST_PERIODIC_RESULTS = [
-  ...listImplementations('all-lattices-cylinder-torus-bigint').flatMap(({ file }) =>
-    ['10x10-king-torus', '12x12-king-cylinder', '12x12-square-torus', '12x12-square-cylinder'].map(board => `${path.basename(file)}_${board}.txt`),
-  ),
-  ...listImplementations('all-lattices-cylinder-torus-modular').flatMap(({ file }) =>
-    ['king', 'square'].flatMap(lattice => [
-      `${path.basename(file)}_14x14-${lattice}-torus.txt`,
-      `${path.basename(file)}_16x16-${lattice}-cylinder.txt`,
-    ]),
-  ),
-  ...listImplementations('diagonal-pieces-bigint').map(({ file }) => `${path.basename(file)}_12x12.txt`),
-  ...listImplementations('diagonal-pieces-modular').map(({ file }) => `${path.basename(file)}_20x20.txt`),
-];
-
-function resultFileName(fileName, { rowCount, colCount }) {
-  return `${fileName}_${rowCount}x${colCount}.txt`;
-}
 
 function readRunEnvironment(root, run) {
   const file = path.join(root, run, 'environment.json');
@@ -32,45 +13,23 @@ function readRunEnvironment(root, run) {
   }
 }
 
-function isMonthRun(run) {
-  return /^\d{4}-\d{2}$/.test(run);
-}
-
 function isCompleteRun(root, run) {
-  if (!isMonthRun(run)) {
-    const { complete, dirty } = readRunEnvironment(root, run);
+  const { complete, dirty } = readRunEnvironment(root, run);
 
-    return complete === true && dirty === false;
-  }
-
-  const lastNumber = testCasesOf('domino-rectangle-number').filter(isEvenSquare).at(-1);
-  const lastBigInt = testCasesOf('domino-rectangle-formula').at(-1);
-  const requiredFiles = [
-    'environment.json',
-    ...listImplementations('domino-rectangle-number').map(({ file }) => resultFileName(path.basename(file), lastNumber)),
-    ...['domino-rectangle-bigint', 'domino-rectangle-formula']
-      .flatMap(listImplementations)
-      .map(({ file }) => resultFileName(path.basename(file), lastBigInt)),
-    ...['domicule-rectangle-bigint', 'domicule-rectangle-modular']
-      .flatMap(listImplementations)
-      .flatMap(({ file }) => [16, 20].map(side => resultFileName(path.basename(file), { rowCount: side, colCount: side }))),
-    ...LARGEST_PERIODIC_RESULTS,
-  ];
-
-  return requiredFiles.every(file => fs.existsSync(path.join(root, run, file)));
+  return complete === true && dirty === false;
 }
 
 /**
  * Lists the benchmark runs, newest first, and picks the newest complete one: a partial run in a
- * new month, such as pnpm -C js start, must not replace the full table.
+ * new directory, such as pnpm -C js start, must not replace the full table.
  * @param {string} [root] The directory of the run directories.
  * @returns {{runs: string[], latest: string}} Every run and the newest complete one.
  */
 function readBenchmarkRuns(root = RESULTS_DIRECTORY) {
   const runs = fs
     .readdirSync(root)
-    .filter(name => isMonthRun(name) || fs.existsSync(path.join(root, name, 'environment.json')))
-    .map(name => ({ name, date: isMonthRun(name) ? name : readRunEnvironment(root, name).date || '' }))
+    .filter(name => fs.existsSync(path.join(root, name, 'environment.json')))
+    .map(name => ({ name, date: readRunEnvironment(root, name).date || '' }))
     .sort((a, b) => b.date.localeCompare(a.date) || b.name.localeCompare(a.name))
     .map(({ name }) => name);
   const latest = runs.find(run => isCompleteRun(root, run));
@@ -95,4 +54,25 @@ function listJavaScriptResults(directory, prefix) {
   return fs.readdirSync(directory).filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'));
 }
 
-module.exports = { readBenchmarkRuns, listJavaScriptResults };
+/**
+ * Says why plan.json records a board as not measured. A failure closes the larger boards of its
+ * series too, so a failed board may never have started.
+ * @param {{reason: string}} entry The entry of plan.json.
+ * @param {number} budgetHours The budget of one board in the run.
+ * @returns {string} The reason for the tooltip of a dash.
+ */
+function describeMissing({ reason }, budgetHours) {
+  if (reason === 'over budget') {
+    return `not measured: 10 runs would exceed the budget of ${budgetHours} h per board`;
+  }
+
+  if (/ETIMEDOUT/.test(reason)) {
+    return 'not measured: a run on this or a smaller board passed its time limit';
+  }
+
+  return /Last few GCs|exit code (134|137)|memory|Invalid array length|allocation/i.test(reason)
+    ? 'not measured: ran out of memory on this or a smaller board'
+    : 'not measured: a run failed on this or a smaller board';
+}
+
+module.exports = { readBenchmarkRuns, listJavaScriptResults, describeMissing };

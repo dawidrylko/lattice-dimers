@@ -1,0 +1,14 @@
+Average Execution Time: 7994.411 ms
+Average Process Time: 8010.085 ms
+Load Average Before: see host-load-ee071e57836d.txt
+---
+1. Execution Time: 7978.485 ms, Process Time: 7993.558 ms
+2. Execution Time: 7986.616 ms, Process Time: 8001.551 ms
+3. Execution Time: 8040.364 ms, Process Time: 8056.021 ms
+4. Execution Time: 7995.916 ms, Process Time: 8013.645 ms
+5. Execution Time: 7986.637 ms, Process Time: 8001.928 ms
+6. Execution Time: 8021.791 ms, Process Time: 8037.126 ms
+7. Execution Time: 8003.867 ms, Process Time: 8019.588 ms
+8. Execution Time: 7969.655 ms, Process Time: 7984.981 ms
+9. Execution Time: 7974.486 ms, Process Time: 7990.396 ms
+10. Execution Time: 7986.295 ms, Process Time: 8002.056 ms

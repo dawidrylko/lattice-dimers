@@ -1,0 +1,18 @@
+{
+  "complete": true,
+  "date": "2026-11-07",
+  "timing": "solver",
+  "commit": "ee071e57836d65d80c1ee0adcabbad3be02904f6",
+  "dirty": false,
+  "node": "v26.11.1",
+  "python": "Python 3.14.5",
+  "rust": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "platform": "Linux 7.0.12-linuxkit arm64",
+  "architecture": "arm64",
+  "cpu": "unknown",
+  "cores": 5,
+  "memory": "12 GB",
+  "host": "Darwin 27.2.0 arm64, Apple M4, 10 cores, 16 GB",
+  "image": "lattice-dimers-benchmark:ee071e57836d",
+  "valgrind": "valgrind-3.24.0"
+}

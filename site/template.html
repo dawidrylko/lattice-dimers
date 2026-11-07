@@ -279,7 +279,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="domino-cylinder-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not run on; the dash's tooltip says why.</p>
+      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domino" data-surface="torus" hidden>
       <div class="table-wrap">
@@ -288,7 +288,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="domino-torus-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not run on; the dash's tooltip says why.</p>
+      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="rectangle" hidden>
       <div class="table-wrap">
@@ -305,7 +305,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="cylinder-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not run on; the dash's tooltip says why.</p>
+      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="torus" hidden>
       <div class="table-wrap">
@@ -314,7 +314,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="torus-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not run on; the dash's tooltip says why.</p>
+      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
     <p class="note run">
       Mean time of the count each solver reports with <code>--time</code>. The tooltip of a time gives the whole process,
@@ -935,9 +935,9 @@ const MODULAR_AND_BIGINT_LANGUAGES = [
   { read: r => r.languages.rs },
   { read: r => r.languages.py },
   { read: r => r.modular },
-  { read: r => r.bigintLanguages.rs, missing: r => r.bigintMissing },
-  { read: r => r.bigintLanguages.py, missing: r => r.bigintMissing },
-  { read: r => r.bigint, missing: r => r.bigintMissing },
+  { read: r => r.bigintLanguages.rs, missing: r => r.bigintMissing?.rs },
+  { read: r => r.bigintLanguages.py, missing: r => r.bigintMissing?.py },
+  { read: r => r.bigint, missing: r => r.bigintMissing?.js },
 ];
 
 function columnLabel(th) {
@@ -981,12 +981,16 @@ renderSolverRows('torus-benchmark', DATA.periodicBenchmark.filter(r => r.surface
 renderSolverRows('cylinder-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
 
 if (DATA.environment) {
-  const { date, node, python, rust, commit, cpu, platform, cores, memory } = DATA.environment;
+  const { date, node, python, rust, commit, cpu, platform, cores, memory, host, image } = DATA.environment;
+  const [hostSystem, hostCpu, ...hostResources] = host ? host.split(', ') : [];
+  const machine = host
+    ? `${hostCpu} (${hostResources.join(', ')}, ${hostSystem})${image ? `, in a container with ${cores} cores and ${memory},` : ''}`
+    : `${cpu} (${cores} cores, ${memory}, ${platform})`;
   const runtimes = [`Node.js ${node}`, python, rust && rust.replace(/^rustc (\S+).*$/, 'Rust $1')].filter(Boolean);
   const runtimeList = runtimes.length > 1 ? `${runtimes.slice(0, -1).join(', ')} and ${runtimes.at(-1)}` : runtimes[0];
   document.querySelectorAll('.environment').forEach(
     span =>
-      (span.textContent = `Run on ${date} on ${cpu} (${cores} cores, ${memory}, ${platform}) with ${runtimeList}${commit ? `, commit ${commit.slice(0, 7)}` : ''}.`),
+      (span.textContent = `Run on ${date} on ${machine} with ${runtimeList}${commit ? `, commit ${commit.slice(0, 7)}` : ''}.`),
   );
 }
 

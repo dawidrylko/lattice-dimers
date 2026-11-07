@@ -1497,10 +1497,11 @@ async function checkBenchmark(page, baseUrl, width) {
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
           const headers = [...table.tHead.rows[0].cells];
-          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: headers[i + 2].textContent.trim().startsWith('BigInt') })));
+          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: headers[i + 2].textContent.trim().startsWith('BigInt'), reason: cell.querySelector('span[title]')?.title ?? '' })));
           const noted = [...group.querySelectorAll('.note')].some(note => note.textContent.startsWith('A dash under BigInt'));
           return [
             ...(cells.some(cell => cell.dash && !cell.bigint) ? [table.id + ' has a dash outside BigInt'] : []),
+            ...(cells.some(cell => cell.dash && !cell.reason.startsWith('not measured: ')) ? [table.id + ' has a dash with no reason from plan.json'] : []),
             ...(cells.some(cell => cell.dash) !== noted ? [table.id + (noted ? ' explains dashes it does not show' : ' shows a dash it does not explain')] : []),
           ];
         }),
@@ -1532,7 +1533,7 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${hash} has no time for ${state.missing.join(', ')} and no rows in ${state.empty.join(', ')}`);
     }
 
-    if (!/^Run on \d{4}-\d{2}-\d{2} on .+ with Node\.js /.test(state.environment)) {
+    if (!/^Run on \d{4}-\d{2}-\d{2} on .+ \(.+\), in a container with \d+ cores and \d+ GB, with Node\.js /.test(state.environment)) {
       problems.push(`#${hash} has no environment`);
     }
   }

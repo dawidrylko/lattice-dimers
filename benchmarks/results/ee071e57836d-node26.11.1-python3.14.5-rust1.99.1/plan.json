@@ -1,0 +1,315 @@
+{
+  "budgetHours": 1,
+  "runs": 10,
+  "jobs": 4,
+  "notMeasured": [
+    {
+      "series": "diagonal-pieces-bigint.js",
+      "board": "18x18",
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[843:0xffffaddc0000]    35360 ms: Scavenge (during sweeping) 2021.6 (2032.1) -> 2021.0 (2037.4) MB, pooled: 0.0 MB, 6.48 / 0.00 ms (average mu = 0.294, "
+    },
+    {
+      "series": "diagonal-pieces-bigint.js",
+      "board": "20x20",
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[843:0xffffaddc0000]    35360 ms: Scavenge (during sweeping) 2021.6 (2032.1) -> 2021.0 (2037.4) MB, pooled: 0.0 MB, 6.48 / 0.00 ms (average mu = 0.294, "
+    },
+    {
+      "series": "diagonal_pieces_bigint.py",
+      "board": "18x18",
+      "reason": "over budget",
+      "estimateTenRunsHours": 2.99
+    },
+    {
+      "series": "diagonal_pieces_bigint.py",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "diagonal-pieces-bigint.rs",
+      "board": "20x20",
+      "reason": "over budget",
+      "estimateTenRunsHours": 5.55
+    },
+    {
+      "series": "diagonal-pieces-modular.js",
+      "board": "20x20",
+      "reason": "over budget",
+      "estimateTenRunsHours": 1.67
+    },
+    {
+      "series": "diagonal_pieces_modular.py",
+      "board": "20x20",
+      "reason": "over budget",
+      "estimateTenRunsHours": 2.16
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.js-square-torus",
+      "board": "16x16",
+      "reason": "over budget",
+      "estimateTenRunsHours": 1.43
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.js-square-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.js-square-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_modular.py-square-torus",
+      "board": "16x16",
+      "reason": "over budget",
+      "estimateTenRunsHours": 1.79
+    },
+    {
+      "series": "all_lattices_cylinder_torus_modular.py-square-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_modular.py-square-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.rs-king-torus",
+      "board": "16x16",
+      "reason": "over budget",
+      "estimateTenRunsHours": 5.1
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.rs-king-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.rs-king-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_modular.py-king-torus",
+      "board": "16x16",
+      "reason": "over budget",
+      "estimateTenRunsHours": 11.5
+    },
+    {
+      "series": "all_lattices_cylinder_torus_modular.py-king-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_modular.py-king-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.js-king-torus",
+      "board": "16x16",
+      "reason": "over budget",
+      "estimateTenRunsHours": 16.9
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.js-king-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.js-king-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.rs-square-torus",
+      "board": "18x18",
+      "reason": "over budget",
+      "estimateTenRunsHours": 19.8
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.rs-square-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-square-cylinder",
+      "board": "20x20",
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2293:0xffffb5c00000]     8739 ms: Scavenge (during sweeping) 2039.7 (2043.3) -> 2037.8 (2043.3) MB, pooled: 0.0 MB, 0.41 / 0.00 ms (average mu = 0.241,"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-king-cylinder",
+      "board": "14x14",
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2310:0xffffa8f90000]     6455 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.44 / 0.00 ms (average mu = 0.136,"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-king-cylinder",
+      "board": "16x16",
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2310:0xffffa8f90000]     6455 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.44 / 0.00 ms (average mu = 0.136,"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-king-cylinder",
+      "board": "18x18",
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2310:0xffffa8f90000]     6455 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.44 / 0.00 ms (average mu = 0.136,"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-king-cylinder",
+      "board": "20x20",
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2310:0xffffa8f90000]     6455 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.44 / 0.00 ms (average mu = 0.136,"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
+      "board": "14x14",
+      "reason": "over budget",
+      "estimateTenRunsHours": 1.41
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
+      "board": "16x16",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.rs-king-cylinder",
+      "board": "18x18",
+      "reason": "over budget",
+      "estimateTenRunsHours": 2.1
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.rs-king-cylinder",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.rs-square-torus",
+      "board": "16x16",
+      "reason": "over budget",
+      "estimateTenRunsHours": 2.43
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.rs-square-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.rs-square-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-king-cylinder",
+      "board": "16x16",
+      "reason": "over budget",
+      "estimateTenRunsHours": 4.71
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-king-cylinder",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-king-cylinder",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-king-torus",
+      "board": "12x12",
+      "reason": "over budget",
+      "estimateTenRunsHours": 17.6
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-king-torus",
+      "board": "14x14",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-king-torus",
+      "board": "16x16",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-king-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-king-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-king-torus",
+      "board": "12x12",
+      "reason": "over budget",
+      "estimateTenRunsHours": 25.6
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-king-torus",
+      "board": "14x14",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-king-torus",
+      "board": "16x16",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-king-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-king-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-square-torus",
+      "board": "16x16",
+      "reason": "over budget",
+      "estimateTenRunsHours": 35.9
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-square-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.js-square-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.rs-king-torus",
+      "board": "14x14",
+      "reason": "over budget",
+      "estimateTenRunsHours": 58
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.rs-king-torus",
+      "board": "16x16",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.rs-king-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all-lattices-cylinder-torus-bigint.rs-king-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    }
+  ]
+}
