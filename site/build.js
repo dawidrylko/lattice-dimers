@@ -11,7 +11,6 @@ const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
 const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
 const diagonalReference = require('../js/solvers/diagonal-pieces-bigint.js');
-const { MAX_CIRCUMFERENCE: PERIODIC_BIGINT_CIRCUMFERENCE } = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
 const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
@@ -26,7 +25,6 @@ const OUTPUT_DIRECTORY = path.join(ROOT_DIRECTORY, 'dist', 'site');
 const BENCHMARK_ROOT = 'benchmarks/results';
 const RESULT_FILE = /_(\d+)x(\d+)\.txt$/;
 const PERIODIC_RESULT_FILE = /_(\d+)x(\d+)-(\w+)-(torus|cylinder)\.txt$/;
-const DIAGONAL_BIGINT_SIDE = diagonalReference.MAX_SHORTER_SIDE;
 const { latest: BENCHMARK_RUN } = readBenchmarkRuns();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
 const BROWSER_SCRIPTS = ['js/renderer/svg.js', 'js/renderer/rank.js'];
@@ -347,12 +345,7 @@ async function buildPeriodicBenchmark(lattice) {
       surface,
       tilings: await countPeriodicTilings({ rowCount, colCount, lattice, torus: surface === 'torus' }),
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
-      bigintMissing:
-        colCount > PERIODIC_BIGINT_CIRCUMFERENCE
-          ? `not run: BigInt counts circumferences up to ${PERIODIC_BIGINT_CIRCUMFERENCE}`
-          : surface === 'torus'
-            ? `not run: BigInt would run all 2^${colCount} sets of first-row cells`
-            : 'not run in this benchmark',
+      bigintMissing: readMissingReasons('all-lattices-cylinder-torus-bigint', `${rowCount}x${colCount}`, `-${lattice}-${surface}`),
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
       languages: readLanguages('all-lattices-cylinder-torus-modular', suffix),
       bigintLanguages: readLanguages('all-lattices-cylinder-torus-bigint', suffix),
@@ -379,12 +372,30 @@ function buildDiagonalBenchmark(totals) {
         colCount,
         tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
         bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
-        bigintMissing: `not run: BigInt counts boards with a shorter side up to ${DIAGONAL_BIGINT_SIDE}`,
+        bigintMissing: readMissingReasons('diagonal-pieces-bigint', `${rowCount}x${colCount}`),
         bigintLanguages: readLanguages('diagonal-pieces-bigint', suffix),
         modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
         languages: readLanguages('diagonal-pieces-modular', suffix),
       };
     });
+}
+
+function describeMissing({ reason }, budgetHours) {
+  return reason === 'over budget'
+    ? `not measured: 10 runs would exceed the budget of ${budgetHours} h per board`
+    : 'not measured: ran out of memory';
+}
+
+function readMissingReasons(algorithm, board, seriesSuffix = '') {
+  const { budgetHours, notMeasured } = JSON.parse(fs.readFileSync(path.join(BENCHMARK_DIRECTORY, 'plan.json'), 'utf-8'));
+
+  return Object.fromEntries(
+    listImplementations(algorithm).map(({ language, file }) => {
+      const entry = notMeasured.find(({ series, board: other }) => series === `${path.basename(file)}${seriesSuffix}` && other === board);
+
+      return [language, entry ? describeMissing(entry, budgetHours) : null];
+    }),
+  );
 }
 
 function readLanguages(algorithm, suffix) {

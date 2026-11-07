@@ -1,0 +1,272 @@
+[
+  {
+    "file": "domino-rectangle-formula.rs",
+    "board": "-r 20 -c 20",
+    "counts": [
+      3861638,
+      3861638,
+      3861638
+    ],
+    "instructions": 3861638
+  },
+  {
+    "file": "domino_rectangle_formula.py",
+    "board": "-r 20 -c 20",
+    "counts": [
+      226256000,
+      191683167,
+      191683560
+    ],
+    "instructions": 191683560
+  },
+  {
+    "file": "domino-rectangle-formula.js",
+    "board": "-r 20 -c 20",
+    "counts": [
+      116138338,
+      117748327,
+      111480912
+    ],
+    "instructions": 116138338
+  },
+  {
+    "file": "domino-rectangle-number.rs",
+    "board": "-r 8 -c 8",
+    "counts": [
+      1211289,
+      1211289,
+      1211289
+    ],
+    "instructions": 1211289
+  },
+  {
+    "file": "domino_rectangle_number.py",
+    "board": "-r 8 -c 8",
+    "counts": [
+      253715384,
+      253805896,
+      254058302
+    ],
+    "instructions": 253805896
+  },
+  {
+    "file": "domino-rectangle-number.js",
+    "board": "-r 8 -c 8",
+    "counts": [
+      191996420,
+      183964407,
+      191343612
+    ],
+    "instructions": 191343612
+  },
+  {
+    "file": "domino-rectangle-bigint.rs",
+    "board": "-r 8 -c 8",
+    "counts": [
+      1723950,
+      1723950,
+      1723950
+    ],
+    "instructions": 1723950
+  },
+  {
+    "file": "domino_rectangle_bigint.py",
+    "board": "-r 8 -c 8",
+    "counts": [
+      247348881,
+      247491287,
+      247480178
+    ],
+    "instructions": 247480178
+  },
+  {
+    "file": "domino-rectangle-bigint.js",
+    "board": "-r 8 -c 8",
+    "counts": [
+      269051099,
+      265930601,
+      262447976
+    ],
+    "instructions": 265930601
+  },
+  {
+    "file": "domicule-rectangle-modular.rs",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      3151255,
+      3151255,
+      3151255
+    ],
+    "instructions": 3151255
+  },
+  {
+    "file": "domicule_rectangle_modular.py",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      682326858,
+      681185541,
+      682194413
+    ],
+    "instructions": 682194413
+  },
+  {
+    "file": "domicule-rectangle-modular.js",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      577741828,
+      576015337,
+      576056699
+    ],
+    "instructions": 576056699
+  },
+  {
+    "file": "domicule-rectangle-bigint.rs",
+    "board": "-r 8 -c 8",
+    "counts": [
+      8361835,
+      8361835,
+      8361835
+    ],
+    "instructions": 8361835
+  },
+  {
+    "file": "domicule_rectangle_bigint.py",
+    "board": "-r 8 -c 8",
+    "counts": [
+      231818419,
+      231697816,
+      231686242
+    ],
+    "instructions": 231697816
+  },
+  {
+    "file": "domicule-rectangle-bigint.js",
+    "board": "-r 8 -c 8",
+    "counts": [
+      203805310,
+      210743014,
+      207747885
+    ],
+    "instructions": 207747885
+  },
+  {
+    "file": "diagonal-pieces-modular.rs",
+    "board": "-r 6 -c 6 -j 1",
+    "counts": [
+      1851689,
+      1851689,
+      1851689
+    ],
+    "instructions": 1851689
+  },
+  {
+    "file": "diagonal_pieces_modular.py",
+    "board": "-r 6 -c 6 -j 1",
+    "counts": [
+      613764319,
+      613973171,
+      613378565
+    ],
+    "instructions": 613764319
+  },
+  {
+    "file": "diagonal-pieces-modular.js",
+    "board": "-r 6 -c 6 -j 1",
+    "counts": [
+      406407562,
+      423971499,
+      422256609
+    ],
+    "instructions": 422256609
+  },
+  {
+    "file": "diagonal-pieces-bigint.rs",
+    "board": "-r 6 -c 6",
+    "counts": [
+      6498874,
+      6498874,
+      6498874
+    ],
+    "instructions": 6498874
+  },
+  {
+    "file": "diagonal_pieces_bigint.py",
+    "board": "-r 6 -c 6",
+    "counts": [
+      216486557,
+      216779295,
+      216626985
+    ],
+    "instructions": 216626985
+  },
+  {
+    "file": "diagonal-pieces-bigint.js",
+    "board": "-r 6 -c 6",
+    "counts": [
+      168761570,
+      173493290,
+      172478212
+    ],
+    "instructions": 172478212
+  },
+  {
+    "file": "all-lattices-cylinder-torus-modular.rs",
+    "board": "-r 8 -c 8 --lattice king -j 1",
+    "counts": [
+      9162943,
+      9162943,
+      9162943
+    ],
+    "instructions": 9162943
+  },
+  {
+    "file": "all_lattices_cylinder_torus_modular.py",
+    "board": "-r 8 -c 8 --lattice king -j 1",
+    "counts": [
+      767089585,
+      767323796,
+      766907856
+    ],
+    "instructions": 767089585
+  },
+  {
+    "file": "all-lattices-cylinder-torus-modular.js",
+    "board": "-r 8 -c 8 --lattice king -j 1",
+    "counts": [
+      1071391356,
+      1061569856,
+      1042597547
+    ],
+    "instructions": 1061569856
+  },
+  {
+    "file": "all-lattices-cylinder-torus-bigint.rs",
+    "board": "-r 6 -c 6 --lattice king",
+    "counts": [
+      1020510,
+      1020510,
+      1020510
+    ],
+    "instructions": 1020510
+  },
+  {
+    "file": "all_lattices_cylinder_torus_bigint.py",
+    "board": "-r 6 -c 6 --lattice king",
+    "counts": [
+      209608111,
+      209753923,
+      209793126
+    ],
+    "instructions": 209753923
+  },
+  {
+    "file": "all-lattices-cylinder-torus-bigint.js",
+    "board": "-r 6 -c 6 --lattice king",
+    "counts": [
+      141921194,
+      139882352,
+      144076260
+    ],
+    "instructions": 141921194
+  }
+]
