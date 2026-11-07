@@ -15,7 +15,7 @@ const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
-const { readBenchmarkRuns, listJavaScriptResults } = require('./benchmarkRuns');
+const { readBenchmarkRuns, listJavaScriptResults, describeMissing } = require('./benchmarkRuns');
 const { DEFAULT_BOARD } = require('./defaultBoard');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -372,7 +372,6 @@ function buildDiagonalBenchmark(totals) {
         colCount,
         tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
         bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
-        bigintMissing: readMissingReasons('diagonal-pieces-bigint', `${rowCount}x${colCount}`),
         bigintLanguages: readLanguages('diagonal-pieces-bigint', suffix),
         modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
         languages: readLanguages('diagonal-pieces-modular', suffix),
@@ -380,13 +379,7 @@ function buildDiagonalBenchmark(totals) {
     });
 }
 
-function describeMissing({ reason }, budgetHours) {
-  return reason === 'over budget'
-    ? `not measured: 10 runs would exceed the budget of ${budgetHours} h per board`
-    : 'not measured: ran out of memory';
-}
-
-function readMissingReasons(algorithm, board, seriesSuffix = '') {
+function readMissingReasons(algorithm, board, seriesSuffix) {
   const { budgetHours, notMeasured } = JSON.parse(fs.readFileSync(path.join(BENCHMARK_DIRECTORY, 'plan.json'), 'utf-8'));
 
   return Object.fromEntries(

@@ -54,4 +54,25 @@ function listJavaScriptResults(directory, prefix) {
   return fs.readdirSync(directory).filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'));
 }
 
-module.exports = { readBenchmarkRuns, listJavaScriptResults };
+/**
+ * Says why plan.json records a board as not measured. A failure closes the larger boards of its
+ * series too, so a failed board may never have started.
+ * @param {{reason: string}} entry The entry of plan.json.
+ * @param {number} budgetHours The budget of one board in the run.
+ * @returns {string} The reason for the tooltip of a dash.
+ */
+function describeMissing({ reason }, budgetHours) {
+  if (reason === 'over budget') {
+    return `not measured: 10 runs would exceed the budget of ${budgetHours} h per board`;
+  }
+
+  if (/ETIMEDOUT/.test(reason)) {
+    return 'not measured: a run on this or a smaller board passed its time limit';
+  }
+
+  return /Last few GCs|exit code (134|137)|memory|Invalid array length|allocation/i.test(reason)
+    ? 'not measured: ran out of memory on this or a smaller board'
+    : 'not measured: a run failed on this or a smaller board';
+}
+
+module.exports = { readBenchmarkRuns, listJavaScriptResults, describeMissing };

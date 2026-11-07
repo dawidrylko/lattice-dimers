@@ -83,4 +83,4 @@ An algorithm is a solver apart from its language. [`spec/algorithms.json`](../sp
 | run directory | one measurement in `benchmarks/results`, named by commit and Node.js, Python and Rust versions, so two runs compare one change at a time | `benchmarks/README.md`, `benchmarks/environment.js` | |
 | board budget | an optional limit on the 10 runs of one board in one language; `plan.json` lists what it left out | `benchmarks/README.md`, `benchmarks/full.js` | |
 | instruction count | the instructions Cachegrind counts for a run on a small board, the benchmark signal for regressions in Rust and Python | `benchmarks/README.md`, `instructions.json` | |
-| process time | the time of the whole process of one run, start-up included; the benchmark files record it next to the time of the count, and the site shows it in a tooltip | `benchmarks/README.md`, the files in `benchmarks/results` from November 2026 on | |
+| process time | the time of the whole process of one run, start-up included; the benchmark files record it next to the time of the count, and the site shows it in a tooltip | `benchmarks/README.md`, the files in `benchmarks/results` | |
