@@ -15,7 +15,7 @@ const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
-const { readBenchmarkRuns, listJavaScriptResults, describeMissing, formerResultName, resultFileOf } = require('./benchmarkRuns');
+const { readBenchmarkRuns, findSeriesRun, listJavaScriptResults, describeMissing, formerResultName, resultFileOf } = require('./benchmarkRuns');
 const { DEFAULT_BOARD } = require('./defaultBoard');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -27,6 +27,9 @@ const RESULT_FILE = /_(\d+)x(\d+)\.txt$/;
 const PERIODIC_RESULT_FILE = /_(\d+)x(\d+)-(\w+)-(torus|cylinder)\.txt$/;
 const { latest: BENCHMARK_RUN } = readBenchmarkRuns();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
+const PERIODIC_DIAGONAL_PREFIX = 'domicule-cylinder-torus-polynomial-';
+const PERIODIC_DIAGONAL_RESULT_FILE = /_(\d+)x(\d+)-(torus|cylinder)\.txt$/;
+const PERIODIC_DIAGONAL_RUN = findSeriesRun(PERIODIC_DIAGONAL_PREFIX, path.join(ROOT_DIRECTORY, BENCHMARK_ROOT));
 const BROWSER_SCRIPTS = ['js/renderer/svg.js', 'js/renderer/rank.js'];
 const WORKER_SCRIPTS = [
   'js/renderer/unrank.js',
@@ -408,8 +411,49 @@ function buildDiagonalBenchmark(totals) {
     });
 }
 
-function readMissingReasons(algorithm, board, seriesSuffix) {
-  const { budgetHours, notMeasured } = JSON.parse(fs.readFileSync(path.join(BENCHMARK_DIRECTORY, 'plan.json'), 'utf-8'));
+/**
+ * Reads the times of the solvers that count the domicule tilings of cylinders and tori by diagonal
+ * pieces, from the newest clean run that measured them, which may not be the run of the other tables.
+ * @returns {Object[]} One row per board, the tori first; none before such a run exists.
+ */
+function buildPeriodicDiagonalBenchmark() {
+  if (PERIODIC_DIAGONAL_RUN === null) {
+    return [];
+  }
+
+  const directory = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, PERIODIC_DIAGONAL_RUN);
+  const prefix = PERIODIC_DIAGONAL_PREFIX;
+
+  return listJavaScriptResults(directory, prefix)
+    .map(fileName => fileName.match(PERIODIC_DIAGONAL_RESULT_FILE))
+    .filter(Boolean)
+    .map(([, rowCount, colCount, surface]) => `${surface}/${rowCount}x${colCount}`)
+    .filter((board, index, all) => all.indexOf(board) === index)
+    .map(board => {
+      const [surface, size] = board.split('/');
+      const [rowCount, colCount] = size.split('x').map(Number);
+      return { surface, rowCount, colCount };
+    })
+    .sort((a, b) => b.surface.localeCompare(a.surface) || a.rowCount - b.rowCount)
+    .map(({ surface, rowCount, colCount }) => {
+      const suffix = `_${rowCount}x${colCount}-${surface}.txt`;
+      return {
+        rowCount,
+        colCount,
+        surface,
+        tilings: readStoredPeriodicCount({ rowCount, colCount, lattice: 'king', torus: surface === 'torus' }),
+        bigint: readAverageTime(directory, `${prefix}bigint.js${suffix}`),
+        bigintLanguages: readLanguages(`${prefix}bigint`, suffix, directory),
+        bigintMissing: readMissingReasons(`${prefix}bigint`, `${rowCount}x${colCount}`, `-${surface}`, directory),
+        modular: readAverageTime(directory, `${prefix}modular.js${suffix}`),
+        languages: readLanguages(`${prefix}modular`, suffix, directory),
+      };
+    });
+}
+
+function readMissingReasons(algorithm, board, seriesSuffix, directory = BENCHMARK_DIRECTORY) {
+  const plan = path.join(directory, 'plan.json');
+  const { budgetHours, notMeasured } = fs.existsSync(plan) ? JSON.parse(fs.readFileSync(plan, 'utf-8')) : { budgetHours: null, notMeasured: [] };
 
   return Object.fromEntries(
     listImplementations(algorithm).map(({ language, file }) => {
@@ -421,11 +465,11 @@ function readMissingReasons(algorithm, board, seriesSuffix) {
   );
 }
 
-function readLanguages(algorithm, suffix) {
+function readLanguages(algorithm, suffix, directory = BENCHMARK_DIRECTORY) {
   return Object.fromEntries(
     listImplementations(algorithm)
       .filter(({ language }) => language !== 'js')
-      .map(({ language, file }) => [language, readAverageTime(BENCHMARK_DIRECTORY, `${path.basename(file)}${suffix}`)]),
+      .map(({ language, file }) => [language, readAverageTime(directory, `${path.basename(file)}${suffix}`)]),
   );
 }
 
@@ -728,7 +772,12 @@ async function __main__() {
     periodicBenchmark: await buildPeriodicBenchmark('king'),
     dominoPeriodicBenchmark: await buildPeriodicBenchmark('square'),
     diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
+    periodicDiagonalBenchmark: buildPeriodicDiagonalBenchmark(),
     environment: readEnvironment(BENCHMARK_DIRECTORY),
+    periodicDiagonalRun: PERIODIC_DIAGONAL_RUN && {
+      directory: `${BENCHMARK_ROOT}/${PERIODIC_DIAGONAL_RUN}`,
+      environment: readEnvironment(path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, PERIODIC_DIAGONAL_RUN)),
+    },
   };
   const notes = listNotes();
   await buildNotes(notes, {
@@ -739,6 +788,8 @@ async function __main__() {
     periodicBenchmark: data.periodicBenchmark,
     dominoPeriodicBenchmark: data.dominoPeriodicBenchmark,
     diagonalBenchmark: data.diagonalBenchmark,
+    periodicDiagonalBenchmark: data.periodicDiagonalBenchmark,
+    periodicDiagonalRun: data.periodicDiagonalRun,
     periodicDiagonals: periodicBoards
       .filter(({ diagonals }) => diagonals)
       .map(({ surface, rowCount, diagonals }) => ({ surface, side: rowCount, diagonals })),
@@ -766,6 +817,7 @@ async function __main__() {
     .replace('__JSON_LD__', () => JSON.stringify(buildJsonLd()).replace(/</g, '\\u003c'))
     .replace(/__SITE_URL__/g, SITE_URL)
     .replace(/__BENCHMARK_DIRECTORY__/g, `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`)
+    .replace(/__PERIODIC_DIAGONAL_DIRECTORY__/g, PERIODIC_DIAGONAL_RUN ? `${BENCHMARK_ROOT}/${PERIODIC_DIAGONAL_RUN}` : BENCHMARK_ROOT)
     .replace(/__DOMICULE_SWEEPS__/g, DOMICULE_SWEEPS.toLocaleString('en-US'))
     .replace('__THEME_CSS__', () => THEME_CSS)
     .replace('__CHROME_CSS__', () => CHROME_CSS)

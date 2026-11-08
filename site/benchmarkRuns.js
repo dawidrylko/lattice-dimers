@@ -91,6 +91,20 @@ function listJavaScriptResults(directory, prefix) {
 }
 
 /**
+ * Finds the newest clean run that measured the solvers a prefix names. A solver added after the
+ * complete run the site shows is measured in a run of its own, which stays incomplete because it
+ * leaves the other solvers out, so its table reads that run instead.
+ * @param {string} prefix The start of the solver id.
+ * @param {string} [root] The directory of the run directories.
+ * @returns {string|null} The name of the run directory, or null when no run measured them.
+ */
+function findSeriesRun(prefix, root = RESULTS_DIRECTORY) {
+  const { runs } = readBenchmarkRuns(root);
+
+  return runs.find(run => readRunEnvironment(root, run).dirty === false && listJavaScriptResults(path.join(root, run), prefix).length) ?? null;
+}
+
+/**
  * Says why plan.json records a board as not measured. A failure closes the larger boards of its
  * series too, so a failed board may never have started.
  * @param {{reason: string}} entry The entry of plan.json.
@@ -111,4 +125,4 @@ function describeMissing({ reason }, budgetHours) {
     : 'not measured: a run failed on this or a smaller board';
 }
 
-module.exports = { readBenchmarkRuns, listJavaScriptResults, describeMissing, formerResultName, resultFileOf };
+module.exports = { readBenchmarkRuns, findSeriesRun, listJavaScriptResults, describeMissing, formerResultName, resultFileOf };

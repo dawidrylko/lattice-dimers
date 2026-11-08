@@ -57,6 +57,8 @@ Its `plan.json` records the other 55 boards. Of these, 47 are over the budget. T
 
 This run predates the rename of 2026-11-08, so its files and `plan.json` keep the former ids `diagonal-pieces-*` and `diagonal_pieces_*`. The site and `pnpm -C js benchmark:compare` read them under `domicule-rectangle-polynomial-*` through `FORMER_NAMES` in [`site/benchmarkRuns.js`](../site/benchmarkRuns.js), which can go once this run is replaced.
 
+The cylinder and torus solvers by diagonal pieces, `domicule-cylinder-torus-polynomial-*`, came after this run. They are measured in a run of their own, `pnpm -C js benchmark domicule-cylinder-torus-polynomial-modular` and `pnpm -C js benchmark domicule-cylinder-torus-polynomial-bigint` from one commit, whose result files end in `-cylinder` or `-torus`. That run stays incomplete, since it leaves the other solvers out, so the site keeps this run for every other table and reads the newest clean run that measured these solvers for theirs (`findSeriesRun` in [`site/benchmarkRuns.js`](../site/benchmarkRuns.js)).
+
 The noise measured right before the run gave a largest difference of medians of 0.67 % and a largest variation of 3.67 %; `results/noise-*` stays outside git. With no container running, the host load read 1.5 to 2.1 before each solver, never the load below 1 that the steps above ask for, and during the runs it read 1.5 to 7.0 in the host load file. Spotlight was not turned off during the first part and was off during the resumed one. Time Machine was left as it was in both.
 
 The language icons on the site are the Rust, Python and JavaScript marks of [simple-icons](https://simpleicons.org) 16.34.0, under CC0 1.0.

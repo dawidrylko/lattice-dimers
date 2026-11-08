@@ -22,12 +22,14 @@ const DOMINO_GROUP = {
 const DOMICULE_FILES = ['domicule-rectangle-bigint', 'domicule-rectangle-modular'].map(javaScriptFileOf);
 const PERIODIC_FILES = ['all-lattices-cylinder-torus-bigint', 'all-lattices-cylinder-torus-modular'].map(javaScriptFileOf);
 const DIAGONAL_FILES = ['domicule-rectangle-polynomial-bigint', 'domicule-rectangle-polynomial-modular'].map(javaScriptFileOf);
+const PERIODIC_DIAGONAL_FILES = ['domicule-cylinder-torus-polynomial-bigint', 'domicule-cylinder-torus-polynomial-modular'].map(javaScriptFileOf);
 const PERIODIC_CASES = testCasesOf('all-lattices-cylinder-torus-modular');
 const DIAGONAL_CASES = testCasesOf('domicule-rectangle-polynomial-modular');
+const PERIODIC_DIAGONAL_CASES = testCasesOf('domicule-cylinder-torus-polynomial-modular');
 const DOMICULE_BOARDS = [...testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare), { rowCount: 20, colCount: 20 }];
 const PERIODIC_GROUPS = ['--torus', '--cylinder'];
 const USAGE =
-  'Usage: node benchmarks/runner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal] [--lattice king|triangular|square] [--force]';
+  'Usage: node benchmarks/runner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal | --diagonal-cylinder | --diagonal-torus] [--lattice king|triangular|square] [--force]';
 
 function displayPath(file) {
   const relative = path.relative(path.join(__dirname, '..'), file);
@@ -60,6 +62,8 @@ function listGroups(lattice) {
     '--torus': [{ files: PERIODIC_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice, torus: true }), PERIODIC_CASES) }],
     '--cylinder': [{ files: PERIODIC_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice }), PERIODIC_CASES) }],
     '--diagonal': [{ files: DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
+    '--diagonal-cylinder': [{ files: PERIODIC_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { torus: false }), PERIODIC_DIAGONAL_CASES) }],
+    '--diagonal-torus': [{ files: PERIODIC_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { torus: true }), PERIODIC_DIAGONAL_CASES) }],
   };
 }
 
@@ -105,7 +109,8 @@ function ensureDirectoryExists(directory) {
 
 function generateFileName(options) {
   const { directory, fileName, rowCount, colCount, lattice, torus } = options;
-  const surface = lattice ? `-${lattice}-${torus ? 'torus' : 'cylinder'}` : '';
+  const surfaceName = torus ? 'torus' : 'cylinder';
+  const surface = lattice ? `-${lattice}-${surfaceName}` : typeof torus === 'boolean' ? `-${surfaceName}` : '';
 
   return path.join(directory, `${path.basename(fileName)}_${rowCount}x${colCount}${surface}.txt`);
 }

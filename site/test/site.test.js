@@ -6,6 +6,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const { after, before, describe, test } = require('node:test');
 const { DOMICULE_SWEEPS } = require('../../js/renderer');
+const { findSeriesRun } = require('../benchmarkRuns');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..', '..');
 const SITE_DIRECTORY = path.resolve(process.env.SITE_DIRECTORY || path.join(ROOT_DIRECTORY, 'dist', 'site'));
@@ -37,6 +38,9 @@ const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGES = [['Rust', '#icon-rust'], ['Python', '#icon-python'], ['JavaScript', '#icon-javascript']];
 const solverColumns = (solver, languages) => LANGUAGES.filter(([name]) => languages.includes(name)).map(([name, icon]) => ({ name: `${solver}, ${name}`, icon: `${solver} ${icon}` }));
 const MODULAR_AND_BIGINT = [solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])];
+const PERIODIC_DIAGONAL_MEASURED = findSeriesRun('domicule-cylinder-torus-polynomial-') !== null;
+const SHOWN_ROWS = id =>
+  `document.querySelectorAll('#${id} tr').length > 0 || (${!PERIODIC_DIAGONAL_MEASURED} && /^(cylinder|torus)-diagonal-/.test('${id}') && !document.querySelector('.bench-group:not([hidden]) [data-unmeasured]').hidden)`;
 const LANGUAGE_TABLES = [
   ['domino/rectangle', 'domino-benchmark', 'DATA.benchmark', '36', 'FORMULA_AND_BIGINT_LANGUAGES', [solverColumns('Formula', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])]],
   ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
@@ -45,6 +49,12 @@ const LANGUAGE_TABLES = [
   ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
   ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
   ['domicule/rectangle/diagonal', 'diagonal-benchmark', 'DATA.diagonalBenchmark', '280', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ...(PERIODIC_DIAGONAL_MEASURED
+    ? [
+        ['domicule/cylinder/diagonal', 'cylinder-diagonal-benchmark', "DATA.periodicDiagonalBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+        ['domicule/torus/diagonal', 'torus-diagonal-benchmark', "DATA.periodicDiagonalBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+      ]
+    : []),
 ];
 const SHOWN_BENCHMARK = `(() => {
   const view = group => group.dataset.pieces + '/' + group.dataset.surface + (group.dataset.count ? '/' + group.dataset.count : '');
@@ -129,7 +139,7 @@ const NOTES = [
   },
   {
     slug: 'domicules/diagonal-pieces',
-    cells: 7, figures: 1,
+    cells: 8, figures: 1,
     group: 'Domicules',
     h1: 'Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673 on the 2n × 2n board)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Cylinders and tori', 'Running time', 'PARI/GP', 'Verification', 'References'],
@@ -1472,11 +1482,13 @@ async function checkBenchmark(page, baseUrl, width) {
     ['benchmark/tori', 'domicule/torus', 'torus-benchmark-rows', null],
     ['benchmark/domicule/rectangle/diagonal', 'domicule/rectangle/diagonal', 'diagonal-benchmark-rows', 'some'],
     ['benchmark/diagonals', 'domicule/rectangle/diagonal', 'diagonal-benchmark-rows', null],
-    ['benchmark/domicule/torus/diagonal', 'domicule/torus', 'torus-benchmark-rows', null],
+    ['benchmark/domicule/cylinder/diagonal', 'domicule/cylinder/diagonal', 'cylinder-diagonal-benchmark-rows', PERIODIC_DIAGONAL_MEASURED ? 'some' : null],
+    ['benchmark/domicule/torus/diagonal', 'domicule/torus/diagonal', 'torus-diagonal-benchmark-rows', PERIODIC_DIAGONAL_MEASURED ? 'some' : null],
+    ['benchmark/domino/torus/diagonal', 'domino/torus', 'domino-torus-benchmark-rows', null],
     ['benchmark/domino/hexagon', 'domino/rectangle', 'domino-benchmark-rows', null],
   ]) {
     await loadSite(page, baseUrl, width, hash);
-    await page.waitFor(`document.querySelectorAll('#${rows} tr').length > 0`, `the ${view} rows`);
+    await page.waitFor(SHOWN_ROWS(rows), `the ${view} rows`);
     await page.settle();
     const shown = await page.evaluate(SHOWN_BENCHMARK);
     const state = await page.evaluate(`(() => {
@@ -1502,13 +1514,13 @@ async function checkBenchmark(page, baseUrl, width) {
         ),
         environment: section.querySelector('.environment').textContent,
         titles: section.querySelectorAll('.bench-group h2, .bench-group h3').length,
-        older: section.textContent.split('benchmarks/results/').length !== 2 || /pnpm/.test(section.textContent),
+        older: section.innerText.split('benchmarks/results/').length !== 2 + section.querySelectorAll('.bench-group:not([hidden]) [data-run]:not([hidden])').length || /pnpm/.test(section.textContent),
         rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
           const headers = [...table.tHead.rows[0].cells];
           const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: headers[i + 2].textContent.trim().startsWith('BigInt'), reason: cell.querySelector('span[title]')?.title ?? '' })));
-          const noted = [...group.querySelectorAll('.note')].some(note => note.textContent.startsWith('A dash under BigInt'));
+          const noted = [...group.querySelectorAll('.note:not([hidden])')].some(note => note.textContent.startsWith('A dash under BigInt'));
           return [
             ...(cells.some(cell => cell.dash && !cell.bigint) ? [table.id + ' has a dash outside BigInt'] : []),
             ...(cells.some(cell => cell.dash && !cell.reason.startsWith('not measured: ')) ? [table.id + ' has a dash with no reason from plan.json'] : []),
@@ -1535,7 +1547,7 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${hash} shows ${shown.shown} with ${shown.pressed} pressed instead of ${view}`);
     }
 
-    if (shown.counted !== view.startsWith('domicule/rectangle')) {
+    if (shown.counted !== view.startsWith('domicule/')) {
       problems.push(`#${hash} ${shown.counted ? 'shows' : 'hides'} the Count switch`);
     }
 
@@ -1697,7 +1709,7 @@ async function checkBenchmark(page, baseUrl, width) {
   return problems;
 }
 
-const READ_CARD_LINKS = `[...document.querySelectorAll('#benchmark table')].flatMap(table => {
+const READ_CARD_LINKS = `[...document.querySelectorAll('#benchmark table')].filter(table => table.tBodies[0].rows.length).flatMap(table => {
     const row = table.tBodies[0].rows[0];
 
     return [...table.tHead.rows[0].cells].flatMap((th, i) => {
@@ -1736,7 +1748,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const groups = await page.evaluate("[...document.querySelectorAll('#benchmark .bench-group')].map(group => group.dataset.pieces + '/' + group.dataset.surface + (group.dataset.count ? '/' + group.dataset.count : '')).sort().join()");
   const views = pieces.flatMap(p =>
     surfaces.flatMap(surface =>
-      p === 'domicule' && surface === 'rectangle' ? counts.map(count => (count === 'all' ? `${p}/${surface}` : `${p}/${surface}/${count}`)) : [`${p}/${surface}`],
+      p === 'domicule' ? counts.map(count => (count === 'all' ? `${p}/${surface}` : `${p}/${surface}/${count}`)) : [`${p}/${surface}`],
     ),
   );
   const cardLinks = [];
@@ -1752,7 +1764,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       `document.querySelector('#benchmark-pieces button[data-pieces=${p}]').click(); document.querySelector('#benchmark-surfaces button[data-surface=${surface}]').click(); document.querySelector('#benchmark-counts button[data-count=${count}]').click()`,
     );
     await page.waitFor(
-      `!document.querySelector('${group}').hidden && document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0`,
+      `!document.querySelector('${group}').hidden && (document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0 || (${!PERIODIC_DIAGONAL_MEASURED} && ${surface !== 'rectangle' && count === 'diagonal'}))`,
       `the ${view} rows`,
     );
     cardLinks.push(await page.evaluate(READ_CARD_LINKS));
@@ -1805,6 +1817,8 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     'cylinder-benchmark': 'domicules/cylinders',
     'torus-benchmark': 'domicules/tori',
     'diagonal-benchmark': 'domicules/diagonal-pieces',
+    'cylinder-diagonal-benchmark': 'domicules/diagonal-pieces',
+    'torus-diagonal-benchmark': 'domicules/diagonal-pieces',
   };
   const expected = label => {
     const [table, solver] = label.split(/[ ,]/);
@@ -1819,9 +1833,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     problems.push(`at ${width} px the solver links of the benchmark cards are wrong: ${wrongCards.map(({ label, problem, display, tapped }) => `${label} ${problem || `display ${display}, tapped ${tapped}`}`).join('; ')}`);
   }
 
-  if (headers.length !== 42 || wrong.length) {
+  if (headers.length !== 54 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 42 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 54 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 
