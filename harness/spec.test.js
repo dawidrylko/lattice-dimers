@@ -265,3 +265,21 @@ describe('the shared test data', () => {
     assert.ok(ids.includes(cli.timeSpan.algorithm));
   });
 });
+
+test('every cylinder and torus of the benchmark run the site shows has a stored count', () => {
+  const { readBenchmarkRuns, listJavaScriptResults } = require('../site/benchmarkRuns');
+  const { latest } = readBenchmarkRuns();
+  const directory = path.join(ROOT_DIRECTORY, 'benchmarks', 'results', latest);
+  const stored = new Set(
+    testCasesOf('all-lattices-cylinder-torus-modular')
+      .filter(({ twisted }) => !twisted)
+      .map(({ rowCount, colCount, lattice, torus }) => `${rowCount}x${colCount}-${lattice}-${torus ? 'torus' : 'cylinder'}`),
+  );
+  const measured = listJavaScriptResults(directory, 'all-lattices-cylinder-torus-')
+    .map(fileName => fileName.match(/_(\d+x\d+-(?:king|square)-(?:torus|cylinder))\.txt$/))
+    .filter(Boolean)
+    .map(([, board]) => board);
+
+  assert.ok(measured.length > 0);
+  assert.deepEqual([...new Set(measured.filter(board => !stored.has(board)))], [], 'Add these counts to spec/cases/all-lattices-cylinder-torus-modular.json.');
+});

@@ -135,6 +135,36 @@ function countTilings(board) {
 const periodicCounts = new Map();
 
 /**
+ * Finds the stored count of a cylinder or torus that is not twisted.
+ * @param {Object} board The board, as for countPeriodicTilings.
+ * @returns {Object|undefined} The case of spec/cases/, if there is one.
+ */
+function findPeriodicCase({ rowCount, colCount, lattice, torus }) {
+  return testCasesPeriodic.find(
+    t => t.rowCount === rowCount && t.colCount === colCount && t.lattice === lattice && !t.torus === !torus && !t.twisted,
+  );
+}
+
+/**
+ * Reads the stored count of a board in a benchmark table. The tables never count a board: the
+ * largest boards a run measures take the modular solver longer than the whole build should.
+ * @param {Object} board The board, as for countPeriodicTilings.
+ * @returns {string} The number of tilings.
+ */
+function readStoredPeriodicCount(board) {
+  const known = findPeriodicCase(board);
+
+  if (!known) {
+    const { rowCount, colCount, lattice, torus } = board;
+    throw new Error(
+      `No count of the ${rowCount}x${colCount} ${lattice} ${torus ? 'torus' : 'cylinder'} in spec/cases/all-lattices-cylinder-torus-modular.json, which the benchmark table needs.`,
+    );
+  }
+
+  return known.expectedResult;
+}
+
+/**
  * Counts the tilings of a king's graph or square lattice cylinder or torus once per build:
  * from spec/cases/ when the board is known there, otherwise with the modular solver.
  * @param {Object} board The board.
@@ -148,9 +178,7 @@ function countPeriodicTilings({ rowCount, colCount, lattice, torus }) {
   const key = `${rowCount}x${colCount}-${lattice}-${torus ? 'torus' : 'cylinder'}`;
 
   if (!periodicCounts.has(key)) {
-    const known = testCasesPeriodic.find(
-      t => t.rowCount === rowCount && t.colCount === colCount && t.lattice === lattice && !t.torus === !torus && !t.twisted,
-    );
+    const known = findPeriodicCase({ rowCount, colCount, lattice, torus });
 
     periodicCounts.set(
       key,
@@ -343,7 +371,7 @@ async function buildPeriodicBenchmark(lattice) {
       rowCount,
       colCount,
       surface,
-      tilings: await countPeriodicTilings({ rowCount, colCount, lattice, torus: surface === 'torus' }),
+      tilings: readStoredPeriodicCount({ rowCount, colCount, lattice, torus: surface === 'torus' }),
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
       bigintMissing: readMissingReasons('all-lattices-cylinder-torus-bigint', `${rowCount}x${colCount}`, `-${lattice}-${surface}`),
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),

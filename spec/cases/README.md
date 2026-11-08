@@ -12,7 +12,7 @@ There is one file per algorithm, `<id>.json` with the id of [`algorithms.json`](
 | [`domicule-rectangle-bigint.json`](domicule-rectangle-bigint.json) | domicule squares up to 18 × 18 (A239273, up to 16 × 16 in a short run) and domicule rectangles (A239264) |
 | [`domicule-rectangle-modular.json`](domicule-rectangle-modular.json) | the same boards |
 | [`all-lattices-cylinder-torus-bigint.json`](all-lattices-cylinder-torus-bigint.json) | cylinders and tori on three lattices up to 10 × 10 (tori up to 8 × 8 in a short run) |
-| [`all-lattices-cylinder-torus-modular.json`](all-lattices-cylinder-torus-modular.json) | larger cylinders and tori, up to the 16 × 16 torus (the first seven in a short run), then the boards of its BigInt twin |
+| [`all-lattices-cylinder-torus-modular.json`](all-lattices-cylinder-torus-modular.json) | larger cylinders and tori, up to the 16 × 16 torus (the first seven in a short run), then the boards of its BigInt twin, then every board of the benchmark run the site shows, so the site build reads their counts instead of computing them |
 | [`domicule-rectangle-polynomial-bigint.json`](domicule-rectangle-polynomial-bigint.json) | domicule boards by diagonal pieces up to 12 × 12 |
 | [`domicule-rectangle-polynomial-modular.json`](domicule-rectangle-polynomial-modular.json) | the squares up to 20 × 20 (the first seven in a short run), then the other boards of its BigInt twin |
 
