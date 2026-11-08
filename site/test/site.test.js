@@ -1269,6 +1269,7 @@ const READ_CHROME = `(() => {
       return new URL(link.href).pathname.replace(/^.*\\/notes\\//, '').replace(/\\.html$/, '') === expected ? '' : link.getAttribute('href') + ' for ' + expected;
     }).filter(Boolean) : [],
     groups: header ? [...header.querySelectorAll('summary')].map(summary => summary.textContent.trim()).join(', ') : '',
+    separated: header ? [...header.querySelectorAll('nav .menu hr')].map(rule => rule.nextElementSibling?.textContent.trim() ?? 'nothing').join(', ') : '',
     currentGroups: header ? [...header.querySelectorAll('summary[data-current][aria-current="true"]')].map(summary => summary.textContent.trim()) : [],
     linkGroup: (() => {
       const link = header && header.querySelector('nav [aria-current="page"]');
@@ -1404,6 +1405,10 @@ async function checkChrome(page, baseUrl, width) {
 
   if (home.misnamed.length) {
     problems.push(`menu entries whose address is not their label: ${home.misnamed.join(', ')}`);
+  }
+
+  if (home.separated !== 'Diagonal pieces') {
+    problems.push(`the menu sets apart ${home.separated || 'no entry'} instead of Diagonal pieces, which is not a surface`);
   }
 
   if (home.groups !== MENU_GROUPS.join(', ')) {
@@ -1544,6 +1549,23 @@ async function checkBenchmark(page, baseUrl, width) {
 
     if (!/^Run on \d{4}-\d{2}-\d{2} on .+ \(.+\), in a container with \d+ cores and \d+ GB, with Node\.js /.test(state.environment)) {
       problems.push(`#${hash} has no environment`);
+    }
+  }
+
+  await loadSite(page, baseUrl, width, 'benchmark/domicule/rectangle/diagonal');
+
+  for (const [click, hash] of [
+    ['#benchmark-surfaces button[data-surface=cylinder]', '#benchmark/domicule/cylinder'],
+    ['#benchmark-surfaces button[data-surface=rectangle]', '#benchmark/domicule/rectangle'],
+    ['#benchmark-counts button[data-count=diagonal]', '#benchmark/domicule/rectangle/diagonal'],
+    ['#benchmark-pieces button[data-pieces=domino]', '#benchmark/domino/rectangle'],
+    ['#benchmark-pieces button[data-pieces=domicule]', '#benchmark/domicule/rectangle'],
+  ]) {
+    await page.evaluate(`document.querySelector('${click}').click()`);
+    const reached = await page.evaluate('location.hash');
+
+    if (reached !== hash) {
+      problems.push(`${click} leads to ${reached} instead of ${hash}`);
     }
   }
 

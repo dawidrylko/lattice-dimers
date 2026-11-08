@@ -169,7 +169,7 @@ chart({
 
 ## Cylinders and tori
 
-The gallery's scan of the [cylinders](02-cylinders.md#numbering) and [tori](03-tori.md#numbering) carries the same lists, so the build sorts their tilings by diagonal pieces too, up to $10 \times 10$, and checks every row as the [numbering](#numbering) section says. No solver counts these polynomials yet, and they are not in the OEIS. The cell lists the $n \times n$ boards of the gallery, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces.
+The gallery's scan of the [cylinders](02-cylinders.md#numbering) and [tori](03-tori.md#numbering) carries the same lists. So the build sorts their tilings by diagonal pieces too, up to $10 \times 10$. It checks every row as the [numbering](#numbering) section says. No solver counts these polynomials yet. The table below gives, for each $n \times n$ board of the gallery, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces.
 
 ```js run
 const rows = nb.context.periodicDiagonals.map(({ surface, side, diagonals }) => {

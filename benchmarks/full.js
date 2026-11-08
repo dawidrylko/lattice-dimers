@@ -17,6 +17,7 @@ const {
   saveExecutionResults,
 } = require('./runner');
 const { RESULTS_DIRECTORY } = require('./environment');
+const { formerResultName } = require('../site/benchmarkRuns');
 
 const RUNS = 10;
 const DEFAULT_JOBS = 4;
@@ -29,8 +30,8 @@ const GROWTH_FLOORS = [
   [/^all[-_]lattices.*bigint.*king-cylinder/, 12.87],
   [/^all[-_]lattices.*bigint.*square-cylinder/, 5.83],
   [/^all[-_]lattices.*torus$/, TORUS_GROWTH],
-  [/^diagonal[-_]pieces[-_]bigint/, 10],
-  [/^diagonal[-_]pieces[-_]modular/, 5],
+  [/^domicule[-_]rectangle[-_]polynomial[-_]bigint/, 10],
+  [/^domicule[-_]rectangle[-_]polynomial[-_]modular/, 5],
 ];
 const INSTRUCTION_BOARDS = [
   { id: 'domino-rectangle-formula', args: ['-r', '20', '-c', '20'] },
@@ -263,9 +264,11 @@ function compareRuns(before, after) {
   const beforeTimes = read(before);
   const afterTimes = read(after);
 
+  const beforeOf = name => beforeTimes[name] ?? beforeTimes[formerResultName(name)];
+
   return Object.keys(afterTimes)
-    .filter(name => beforeTimes[name] > 0 && afterTimes[name] > 0)
-    .map(name => ({ name, before: beforeTimes[name], after: afterTimes[name], ratio: Number((afterTimes[name] / beforeTimes[name]).toFixed(3)) }))
+    .filter(name => beforeOf(name) > 0 && afterTimes[name] > 0)
+    .map(name => ({ name, before: beforeOf(name), after: afterTimes[name], ratio: Number((afterTimes[name] / beforeOf(name)).toFixed(3)) }))
     .sort((a, b) => b.ratio - a.ratio);
 }
 
