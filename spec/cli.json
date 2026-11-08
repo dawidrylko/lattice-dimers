@@ -791,6 +791,16 @@
       "message": "Usage"
     },
     {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "3000000000000001",
+        "-c",
+        "3"
+      ],
+      "message": "Invalid array length"
+    },
+    {
       "algorithm": "domicule-cylinder-torus-polynomial-modular",
       "args": [
         "-r",
@@ -883,6 +893,16 @@
         "x"
       ],
       "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "3000000000000001",
+        "-c",
+        "3"
+      ],
+      "message": "Invalid array length"
     }
   ],
   "parity": [

@@ -1098,11 +1098,11 @@ function switchBenchmark(change) {
 
 $('benchmark-pieces').addEventListener('click', e => {
   const button = e.target.closest('button');
-  if (button) switchBenchmark({ pieces: button.dataset.pieces, count: BENCHMARK_COUNTS[0] });
+  if (button && button.dataset.pieces !== parseHash().benchmark.pieces) switchBenchmark({ pieces: button.dataset.pieces, count: BENCHMARK_COUNTS[0] });
 });
 $('benchmark-surfaces').addEventListener('click', e => {
   const button = e.target.closest('button');
-  if (button) switchBenchmark({ surface: button.dataset.surface, count: BENCHMARK_COUNTS[0] });
+  if (button && button.dataset.surface !== parseHash().benchmark.surface) switchBenchmark({ surface: button.dataset.surface, count: BENCHMARK_COUNTS[0] });
 });
 $('benchmark-counts').addEventListener('click', e => {
   const button = e.target.closest('button');

@@ -146,7 +146,11 @@ def main(argv):
         return 1
 
     stop_timer = start_timer(argv)
-    coefficients = calculate_diagonal_polynomial(row_count, col_count, torus)
+    try:
+        coefficients = calculate_diagonal_polynomial(row_count, col_count, torus)
+    except MemoryError:
+        print("Invalid array length", file=sys.stderr)
+        return 1
     stop_timer()
     print(",".join(map(str, coefficients)))
     return 0

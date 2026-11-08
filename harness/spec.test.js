@@ -52,6 +52,64 @@ describe('cylinder and torus diagonal anchors', () => {
   }
 });
 
+describe('cylinder and torus diagonal pieces listed one by one', () => {
+  const listCoefficients = ({ rowCount, colCount, torus = false }) => {
+    const cells = rowCount * colCount;
+    const id = (r, c) => r * colCount + c;
+    const edges = Array.from({ length: cells }, () => []);
+    const join = (a, b, diagonal) => {
+      edges[a].push({ other: b, diagonal });
+      edges[b].push({ other: a, diagonal });
+    };
+
+    for (let r = 0; r < rowCount; r++) {
+      for (let c = 0; c < colCount; c++) {
+        join(id(r, c), id(r, (c + 1) % colCount), 0);
+
+        if (r + 1 < rowCount || torus) {
+          [-1, 0, 1].forEach(d => join(id(r, c), id((r + 1) % rowCount, (c + d + colCount) % colCount), d === 0 ? 0 : 1));
+        }
+      }
+    }
+
+    const counts = new Array(Math.floor(cells / 2) + 1).fill(0);
+    const covered = new Array(cells).fill(false);
+    const place = (from, diagonals) => {
+      const cell = covered.indexOf(false, from);
+
+      if (cell === -1) {
+        counts[diagonals]++;
+        return;
+      }
+
+      covered[cell] = true;
+      edges[cell]
+        .filter(({ other }) => other !== cell && !covered[other])
+        .forEach(({ other, diagonal }) => {
+          covered[other] = true;
+          place(cell + 1, diagonals + diagonal);
+          covered[other] = false;
+        });
+      covered[cell] = false;
+    };
+
+    place(0, 0);
+
+    return counts.join(",");
+  };
+  const small = testCasesOf('domicule-cylinder-torus-polynomial-bigint').filter(({ rowCount, colCount }) => rowCount >= 1 && rowCount * colCount <= 16);
+
+  test('at least 15 boards are small enough to list', () => {
+    assert.ok(small.length >= 15, `Only ${small.length} boards of spec/cases/ have at most 16 cells.`);
+  });
+
+  for (const testCase of small) {
+    test(`${testCase.rowCount}x${testCase.colCount} ${testCase.torus ? 'torus' : 'cylinder'}`, () => {
+      assert.equal(listCoefficients(testCase), testCase.expectedResult);
+    });
+  }
+});
+
 describe('diagonal anchors', () => {
   const find = (testCases, rowCount, colCount) =>
     testCases.find(t => (t.rowCount === rowCount && t.colCount === colCount) || (t.rowCount === colCount && t.colCount === rowCount));
@@ -301,4 +359,22 @@ test('every cylinder and torus of the benchmark run the site shows has a stored 
 
   assert.ok(measured.length > 0);
   assert.deepEqual([...new Set(measured.filter(board => !stored.has(board)))], [], 'Add these counts to spec/cases/all-lattices-cylinder-torus-modular.json.');
+});
+
+test('every board of the cylinder and torus diagonal run the site shows has a stored king count', () => {
+  const { findSeriesRun, listJavaScriptResults } = require('../site/benchmarkRuns');
+  const run = findSeriesRun('domicule-cylinder-torus-polynomial-');
+  const stored = new Set(
+    testCasesOf('all-lattices-cylinder-torus-modular')
+      .filter(({ lattice, twisted }) => lattice === 'king' && !twisted)
+      .map(({ rowCount, colCount, torus }) => `${rowCount}x${colCount}-${torus ? 'torus' : 'cylinder'}`),
+  );
+  const measured = run === null
+    ? []
+    : listJavaScriptResults(path.join(ROOT_DIRECTORY, 'benchmarks', 'results', run), 'domicule-cylinder-torus-polynomial-')
+        .map(fileName => fileName.match(/_(\d+x\d+-(?:torus|cylinder))\.txt$/))
+        .filter(Boolean)
+        .map(([, board]) => board);
+
+  assert.deepEqual([...new Set(measured.filter(board => !stored.has(board)))], [], 'Add these king counts to spec/cases/all-lattices-cylinder-torus-modular.json.');
 });

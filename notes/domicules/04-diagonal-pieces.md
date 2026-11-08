@@ -257,7 +257,7 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 ## Verification
 
-The two diagonal solvers of each surface agree with each other, with A004003 at $k = 0$ and with A239273 summed over $k$ on a rectangle, and on cylinders and tori with the domino count at $k = 0$ and the domicule count of the cylinder and torus solvers summed over $k$, and the PARI/GP program runs in CI against the same data. The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
+The two diagonal solvers of each surface agree with each other. On a rectangle they agree with A004003 at $k = 0$ and with A239273 summed over $k$. On a cylinder or torus they agree with the domino count of `all-lattices-cylinder-torus-bigint` at $k = 0$ and with its king's graph count summed over $k$, and on the boards of up to 16 cells with every tiling listed one by one. The PARI/GP program runs in CI against the rectangle data. The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
 

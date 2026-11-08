@@ -7,7 +7,7 @@ import numpy as np
 from lattice_dimers.core import combine_checked_residues, list_primes, parse_args, run_workers, start_timer
 
 MAX_CIRCUMFERENCE = 20
-BATCH_COUNTS = 1 << 22
+BATCH_COUNTS = 1 << 20
 SCRATCH_COUNTS = 1 << 19
 USAGE = (
     "Usage: python3 -m lattice_dimers.solvers.domicule_cylinder_torus_polynomial_modular -r <rowCount> -c <circumference> "
