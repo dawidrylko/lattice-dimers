@@ -17,7 +17,7 @@ const NAV = [
       { slug: 'domicules/rectangles', label: 'Rectangles' },
       { slug: 'domicules/cylinders', label: 'Cylinders' },
       { slug: 'domicules/tori', label: 'Tori' },
-      { slug: 'domicules/diagonal-pieces', label: 'Diagonal pieces' },
+      { slug: 'domicules/diagonal-pieces', label: 'Diagonal pieces', separated: true },
     ],
   },
   {
@@ -190,6 +190,7 @@ const CHROME_CSS = `
 .site-nav details[open] summary::after { border-top-width: 0; border-bottom: 4px solid currentColor; }
 .site-nav .menu { position: absolute; top: calc(100% + 6px); left: -12px; z-index: 10; display: flex; flex-direction: column; gap: 4px; min-width: max-content; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); box-shadow: var(--menu-shadow); }
 .site-nav .menu a { padding: 2px 0; }
+.site-nav .menu hr { width: 100%; margin: 2px 0; border: 0; border-top: 1px solid var(--border); }
 @media (max-width: 640px) {
   .site-nav { position: relative; }
   .site-nav details { position: static; }
@@ -222,7 +223,7 @@ function renderHeader({ root, current, notes }) {
   }
 
   const link = (slug, href, label) => `<a href="${href}"${slug === current ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a>`;
-  const note = ({ slug, label }) => link(slug, `${root}notes/${slug}.html`, label);
+  const note = ({ slug, label, separated }) => `${separated ? '<hr>' : ''}${link(slug, `${root}notes/${slug}.html`, label)}`;
   const nav = [
     link('home', home, 'Home'),
     ...NAV.map(entry =>

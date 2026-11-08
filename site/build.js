@@ -115,7 +115,7 @@ const NOTE_SUMMARIES = {
   'domicules/rectangles': 'Notebook: domicule tilings of the 2n × 2n board (A239273) up to 20 × 20, the modular solver, the Markov chain and how every count is checked.',
   'domicules/cylinders': "Notebook: domicule tilings of cylinders, the perfect matchings of the king's graph on the cylinder.",
   'domicules/tori': "Notebook: domicule tilings of tori (A401670); the king's graph torus count over e^(sL²) tends to 2, compared with two other lattices.",
-  'domicules/diagonal-pieces': 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces (A401673), up to 20 × 20.',
+  'domicules/diagonal-pieces': 'Notebook: domicule tilings of rectangles, cylinders and tori by the number of diagonal pieces (A401673), up to 20 × 20.',
   'triangular-lattice/cylinders': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
   'triangular-lattice/tori': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
 };
@@ -373,6 +373,7 @@ function buildDiagonalBenchmark(totals) {
         tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
         bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
         bigintLanguages: readLanguages('domicule-rectangle-polynomial-bigint', suffix),
+        bigintMissing: readMissingReasons('domicule-rectangle-polynomial-bigint', `${rowCount}x${colCount}`, ''),
         modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
         languages: readLanguages('domicule-rectangle-polynomial-modular', suffix),
       };
@@ -698,6 +699,7 @@ async function __main__() {
     domiculeBenchmark: buildDomiculeBenchmark(domiculeTotals),
     periodicBenchmark: await buildPeriodicBenchmark('king'),
     dominoPeriodicBenchmark: await buildPeriodicBenchmark('square'),
+    diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
     environment: readEnvironment(BENCHMARK_DIRECTORY),
   };
   const notes = listNotes();
@@ -708,7 +710,10 @@ async function __main__() {
     domiculeBenchmark: data.domiculeBenchmark,
     periodicBenchmark: data.periodicBenchmark,
     dominoPeriodicBenchmark: data.dominoPeriodicBenchmark,
-    diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
+    diagonalBenchmark: data.diagonalBenchmark,
+    periodicDiagonals: periodicBoards
+      .filter(({ diagonals }) => diagonals)
+      .map(({ surface, rowCount, diagonals }) => ({ surface, side: rowCount, diagonals })),
     countDomicule: board => countDomiculeTilings(board).then(BigInt),
     roundDecimal,
     logCount,

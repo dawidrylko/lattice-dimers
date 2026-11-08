@@ -1,6 +1,6 @@
-# Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)
+# Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673) [3].
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673) [3]. The gallery's cylinders and tori are sorted the same way in the [last counting section](#cylinders-and-tori).
 
 ## The problem
 
@@ -165,6 +165,28 @@ chart({
   })),
   describe: ([x, value]) => `x = ${x}, log P(x)/(4n²) = ${value.toFixed(6)}`,
 });
+```
+
+## Cylinders and tori
+
+The gallery's scan of the [cylinders](02-cylinders.md#numbering) and [tori](03-tori.md#numbering) carries the same lists, so the build sorts their tilings by diagonal pieces too, up to $10 \times 10$, and checks every row as the [numbering](#numbering) section says. No solver counts these polynomials yet, and they are not in the OEIS. The cell lists the $n \times n$ boards of the gallery, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces.
+
+```js run
+const rows = nb.context.periodicDiagonals.map(({ surface, side, diagonals }) => {
+  const counts = diagonals.map(BigInt);
+  const total = counts.reduce((sum, c) => sum + c, 0n);
+  const peak = counts.indexOf(counts.reduce((max, c) => (c > max ? c : max), 0n));
+  const scale = 10n ** 15n;
+  const mean = Number((counts.reduce((sum, c, k) => sum + BigInt(k) * c, 0n) * scale) / total) / Number(scale);
+
+  return [surface, `${side}×${side}`, counts.filter(c => c > 0n).length, peak, (mean / ((side * side) / 2)).toFixed(6)];
+});
+
+table(['surface', 'board', 'k with a tiling', 'k of the largest term', 'share of diagonal pieces'], rows);
+print('The 4 × 4 boards, k = 0, 1, 2, ...:');
+nb.context.periodicDiagonals
+  .filter(({ side }) => side === 4)
+  .forEach(({ surface, diagonals }) => print(`${surface}: ${diagonals.join(', ')}`));
 ```
 
 ## Running time

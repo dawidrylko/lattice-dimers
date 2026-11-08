@@ -73,7 +73,9 @@ function readBenchmarkRuns(root = RESULTS_DIRECTORY) {
 
 /**
  * Lists the result files of the JavaScript implementations of the solvers a prefix names, which
- * set the boards of a benchmark table: a board only another language ran adds no row.
+ * set the boards of a benchmark table: a board only another language ran adds no row, and neither
+ * does a longer solver id that starts with the prefix. A run made before a solver rename is listed
+ * under the current id.
  * @param {string} directory The directory of one run.
  * @param {string} prefix The start of the solver id.
  * @returns {string[]} The result file names.
@@ -85,7 +87,7 @@ function listJavaScriptResults(directory, prefix) {
     .readdirSync(directory)
     .filter(fileName => fileName.includes('.js_'))
     .map(fileName => (former !== prefix && fileName.startsWith(former) ? prefix + fileName.slice(former.length) : fileName))
-    .filter(fileName => fileName.startsWith(prefix));
+    .filter(fileName => fileName.startsWith(prefix) && !fileName.slice(prefix.length).split('.js_')[0].includes('-'));
 }
 
 /**

@@ -125,7 +125,7 @@ th a.solver:focus-visible { outline: 2px solid var(--accent); outline-offset: 1p
   .bench .table-wrap table.languages td:last-child { grid-area: 1 / 4; }
   .bench .table-wrap table.languages td { white-space: nowrap; font-size: 14px; }
   .bench .table-wrap table.languages td:last-child { white-space: normal; }
-  .bench .table-wrap :is(#domino-benchmark, #domino-cylinder-benchmark, #domino-torus-benchmark, #domicule-benchmark, #cylinder-benchmark, #torus-benchmark) td:nth-child(6) { grid-column: 1; }
+  .bench .table-wrap :is(#domino-benchmark, #domino-cylinder-benchmark, #domino-torus-benchmark, #domicule-benchmark, #diagonal-benchmark, #cylinder-benchmark, #torus-benchmark) td:nth-child(6) { grid-column: 1; }
   .bench .table-wrap td[data-text] { display: grid; grid-template-columns: max-content 1fr; align-items: center; column-gap: 4px; }
   .bench .table-wrap td[data-text]::before { content: none; }
   .bench .table-wrap a.card-solver { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 13px; color: var(--muted); text-decoration: underline 1px var(--muted); text-underline-offset: 3px; grid-column: 1 / -1; }
@@ -207,7 +207,7 @@ ul.intro li + li { margin-top: 4px; }
       <span class="label" id="diagonals-label" title="Show only the tilings with this many diagonal pieces">Diagonal pieces</span>
       <div class="filter">
         <select class="field" id="diagonals" aria-labelledby="diagonals-label"></select>
-        <label class="toggle"><input type="checkbox" id="highlight">Highlight diagonals</label>
+        <label class="toggle"><input type="checkbox" id="highlight">Highlight diagonal pieces</label>
       </div>
     </div>
     <div class="picker">
@@ -264,6 +264,13 @@ ul.intro li + li { margin-top: 4px; }
         <button type="button" data-surface="torus">Torus</button>
       </div>
     </div>
+    <div class="picker" id="benchmark-count-picker" hidden>
+      <span class="label" id="benchmark-counts-label">Count</span>
+      <div class="pieces" id="benchmark-counts" role="group" aria-labelledby="benchmark-counts-label">
+        <button type="button" data-count="all" title="The number of tilings">All tilings</button>
+        <button type="button" data-count="diagonal" title="The tilings sorted by their number of diagonal pieces">By diagonal pieces</button>
+      </div>
+    </div>
     <div class="bench-group" data-pieces="domino" data-surface="rectangle">
       <div class="table-wrap">
         <table role="table" id="domino-benchmark" aria-label="Dominoes (A004003)" class="languages">
@@ -297,6 +304,15 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="domicule-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
+    </div>
+    <div class="bench-group" data-pieces="domicule" data-surface="rectangle" data-count="diagonal" hidden>
+      <div class="table-wrap">
+        <table role="table" id="diagonal-benchmark" aria-label="Domicules by diagonal pieces (A401673)" class="languages">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <tbody id="diagonal-benchmark-rows" role="rowgroup"></tbody>
+        </table>
+      </div>
+      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="cylinder" hidden>
       <div class="table-wrap">
@@ -553,17 +569,23 @@ const BENCHMARK_ALIASES = {
   domicules: ['domicule', 'rectangle'],
   cylinders: ['domicule', 'cylinder'],
   tori: ['domicule', 'torus'],
-  diagonals: ['domicule', 'rectangle'],
+  diagonals: ['domicule', 'rectangle', 'diagonal'],
 };
+const BENCHMARK_COUNTS = ['all', 'diagonal'];
 
-function readBenchmarkView(tab, first, second) {
-  const [pieces, surface] =
-    tab === 'benchmark-domicule' ? BENCHMARK_ALIASES.domicules : Object.hasOwn(BENCHMARK_ALIASES, first) ? BENCHMARK_ALIASES[first] : [first, second];
+function hasDiagonalCount(pieces, surface) {
+  return pieces === 'domicule' && surface === 'rectangle';
+}
 
-  return {
+function readBenchmarkView(tab, first, second, third) {
+  const [pieces, surface, count] =
+    tab === 'benchmark-domicule' ? BENCHMARK_ALIASES.domicules : Object.hasOwn(BENCHMARK_ALIASES, first) ? BENCHMARK_ALIASES[first] : [first, second, third];
+  const view = {
     pieces: BENCHMARK_PIECES.includes(pieces) ? pieces : BENCHMARK_PIECES[0],
     surface: BENCHMARK_SURFACES.includes(surface) ? surface : BENCHMARK_SURFACES[0],
   };
+
+  return { ...view, count: hasDiagonalCount(view.pieces, view.surface) && BENCHMARK_COUNTS.includes(count) ? count : BENCHMARK_COUNTS[0] };
 }
 
 function parseHash() {
@@ -576,7 +598,7 @@ function parseHash() {
 
   return {
     tab: benchmark ? 'benchmark' : 'gallery',
-    benchmark: readBenchmarkView(tab, boardId, page),
+    benchmark: readBenchmarkView(tab, boardId, page, path.split('/')[3]),
     board,
     diagonals,
     total,
@@ -856,8 +878,14 @@ function render() {
   $('benchmark').hidden = state.tab !== 'benchmark';
   $('benchmark-pieces').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.pieces === state.benchmark.pieces));
   $('benchmark-surfaces').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.surface === state.benchmark.surface));
+  $('benchmark-count-picker').hidden = !hasDiagonalCount(state.benchmark.pieces, state.benchmark.surface);
+  $('benchmark-counts').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.count === state.benchmark.count));
   document.querySelectorAll('.bench-group').forEach(
-    group => (group.hidden = group.dataset.pieces !== state.benchmark.pieces || group.dataset.surface !== state.benchmark.surface),
+    group =>
+      (group.hidden =
+        group.dataset.pieces !== state.benchmark.pieces ||
+        group.dataset.surface !== state.benchmark.surface ||
+        (group.dataset.count || 'all') !== state.benchmark.count),
   );
 
   if (state.tab === 'gallery') {
@@ -977,6 +1005,7 @@ renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_AND_BIGINT_LANGUAGE
 renderSolverRows('domino-torus-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_AND_BIGINT_LANGUAGES);
 renderSolverRows('domino-cylinder-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
 renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, MODULAR_AND_BIGINT_LANGUAGES);
+renderSolverRows('diagonal-benchmark', DATA.diagonalBenchmark, MODULAR_AND_BIGINT_LANGUAGES);
 renderSolverRows('torus-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_AND_BIGINT_LANGUAGES);
 renderSolverRows('cylinder-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
 
@@ -1018,9 +1047,10 @@ new ResizeObserver(() => {
 
 function switchBenchmark(change) {
   const current = parseHash().benchmark;
-  const { pieces, surface } = { ...current, ...change };
-  if (pieces === current.pieces && surface === current.surface) return;
-  history.pushState(null, '', `#benchmark/${pieces}/${surface}`);
+  const { pieces, surface, count } = { ...current, ...change };
+  const shown = hasDiagonalCount(pieces, surface) ? count : BENCHMARK_COUNTS[0];
+  if (pieces === current.pieces && surface === current.surface && shown === current.count) return;
+  history.pushState(null, '', `#benchmark/${pieces}/${surface}${shown === BENCHMARK_COUNTS[0] ? '' : `/${shown}`}`);
   render();
 }
 
@@ -1031,6 +1061,10 @@ $('benchmark-pieces').addEventListener('click', e => {
 $('benchmark-surfaces').addEventListener('click', e => {
   const button = e.target.closest('button');
   if (button) switchBenchmark({ surface: button.dataset.surface });
+});
+$('benchmark-counts').addEventListener('click', e => {
+  const button = e.target.closest('button');
+  if (button) switchBenchmark({ count: button.dataset.count });
 });
 
 document.querySelectorAll('nav.tabs, #intro-sections').forEach(links => links.addEventListener('click', e => {
