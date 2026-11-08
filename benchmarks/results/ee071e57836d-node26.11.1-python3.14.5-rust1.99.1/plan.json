@@ -1,17 +1,17 @@
 {
-  "budgetHours": 1,
+  "budgetHours": 2,
   "runs": 10,
   "jobs": 4,
   "notMeasured": [
     {
       "series": "diagonal-pieces-bigint.js",
       "board": "18x18",
-      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[843:0xffffaddc0000]    35360 ms: Scavenge (during sweeping) 2021.6 (2032.1) -> 2021.0 (2037.4) MB, pooled: 0.0 MB, 6.48 / 0.00 ms (average mu = 0.294, "
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[23:0xffffbc2b0000]    29565 ms: Scavenge (during sweeping) 2009.0 (2024.9) -> 2008.4 (2024.9) MB, pooled: 0.0 MB, 12.20 / 0.00 ms (average mu = 0.199, "
     },
     {
       "series": "diagonal-pieces-bigint.js",
       "board": "20x20",
-      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[843:0xffffaddc0000]    35360 ms: Scavenge (during sweeping) 2021.6 (2032.1) -> 2021.0 (2037.4) MB, pooled: 0.0 MB, 6.48 / 0.00 ms (average mu = 0.294, "
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[23:0xffffbc2b0000]    29565 ms: Scavenge (during sweeping) 2009.0 (2024.9) -> 2008.4 (2024.9) MB, pooled: 0.0 MB, 12.20 / 0.00 ms (average mu = 0.199, "
     },
     {
       "series": "diagonal_pieces_bigint.py",
@@ -33,46 +33,13 @@
     {
       "series": "diagonal-pieces-modular.js",
       "board": "20x20",
-      "reason": "over budget",
-      "estimateTenRunsHours": 1.67
+      "reason": "failed: spawnSync /usr/local/bin/node ETIMEDOUT"
     },
     {
       "series": "diagonal_pieces_modular.py",
       "board": "20x20",
       "reason": "over budget",
       "estimateTenRunsHours": 2.16
-    },
-    {
-      "series": "all-lattices-cylinder-torus-modular.js-square-torus",
-      "board": "16x16",
-      "reason": "over budget",
-      "estimateTenRunsHours": 1.43
-    },
-    {
-      "series": "all-lattices-cylinder-torus-modular.js-square-torus",
-      "board": "18x18",
-      "reason": "over budget"
-    },
-    {
-      "series": "all-lattices-cylinder-torus-modular.js-square-torus",
-      "board": "20x20",
-      "reason": "over budget"
-    },
-    {
-      "series": "all_lattices_cylinder_torus_modular.py-square-torus",
-      "board": "16x16",
-      "reason": "over budget",
-      "estimateTenRunsHours": 1.79
-    },
-    {
-      "series": "all_lattices_cylinder_torus_modular.py-square-torus",
-      "board": "18x18",
-      "reason": "over budget"
-    },
-    {
-      "series": "all_lattices_cylinder_torus_modular.py-square-torus",
-      "board": "20x20",
-      "reason": "over budget"
     },
     {
       "series": "all-lattices-cylinder-torus-modular.rs-king-torus",
@@ -134,50 +101,51 @@
       "reason": "over budget"
     },
     {
+      "series": "all-lattices-cylinder-torus-modular.js-square-torus",
+      "board": "18x18",
+      "reason": "over budget",
+      "estimateTenRunsHours": 58.9
+    },
+    {
+      "series": "all-lattices-cylinder-torus-modular.js-square-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_modular.py-square-torus",
+      "board": "18x18",
+      "reason": "over budget",
+      "estimateTenRunsHours": 152
+    },
+    {
+      "series": "all_lattices_cylinder_torus_modular.py-square-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
       "series": "all-lattices-cylinder-torus-bigint.js-square-cylinder",
       "board": "20x20",
-      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2293:0xffffb5c00000]     8739 ms: Scavenge (during sweeping) 2039.7 (2043.3) -> 2037.8 (2043.3) MB, pooled: 0.0 MB, 0.41 / 0.00 ms (average mu = 0.241,"
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[23:0xffff894a0000]     9173 ms: Scavenge (during sweeping) 2043.4 (2047.1) -> 2041.5 (2047.3) MB, pooled: 0.0 MB, 0.55 / 0.00 ms (average mu = 0.241, c"
     },
     {
       "series": "all-lattices-cylinder-torus-bigint.js-king-cylinder",
       "board": "14x14",
-      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2310:0xffffa8f90000]     6455 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.44 / 0.00 ms (average mu = 0.136,"
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[30:0xffff943b0000]     5514 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.42 / 0.00 ms (average mu = 0.213, c"
     },
     {
       "series": "all-lattices-cylinder-torus-bigint.js-king-cylinder",
       "board": "16x16",
-      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2310:0xffffa8f90000]     6455 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.44 / 0.00 ms (average mu = 0.136,"
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[30:0xffff943b0000]     5514 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.42 / 0.00 ms (average mu = 0.213, c"
     },
     {
       "series": "all-lattices-cylinder-torus-bigint.js-king-cylinder",
       "board": "18x18",
-      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2310:0xffffa8f90000]     6455 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.44 / 0.00 ms (average mu = 0.136,"
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[30:0xffff943b0000]     5514 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.42 / 0.00 ms (average mu = 0.213, c"
     },
     {
       "series": "all-lattices-cylinder-torus-bigint.js-king-cylinder",
       "board": "20x20",
-      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[2310:0xffffa8f90000]     6455 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.44 / 0.00 ms (average mu = 0.136,"
-    },
-    {
-      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
-      "board": "14x14",
-      "reason": "over budget",
-      "estimateTenRunsHours": 1.41
-    },
-    {
-      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
-      "board": "16x16",
-      "reason": "over budget"
-    },
-    {
-      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
-      "board": "18x18",
-      "reason": "over budget"
-    },
-    {
-      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
-      "board": "20x20",
-      "reason": "over budget"
+      "reason": "failed: exit code null, <--- Last few GCs --->\n\n[30:0xffff943b0000]     5514 ms: Scavenge (during sweeping) 2038.2 (2043.3) -> 2036.4 (2043.3) MB, pooled: 0.0 MB, 0.42 / 0.00 ms (average mu = 0.213, c"
     },
     {
       "series": "all-lattices-cylinder-torus-bigint.rs-king-cylinder",
@@ -287,6 +255,22 @@
     },
     {
       "series": "all-lattices-cylinder-torus-bigint.js-square-torus",
+      "board": "20x20",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
+      "board": "16x16",
+      "reason": "over budget",
+      "estimateTenRunsHours": 37.6
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
+      "board": "18x18",
+      "reason": "over budget"
+    },
+    {
+      "series": "all_lattices_cylinder_torus_bigint.py-square-torus",
       "board": "20x20",
       "reason": "over budget"
     },

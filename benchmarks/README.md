@@ -51,10 +51,10 @@ This setup is a stopgap. The final environment will be a dedicated Linux machine
 
 ## The run of 2026-11-07
 
-[`results/ee071e57836d-node26.11.1-python3.14.5-rust1.99.1`](results/ee071e57836d-node26.11.1-python3.14.5-rust1.99.1) ran with `--board-budget-hours 1` and 4 threads on an Apple M4 with 16 GB, with Docker at 5 cores and 12 GB. It measured 413 boards in 12 hours of solver time.
+[`results/ee071e57836d-node26.11.1-python3.14.5-rust1.99.1`](results/ee071e57836d-node26.11.1-python3.14.5-rust1.99.1) ran with `--board-budget-hours 1` and 4 threads on an Apple M4 with 16 GB, with Docker at 5 cores and 12 GB. It measured 413 boards in 12 hours of solver time. Resumed from the same commit with `--board-budget-hours 2` on 2026-11-07, it added 3 square torus boards in 7 more hours: Modular 16 × 16 in Python and JavaScript, and BigInt 14 × 14 in Python. Each took longer than its estimate, the Python Modular board 3.6 hours against 1.8.
 
-Its `plan.json` records the other 58 boards. Of these, 51 were over the budget. In the other 7, three JavaScript BigInt series hit the default heap limit of Node.js, about 2 GB, which is not the memory of the machine, and the 4 larger boards after those three failures never started.
+Its `plan.json` records the other 55 boards. Of these, 47 are over the budget. In 7 more, three JavaScript BigInt series hit the default heap limit of Node.js, about 2 GB, which is not the memory of the machine, and the 4 larger boards after those three failures never started. The last, JavaScript diagonal Modular 20 × 20, passed the time limit of one run, 24 minutes at this budget.
 
-The noise measured right before the run gave a largest difference of medians of 0.67 % and a largest variation of 3.67 %; `results/noise-*` stays outside git. With no container running, the host load read 1.5 to 2.1 before each solver, never the load below 1 that the steps above ask for, and during the run it read 1.5 to 5.4 in the host load file. Spotlight and Time Machine were left as they were.
+The noise measured right before the run gave a largest difference of medians of 0.67 % and a largest variation of 3.67 %; `results/noise-*` stays outside git. With no container running, the host load read 1.5 to 2.1 before each solver, never the load below 1 that the steps above ask for, and during the runs it read 1.5 to 7.0 in the host load file. Spotlight indexed during the first part and was off during the resumed one.
 
 The language icons on the site are the Rust, Python and JavaScript marks of [simple-icons](https://simpleicons.org) 16.34.0, under CC0 1.0.
