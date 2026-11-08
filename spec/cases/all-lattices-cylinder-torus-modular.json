@@ -757,19 +757,22 @@
       "rowCount": 2,
       "colCount": 2,
       "lattice": "square",
-      "expectedResult": "5"
+      "expectedResult": "5",
+      "oeis": "A000129"
     },
     {
       "rowCount": 6,
       "colCount": 6,
       "lattice": "square",
-      "expectedResult": "28561"
+      "expectedResult": "28561",
+      "oeis": "A028477"
     },
     {
       "rowCount": 8,
       "colCount": 8,
       "lattice": "square",
-      "expectedResult": "71385601"
+      "expectedResult": "71385601",
+      "oeis": "A028479"
     },
     {
       "rowCount": 10,

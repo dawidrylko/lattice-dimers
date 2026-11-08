@@ -276,7 +276,7 @@ test('every cylinder and torus of the benchmark run the site shows has a stored 
       .map(({ rowCount, colCount, lattice, torus }) => `${rowCount}x${colCount}-${lattice}-${torus ? 'torus' : 'cylinder'}`),
   );
   const measured = listJavaScriptResults(directory, 'all-lattices-cylinder-torus-')
-    .map(fileName => fileName.match(/_(\d+x\d+-\w+-(?:torus|cylinder))\.txt$/))
+    .map(fileName => fileName.match(/_(\d+x\d+-(?:king|square)-(?:torus|cylinder))\.txt$/))
     .filter(Boolean)
     .map(([, board]) => board);
 
