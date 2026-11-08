@@ -34,6 +34,14 @@ name = "all-lattices-cylinder-torus-modular"
 path = "solvers/src/bin/all-lattices-cylinder-torus-modular.rs"
 
 [[bin]]
+name = "domicule-cylinder-torus-polynomial-bigint"
+path = "solvers/src/bin/domicule-cylinder-torus-polynomial-bigint.rs"
+
+[[bin]]
+name = "domicule-cylinder-torus-polynomial-modular"
+path = "solvers/src/bin/domicule-cylinder-torus-polynomial-modular.rs"
+
+[[bin]]
 name = "domicule-rectangle-polynomial-bigint"
 path = "solvers/src/bin/domicule-rectangle-polynomial-bigint.rs"
 
