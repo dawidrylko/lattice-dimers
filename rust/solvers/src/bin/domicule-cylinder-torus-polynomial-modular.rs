@@ -140,8 +140,8 @@ fn count_modulo(board: &Board, prime: u32) -> Vec<u32> {
                 }
             };
 
-            for state in 0..state_count {
-                if !reached[state] {
+            for (state, &seen) in reached.iter().enumerate() {
+                if !seen {
                     continue;
                 }
 
