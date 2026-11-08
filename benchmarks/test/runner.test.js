@@ -57,6 +57,12 @@ describe('result files by surface', () => {
       { args: ['--torus', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-square-torus') },
       { args: ['--cylinder', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-square-cylinder') },
     ]),
+    ...['domicule-cylinder-torus-polynomial-bigint', 'domicule-cylinder-torus-polynomial-modular'].flatMap(algorithm =>
+      listImplementations(algorithm).flatMap(implementation => [
+        { args: ['--diagonal-cylinder', '--only', `${algorithm}.js`], file: fileOf(implementation, '2x2-cylinder') },
+        { args: ['--diagonal-torus', '--only', `${algorithm}.js`], file: fileOf(implementation, '2x2-torus') },
+      ]),
+    ),
     ...[
       ['domino-rectangle-formula', []],
       ['domino-rectangle-number', []],
