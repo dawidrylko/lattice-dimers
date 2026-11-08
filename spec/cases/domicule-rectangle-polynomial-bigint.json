@@ -1,5 +1,5 @@
 {
-  "algorithm": "diagonal-pieces-bigint",
+  "algorithm": "domicule-rectangle-polynomial-bigint",
   "testCases": [
     {
       "rowCount": 0,

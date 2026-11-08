@@ -10,7 +10,7 @@ const LAST_SQUARE = 12;
 const LAST_TORUS = 8;
 const LAST_DIAGONAL_ROW = 10;
 const TORUS_FILE = 'spec/cases/all-lattices-cylinder-torus-modular.json';
-const DIAGONAL_FILE = 'spec/cases/diagonal-pieces-modular.json';
+const DIAGONAL_FILE = 'spec/cases/domicule-rectangle-polynomial-modular.json';
 const SOURCES = {
   'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
   'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),

@@ -38,8 +38,8 @@ const INSTRUCTION_BOARDS = [
   { id: 'domino-rectangle-bigint', args: ['-r', '8', '-c', '8'] },
   { id: 'domicule-rectangle-modular', args: ['-r', '8', '-c', '8', '-j', '1'] },
   { id: 'domicule-rectangle-bigint', args: ['-r', '8', '-c', '8'] },
-  { id: 'diagonal-pieces-modular', args: ['-r', '6', '-c', '6', '-j', '1'] },
-  { id: 'diagonal-pieces-bigint', args: ['-r', '6', '-c', '6'] },
+  { id: 'domicule-rectangle-polynomial-modular', args: ['-r', '6', '-c', '6', '-j', '1'] },
+  { id: 'domicule-rectangle-polynomial-bigint', args: ['-r', '6', '-c', '6'] },
   { id: 'all-lattices-cylinder-torus-modular', args: ['-r', '8', '-c', '8', '--lattice', 'king', '-j', '1'] },
   { id: 'all-lattices-cylinder-torus-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'king'] },
 ];

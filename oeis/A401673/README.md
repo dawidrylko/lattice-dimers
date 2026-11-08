@@ -15,7 +15,7 @@ Proposed 1 November 2026, revision #4 of the draft.
 | file | content |
 | --- | --- |
 | [A401673.txt](A401673.txt) | the full entry text, reconstructed from the draft page |
-| [b401673.txt](b401673.txt) | rows 0..10, 396 terms, rebuilt from [`spec/cases/diagonal-pieces-modular.json`](../../spec/cases/diagonal-pieces-modular.json); identical to the file uploaded with the draft |
+| [b401673.txt](b401673.txt) | rows 0..10, 396 terms, rebuilt from [`spec/cases/domicule-rectangle-polynomial-modular.json`](../../spec/cases/domicule-rectangle-polynomial-modular.json); identical to the file uploaded with the draft |
 | [A401673.gp](A401673.gp) | the program of the `%o` lines |
 
 ## Notes

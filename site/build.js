@@ -6,16 +6,16 @@ const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 const testCasesDomino = testCasesOf('domino-rectangle-formula');
 const testCasesDomicule = testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare);
 const testCasesPeriodic = testCasesOf('all-lattices-cylinder-torus-modular');
-const testCasesDiagonal = testCasesOf('diagonal-pieces-modular');
+const testCasesDiagonal = testCasesOf('domicule-rectangle-polynomial-modular');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
 const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
-const diagonalReference = require('../js/solvers/diagonal-pieces-bigint.js');
+const diagonalReference = require('../js/solvers/domicule-rectangle-polynomial-bigint.js');
 const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
-const { readBenchmarkRuns, listJavaScriptResults, describeMissing } = require('./benchmarkRuns');
+const { readBenchmarkRuns, listJavaScriptResults, describeMissing, formerResultName, resultFileOf } = require('./benchmarkRuns');
 const { DEFAULT_BOARD } = require('./defaultBoard');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -242,7 +242,7 @@ function escapeHtml(text) {
 }
 
 function readAverageTime(directory, fileName) {
-  const file = path.join(directory, fileName);
+  const file = resultFileOf(directory, fileName);
 
   if (!fs.existsSync(file)) {
     return null;
@@ -356,7 +356,7 @@ async function buildPeriodicBenchmark(lattice) {
 }
 
 function buildDiagonalBenchmark(totals) {
-  const prefix = 'diagonal-pieces-';
+  const prefix = 'domicule-rectangle-polynomial-';
 
   return listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
     .map(fileName => fileName.match(RESULT_FILE))
@@ -372,9 +372,9 @@ function buildDiagonalBenchmark(totals) {
         colCount,
         tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
         bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
-        bigintLanguages: readLanguages('diagonal-pieces-bigint', suffix),
+        bigintLanguages: readLanguages('domicule-rectangle-polynomial-bigint', suffix),
         modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
-        languages: readLanguages('diagonal-pieces-modular', suffix),
+        languages: readLanguages('domicule-rectangle-polynomial-modular', suffix),
       };
     });
 }
@@ -384,7 +384,8 @@ function readMissingReasons(algorithm, board, seriesSuffix) {
 
   return Object.fromEntries(
     listImplementations(algorithm).map(({ language, file }) => {
-      const entry = notMeasured.find(({ series, board: other }) => series === `${path.basename(file)}${seriesSuffix}` && other === board);
+      const name = `${path.basename(file)}${seriesSuffix}`;
+      const entry = notMeasured.find(({ series, board: other }) => (series === name || series === formerResultName(name)) && other === board);
 
       return [language, entry ? describeMissing(entry, budgetHours) : null];
     }),

@@ -217,7 +217,7 @@ const diagonalUnrankTestCases = [
   { rowCount: 6, colCount: 6 },
 ].map(board => ({
   ...board,
-  expectedResult: testCasesOf('diagonal-pieces-modular').find(
+  expectedResult: testCasesOf('domicule-rectangle-polynomial-modular').find(
     t => t.rowCount === board.rowCount && t.colCount === board.colCount,
   ).expectedResult,
 }));

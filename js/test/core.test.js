@@ -7,7 +7,7 @@ const { parseArgs, exec } = require('../core');
 const { listPrimes, combineCheckedResidues } = require('../core/modular');
 const { testCasesOf } = require('../core/cases');
 const periodicModular = require('../solvers/all-lattices-cylinder-torus-modular.js');
-const { capThreads } = require('../solvers/diagonal-pieces-modular.js');
+const { capThreads } = require('../solvers/domicule-rectangle-polynomial-modular.js');
 const { ROOT_DIRECTORY, REJECTION_TIMEOUT, runNode } = require('./support');
 
 const EXITING_WORKER = path.join(__dirname, 'fixtures', 'exitingWorker.js');
@@ -95,7 +95,7 @@ describe('limits', () => {
 
 describe('rejections of the library and of a worker that exits', () => {
   const solver = name => path.join(SOLVERS_DIRECTORY, name);
-  const exitingWorkerCases = ['domicule-rectangle-modular', 'all-lattices-cylinder-torus-modular', 'diagonal-pieces-modular'].map(algorithm => ({
+  const exitingWorkerCases = ['domicule-rectangle-modular', 'all-lattices-cylinder-torus-modular', 'domicule-rectangle-polynomial-modular'].map(algorithm => ({
     name: `${algorithm} with a worker that exits before it sends a result`,
     args: ['--require', EXITING_WORKER, solver(`${algorithm}.js`), '-r', '2', '-c', '2', '-j', '1'],
     message: 'before it sent a result',
@@ -173,7 +173,7 @@ describe('modules without a worker count', () => {
   const modules = [
     ['domicule-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('domicule-rectangle-modular')],
     ['all-lattices-cylinder-torus-modular.js', 'calculateTotalTilingCombinations', fourByFour('all-lattices-cylinder-torus-bigint')],
-    ['diagonal-pieces-modular.js', 'calculateDiagonalPolynomial', fourByFour('diagonal-pieces-bigint')],
+    ['domicule-rectangle-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('domicule-rectangle-polynomial-bigint')],
   ];
 
   for (const [fileName, method, { expectedResult, ...board }] of modules) {

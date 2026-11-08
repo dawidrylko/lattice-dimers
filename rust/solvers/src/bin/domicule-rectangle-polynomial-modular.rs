@@ -7,7 +7,7 @@ use lattice_dimers_core::{Timer, calculate_log2_bound, combine_checked_residues,
 
 const MAX_SHORTER_SIDE: u64 = 20;
 const UNREACHED: u8 = 2;
-const USAGE: &str = "Usage: diagonal-pieces-modular -r <rowCount> -c <colCount> [-j <jobs>]";
+const USAGE: &str = "Usage: domicule-rectangle-polynomial-modular -r <rowCount> -c <colCount> [-j <jobs>]";
 
 #[cfg(target_os = "macos")]
 const SYSCONF_NAMES: Option<(c_int, c_int)> = Some((200, 29));
@@ -32,7 +32,7 @@ fn physical_memory() -> u64 {
 }
 
 /// Lists the bit and the diagonal flag of every partner a free cell in column c can cover, like the moves in
-/// countModulo of js/solvers/diagonal-pieces-modular.js: right, down-left, down and down-right.
+/// countModulo of js/solvers/domicule-rectangle-polynomial-modular.js: right, down-left, down and down-right.
 fn list_moves(cols: usize, c: usize, has_below: bool) -> Vec<(usize, u8)> {
     let has_right = c + 1 < cols;
     let mut moves = Vec::new();
@@ -63,7 +63,7 @@ struct Tables {
 }
 
 /// Counts the domicule tilings by the number of diagonal pieces modulo a prime, with the transfer of countModulo in
-/// js/solvers/diagonal-pieces-modular.js. Every state keeps only the coefficients of x^k with k of its parity:
+/// js/solvers/domicule-rectangle-polynomial-modular.js. Every state keeps only the coefficients of x^k with k of its parity:
 /// entry j of its block is the coefficient of x^(2j + parity). Each cell places at most one piece, so before cell p
 /// only the coefficients up to x^p are visited, and a table is cleared only where the last cell that wrote it reached.
 fn count_modulo(rows: usize, cols: usize, prime: u32) -> Result<Vec<u32>, String> {
@@ -146,7 +146,7 @@ fn add(current: &Tables, next: &mut Tables, (source, target, diagonal): (usize, 
 }
 
 /// Caps the number of worker threads so that their tables fit in half the memory, like capThreads of
-/// js/solvers/diagonal-pieces-modular.js: each keeps two tables of half a polynomial per state in 32-bit
+/// js/solvers/domicule-rectangle-polynomial-modular.js: each keeps two tables of half a polynomial per state in 32-bit
 /// counts and two parity tables.
 fn cap_threads(jobs: u64, cols: usize, degree: usize, memory: u64) -> u64 {
     let bytes_per_worker = (1u128 << (cols + 2)) * (2 * 4 * (degree as u128 / 2 + 1) + 2);

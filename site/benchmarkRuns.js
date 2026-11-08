@@ -2,6 +2,34 @@ const fs = require('fs');
 const path = require('path');
 
 const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
+const FORMER_NAMES = [
+  ['domicule-rectangle-polynomial-', 'diagonal-pieces-'],
+  ['domicule_rectangle_polynomial_', 'diagonal_pieces_'],
+];
+
+/**
+ * Names a result file as a run made before a solver rename recorded it, so that run stays readable.
+ * @param {string} fileName The result file name under the current solver id.
+ * @returns {string} The same name under the former id, or the name itself.
+ */
+function formerResultName(fileName) {
+  const renamed = FORMER_NAMES.find(([current]) => fileName.startsWith(current));
+
+  return renamed ? renamed[1] + fileName.slice(renamed[0].length) : fileName;
+}
+
+/**
+ * Finds the file a run recorded for a result, under the current solver id or the former one.
+ * @param {string} directory The directory of one run.
+ * @param {string} fileName The result file name under the current solver id.
+ * @returns {string} The path of the file, which may not exist.
+ */
+function resultFileOf(directory, fileName) {
+  const current = path.join(directory, fileName);
+  const former = path.join(directory, formerResultName(fileName));
+
+  return fs.existsSync(current) || !fs.existsSync(former) ? current : former;
+}
 
 function readRunEnvironment(root, run) {
   const file = path.join(root, run, 'environment.json');
@@ -51,7 +79,13 @@ function readBenchmarkRuns(root = RESULTS_DIRECTORY) {
  * @returns {string[]} The result file names.
  */
 function listJavaScriptResults(directory, prefix) {
-  return fs.readdirSync(directory).filter(fileName => fileName.startsWith(prefix) && fileName.includes('.js_'));
+  const former = formerResultName(prefix);
+
+  return fs
+    .readdirSync(directory)
+    .filter(fileName => fileName.includes('.js_'))
+    .map(fileName => (former !== prefix && fileName.startsWith(former) ? prefix + fileName.slice(former.length) : fileName))
+    .filter(fileName => fileName.startsWith(prefix));
 }
 
 /**
@@ -75,4 +109,4 @@ function describeMissing({ reason }, budgetHours) {
     : 'not measured: a run failed on this or a smaller board';
 }
 
-module.exports = { readBenchmarkRuns, listJavaScriptResults, describeMissing };
+module.exports = { readBenchmarkRuns, listJavaScriptResults, describeMissing, formerResultName, resultFileOf };

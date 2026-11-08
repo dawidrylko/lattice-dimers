@@ -8,12 +8,12 @@ from lattice_dimers.core import calculate_log2_bound, combine_checked_residues, 
 
 MAX_SHORTER_SIDE = 20
 SCRATCH_COUNTS = 1 << 19
-USAGE = "Usage: python3 -m lattice_dimers.solvers.diagonal_pieces_modular -r <rowCount> -c <colCount> [-j <jobs>]"
+USAGE = "Usage: python3 -m lattice_dimers.solvers.domicule_rectangle_polynomial_modular -r <rowCount> -c <colCount> [-j <jobs>]"
 
 
 def list_moves(cols, c, has_below):
     """Lists the bit index and the diagonal flag of every partner a free cell in column c can cover, like the moves in
-    countModulo of js/solvers/diagonal-pieces-modular.js: right, down-left, down and down-right."""
+    countModulo of js/solvers/domicule-rectangle-polynomial-modular.js: right, down-left, down and down-right."""
     has_right = c + 1 < cols
     moves = []
 
@@ -34,7 +34,7 @@ def list_moves(cols, c, has_below):
 
 def count_modulo(task):
     """Counts the domicule tilings by the number of diagonal pieces modulo a prime, with the transfer of countModulo in
-    js/solvers/diagonal-pieces-modular.js and tables of 32-bit counts reduced modulo the prime as there.
+    js/solvers/domicule-rectangle-polynomial-modular.js and tables of 32-bit counts reduced modulo the prime as there.
 
     The covered cells of a state fix the difference between the diagonal pieces on black and on white cells. So instead
     of the parity of the JavaScript solver, entry j of a state's block counts the tilings with j diagonal pieces on
@@ -112,7 +112,7 @@ def physical_memory():
 
 
 def cap_threads(jobs, cols, degree, memory):
-    """Caps the number of worker threads like capThreads of js/solvers/diagonal-pieces-modular.js, with its
+    """Caps the number of worker threads like capThreads of js/solvers/domicule-rectangle-polynomial-modular.js, with its
     table sizes, so that every language runs the same number of threads, although the tables here take half of that."""
     bytes_per_worker = 2 ** (cols + 2) * (2 * 4 * (degree // 2 + 1) + 2)
 
