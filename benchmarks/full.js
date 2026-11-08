@@ -32,6 +32,10 @@ const GROWTH_FLOORS = [
   [/^all[-_]lattices.*torus$/, TORUS_GROWTH],
   [/^domicule[-_]rectangle[-_]polynomial[-_]bigint/, 10],
   [/^domicule[-_]rectangle[-_]polynomial[-_]modular/, 5],
+  [/^domicule[-_]cylinder[-_]torus[-_]polynomial[-_]bigint.*torus$/, 51],
+  [/^domicule[-_]cylinder[-_]torus[-_]polynomial[-_]bigint.*cylinder$/, 24],
+  [/^domicule[-_]cylinder[-_]torus[-_]polynomial[-_]modular.*torus$/, 37],
+  [/^domicule[-_]cylinder[-_]torus[-_]polynomial[-_]modular.*cylinder$/, 8],
 ];
 const INSTRUCTION_BOARDS = [
   { id: 'domino-rectangle-formula', args: ['-r', '20', '-c', '20'] },
@@ -43,6 +47,8 @@ const INSTRUCTION_BOARDS = [
   { id: 'domicule-rectangle-polynomial-bigint', args: ['-r', '6', '-c', '6'] },
   { id: 'all-lattices-cylinder-torus-modular', args: ['-r', '8', '-c', '8', '--lattice', 'king', '-j', '1'] },
   { id: 'all-lattices-cylinder-torus-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'king'] },
+  { id: 'domicule-cylinder-torus-polynomial-modular', args: ['-r', '8', '-c', '8', '-j', '1'] },
+  { id: 'domicule-cylinder-torus-polynomial-bigint', args: ['-r', '6', '-c', '6'] },
 ];
 const INSTRUCTION_RUNS = 3;
 const MIN_RUN_TIMEOUT_SECONDS = 60;
@@ -100,6 +106,7 @@ function listSeries(jobs) {
   ].forEach(([lattice, surface, groups]) =>
     groups.forEach(({ files, testCases }) => add(files, testCases, `-${lattice}-${surface}`)),
   );
+  ['torus', 'cylinder'].forEach(surface => king[`--diagonal-${surface}`].forEach(({ files, testCases }) => add(files, testCases, `-${surface}`)));
 
   return series;
 }

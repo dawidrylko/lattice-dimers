@@ -30,6 +30,8 @@ Each solver is a command-line program that prints the number of tilings of one b
 | [`all-lattices-cylinder-torus-modular.js`](solvers/all-lattices-cylinder-torus-modular.js) | the same | transfer by cells modulo primes |
 | [`domicule-rectangle-polynomial-bigint.js`](solvers/domicule-rectangle-polynomial-bigint.js) | domicule tilings by the number of diagonal pieces | transfer by cells, `BigInt` (reference) |
 | [`domicule-rectangle-polynomial-modular.js`](solvers/domicule-rectangle-polynomial-modular.js) | the same | transfer by cells modulo primes |
+| [`domicule-cylinder-torus-polynomial-bigint.js`](solvers/domicule-cylinder-torus-polynomial-bigint.js) | domicule tilings of cylinders and tori by the number of diagonal pieces | transfer by rows, `BigInt` (reference) |
+| [`domicule-cylinder-torus-polynomial-modular.js`](solvers/domicule-cylinder-torus-polynomial-modular.js) | the same | transfer by cells modulo primes |
 
 ```sh
 node js/solvers/domino-rectangle-formula.js -r 20 -c 20
@@ -37,6 +39,7 @@ node js/solvers/domicule-rectangle-modular.js -r 20 -c 20 -j 8                  
 node js/solvers/all-lattices-cylinder-torus-modular.js -r 12 -c 12 --torus                # the king's graph on the 12 × 12 torus
 node js/solvers/all-lattices-cylinder-torus-modular.js -r 8 -c 6 --lattice triangular     # a triangular cylinder of circumference 6
 node js/solvers/domicule-rectangle-polynomial-modular.js -r 16 -c 16                                    # 20 × 20 needs 3.4 GB per thread
+node js/solvers/domicule-cylinder-torus-polynomial-modular.js -r 12 -c 12 --torus         # by diagonal pieces on the 12 × 12 torus
 ```
 
 ## Implementations

@@ -12,6 +12,7 @@ SPEC = ROOT / "spec"
 DIGIT_LIMIT = 640
 GIGABYTE = 2**30
 MODULAR_DIAGONAL = "lattice_dimers.solvers.domicule_rectangle_polynomial_modular"
+MODULAR_CYLINDER_TORUS_DIAGONAL = "lattice_dimers.solvers.domicule_cylinder_torus_polynomial_modular"
 
 
 def load(path):
@@ -143,5 +144,40 @@ def test_unknown_processor_count(algorithm, method, case):
 )
 def test_cap_threads(jobs, cols, degree, memory, expected):
     cap_threads = importlib.import_module(MODULAR_DIAGONAL).cap_threads
+
+    assert cap_threads(jobs, cols, degree, memory) == expected
+
+
+CYLINDER_TORUS_CASES = [
+    board_of("domicule-cylinder-torus-polynomial-bigint", 4, 6),
+    board_of("domicule-cylinder-torus-polynomial-bigint", 5, 4),
+]
+
+
+@pytest.mark.parametrize(
+    "case",
+    [pytest.param(case, id=f"{case['rowCount']}x{case['colCount']}{'-torus' if case.get('torus') else ''}") for case in CYLINDER_TORUS_CASES],
+)
+def test_cylinder_torus_scratch_array_of_one_count(monkeypatch, case):
+    solver = importlib.import_module(MODULAR_CYLINDER_TORUS_DIAGONAL)
+    monkeypatch.setattr(solver, "SCRATCH_COUNTS", 1)
+    monkeypatch.setattr(solver, "BATCH_COUNTS", 1)
+
+    result = solver.calculate_diagonal_polynomial(case["rowCount"], case["colCount"], bool(case.get("torus")), 2)
+
+    assert joined(result) == case["expectedResult"]
+
+
+@pytest.mark.parametrize(
+    "jobs, cols, degree, memory, expected",
+    [
+        pytest.param(10, 20, 200, 64 * GIGABYTE, 2, id="20x20-on-64GB"),
+        pytest.param(4, 6, 18, 16 * GIGABYTE, 4, id="6x6-on-16GB"),
+        pytest.param(3, 20, 200, GIGABYTE, 1, id="20x20-on-1GB"),
+        pytest.param(9, 2, 31, 0, 1, id="unknown-memory"),
+    ],
+)
+def test_cylinder_torus_cap_threads(jobs, cols, degree, memory, expected):
+    cap_threads = importlib.import_module(MODULAR_CYLINDER_TORUS_DIAGONAL).cap_threads
 
     assert cap_threads(jobs, cols, degree, memory) == expected

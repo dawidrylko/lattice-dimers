@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { test } = require('node:test');
-const { listJavaScriptResults, describeMissing, resultFileOf } = require('../../site/benchmarkRuns.js');
+const { listJavaScriptResults, describeMissing, resultFileOf, findSeriesRun } = require('../../site/benchmarkRuns.js');
 const { makeTemporaryDirectory } = require('./support');
 
 test('a benchmark table reads the JavaScript results only', t => {
@@ -31,6 +31,22 @@ test('a run made before the rename of the diagonal solvers is read under their n
   assert.deepEqual(listJavaScriptResults(directory, 'domicule-rectangle-polynomial-'), ['domicule-rectangle-polynomial-modular.js_4x4.txt']);
   assert.equal(resultFileOf(directory, 'domicule_rectangle_polynomial_modular.py_4x4.txt'), path.join(directory, 'diagonal_pieces_modular.py_4x4.txt'));
   assert.equal(resultFileOf(directory, 'domicule-rectangle-polynomial-modular.rs_4x4.txt'), path.join(directory, 'domicule-rectangle-polynomial-modular.rs_4x4.txt'));
+});
+
+test('a table of solvers newer than the complete run reads the newest clean run that measured them', t => {
+  const root = makeTemporaryDirectory(t, 'series-benchmark-');
+  const run = (name, environment, files) => {
+    fs.mkdirSync(path.join(root, name));
+    fs.writeFileSync(path.join(root, name, 'environment.json'), JSON.stringify(environment));
+    files.forEach(file => fs.writeFileSync(path.join(root, name, file), ''));
+  };
+
+  run('old', { complete: true, dirty: false, date: '2026-11-07' }, ['domicule-rectangle-bigint.js_2x2.txt']);
+  run('new', { complete: false, dirty: false, date: '2026-11-09' }, ['domicule-cylinder-torus-polynomial-bigint.js_2x2-torus.txt']);
+  run('dirty', { complete: false, dirty: true, date: '2026-11-10' }, ['domicule-cylinder-torus-polynomial-bigint.js_4x4-torus.txt']);
+
+  assert.equal(findSeriesRun('domicule-cylinder-torus-polynomial-', root), 'new');
+  assert.equal(findSeriesRun('domino-rectangle-', root), null);
 });
 
 test('a dash gives the reason plan.json records', () => {

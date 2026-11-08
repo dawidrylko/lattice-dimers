@@ -26,9 +26,13 @@ where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only 
 
 [`domicule-rectangle-polynomial-modular.js`](../../js/solvers/domicule-rectangle-polynomial-modular.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, modulo primes, one prime per worker thread. [`domicule-rectangle-polynomial-modular.rs`](../../rust/solvers/src/bin/domicule-rectangle-polynomial-modular.rs) and [`domicule_rectangle_polynomial_modular.py`](../../python/lattice_dimers/solvers/domicule_rectangle_polynomial_modular.py) count the same polynomial. Rust keeps the parity of every state as JavaScript does. Python numbers the entries of a state by the diagonal pieces on white cells, so a cell step needs no table of parities and moves whole views of the table. Its tables take half the memory of the other two, but all three cap the worker threads by the same formula, so the running times below compare the same number of threads.
 
+On cylinders and tori [`domicule-cylinder-torus-polynomial-modular.js`](../../js/solvers/domicule-cylinder-torus-polynomial-modular.js) runs the cell by cell transfer of the [tori notebook](03-tori.md#the-modular-solver) on the king's graph with a block of coefficients in every state, one prime per worker thread. A torus runs only the smallest rotation of every set of cells covered from the last row and counts it once per rotation, and its shorter side is taken as the circumference. [`domicule-cylinder-torus-polynomial-modular.rs`](../../rust/solvers/src/bin/domicule-cylinder-torus-polynomial-modular.rs) and [`domicule_cylinder_torus_polynomial_modular.py`](../../python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_modular.py) count the same polynomial.
+
 ## The BigInt solver
 
 [`domicule-rectangle-polynomial-bigint.js`](../../js/solvers/domicule-rectangle-polynomial-bigint.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, and keeps its coefficients as `BigInt`, and so do its Rust and Python implementations, [`domicule-rectangle-polynomial-bigint.rs`](../../rust/solvers/src/bin/domicule-rectangle-polynomial-bigint.rs) and [`domicule_rectangle_polynomial_bigint.py`](../../python/lattice_dimers/solvers/domicule_rectangle_polynomial_bigint.py).
+
+On cylinders and tori [`domicule-cylinder-torus-polynomial-bigint.js`](../../js/solvers/domicule-cylinder-torus-polynomial-bigint.js) runs the row transfer of the [cylinders notebook](02-cylinders.md#the-bigint-solver) on the king's graph and counts a piece sent to the next row one column left or right as diagonal. A torus is the trace of the transfer, with the same rotations as the Modular solver. Its Rust and Python implementations are [`domicule-cylinder-torus-polynomial-bigint.rs`](../../rust/solvers/src/bin/domicule-cylinder-torus-polynomial-bigint.rs) and [`domicule_cylinder_torus_polynomial_bigint.py`](../../python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_bigint.py).
 
 ## Numbering
 
@@ -169,10 +173,27 @@ chart({
 
 ## Cylinders and tori
 
-The gallery's scan of the [cylinders](02-cylinders.md#numbering) and [tori](03-tori.md#numbering) carries the same lists. So the build sorts their tilings by diagonal pieces too, up to $10 \times 10$. It checks every row as the [numbering](#numbering) section says. No solver counts these polynomials yet. The table below gives, for each $n \times n$ board of the gallery, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces.
+The [solvers](#the-modular-solver) count the polynomial on cylinders and tori, and the gallery's scan of the [cylinders](02-cylinders.md#numbering) and [tori](03-tori.md#numbering) carries the same lists up to $10 \times 10$, so the cell below checks one against the other. The table gives, for each $n \times n$ board in `spec/cases/`, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces.
 
 ```js run
-const rows = nb.context.periodicDiagonals.map(({ surface, side, diagonals }) => {
+const stored = require('./js/core/cases')
+  .testCasesOf('domicule-cylinder-torus-polynomial-modular')
+  .filter(({ rowCount, colCount }) => rowCount === colCount && rowCount >= 2 && rowCount % 2 === 0)
+  .map(({ rowCount, torus, expectedResult }) => ({ surface: torus ? 'torus' : 'cylinder', side: rowCount, diagonals: expectedResult.split(',') }))
+  .sort((a, b) => b.surface.localeCompare(a.surface) || a.side - b.side);
+const gallery = nb.context.periodicDiagonals.filter(({ side }) => side >= 2);
+const differing = gallery.filter(g => {
+  const solved = stored.find(s => s.surface === g.surface && s.side === g.side);
+  return solved && solved.diagonals.join() !== g.diagonals.join();
+});
+
+if (differing.length) {
+  throw new Error(`The gallery and the solvers differ on ${differing.map(({ surface, side }) => `the ${side}x${side} ${surface}`).join(', ')}.`);
+}
+
+print(`The gallery's scan agrees with the solvers on the ${gallery.filter(g => stored.some(s => s.surface === g.surface && s.side === g.side)).length} boards both count.`);
+
+const rows = stored.map(({ surface, side, diagonals }) => {
   const counts = diagonals.map(BigInt);
   const total = counts.reduce((sum, c) => sum + c, 0n);
   const peak = counts.indexOf(counts.reduce((max, c) => (c > max ? c : max), 0n));
@@ -184,7 +205,7 @@ const rows = nb.context.periodicDiagonals.map(({ surface, side, diagonals }) => 
 
 table(['surface', 'board', 'k with a tiling', 'k of the largest term', 'share of diagonal pieces'], rows);
 print('The 4 × 4 boards, k = 0, 1, 2, ...:');
-nb.context.periodicDiagonals
+stored
   .filter(({ side }) => side === 4)
   .forEach(({ surface, diagonals }) => print(`${surface}: ${diagonals.join(', ')}`));
 ```
@@ -206,6 +227,26 @@ table(
 print(`Run: ${nb.context.benchmarkRun}`);
 ```
 
+On cylinders and tori the solvers came after that run, so their times come from a run of their own.
+
+```js run
+const { formatTime, periodicDiagonalBenchmark, periodicDiagonalRun } = nb.context;
+
+if (!periodicDiagonalRun) {
+  print('These solvers have no benchmark run yet.');
+} else {
+  table(
+    ['surface', 'board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
+    periodicDiagonalBenchmark.map(r => [
+      r.surface,
+      `${r.rowCount}×${r.colCount}`,
+      ...[r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
+    ]),
+  );
+  print(`Run: ${periodicDiagonalRun.directory}`);
+}
+```
+
 ## PARI/GP
 
 The polynomial $P_{h,w}(x)$ and the rows of the triangle in [`oeis/A401673/A401673.gp`](../../oeis/A401673/A401673.gp), checked in CI against the test data up to $8 \times 8$.
@@ -216,7 +257,7 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 ## Verification
 
-The two diagonal solvers agree with each other, with A004003 at $k = 0$ and with A239273 summed over $k$, and the PARI/GP program runs in CI against the same data. The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
+The two diagonal solvers of each surface agree with each other. On a rectangle they agree with A004003 at $k = 0$ and with A239273 summed over $k$. On a cylinder or torus they agree with the domino count of `all-lattices-cylinder-torus-bigint` at $k = 0$ and with its king's graph count summed over $k$, and on the boards of up to 16 cells with every tiling listed one by one. The PARI/GP program runs in CI against the rectangle data. The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
 

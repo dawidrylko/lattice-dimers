@@ -719,6 +719,190 @@
         "x"
       ],
       "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "21"
+      ],
+      "message": "at most 20"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "21",
+        "-c",
+        "21",
+        "--torus"
+      ],
+      "message": "use domicule-cylinder-torus-polynomial-modular.js for larger boards"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "1",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "3000000000000001",
+        "-c",
+        "3"
+      ],
+      "message": "Invalid array length"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "21"
+      ],
+      "message": "at most 20"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "21",
+        "-c",
+        "21",
+        "--torus"
+      ],
+      "message": "because every worker thread keeps the polynomial of every one of 2^(circumference + 3) states in memory"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "1",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "2abc",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "9007199254740992",
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-c",
+        "4"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "0"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "x"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "3000000000000001",
+        "-c",
+        "3"
+      ],
+      "message": "Invalid array length"
     }
   ],
   "parity": [
@@ -937,6 +1121,78 @@
       "rowCount": 2,
       "colCount": 31,
       "expectedResult": "2178309,0,18394910,0,71501422,0,169457708,0,273381350,0,317354740,0,273163100,0,176975160,0,86666790,0,31915300,0,8705060,0,1710280,0,230932,0,19768,0,920,0,16,0"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "rowCount": 0,
+      "colCount": 5,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "rowCount": 1,
+      "colCount": 2,
+      "expectedResult": "2,0"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "rowCount": 1,
+      "colCount": 3,
+      "expectedResult": "0,0"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "rowCount": 2,
+      "colCount": 2,
+      "expectedResult": "5,0,4"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "rowCount": 3,
+      "colCount": 3,
+      "expectedResult": "0,0,0,0,0"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "rowCount": 31,
+      "colCount": 2,
+      "expectedResult": "627013566048,0,11126459816320,0,90028202462720,0,439519304120320,0,1443601349140480,0,3367029545074688,0,5736158801035264,0,7229473511964672,0,6750073566265344,0,4627956991262720,0,2283742726979584,0,783500416385024,0,176555904991232,0,23736136761344,0,1589137899520,0,34359738368,0"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "rowCount": 0,
+      "colCount": 5,
+      "expectedResult": "1"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "rowCount": 1,
+      "colCount": 2,
+      "expectedResult": "2,0"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "rowCount": 1,
+      "colCount": 3,
+      "expectedResult": "0,0"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "rowCount": 2,
+      "colCount": 2,
+      "expectedResult": "5,0,4"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "rowCount": 3,
+      "colCount": 3,
+      "expectedResult": "0,0,0,0,0"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "rowCount": 31,
+      "colCount": 2,
+      "expectedResult": "627013566048,0,11126459816320,0,90028202462720,0,439519304120320,0,1443601349140480,0,3367029545074688,0,5736158801035264,0,7229473511964672,0,6750073566265344,0,4627956991262720,0,2283742726979584,0,783500416385024,0,176555904991232,0,23736136761344,0,1589137899520,0,34359738368,0"
     }
   ],
   "precision": [

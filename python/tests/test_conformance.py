@@ -113,7 +113,7 @@ def listed_cases():
 
 
 def matches(algorithm, expected, actual):
-    if algorithm.startswith("domicule-rectangle-polynomial-"):
+    if "-polynomial-" in algorithm:
         return str(expected) == actual
 
     if isinstance(expected, int):
