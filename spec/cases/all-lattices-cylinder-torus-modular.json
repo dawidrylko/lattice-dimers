@@ -752,6 +752,98 @@
       "colCount": 6,
       "lattice": "king",
       "expectedResult": "77481277"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "square",
+      "expectedResult": "5"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "square",
+      "expectedResult": "28561"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "square",
+      "expectedResult": "71385601"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "square",
+      "expectedResult": "1872712598261"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "square",
+      "expectedResult": "510925709066955625"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "square",
+      "expectedResult": "1443134633691436850272225"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "square",
+      "expectedResult": "42112012462508110293785705054209"
+    },
+    {
+      "rowCount": 18,
+      "colCount": 18,
+      "lattice": "square",
+      "expectedResult": "12682456809311721350817701357733298515749"
+    },
+    {
+      "rowCount": 20,
+      "colCount": 20,
+      "lattice": "square",
+      "expectedResult": "39396218792467346390886562920071491558570190350809"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "king",
+      "expectedResult": "218443636071809"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "king",
+      "expectedResult": "3128916537327542580980996959564887390713928173"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "king",
+      "expectedResult": "646956954129715568786996558103553266832772491709888662811137"
+    },
+    {
+      "rowCount": 18,
+      "colCount": 18,
+      "lattice": "king",
+      "expectedResult": "12335487571209436768383230060812575724495333522296724603496099865472598819137"
+    },
+    {
+      "rowCount": 20,
+      "colCount": 20,
+      "lattice": "king",
+      "expectedResult": "21688471369357631115632742624521218075707923127202396257900707435118841134780628591174563434057"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "630665326543010382995142219988992",
+      "oeis": "A335586"
     }
   ]
 }
