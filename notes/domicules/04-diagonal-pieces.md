@@ -1,4 +1,4 @@
-# Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673)
+# Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673 on the 2n × 2n board)
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673) [3]. The gallery's cylinders and tori are sorted the same way in the [last counting section](#cylinders-and-tori).
 

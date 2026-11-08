@@ -131,7 +131,7 @@ const NOTES = [
     slug: 'domicules/diagonal-pieces',
     cells: 7, figures: 1,
     group: 'Domicules',
-    h1: 'Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673)',
+    h1: 'Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673 on the 2n × 2n board)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Cylinders and tori', 'Running time', 'PARI/GP', 'Verification', 'References'],
   },
   {
@@ -161,7 +161,7 @@ const OLD_SECTIONS = {
   'triangular-lattice/cylinders': SOLVER_SECTION,
   'triangular-lattice/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus': 'the-counts' },
 };
-const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule )?tilings of .+ \((A\d{6}(, A\d{6})*|not in the OEIS)\)$/;
+const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule )?tilings of .+ \((A\d{6}( on the [^)]+)?(, A\d{6})*|not in the OEIS)\)$/;
 const NOTEBOOK_SKELETON = ['The problem', 'The Formula solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', '*', 'Running time', 'PARI/GP', 'Verification', 'References'];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes/rectangles'],
