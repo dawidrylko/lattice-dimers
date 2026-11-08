@@ -1,6 +1,6 @@
-# Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)
+# Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673 on the 2n × 2n board)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673) [3].
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673) [3]. The gallery's cylinders and tori are sorted the same way in the [last counting section](#cylinders-and-tori).
 
 ## The problem
 
@@ -24,26 +24,26 @@ where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only 
 
 ## The Modular solver
 
-[`diagonal-pieces-modular.js`](../../js/solvers/diagonal-pieces-modular.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, modulo primes, one prime per worker thread. [`diagonal-pieces-modular.rs`](../../rust/solvers/src/bin/diagonal-pieces-modular.rs) and [`diagonal_pieces_modular.py`](../../python/lattice_dimers/solvers/diagonal_pieces_modular.py) count the same polynomial. Rust keeps the parity of every state as JavaScript does. Python numbers the entries of a state by the diagonal pieces on white cells, so a cell step needs no table of parities and moves whole views of the table. Its tables take half the memory of the other two, but all three cap the worker threads by the same formula, so the running times below compare the same number of threads.
+[`domicule-rectangle-polynomial-modular.js`](../../js/solvers/domicule-rectangle-polynomial-modular.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, modulo primes, one prime per worker thread. [`domicule-rectangle-polynomial-modular.rs`](../../rust/solvers/src/bin/domicule-rectangle-polynomial-modular.rs) and [`domicule_rectangle_polynomial_modular.py`](../../python/lattice_dimers/solvers/domicule_rectangle_polynomial_modular.py) count the same polynomial. Rust keeps the parity of every state as JavaScript does. Python numbers the entries of a state by the diagonal pieces on white cells, so a cell step needs no table of parities and moves whole views of the table. Its tables take half the memory of the other two, but all three cap the worker threads by the same formula, so the running times below compare the same number of threads.
 
 ## The BigInt solver
 
-[`diagonal-pieces-bigint.js`](../../js/solvers/diagonal-pieces-bigint.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, and keeps its coefficients as `BigInt`, and so do its Rust and Python implementations, [`diagonal-pieces-bigint.rs`](../../rust/solvers/src/bin/diagonal-pieces-bigint.rs) and [`diagonal_pieces_bigint.py`](../../python/lattice_dimers/solvers/diagonal_pieces_bigint.py).
+[`domicule-rectangle-polynomial-bigint.js`](../../js/solvers/domicule-rectangle-polynomial-bigint.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, and keeps its coefficients as `BigInt`, and so do its Rust and Python implementations, [`domicule-rectangle-polynomial-bigint.rs`](../../rust/solvers/src/bin/domicule-rectangle-polynomial-bigint.rs) and [`domicule_rectangle_polynomial_bigint.py`](../../python/lattice_dimers/solvers/domicule_rectangle_polynomial_bigint.py).
 
 ## Numbering
 
 The gallery can also number only the tilings with $k$ diagonal pieces. Every entry of the table of the [domicule numbering](01-rectangles.md#numbering) then becomes a list, `table[i][state][r]`, of the completions with exactly $r \le k$ diagonal pieces, and unranking keeps the order of the full numbering. The gallery offers this up to $10 \times 10$.
 
-A straight piece covers a black and a white cell of the chessboard, a diagonal piece two cells of one colour. So on the $2n \times 2n$ board the number of diagonal pieces is even. On a rectangle the count for every $k$ comes from [`diagonal-pieces-bigint.js`](../../js/solvers/diagonal-pieces-bigint.js) or `spec/cases/`. On a [cylinder](02-cylinders.md) or [torus](03-tori.md) the gallery's own scan carries the same lists, one per rotation class, and the build checks its count for $k = 0$ against the domino count of the same surface. It also checks that the counts add up to the number of tilings.
+A straight piece covers a black and a white cell of the chessboard, a diagonal piece two cells of one colour. So on the $2n \times 2n$ board the number of diagonal pieces is even. On a rectangle the count for every $k$ comes from [`domicule-rectangle-polynomial-bigint.js`](../../js/solvers/domicule-rectangle-polynomial-bigint.js) or `spec/cases/`. On a [cylinder](02-cylinders.md) or [torus](03-tori.md) the gallery's own scan carries the same lists, one per rotation class, and the build checks its count for $k = 0$ against the domino count of the same surface. It also checks that the counts add up to the number of tilings.
 
 ## The counts
 
 A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. When the OEIS was searched by terms and by name on 30 October 2026, before A401673 was drafted, it had no such triangle.
 
 ```js run
-const reference = require('./js/solvers/diagonal-pieces-bigint.js');
+const reference = require('./js/solvers/domicule-rectangle-polynomial-bigint.js');
 const data = require('./js/core/cases');
-const stored = side => data.testCasesOf('diagonal-pieces-modular').find(t => t.rowCount === side && t.colCount === side);
+const stored = side => data.testCasesOf('domicule-rectangle-polynomial-modular').find(t => t.rowCount === side && t.colCount === side);
 const domino = side => data.testCasesOf('domino-rectangle-formula').find(t => t.rowCount === side && t.colCount === side).expectedResult;
 
 nb.rows = {};
@@ -165,6 +165,28 @@ chart({
   })),
   describe: ([x, value]) => `x = ${x}, log P(x)/(4n²) = ${value.toFixed(6)}`,
 });
+```
+
+## Cylinders and tori
+
+The gallery's scan of the [cylinders](02-cylinders.md#numbering) and [tori](03-tori.md#numbering) carries the same lists. So the build sorts their tilings by diagonal pieces too, up to $10 \times 10$. It checks every row as the [numbering](#numbering) section says. No solver counts these polynomials yet. The table below gives, for each $n \times n$ board of the gallery, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces.
+
+```js run
+const rows = nb.context.periodicDiagonals.map(({ surface, side, diagonals }) => {
+  const counts = diagonals.map(BigInt);
+  const total = counts.reduce((sum, c) => sum + c, 0n);
+  const peak = counts.indexOf(counts.reduce((max, c) => (c > max ? c : max), 0n));
+  const scale = 10n ** 15n;
+  const mean = Number((counts.reduce((sum, c, k) => sum + BigInt(k) * c, 0n) * scale) / total) / Number(scale);
+
+  return [surface, `${side}×${side}`, counts.filter(c => c > 0n).length, peak, (mean / ((side * side) / 2)).toFixed(6)];
+});
+
+table(['surface', 'board', 'k with a tiling', 'k of the largest term', 'share of diagonal pieces'], rows);
+print('The 4 × 4 boards, k = 0, 1, 2, ...:');
+nb.context.periodicDiagonals
+  .filter(({ side }) => side === 4)
+  .forEach(({ surface, diagonals }) => print(`${surface}: ${diagonals.join(', ')}`));
 ```
 
 ## Running time

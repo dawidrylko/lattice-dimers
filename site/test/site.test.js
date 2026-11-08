@@ -44,13 +44,16 @@ const LANGUAGE_TABLES = [
   ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
   ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
   ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/rectangle/diagonal', 'diagonal-benchmark', 'DATA.diagonalBenchmark', '280', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
 ];
 const SHOWN_BENCHMARK = `(() => {
-  const view = group => group.dataset.pieces + '/' + group.dataset.surface;
+  const view = group => group.dataset.pieces + '/' + group.dataset.surface + (group.dataset.count ? '/' + group.dataset.count : '');
   const pressed = id => [...document.querySelectorAll('#' + id + ' button[aria-pressed="true"]')];
+  const count = document.getElementById('benchmark-count-picker').hidden ? '' : pressed('benchmark-counts').map(button => button.dataset.count).join();
   return {
     shown: [...document.querySelectorAll('#benchmark .bench-group')].filter(group => !group.hidden).map(view).join(),
-    pressed: pressed('benchmark-pieces').map(button => button.dataset.pieces).join() + '/' + pressed('benchmark-surfaces').map(button => button.dataset.surface).join(),
+    pressed: pressed('benchmark-pieces').map(button => button.dataset.pieces).join() + '/' + pressed('benchmark-surfaces').map(button => button.dataset.surface).join() + (count && count !== 'all' ? '/' + count : ''),
+    counted: !document.getElementById('benchmark-count-picker').hidden,
   };
 })()`;
 const WAIT_TIMEOUT = 20000;
@@ -126,10 +129,10 @@ const NOTES = [
   },
   {
     slug: 'domicules/diagonal-pieces',
-    cells: 6, figures: 1,
+    cells: 7, figures: 1,
     group: 'Domicules',
-    h1: 'Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Running time', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673 on the 2n × 2n board)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Cylinders and tori', 'Running time', 'PARI/GP', 'Verification', 'References'],
   },
   {
     slug: 'triangular-lattice/cylinders',
@@ -158,7 +161,7 @@ const OLD_SECTIONS = {
   'triangular-lattice/cylinders': SOLVER_SECTION,
   'triangular-lattice/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus': 'the-counts' },
 };
-const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule )?tilings of .+ \((A\d{6}(, A\d{6})*|not in the OEIS)\)$/;
+const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule )?tilings of .+ \((A\d{6}( on the [^)]+)?(, A\d{6})*|not in the OEIS)\)$/;
 const NOTEBOOK_SKELETON = ['The problem', 'The Formula solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', '*', 'Running time', 'PARI/GP', 'Verification', 'References'];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes/rectangles'],
@@ -1266,6 +1269,7 @@ const READ_CHROME = `(() => {
       return new URL(link.href).pathname.replace(/^.*\\/notes\\//, '').replace(/\\.html$/, '') === expected ? '' : link.getAttribute('href') + ' for ' + expected;
     }).filter(Boolean) : [],
     groups: header ? [...header.querySelectorAll('summary')].map(summary => summary.textContent.trim()).join(', ') : '',
+    separated: header ? [...header.querySelectorAll('nav .menu hr')].map(rule => rule.nextElementSibling?.textContent.trim() ?? 'nothing').join(', ') : '',
     currentGroups: header ? [...header.querySelectorAll('summary[data-current][aria-current="true"]')].map(summary => summary.textContent.trim()) : [],
     linkGroup: (() => {
       const link = header && header.querySelector('nav [aria-current="page"]');
@@ -1403,6 +1407,10 @@ async function checkChrome(page, baseUrl, width) {
     problems.push(`menu entries whose address is not their label: ${home.misnamed.join(', ')}`);
   }
 
+  if (home.separated !== 'Diagonal pieces') {
+    problems.push(`the menu sets apart ${home.separated || 'no entry'} instead of Diagonal pieces, which is not a surface`);
+  }
+
   if (home.groups !== MENU_GROUPS.join(', ')) {
     problems.push(`the menu groups are ${home.groups} instead of ${MENU_GROUPS.join(', ')}`);
   }
@@ -1462,7 +1470,9 @@ async function checkBenchmark(page, baseUrl, width) {
     ['benchmark-domicule', 'domicule/rectangle', 'domicule-benchmark-rows', null],
     ['benchmark/cylinders', 'domicule/cylinder', 'cylinder-benchmark-rows', null],
     ['benchmark/tori', 'domicule/torus', 'torus-benchmark-rows', null],
-    ['benchmark/diagonals', 'domicule/rectangle', 'domicule-benchmark-rows', null],
+    ['benchmark/domicule/rectangle/diagonal', 'domicule/rectangle/diagonal', 'diagonal-benchmark-rows', 'some'],
+    ['benchmark/diagonals', 'domicule/rectangle/diagonal', 'diagonal-benchmark-rows', null],
+    ['benchmark/domicule/torus/diagonal', 'domicule/torus', 'torus-benchmark-rows', null],
     ['benchmark/domino/hexagon', 'domino/rectangle', 'domino-benchmark-rows', null],
   ]) {
     await loadSite(page, baseUrl, width, hash);
@@ -1525,6 +1535,10 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${hash} shows ${shown.shown} with ${shown.pressed} pressed instead of ${view}`);
     }
 
+    if (shown.counted !== view.startsWith('domicule/rectangle')) {
+      problems.push(`#${hash} ${shown.counted ? 'shows' : 'hides'} the Count switch`);
+    }
+
     if (state.overflow > 0 || state.hidden) {
       problems.push(`#${hash} scrolls ${state.overflow} px sideways with ${state.hidden} cells off screen`);
     }
@@ -1538,11 +1552,21 @@ async function checkBenchmark(page, baseUrl, width) {
     }
   }
 
-  await loadSite(page, baseUrl, width, 'benchmark');
-  const diagonals = await page.evaluate(`Boolean(document.getElementById('diagonal-benchmark'))`);
+  await loadSite(page, baseUrl, width, 'benchmark/domicule/rectangle/diagonal');
 
-  if (diagonals) {
-    problems.push('the benchmarks still show the diagonal pieces table');
+  for (const [click, hash] of [
+    ['#benchmark-surfaces button[data-surface=cylinder]', '#benchmark/domicule/cylinder'],
+    ['#benchmark-surfaces button[data-surface=rectangle]', '#benchmark/domicule/rectangle'],
+    ['#benchmark-counts button[data-count=diagonal]', '#benchmark/domicule/rectangle/diagonal'],
+    ['#benchmark-pieces button[data-pieces=domino]', '#benchmark/domino/rectangle'],
+    ['#benchmark-pieces button[data-pieces=domicule]', '#benchmark/domicule/rectangle'],
+  ]) {
+    await page.evaluate(`document.querySelector('${click}').click()`);
+    const reached = await page.evaluate('location.hash');
+
+    if (reached !== hash) {
+      problems.push(`${click} leads to ${reached} instead of ${hash}`);
+    }
   }
 
   for (const [view, id, source, tilings4x4, languages, groups] of LANGUAGE_TABLES) {
@@ -1708,8 +1732,13 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   await loadSite(page, baseUrl, width, 'benchmark');
   const pieces = await page.evaluate("[...document.querySelectorAll('#benchmark-pieces button')].map(button => button.dataset.pieces)");
   const surfaces = await page.evaluate("[...document.querySelectorAll('#benchmark-surfaces button')].map(button => button.dataset.surface)");
-  const groups = await page.evaluate("[...document.querySelectorAll('#benchmark .bench-group')].map(group => group.dataset.pieces + '/' + group.dataset.surface).sort().join()");
-  const views = pieces.flatMap(p => surfaces.map(surface => `${p}/${surface}`));
+  const counts = await page.evaluate("[...document.querySelectorAll('#benchmark-counts button')].map(button => button.dataset.count)");
+  const groups = await page.evaluate("[...document.querySelectorAll('#benchmark .bench-group')].map(group => group.dataset.pieces + '/' + group.dataset.surface + (group.dataset.count ? '/' + group.dataset.count : '')).sort().join()");
+  const views = pieces.flatMap(p =>
+    surfaces.flatMap(surface =>
+      p === 'domicule' && surface === 'rectangle' ? counts.map(count => (count === 'all' ? `${p}/${surface}` : `${p}/${surface}/${count}`)) : [`${p}/${surface}`],
+    ),
+  );
   const cardLinks = [];
 
   if (groups !== [...views].sort().join()) {
@@ -1717,12 +1746,13 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   }
 
   for (const view of views) {
-    const [p, surface] = view.split('/');
+    const [p, surface, count = 'all'] = view.split('/');
+    const group = `.bench-group[data-pieces=${p}][data-surface=${surface}]${count === 'all' ? ':not([data-count])' : `[data-count=${count}]`}`;
     await page.evaluate(
-      `document.querySelector('#benchmark-pieces button[data-pieces=${p}]').click(); document.querySelector('#benchmark-surfaces button[data-surface=${surface}]').click()`,
+      `document.querySelector('#benchmark-pieces button[data-pieces=${p}]').click(); document.querySelector('#benchmark-surfaces button[data-surface=${surface}]').click(); document.querySelector('#benchmark-counts button[data-count=${count}]').click()`,
     );
     await page.waitFor(
-      `!document.querySelector('.bench-group[data-pieces=${p}][data-surface=${surface}]').hidden && document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0`,
+      `!document.querySelector('${group}').hidden && document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0`,
       `the ${view} rows`,
     );
     cardLinks.push(await page.evaluate(READ_CARD_LINKS));
@@ -1774,6 +1804,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     'domicule-benchmark': 'domicules/rectangles',
     'cylinder-benchmark': 'domicules/cylinders',
     'torus-benchmark': 'domicules/tori',
+    'diagonal-benchmark': 'domicules/diagonal-pieces',
   };
   const expected = label => {
     const [table, solver] = label.split(/[ ,]/);
@@ -1788,9 +1819,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     problems.push(`at ${width} px the solver links of the benchmark cards are wrong: ${wrongCards.map(({ label, problem, display, tapped }) => `${label} ${problem || `display ${display}, tapped ${tapped}`}`).join('; ')}`);
   }
 
-  if (headers.length !== 36 || wrong.length) {
+  if (headers.length !== 42 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 36 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 42 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 

@@ -18,7 +18,7 @@ function listFiles(directory) {
 
 const HOLDS_THE_BOARDS_OF = {
   'all-lattices-cylinder-torus-modular': ['all-lattices-cylinder-torus-bigint'],
-  'diagonal-pieces-modular': ['diagonal-pieces-bigint'],
+  'domicule-rectangle-polynomial-modular': ['domicule-rectangle-polynomial-bigint'],
   'domicule-rectangle-bigint': ['domicule-rectangle-modular'],
   'domicule-rectangle-modular': ['domicule-rectangle-bigint'],
   'domino-rectangle-bigint': ['domino-rectangle-formula', 'domino-rectangle-number'],

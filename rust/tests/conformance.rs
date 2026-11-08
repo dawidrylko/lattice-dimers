@@ -21,8 +21,8 @@ macro_rules! binaries {
 binaries!(
     "all-lattices-cylinder-torus-bigint",
     "all-lattices-cylinder-torus-modular",
-    "diagonal-pieces-bigint",
-    "diagonal-pieces-modular",
+    "domicule-rectangle-polynomial-bigint",
+    "domicule-rectangle-polynomial-modular",
     "domicule-rectangle-bigint",
     "domicule-rectangle-modular",
     "domino-rectangle-bigint",

@@ -21,9 +21,9 @@ const DOMINO_GROUP = {
 };
 const DOMICULE_FILES = ['domicule-rectangle-bigint', 'domicule-rectangle-modular'].map(javaScriptFileOf);
 const PERIODIC_FILES = ['all-lattices-cylinder-torus-bigint', 'all-lattices-cylinder-torus-modular'].map(javaScriptFileOf);
-const DIAGONAL_FILES = ['diagonal-pieces-bigint', 'diagonal-pieces-modular'].map(javaScriptFileOf);
+const DIAGONAL_FILES = ['domicule-rectangle-polynomial-bigint', 'domicule-rectangle-polynomial-modular'].map(javaScriptFileOf);
 const PERIODIC_CASES = testCasesOf('all-lattices-cylinder-torus-modular');
-const DIAGONAL_CASES = testCasesOf('diagonal-pieces-modular');
+const DIAGONAL_CASES = testCasesOf('domicule-rectangle-polynomial-modular');
 const DOMICULE_BOARDS = [...testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare), { rowCount: 20, colCount: 20 }];
 const PERIODIC_GROUPS = ['--torus', '--cylinder'];
 const USAGE =

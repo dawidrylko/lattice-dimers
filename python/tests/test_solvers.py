@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SPEC = ROOT / "spec"
 DIGIT_LIMIT = 640
 GIGABYTE = 2**30
-MODULAR_DIAGONAL = "lattice_dimers.solvers.diagonal_pieces_modular"
+MODULAR_DIAGONAL = "lattice_dimers.solvers.domicule_rectangle_polynomial_modular"
 
 
 def load(path):
@@ -81,7 +81,7 @@ def test_long_coefficient_under_digit_limit():
 
 SCRATCH_CASES = [
     ("domicule-rectangle-modular", "calculate_total_tiling_combinations", board_of("domicule-rectangle-modular", 7, 6)),
-    ("diagonal-pieces-modular", "calculate_diagonal_polynomial", board_of("diagonal-pieces-bigint", 5, 6)),
+    ("domicule-rectangle-polynomial-modular", "calculate_diagonal_polynomial", board_of("domicule-rectangle-polynomial-bigint", 5, 6)),
 ]
 
 
@@ -101,7 +101,7 @@ def test_scratch_array_of_one_count(monkeypatch, algorithm, method, case):
 UNKNOWN_PROCESSOR_CASES = [
     ("all-lattices-cylinder-torus-modular", "calculate_total_tiling_combinations", board_of("all-lattices-cylinder-torus-bigint", 4, 4)),
     ("domicule-rectangle-modular", "calculate_total_tiling_combinations", board_of("domicule-rectangle-modular", 4, 4)),
-    ("diagonal-pieces-modular", "calculate_diagonal_polynomial", board_of("diagonal-pieces-bigint", 4, 4)),
+    ("domicule-rectangle-polynomial-modular", "calculate_diagonal_polynomial", board_of("domicule-rectangle-polynomial-bigint", 4, 4)),
 ]
 
 

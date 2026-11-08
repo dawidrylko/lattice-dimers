@@ -16,15 +16,15 @@
       "py": "python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py",
       "js": "js/solvers/all-lattices-cylinder-torus-modular.js"
     },
-    "diagonal-pieces-bigint": {
-      "rs": "rust/solvers/src/bin/diagonal-pieces-bigint.rs",
-      "py": "python/lattice_dimers/solvers/diagonal_pieces_bigint.py",
-      "js": "js/solvers/diagonal-pieces-bigint.js"
+    "domicule-rectangle-polynomial-bigint": {
+      "rs": "rust/solvers/src/bin/domicule-rectangle-polynomial-bigint.rs",
+      "py": "python/lattice_dimers/solvers/domicule_rectangle_polynomial_bigint.py",
+      "js": "js/solvers/domicule-rectangle-polynomial-bigint.js"
     },
-    "diagonal-pieces-modular": {
-      "rs": "rust/solvers/src/bin/diagonal-pieces-modular.rs",
-      "py": "python/lattice_dimers/solvers/diagonal_pieces_modular.py",
-      "js": "js/solvers/diagonal-pieces-modular.js"
+    "domicule-rectangle-polynomial-modular": {
+      "rs": "rust/solvers/src/bin/domicule-rectangle-polynomial-modular.rs",
+      "py": "python/lattice_dimers/solvers/domicule_rectangle_polynomial_modular.py",
+      "js": "js/solvers/domicule-rectangle-polynomial-modular.js"
     },
     "domicule-rectangle-bigint": {
       "rs": "rust/solvers/src/bin/domicule-rectangle-bigint.rs",

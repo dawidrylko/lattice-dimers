@@ -61,9 +61,9 @@ describe('result files by surface', () => {
       ['domino-rectangle-formula', []],
       ['domino-rectangle-number', []],
       ['domino-rectangle-bigint', []],
-      ['diagonal-pieces-bigint', ['--diagonal']],
+      ['domicule-rectangle-polynomial-bigint', ['--diagonal']],
       ['domicule-rectangle-bigint', ['--domicule']],
-      ['diagonal-pieces-modular', ['--diagonal']],
+      ['domicule-rectangle-polynomial-modular', ['--diagonal']],
       ['domicule-rectangle-modular', ['--domicule']],
     ].flatMap(([algorithm, flags]) =>
       listImplementations(algorithm).map(implementation => ({ args: [...flags, '--only', `${algorithm}.js`], file: fileOf(implementation, '0x0') })),

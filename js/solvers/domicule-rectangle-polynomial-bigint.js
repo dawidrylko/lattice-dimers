@@ -73,13 +73,13 @@ function __main__() {
   const options = parseArgs(process.argv.slice(2), argsSchema);
 
   if (!isValidSize(options.rowCount) || !isValidSize(options.colCount)) {
-    console.error('Usage: node js/solvers/diagonal-pieces-bigint.js -r <rowCount> -c <colCount>');
+    console.error('Usage: node js/solvers/domicule-rectangle-polynomial-bigint.js -r <rowCount> -c <colCount>');
     process.exit(1);
   }
 
   if (Math.min(options.rowCount, options.colCount) > MAX_SHORTER_SIDE) {
     console.error(
-      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}; use diagonal-pieces-modular.js for larger boards.`,
+      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}; use domicule-rectangle-polynomial-modular.js for larger boards.`,
     );
     process.exit(1);
   }

@@ -6,16 +6,16 @@ const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 const testCasesDomino = testCasesOf('domino-rectangle-formula');
 const testCasesDomicule = testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare);
 const testCasesPeriodic = testCasesOf('all-lattices-cylinder-torus-modular');
-const testCasesDiagonal = testCasesOf('diagonal-pieces-modular');
+const testCasesDiagonal = testCasesOf('domicule-rectangle-polynomial-modular');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
 const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
-const diagonalReference = require('../js/solvers/diagonal-pieces-bigint.js');
+const diagonalReference = require('../js/solvers/domicule-rectangle-polynomial-bigint.js');
 const { listImplementations } = require('../js/core/registry');
 const { countPeriodicDiagonals } = require('../js/renderer/periodic');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
-const { readBenchmarkRuns, listJavaScriptResults, describeMissing } = require('./benchmarkRuns');
+const { readBenchmarkRuns, listJavaScriptResults, describeMissing, formerResultName, resultFileOf } = require('./benchmarkRuns');
 const { DEFAULT_BOARD } = require('./defaultBoard');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -115,7 +115,7 @@ const NOTE_SUMMARIES = {
   'domicules/rectangles': 'Notebook: domicule tilings of the 2n × 2n board (A239273) up to 20 × 20, the modular solver, the Markov chain and how every count is checked.',
   'domicules/cylinders': "Notebook: domicule tilings of cylinders, the perfect matchings of the king's graph on the cylinder.",
   'domicules/tori': "Notebook: domicule tilings of tori (A401670); the king's graph torus count over e^(sL²) tends to 2, compared with two other lattices.",
-  'domicules/diagonal-pieces': 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces (A401673), up to 20 × 20.',
+  'domicules/diagonal-pieces': 'Notebook: domicule tilings by the number of diagonal pieces, on the 2n × 2n board up to 20 × 20 (A401673) and on cylinders and tori up to 10 × 10.',
   'triangular-lattice/cylinders': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
   'triangular-lattice/tori': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
 };
@@ -242,7 +242,7 @@ function escapeHtml(text) {
 }
 
 function readAverageTime(directory, fileName) {
-  const file = path.join(directory, fileName);
+  const file = resultFileOf(directory, fileName);
 
   if (!fs.existsSync(file)) {
     return null;
@@ -356,7 +356,7 @@ async function buildPeriodicBenchmark(lattice) {
 }
 
 function buildDiagonalBenchmark(totals) {
-  const prefix = 'diagonal-pieces-';
+  const prefix = 'domicule-rectangle-polynomial-';
 
   return listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
     .map(fileName => fileName.match(RESULT_FILE))
@@ -372,9 +372,10 @@ function buildDiagonalBenchmark(totals) {
         colCount,
         tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
         bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
-        bigintLanguages: readLanguages('diagonal-pieces-bigint', suffix),
+        bigintLanguages: readLanguages('domicule-rectangle-polynomial-bigint', suffix),
+        bigintMissing: readMissingReasons('domicule-rectangle-polynomial-bigint', `${rowCount}x${colCount}`, ''),
         modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
-        languages: readLanguages('diagonal-pieces-modular', suffix),
+        languages: readLanguages('domicule-rectangle-polynomial-modular', suffix),
       };
     });
 }
@@ -384,7 +385,8 @@ function readMissingReasons(algorithm, board, seriesSuffix) {
 
   return Object.fromEntries(
     listImplementations(algorithm).map(({ language, file }) => {
-      const entry = notMeasured.find(({ series, board: other }) => series === `${path.basename(file)}${seriesSuffix}` && other === board);
+      const name = `${path.basename(file)}${seriesSuffix}`;
+      const entry = notMeasured.find(({ series, board: other }) => (series === name || series === formerResultName(name)) && other === board);
 
       return [language, entry ? describeMissing(entry, budgetHours) : null];
     }),
@@ -697,6 +699,7 @@ async function __main__() {
     domiculeBenchmark: buildDomiculeBenchmark(domiculeTotals),
     periodicBenchmark: await buildPeriodicBenchmark('king'),
     dominoPeriodicBenchmark: await buildPeriodicBenchmark('square'),
+    diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
     environment: readEnvironment(BENCHMARK_DIRECTORY),
   };
   const notes = listNotes();
@@ -707,7 +710,10 @@ async function __main__() {
     domiculeBenchmark: data.domiculeBenchmark,
     periodicBenchmark: data.periodicBenchmark,
     dominoPeriodicBenchmark: data.dominoPeriodicBenchmark,
-    diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
+    diagonalBenchmark: data.diagonalBenchmark,
+    periodicDiagonals: periodicBoards
+      .filter(({ diagonals }) => diagonals)
+      .map(({ surface, rowCount, diagonals }) => ({ surface, side: rowCount, diagonals })),
     countDomicule: board => countDomiculeTilings(board).then(BigInt),
     roundDecimal,
     logCount,

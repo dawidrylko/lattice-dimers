@@ -431,7 +431,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "args": [
         "-r",
         "21",
@@ -441,7 +441,7 @@
       "message": "at most 20"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "args": [
         "-r",
         "40",
@@ -451,7 +451,7 @@
       "message": "because every worker thread keeps half the polynomial of every state in memory"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "args": [
         "-r",
         "2abc",
@@ -461,7 +461,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "args": [
         "-r",
         "-2",
@@ -471,7 +471,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "args": [
         "-r",
         "9007199254740992",
@@ -481,7 +481,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "args": [
         "-c",
         "2"
@@ -489,7 +489,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "args": [
         "-r",
         "2",
@@ -501,7 +501,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "args": [
         "-r",
         "2",
@@ -513,7 +513,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "args": [
         "-r",
         "9007199254740991",
@@ -523,7 +523,7 @@
       "message": "Invalid array length"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "args": [
         "-r",
         "21",
@@ -533,17 +533,17 @@
       "message": "at most 20"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "args": [
         "-r",
         "40",
         "-c",
         "21"
       ],
-      "message": "use diagonal-pieces-modular.js for larger boards"
+      "message": "use domicule-rectangle-polynomial-modular.js for larger boards"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "args": [
         "-r",
         "2abc",
@@ -553,7 +553,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "args": [
         "-r",
         "-2",
@@ -563,7 +563,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "args": [
         "-r",
         "9007199254740992",
@@ -573,7 +573,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "args": [
         "-c",
         "2"
@@ -831,109 +831,109 @@
       "expectedResult": "1431655765"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "rowCount": 0,
       "colCount": 5,
       "expectedResult": "1"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "rowCount": 5,
       "colCount": 0,
       "expectedResult": "1"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "rowCount": 1,
       "colCount": 1,
       "expectedResult": "0"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "rowCount": 1,
       "colCount": 2,
       "expectedResult": "1,0"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "rowCount": 2,
       "colCount": 1,
       "expectedResult": "1,0"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "rowCount": 10,
       "colCount": 1,
       "expectedResult": "1,0,0,0,0,0"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "rowCount": 1,
       "colCount": 40,
       "expectedResult": "1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "rowCount": 3,
       "colCount": 3,
       "expectedResult": "0,0,0,0,0"
     },
     {
-      "algorithm": "diagonal-pieces-modular",
+      "algorithm": "domicule-rectangle-polynomial-modular",
       "rowCount": 2,
       "colCount": 31,
       "expectedResult": "2178309,0,18394910,0,71501422,0,169457708,0,273381350,0,317354740,0,273163100,0,176975160,0,86666790,0,31915300,0,8705060,0,1710280,0,230932,0,19768,0,920,0,16,0"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "rowCount": 0,
       "colCount": 5,
       "expectedResult": "1"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "rowCount": 5,
       "colCount": 0,
       "expectedResult": "1"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "rowCount": 1,
       "colCount": 1,
       "expectedResult": "0"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "rowCount": 1,
       "colCount": 2,
       "expectedResult": "1,0"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "rowCount": 2,
       "colCount": 1,
       "expectedResult": "1,0"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "rowCount": 10,
       "colCount": 1,
       "expectedResult": "1,0,0,0,0,0"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "rowCount": 1,
       "colCount": 40,
       "expectedResult": "1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "rowCount": 3,
       "colCount": 3,
       "expectedResult": "0,0,0,0,0"
     },
     {
-      "algorithm": "diagonal-pieces-bigint",
+      "algorithm": "domicule-rectangle-polynomial-bigint",
       "rowCount": 2,
       "colCount": 31,
       "expectedResult": "2178309,0,18394910,0,71501422,0,169457708,0,273381350,0,317354740,0,273163100,0,176975160,0,86666790,0,31915300,0,8705060,0,1710280,0,230932,0,19768,0,920,0,16,0"

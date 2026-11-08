@@ -32,8 +32,8 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 | `domino-rectangle-number` | [✅](rust/solvers/src/bin/domino-rectangle-number.rs) | [✅](python/lattice_dimers/solvers/domino_rectangle_number.py) | [✅](js/solvers/domino-rectangle-number.js) |
 | `domicule-rectangle-modular` | [✅](rust/solvers/src/bin/domicule-rectangle-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_modular.py) | [✅](js/solvers/domicule-rectangle-modular.js) |
 | `domicule-rectangle-bigint` | [✅](rust/solvers/src/bin/domicule-rectangle-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_bigint.py) | [✅](js/solvers/domicule-rectangle-bigint.js) |
-| `diagonal-pieces-modular` | [✅](rust/solvers/src/bin/diagonal-pieces-modular.rs) | [✅](python/lattice_dimers/solvers/diagonal_pieces_modular.py) | [✅](js/solvers/diagonal-pieces-modular.js) |
-| `diagonal-pieces-bigint` | [✅](rust/solvers/src/bin/diagonal-pieces-bigint.rs) | [✅](python/lattice_dimers/solvers/diagonal_pieces_bigint.py) | [✅](js/solvers/diagonal-pieces-bigint.js) |
+| `domicule-rectangle-polynomial-modular` | [✅](rust/solvers/src/bin/domicule-rectangle-polynomial-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_polynomial_modular.py) | [✅](js/solvers/domicule-rectangle-polynomial-modular.js) |
+| `domicule-rectangle-polynomial-bigint` | [✅](rust/solvers/src/bin/domicule-rectangle-polynomial-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_polynomial_bigint.py) | [✅](js/solvers/domicule-rectangle-polynomial-bigint.js) |
 | `all-lattices-cylinder-torus-modular` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py) | [✅](js/solvers/all-lattices-cylinder-torus-modular.js) |
 | `all-lattices-cylinder-torus-bigint` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py) | [✅](js/solvers/all-lattices-cylinder-torus-bigint.js) |
 

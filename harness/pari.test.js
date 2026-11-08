@@ -45,7 +45,7 @@ const PROGRAMS = [
   },
   {
     files: ['oeis/A401673/A401673.gp'],
-    testCases: testCasesOf('diagonal-pieces-modular')
+    testCases: testCasesOf('domicule-rectangle-polynomial-modular')
       .filter(({ rowCount, colCount }) => Math.max(rowCount, colCount) <= MAX_DIAGONAL_SIDE)
       .map(({ rowCount, colCount, expectedResult }) => ({
         call: `(q -> vector(${rowCount * colCount}\\2 + 1, k, polcoef(q, k-1)))(P(${rowCount}, ${colCount}))`,

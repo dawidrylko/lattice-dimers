@@ -13,8 +13,8 @@ There is one file per algorithm, `<id>.json` with the id of [`algorithms.json`](
 | [`domicule-rectangle-modular.json`](domicule-rectangle-modular.json) | the same boards |
 | [`all-lattices-cylinder-torus-bigint.json`](all-lattices-cylinder-torus-bigint.json) | cylinders and tori on three lattices up to 10 × 10 (tori up to 8 × 8 in a short run) |
 | [`all-lattices-cylinder-torus-modular.json`](all-lattices-cylinder-torus-modular.json) | larger cylinders and tori, up to the 16 × 16 torus (the first seven in a short run), then the boards of its BigInt twin |
-| [`diagonal-pieces-bigint.json`](diagonal-pieces-bigint.json) | domicule boards by diagonal pieces up to 12 × 12 |
-| [`diagonal-pieces-modular.json`](diagonal-pieces-modular.json) | the squares up to 20 × 20 (the first seven in a short run), then the other boards of its BigInt twin |
+| [`domicule-rectangle-polynomial-bigint.json`](domicule-rectangle-polynomial-bigint.json) | domicule boards by diagonal pieces up to 12 × 12 |
+| [`domicule-rectangle-polynomial-modular.json`](domicule-rectangle-polynomial-modular.json) | the squares up to 20 × 20 (the first seven in a short run), then the other boards of its BigInt twin |
 
 Twin algorithms, whose ids differ only in the method, repeat the boards they share. `pnpm -C js test:spec` fails when twins hold different counts for a board ([`harness/portCheck.js`](../../harness/portCheck.js)). The OEIS programs and the research scripts read one file each: the modular file for tori and diagonal pieces, `domicule-rectangle-bigint.json` for domicules.
 

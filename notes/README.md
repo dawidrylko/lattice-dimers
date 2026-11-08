@@ -15,7 +15,7 @@ The notebooks are grouped as the site menu groups them: the notes of each kind o
   - [Rectangles](domicules/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html)): domicule tilings of the 2n × 2n board, A239273, up to 20 × 20, the modular solver and the Markov chain.
   - [Cylinders](domicules/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html)): domicule tilings of cylinders, the king's graph on the cylinder.
   - [Tori](domicules/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html)): domicule tilings of tori, A401670, the torus count of three lattices over $e^{sL^2}$ and the seam sign.
-  - [Diagonal pieces](domicules/04-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html)): domicule tilings of the 2n × 2n board by the number of diagonal pieces, A401673.
+  - [Diagonal pieces](domicules/04-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html)): domicule tilings of rectangles, cylinders and tori by the number of diagonal pieces, A401673 on the 2n × 2n board.
 - Triangular lattice:
   - [Cylinders](triangular-lattice/01-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html)): the triangular lattice on cylinders, for comparison.
   - [Tori](triangular-lattice/02-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori.html)): the triangular lattice on 2n × 2n tori, for comparison.

@@ -3,7 +3,7 @@
   "algorithms": {
     "all-lattices-cylinder-torus-bigint": { "maxTorusSide": 8 },
     "all-lattices-cylinder-torus-modular": { "firstCasesPlusBoardsOf": "all-lattices-cylinder-torus-bigint" },
-    "diagonal-pieces-modular": { "firstCasesPlusBoardsOf": "diagonal-pieces-bigint" },
+    "domicule-rectangle-polynomial-modular": { "firstCasesPlusBoardsOf": "domicule-rectangle-polynomial-bigint" },
     "domicule-rectangle-bigint": { "maxSquareSide": 16 },
     "domino-rectangle-bigint": { "maxSquareSide": 16 }
   }

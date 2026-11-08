@@ -36,7 +36,7 @@ describe('data', () => {
 describe('diagonal anchors', () => {
   const find = (testCases, rowCount, colCount) =>
     testCases.find(t => (t.rowCount === rowCount && t.colCount === colCount) || (t.rowCount === colCount && t.colCount === rowCount));
-  const anchored = testCasesOf('diagonal-pieces-modular')
+  const anchored = testCasesOf('domicule-rectangle-polynomial-modular')
     .map(({ rowCount, colCount, expectedResult }) => ({
       rowCount,
       colCount,
@@ -196,12 +196,12 @@ describe('ports', () => {
       {
         ...repository,
         caseFiles: repository.caseFiles.map(caseFile =>
-          caseFile.algorithm === 'diagonal-pieces-modular'
+          caseFile.algorithm === 'domicule-rectangle-polynomial-modular'
             ? { ...caseFile, testCases: caseFile.testCases.filter(({ rowCount, colCount }) => rowCount !== 5 || colCount !== 6) }
             : caseFile,
         ),
       },
-      ['spec/cases/diagonal-pieces-modular.json lacks the board 5|6||false|false of diagonal-pieces-bigint.'],
+      ['spec/cases/domicule-rectangle-polynomial-modular.json lacks the board 5|6||false|false of domicule-rectangle-polynomial-bigint.'],
     ],
     [
       'a mutated copy of the case files, where twin algorithms disagree on a count',

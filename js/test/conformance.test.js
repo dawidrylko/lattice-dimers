@@ -11,7 +11,7 @@ const MEMORY_REPORTER = path.join(__dirname, 'fixtures', 'reportPeakMemory.js');
 const hasJavaScript = ({ algorithm }) => listJavaScriptAlgorithms().includes(algorithm);
 
 function verifierOf({ expectedResult }, algorithm) {
-  if (algorithm.startsWith('diagonal-pieces-')) {
+  if (algorithm.startsWith('domicule-rectangle-polynomial-')) {
     return (expected, actual) => expected === actual;
   }
 
