@@ -33,6 +33,25 @@ describe('data', () => {
   }
 });
 
+describe('cylinder and torus diagonal anchors', () => {
+  const periodic = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
+  const anchored = testCasesOf('domicule-cylinder-torus-polynomial-modular').filter(({ rowCount, colCount }) => rowCount * colCount <= 64);
+
+  test('at least 20 cylinder and torus rows are small enough to anchor', () => {
+    assert.ok(anchored.length >= 20, `Only ${anchored.length} rows of spec/cases/ are anchored.`);
+  });
+
+  for (const { rowCount, colCount, torus = false, expectedResult } of anchored) {
+    test(`${rowCount}x${colCount} ${torus ? 'torus' : 'cylinder'}`, () => {
+      const coefficients = expectedResult.split(',').map(BigInt);
+      const count = lattice => periodic.calculateTotalTilingCombinations({ rowCount, colCount, lattice, torus });
+
+      assert.equal(coefficients.reduce((sum, c) => sum + c, BigInt(0)), count('king'), 'The sum of the coefficients differs from the count on the king\'s graph.');
+      assert.equal(coefficients[0], count('square'), 'The constant coefficient differs from the domino count.');
+    });
+  }
+});
+
 describe('diagonal anchors', () => {
   const find = (testCases, rowCount, colCount) =>
     testCases.find(t => (t.rowCount === rowCount && t.colCount === colCount) || (t.rowCount === colCount && t.colCount === rowCount));
