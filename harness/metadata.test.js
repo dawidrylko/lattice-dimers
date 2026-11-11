@@ -285,7 +285,9 @@ function matchesPath(file, pattern) {
 function checkLicenses() {
   const files = listTrackedFiles();
   const paths = readLicensePaths();
-  const licenseOf = file => ['CC BY-SA 4.0', 'CC BY 4.0'].find(license => paths[license].some(pattern => matchesPath(file, pattern))) ?? 'MIT';
+  const listed = (license, file) => paths[license].some(pattern => matchesPath(file, pattern));
+  const licenseOf = file => (listed('MIT', file) && /\.(sh|py|js|c|gp)$/.test(file) ? 'MIT' : ['CC BY-SA 4.0', 'CC BY 4.0'].find(license => listed(license, file)) ?? 'MIT');
+  const isCode = file => /\.(sh|py|js|c|gp)$/.test(file);
   const isData = file => /^research\/.*\/(data|out|logs)\//.test(file) || /^research\/.*\/(out|time|log)_[^/]*\.txt$/.test(file);
   const isOeisText = file => /^oeis\/A\d{6}\/A\d{6}\.txt$/.test(file);
 
@@ -294,6 +296,7 @@ function checkLicenses() {
       patterns.filter(pattern => !files.some(file => matchesPath(file, pattern))).map(pattern => `The ${license} path ${pattern} in the License section of README.md matches no tracked file.`)
     ),
     ...files.filter(isData).filter(file => licenseOf(file) !== 'CC BY 4.0').map(file => `${file} is data, but the License section of README.md gives it ${licenseOf(file)}.`),
+    ...files.filter(isCode).filter(file => licenseOf(file) !== 'MIT').map(file => `${file} is a program, but the License section of README.md gives it ${licenseOf(file)}.`),
     ...files.filter(isOeisText).filter(file => licenseOf(file) !== 'CC BY-SA 4.0').map(file => `${file} is OEIS content, but the License section of README.md gives it ${licenseOf(file)}.`),
   ];
 }

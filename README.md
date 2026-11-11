@@ -94,7 +94,7 @@ The entry texts `oeis/*/A*.txt` are copies of OEIS content, which the OEIS Found
 they keep that license.
 
 Everything else is MIT, in particular all programs and scripts: `rust/`, `python/`, `js/`, the programs in `oeis/`, `site/`, `harness/`, `research/king-entropy/src/`,
-`research/king-entropy/log-convexity/*.py` and the code in `research/king-entropy/replication/`.
+`research/king-entropy/log-convexity/*.py`, `research/king-entropy/rerun/2026-10/release/step0-rerun.sh` and the code in `research/king-entropy/replication/`.
 
 ## Author
 

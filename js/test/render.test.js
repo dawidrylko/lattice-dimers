@@ -1164,7 +1164,7 @@ suite('chart', chartTestCases, runChartTest, named);
 suite('notebook helper', notebookHelperTestCases, runNotebookHelperTest, named);
 suite('figure', figureTestCases, runFigureTest, named);
 
-test('countTilings counts in process and skips boards whose table is too large', () => {
+test('countTilings counts in a child process and skips boards whose table is too large', () => {
   assert.equal(countTilings({ rowCount: 8, colCount: 8 }), '12988816');
   assert.equal(countTilings({ rowCount: 3, colCount: 3 }), '0');
   assert.equal(countTilings({ rowCount: 30, colCount: 30 }), null);
