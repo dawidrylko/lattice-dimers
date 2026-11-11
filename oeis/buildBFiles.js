@@ -12,7 +12,8 @@ const LAST_DIAGONAL_ROW = 10;
 const TORUS_FILE = 'spec/cases/all-lattices-cylinder-torus-modular.json';
 const DIAGONAL_FILE = 'spec/cases/domicule-rectangle-polynomial-modular.json';
 const TRIANGULAR_FILE = 'spec/cases/all-lattices-rectangle-modular.json';
-const PREFIX_ONLY = new Set(['A401988/b401988.txt']);
+const LAST_TRIANGULAR_SQUARE = 11;
+const GENERATORS = { 'A401988/b401988.txt': 'node oeis/A401988/b401988.js 0 36' };
 const SOURCES = {
   'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
   'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
@@ -140,13 +141,13 @@ function readTriangularSquares() {
     }
   }
 
-  const terms = [];
+  return Array.from({ length: LAST_TRIANGULAR_SQUARE + 1 }, (_, n) => {
+    if (!squares.has(n)) {
+      throw new Error(`No count for the ${2 * n} X ${2 * n} triangular board in ${TRIANGULAR_FILE}.`);
+    }
 
-  for (let n = 0; squares.has(n); n++) {
-    terms.push(squares.get(n));
-  }
-
-  return terms;
+    return squares.get(n);
+  });
 }
 
 function formatBFile(terms) {
@@ -188,8 +189,8 @@ function main() {
     const file = path.join(__dirname, name);
     const terms = content.split('\n').length - 1;
 
-    if (!check && PREFIX_ONLY.has(name)) {
-      console.log(`Skipped ${name}: node oeis/A401988/b401988.js 0 36 rebuilds it in full.`);
+    if (!check && GENERATORS[name]) {
+      console.log(`Skipped ${name}: ${GENERATORS[name]} > oeis/${name} rebuilds it in full.`);
       continue;
     }
 
@@ -203,10 +204,10 @@ function main() {
 
     const stored = fs.existsSync(file) ? fs.readFileSync(file, 'utf-8') : null;
 
-    if (stored !== null && (PREFIX_ONLY.has(name) ? stored.startsWith(content) : stored === content)) {
+    if (stored !== null && (GENERATORS[name] ? stored.startsWith(content) : stored === content)) {
       console.log('Passed!');
     } else {
-      console.error(`Failed! Run ${PREFIX_ONLY.has(name) ? 'node oeis/A401988/b401988.js 0 36 > oeis/' + name : 'node oeis/buildBFiles.js'} to rebuild ${name}.`);
+      console.error(`Failed! Run ${GENERATORS[name] ?? 'node oeis/buildBFiles.js'} to rebuild ${name}.`);
       passed = false;
     }
   }
