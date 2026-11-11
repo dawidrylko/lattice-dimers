@@ -57,7 +57,10 @@ jobs:
       - run: pnpm -C js test:markdown
       - run: pnpm -C js test:numbers
       - run: pnpm -C js test:metadata
-      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends pari-gp
+      - run: |
+          curl -fsSL https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xj -C "$RUNNER_TEMP" bin/micromamba
+          "$RUNNER_TEMP/bin/micromamba" create -y -p "$RUNNER_TEMP/pari" -c conda-forge pari=2.17.3
+          echo "GP_PATH=$RUNNER_TEMP/pari/bin/gp" >> "$GITHUB_ENV"
       - run: pnpm -C js test:pari
       - run: node "$GITHUB_WORKSPACE/site/build.js"
         working-directory: ${{ runner.temp }}
