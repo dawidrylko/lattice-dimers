@@ -15,7 +15,7 @@ updates:
       - "/research/king-entropy/replication"
     schedule:
       interval: "monthly"
-  - package-ecosystem: "npm"
-    directory: "/js"
-    schedule:
-      interval: "monthly"
+    groups:
+      python:
+        patterns:
+          - "*"

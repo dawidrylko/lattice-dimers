@@ -91,7 +91,7 @@ The code is MIT, see [LICENSE](LICENSE). Text and data are licensed under
 
 The entry texts `oeis/*/A*.txt` are copies of OEIS content, which the OEIS Foundation licenses under
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), see [LICENSES/CC-BY-SA-4.0.txt](LICENSES/CC-BY-SA-4.0.txt);
-they keep that license.
+they keep that license. The b-files `oeis/*/b*.txt` are built from the counts of this repository and are MIT.
 
 Everything else is MIT, in particular all programs and scripts: `rust/`, `python/`, `js/`, the programs in `oeis/`, `site/`, `harness/`, `research/king-entropy/src/`,
 `research/king-entropy/log-convexity/*.py`, `research/king-entropy/rerun/2026-10/release/step0-rerun.sh` and the code in `research/king-entropy/replication/`.
