@@ -976,6 +976,9 @@ async function checkDiagonals(page, baseUrl, width) {
   await page.waitFor("location.hash === '#gallery/6x6-diagonal/2?diagonals=4' && document.querySelector('#sheet text:not(.n)')?.textContent === '#101'", 'the next 6x6 page with 4 diagonal pieces');
   await page.evaluate("document.querySelector('#boards [data-id=\"8x8-diagonal\"]').click()");
   await page.waitFor("location.hash === '#gallery/8x8-diagonal/1?diagonals=4' && document.getElementById('gallery-meta').textContent.includes('with 4 diagonal pieces')", 'the 8x8 board keeping the filter');
+  await showBoard(page, 'gallery/6x6-diagonal/1?diagonals=10', 'the 6x6 sheet with 10 diagonal pieces');
+  await page.evaluate("document.querySelector('#boards [data-id=\"4x4-diagonal\"]').click()");
+  await page.waitFor("location.hash === '#gallery/4x4-diagonal/1?diagonals=2' && document.getElementById('gallery-meta').textContent.includes('with 2 diagonal pieces')", 'the 4x4 board at its k with the most tilings, since it has no tiling with 10');
 
   for (const query of ['1', 'abc', '']) {
     const ignored = await showBoard(page, `gallery/6x6-diagonal/1?diagonals=${query}`, `the 6x6 sheet with ?diagonals=${query}`);

@@ -929,10 +929,16 @@ function render() {
 $('boards').innerHTML = DATA.boards
   .map(b => `<button type="button" data-id="${b.id}">${b.rowCount}×${b.colCount}</button>`)
   .join('');
+function keepDiagonals(board, diagonals) {
+  if (diagonals === null || !board.diagonals) return null;
+  return readDiagonals(board, String(diagonals)) ?? largestDiagonalCount(board);
+}
+
 function switchBoard(pieces, surface) {
   const { board, diagonals } = parseHash();
   const boards = DATA.boards.filter(b => b.pieces === pieces && b.surface === surface);
-  go(boards.find(b => b.rowCount === board.rowCount && b.colCount === board.colCount) || boards[0], ONE, null, diagonals);
+  const next = boards.find(b => b.rowCount === board.rowCount && b.colCount === board.colCount) || boards[0];
+  go(next, ONE, null, keepDiagonals(next, diagonals));
 }
 
 $('pieces').addEventListener('click', e => {
@@ -945,7 +951,9 @@ $('surfaces').addEventListener('click', e => {
 });
 $('boards').addEventListener('click', e => {
   const button = e.target.closest('button');
-  if (button) go(DATA.boards.find(b => b.id === button.dataset.id), ONE, null, parseHash().diagonals);
+  if (!button) return;
+  const next = DATA.boards.find(b => b.id === button.dataset.id);
+  go(next, ONE, null, keepDiagonals(next, parseHash().diagonals));
 });
 $('diagonals').addEventListener('change', () => {
   go(parseHash().board, ONE, null, Number($('diagonals').value));
