@@ -38,6 +38,8 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 | `domicule-cylinder-torus-polynomial-bigint` | [✅](rust/solvers/src/bin/domicule-cylinder-torus-polynomial-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_bigint.py) | [✅](js/solvers/domicule-cylinder-torus-polynomial-bigint.js) |
 | `all-lattices-cylinder-torus-modular` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py) | [✅](js/solvers/all-lattices-cylinder-torus-modular.js) |
 | `all-lattices-cylinder-torus-bigint` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py) | [✅](js/solvers/all-lattices-cylinder-torus-bigint.js) |
+| `all-lattices-rectangle-modular` | [✅](rust/solvers/src/bin/all-lattices-rectangle-modular.rs) | [✅](python/lattice_dimers/solvers/all_lattices_rectangle_modular.py) | [✅](js/solvers/all-lattices-rectangle-modular.js) |
+| `all-lattices-rectangle-bigint` | [✅](rust/solvers/src/bin/all-lattices-rectangle-bigint.rs) | [✅](python/lattice_dimers/solvers/all_lattices_rectangle_bigint.py) | [✅](js/solvers/all-lattices-rectangle-bigint.js) |
 
 ## Results
 
@@ -61,7 +63,7 @@ The king's graph is not planar, and its boards with both sides at least 3 admit 
 | --- | --- |
 | [`research/king-entropy`](research/king-entropy/README.md) | scripts, data, outputs, proofs and papers on the entropy of the king's graph |
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
-| [`notes`](notes/README.md) | notebooks on dominoes and domicules on rectangles, cylinders and tori, on diagonal pieces, on the triangular lattice on cylinders and tori, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
+| [`notes`](notes/README.md) | notebooks on dominoes and domicules on rectangles, cylinders and tori, on diagonal pieces, on the triangular lattice on rectangles, cylinders and tori, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
 | [`spec`](spec/README.md) | the solver contract, the registry of algorithms and the known counts every implementation and program is checked against |
 | [`rust`](rust/README.md) | the Rust solvers, for the algorithms [`spec/algorithms.json`](spec/algorithms.json) lists with Rust, and the library they share; its manifest is [`Cargo.toml`](rust/Cargo.toml) |
 | [`python`](python/README.md) | the Python package `lattice_dimers`: the Python solvers, for the algorithms `spec/algorithms.json` lists with Python, and the library they share; its manifest is [`pyproject.toml`](python/pyproject.toml) |

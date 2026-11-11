@@ -1,6 +1,6 @@
 # Domicules: tilings of cylinders (A002532, A062510)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html) has the results. It counts the domicule tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom; they are the perfect matchings of the king's graph on the cylinder. The same boards are counted with [dominoes](../dominoes/02-cylinders.md) and on the [triangular lattice](../triangular-lattice/01-cylinders.md); the [rectangles notebook](01-rectangles.md) counts domicules on boards with no glued edge.
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html) has the results. It counts the domicule tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom; they are the perfect matchings of the king's graph on the cylinder. The same boards are counted with [dominoes](../dominoes/02-cylinders.md) and on the [triangular lattice](../triangular-lattice/02-cylinders.md); the [rectangles notebook](01-rectangles.md) counts domicules on boards with no glued edge.
 
 ## The problem
 

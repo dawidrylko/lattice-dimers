@@ -4,7 +4,7 @@ The Rust implementations of the solvers, the first of the three languages of [`s
 
 | path | holds |
 | --- | --- |
-| [`core`](core/src/lib.rs) | the contract's argument parser, modular arithmetic, primes, the Kahn-Lovász bound, the Chinese remainder theorem, an integer of any size for it, for the exact determinant of `domino-rectangle-formula` and for the counts of `domino-rectangle-bigint`, `domicule-rectangle-bigint`, `domicule-rectangle-polynomial-bigint`, `domicule-cylinder-torus-polynomial-bigint` and `all-lattices-cylinder-torus-bigint`, and the worker threads |
+| [`core`](core/src/lib.rs) | the contract's argument parser, modular arithmetic, primes, the Kahn-Lovász bound, the Chinese remainder theorem, an integer of any size for it, for the exact determinant of `domino-rectangle-formula` and for the counts of `domino-rectangle-bigint`, `domicule-rectangle-bigint`, `domicule-rectangle-polynomial-bigint`, `domicule-cylinder-torus-polynomial-bigint`, `all-lattices-cylinder-torus-bigint` and `all-lattices-rectangle-bigint`, and the worker threads |
 | [`solvers/src/bin`](solvers/src/bin/all-lattices-cylinder-torus-modular.rs) | one binary per algorithm, named by its id, each with a `[[bin]]` entry in [`Cargo.toml`](Cargo.toml) |
 
 ## Quick start

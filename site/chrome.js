@@ -23,6 +23,7 @@ const NAV = [
   {
     label: 'Triangular lattice',
     items: [
+      { slug: 'triangular-lattice/rectangles', label: 'Rectangles' },
       { slug: 'triangular-lattice/cylinders', label: 'Cylinders' },
       { slug: 'triangular-lattice/tori', label: 'Tori' },
     ],

@@ -13,13 +13,15 @@ const KING_STEPS = [
 
 /**
  * Lists the cells a free cell can be matched with, as offsets in row-major order:
- * right, down-left, down and down-right, the order of domicule-rectangle-bigint.js.
+ * right, down-left, down and down-right, the order of domicule-rectangle-bigint.js. The
+ * triangular lattice has no down-left diagonal, as in all-lattices-rectangle-bigint.js.
  * @param {number} index The cell.
  * @param {number} rowCount The number of rows.
  * @param {number} colCount The number of columns.
+ * @param {string} [lattice] 'king' or 'triangular'.
  * @returns {number[]} The offsets.
  */
-function listOffsets(index, rowCount, colCount) {
+function listOffsets(index, rowCount, colCount, lattice = 'king') {
   const row = Math.floor(index / colCount);
   const col = index % colCount;
   const hasRight = col + 1 < colCount;
@@ -27,7 +29,7 @@ function listOffsets(index, rowCount, colCount) {
 
   return [
     ...(hasRight ? [1] : []),
-    ...(hasBelow && col > 0 ? [colCount - 1] : []),
+    ...(lattice === 'king' && hasBelow && col > 0 ? [colCount - 1] : []),
     ...(hasBelow ? [colCount] : []),
     ...(hasBelow && hasRight ? [colCount + 1] : []),
   ];
@@ -66,10 +68,15 @@ function canUnrankDomicule({ rowCount, colCount }) {
  * @param {Object} options Board dimensions.
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
+ * @property {string} [options.lattice] 'king' for domicules, 'triangular' for the triangular lattice.
  * @param {function(number): void} [onProgress] Called with the completed fraction after every board row.
  * @returns {{ rowCount: number, colCount: number, table: BigInt[][], total: BigInt }} The unranker.
  */
-function createDomiculeUnranker({ rowCount, colCount }, onProgress) {
+function createDomiculeUnranker({ rowCount, colCount, lattice = 'king' }, onProgress) {
+  if (!['king', 'triangular'].includes(lattice)) {
+    throw new Error(`createDomiculeUnranker() takes lattice king or triangular, not ${lattice}.`);
+  }
+
   const cellCount = rowCount * colCount;
   const stateCount = 2 ** (colCount + 2);
   const zero = BigInt(0);
@@ -81,7 +88,7 @@ function createDomiculeUnranker({ rowCount, colCount }, onProgress) {
   for (let index = cellCount - 1; index >= 0; index--) {
     const next = table[index + 1];
     const current = new Array(stateCount);
-    const bits = listOffsets(index, rowCount, colCount).map(offset => 2 ** offset);
+    const bits = listOffsets(index, rowCount, colCount, lattice).map(offset => 2 ** offset);
 
     for (let state = 0; state < stateCount; state++) {
       if (state & 1) {
@@ -107,7 +114,7 @@ function createDomiculeUnranker({ rowCount, colCount }, onProgress) {
     }
   }
 
-  return { rowCount, colCount, table, total: table[0][0] };
+  return { rowCount, colCount, lattice, table, total: table[0][0] };
 }
 
 /**
@@ -117,7 +124,7 @@ function createDomiculeUnranker({ rowCount, colCount }, onProgress) {
  * @param {BigInt} rank The 0-based rank, lower than unranker.total.
  * @returns {{ row: number, col: number, dr: number, dc: number }[]} The tiling.
  */
-function unrankDomiculeTiling({ rowCount, colCount, table, total }, rank) {
+function unrankDomiculeTiling({ rowCount, colCount, lattice, table, total }, rank) {
   if (rank < BigInt(0) || rank >= total) {
     throw new RangeError(`Rank must be between 0 and ${total - BigInt(1)}.`);
   }
@@ -134,7 +141,7 @@ function unrankDomiculeTiling({ rowCount, colCount, table, total }, rank) {
     }
 
     const next = table[index + 1];
-    const offsets = listOffsets(index, rowCount, colCount).filter(offset => !(state & 2 ** offset));
+    const offsets = listOffsets(index, rowCount, colCount, lattice).filter(offset => !(state & 2 ** offset));
 
     for (let i = 0; i < offsets.length; i++) {
       const target = (state + 2 ** offsets[i]) >>> 1;

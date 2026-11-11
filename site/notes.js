@@ -396,7 +396,7 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
  * @property {number} options.rowCount The height.
  * @property {number} options.colCount The width or circumference.
  * @property {string} [options.pieces] 'domino' or 'domicule'.
- * @property {string} [options.lattice] 'triangular' in place of pieces, on a cylinder or a torus only.
+ * @property {string} [options.lattice] 'triangular' in place of pieces.
  * @property {string} [options.surface] 'rectangle', 'cylinder' or 'torus'.
  * @property {number} [options.diagonals] Only the domicule tilings of a rectangle with this many diagonal pieces, as the
  * gallery's Diagonal pieces filter numbers them; the label under each tiling then gives that number.
@@ -409,8 +409,8 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', lattice, surface =
     throw new Error(`drawTilings() takes pieces domino or domicule and surface rectangle, cylinder or torus, not ${pieces} on a ${surface}.`);
   }
 
-  if (lattice !== undefined && (lattice !== 'triangular' || surface === 'rectangle')) {
-    throw new Error(`drawTilings() takes lattice triangular on a cylinder or a torus only, not ${lattice} on a ${surface}.`);
+  if (lattice !== undefined && lattice !== 'triangular') {
+    throw new Error(`drawTilings() takes lattice triangular only, not ${lattice}.`);
   }
 
   if (lattice !== undefined && pieces !== 'domino') {
@@ -435,11 +435,11 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', lattice, surface =
   } else if (surface !== 'rectangle') {
     unranker = renderer.createPeriodicUnranker({ rowCount, colCount, lattice: lattice ?? (pieces === 'domino' ? 'square' : 'king'), torus: surface === 'torus' });
     unrank = renderer.unrankPeriodicTiling;
-  } else if (pieces === 'domino') {
+  } else if (pieces === 'domino' && lattice === undefined) {
     unranker = renderer.createUnranker({ rowCount, colCount });
     unrank = renderer.unrankTiling;
   } else {
-    unranker = renderer.createDomiculeUnranker({ rowCount, colCount });
+    unranker = renderer.createDomiculeUnranker({ rowCount, colCount, lattice: lattice ?? 'king' });
     unrank = renderer.unrankDomiculeTiling;
   }
 

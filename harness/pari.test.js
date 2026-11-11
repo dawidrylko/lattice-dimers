@@ -13,6 +13,7 @@ const OUTPUT_MARKER = 'END OF PROGRAMS';
 const MAX_DOMICULE_SQUARE_SIDE = 12;
 const MAX_TORUS_CIRCUMFERENCE = 8;
 const MAX_DIAGONAL_SIDE = 8;
+const MAX_TRIANGULAR_SIDE = 16;
 const PROGRAMS = [
   {
     files: ['oeis/A004003/A004003.gp'],
@@ -52,6 +53,12 @@ const PROGRAMS = [
         expectedResult: `[${expectedResult.split(',').join(', ')}]`,
       }))
       .concat({ call: 'row(2)', expectedResult: '[36, 126, 105, 12, 1]' }),
+  },
+  {
+    files: ['notes/triangular-lattice/rectangles.gp'],
+    testCases: testCasesOf('all-lattices-rectangle-modular')
+      .filter(({ lattice, rowCount, colCount }) => lattice === 'triangular' && rowCount === colCount && rowCount % 2 === 0 && rowCount <= MAX_TRIANGULAR_SIDE)
+      .map(({ rowCount, expectedResult }) => ({ call: `a(${rowCount / 2})`, expectedResult })),
   },
 ];
 const ENTRY_PROGRAMS = {

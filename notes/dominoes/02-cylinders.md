@@ -1,6 +1,6 @@
 # Dominoes: tilings of cylinders (A000129, A004253, A006253, A003729, A028477, A028478, A028479)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html) has the results. It counts the domino tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom. The same boards are counted with [domicules](../domicules/02-cylinders.md) and on the [triangular lattice](../triangular-lattice/01-cylinders.md); the [rectangles notebook](01-rectangles.md) counts dominoes on boards with no glued edge.
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html) has the results. It counts the domino tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom. The same boards are counted with [domicules](../domicules/02-cylinders.md) and on the [triangular lattice](../triangular-lattice/02-cylinders.md); the [rectangles notebook](01-rectangles.md) counts dominoes on boards with no glued edge.
 
 ## The problem
 

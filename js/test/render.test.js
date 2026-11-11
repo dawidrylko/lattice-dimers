@@ -275,11 +275,11 @@ function serializeDomiculeTiling(tiling) {
   return tiling.map(({ row, col, dr, dc }) => `${row},${col},${dr},${dc}`).join(';');
 }
 
-function findDomiculeCoverageError(tiling, { rowCount, colCount }) {
+function findDomiculeCoverageError(tiling, { rowCount, colCount, lattice = 'king' }) {
   const covered = new Uint8Array(rowCount * colCount);
 
   for (const { row, col, dr, dc } of tiling) {
-    if (![0, 1].includes(dr) || ![-1, 0, 1].includes(dc) || (dr === 0 && dc !== 1)) {
+    if (![0, 1].includes(dr) || ![-1, 0, 1].includes(dc) || (dr === 0 && dc !== 1) || (lattice === 'triangular' && dc === -1)) {
       return `invalid domicule direction ${dr},${dc} at ${row},${col}`;
     }
 
@@ -834,11 +834,19 @@ const figureTestCases = [
   {
     name: 'the triangular lattice on a rectangle',
     run: async () => {
+      const { svgs, total } = drawTilings({ rowCount: 4, colCount: 4, lattice: 'triangular', ranks: [0, 55] });
+
+      return total === BigInt(56) && svgs.length === 2 && svgs[1].includes('aria-label="Triangular lattice tiling number 56 of a 4 by 4 rectangle"');
+    },
+  },
+  {
+    name: 'a lattice other than the triangular one',
+    run: async () => {
       try {
-        drawTilings({ rowCount: 4, colCount: 4, lattice: 'triangular', ranks: [0] });
+        drawTilings({ rowCount: 4, colCount: 4, lattice: 'king', ranks: [0] });
         return false;
       } catch (error) {
-        return error.message.includes('cylinder or a torus only');
+        return error.message.includes('lattice triangular only');
       }
     },
   },
@@ -1115,6 +1123,7 @@ const unrankTestCases = testCasesOf('domino-rectangle-formula').filter(
   ({ rowCount, colCount }) => rowCount * colCount > MAX_CELLS && canUnrank({ rowCount, colCount }),
 );
 const domiculeTestCases = testCasesOf('domicule-rectangle-bigint').filter(canUnrankDomicule);
+const triangularTestCases = testCasesOf('all-lattices-rectangle-bigint').filter(({ lattice, ...board }) => lattice === 'triangular' && canUnrankDomicule(board));
 const named = ({ name }) => name;
 
 suite('renderer', testCases, runTest);
@@ -1123,6 +1132,7 @@ suite('rank', rankTestCases, runRankTest);
 suite('random uniformity', randomTestCases, runRandomUniformityTest);
 suite('random validity', randomValidityTestCases, runRandomValidityTest);
 suite('domicule unrank', domiculeTestCases, runDomiculeUnrankTest);
+suite('triangular unrank', triangularTestCases, runDomiculeUnrankTest);
 suite('domicule random uniformity', domiculeRandomTestCases, runDomiculeUniformityTest);
 suite('domicule random validity', domiculeRandomValidityTestCases, runDomiculeValidityTest);
 suite('domicule chain reach', domiculeReachTestCases, runDomiculeReachTest);

@@ -1,6 +1,6 @@
 # Domicules: tilings of the 2n × 2n torus (A401670)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html) has the results. It counts the domicule tilings of tori, boards whose opposite edges are glued in both directions; they are the perfect matchings of the king's graph on the torus. It compares the torus count of the king's graph with those of [dominoes](../dominoes/03-tori.md) and of the [triangular lattice](../triangular-lattice/02-tori.md). The [cylinders notebook](02-cylinders.md) glues only the left and right edges.
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html) has the results. It counts the domicule tilings of tori, boards whose opposite edges are glued in both directions; they are the perfect matchings of the king's graph on the torus. It compares the torus count of the king's graph with those of [dominoes](../dominoes/03-tori.md) and of the [triangular lattice](../triangular-lattice/03-tori.md). The [cylinders notebook](02-cylinders.md) glues only the left and right edges.
 
 ## The problem
 
@@ -86,7 +86,7 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 Since a torus has no boundary, $\log Z(L \times L) = s L^2 + c + o(1)$ has no surface or corner term, where $s$ is the entropy per site [2].
 
-The cell divides the torus count by $e^{sL^2}$ on the king's graph and, for comparison, on the square lattice of the [domino tori](../dominoes/03-tori.md) and on the [triangular lattice](../triangular-lattice/02-tori.md), and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([OEIS A143233](https://oeis.org/A143233) [1], $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
+The cell divides the torus count by $e^{sL^2}$ on the king's graph and, for comparison, on the square lattice of the [domino tori](../dominoes/03-tori.md) and on the [triangular lattice](../triangular-lattice/03-tori.md), and the chart under the table draws the same ratios with 2 as a dashed line. For the square lattice $s = G/\pi$ ([OEIS A143233](https://oeis.org/A143233) [1], $G$ is Catalan's constant). The triangular value comes from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`, the king's graph value from `research/king-entropy/data/errbar.json`.
 
 ```js run
 const fs = require('fs');
