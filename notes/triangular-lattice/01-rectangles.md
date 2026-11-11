@@ -21,6 +21,15 @@ The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modu
 
 [`all-lattices-rectangle-bigint.js`](../../js/solvers/all-lattices-rectangle-bigint.js) goes cell by cell in row-major order, the transfer by cells of the [domicule solver](../domicules/01-rectangles.md#the-bigint-solver). A free cell is matched with a later cell: its right, down or down-right neighbour on the triangular lattice, also its down-left neighbour on the king's graph, and only right or down on the square lattice. The farthest cell a state has to remember lies $w + 1$ places ahead, so a state has $w + 2$ bits. The counts are `BigInt`, and so are those of its Rust and Python implementations, [`all-lattices-rectangle-bigint.rs`](../../rust/solvers/src/bin/all-lattices-rectangle-bigint.rs) and [`all_lattices_rectangle_bigint.py`](../../python/lattice_dimers/solvers/all_lattices_rectangle_bigint.py). In every language this solver is the reference of the modular one.
 
+## Numbering
+
+Up to $14 \times 14$ the gallery numbers every tiling with the table of completion counts of the [cell-by-cell scan](#the-bigint-solver), as it numbers the [domicule tilings](../domicules/01-rectangles.md#numbering), without the down-left neighbour. Drawing the number at random gives an exactly uniform tiling.
+
+### Sampling with a Markov chain
+
+From $16 \times 16$ to $20 \times 20$ the gallery runs the Markov chain of the [domicule tilings](../domicules/01-rectangles.md#sampling-with-a-markov-chain) with the six neighbours of the triangular lattice. Its moves along 4-cycles do not connect all tilings here, because the lattice has triangles: they join 14 of the 15 tilings of the $3 \times 4$ board and 50 of the 56 of the $4 \times 4$ board. Half of the steps therefore go along a 6-cycle: from $a$, its partner $b$, a neighbour $c$ of $a$ and its partner $d$, a neighbour $e$ of $d$ and its partner $f$, the pairs $ab$, $cd$ and $ef$ become $ac$, $de$ and $fb$ when $f$ and $b$ are neighbours. The move back arises from the same number of choices, so the uniform distribution stays stationary, and on every board small enough to check (up to $4 \times 5$) the two kinds of moves together connect all tilings. A chain run for finitely many steps is only approximately uniform, and the gallery labels its samples as such; each sample gets its number from the same backward scan as a domicule sample.
+
+
 ## The counts
 
 The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/all-lattices-rectangle-modular.json`](../../spec/cases/all-lattices-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are [OEIS A401988](https://oeis.org/draft/A401988) [3]; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.

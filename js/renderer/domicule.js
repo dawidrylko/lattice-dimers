@@ -1,15 +1,25 @@
 const MAX_DOMICULE_TABLE_SIZE = 4000000;
 const DEFAULT_SWEEPS = 5000;
-const KING_STEPS = [
-  [-1, -1],
-  [-1, 0],
-  [-1, 1],
-  [0, -1],
-  [0, 1],
-  [1, -1],
-  [1, 0],
-  [1, 1],
-];
+const SAMPLER_STEPS = {
+  king: [
+    [-1, -1],
+    [-1, 0],
+    [-1, 1],
+    [0, -1],
+    [0, 1],
+    [1, -1],
+    [1, 0],
+    [1, 1],
+  ],
+  triangular: [
+    [-1, -1],
+    [-1, 0],
+    [0, -1],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+  ],
+};
 
 /**
  * Lists the cells a free cell can be matched with, as offsets in row-major order:
@@ -292,20 +302,45 @@ function createStartPartners(rowCount, colCount) {
   return partner;
 }
 
+function stepFrom(cell, steps, random, rowCount, colCount) {
+  const [dRow, dCol] = steps[Math.floor(random() * steps.length)];
+  const row = Math.floor(cell / colCount) + dRow;
+  const col = (cell % colCount) + dCol;
+
+  return row < 0 || row >= rowCount || col < 0 || col >= colCount ? -1 : row * colCount + col;
+}
+
+function areNeighbours(steps, colCount, from, to) {
+  const dRow = Math.floor(to / colCount) - Math.floor(from / colCount);
+  const dCol = (to % colCount) - (from % colCount);
+
+  return steps.some(([stepRow, stepCol]) => stepRow === dRow && stepCol === dCol);
+}
+
 /**
  * Samples a domicule tiling with a Markov chain whose stationary distribution is uniform.
- * A step picks a cell a and one of its eight king neighbours c; when the partners b of a
- * and d of c are king neighbours too, the pairs ab and cd become ac and bd. The proposal
- * is symmetric, so the uniform distribution is stationary, but a finite run is only
- * approximately uniform.
+ * A step picks a cell a and one of its neighbours c, eight on the king's graph and six on
+ * the triangular lattice; when the partners b of a and d of c are neighbours too, the pairs
+ * ab and cd become ac and bd. These moves along 4-cycles reach every tiling of the king's
+ * graph, not of the triangular lattice, so there half of the steps go along a 6-cycle: from
+ * d a neighbour e is picked, and when the partner f of e is a neighbour of b, the pairs ab,
+ * cd and ef become ac, de and fb. Both proposals are symmetric, so the uniform distribution
+ * is stationary, but a finite run is only approximately uniform.
  * @param {Object} options Board dimensions.
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
+ * @property {string} [options.lattice] 'king' for domicules, 'triangular' for the triangular lattice.
  * @param {function(): number} [random] A generator of numbers in [0, 1).
  * @param {number} [sweeps] The number of steps per cell.
  * @returns {{ row: number, col: number, dr: number, dc: number }[]|null} A tiling, or null if the board has an odd number of cells.
  */
-function sampleDomiculeTiling({ rowCount, colCount }, random = Math.random, sweeps = DEFAULT_SWEEPS) {
+function sampleDomiculeTiling({ rowCount, colCount, lattice = 'king' }, random = Math.random, sweeps = DEFAULT_SWEEPS) {
+  const steps = SAMPLER_STEPS[lattice];
+
+  if (!steps) {
+    throw new Error(`sampleDomiculeTiling() takes lattice king or triangular, not ${lattice}.`);
+  }
+
   const cellCount = rowCount * colCount;
 
   if (cellCount % 2 !== 0) {
@@ -313,34 +348,53 @@ function sampleDomiculeTiling({ rowCount, colCount }, random = Math.random, swee
   }
 
   const partner = createStartPartners(rowCount, colCount);
-  const steps = sweeps * cellCount;
+  const stepCount = sweeps * cellCount;
 
-  for (let step = 0; step < steps; step++) {
+  for (let step = 0; step < stepCount; step++) {
+    const sixCycle = lattice === 'triangular' && random() < 0.5;
     const a = Math.floor(random() * cellCount);
-    const [dRow, dCol] = KING_STEPS[Math.floor(random() * 8)];
-    const row = Math.floor(a / colCount) + dRow;
-    const col = (a % colCount) + dCol;
+    const c = stepFrom(a, steps, random, rowCount, colCount);
 
-    if (row < 0 || row >= rowCount || col < 0 || col >= colCount) {
+    if (c < 0) {
       continue;
     }
 
-    const c = row * colCount + col;
     const b = partner[a];
     const d = partner[c];
 
-    if (
-      b === c ||
-      Math.abs(Math.floor(b / colCount) - Math.floor(d / colCount)) > 1 ||
-      Math.abs((b % colCount) - (d % colCount)) > 1
-    ) {
+    if (b === c) {
+      continue;
+    }
+
+    if (!sixCycle) {
+      if (areNeighbours(steps, colCount, b, d)) {
+        partner[a] = c;
+        partner[c] = a;
+        partner[b] = d;
+        partner[d] = b;
+      }
+
+      continue;
+    }
+
+    const e = stepFrom(d, steps, random, rowCount, colCount);
+
+    if (e < 0 || e === a || e === b || e === c) {
+      continue;
+    }
+
+    const f = partner[e];
+
+    if (f === a || f === b || !areNeighbours(steps, colCount, f, b)) {
       continue;
     }
 
     partner[a] = c;
     partner[c] = a;
-    partner[b] = d;
-    partner[d] = b;
+    partner[d] = e;
+    partner[e] = d;
+    partner[f] = b;
+    partner[b] = f;
   }
 
   const domicules = [];

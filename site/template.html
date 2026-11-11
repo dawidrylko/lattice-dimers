@@ -189,6 +189,7 @@ ul.intro li + li { margin-top: 4px; }
       <div class="pieces" id="pieces" role="group" aria-labelledby="pieces-label">
         <button type="button" data-pieces="domino" title="Every piece covers two cells that share a side">Dominoes</button>
         <button type="button" data-pieces="domicule" title="A piece may also cover two cells that share only a corner">Domicules</button>
+        <button type="button" data-pieces="triangular" title="A piece may also cover two cells joined by the ↘ diagonal">Triangular lattice</button>
       </div>
     </div>
     <div class="picker">
@@ -240,7 +241,7 @@ ul.intro li + li { margin-top: 4px; }
     </div>
     <div class="summary">
       <p class="meta" id="gallery-meta"></p>
-      <span class="legend"><span><i class="h"></i>horizontal</span><span><i class="v"></i>vertical</span><span class="diagonal"><i class="d"></i>diagonal ↘</span><span class="diagonal"><i class="a"></i>diagonal ↙</span><span class="seam"><i class="s"></i>left and right edges glued</span><span class="seam-ends"><i class="t"></i>top and bottom edges glued</span></span>
+      <span class="legend"><span><i class="h"></i>horizontal</span><span><i class="v"></i>vertical</span><span class="diagonal"><i class="d"></i>diagonal ↘</span><span class="diagonal" data-diagonal="a"><i class="a"></i>diagonal ↙</span><span class="seam"><i class="s"></i>left and right edges glued</span><span class="seam-ends"><i class="t"></i>top and bottom edges glued</span></span>
     </div>
     <div class="notice" id="notice" hidden>
       <p id="notice-text"></p>
@@ -258,6 +259,7 @@ ul.intro li + li { margin-top: 4px; }
       <div class="pieces" id="benchmark-pieces" role="group" aria-labelledby="benchmark-pieces-label">
         <button type="button" data-pieces="domino" title="Every piece covers two cells that share a side">Dominoes</button>
         <button type="button" data-pieces="domicule" title="A piece may also cover two cells that share only a corner">Domicules</button>
+        <button type="button" data-pieces="triangular" title="A piece may also cover two cells joined by the ↘ diagonal">Triangular lattice</button>
       </div>
     </div>
     <div class="picker">
@@ -355,6 +357,33 @@ ul.intro li + li { margin-top: 4px; }
       </div>
       <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
       <p class="note" data-unmeasured hidden>These solvers have no benchmark run yet.</p>
+    </div>
+    <div class="bench-group" data-pieces="triangular" data-surface="rectangle" data-run="triangular" hidden>
+      <div class="table-wrap">
+        <table role="table" id="triangular-rectangle-benchmark" aria-label="Triangular lattice (A401988)" class="languages">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/triangular-lattice/rectangles.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/triangular-lattice/rectangles.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/triangular-lattice/rectangles.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/triangular-lattice/rectangles.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/triangular-lattice/rectangles.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/triangular-lattice/rectangles.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <tbody id="triangular-rectangle-benchmark-rows" role="rowgroup"></tbody>
+        </table>
+      </div>
+      <p class="note">No benchmark run has measured these solvers on the triangular lattice yet, so the table gives the boards and their counts only.</p>
+    </div>
+    <div class="bench-group" data-pieces="triangular" data-surface="cylinder" data-run="triangular" hidden>
+      <div class="table-wrap">
+        <table role="table" id="triangular-cylinder-benchmark" aria-label="Triangular lattice on cylinders" class="languages">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/triangular-lattice/cylinders.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/triangular-lattice/cylinders.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/triangular-lattice/cylinders.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/triangular-lattice/cylinders.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/triangular-lattice/cylinders.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/triangular-lattice/cylinders.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <tbody id="triangular-cylinder-benchmark-rows" role="rowgroup"></tbody>
+        </table>
+      </div>
+      <p class="note">No benchmark run has measured these solvers on the triangular lattice yet, so the table gives the boards and their counts only.</p>
+    </div>
+    <div class="bench-group" data-pieces="triangular" data-surface="torus" data-run="triangular" hidden>
+      <div class="table-wrap">
+        <table role="table" id="triangular-torus-benchmark" aria-label="Triangular lattice on tori" class="languages">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/triangular-lattice/tori.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/triangular-lattice/tori.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/triangular-lattice/tori.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/triangular-lattice/tori.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/triangular-lattice/tori.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/triangular-lattice/tori.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
+          <tbody id="triangular-torus-benchmark-rows" role="rowgroup"></tbody>
+        </table>
+      </div>
+      <p class="note">No benchmark run has measured these solvers on the triangular lattice yet, so the table gives the boards and their counts only.</p>
     </div>
     <p class="note run">
       Mean time of the count each solver reports with <code>--time</code>. The tooltip of a time gives the whole process,
@@ -586,7 +615,8 @@ function clamp(value, min, max) {
   return value < min ? min : value > max ? max : value;
 }
 
-const BENCHMARK_PIECES = ['domino', 'domicule'];
+const PIECE_NAMES = { domino: 'Domino', domicule: 'Domicule', triangular: 'Triangular lattice' };
+const BENCHMARK_PIECES = ['domino', 'domicule', 'triangular'];
 const BENCHMARK_SURFACES = ['rectangle', 'cylinder', 'torus'];
 const BENCHMARK_ALIASES = {
   dominoes: ['domino', 'rectangle'],
@@ -675,6 +705,7 @@ function describeTiling(board, tiling) {
   return [
     `${fmt(kinds.h)} horizontal, ${fmt(kinds.v)} vertical`,
     ...(board.pieces === 'domicule' ? [`${plural(kinds.d + kinds.a, 'diagonal piece')}: ${fmt(kinds.d)} ↘, ${fmt(kinds.a)} ↙`] : []),
+    ...(board.pieces === 'triangular' ? [`${plural(kinds.d, 'diagonal piece')} ↘`] : []),
     ...(board.surface === 'rectangle' ? [] : [`${plural(glued, 'piece')} across a glued edge`]),
   ];
 }
@@ -743,7 +774,7 @@ function showSheet(board, tilings, first, labels) {
   svg.setAttribute('role', 'img');
   svg.setAttribute(
     'aria-label',
-    `${board.pieces === 'domicule' ? 'Domicule' : 'Domino'} tilings of a ${board.rowCount} by ${board.colCount} ${board.surface}`,
+    `${PIECE_NAMES[board.pieces]} tilings of a ${board.rowCount} by ${board.colCount} ${board.surface}`,
   );
 }
 
@@ -794,7 +825,9 @@ function updateControls({ board, page, diagonals, total }) {
     b.hidden = other.pieces !== board.pieces || other.surface !== board.surface;
     b.setAttribute('aria-pressed', b.dataset.id === board.id);
   });
-  document.querySelectorAll('.legend .diagonal').forEach(item => (item.hidden = board.pieces !== 'domicule'));
+  document.querySelectorAll('.legend .diagonal').forEach(
+    item => (item.hidden = board.pieces === 'domino' || (item.dataset.diagonal === 'a' && board.pieces !== 'domicule')),
+  );
   document.querySelectorAll('.legend .seam').forEach(item => (item.hidden = board.surface === 'rectangle'));
   document.querySelectorAll('.legend .seam-ends').forEach(item => (item.hidden = board.surface !== 'torus'));
   $('diagonal-picker').hidden = board.pieces !== 'domicule';
@@ -831,7 +864,7 @@ async function renderGallery(state) {
   if (board.mode === 'random') {
     $('gallery-meta').innerHTML =
       `${name} · ${num(board.total)} tilings · too many to page through in a browser, ` +
-      (board.pieces === 'domicule'
+      (board.pieces !== 'domino'
         ? `so these are ${RANDOM_SAMPLE_SIZE} approximately uniform random ones (a Markov chain of __DOMICULE_SWEEPS__ steps per cell)`
         : `so these are ${RANDOM_SAMPLE_SIZE} uniformly random ones (coupling from the past)`) +
       ', each with its number';
@@ -1013,6 +1046,11 @@ const MODULAR_AND_BIGINT_LANGUAGES = [
   { read: r => r.bigint, missing: r => r.bigintMissing?.js },
 ];
 
+const UNMEASURED_TRIANGULAR = MODULAR_AND_BIGINT_LANGUAGES.map(() => ({
+  read: () => null,
+  missing: () => 'not measured: no benchmark run has measured the triangular lattice',
+}));
+
 function columnLabel(th) {
   const icon = th.querySelector('svg.lang');
   const text = th.textContent.trim();
@@ -1036,7 +1074,9 @@ function renderSolverRows(table, rows, solvers) {
       const results = solvers.map(({ read }) => read(r));
       const runs = results.map(result => (result ? result.runs : null));
       const measured = runs.filter(count => count !== null);
-      const runsCell = measured.every(count => count === measured[0])
+      const runsCell = measured.length === 0
+        ? '-'
+        : measured.every(count => count === measured[0])
         ? fmt(measured[0])
         : `<span title="${solverNames}">${runs.map(count => (count === null ? '-' : fmt(count))).join(' / ')}</span>`;
       const times = solvers.map(({ missing }, i) => ms(results[i], missing ? missing(r) : null));
@@ -1053,6 +1093,9 @@ renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, MODULAR_AND_BIGIN
 renderSolverRows('diagonal-benchmark', DATA.diagonalBenchmark, MODULAR_AND_BIGINT_LANGUAGES);
 renderSolverRows('torus-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_AND_BIGINT_LANGUAGES);
 renderSolverRows('cylinder-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
+['rectangle', 'cylinder', 'torus'].forEach(surface =>
+  renderSolverRows(`triangular-${surface}-benchmark`, DATA.triangularBenchmark.filter(r => r.surface === surface), UNMEASURED_TRIANGULAR),
+);
 ['torus', 'cylinder'].forEach(surface => renderSolverRows(`${surface}-diagonal-benchmark`, DATA.periodicDiagonalBenchmark.filter(r => r.surface === surface), MODULAR_AND_BIGINT_LANGUAGES));
 document.querySelectorAll('[data-unmeasured]').forEach(note => (note.hidden = DATA.periodicDiagonalRun !== null));
 document.querySelectorAll('#benchmark .bench-group').forEach(group => {
@@ -1076,6 +1119,7 @@ function describeRun({ date, node, python, rust, commit, cpu, platform, cores, m
 const BENCHMARK_RUNS = {
   main: DATA.environment && { directory: '__BENCHMARK_DIRECTORY__', environment: DATA.environment },
   'periodic-diagonal': DATA.periodicDiagonalRun?.environment ? DATA.periodicDiagonalRun : null,
+  triangular: null,
 };
 
 const BENCHMARK_LINK = $('benchmark-run').querySelector('a').href;
@@ -1084,6 +1128,7 @@ function showBenchmarkRun(group) {
   const run = BENCHMARK_RUNS[group?.dataset.run || 'main'];
   const note = $('benchmark-run');
   note.hidden = !run;
+  document.querySelector('#benchmark .note.run').hidden = !run;
   if (!run) return;
   const link = note.querySelector('a');
   note.querySelector('.environment').textContent = describeRun(run.environment);

@@ -7,6 +7,7 @@ const testCasesDomino = testCasesOf('domino-rectangle-formula');
 const testCasesDomicule = testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare);
 const testCasesPeriodic = testCasesOf('all-lattices-cylinder-torus-modular');
 const testCasesDiagonal = testCasesOf('domicule-rectangle-polynomial-modular');
+const testCasesTriangular = testCasesOf('all-lattices-rectangle-modular').filter(t => t.lattice === 'triangular');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
 const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
@@ -94,7 +95,9 @@ const PERIODIC_FILTER_MEMORY = { '10x10-diagonal-torus': '800 MB' };
 const PERIODIC_PIECES = [
   { pieces: 'domino', lattice: 'square', suffix: '' },
   { pieces: 'domicule', lattice: 'king', suffix: '-diagonal' },
+  { pieces: 'triangular', lattice: 'triangular', suffix: '-triangular' },
 ];
+const TRIANGULAR_BENCHMARK_SIDES = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
 const DIAGONAL_FILTER_MAX_SIDE = 10;
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const COMPUTED = 'every output on this page was produced during that build from the files of this repository';
@@ -141,6 +144,15 @@ function countTilings(board) {
   return testCase.expectedResult;
 }
 
+/**
+ * Reads the stored count of the triangular lattice on a rectangle from spec/cases/.
+ * @param {Object} board The board.
+ * @returns {string|null} The number of tilings, or null when spec/cases/ has none.
+ */
+function findTriangularCount({ rowCount, colCount }) {
+  return testCasesTriangular.find(t => t.rowCount === rowCount && t.colCount === colCount)?.expectedResult ?? null;
+}
+
 const periodicCounts = new Map();
 
 /**
@@ -174,12 +186,12 @@ function readStoredPeriodicCount(board) {
 }
 
 /**
- * Counts the tilings of a king's graph or square lattice cylinder or torus once per build:
+ * Counts the tilings of a cylinder or torus of one of the three lattices once per build:
  * from spec/cases/ when the board is known there, otherwise with the modular solver.
  * @param {Object} board The board.
  * @property {number} board.rowCount The number of rows.
  * @property {number} board.colCount The circumference.
- * @property {string} board.lattice square or king.
+ * @property {string} board.lattice square, triangular or king.
  * @property {boolean} board.torus Whether the rows are periodic too.
  * @returns {Promise<string>} The number of tilings.
  */
@@ -387,6 +399,33 @@ async function buildPeriodicBenchmark(lattice) {
       languages: readLanguages('all-lattices-cylinder-torus-modular', suffix),
       bigintLanguages: readLanguages('all-lattices-cylinder-torus-bigint', suffix),
     });
+  }
+
+  return rows;
+}
+
+/**
+ * Lists the boards of the triangular lattice tables of the Benchmarks tab, the boards the runner
+ * would measure that have a count: every rectangle and torus stored in spec/cases/, and the
+ * cylinders stored there or counted for the gallery. No run has measured these solvers yet, so
+ * the rows have no times.
+ * @returns {Promise<Object[]>} One row per board, with its surface.
+ */
+async function buildTriangularBenchmark() {
+  const rows = [];
+
+  for (const surface of ['rectangle', 'cylinder', 'torus']) {
+    for (const side of TRIANGULAR_BENCHMARK_SIDES) {
+      const board = { rowCount: side, colCount: side, lattice: 'triangular', torus: surface === 'torus' };
+      const tilings =
+        surface === 'rectangle'
+          ? findTriangularCount(board)
+          : findPeriodicCase(board)?.expectedResult ?? (PERIODIC_SIDES.includes(side) ? await countPeriodicTilings(board) : null);
+
+      if (tilings !== null) {
+        rows.push({ rowCount: side, colCount: side, surface, tilings });
+      }
+    }
   }
 
   return rows;
@@ -732,6 +771,15 @@ async function __main__() {
     });
   }
 
+  const triangularBoards = DOMICULE_BOARDS.map(board => {
+    const total = findTriangularCount(board);
+
+    if (total === null) {
+      throw new Error(`No count of the ${board.rowCount}x${board.colCount} triangular lattice in spec/cases/all-lattices-rectangle-modular.json, which the gallery needs.`);
+    }
+
+    return { id: `${board.rowCount}x${board.colCount}-triangular`, pieces: 'triangular', surface: 'rectangle', mode: 'pages', ...board, total };
+  });
   const periodicBoards = [];
 
   for (const { pieces, lattice, suffix } of PERIODIC_PIECES) {
@@ -771,12 +819,14 @@ async function __main__() {
         total: countTilings(board),
       })),
       ...domiculeBoards,
+      ...triangularBoards,
       ...periodicBoards,
     ],
     benchmark: buildBenchmark(),
     domiculeBenchmark: buildDomiculeBenchmark(domiculeTotals),
     periodicBenchmark: await buildPeriodicBenchmark('king'),
     dominoPeriodicBenchmark: await buildPeriodicBenchmark('square'),
+    triangularBenchmark: await buildTriangularBenchmark(),
     diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
     periodicDiagonalBenchmark: buildPeriodicDiagonalBenchmark(),
     environment: readEnvironment(BENCHMARK_DIRECTORY),

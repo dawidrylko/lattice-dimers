@@ -1,10 +1,11 @@
 const unrankers = new Map();
 
-const PIECE_LATTICES = { domino: 'square', domicule: 'king' };
+const PIECE_LATTICES = { domino: 'square', domicule: 'king', triangular: 'triangular' };
 
 const SAMPLERS = {
   domino: board => sampleRandomTiling(board),
   domicule: board => sampleDomiculeTiling(board),
+  triangular: board => sampleDomiculeTiling({ ...board, lattice: 'triangular' }),
 };
 
 function selectNumbering(board, diagonals) {
@@ -34,11 +35,11 @@ function selectNumbering(board, diagonals) {
     };
   }
 
-  if (board.pieces === 'domicule') {
+  if (board.pieces !== 'domino') {
     return {
       key: board.id,
       large: !canUnrankDomicule(board),
-      create: onProgress => createDomiculeUnranker(board, onProgress),
+      create: onProgress => createDomiculeUnranker({ ...board, lattice: PIECE_LATTICES[board.pieces] }, onProgress),
       unrank: unrankDomiculeTiling,
     };
   }

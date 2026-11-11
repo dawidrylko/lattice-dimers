@@ -53,6 +53,9 @@ const rankTestCases = [
   { pieces: 'domino', rowCount: 9, colCount: 12 },
   { pieces: 'domicule', rowCount: 8, colCount: 8 },
   { pieces: 'domicule', rowCount: 10, colCount: 10 },
+  { pieces: 'triangular', rowCount: 5, colCount: 4 },
+  { pieces: 'triangular', rowCount: 3, colCount: 5 },
+  { pieces: 'triangular', rowCount: 10, colCount: 10 },
 ];
 const shortLabelTestCases = [{ rowCount: 4, colCount: 4, label: '"a" <&>' }];
 const randomTestCases = [
@@ -75,6 +78,10 @@ const domiculeReachTestCases = [
   { rowCount: 3, colCount: 4, expectedResult: 43 },
   { rowCount: 4, colCount: 5, expectedResult: 1563 },
   { rowCount: 5, colCount: 4, expectedResult: 1563 },
+  { rowCount: 2, colCount: 3, lattice: 'triangular', expectedResult: 3 },
+  { rowCount: 3, colCount: 4, lattice: 'triangular', expectedResult: 15 },
+  { rowCount: 4, colCount: 5, lattice: 'triangular', expectedResult: 203 },
+  { rowCount: 5, colCount: 4, lattice: 'triangular', expectedResult: 203 },
 ];
 const domiculeShapeTestCases = [
   { rowCount: 2, colCount: 2, piece: { row: 0, col: 0, dr: 1, dc: 1 }, svg: 'class="d"', rotation: 'rotate(45 ', ascii: '\\ .\n. \\' },
@@ -224,6 +231,8 @@ const diagonalUnrankTestCases = [
 const domiculeRandomTestCases = [
   { rowCount: 2, colCount: 2, expectedResult: 3, criticalValue: 13.82 },
   { rowCount: 4, colCount: 4, expectedResult: 280, criticalValue: 357.8 },
+  { rowCount: 2, colCount: 2, lattice: 'triangular', expectedResult: 2, criticalValue: 10.83 },
+  { rowCount: 4, colCount: 4, lattice: 'triangular', expectedResult: 56, criticalValue: 93.17 },
 ];
 const domiculeRandomValidityTestCases = [
   { rowCount: 1, colCount: 2 },
@@ -231,6 +240,8 @@ const domiculeRandomValidityTestCases = [
   { rowCount: 5, colCount: 4 },
   { rowCount: 20, colCount: 20 },
   { rowCount: 30, colCount: 30 },
+  { rowCount: 20, colCount: 20, lattice: 'triangular' },
+  { rowCount: 5, colCount: 4, lattice: 'triangular' },
 ];
 const cliTestCases = [
   { rowCount: 3, colCount: 3, args: ['--random', '--ascii'], status: 0, output: 'Nothing to render.' },
@@ -397,7 +408,8 @@ function runUnrankTest(testCase) {
 
 function runRankTest(testCase) {
   const domino = testCase.pieces === 'domino';
-  const unranker = domino ? createUnranker(testCase) : createDomiculeUnranker(testCase);
+  const lattice = testCase.pieces === 'triangular' ? 'triangular' : 'king';
+  const unranker = domino ? createUnranker(testCase) : createDomiculeUnranker({ ...testCase, lattice });
   const unrank = domino ? unrankTiling : unrankDomiculeTiling;
 
   if (unranker.total === BigInt(0)) {
@@ -1144,6 +1156,10 @@ suite('triangular unrank', triangularTestCases, runDomiculeUnrankTest);
 suite('domicule random uniformity', domiculeRandomTestCases, runDomiculeUniformityTest);
 suite('domicule random validity', domiculeRandomValidityTestCases, runDomiculeValidityTest);
 suite('domicule chain reach', domiculeReachTestCases, runDomiculeReachTest);
+
+test('domicule sampler rejects a lattice other than king or triangular', () => {
+  assert.throws(() => sampleDomiculeTiling({ rowCount: 2, colCount: 2, lattice: 'square' }), /lattice king or triangular/);
+});
 suite('domicule shape', domiculeShapeTestCases, runDomiculeShapeTest);
 suite('periodic unrank', periodicUnrankTestCases, runPeriodicUnrankTest);
 suite('periodic diagonal pieces', periodicDiagonalTestCases, runPeriodicDiagonalTest);

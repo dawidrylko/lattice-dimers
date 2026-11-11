@@ -21,6 +21,11 @@ figure(svgs, `4 of the ${total} tilings of the triangular lattice on the cylinde
 
 [`all-lattices-cylinder-torus-bigint.js`](../../js/solvers/all-lattices-cylinder-torus-bigint.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. The same algorithm is in Rust, [`all-lattices-cylinder-torus-bigint.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs), and in Python, [`all_lattices_cylinder_torus_bigint.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py).
 
+## Numbering
+
+The gallery numbers the tilings of the cylinders up to $10 \times 10$ with the cell-by-cell scan of the modular solver, as it numbers the [domino tilings of cylinders](../dominoes/02-cylinders.md#numbering). The Random button draws a uniformly random number, so the sample is exact.
+
+
 ## The counts
 
 Two solvers count the same boards by different methods, and the cell below compares the last column of the table, $h = 8$, with the count of the modular solver.
