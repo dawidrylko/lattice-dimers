@@ -819,7 +819,6 @@ async function __main__() {
     .replace('__JSON_LD__', () => JSON.stringify(buildJsonLd()).replace(/</g, '\\u003c'))
     .replace(/__SITE_URL__/g, SITE_URL)
     .replace(/__BENCHMARK_DIRECTORY__/g, `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`)
-    .replace(/__PERIODIC_DIAGONAL_DIRECTORY__/g, PERIODIC_DIAGONAL_RUN ? `${BENCHMARK_ROOT}/${PERIODIC_DIAGONAL_RUN}` : BENCHMARK_ROOT)
     .replace(/__DOMICULE_SWEEPS__/g, DOMICULE_SWEEPS.toLocaleString('en-US'))
     .replace('__THEME_CSS__', () => THEME_CSS)
     .replace('__CHROME_CSS__', () => CHROME_CSS)

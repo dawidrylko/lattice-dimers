@@ -1521,7 +1521,7 @@ async function checkBenchmark(page, baseUrl, width) {
         ),
         environment: section.querySelector('.environment').textContent,
         titles: section.querySelectorAll('.bench-group h2, .bench-group h3').length,
-        older: section.innerText.split('benchmarks/results/').length !== 2 + section.querySelectorAll('.bench-group:not([hidden]) [data-run]:not([hidden])').length || /pnpm/.test(section.textContent),
+        older: section.innerText.split('benchmarks/results/').length > 2 || /pnpm/.test(section.textContent),
         rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
@@ -1555,7 +1555,7 @@ async function checkBenchmark(page, baseUrl, width) {
     }
 
     if (shown.counted !== view.startsWith('domicule/')) {
-      problems.push(`#${hash} ${shown.counted ? 'shows' : 'hides'} the Count switch`);
+      problems.push(`#${hash} ${shown.counted ? 'shows' : 'hides'} the Diagonal pieces switch`);
     }
 
     if (state.overflow > 0 || state.hidden) {
@@ -1764,6 +1764,19 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     problems.push(`the benchmark switches give ${views.join(', ')} but the tables are ${groups}`);
   }
 
+  const labels = await page.evaluate(
+    "['gallery', 'benchmark'].map(id => [...document.querySelectorAll('#' + id + ' .picker > .label')].map(label => label.textContent.trim()).join(' / '))",
+  );
+  const highlight = await page.evaluate("document.getElementById('highlight').parentElement.textContent.trim()");
+  const countButtons = await page.evaluate("[...document.querySelectorAll('#benchmark-counts button')].map(button => button.textContent.trim()).join(' / ')");
+
+  if (labels[0] !== 'Pieces / Surface / Diagonal pieces / Board / Style' || labels[1] !== 'Pieces / Surface / Diagonal pieces') {
+    problems.push(`the pickers read ${labels.join(' | ')}; Diagonal pieces follows Surface in both tabs, above Board in the gallery`);
+  }
+  if (highlight !== 'Highlight' || countButtons !== 'Any number / Each number') {
+    problems.push(`the diagonal pieces controls read ${highlight} and ${countButtons} instead of Highlight and Any number / Each number`);
+  }
+
   for (const view of views) {
     const [p, surface, count = 'all'] = view.split('/');
     const group = `.bench-group[data-pieces=${p}][data-surface=${surface}]${count === 'all' ? ':not([data-count])' : `[data-count=${count}]`}`;
@@ -1775,6 +1788,18 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       `the ${view} rows`,
     );
     cardLinks.push(await page.evaluate(READ_CARD_LINKS));
+    const run = await page.evaluate(`(() => {
+      const section = document.getElementById('benchmark');
+      const links = [...section.querySelectorAll('a[href*="benchmarks/results/"]')].filter(link => link.checkVisibility()).map(link => (new URL(link.href).pathname.endsWith('/' + link.textContent) ? link.textContent : 'a link to another run than ' + link.textContent));
+      return { runs: section.innerText.split('Run on ').length - 1, links, periodic: DATA.periodicDiagonalRun?.directory ?? null };
+    })()`);
+    const ownRun = surface !== 'rectangle' && count === 'diagonal';
+    const wanted = ownRun ? (run.periodic ? 1 : 0) : 1;
+    const linked = run.links.length === wanted && run.links.every(link => !ownRun || link === run.periodic);
+
+    if (run.runs !== wanted || !linked) {
+      problems.push(`the ${view} table shows ${run.runs} run lines linking ${run.links.join(', ') || 'nothing'}; it should show ${wanted}, for ${ownRun ? 'its own run' : 'the main run'}`);
+    }
     const times = await page.evaluate(
       "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr')].flatMap(row => [...row.cells].slice(2, -1).map(cell => cell.textContent))",
     );

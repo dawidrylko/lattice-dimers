@@ -227,7 +227,7 @@ table(
 print(`Run: ${nb.context.benchmarkRun}`);
 ```
 
-On cylinders and tori the solvers came after that run, so their times come from a run of their own.
+The same run measured the solvers on cylinders and tori.
 
 ```js run
 const { formatTime, periodicDiagonalBenchmark, periodicDiagonalRun } = nb.context;
@@ -243,7 +243,6 @@ if (!periodicDiagonalRun) {
       ...[r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
     ]),
   );
-  print(`Run: ${periodicDiagonalRun.directory}`);
 }
 ```
 

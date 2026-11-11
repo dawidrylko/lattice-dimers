@@ -199,16 +199,16 @@ ul.intro li + li { margin-top: 4px; }
         <button type="button" data-surface="torus">Torus</button>
       </div>
     </div>
-    <div class="picker">
-      <span class="label" id="boards-label">Board</span>
-      <div class="boards" id="boards" role="group" aria-labelledby="boards-label"></div>
-    </div>
     <div class="picker" id="diagonal-picker">
       <span class="label" id="diagonals-label" title="Show only the tilings with this many diagonal pieces">Diagonal pieces</span>
       <div class="filter">
         <select class="field" id="diagonals" aria-labelledby="diagonals-label"></select>
-        <label class="toggle"><input type="checkbox" id="highlight">Highlight diagonal pieces</label>
+        <label class="toggle" title="Mark the diagonal pieces in every tiling"><input type="checkbox" id="highlight" aria-label="Highlight diagonal pieces">Highlight</label>
       </div>
+    </div>
+    <div class="picker">
+      <span class="label" id="boards-label">Board</span>
+      <div class="boards" id="boards" role="group" aria-labelledby="boards-label"></div>
     </div>
     <div class="picker">
       <span class="label" id="styles-label">Style</span>
@@ -265,10 +265,10 @@ ul.intro li + li { margin-top: 4px; }
       </div>
     </div>
     <div class="picker" id="benchmark-count-picker" hidden>
-      <span class="label" id="benchmark-counts-label">Count</span>
+      <span class="label" id="benchmark-counts-label">Diagonal pieces</span>
       <div class="pieces" id="benchmark-counts" role="group" aria-labelledby="benchmark-counts-label">
-        <button type="button" data-count="all" title="The number of tilings">All tilings</button>
-        <button type="button" data-count="diagonal" title="The tilings sorted by their number of diagonal pieces">By diagonal pieces</button>
+        <button type="button" data-count="all" title="The number of tilings, whatever their number of diagonal pieces">Any number</button>
+        <button type="button" data-count="diagonal" title="The number of tilings for each number of diagonal pieces">Each number</button>
       </div>
     </div>
     <div class="bench-group" data-pieces="domino" data-surface="rectangle">
@@ -312,7 +312,6 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="diagonal-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">These solvers count the tilings for every number of diagonal pieces at once, so their times are not comparable with those of All tilings.</p>
       <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="cylinder" hidden>
@@ -324,17 +323,15 @@ ul.intro li + li { margin-top: 4px; }
       </div>
       <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
-    <div class="bench-group" data-pieces="domicule" data-surface="cylinder" data-count="diagonal" hidden>
+    <div class="bench-group" data-pieces="domicule" data-surface="cylinder" data-count="diagonal" data-run="periodic-diagonal" hidden>
       <div class="table-wrap">
         <table role="table" id="cylinder-diagonal-benchmark" aria-label="Domicules on cylinders by diagonal pieces" class="languages">
           <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="cylinder-diagonal-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">These solvers count the tilings for every number of diagonal pieces at once, so their times are not comparable with those of All tilings.</p>
       <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
       <p class="note" data-unmeasured hidden>These solvers have no benchmark run yet.</p>
-      <p class="note" data-run="periodic-diagonal" hidden><span class="environment"></span> Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__PERIODIC_DIAGONAL_DIRECTORY__">__PERIODIC_DIAGONAL_DIRECTORY__</a>.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="torus" hidden>
       <div class="table-wrap">
@@ -345,23 +342,21 @@ ul.intro li + li { margin-top: 4px; }
       </div>
       <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
-    <div class="bench-group" data-pieces="domicule" data-surface="torus" data-count="diagonal" hidden>
+    <div class="bench-group" data-pieces="domicule" data-surface="torus" data-count="diagonal" data-run="periodic-diagonal" hidden>
       <div class="table-wrap">
         <table role="table" id="torus-diagonal-benchmark" aria-label="Domicules on tori by diagonal pieces" class="languages">
           <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
           <tbody id="torus-diagonal-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">These solvers count the tilings for every number of diagonal pieces at once, so their times are not comparable with those of All tilings.</p>
       <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
       <p class="note" data-unmeasured hidden>These solvers have no benchmark run yet.</p>
-      <p class="note" data-run="periodic-diagonal" hidden><span class="environment"></span> Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__PERIODIC_DIAGONAL_DIRECTORY__">__PERIODIC_DIAGONAL_DIRECTORY__</a>.</p>
     </div>
     <p class="note run">
       Mean time of the count each solver reports with <code>--time</code>. The tooltip of a time gives the whole process,
       start-up included.
     </p>
-    <p class="note">
+    <p class="note" id="benchmark-run">
       <span class="environment"></span>
       Results: <a href="https://github.com/dawidrylko/lattice-dimers/tree/master/__BENCHMARK_DIRECTORY__">__BENCHMARK_DIRECTORY__</a>.
     </p>
@@ -912,6 +907,7 @@ function render() {
         group.dataset.surface !== state.benchmark.surface ||
         (group.dataset.count || 'all') !== state.benchmark.count),
   );
+  showBenchmarkRun(document.querySelector('.bench-group:not([hidden])'));
 
   if (state.tab === 'gallery') {
     renderGallery(state);
@@ -1053,16 +1049,22 @@ function describeRun({ date, node, python, rust, commit, cpu, platform, cores, m
   return `Run on ${date} on ${machine} with ${runtimeList}${commit ? `, commit ${commit.slice(0, 7)}` : ''}.`;
 }
 
-if (DATA.environment) {
-  document.querySelectorAll('.environment').forEach(span => (span.textContent = describeRun(DATA.environment)));
-}
+const BENCHMARK_RUNS = {
+  main: DATA.environment && { directory: '__BENCHMARK_DIRECTORY__', environment: DATA.environment },
+  'periodic-diagonal': DATA.periodicDiagonalRun?.environment ? DATA.periodicDiagonalRun : null,
+};
 
-if (DATA.periodicDiagonalRun?.environment) {
-  const { environment } = DATA.periodicDiagonalRun;
-  document.querySelectorAll('[data-run="periodic-diagonal"]').forEach(note => {
-    note.hidden = false;
-    note.querySelector('.environment').textContent = describeRun(environment);
-  });
+const BENCHMARK_LINK = $('benchmark-run').querySelector('a').href;
+
+function showBenchmarkRun(group) {
+  const run = BENCHMARK_RUNS[group?.dataset.run || 'main'];
+  const note = $('benchmark-run');
+  note.hidden = !run;
+  if (!run) return;
+  const link = note.querySelector('a');
+  note.querySelector('.environment').textContent = describeRun(run.environment);
+  link.href = BENCHMARK_LINK.replace('__BENCHMARK_DIRECTORY__', run.directory);
+  link.textContent = run.directory;
 }
 
 function visibleLabel(number) {
