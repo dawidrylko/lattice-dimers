@@ -204,7 +204,7 @@ const { formatTime } = nb.context;
 
 table(
   ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
-  nb.context.periodicBenchmark
+  nb.context.cylinderTorusBenchmark
     .filter(r => r.surface === 'torus')
     .map(r => [
       `${r.rowCount}×${r.colCount}`,

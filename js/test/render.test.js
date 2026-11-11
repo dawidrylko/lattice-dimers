@@ -16,14 +16,15 @@ const {
   createDiagonalUnranker,
   unrankDiagonalTiling,
   sampleDomiculeTiling,
-  createPeriodicUnranker,
-  unrankPeriodicTiling,
+  countTilings,
+  createCylinderTorusUnranker,
+  unrankCylinderTorusTiling,
   listRankPrimes,
   rankTilingsModulo,
   combineRanks,
 } = require('../renderer');
-const { PERIODIC_LATTICES, countPeriodicDiagonals } = require('../renderer/periodic');
-const periodicReference = require('../solvers/all-lattices-cylinder-torus-bigint.js');
+const { CYLINDER_TORUS_LATTICES, countCylinderTorusDiagonals } = require('../renderer/cylinderTorus');
+const cylinderTorusReference = require('../solvers/all-lattices-cylinder-torus-bigint.js');
 const crypto = require('crypto');
 const { createRandom } = require('../renderer/cftp');
 const fs = require('fs');
@@ -125,8 +126,8 @@ const STYLE_TEST_TILING = [
   { row: 0, col: 3, dr: 1, dc: -1 },
 ];
 const DOMICULE_TEST_SWEEPS = 200;
-const PERIODIC_FULL_CHECK_LIMIT = BigInt(20000);
-const periodicUnrankTestCases = ['square', 'triangular', 'king'].flatMap(lattice =>
+const CYLINDER_TORUS_FULL_CHECK_LIMIT = BigInt(20000);
+const cylinderTorusUnrankTestCases = ['square', 'triangular', 'king'].flatMap(lattice =>
   [false, true].flatMap(torus =>
     [
       { rowCount: 2, colCount: 2 },
@@ -139,7 +140,7 @@ const periodicUnrankTestCases = ['square', 'triangular', 'king'].flatMap(lattice
     ].map(board => ({ ...board, lattice, torus })),
   ),
 );
-const periodicDiagonalTestCases = [false, true].flatMap(torus =>
+const cylinderTorusDiagonalTestCases = [false, true].flatMap(torus =>
   [
     { rowCount: 2, colCount: 2 },
     { rowCount: 3, colCount: 2 },
@@ -150,7 +151,7 @@ const periodicDiagonalTestCases = [false, true].flatMap(torus =>
     { rowCount: 4, colCount: 4 },
   ].map(board => ({ ...board, lattice: 'king', torus })),
 );
-const periodicSheetTestCases = [
+const cylinderTorusSheetTestCases = [
   {
     rowCount: 2,
     colCount: 4,
@@ -896,7 +897,7 @@ function runDomiculeReachTest(testCase) {
 function runCliTest({ rowCount, colCount, args, env = {}, status, output }) {
   const result = spawnSync(
     process.execPath,
-    ['js/dominoTilingRenderer.js', '-r', String(rowCount), '-c', String(colCount), ...args],
+    ['js/tilingRenderer.js', '-r', String(rowCount), '-c', String(colCount), ...args],
     { cwd: ROOT_DIRECTORY, encoding: 'utf-8', timeout: CLI_TIMEOUT, env: { ...process.env, ...env } },
   );
 
@@ -905,9 +906,9 @@ function runCliTest({ rowCount, colCount, args, env = {}, status, output }) {
   }
 }
 
-function findPeriodicCoverageError(tiling, { rowCount, colCount, lattice, torus }) {
+function findCylinderTorusCoverageError(tiling, { rowCount, colCount, lattice, torus }) {
   const covered = new Array(rowCount * colCount).fill(0);
-  const shifts = [0, ...[-1, 1].filter(dc => (dc < 0 ? PERIODIC_LATTICES[lattice].downLeft : PERIODIC_LATTICES[lattice].downRight))];
+  const shifts = [0, ...[-1, 1].filter(dc => (dc < 0 ? CYLINDER_TORUS_LATTICES[lattice].downLeft : CYLINDER_TORUS_LATTICES[lattice].downRight))];
 
   for (const { row, col, dr, dc } of tiling) {
     if (!(dr === 0 && dc === 1) && !(dr === 1 && shifts.includes(dc))) {
@@ -933,19 +934,19 @@ function countDiagonalPieces(tiling) {
   return tiling.filter(piece => piece.dr !== 0 && piece.dc !== 0).length;
 }
 
-function runPeriodicDiagonalTest(testCase) {
+function runCylinderTorusDiagonalTest(testCase) {
   const surface = `${testCase.rowCount}x${testCase.colCount} ${testCase.torus ? 'torus' : 'cylinder'}`;
-  const coefficients = countPeriodicDiagonals(testCase);
-  const unranker = createPeriodicUnranker(testCase);
+  const coefficients = countCylinderTorusDiagonals(testCase);
+  const unranker = createCylinderTorusUnranker(testCase);
   const histogram = [];
 
   for (let rank = BigInt(0); rank < unranker.total; rank++) {
-    const k = countDiagonalPieces(unrankPeriodicTiling(unranker, rank));
+    const k = countDiagonalPieces(unrankCylinderTorusTiling(unranker, rank));
     histogram[k] = (histogram[k] ?? BigInt(0)) + BigInt(1);
   }
 
   const expected = Array.from(histogram, count => String(count ?? BigInt(0))).join();
-  const squareCount = periodicReference.calculateTotalTilingCombinations({ ...testCase, lattice: 'square' });
+  const squareCount = cylinderTorusReference.calculateTotalTilingCombinations({ ...testCase, lattice: 'square' });
 
   if (coefficients[0] !== squareCount) {
     assert.fail(`${surface}: ${coefficients[0]} tilings without diagonal pieces, ${squareCount} on the square lattice`);
@@ -956,7 +957,7 @@ function runPeriodicDiagonalTest(testCase) {
   }
 
   for (let k = 0; k < coefficients.length; k++) {
-    const filtered = createPeriodicUnranker({ ...testCase, diagonals: k });
+    const filtered = createCylinderTorusUnranker({ ...testCase, diagonals: k });
     const all = new Set();
 
     if (filtered.total !== coefficients[k]) {
@@ -964,8 +965,8 @@ function runPeriodicDiagonalTest(testCase) {
     }
 
     for (let rank = BigInt(0); rank < filtered.total; rank++) {
-      const tiling = unrankPeriodicTiling(filtered, rank);
-      const error = findPeriodicCoverageError(tiling, testCase);
+      const tiling = unrankCylinderTorusTiling(filtered, rank);
+      const error = findCylinderTorusCoverageError(tiling, testCase);
 
       if (error || countDiagonalPieces(tiling) !== k) {
         assert.fail(`${surface} #${rank + BigInt(1)} with ${k} diagonal pieces: ${error || `${countDiagonalPieces(tiling)} diagonal pieces`}`);
@@ -980,23 +981,23 @@ function runPeriodicDiagonalTest(testCase) {
   }
 }
 
-function runPeriodicUnrankTest(testCase) {
-  const unranker = createPeriodicUnranker(testCase);
-  const expected = periodicReference.calculateTotalTilingCombinations(testCase);
+function runCylinderTorusUnrankTest(testCase) {
+  const unranker = createCylinderTorusUnranker(testCase);
+  const expected = cylinderTorusReference.calculateTotalTilingCombinations(testCase);
 
   if (unranker.total !== expected) {
     assert.fail(`${testCase.lattice} ${testCase.torus ? 'torus' : 'cylinder'}: expected ${expected}, actual ${unranker.total}`);
   }
 
   const ranks =
-    unranker.total <= PERIODIC_FULL_CHECK_LIMIT
+    unranker.total <= CYLINDER_TORUS_FULL_CHECK_LIMIT
       ? Array.from({ length: Number(unranker.total) }, (_, i) => BigInt(i))
       : [...Array.from({ length: UNRANK_SAMPLE_SIZE }, (_, i) => (unranker.total * BigInt(i)) / BigInt(UNRANK_SAMPLE_SIZE)), unranker.total - BigInt(1)];
   const seen = new Set();
 
   for (const rank of ranks) {
-    const tiling = unrankPeriodicTiling(unranker, rank);
-    const error = findPeriodicCoverageError(tiling, testCase);
+    const tiling = unrankCylinderTorusTiling(unranker, rank);
+    const error = findCylinderTorusCoverageError(tiling, testCase);
 
     if (error) {
       assert.fail(`Invalid tiling #${rank + BigInt(1)}: ${error}`);
@@ -1010,7 +1011,7 @@ function runPeriodicUnrankTest(testCase) {
   }
 
   try {
-    unrankPeriodicTiling(unranker, unranker.total);
+    unrankCylinderTorusTiling(unranker, unranker.total);
     assert.fail('A rank past the last tiling was accepted.');
   } catch (error) {
     if (!(error instanceof RangeError)) {
@@ -1028,7 +1029,7 @@ function runSeamGeometryTest() {
   }
 }
 
-function runPeriodicSheetTest({ tiling, copies, edges, ...options }) {
+function runCylinderTorusSheetTest({ tiling, copies, edges, ...options }) {
   const sheet = renderSheet([tiling], 1, { ...options, sublabels: ['2'] });
   const nested = sheet.match(/<svg x="(\d+)" y="(\d+)" width="(\d+)" height="(\d+)" viewBox="([^"]+)">/);
   const counts = Object.fromEntries(Object.keys(copies).map(kind => [kind, (sheet.match(new RegExp(`<rect class="${kind}"`, 'g')) || []).length]));
@@ -1145,9 +1146,9 @@ suite('domicule random uniformity', domiculeRandomTestCases, runDomiculeUniformi
 suite('domicule random validity', domiculeRandomValidityTestCases, runDomiculeValidityTest);
 suite('domicule chain reach', domiculeReachTestCases, runDomiculeReachTest);
 suite('domicule shape', domiculeShapeTestCases, runDomiculeShapeTest);
-suite('periodic unrank', periodicUnrankTestCases, runPeriodicUnrankTest);
-suite('periodic diagonal pieces', periodicDiagonalTestCases, runPeriodicDiagonalTest);
-suite('periodic sheet', periodicSheetTestCases, runPeriodicSheetTest);
+suite('cylinder and torus unrank', cylinderTorusUnrankTestCases, runCylinderTorusUnrankTest);
+suite('cylinder and torus diagonal pieces', cylinderTorusDiagonalTestCases, runCylinderTorusDiagonalTest);
+suite('cylinder and torus sheet', cylinderTorusSheetTestCases, runCylinderTorusSheetTest);
 suite('glued edge marks', [{ rowCount: 2, colCount: 4 }], runSeamGeometryTest);
 suite('second label line', sublabelTestCases, runSublabelTest);
 suite('sheet without labels', unlabelledTestCases, runUnlabelledTest);
@@ -1162,3 +1163,9 @@ suite('command line', cliTestCases, runCliTest);
 suite('chart', chartTestCases, runChartTest, named);
 suite('notebook helper', notebookHelperTestCases, runNotebookHelperTest, named);
 suite('figure', figureTestCases, runFigureTest, named);
+
+test('countTilings counts in a child process and skips boards whose table is too large', () => {
+  assert.equal(countTilings({ rowCount: 8, colCount: 8 }), '12988816');
+  assert.equal(countTilings({ rowCount: 3, colCount: 3 }), '0');
+  assert.equal(countTilings({ rowCount: 30, colCount: 30 }), null);
+});

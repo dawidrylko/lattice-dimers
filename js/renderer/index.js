@@ -15,7 +15,7 @@ const {
   sampleDomiculeTiling,
   DEFAULT_SWEEPS: DOMICULE_SWEEPS,
 } = require('./domicule');
-const { canUnrankPeriodic, createPeriodicUnranker, unrankPeriodicTiling } = require('./periodic');
+const { canUnrankCylinderTorus, createCylinderTorusUnranker, unrankCylinderTorusTiling } = require('./cylinderTorus');
 const { listRankPrimes, rankTilingsModulo, combineRanks } = require('./rank');
 
 module.exports = {
@@ -37,9 +37,9 @@ module.exports = {
   unrankDiagonalTiling,
   sampleDomiculeTiling,
   DOMICULE_SWEEPS,
-  canUnrankPeriodic,
-  createPeriodicUnranker,
-  unrankPeriodicTiling,
+  canUnrankCylinderTorus,
+  createCylinderTorusUnranker,
+  unrankCylinderTorusTiling,
   listRankPrimes,
   rankTilingsModulo,
   combineRanks,

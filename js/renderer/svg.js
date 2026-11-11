@@ -216,8 +216,8 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
   const { rowCount, colCount, style, surface } = options;
   const boardWidth = colCount * CELL_SIZE;
   const boardHeight = rowCount * CELL_SIZE;
-  const periodic = SURFACES.includes(surface);
-  const pieces = tiling.map(normalize).flatMap(piece => (periodic ? wrapPiece(piece, rowCount, colCount, surface) : [piece]));
+  const wrapped = SURFACES.includes(surface);
+  const pieces = tiling.map(normalize).flatMap(piece => (wrapped ? wrapPiece(piece, rowCount, colCount, surface) : [piece]));
   const renderers = RENDERERS[style];
   const drawn = [
     ...pieces.filter(piece => !isDiagonal(piece)).map(piece => renderers.straight(piece, offsetX, offsetY)),
@@ -227,7 +227,7 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
 
   return [
     `<rect class="b" x="${offsetX}" y="${offsetY}" width="${boardWidth}" height="${boardHeight}"/>`,
-    ...(periodic
+    ...(wrapped
       ? [
           `<svg x="${offsetX}" y="${offsetY}" width="${boardWidth}" height="${boardHeight}" viewBox="${offsetX} ${offsetY} ${boardWidth} ${boardHeight}">${drawn.join('')}</svg>`,
           renderSeams(offsetX, offsetY, boardWidth, boardHeight, surface),

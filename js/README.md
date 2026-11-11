@@ -41,7 +41,7 @@ node js/solvers/domicule-rectangle-modular.js -r 20 -c 20 -j 8                  
 node js/solvers/all-lattices-cylinder-torus-modular.js -r 12 -c 12 --torus                # the king's graph on the 12 × 12 torus
 node js/solvers/all-lattices-cylinder-torus-modular.js -r 8 -c 6 --lattice triangular     # a triangular cylinder of circumference 6
 node js/solvers/all-lattices-rectangle-modular.js -r 20 -c 20 --lattice triangular        # the triangular lattice on the 20 × 20 rectangle
-node js/solvers/domicule-rectangle-polynomial-modular.js -r 16 -c 16                                    # 20 × 20 needs 3.4 GB per thread
+node js/solvers/domicule-rectangle-polynomial-modular.js -r 16 -c 16                      # 20 × 20 needs 3.4 GB per thread
 node js/solvers/domicule-cylinder-torus-polynomial-modular.js -r 12 -c 12 --torus         # by diagonal pieces on the 12 × 12 torus
 ```
 
@@ -51,7 +51,7 @@ These are the JavaScript implementations, the third of three languages. The cont
 
 ## Renderer
 
-[`renderer/`](renderer) numbers tilings, rebuilds any tiling from its number without listing the ones before, samples domino tilings exactly with coupling from the past and domicule tilings with a Markov chain, and draws them as SVG or ASCII. [`dominoTilingRenderer.js`](dominoTilingRenderer.js) is its command line:
+[`renderer/`](renderer) numbers tilings, rebuilds any tiling from its number without listing the ones before, samples domino tilings exactly with coupling from the past and domicule tilings with a Markov chain, and draws them as SVG or ASCII. [`tilingRenderer.js`](tilingRenderer.js) is its command line:
 
 ```sh
 pnpm -C js render -r 8 -c 8 -o 5000 -l 200              # tilings 5001-5200 of 12,988,816, as SVG sheets in output/8x8/

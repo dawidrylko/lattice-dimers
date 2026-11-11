@@ -4,3 +4,18 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+  - package-ecosystem: "cargo"
+    directory: "/rust"
+    schedule:
+      interval: "monthly"
+  - package-ecosystem: "pip"
+    directories:
+      - "/python"
+      - "/research/king-entropy/src"
+      - "/research/king-entropy/replication"
+    schedule:
+      interval: "monthly"
+    groups:
+      python:
+        patterns:
+          - "*"
