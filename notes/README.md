@@ -15,7 +15,10 @@ The notebooks are grouped as the site menu groups them: the notes of each kind o
   - [Rectangles](domicules/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html)): domicule tilings of the 2n × 2n board, A239273, up to 20 × 20, the modular solver and the Markov chain.
   - [Cylinders](domicules/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html)): domicule tilings of cylinders, the king's graph on the cylinder.
   - [Tori](domicules/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html)): domicule tilings of tori, A401670, the torus count of three lattices over $e^{sL^2}$ and the seam sign.
-  - [Diagonal pieces](domicules/04-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html)): domicule tilings of rectangles, cylinders and tori by the number of diagonal pieces, A401673 on the 2n × 2n board.
+  - By diagonal pieces:
+    - [Rectangles](domicules/04-rectangles-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles-by-diagonal-pieces.html)): domicule tilings of the 2n × 2n board by the number of diagonal pieces, A401673, and their weighted counts.
+    - [Cylinders](domicules/05-cylinders-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders-by-diagonal-pieces.html)): domicule tilings of cylinders by the number of diagonal pieces.
+    - [Tori](domicules/06-tori-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori-by-diagonal-pieces.html)): domicule tilings of tori by the number of diagonal pieces.
 - Triangular lattice:
   - [Rectangles](triangular-lattice/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html)): the triangular lattice on the 2n × 2n board and on rectangles, for comparison, with the Kasteleyn determinant in PARI/GP.
   - [Cylinders](triangular-lattice/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html)): the triangular lattice on cylinders, for comparison.
