@@ -60,3 +60,7 @@ test('a dash gives the reason plan.json records', () => {
 
   reasons.forEach(([reason, text]) => assert.equal(describeMissing({ reason }, 1), text));
 });
+
+test('an entry of plan.json with a budget of its own names that budget', () => {
+  assert.equal(describeMissing({ reason: 'over budget', budgetHours: 0.25 }, 2), 'not measured: 10 runs would exceed the budget of 0.25 h per board');
+});
