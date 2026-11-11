@@ -1,6 +1,6 @@
 # Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673 on the 2n × 2n board)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/draft/A401673) [3]. The gallery's cylinders and tori are sorted the same way in the [last counting section](#cylinders-and-tori).
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/A401673) [3]. The gallery's cylinders and tori are sorted the same way in the [last counting section](#cylinders-and-tori).
 
 ## The problem
 
@@ -263,4 +263,4 @@ The two diagonal solvers of each surface agree with each other. On a rectangle t
 
 1. A. W. Sandvik and R. Moessner. Correlations and confinement in nonplanar two-dimensional dimer models. *Physical Review B* 73(14):144504, 2006. [doi:10.1103/PhysRevB.73.144504](https://doi.org/10.1103/PhysRevB.73.144504)
 2. D. Ryłko. Log-convexity of strip dimer counts on the king's graph. Companion note, October 2026. [doi:10.5281/zenodo.23686087](https://doi.org/10.5281/zenodo.23686087)
-3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A401673](https://oeis.org/draft/A401673), [OEIS A004003](https://oeis.org/A004003), [OEIS A239273](https://oeis.org/A239273) and [OEIS A011379](https://oeis.org/A011379). [oeis.org](https://oeis.org)
+3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A401673](https://oeis.org/A401673), [OEIS A004003](https://oeis.org/A004003), [OEIS A239273](https://oeis.org/A239273) and [OEIS A011379](https://oeis.org/A011379). [oeis.org](https://oeis.org)

@@ -29,7 +29,7 @@ The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-b
 
 ## The counts
 
-The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/draft/A401670) [1]. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph tori.
+The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670](https://oeis.org/A401670) [1]. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. Beyond A401670 it has no entry for king's graph tori.
 
 For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in [OEIS A335586](https://oeis.org/A335586) [1]. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `spec/cases/all-lattices-cylinder-torus-modular.json`, where it wrote them once.
 
@@ -228,5 +228,5 @@ The two cylinder and torus solvers agree with each other up to $8 \times 8$, the
 
 ## References
 
-1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A401670](https://oeis.org/draft/A401670), [OEIS A335586](https://oeis.org/A335586) and [OEIS A143233](https://oeis.org/A143233). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A401670](https://oeis.org/A401670), [OEIS A335586](https://oeis.org/A335586) and [OEIS A143233](https://oeis.org/A143233). [oeis.org](https://oeis.org)
 2. D. Ryłko. The dimer entropy of the king's graph. Preprint, October 2026. [doi:10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056)

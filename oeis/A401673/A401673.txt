@@ -1,17 +1,17 @@
-%I A401673 #4 Nov 01 2026 11:32:48
-%S A401673 1,2,1,36,126,105,12,1,6728,84132,413932,934213,1000638,491689,99554,6638,36,1,12988816,381233080,4924514652,35167723972,151708056673,414390443420,734997028142,854245466616,646928970205,312256068860,91859468926,15162565624
+%I A401673 #9 Nov 09 2026 17:52:57
+%S A401673 1,2,1,36,126,105,12,1,6728,84132,413932,934213,1000638,491689,99554,6638,36,1,12988816,381233080,4924514652,35167723972,151708056673,414390443420,734997028142,854245466616,646928970205,312256068860,91859468926,15162565624,1195684186,32053424,363228,80,1
 %N A401673 Triangle read by rows: T(n,k) is the number of domicule tilings of the 2n X 2n square with exactly 2k diagonal domicules, 0 <= k <= n^2.
 %C A401673 A diagonal domicule joins two cells that share only a corner (see A239264). In a checkerboard coloring a domino covers one black and one white cell, while a diagonal domicule covers two cells of one color. The board has as many black cells as white ones, so as many diagonal domicules lie on black cells as on white cells, and their number is even.
 %C A401673 Rows 0-6 come from a transfer matrix in exact integers that weights each diagonal domicule by x. Rows 7-10 come from the same transfer modulo primes. Each row sums to A239273(n) and starts with A004003(n).
-%H A401673 Dawid Ryłko, <a href="/A401673/b401673_1.txt">Rows n = 0..10 of triangle, flattened</a>
+%H A401673 Dawid Ryłko, <a href="/A401673/b401673.txt">Rows n = 0..10 of triangle, flattened</a>
 %H A401673 Dawid Ryłko, <a href="https://dawidrylko.github.io/lattice-dimers/notes/diagonals.html">Diagonal pieces</a>.
 %F A401673 T(n,0) = A004003(n).
 %F A401673 Sum_{k=0..n^2} T(n,k) = A239273(n).
 %F A401673 Conjecture: T(n,n^2) = 1 and T(n,n^2-1) = A011379(n) = n^2*(n+1); true for n <= 10.
 %e A401673 Triangle begins:
-%e A401673   1;
-%e A401673   2, 1;
-%e A401673   36, 126, 105, 12, 1;
+%e A401673      1;
+%e A401673      2,     1;
+%e A401673     36,   126,    105,     12,       1;
 %e A401673   6728, 84132, 413932, 934213, 1000638, 491689, 99554, 6638, 36, 1;
 %e A401673   ...
 %e A401673 T(1,1) = 1: the 2 X 2 square is covered by its two diagonal domicules, which cross.

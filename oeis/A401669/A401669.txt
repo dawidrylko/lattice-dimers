@@ -1,4 +1,4 @@
-%I A401669 #4 Nov 01 2026 08:47:47
+%I A401669 #5 Nov 09 2026 13:42:03
 %S A401669 5,6,5,5,1,1,9,1,1,0,4,1,3,2
 %N A401669 Decimal expansion of the entropy per site of the dimer coverings (perfect matchings) of the king's graph (square lattice with both diagonals), i.e., of domicule tilings.
 %C A401669 The digits come from row transfer matrices on cylinders of circumference w <= 25, split by the parity of the number of dimers crossing a loop around the cylinder, and extrapolated in w. This gives s = 0.5655119110413253 +- 6*10^-16. The error bar is supported by several extrapolation models with backtests and by an extended-precision check of the rounding, but it is not a proof, so only the 14 digits shared by both ends of the interval are listed.
