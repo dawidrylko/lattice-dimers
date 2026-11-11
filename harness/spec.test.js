@@ -82,8 +82,8 @@ describe('rectangles on three lattices', () => {
 
     return String(place(0));
   };
-  test('the signs of notes/triangular-lattice/rectangles.gp orient every triangular face the same odd way', () => {
-    const program = fs.readFileSync(path.join(ROOT_DIRECTORY, 'notes', 'triangular-lattice', 'rectangles.gp'), 'utf-8');
+  test('the signs of oeis/A401988/A401988.gp orient every triangular face the same odd way', () => {
+    const program = fs.readFileSync(path.join(ROOT_DIRECTORY, 'oeis', 'A401988', 'A401988.gp'), 'utf-8');
 
     for (const line of [
       'D = [1, 0; 0, 1; 1, 1]',

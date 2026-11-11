@@ -8,7 +8,7 @@
 
 ## Status
 
-Proposed 1 November 2026, revision #5 of the draft.
+Proposed 1 November 2026, revision #7 of the draft.
 
 ## Files
 
@@ -21,3 +21,5 @@ Proposed 1 November 2026, revision #5 of the draft.
 The entry has no b-file and no PARI program. Its 14 digits are all that the error bar $\pm 6 \cdot 10^{-16}$ supports, and they come from the transfer-matrix scripts in [`research/king-entropy`](../../research/king-entropy), which also hold the paper.
 
 On 9 November 2026 an editor set the draft back to editing (revision #5): the editor is not yet convinced that the constant needs an entry of its own and suggested giving it only in A239264, and asked for comments that stay true if more digits are added, such as "(Ryłko (2026))" in place of "(proved in the Zenodo preprint)".
+
+On 11 November 2026 the comments were rewritten that way and the draft was proposed again (revision #7), with a reply that A401670 already uses the constant in its asymptotic formula.

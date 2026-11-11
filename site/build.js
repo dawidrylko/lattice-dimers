@@ -124,7 +124,7 @@ const NOTE_SUMMARIES = {
   'domicules/rectangles-by-diagonal-pieces': 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces, up to 20 × 20 (A401673), and their weighted counts.',
   'domicules/cylinders-by-diagonal-pieces': 'Notebook: domicule tilings of cylinders by the number of diagonal pieces, checked against the gallery up to 10 × 10.',
   'domicules/tori-by-diagonal-pieces': 'Notebook: domicule tilings of tori by the number of diagonal pieces, checked against the gallery up to 10 × 10.',
-  'triangular-lattice/rectangles': 'Notebook: perfect matchings of the triangular lattice on the 2n × 2n board and on rectangles, by a transfer and by the Kasteleyn determinant, counted for comparison with dominoes and domicules.',
+  'triangular-lattice/rectangles': 'Notebook: perfect matchings of the triangular lattice on the 2n × 2n board (A401988) and on rectangles, by a transfer and by the Kasteleyn determinant, counted for comparison with dominoes and domicules.',
   'triangular-lattice/cylinders': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
   'triangular-lattice/tori': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
 };

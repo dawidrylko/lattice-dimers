@@ -1,3 +1,4 @@
-%I A004003 M2160 #168 Oct 21 2026 22:40:59
-%F A004003 a(n) = (-1)^n * Resultant(P(x), P(-x)), where P(x^2) = U(2*n,x/2); i.e., P is the monic polynomial of degree n with roots 4*cos(j*Pi/(2*n+1))^2, j=1..n. - _Dawid Rylko_, Oct 15 2026
-%o A004003 (PARI) a(n) = my(P=substpol(polchebyshev(2*n,2,x/2), x^2, x)); (-1)^n*polresultant(P, subst(P,x,-x)) \\ _Dawid Rylko_, Oct 15 2026
+%I A004003 M2160 #172 Nov 11 2026 08:18:34
+%F A004003 a(n) = (-1)^n * Resultant(P(x), P(-x)), where P(x^2) = U(2*n,x/2); i.e., P is the monic polynomial of degree n with roots 4*cos(j*Pi/(2*n+1))^2, j=1..n. - _Dawid Ryłko_, Oct 15 2026
+%o A004003 (PARI) a(n) = my(P=substpol(polchebyshev(2*n,2,x/2), x^2, x)); (-1)^n*polresultant(P, subst(P,x,-x)) \\ _Dawid Ryłko_, Oct 15 2026
+%Y A004003 Column k=0 of A401673.
