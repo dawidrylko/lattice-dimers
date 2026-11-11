@@ -764,11 +764,10 @@ function highlightTiling(number) {
 
 function showDiagonalFilter(board, diagonals) {
   const select = $('diagonals');
-  const tilings = count => `${fmt(count)} ${BigInt(count) === ONE ? 'tiling' : 'tilings'}`;
-  const options = [['', `Any number (all ${tilings(board.total)})`]];
+  const options = [['', 'Any number']];
 
   (board.diagonals || []).forEach((count, k) => {
-    if (BigInt(count) > ZERO) options.push([String(k), `Exactly ${k} (${tilings(count)})`]);
+    if (BigInt(count) > ZERO) options.push([String(k), `Exactly ${k}`]);
   });
   select.innerHTML = options.map(([value, text]) => `<option value="${value}">${text}</option>`).join('');
   select.value = diagonals === null ? '' : String(diagonals);
