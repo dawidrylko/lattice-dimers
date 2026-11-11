@@ -1,0 +1,269 @@
+{
+  "algorithm": "all-lattices-rectangle-bigint",
+  "testCases": [
+    {
+      "rowCount": 0,
+      "colCount": 0,
+      "lattice": "triangular",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "triangular",
+      "expectedResult": "2"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "56"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "triangular",
+      "expectedResult": "56568"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "triangular",
+      "expectedResult": "1848358752"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "triangular",
+      "expectedResult": "1852300296658080"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "triangular",
+      "expectedResult": "57261989986381118073728"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "triangular",
+      "expectedResult": "54593422399714606054592633969024"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "triangular",
+      "expectedResult": "1605069789666171761821497455215339670984192"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 5,
+      "lattice": "triangular",
+      "expectedResult": "203"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "203"
+    },
+    {
+      "rowCount": 7,
+      "colCount": 6,
+      "lattice": "triangular",
+      "expectedResult": "496085"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 1,
+      "lattice": "triangular",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 22,
+      "lattice": "triangular",
+      "expectedResult": "982690786037"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 40,
+      "lattice": "triangular",
+      "expectedResult": "165580141"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 2,
+      "lattice": "triangular",
+      "expectedResult": "165580141"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 0,
+      "lattice": "square",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "square",
+      "expectedResult": "2"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "36"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "square",
+      "expectedResult": "6728"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "square",
+      "expectedResult": "12988816"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "square",
+      "expectedResult": "258584046368"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "square",
+      "expectedResult": "53060477521960000"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 5,
+      "lattice": "square",
+      "expectedResult": "95"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "95"
+    },
+    {
+      "rowCount": 7,
+      "colCount": 6,
+      "lattice": "square",
+      "expectedResult": "31529"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 1,
+      "lattice": "square",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 22,
+      "lattice": "square",
+      "expectedResult": "4977472781"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 40,
+      "lattice": "square",
+      "expectedResult": "165580141"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 2,
+      "lattice": "square",
+      "expectedResult": "165580141"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 0,
+      "lattice": "king",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "king",
+      "expectedResult": "3"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "280"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "king",
+      "expectedResult": "3037561"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "king",
+      "expectedResult": "3263262629905"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "king",
+      "expectedResult": "326207195516663381931"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "king",
+      "expectedResult": "3011882198082438957330143630563"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 5,
+      "lattice": "king",
+      "expectedResult": "1563"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "king",
+      "expectedResult": "1563"
+    },
+    {
+      "rowCount": 7,
+      "colCount": 6,
+      "lattice": "king",
+      "expectedResult": "55263473"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 1,
+      "lattice": "king",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 22,
+      "lattice": "king",
+      "expectedResult": "23114817718082715"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 40,
+      "lattice": "king",
+      "expectedResult": "733007751851"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 2,
+      "lattice": "king",
+      "expectedResult": "733007751851"
+    }
+  ]
+}
