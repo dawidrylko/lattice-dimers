@@ -57,8 +57,19 @@ jobs:
       - run: pnpm -C js test:markdown
       - run: pnpm -C js test:numbers
       - run: pnpm -C js test:metadata
-      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends pari-gp
+      - id: pari
+        uses: mamba-org/setup-micromamba@v3
+        with:
+          environment-name: pari
+          condarc: |
+            channels:
+              - conda-forge
+          create-args: pari=2.17.3
+          cache-environment: true
+          init-shell: none
       - run: pnpm -C js test:pari
+        env:
+          GP_PATH: ${{ steps.pari.outputs.environment-path }}/bin/gp
       - run: node "$GITHUB_WORKSPACE/site/build.js"
         working-directory: ${{ runner.temp }}
       - run: pnpm -C js test:site
