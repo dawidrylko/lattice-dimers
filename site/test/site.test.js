@@ -1033,6 +1033,13 @@ async function checkDiagonals(page, baseUrl, width) {
     }
   }
 
+  await showBoard(page, 'gallery/10x10-diagonal-torus/1', 'the 10x10 torus sheet');
+  await page.evaluate("document.querySelector('#counts [data-count=diagonal]').click()");
+  await page.waitFor(
+    "location.hash.startsWith('#gallery/10x10-diagonal-torus/1?diagonals=') && !document.getElementById('notice').hidden && !document.getElementById('diagonals').hidden",
+    'the confirmation notice after By diagonal pieces on the 10x10 torus',
+  );
+
   return problems;
 }
 
