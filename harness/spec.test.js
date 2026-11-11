@@ -33,6 +33,98 @@ describe('data', () => {
   }
 });
 
+describe('rectangles on three lattices', () => {
+  const rectangles = testCasesOf('all-lattices-rectangle-modular');
+  const storedOf = algorithm =>
+    new Map(testCasesOf(algorithm).map(({ rowCount, colCount, expectedResult }) => [`${rowCount}x${colCount}`, String(expectedResult)]));
+  const anchors = { square: storedOf('domino-rectangle-bigint'), king: storedOf('domicule-rectangle-bigint') };
+
+  for (const lattice of ['square', 'king']) {
+    const shared = rectangles.filter(t => t.lattice === lattice && anchors[lattice].has(`${t.rowCount}x${t.colCount}`));
+
+    test(`the ${lattice} rectangles agree with the stored ${lattice === 'square' ? 'domino' : 'domicule'} counts`, () => {
+      assert.ok(shared.length >= 5, `Only ${shared.length} ${lattice} rectangles share a board with the stored counts.`);
+
+      for (const { rowCount, colCount, expectedResult } of shared) {
+        assert.equal(expectedResult, anchors[lattice].get(`${rowCount}x${colCount}`), `${rowCount}x${colCount}`);
+      }
+    });
+  }
+
+  const listTilings = ({ rowCount, colCount }) => {
+    const covered = Array.from({ length: rowCount }, () => new Array(colCount).fill(false));
+    const place = index => {
+      while (index < rowCount * colCount && covered[Math.floor(index / colCount)][index % colCount]) {
+        index++;
+      }
+
+      if (index === rowCount * colCount) {
+        return 1;
+      }
+
+      const r = Math.floor(index / colCount);
+      const c = index % colCount;
+      let total = 0;
+      covered[r][c] = true;
+
+      for (const [dr, dc] of [[0, 1], [1, 0], [1, 1]]) {
+        if (r + dr < rowCount && c + dc < colCount && !covered[r + dr][c + dc]) {
+          covered[r + dr][c + dc] = true;
+          total += place(index + 1);
+          covered[r + dr][c + dc] = false;
+        }
+      }
+
+      covered[r][c] = false;
+
+      return total;
+    };
+
+    return String(place(0));
+  };
+  test('the signs of notes/triangular-lattice/rectangles.gp orient every triangular face the same odd way', () => {
+    const program = fs.readFileSync(path.join(ROOT_DIRECTORY, 'notes', 'triangular-lattice', 'rectangles.gp'), 'utf-8');
+
+    assert.match(program, /s = if \(k < 3 && x % 2 == 0, -1, 1\);/, 'The sign rule of the program changed; check its faces again.');
+
+    const sign = (x, k) => (k < 2 && x % 2 === 0 ? -1 : 1);
+    const STEPS = [[1, 0], [0, 1], [1, 1]];
+    const along = ([ax, ay], [bx, by]) => {
+      const k = STEPS.findIndex(([dx, dy]) => bx - ax === dx && by - ay === dy);
+
+      return k === -1 ? Number(sign(bx, STEPS.findIndex(([dx, dy]) => ax - bx === dx && ay - by === dy)) === -1) : Number(sign(ax, k) === 1);
+    };
+    const parities = new Set();
+
+    for (let L = 2; L <= 12; L++) {
+      for (let x = 0; x + 1 < L; x++) {
+        for (let y = 0; y + 1 < L; y++) {
+          for (const face of [
+            [[x, y], [x + 1, y], [x + 1, y + 1]],
+            [[x, y], [x + 1, y + 1], [x, y + 1]],
+          ]) {
+            parities.add(face.reduce((sum, corner, i) => sum + along(corner, face[(i + 1) % 3]), 0) % 2);
+          }
+        }
+      }
+    }
+
+    assert.deepEqual([...parities], [1]);
+  });
+
+  const small = rectangles.filter(t => t.lattice === 'triangular' && t.rowCount * t.colCount <= 40);
+
+  test('at least 6 triangular rectangles are small enough to list', () => {
+    assert.ok(small.length >= 6, `Only ${small.length} triangular rectangles have at most 40 cells.`);
+  });
+
+  for (const testCase of small) {
+    test(`the triangular ${testCase.rowCount}x${testCase.colCount} rectangle listed one tiling at a time`, () => {
+      assert.equal(listTilings(testCase), testCase.expectedResult);
+    });
+  }
+});
+
 describe('cylinder and torus diagonal anchors', () => {
   const periodic = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
   const anchored = testCasesOf('domicule-cylinder-torus-polynomial-modular').filter(({ rowCount, colCount }) => rowCount * colCount <= 64);

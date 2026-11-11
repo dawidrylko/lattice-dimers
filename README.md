@@ -38,6 +38,8 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 | `domicule-cylinder-torus-polynomial-bigint` | [✅](rust/solvers/src/bin/domicule-cylinder-torus-polynomial-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_bigint.py) | [✅](js/solvers/domicule-cylinder-torus-polynomial-bigint.js) |
 | `all-lattices-cylinder-torus-modular` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py) | [✅](js/solvers/all-lattices-cylinder-torus-modular.js) |
 | `all-lattices-cylinder-torus-bigint` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py) | [✅](js/solvers/all-lattices-cylinder-torus-bigint.js) |
+| `all-lattices-rectangle-modular` | [✅](rust/solvers/src/bin/all-lattices-rectangle-modular.rs) | [✅](python/lattice_dimers/solvers/all_lattices_rectangle_modular.py) | [✅](js/solvers/all-lattices-rectangle-modular.js) |
+| `all-lattices-rectangle-bigint` | [✅](rust/solvers/src/bin/all-lattices-rectangle-bigint.rs) | [✅](python/lattice_dimers/solvers/all_lattices_rectangle_bigint.py) | [✅](js/solvers/all-lattices-rectangle-bigint.js) |
 
 ## Results
 

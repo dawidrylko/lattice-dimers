@@ -145,6 +145,13 @@ const NOTES = [
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Cylinders and tori', 'Running time', 'PARI/GP', 'Verification', 'References'],
   },
   {
+    slug: 'triangular-lattice/rectangles',
+    cells: 5, figures: 1,
+    group: 'Triangular lattice',
+    h1: 'Triangular lattice: tilings of the 2n × 2n board (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'The counts', 'The entropy per site', 'PARI/GP', 'Verification', 'References'],
+  },
+  {
     slug: 'triangular-lattice/cylinders',
     cells: 3, figures: 1,
     group: 'Triangular lattice',
@@ -1026,7 +1033,7 @@ async function checkLanding(page, baseUrl, width) {
     '#benchmark',
     'notes/dominoes/rectangles.html',
     'notes/domicules/rectangles.html',
-    'notes/triangular-lattice/cylinders.html',
+    'notes/triangular-lattice/rectangles.html',
     'notes/research.html',
     'papers/king-entropy.pdf',
     'papers/king-entropy-log-convexity.pdf',

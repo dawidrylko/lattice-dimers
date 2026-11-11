@@ -107,6 +107,7 @@ const NOTE_PROVENANCE = {
   'domicules/cylinders': `${COMPUTED}; the running times come from the benchmark run the page names.`,
   'domicules/tori': `${COMPUTED}; the boards the solver column marks as spec/cases/ are stored counts, the entropies and the decay length ξ come from research/king-entropy/, and the running times from the benchmark run the page names.`,
   'domicules/diagonal-pieces': `${COMPUTED}; the rows the solver column marks as spec/cases/ are stored counts, which the build checked, and the running times come from the benchmark run the page names.`,
+  'triangular-lattice/rectangles': `${COMPUTED}; the rows the solver column marks as spec/cases/ are stored counts, which the build checked, and the entropy s comes from research/king-entropy/.`,
   'triangular-lattice/cylinders': `${COMPUTED}.`,
   'triangular-lattice/tori': `${COMPUTED}.`,
 };
@@ -119,6 +120,7 @@ const NOTE_SUMMARIES = {
   'domicules/cylinders': "Notebook: domicule tilings of cylinders, the perfect matchings of the king's graph on the cylinder.",
   'domicules/tori': "Notebook: domicule tilings of tori (A401670); the king's graph torus count over e^(sL²) tends to 2, compared with two other lattices.",
   'domicules/diagonal-pieces': 'Notebook: domicule tilings by the number of diagonal pieces, on the 2n × 2n board up to 20 × 20 (A401673) and on cylinders and tori up to 10 × 10.',
+  'triangular-lattice/rectangles': 'Notebook: perfect matchings of the triangular lattice on the 2n × 2n board and on rectangles, by a transfer and by the Kasteleyn determinant, counted for comparison with dominoes and domicules.',
   'triangular-lattice/cylinders': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
   'triangular-lattice/tori': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
 };

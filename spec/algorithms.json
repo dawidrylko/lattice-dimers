@@ -16,6 +16,16 @@
       "py": "python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py",
       "js": "js/solvers/all-lattices-cylinder-torus-modular.js"
     },
+    "all-lattices-rectangle-bigint": {
+      "rs": "rust/solvers/src/bin/all-lattices-rectangle-bigint.rs",
+      "py": "python/lattice_dimers/solvers/all_lattices_rectangle_bigint.py",
+      "js": "js/solvers/all-lattices-rectangle-bigint.js"
+    },
+    "all-lattices-rectangle-modular": {
+      "rs": "rust/solvers/src/bin/all-lattices-rectangle-modular.rs",
+      "py": "python/lattice_dimers/solvers/all_lattices_rectangle_modular.py",
+      "js": "js/solvers/all-lattices-rectangle-modular.js"
+    },
     "domicule-cylinder-torus-polynomial-bigint": {
       "rs": "rust/solvers/src/bin/domicule-cylinder-torus-polynomial-bigint.rs",
       "py": "python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_bigint.py",
