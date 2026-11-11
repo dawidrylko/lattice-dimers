@@ -10,6 +10,7 @@ Entries of the [OEIS](https://oeis.org/) this repository has contributed to. Eac
 | [OEIS A401669](https://oeis.org/draft/A401669) | [decimal expansion of the entropy per site of the dimers of the king's graph](A401669/) | [A401669.txt](A401669/A401669.txt) | — | — |
 | [OEIS A401670](https://oeis.org/A401670) | [domicule tilings of the 2n × 2n torus](A401670/) | [A401670.txt](A401670/A401670.txt) | [b401670.txt](A401670/b401670.txt) | [A401670.gp](A401670/A401670.gp) |
 | [OEIS A401673](https://oeis.org/A401673) | [domicule tilings of the 2n × 2n square by the number of diagonal domicules](A401673/) | [A401673.txt](A401673/A401673.txt) | [b401673.txt](A401673/b401673.txt) | [A401673.gp](A401673/A401673.gp) |
+| [OEIS A401988](https://oeis.org/draft/A401988) | [tilings of the 2n × 2n board on the triangular lattice](A401988/) | [A401988.txt](A401988/A401988.txt) | [b401988.txt](A401988/b401988.txt) | [A401988.gp](A401988/A401988.gp) |
 
 ## Files
 

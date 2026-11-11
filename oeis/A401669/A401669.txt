@@ -1,10 +1,10 @@
-%I A401669 #5 Nov 09 2026 13:42:03
+%I A401669 #7 Nov 11 2026 03:46:07
 %S A401669 5,6,5,5,1,1,9,1,1,0,4,1,3,2
 %N A401669 Decimal expansion of the entropy per site of the dimer coverings (perfect matchings) of the king's graph (square lattice with both diagonals), i.e., of domicule tilings.
-%C A401669 The digits come from row transfer matrices on cylinders of circumference w <= 25, split by the parity of the number of dimers crossing a loop around the cylinder, and extrapolated in w. This gives s = 0.5655119110413253 +- 6*10^-16. The error bar is supported by several extrapolation models with backtests and by an extended-precision check of the rounding, but it is not a proof, so only the 14 digits shared by both ends of the interval are listed.
-%C A401669 Rigorous bounds are 0.545343749727 <= s <= 0.582767477484. They come from computer-assisted Collatz-Wielandt certificates on free strips of width 24, and the upper bound also weights the runs of cells whose dimers cross a cut. These bounds fix only the first digit.
-%C A401669 The entropy per dimer is 2*s = 1.1310238220826... and the growth constant per site is exp(s) = 1.76034869404197..., both truncated to the digits valid for the whole interval.
-%C A401669 For h*w even, the h X w king's graph has a Pfaffian orientation if and only if min(h,w) <= 2 (proved in the Zenodo preprint), so Kasteleyn's method, which gives Catalan/Pi (A143233) for dominoes, does not apply.
+%C A401669 In Ryłko (2026), the digits come from row transfer matrices on cylinders of circumference w <= 25, split by the parity of the number of dimers crossing a loop around the cylinder, and extrapolated in w. This gives s = 0.5655119110413253 +- 6*10^-16. The error bar is supported by several extrapolation models with backtests and by an extended-precision check of the rounding, but it is not a proof.
+%C A401669 Rigorous bounds are 0.545343749727 <= s <= 0.582767477484 (Ryłko (2026)). They come from computer-assisted Collatz-Wielandt certificates on free strips of width 24, and the upper bound also weights the runs of cells whose dimers cross a cut.
+%C A401669 The entropy per dimer is 2*s = 1.1310238220826... and the growth constant per site is exp(s) = 1.76034869404197....
+%C A401669 For h*w even, the h X w king's graph has a Pfaffian orientation if and only if min(h,w) <= 2 (Ryłko (2026)), so Kasteleyn's method, which gives Catalan/Pi (A143233) for dominoes, does not apply.
 %H A401669 Dawid Ryłko, <a href="https://github.com/dawidrylko/lattice-dimers/tree/king-entropy-v1.0.0/research/king-entropy">Transfer-matrix scripts, outputs and paper source</a> (directory research/king-entropy).
 %H A401669 Dawid Ryłko, <a href="https://doi.org/10.5281/zenodo.23686056">The dimer entropy of the king's graph</a>, Zenodo preprint, 2026.
 %H A401669 Dawid Ryłko, <a href="https://doi.org/10.5281/zenodo.23686293">The dimer entropy of the king's graph: transfer-matrix scripts, data and outputs</a>, Zenodo, 2026.

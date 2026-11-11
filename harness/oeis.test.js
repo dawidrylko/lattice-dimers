@@ -31,6 +31,7 @@ function entryFiles(entry) {
     text: `${entry}.txt`,
     bFile: `b${number}.txt`,
     program: `${entry}.gp`,
+    generator: `b${number}.js`,
   };
 }
 
@@ -102,8 +103,8 @@ function checkLayout() {
   }
 
   for (const entry of listEntries()) {
-    const { text, bFile, program } = entryFiles(entry);
-    const allowed = ['README.md', text, bFile, program];
+    const { text, bFile, program, generator } = entryFiles(entry);
+    const allowed = ['README.md', text, bFile, program, generator];
 
     for (const name of fs.readdirSync(path.join(OEIS_DIRECTORY, entry)).filter(name => !name.startsWith('.'))) {
       if (!allowed.includes(name)) {
@@ -223,8 +224,8 @@ function checkEntryReadme(entry) {
     }
   }
 
-  const { text, bFile, program } = entryFiles(entry);
-  const files = [text, bFile, program].filter(name => exists(entry, name));
+  const { text, bFile, program, generator } = entryFiles(entry);
+  const files = [text, bFile, program, generator].filter(name => exists(entry, name));
   const listed = readFilesSection(lines);
 
   if (listed.map(([name]) => name).join(',') !== files.join(',')) {

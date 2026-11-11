@@ -55,7 +55,7 @@ const PROGRAMS = [
       .concat({ call: 'row(2)', expectedResult: '[36, 126, 105, 12, 1]' }),
   },
   {
-    files: ['notes/triangular-lattice/rectangles.gp'],
+    files: ['oeis/A401988/A401988.gp'],
     testCases: testCasesOf('all-lattices-rectangle-modular')
       .filter(({ lattice, rowCount, colCount }) => lattice === 'triangular' && rowCount === colCount && rowCount % 2 === 0 && rowCount <= MAX_TRIANGULAR_SIDE)
       .map(({ rowCount, expectedResult }) => ({ call: `a(${rowCount / 2})`, expectedResult })),
@@ -67,6 +67,7 @@ const ENTRY_PROGRAMS = {
   A239273: 'vector(5, n, a(n-1))',
   A401670: 'vector(5, n, a(n-1))',
   A401673: 'concat(vector(4, n, row(n-1)))',
+  A401988: 'vector(6, n, a(n-1))',
 };
 
 function runGp(programs, calls) {
