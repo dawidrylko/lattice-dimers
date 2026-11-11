@@ -535,17 +535,35 @@ function checkDraftLinks() {
   return errors;
 }
 
+const GENERATOR_TERMS = 13;
+
+function checkGenerator(entry) {
+  const { bFile, generator } = entryFiles(entry);
+  const { status, stdout, stderr } = spawnSync(process.execPath, [path.join(OEIS_DIRECTORY, entry, generator), '0', String(GENERATOR_TERMS - 1)], {
+    encoding: 'utf-8',
+  });
+
+  if (status !== 0) {
+    return [`oeis/${entry}/${generator} failed: ${stderr.trim()}`];
+  }
+
+  const expected = read(entry, bFile).split('\n').slice(0, GENERATOR_TERMS).join('\n') + '\n';
+
+  return stdout === expected ? [] : [`oeis/${entry}/${generator} 0 ${GENERATOR_TERMS - 1} does not print the first ${GENERATOR_TERMS} lines of ${bFile}.`];
+}
+
 const checks = [
   ['the layout of oeis/', checkLayout],
   ['the table of oeis/README.md', checkTable],
   ...listEntries().flatMap(entry => {
-    const { text, bFile, program } = entryFiles(entry);
+    const { text, bFile, program, generator } = entryFiles(entry);
 
     return [
       [`oeis/${entry}/README.md`, () => checkEntryReadme(entry)],
       [`oeis/${entry}/${text}`, () => checkEntryText(entry)],
       ...(exists(entry, bFile) ? [[`oeis/${entry}/${bFile}`, () => [...checkBFile(entry), ...checkBFileFacts(entry)]]] : []),
       ...(exists(entry, program) ? [[`oeis/${entry}/${program}`, () => checkProgram(entry)]] : []),
+      ...(exists(entry, generator) ? [[`oeis/${entry}/${generator}`, () => checkGenerator(entry)]] : []),
     ];
   }),
   ['links to approved entries and drafts', checkDraftLinks],
