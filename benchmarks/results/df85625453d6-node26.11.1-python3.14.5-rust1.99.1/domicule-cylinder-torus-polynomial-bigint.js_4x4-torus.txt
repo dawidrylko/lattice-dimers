@@ -1,0 +1,14 @@
+Average Execution Time: 0.61 ms
+Average Process Time: 12.706 ms
+Load Average Before: see host-load-df85625453d6.txt
+---
+1. Execution Time: 0.679 ms, Process Time: 12.386 ms
+2. Execution Time: 0.611 ms, Process Time: 13.114 ms
+3. Execution Time: 0.595 ms, Process Time: 12.93 ms
+4. Execution Time: 0.619 ms, Process Time: 12.355 ms
+5. Execution Time: 0.602 ms, Process Time: 13.287 ms
+6. Execution Time: 0.585 ms, Process Time: 12.244 ms
+7. Execution Time: 0.597 ms, Process Time: 12.371 ms
+8. Execution Time: 0.573 ms, Process Time: 12.861 ms
+9. Execution Time: 0.598 ms, Process Time: 11.947 ms
+10. Execution Time: 0.637 ms, Process Time: 13.562 ms
