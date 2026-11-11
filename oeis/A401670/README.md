@@ -1,6 +1,6 @@
 # A401670
 
-[OEIS A401670](https://oeis.org/draft/A401670): number of domicule tilings of the $2n \times 2n$ torus.
+[OEIS A401670](https://oeis.org/A401670): number of domicule tilings of the $2n \times 2n$ torus.
 
 ## Contribution
 
@@ -8,13 +8,13 @@
 
 ## Status
 
-Proposed 1 November 2026, revision #3 of the draft.
+Approved 9 November 2026, revision #6.
 
 ## Files
 
 | file | content |
 | --- | --- |
-| [A401670.txt](A401670.txt) | the full entry text, reconstructed from the draft page |
+| [A401670.txt](A401670.txt) | the full entry text as published |
 | [b401670.txt](b401670.txt) | $n = 0, \dots, 8$, the terms of the data line, from [`spec/cases/all-lattices-cylinder-torus-modular.json`](../../spec/cases/all-lattices-cylinder-torus-modular.json); not submitted |
 | [A401670.gp](A401670.gp) | the program of the `%o` lines, with `T(h, w)` for the $h \times w$ torus |
 

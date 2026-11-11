@@ -8,7 +8,7 @@
 
 ## Status
 
-Proposed 1 November 2026, revision #4 of the draft.
+Proposed 1 November 2026, revision #5 of the draft.
 
 ## Files
 
@@ -19,3 +19,5 @@ Proposed 1 November 2026, revision #4 of the draft.
 ## Notes
 
 The entry has no b-file and no PARI program. Its 14 digits are all that the error bar $\pm 6 \cdot 10^{-16}$ supports, and they come from the transfer-matrix scripts in [`research/king-entropy`](../../research/king-entropy), which also hold the paper.
+
+On 9 November 2026 an editor set the draft back to editing (revision #5): the comments are to be worded so that they stay true if more digits are added, and the editor asked whether the constant needs an entry of its own or belongs in A239264.
