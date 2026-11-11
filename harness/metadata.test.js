@@ -114,8 +114,8 @@ function checkSiteMenu() {
   const name = text => text.toLowerCase().replace(/\s+/g, '-');
 
   NAV.forEach(entry =>
-    (entry.items || [entry]).forEach(({ slug, label }) => {
-      const expected = [entry.items && name(entry.label), name(label)].filter(Boolean).join('/');
+    (entry.items || [entry]).forEach(({ slug, label, heading }) => {
+      const expected = [entry.items && name(entry.label), name(heading ? `${label} ${heading}` : label)].filter(Boolean).join('/');
 
       if (slug !== expected) {
         errors.push(`the menu entry ${label} opens ${slug}.html instead of ${expected}.html`);

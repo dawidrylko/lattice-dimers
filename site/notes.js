@@ -398,7 +398,7 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
  * @property {string} [options.pieces] 'domino' or 'domicule'.
  * @property {string} [options.lattice] 'triangular' in place of pieces.
  * @property {string} [options.surface] 'rectangle', 'cylinder' or 'torus'.
- * @property {number} [options.diagonals] Only the domicule tilings of a rectangle with this many diagonal pieces, as the
+ * @property {number} [options.diagonals] Only the domicule tilings with this many diagonal pieces, as the
  * gallery's Diagonal pieces filter numbers them; the label under each tiling then gives that number.
  * @property {Array<number|bigint>} [options.ranks] The 0-based numbers of the tilings to draw.
  * @property {number} [options.spread] In place of ranks: this many tilings, evenly spaced over the numbering.
@@ -421,19 +421,25 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', lattice, surface =
     throw new Error('drawTilings() takes either a list of ranks or a whole number spread of at least 1.');
   }
 
-  if (diagonals !== undefined && (pieces !== 'domicule' || surface !== 'rectangle')) {
-    throw new Error(`drawTilings() counts diagonal pieces of domicule tilings of a rectangle only, not ${pieces} on a ${surface}.`);
+  if (diagonals !== undefined && pieces !== 'domicule') {
+    throw new Error(`drawTilings() counts diagonal pieces of domicule tilings only, not of ${pieces} tilings.`);
   }
 
   const renderer = repositoryRequire('./js/renderer');
   let unranker;
   let unrank;
 
-  if (diagonals !== undefined) {
+  if (diagonals !== undefined && surface === 'rectangle') {
     unranker = renderer.createDiagonalUnranker({ rowCount, colCount, diagonals });
     unrank = renderer.unrankDiagonalTiling;
   } else if (surface !== 'rectangle') {
-    unranker = renderer.createPeriodicUnranker({ rowCount, colCount, lattice: lattice ?? (pieces === 'domino' ? 'square' : 'king'), torus: surface === 'torus' });
+    unranker = renderer.createPeriodicUnranker({
+      rowCount,
+      colCount,
+      lattice: lattice ?? (pieces === 'domino' ? 'square' : 'king'),
+      torus: surface === 'torus',
+      diagonals: diagonals ?? null,
+    });
     unrank = renderer.unrankPeriodicTiling;
   } else if (pieces === 'domino' && lattice === undefined) {
     unranker = renderer.createUnranker({ rowCount, colCount });

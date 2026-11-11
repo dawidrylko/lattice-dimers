@@ -853,11 +853,19 @@ const figureTestCases = [
   {
     name: 'diagonal pieces counted on a torus',
     run: async () => {
+      const { svgs, total } = drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', surface: 'torus', diagonals: 2, ranks: [0, 3711] });
+
+      return total === BigInt(3712) && svgs[1].includes('aria-label="Domicule tiling number 3712 with 2 diagonal pieces of a 4 by 4 torus"') && svgs[1].includes('k = 2');
+    },
+  },
+  {
+    name: 'diagonal pieces of a domino tiling',
+    run: async () => {
       try {
-        drawTilings({ rowCount: 4, colCount: 4, pieces: 'domicule', surface: 'torus', diagonals: 2, ranks: [0] });
+        drawTilings({ rowCount: 4, colCount: 4, surface: 'cylinder', diagonals: 2, ranks: [0] });
         return false;
       } catch (error) {
-        return error.message.includes('rectangle only');
+        return error.message.includes('domicule tilings only');
       }
     },
   },
