@@ -138,11 +138,25 @@ const NOTES = [
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Three lattices on the torus', 'The seam sign', 'Running time', 'PARI/GP', 'Verification', 'References'],
   },
   {
-    slug: 'domicules/diagonal-pieces',
-    cells: 8, figures: 1,
+    slug: 'domicules/rectangles-by-diagonal-pieces',
+    cells: 6, figures: 1,
     group: 'Domicules',
-    h1: 'Diagonal pieces: domicule tilings of rectangles, cylinders and tori by their count (A401673 on the 2n × 2n board)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Cylinders and tori', 'Running time', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Running time', 'PARI/GP', 'Verification', 'References'],
+  },
+  {
+    slug: 'domicules/cylinders-by-diagonal-pieces',
+    cells: 3, figures: 1,
+    group: 'Domicules',
+    h1: 'Diagonal pieces: domicule tilings of cylinders by their count (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
+  },
+  {
+    slug: 'domicules/tori-by-diagonal-pieces',
+    cells: 3, figures: 1,
+    group: 'Domicules',
+    h1: 'Diagonal pieces: domicule tilings of tori by their count (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
   },
   {
     slug: 'triangular-lattice/rectangles',
@@ -174,7 +188,6 @@ const OLD_SECTIONS = {
   'domicules/rectangles': { 'counting-modulo-primes': 'the-modular-solver', 'transfer-by-cells': 'the-bigint-solver', 'the-sequence-up-to-20-20': 'the-counts' },
   'domicules/cylinders': SOLVER_SECTION,
   'domicules/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus-a401670': 'the-counts' },
-  'domicules/diagonal-pieces': { 'numbering-by-diagonal-pieces': 'numbering', 'the-polynomial': 'the-problem' },
   'triangular-lattice/cylinders': SOLVER_SECTION,
   'triangular-lattice/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus': 'the-counts' },
 };
@@ -189,14 +202,15 @@ const NOTE_REDIRECTS = [
   ['cylinders', 'domicules/cylinders'],
   ['tori', 'domicules/tori'],
   ['torus', 'domicules/tori'],
-  ['diagonals', 'domicules/diagonal-pieces'],
+  ['diagonals', 'domicules/rectangles-by-diagonal-pieces'],
   ['dominoes/rectangle', 'dominoes/rectangles'],
   ['dominoes/cylinder', 'dominoes/cylinders'],
   ['dominoes/torus', 'dominoes/tori'],
   ['domicules/rectangle', 'domicules/rectangles'],
   ['domicules/cylinder', 'domicules/cylinders'],
   ['domicules/torus', 'domicules/tori'],
-  ['domicules/diagonals', 'domicules/diagonal-pieces'],
+  ['domicules/diagonals', 'domicules/rectangles-by-diagonal-pieces'],
+  ['domicules/diagonal-pieces', 'domicules/rectangles-by-diagonal-pieces'],
   ['triangular/cylinder', 'triangular-lattice/cylinders'],
   ['triangular/torus', 'triangular-lattice/tori'],
 ];
@@ -205,6 +219,10 @@ const MOVED_SECTIONS = [
   ['method', 'transfer-by-cells', 'domicules/rectangles', 'transfer-by-cells'],
   ['cylinders', 'the-triangular-lattice', 'triangular-lattice/cylinders', 'the-counts'],
   ['torus', 'the-king-s-graph-on-the-2n-2n-torus-a401670', 'domicules/tori', 'the-2n-2n-torus-a401670'],
+  ['domicules/diagonal-pieces', 'the-polynomial', 'domicules/rectangles-by-diagonal-pieces', 'the-problem'],
+  ['domicules/diagonal-pieces', 'cylinders-and-tori', 'domicules/cylinders-by-diagonal-pieces', 'the-counts'],
+  ['diagonals', 'cylinders-and-tori', 'domicules/cylinders-by-diagonal-pieces', 'the-counts'],
+  ['domicules/diagonals', 'numbering-by-diagonal-pieces', 'domicules/rectangles-by-diagonal-pieces', 'numbering'],
 ];
 const MENU_GROUPS = ['Dominoes', 'Domicules', 'Triangular lattice'];
 const NOTE_FAILURES = ['DIFFERS FROM OEIS'];
@@ -812,7 +830,7 @@ const READ_SHEET = `(() => ({
     return board && label ? Math.round((label.getBBox().y - (board.getBBox().y + board.getBBox().height)) * 10) / 10 : null;
   })(document.querySelector('#sheet rect.b')),
   picker: !document.getElementById('diagonal-picker').hidden,
-  filter: { value: document.getElementById('diagonals').value, shown: !document.getElementById('diagonals').hidden, options: document.getElementById('diagonals').options.length },
+  filter: { value: document.getElementById('diagonals').value, shown: !document.getElementById('diagonals').hidden, options: document.getElementById('diagonals').options.length, texts: [...document.getElementById('diagonals').options].map(option => option.textContent) },
   labels: document.querySelectorAll('#sheet text:not(.n)').length,
   sublabels: document.querySelectorAll('#sheet text.n').length,
   tip: (board => {
@@ -946,6 +964,7 @@ async function checkDiagonals(page, baseUrl, width) {
     !filtered.meta.startsWith('6×6 · 413,932 tilings with 4 diagonal pieces (of 3,037,561)') ||
     filtered.filter.value !== '4' ||
     filtered.filter.options !== 11 ||
+    filtered.filter.texts.join('|') !== 'Any number|Exactly 0|Exactly 2|Exactly 4|Exactly 6|Exactly 8|Exactly 10|Exactly 12|Exactly 14|Exactly 16|Exactly 18' ||
     filtered.labels !== 100 ||
     !filtered.tip.includes('4 diagonal pieces')
   ) {
@@ -1282,7 +1301,7 @@ const READ_CHROME = `(() => {
     misnamed: header ? [...header.querySelectorAll('nav a')].filter(link => link.textContent.trim() !== 'Home').map(link => {
       const name = text => text.trim().toLowerCase().replace(/\\s+/g, '-');
       const group = link.closest('details');
-      const expected = [group && name(group.querySelector('summary').textContent), name(link.textContent)].filter(Boolean).join('/');
+      const expected = [group && name(group.querySelector('summary').textContent), name(link.getAttribute('aria-label') || link.textContent)].filter(Boolean).join('/');
       return new URL(link.href).pathname.replace(/^.*\\/notes\\//, '').replace(/\\.html$/, '') === expected ? '' : link.getAttribute('href') + ' for ' + expected;
     }).filter(Boolean) : [],
     groups: header ? [...header.querySelectorAll('summary')].map(summary => summary.textContent.trim()).join(', ') : '',
@@ -1424,8 +1443,8 @@ async function checkChrome(page, baseUrl, width) {
     problems.push(`menu entries whose address is not their label: ${home.misnamed.join(', ')}`);
   }
 
-  if (home.separated !== 'Diagonal pieces') {
-    problems.push(`the menu sets apart ${home.separated || 'no entry'} instead of Diagonal pieces, which is not a surface`);
+  if (home.separated !== 'By diagonal pieces') {
+    problems.push(`the menu sets apart ${home.separated || 'no entry'} instead of the By diagonal pieces heading`);
   }
 
   if (home.groups !== MENU_GROUPS.join(', ')) {
@@ -1555,7 +1574,7 @@ async function checkBenchmark(page, baseUrl, width) {
     }
 
     if (shown.counted !== view.startsWith('domicule/')) {
-      problems.push(`#${hash} ${shown.counted ? 'shows' : 'hides'} the Diagonal pieces switch`);
+      problems.push(`#${hash} ${shown.counted ? 'shows' : 'hides'} the Count switch`);
     }
 
     if (state.overflow > 0 || state.hidden) {
@@ -1770,11 +1789,11 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const highlight = await page.evaluate("document.getElementById('highlight').parentElement.textContent.trim()");
   const countButtons = await page.evaluate("[...document.querySelectorAll('#benchmark-counts button')].map(button => button.textContent.trim()).join(' / ')");
 
-  if (labels[0] !== 'Pieces / Surface / Diagonal pieces / Board / Style' || labels[1] !== 'Pieces / Surface / Diagonal pieces') {
-    problems.push(`the pickers read ${labels.join(' | ')}; Diagonal pieces follows Surface in both tabs, above Board in the gallery`);
+  if (labels[0] !== 'Pieces / Surface / Diagonal pieces / Board / Style' || labels[1] !== 'Pieces / Surface / Count') {
+    problems.push(`the pickers read ${labels.join(' | ')}; Diagonal pieces follows Surface in the gallery, above Board, and Count follows Surface in the benchmarks`);
   }
-  if (highlight !== 'Highlight' || countButtons !== 'Any number / Each number') {
-    problems.push(`the diagonal pieces controls read ${highlight} and ${countButtons} instead of Highlight and Any number / Each number`);
+  if (highlight !== 'Highlight' || countButtons !== 'All / By diagonal pieces') {
+    problems.push(`the diagonal pieces controls read ${highlight} and ${countButtons} instead of Highlight and All / By diagonal pieces`);
   }
 
   for (const view of views) {
@@ -1848,9 +1867,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     'domicule-benchmark': 'domicules/rectangles',
     'cylinder-benchmark': 'domicules/cylinders',
     'torus-benchmark': 'domicules/tori',
-    'diagonal-benchmark': 'domicules/diagonal-pieces',
-    'cylinder-diagonal-benchmark': 'domicules/diagonal-pieces',
-    'torus-diagonal-benchmark': 'domicules/diagonal-pieces',
+    'diagonal-benchmark': 'domicules/rectangles-by-diagonal-pieces',
+    'cylinder-diagonal-benchmark': 'domicules/cylinders-by-diagonal-pieces',
+    'torus-diagonal-benchmark': 'domicules/tori-by-diagonal-pieces',
   };
   const expected = label => {
     const [table, solver] = label.split(/[ ,]/);

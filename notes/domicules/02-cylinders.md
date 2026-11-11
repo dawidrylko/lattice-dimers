@@ -23,7 +23,7 @@ figure(svgs, `4 of the ${total} domicule tilings of the cylinder of circumferenc
 
 ## Numbering
 
-The gallery numbers the tilings of the cylinders up to $10 \times 10$ with the cell-by-cell scan of the modular solver, as it numbers the [tilings of a rectangle](01-rectangles.md#numbering). The Random button draws a uniformly random number, so the sample is exact. The [Diagonal pieces](04-diagonal-pieces.md#numbering) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
+The gallery numbers the tilings of the cylinders up to $10 \times 10$ with the cell-by-cell scan of the modular solver, as it numbers the [tilings of a rectangle](01-rectangles.md#numbering). The Random button draws a uniformly random number, so the sample is exact. The [Cylinders by diagonal pieces](05-cylinders-by-diagonal-pieces.md#numbering) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
 
 ## The counts
 

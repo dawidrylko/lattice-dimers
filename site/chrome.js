@@ -17,7 +17,9 @@ const NAV = [
       { slug: 'domicules/rectangles', label: 'Rectangles' },
       { slug: 'domicules/cylinders', label: 'Cylinders' },
       { slug: 'domicules/tori', label: 'Tori' },
-      { slug: 'domicules/diagonal-pieces', label: 'Diagonal pieces', separated: true },
+      { slug: 'domicules/rectangles-by-diagonal-pieces', label: 'Rectangles', heading: 'By diagonal pieces' },
+      { slug: 'domicules/cylinders-by-diagonal-pieces', label: 'Cylinders', heading: 'By diagonal pieces' },
+      { slug: 'domicules/tori-by-diagonal-pieces', label: 'Tori', heading: 'By diagonal pieces' },
     ],
   },
   {
@@ -29,6 +31,15 @@ const NAV = [
     ],
   },
 ];
+
+const DIAGONAL_PIECES_REDIRECT = {
+  to: 'domicules/rectangles-by-diagonal-pieces',
+  sections: {
+    'numbering-by-diagonal-pieces': '#numbering',
+    'the-polynomial': '#the-problem',
+    'cylinders-and-tori': 'domicules/cylinders-by-diagonal-pieces#the-counts',
+  },
+};
 
 const NOTE_REDIRECTS = {
   a004003: { to: 'dominoes/rectangles' },
@@ -48,7 +59,7 @@ const NOTE_REDIRECTS = {
       'transfer-by-cells': 'domicules/rectangles#transfer-by-cells',
       'counting-modulo-primes': 'domicules/rectangles#counting-modulo-primes',
       'sampling-with-a-markov-chain': 'domicules/rectangles#sampling-with-a-markov-chain',
-      'numbering-by-diagonal-pieces': 'domicules/diagonal-pieces#numbering-by-diagonal-pieces',
+      'numbering-by-diagonal-pieces': 'domicules/rectangles-by-diagonal-pieces#numbering',
       'cylinders-and-tori': 'domicules/tori#numbering',
       verification: '#verification',
       references: '#references',
@@ -64,14 +75,15 @@ const NOTE_REDIRECTS = {
   },
   tori: { to: 'domicules/tori', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
   torus: { to: 'domicules/tori', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
-  diagonals: { to: 'domicules/diagonal-pieces' },
+  diagonals: DIAGONAL_PIECES_REDIRECT,
   'dominoes/rectangle': { to: 'dominoes/rectangles' },
   'dominoes/cylinder': { to: 'dominoes/cylinders' },
   'dominoes/torus': { to: 'dominoes/tori' },
   'domicules/rectangle': { to: 'domicules/rectangles' },
   'domicules/cylinder': { to: 'domicules/cylinders' },
   'domicules/torus': { to: 'domicules/tori' },
-  'domicules/diagonals': { to: 'domicules/diagonal-pieces' },
+  'domicules/diagonals': DIAGONAL_PIECES_REDIRECT,
+  'domicules/diagonal-pieces': DIAGONAL_PIECES_REDIRECT,
   'triangular/cylinder': { to: 'triangular-lattice/cylinders' },
   'triangular/torus': { to: 'triangular-lattice/tori' },
 };
@@ -94,7 +106,6 @@ const SECTION_ALIASES = {
   },
   'domicules/cylinders': SOLVER_SECTIONS,
   'domicules/tori': { ...SOLVER_SECTIONS, 'the-2n-2n-torus-a401670': 'the-counts' },
-  'domicules/diagonal-pieces': { 'numbering-by-diagonal-pieces': 'numbering', 'the-polynomial': 'the-problem' },
   'triangular-lattice/cylinders': SOLVER_SECTIONS,
   'triangular-lattice/tori': { ...SOLVER_SECTIONS, 'the-2n-2n-torus': 'the-counts' },
 };
@@ -192,6 +203,7 @@ const CHROME_CSS = `
 .site-nav .menu { position: absolute; top: calc(100% + 6px); left: -12px; z-index: 10; display: flex; flex-direction: column; gap: 4px; min-width: max-content; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); box-shadow: var(--menu-shadow); }
 .site-nav .menu a { padding: 2px 0; }
 .site-nav .menu hr { width: 100%; margin: 2px 0; border: 0; border-top: 1px solid var(--border); }
+.site-nav .menu .menu-heading { color: var(--muted); font-size: 13px; }
 @media (max-width: 640px) {
   .site-nav { position: relative; }
   .site-nav details { position: static; }
@@ -223,8 +235,10 @@ function renderHeader({ root, current, notes }) {
     throw new Error(`the site navigation misses ${unlisted.join(', ') || 'no note'} and names ${missing.join(', ') || 'no missing note'}`);
   }
 
-  const link = (slug, href, label) => `<a href="${href}"${slug === current ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a>`;
-  const note = ({ slug, label, separated }) => `${separated ? '<hr>' : ''}${link(slug, `${root}notes/${slug}.html`, label)}`;
+  const link = (slug, href, label, heading) =>
+    `<a href="${href}"${heading ? ` aria-label="${escapeHtml(`${label} ${heading.toLowerCase()}`)}"` : ''}${slug === current ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a>`;
+  const note = ({ slug, label, heading }, index, items) =>
+    `${heading && items[index - 1]?.heading !== heading ? `<hr><span class="menu-heading">${escapeHtml(heading)}</span>` : ''}${link(slug, `${root}notes/${slug}.html`, label, heading)}`;
   const nav = [
     link('home', home, 'Home'),
     ...NAV.map(entry =>

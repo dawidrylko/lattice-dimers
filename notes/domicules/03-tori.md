@@ -25,7 +25,7 @@ A torus is a sum over the sets $S$ of first-row cells covered from the last row.
 
 ## Numbering
 
-The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-by-cell scan of the modular solver. The tilings are ordered by $S$ and then by the scan. The tilings of $S$ and of its rotations are equally many, so one table per rotation class gives every count, and the table of a single $S$ is rebuilt when a page needs it. The Random button draws a uniformly random number, so the sample is exact. The [Diagonal pieces](04-diagonal-pieces.md#numbering) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
+The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-by-cell scan of the modular solver. The tilings are ordered by $S$ and then by the scan. The tilings of $S$ and of its rotations are equally many, so one table per rotation class gives every count, and the table of a single $S$ is rebuilt when a page needs it. The Random button draws a uniformly random number, so the sample is exact. The [Tori by diagonal pieces](06-tori-by-diagonal-pieces.md#numbering) notebook says how the same scan numbers only the tilings with $k$ diagonal pieces.
 
 ## The counts
 
