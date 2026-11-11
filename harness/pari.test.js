@@ -79,7 +79,7 @@ function runGp(programs, calls) {
 
   if (error || status !== 0 || stderr.split('\n').some(line => line.includes('***') && !line.includes('Warning'))) {
     throw new Error(
-      `Failed to run PARI/GP (${GP}): ${error ? error.message : stderr.trim()}. Install it (apt install pari-gp, brew install pari) or set GP_PATH.`,
+      `Failed to run PARI/GP (${GP}): ${error ? error.message : stderr.trim()}. Install it (apt install pari-gp, brew install pari, micromamba create -n pari -c conda-forge pari) or set GP_PATH.`,
     );
   }
 
