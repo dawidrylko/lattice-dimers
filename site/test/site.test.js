@@ -830,7 +830,7 @@ const READ_SHEET = `(() => ({
     return board && label ? Math.round((label.getBBox().y - (board.getBBox().y + board.getBBox().height)) * 10) / 10 : null;
   })(document.querySelector('#sheet rect.b')),
   picker: !document.getElementById('diagonal-picker').hidden,
-  filter: { value: document.getElementById('diagonals').value, shown: !document.getElementById('diagonals').hidden, options: document.getElementById('diagonals').options.length },
+  filter: { value: document.getElementById('diagonals').value, shown: !document.getElementById('diagonals').hidden, options: document.getElementById('diagonals').options.length, texts: [...document.getElementById('diagonals').options].map(option => option.textContent) },
   labels: document.querySelectorAll('#sheet text:not(.n)').length,
   sublabels: document.querySelectorAll('#sheet text.n').length,
   tip: (board => {
@@ -964,6 +964,7 @@ async function checkDiagonals(page, baseUrl, width) {
     !filtered.meta.startsWith('6×6 · 413,932 tilings with 4 diagonal pieces (of 3,037,561)') ||
     filtered.filter.value !== '4' ||
     filtered.filter.options !== 11 ||
+    filtered.filter.texts.join('|') !== 'Any number|Exactly 0|Exactly 2|Exactly 4|Exactly 6|Exactly 8|Exactly 10|Exactly 12|Exactly 14|Exactly 16|Exactly 18' ||
     filtered.labels !== 100 ||
     !filtered.tip.includes('4 diagonal pieces')
   ) {
