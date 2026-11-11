@@ -73,6 +73,10 @@ function canUnrankDomicule({ rowCount, colCount }) {
  * @returns {{ rowCount: number, colCount: number, table: BigInt[][], total: BigInt }} The unranker.
  */
 function createDomiculeUnranker({ rowCount, colCount, lattice = 'king' }, onProgress) {
+  if (!['king', 'triangular'].includes(lattice)) {
+    throw new Error(`createDomiculeUnranker() takes lattice king or triangular, not ${lattice}.`);
+  }
+
   const cellCount = rowCount * colCount;
   const stateCount = 2 ** (colCount + 2);
   const zero = BigInt(0);

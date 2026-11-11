@@ -4,7 +4,7 @@ A notebook: every code cell below runs when the site is built, and its output is
 
 ## The problem
 
-The triangular lattice [1] is the square lattice with one diagonal in every cell, here the one that runs down to the right. A tiling uses dominoes and diagonal pieces in that one direction, so it lies between a domino tiling, which has no diagonal piece, and a domicule tiling, which may use both diagonals. The $2 \times 2$ board has 2 tilings, since the two diagonal pieces of a domicule tiling would need both diagonals, and the $8 \times 8$ board has 1,848,358,752. The drawings show 4 of them, spread over a numbering by a table of completion counts of the [cell-by-cell scan](#the-bigint-solver), as the [domicule rectangles](../domicules/01-rectangles.md#numbering) are numbered without the down-left move.
+The triangular lattice [1] is the square lattice with one diagonal in every cell, here the one that runs down to the right. A tiling uses dominoes and diagonal pieces in that one direction, so it lies between a domino tiling, which has no diagonal piece, and a domicule tiling, which may use both diagonals. The $2 \times 2$ board has 2 tilings, one fewer than with domicules, whose third tiling uses both diagonals, and the $8 \times 8$ board has 1,848,358,752. The drawings show 4 of them, spread over a numbering by a table of completion counts of the [cell-by-cell scan](#the-bigint-solver), as the [domicule rectangles](../domicules/01-rectangles.md#numbering) are numbered without the down-left move.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
@@ -96,7 +96,7 @@ print(`s = ${s}`);
 
 ## PARI/GP
 
-The counts follow also from Kasteleyn's theorem [2]: the board is a planar graph, every inner face is a triangle, and a sign on every edge that makes each triangle carry an odd number of clockwise edges turns the number of tilings into the Pfaffian of a skew-symmetric matrix $K$, so $a(n) = \sqrt{\det K}$. [`rectangles.gp`](rectangles.gp) builds $K$ with the sign $-1$ on the horizontal and vertical edges from the even rows and $+1$ elsewhere. CI runs it on the boards up to $16 \times 16$ of `spec/cases/`, and [`harness/spec.test.js`](../../harness/spec.test.js) checks the parity of every triangle on boards up to $12 \times 12$, so the two methods are independent. The program moves to `oeis/` with an OEIS entry.
+The counts follow also from Kasteleyn's theorem [2]: the board is a planar graph, every inner face is a triangle, and a sign on every edge that makes each triangle carry an odd number of clockwise edges turns the number of tilings into the Pfaffian of a skew-symmetric matrix $K$, so $a(n) = \sqrt{\det K}$. [`rectangles.gp`](rectangles.gp) builds $K$ with the sign $-1$ on the horizontal and vertical edges from the even rows and $+1$ elsewhere, where $K_{ab} = 1$ orients the edge from $a$ to $b$; with the rows drawn downwards, every triangle then has one or three clockwise edges. CI runs it on the boards up to $16 \times 16$ of `spec/cases/`, and [`harness/spec.test.js`](../../harness/spec.test.js) checks the parity of every triangle on boards up to $12 \times 12$, so the two methods are independent. The program moves to `oeis/` with an OEIS entry.
 
 ```js run
 print(require('fs').readFileSync(require('path').join(nb.context.root, 'notes/triangular-lattice/rectangles.gp'), 'utf-8').trim());

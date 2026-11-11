@@ -85,7 +85,14 @@ describe('rectangles on three lattices', () => {
   test('the signs of notes/triangular-lattice/rectangles.gp orient every triangular face the same odd way', () => {
     const program = fs.readFileSync(path.join(ROOT_DIRECTORY, 'notes', 'triangular-lattice', 'rectangles.gp'), 'utf-8');
 
-    assert.match(program, /s = if \(k < 3 && x % 2 == 0, -1, 1\);/, 'The sign rule of the program changed; check its faces again.');
+    for (const line of [
+      'D = [1, 0; 0, 1; 1, 1]',
+      's = if (k < 3 && x % 2 == 0, -1, 1);',
+      'K[x*L + y + 1, x2*L + y2 + 1] = s;',
+      'K[x2*L + y2 + 1, x*L + y + 1] = -s',
+    ]) {
+      assert.ok(program.includes(line), `The program no longer has ${line}; check its faces again.`);
+    }
 
     const sign = (x, k) => (k < 2 && x % 2 === 0 ? -1 : 1);
     const STEPS = [[1, 0], [0, 1], [1, 1]];

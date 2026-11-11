@@ -107,6 +107,7 @@ describe('rejections of the library and of a worker that exits', () => {
   const exitingWorkerCases = [
     'domicule-rectangle-modular',
     'all-lattices-cylinder-torus-modular',
+    'all-lattices-rectangle-modular',
     'domicule-rectangle-polynomial-modular',
     'domicule-cylinder-torus-polynomial-modular',
   ].map(algorithm => ({
@@ -203,6 +204,7 @@ describe('modules without a worker count', () => {
   const modules = [
     ['domicule-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('domicule-rectangle-modular')],
     ['all-lattices-cylinder-torus-modular.js', 'calculateTotalTilingCombinations', fourByFour('all-lattices-cylinder-torus-bigint')],
+    ['all-lattices-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('all-lattices-rectangle-bigint')],
     ['domicule-rectangle-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('domicule-rectangle-polynomial-bigint')],
     ['domicule-cylinder-torus-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('domicule-cylinder-torus-polynomial-bigint')],
   ];
