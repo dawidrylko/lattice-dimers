@@ -13,7 +13,7 @@ const TORUS_FILE = 'spec/cases/all-lattices-cylinder-torus-modular.json';
 const DIAGONAL_FILE = 'spec/cases/domicule-rectangle-polynomial-modular.json';
 const TRIANGULAR_FILE = 'spec/cases/all-lattices-rectangle-modular.json';
 const LAST_TRIANGULAR_SQUARE = 11;
-const GENERATORS = { 'A401988/b401988.txt': 'node oeis/A401988/b401988.js 0 36' };
+const GENERATORS = { 'A401988/b401988.txt': 'node oeis/A401988/b401988.js 0 37' };
 const SOURCES = {
   'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
   'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
