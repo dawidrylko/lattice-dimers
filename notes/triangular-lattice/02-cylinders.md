@@ -25,7 +25,6 @@ figure(svgs, `4 of the ${total} tilings of the triangular lattice on the cylinde
 
 The gallery numbers the tilings of the cylinders up to $10 \times 10$ with the cell-by-cell scan of the modular solver, as it numbers the [domino tilings of cylinders](../dominoes/02-cylinders.md#numbering). The Random button draws a uniformly random number, so the sample is exact.
 
-
 ## The counts
 
 Two solvers count the same boards by different methods, and the cell below compares the last column of the table, $h = 8$, with the count of the modular solver.

@@ -25,7 +25,6 @@ figure(svgs, `4 of the ${total} tilings of the triangular lattice on the 8 × 8 
 
 The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-by-cell scan of the modular solver, as it numbers the [domino tilings of tori](../dominoes/03-tori.md#numbering): the tilings are ordered by $S$ and then by the scan, and one table per rotation class gives every count. The Random button draws a uniformly random number, so the sample is exact.
 
-
 ## The counts
 
 For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate piece. Boards up to $8 \times 8$ go through both solvers, $10 \times 10$ and $12 \times 12$ through the modular one, and every count that `spec/cases/` stores is compared with it. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for triangular tori.

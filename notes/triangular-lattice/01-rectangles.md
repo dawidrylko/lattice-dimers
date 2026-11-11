@@ -27,8 +27,7 @@ Up to $14 \times 14$ the gallery numbers every tiling with the table of completi
 
 ### Sampling with a Markov chain
 
-From $16 \times 16$ to $20 \times 20$ the gallery runs the Markov chain of the [domicule tilings](../domicules/01-rectangles.md#sampling-with-a-markov-chain) with the six neighbours of the triangular lattice. Its moves along 4-cycles do not connect all tilings here, because the lattice has triangles: they join 14 of the 15 tilings of the $3 \times 4$ board and 50 of the 56 of the $4 \times 4$ board. Half of the steps therefore go along a 6-cycle: from $a$, its partner $b$, a neighbour $c$ of $a$ and its partner $d$, a neighbour $e$ of $d$ and its partner $f$, the pairs $ab$, $cd$ and $ef$ become $ac$, $de$ and $fb$ when $f$ and $b$ are neighbours. The move back arises from the same number of choices, so the uniform distribution stays stationary, and on every board small enough to check (up to $4 \times 5$) the two kinds of moves together connect all tilings. A chain run for finitely many steps is only approximately uniform, and the gallery labels its samples as such; each sample gets its number from the same backward scan as a domicule sample.
-
+From $16 \times 16$ to $20 \times 20$ the gallery runs the Markov chain of the [domicule tilings](../domicules/01-rectangles.md#sampling-with-a-markov-chain) with the six neighbours of the triangular lattice. Its moves along 4-cycles do not connect all tilings here: they join 14 of the 15 tilings of the $3 \times 4$ board and 50 of the 56 of the $4 \times 4$ board. Half of the steps therefore go along a 6-cycle: from $a$, its partner $b$, a neighbour $c$ of $a$ and its partner $d$, a neighbour $e$ of $d$ and its partner $f$, the pairs $ab$, $cd$ and $ef$ become $ac$, $de$ and $fb$ when $f$ and $b$ are neighbours and the six cells are distinct. The move back arises from the same number of choices, so the uniform distribution stays stationary, and on every board small enough to check (up to $4 \times 5$) the two kinds of moves together connect all tilings. A chain run for finitely many steps is only approximately uniform, and the gallery labels its samples as such; each sample gets its number from the same backward scan as a domicule sample.
 
 ## The counts
 
@@ -120,6 +119,7 @@ Every count on this page is checked in more than one independent way:
 - a listing of every tiling agrees on the triangular boards of up to 40 cells;
 - the Kasteleyn determinant of the PARI/GP program agrees up to $16 \times 16$ in CI;
 - the numbering of the drawings is checked against the count, and every numbered tiling for coverage and for the missing down-left diagonal;
+- the Markov chain is checked with chi-squared tests on $2 \times 2$ and $4 \times 4$, and for reaching every tiling of the $2 \times 3$, $3 \times 4$, $4 \times 5$ and $5 \times 4$ boards;
 - the modular solver checks every result against an extra prime.
 
 The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests).
