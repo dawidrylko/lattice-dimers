@@ -107,13 +107,14 @@ function findSeriesRun(prefix, root = RESULTS_DIRECTORY) {
 /**
  * Says why plan.json records a board as not measured. A failure closes the larger boards of its
  * series too, so a failed board may never have started.
- * @param {{reason: string}} entry The entry of plan.json.
+ * @param {{reason: string, budgetHours?: number}} entry The entry of plan.json; its own budgetHours
+ * wins over the run's, for a series measured with a budget of its own.
  * @param {number} budgetHours The budget of one board in the run.
  * @returns {string} The reason for the tooltip of a dash.
  */
-function describeMissing({ reason }, budgetHours) {
+function describeMissing({ reason, budgetHours: ownBudgetHours }, budgetHours) {
   if (reason === 'over budget') {
-    return `not measured: 10 runs would exceed the budget of ${budgetHours} h per board`;
+    return `not measured: 10 runs would exceed the budget of ${ownBudgetHours ?? budgetHours} h per board`;
   }
 
   if (/ETIMEDOUT/.test(reason)) {

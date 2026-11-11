@@ -268,5 +268,65 @@
       144076260
     ],
     "instructions": 141921194
+  },
+  {
+    "file": "domicule-cylinder-torus-polynomial-modular.rs",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      32316763,
+      32316763,
+      32316763
+    ],
+    "instructions": 32316763
+  },
+  {
+    "file": "domicule_cylinder_torus_polynomial_modular.py",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      1073352113,
+      1076108558,
+      1075139152
+    ],
+    "instructions": 1075139152
+  },
+  {
+    "file": "domicule-cylinder-torus-polynomial-modular.js",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      3428433667,
+      3091820750,
+      3428605689
+    ],
+    "instructions": 3428433667
+  },
+  {
+    "file": "domicule-cylinder-torus-polynomial-bigint.rs",
+    "board": "-r 6 -c 6",
+    "counts": [
+      5222733,
+      5222733,
+      5222733
+    ],
+    "instructions": 5222733
+  },
+  {
+    "file": "domicule_cylinder_torus_polynomial_bigint.py",
+    "board": "-r 6 -c 6",
+    "counts": [
+      238224338,
+      238266080,
+      238347476
+    ],
+    "instructions": 238266080
+  },
+  {
+    "file": "domicule-cylinder-torus-polynomial-bigint.js",
+    "board": "-r 6 -c 6",
+    "counts": [
+      205442135,
+      206973144,
+      204717017
+    ],
+    "instructions": 205442135
   }
 ]

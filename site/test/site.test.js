@@ -1783,12 +1783,12 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     cardLinks.push(await page.evaluate(READ_CARD_LINKS));
     const run = await page.evaluate(`(() => {
       const section = document.getElementById('benchmark');
-      const links = [...section.querySelectorAll('a[href*="benchmarks/results/"]')].filter(link => link.checkVisibility()).map(link => link.textContent);
+      const links = [...section.querySelectorAll('a[href*="benchmarks/results/"]')].filter(link => link.checkVisibility()).map(link => (new URL(link.href).pathname.endsWith('/' + link.textContent) ? link.textContent : 'a link to another run than ' + link.textContent));
       return { runs: section.innerText.split('Run on ').length - 1, links, periodic: DATA.periodicDiagonalRun?.directory ?? null };
     })()`);
     const ownRun = surface !== 'rectangle' && count === 'diagonal';
     const wanted = ownRun ? (run.periodic ? 1 : 0) : 1;
-    const linked = run.links.length === wanted && run.links.every(link => (link === run.periodic) === ownRun);
+    const linked = run.links.length === wanted && run.links.every(link => !ownRun || link === run.periodic);
 
     if (run.runs !== wanted || !linked) {
       problems.push(`the ${view} table shows ${run.runs} run lines linking ${run.links.join(', ') || 'nothing'}; it should show ${wanted}, for ${ownRun ? 'its own run' : 'the main run'}`);
