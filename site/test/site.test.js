@@ -830,7 +830,7 @@ const READ_SHEET = `(() => ({
     return board && label ? Math.round((label.getBBox().y - (board.getBBox().y + board.getBBox().height)) * 10) / 10 : null;
   })(document.querySelector('#sheet rect.b')),
   picker: !document.getElementById('diagonal-picker').hidden,
-  filter: { value: document.getElementById('diagonals').value, shown: !document.getElementById('diagonals').hidden, options: document.getElementById('diagonals').options.length, texts: [...document.getElementById('diagonals').options].map(option => option.textContent) },
+  filter: { value: document.getElementById('diagonals').value, shown: !document.getElementById('diagonals').hidden, counts: !document.getElementById('counts').hidden, count: document.querySelector('#counts [aria-pressed="true"]')?.dataset.count ?? '', options: document.getElementById('diagonals').options.length, texts: [...document.getElementById('diagonals').options].map(option => option.textContent) },
   labels: document.querySelectorAll('#sheet text:not(.n)').length,
   sublabels: document.querySelectorAll('#sheet text.n').length,
   tip: (board => {
@@ -963,8 +963,9 @@ async function checkDiagonals(page, baseUrl, width) {
   if (
     !filtered.meta.startsWith('6×6 · 413,932 tilings with 4 diagonal pieces (of 3,037,561)') ||
     filtered.filter.value !== '4' ||
-    filtered.filter.options !== 11 ||
-    filtered.filter.texts.join('|') !== 'Any number|Exactly 0|Exactly 2|Exactly 4|Exactly 6|Exactly 8|Exactly 10|Exactly 12|Exactly 14|Exactly 16|Exactly 18' ||
+    filtered.filter.options !== 10 ||
+    filtered.filter.count !== 'diagonal' ||
+    filtered.filter.texts.join('|') !== 'k = 0|k = 2|k = 4|k = 6|k = 8|k = 10|k = 12|k = 14|k = 16|k = 18' ||
     filtered.labels !== 100 ||
     !filtered.tip.includes('4 diagonal pieces')
   ) {
@@ -975,12 +976,15 @@ async function checkDiagonals(page, baseUrl, width) {
   await page.waitFor("location.hash === '#gallery/6x6-diagonal/2?diagonals=4' && document.querySelector('#sheet text:not(.n)')?.textContent === '#101'", 'the next 6x6 page with 4 diagonal pieces');
   await page.evaluate("document.querySelector('#boards [data-id=\"8x8-diagonal\"]').click()");
   await page.waitFor("location.hash === '#gallery/8x8-diagonal/1?diagonals=4' && document.getElementById('gallery-meta').textContent.includes('with 4 diagonal pieces')", 'the 8x8 board keeping the filter');
+  await showBoard(page, 'gallery/6x6-diagonal/1?diagonals=10', 'the 6x6 sheet with 10 diagonal pieces');
+  await page.evaluate("document.querySelector('#boards [data-id=\"4x4-diagonal\"]').click()");
+  await page.waitFor("location.hash === '#gallery/4x4-diagonal/1?diagonals=2' && document.getElementById('gallery-meta').textContent.includes('with 2 diagonal pieces')", 'the 4x4 board at its k with the most tilings, since it has no tiling with 10');
 
   for (const query of ['1', 'abc', '']) {
     const ignored = await showBoard(page, `gallery/6x6-diagonal/1?diagonals=${query}`, `the 6x6 sheet with ?diagonals=${query}`);
 
-    if (!ignored.meta.startsWith('6×6 · 3,037,561 tilings · showing') || ignored.filter.value !== '') {
-      problems.push(`?diagonals=${query} reads "${ignored.meta}" with the filter at "${ignored.filter.value}"`);
+    if (!ignored.meta.startsWith('6×6 · 3,037,561 tilings · showing') || ignored.filter.value !== '' || ignored.filter.shown || ignored.filter.count !== 'all') {
+      problems.push(`?diagonals=${query} reads "${ignored.meta}" with the filter ${JSON.stringify(ignored.filter)}`);
     }
   }
 
@@ -997,8 +1001,12 @@ async function checkDiagonals(page, baseUrl, width) {
   }
 
   await showBoard(page, 'gallery/6x6-diagonal/1?diagonals=4', 'the 6x6 sheet with 4 diagonal pieces again');
-  await page.evaluate("const select = document.getElementById('diagonals'); select.value = ''; select.dispatchEvent(new Event('change'))");
+  await page.evaluate("document.querySelector('#counts [data-count=all]').click()");
   await page.waitFor("location.hash === '#gallery/6x6-diagonal/1' && document.getElementById('gallery-meta').textContent.startsWith('6×6 · 3,037,561 tilings · showing')", 'the 6x6 sheet without the filter');
+  await page.evaluate("document.querySelector('#counts [data-count=diagonal]').click()");
+  await page.waitFor("location.hash === '#gallery/6x6-diagonal/1?diagonals=8' && document.getElementById('gallery-meta').textContent.includes('with 8 diagonal pieces')", 'the 6x6 sheet at the k with the most tilings');
+  await page.evaluate("document.querySelector('#counts [data-count=all]').click()");
+  await page.waitFor("location.hash === '#gallery/6x6-diagonal/1' && document.getElementById('diagonals').hidden", 'the 6x6 sheet without the filter again');
   await page.evaluate("if (!document.getElementById('highlight').checked) document.getElementById('highlight').click()");
   await page.settle();
   const colors = await page.evaluate(`(() => {
@@ -1023,10 +1031,17 @@ async function checkDiagonals(page, baseUrl, width) {
   for (const [board, filtered] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', true], ['10x10-diagonal-torus', true], ['2x2-diagonal', true]]) {
     const state = await showBoard(page, `gallery/${board}/1`, `the ${board} sheet`);
 
-    if (!state.picker || state.filter.shown !== filtered || !/diagonal pieces?:/.test(state.tip)) {
+    if (!state.picker || state.filter.counts !== filtered || state.filter.shown || !/diagonal pieces?:/.test(state.tip)) {
       problems.push(`${board} filter: ${JSON.stringify(state.filter)}, tooltip ${state.tip}`);
     }
   }
+
+  await showBoard(page, 'gallery/10x10-diagonal-torus/1', 'the 10x10 torus sheet');
+  await page.evaluate("document.querySelector('#counts [data-count=diagonal]').click()");
+  await page.waitFor(
+    "location.hash.startsWith('#gallery/10x10-diagonal-torus/1?diagonals=') && !document.getElementById('notice').hidden && !document.getElementById('diagonals').hidden",
+    'the confirmation notice after By diagonal pieces on the 10x10 torus',
+  );
 
   return problems;
 }
@@ -1305,7 +1320,7 @@ const READ_CHROME = `(() => {
       return new URL(link.href).pathname.replace(/^.*\\/notes\\//, '').replace(/\\.html$/, '') === expected ? '' : link.getAttribute('href') + ' for ' + expected;
     }).filter(Boolean) : [],
     groups: header ? [...header.querySelectorAll('summary')].map(summary => summary.textContent.trim()).join(', ') : '',
-    separated: header ? [...header.querySelectorAll('nav .menu hr')].map(rule => rule.nextElementSibling?.textContent.trim() ?? 'nothing').join(', ') : '',
+    separated: header ? [...header.querySelectorAll('nav .menu .menu-heading')].map(heading => heading.textContent.trim()).join(', ') : '',
     currentGroups: header ? [...header.querySelectorAll('summary[data-current][aria-current="true"]')].map(summary => summary.textContent.trim()) : [],
     linkGroup: (() => {
       const link = header && header.querySelector('nav [aria-current="page"]');
@@ -1443,8 +1458,8 @@ async function checkChrome(page, baseUrl, width) {
     problems.push(`menu entries whose address is not their label: ${home.misnamed.join(', ')}`);
   }
 
-  if (home.separated !== 'By diagonal pieces') {
-    problems.push(`the menu sets apart ${home.separated || 'no entry'} instead of the By diagonal pieces heading`);
+  if (home.separated !== 'All tilings, By diagonal pieces') {
+    problems.push(`the menu headings are ${home.separated || 'none'} instead of All tilings, By diagonal pieces`);
   }
 
   if (home.groups !== MENU_GROUPS.join(', ')) {
@@ -1789,11 +1804,11 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const highlight = await page.evaluate("document.getElementById('highlight').parentElement.textContent.trim()");
   const countButtons = await page.evaluate("[...document.querySelectorAll('#benchmark-counts button')].map(button => button.textContent.trim()).join(' / ')");
 
-  if (labels[0] !== 'Pieces / Surface / Diagonal pieces / Board / Style' || labels[1] !== 'Pieces / Surface / Count') {
-    problems.push(`the pickers read ${labels.join(' | ')}; Diagonal pieces follows Surface in the gallery, above Board, and Count follows Surface in the benchmarks`);
+  if (labels[0] !== 'Pieces / Surface / Count / Board / Style' || labels[1] !== 'Pieces / Surface / Count') {
+    problems.push(`the pickers read ${labels.join(' | ')}; Count follows Surface in both tabs, above Board in the gallery`);
   }
-  if (highlight !== 'Highlight' || countButtons !== 'All / By diagonal pieces') {
-    problems.push(`the diagonal pieces controls read ${highlight} and ${countButtons} instead of Highlight and All / By diagonal pieces`);
+  if (highlight !== 'Highlight' || countButtons !== 'All tilings / By diagonal pieces') {
+    problems.push(`the diagonal pieces controls read ${highlight} and ${countButtons} instead of Highlight and All tilings / By diagonal pieces`);
   }
 
   for (const view of views) {
