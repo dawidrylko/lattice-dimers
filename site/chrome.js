@@ -13,6 +13,7 @@ const NAV = [
   },
   {
     label: 'Domicules',
+    lead: 'All tilings',
     items: [
       { slug: 'domicules/rectangles', label: 'Rectangles' },
       { slug: 'domicules/cylinders', label: 'Cylinders' },
@@ -202,8 +203,8 @@ const CHROME_CSS = `
 .site-nav details[open] summary::after { border-top-width: 0; border-bottom: 4px solid currentColor; }
 .site-nav .menu { position: absolute; top: calc(100% + 6px); left: -12px; z-index: 10; display: flex; flex-direction: column; gap: 4px; min-width: max-content; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); box-shadow: var(--menu-shadow); }
 .site-nav .menu a { padding: 2px 0; }
-.site-nav .menu hr { width: 100%; margin: 2px 0; border: 0; border-top: 1px solid var(--border); }
-.site-nav .menu .menu-heading { color: var(--muted); font-size: 13px; }
+.site-nav .menu .menu-heading { margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.site-nav .menu a + .menu-heading { margin-top: 10px; }
 @media (max-width: 640px) {
   .site-nav { position: relative; }
   .site-nav details { position: static; }
@@ -238,7 +239,7 @@ function renderHeader({ root, current, notes }) {
   const link = (slug, href, label, heading) =>
     `<a href="${href}"${heading ? ` aria-label="${escapeHtml(`${label} ${heading.toLowerCase()}`)}"` : ''}${slug === current ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a>`;
   const note = ({ slug, label, heading }, index, items) =>
-    `${heading && items[index - 1]?.heading !== heading ? `<hr><span class="menu-heading">${escapeHtml(heading)}</span>` : ''}${link(slug, `${root}notes/${slug}.html`, label, heading)}`;
+    `${heading && items[index - 1]?.heading !== heading ? `<span class="menu-heading">${escapeHtml(heading)}</span>` : ''}${link(slug, `${root}notes/${slug}.html`, label, heading)}`;
   const nav = [
     link('home', home, 'Home'),
     ...NAV.map(entry =>
@@ -246,7 +247,7 @@ function renderHeader({ root, current, notes }) {
         ? [
             '<details>',
             `        <summary${entry.items.some(({ slug }) => slug === current) ? ' data-current aria-current="true"' : ''}>${escapeHtml(entry.label)}</summary>`,
-            `        <div class="menu">${entry.items.map(note).join('')}</div>`,
+            `        <div class="menu">${entry.lead ? `<span class="menu-heading">${escapeHtml(entry.lead)}</span>` : ''}${entry.items.map(note).join('')}</div>`,
             '      </details>',
           ].join('\n')
         : note(entry),

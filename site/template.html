@@ -200,9 +200,13 @@ ul.intro li + li { margin-top: 4px; }
       </div>
     </div>
     <div class="picker" id="diagonal-picker">
-      <span class="label" id="diagonals-label" title="Show only the tilings with this many diagonal pieces">Diagonal pieces</span>
+      <span class="label" id="counts-label">Count</span>
       <div class="filter">
-        <select class="field" id="diagonals" aria-labelledby="diagonals-label"></select>
+        <div class="pieces" id="counts" role="group" aria-labelledby="counts-label">
+          <button type="button" data-count="all" title="Every tiling of the board">All tilings</button>
+          <button type="button" data-count="diagonal" title="Only the tilings with k diagonal pieces">By diagonal pieces</button>
+        </div>
+        <select class="field" id="diagonals" aria-label="Number of diagonal pieces"></select>
         <label class="toggle" title="Mark the diagonal pieces in every tiling"><input type="checkbox" id="highlight" aria-label="Highlight diagonal pieces">Highlight</label>
       </div>
     </div>
@@ -267,7 +271,7 @@ ul.intro li + li { margin-top: 4px; }
     <div class="picker" id="benchmark-count-picker" hidden>
       <span class="label" id="benchmark-counts-label">Count</span>
       <div class="pieces" id="benchmark-counts" role="group" aria-labelledby="benchmark-counts-label">
-        <button type="button" data-count="all" title="The solvers that count every tiling">All</button>
+        <button type="button" data-count="all" title="The solvers that count every tiling">All tilings</button>
         <button type="button" data-count="diagonal" title="The solvers that count the tilings for every number of diagonal pieces">By diagonal pieces</button>
       </div>
     </div>
@@ -764,14 +768,20 @@ function highlightTiling(number) {
 
 function showDiagonalFilter(board, diagonals) {
   const select = $('diagonals');
-  const options = [['', 'Any number']];
+  const options = [];
 
   (board.diagonals || []).forEach((count, k) => {
-    if (BigInt(count) > ZERO) options.push([String(k), `Exactly ${k}`]);
+    if (BigInt(count) > ZERO) options.push([String(k), `k = ${k}`]);
   });
   select.innerHTML = options.map(([value, text]) => `<option value="${value}">${text}</option>`).join('');
   select.value = diagonals === null ? '' : String(diagonals);
-  select.hidden = !board.diagonals;
+  select.hidden = !board.diagonals || diagonals === null;
+  $('counts').hidden = !board.diagonals;
+  $('counts').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.count === (diagonals === null ? 'all' : 'diagonal')));
+}
+
+function largestDiagonalCount(board) {
+  return board.diagonals.reduce((best, count, k) => (BigInt(count) > BigInt(board.diagonals[best]) ? k : best), 0);
 }
 
 function updateControls({ board, page, diagonals, total }) {
@@ -938,7 +948,14 @@ $('boards').addEventListener('click', e => {
   if (button) go(DATA.boards.find(b => b.id === button.dataset.id), ONE, null, parseHash().diagonals);
 });
 $('diagonals').addEventListener('change', () => {
-  go(parseHash().board, ONE, null, $('diagonals').value === '' ? null : Number($('diagonals').value));
+  go(parseHash().board, ONE, null, Number($('diagonals').value));
+});
+$('counts').addEventListener('click', e => {
+  const button = e.target.closest('button');
+  const { board, diagonals } = parseHash();
+
+  if (!button || (button.dataset.count === 'diagonal') === (diagonals !== null)) return;
+  go(board, ONE, null, button.dataset.count === 'all' ? null : largestDiagonalCount(board));
 });
 $('highlight').addEventListener('change', () => setHighlight($('highlight').checked));
 $('styles').addEventListener('click', e => {
