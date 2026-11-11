@@ -1,4 +1,7 @@
-const { exec } = require('../core');
+const { execFileSync } = require('child_process');
+const path = require('path');
+
+const SOLVER = path.join(__dirname, '..', 'solvers', 'domino-rectangle-bigint.js');
 
 const MAX_SOLVER_TABLE_SIZE = 4000000;
 
@@ -18,7 +21,8 @@ function canCount({ rowCount, colCount }) {
 }
 
 /**
- * Counts tilings with the BigInt solver, skipping boards whose table is too large or whose count runs out of memory.
+ * Counts tilings with the BigInt solver in a child process, skipping boards whose table is too large or whose count runs out of memory.
+ * The child process keeps a heap exhausted by the count's large integers from ending the caller.
  * @param {Object} options Board dimensions.
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
@@ -30,7 +34,10 @@ function countTilings(options) {
   }
 
   try {
-    return exec('domino-rectangle-bigint.js', options);
+    return execFileSync(process.execPath, [SOLVER, '-r', String(options.rowCount), '-c', String(options.colCount)], {
+      stdio: 'pipe',
+      encoding: 'utf-8',
+    }).trim();
   } catch {
     return null;
   }

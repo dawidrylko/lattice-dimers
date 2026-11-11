@@ -329,7 +329,7 @@ ul.intro li + li { margin-top: 4px; }
       </div>
       <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
-    <div class="bench-group" data-pieces="domicule" data-surface="cylinder" data-count="diagonal" data-run="periodic-diagonal" hidden>
+    <div class="bench-group" data-pieces="domicule" data-surface="cylinder" data-count="diagonal" data-run="cylinder-torus-diagonal" hidden>
       <div class="table-wrap">
         <table role="table" id="cylinder-diagonal-benchmark" aria-label="Domicules on cylinders by diagonal pieces" class="languages">
           <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/cylinders-by-diagonal-pieces.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/cylinders-by-diagonal-pieces.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/cylinders-by-diagonal-pieces.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/domicules/cylinders-by-diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/domicules/cylinders-by-diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/cylinders-by-diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
@@ -348,7 +348,7 @@ ul.intro li + li { margin-top: 4px; }
       </div>
       <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
     </div>
-    <div class="bench-group" data-pieces="domicule" data-surface="torus" data-count="diagonal" data-run="periodic-diagonal" hidden>
+    <div class="bench-group" data-pieces="domicule" data-surface="torus" data-count="diagonal" data-run="cylinder-torus-diagonal" hidden>
       <div class="table-wrap">
         <table role="table" id="torus-diagonal-benchmark" aria-label="Domicules on tori by diagonal pieces" class="languages">
           <thead role="rowgroup"><tr role="row"><th role="columnheader">Board</th><th role="columnheader">Tilings</th><th role="columnheader" aria-label="Modular, Rust" title="Modular, Rust"><a class="solver" href="notes/domicules/tori-by-diagonal-pieces.html#the-modular-solver" aria-label="Modular, Rust">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="Modular, Python" title="Modular, Python"><a class="solver" href="notes/domicules/tori-by-diagonal-pieces.html#the-modular-solver" aria-label="Modular, Python">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="Modular, JavaScript" title="Modular, JavaScript"><a class="solver" href="notes/domicules/tori-by-diagonal-pieces.html#the-modular-solver" aria-label="Modular, JavaScript">Modular <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader" aria-label="BigInt, Rust" title="BigInt, Rust"><a class="solver" href="notes/domicules/tori-by-diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Rust">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-rust"/></svg></a></th><th role="columnheader" aria-label="BigInt, Python" title="BigInt, Python"><a class="solver" href="notes/domicules/tori-by-diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, Python">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-python"/></svg></a></th><th role="columnheader" aria-label="BigInt, JavaScript" title="BigInt, JavaScript"><a class="solver" href="notes/domicules/tori-by-diagonal-pieces.html#the-bigint-solver" aria-label="BigInt, JavaScript">BigInt <svg class="lang" aria-hidden="true" focusable="false"><use href="#icon-javascript"/></svg></a></th><th role="columnheader">Runs</th></tr></thead>
@@ -1087,17 +1087,17 @@ function renderSolverRows(table, rows, solvers) {
 }
 
 renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_AND_BIGINT_LANGUAGES);
-renderSolverRows('domino-torus-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_AND_BIGINT_LANGUAGES);
-renderSolverRows('domino-cylinder-benchmark', DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
+renderSolverRows('domino-torus-benchmark', DATA.dominoCylinderTorusBenchmark.filter(r => r.surface === 'torus'), MODULAR_AND_BIGINT_LANGUAGES);
+renderSolverRows('domino-cylinder-benchmark', DATA.dominoCylinderTorusBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
 renderSolverRows('domicule-benchmark', DATA.domiculeBenchmark, MODULAR_AND_BIGINT_LANGUAGES);
 renderSolverRows('diagonal-benchmark', DATA.diagonalBenchmark, MODULAR_AND_BIGINT_LANGUAGES);
-renderSolverRows('torus-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'torus'), MODULAR_AND_BIGINT_LANGUAGES);
-renderSolverRows('cylinder-benchmark', DATA.periodicBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
+renderSolverRows('torus-benchmark', DATA.cylinderTorusBenchmark.filter(r => r.surface === 'torus'), MODULAR_AND_BIGINT_LANGUAGES);
+renderSolverRows('cylinder-benchmark', DATA.cylinderTorusBenchmark.filter(r => r.surface === 'cylinder'), MODULAR_AND_BIGINT_LANGUAGES);
 ['rectangle', 'cylinder', 'torus'].forEach(surface =>
   renderSolverRows(`triangular-${surface}-benchmark`, DATA.triangularBenchmark.filter(r => r.surface === surface), UNMEASURED_TRIANGULAR),
 );
-['torus', 'cylinder'].forEach(surface => renderSolverRows(`${surface}-diagonal-benchmark`, DATA.periodicDiagonalBenchmark.filter(r => r.surface === surface), MODULAR_AND_BIGINT_LANGUAGES));
-document.querySelectorAll('[data-unmeasured]').forEach(note => (note.hidden = DATA.periodicDiagonalRun !== null));
+['torus', 'cylinder'].forEach(surface => renderSolverRows(`${surface}-diagonal-benchmark`, DATA.cylinderTorusDiagonalBenchmark.filter(r => r.surface === surface), MODULAR_AND_BIGINT_LANGUAGES));
+document.querySelectorAll('[data-unmeasured]').forEach(note => (note.hidden = DATA.cylinderTorusDiagonalRun !== null));
 document.querySelectorAll('#benchmark .bench-group').forEach(group => {
   const dashed = [...group.querySelectorAll('tbody td')].some(cell => cell.textContent.trim() === '-');
   group.querySelectorAll('.note').forEach(note => {
@@ -1118,7 +1118,7 @@ function describeRun({ date, node, python, rust, commit, cpu, platform, cores, m
 
 const BENCHMARK_RUNS = {
   main: DATA.environment && { directory: '__BENCHMARK_DIRECTORY__', environment: DATA.environment },
-  'periodic-diagonal': DATA.periodicDiagonalRun?.environment ? DATA.periodicDiagonalRun : null,
+  'cylinder-torus-diagonal': DATA.cylinderTorusDiagonalRun?.environment ? DATA.cylinderTorusDiagonalRun : null,
   triangular: null,
 };
 

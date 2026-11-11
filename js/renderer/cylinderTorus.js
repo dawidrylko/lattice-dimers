@@ -1,6 +1,6 @@
-const MAX_PERIODIC_TABLE_SIZE = 1000000;
-const PERIODIC_CACHED_TABLES = 2;
-const PERIODIC_LATTICES = {
+const MAX_CYLINDER_TORUS_TABLE_SIZE = 1000000;
+const CYLINDER_TORUS_CACHED_TABLES = 2;
+const CYLINDER_TORUS_LATTICES = {
   square: { downLeft: false, downRight: false },
   triangular: { downLeft: false, downRight: true },
   king: { downLeft: true, downRight: true },
@@ -18,7 +18,7 @@ const PERIODIC_LATTICES = {
  * @param {number} wrapBit The extra bit for the piece from column 0 to the last column of the next row.
  * @returns {Array<{ bit: number, col: number, dr: number, dc: number }>} The moves.
  */
-function listPeriodicMoves(colCount, col, hasBelow, { downLeft, downRight }, wrapBit) {
+function listCylinderTorusMoves(colCount, col, hasBelow, { downLeft, downRight }, wrapBit) {
   const moves = [];
   const add = (offset, anchor, dr, dc) => moves.push({ bit: 2 ** offset, col: anchor, dr, dc });
 
@@ -53,8 +53,8 @@ function listPeriodicMoves(colCount, col, hasBelow, { downLeft, downRight }, wra
   return moves;
 }
 
-function createPeriodicScan(rowCount, colCount, lattice, torus) {
-  const diagonals = PERIODIC_LATTICES[lattice];
+function createCylinderTorusScan(rowCount, colCount, lattice, torus) {
+  const diagonals = CYLINDER_TORUS_LATTICES[lattice];
   const windowBits = colCount + 2;
   const windowMask = 2 ** windowBits - 1;
   const wrapBit = 2 ** windowBits;
@@ -68,7 +68,7 @@ function createPeriodicScan(rowCount, colCount, lattice, torus) {
     cellCount,
     stateCount: 2 ** (windowBits + (usesWrapBit ? 1 : 0)),
     moves: Array.from({ length: cellCount }, (_, index) =>
-      listPeriodicMoves(colCount, index % colCount, torus || index < cellCount - colCount, diagonals, wrapBit),
+      listCylinderTorusMoves(colCount, index % colCount, torus || index < cellCount - colCount, diagonals, wrapBit),
     ),
     shift: (state, col) => {
       const window = (state & windowMask) >>> 1;
@@ -82,7 +82,7 @@ function createPeriodicScan(rowCount, colCount, lattice, torus) {
   };
 }
 
-function buildPeriodicTable({ cellCount, colCount, stateCount, moves, shift }, start, keepRows) {
+function buildCylinderTorusTable({ cellCount, colCount, stateCount, moves, shift }, start, keepRows) {
   const zero = BigInt(0);
   let next = new Array(stateCount).fill(zero);
   const table = keepRows ? new Array(cellCount + 1) : null;
@@ -135,7 +135,7 @@ function addShifted(counts, following, shift) {
   }
 }
 
-function buildPeriodicPolynomialTable({ cellCount, colCount, stateCount, moves, shift }, start, keepRows) {
+function buildCylinderTorusPolynomialTable({ cellCount, colCount, stateCount, moves, shift }, start, keepRows) {
   let next = new Array(stateCount).fill(null);
   const table = keepRows ? new Array(cellCount + 1) : null;
 
@@ -194,7 +194,7 @@ function readClassPolynomials({ rowCount, colCount, lattice, torus }) {
 
 function readClassPolynomial(classes, scan, start) {
   if (!classes.has(start)) {
-    classes.set(start, buildPeriodicPolynomialTable(scan, start, false)[start] ?? []);
+    classes.set(start, buildCylinderTorusPolynomialTable(scan, start, false)[start] ?? []);
   }
 
   return classes.get(start);
@@ -222,10 +222,10 @@ function smallestRotation(set, colCount) {
  * @property {string} [options.lattice] One of square, triangular, king.
  * @returns {boolean} True if the board can be unranked.
  */
-function canUnrankPeriodic({ rowCount, colCount, lattice = 'king' }) {
-  const extraBit = PERIODIC_LATTICES[lattice].downLeft && colCount >= 3 ? 1 : 0;
+function canUnrankCylinderTorus({ rowCount, colCount, lattice = 'king' }) {
+  const extraBit = CYLINDER_TORUS_LATTICES[lattice].downLeft && colCount >= 3 ? 1 : 0;
 
-  return (rowCount * colCount + 1) * 2 ** (colCount + 2 + extraBit) <= MAX_PERIODIC_TABLE_SIZE;
+  return (rowCount * colCount + 1) * 2 ** (colCount + 2 + extraBit) <= MAX_CYLINDER_TORUS_TABLE_SIZE;
 }
 
 /**
@@ -244,18 +244,18 @@ function canUnrankPeriodic({ rowCount, colCount, lattice = 'king' }) {
  * @param {function(number): void} [onProgress] Called with the completed fraction after every rotation class.
  * @returns {{ rowCount: number, colCount: number, totals: BigInt[], total: BigInt }} The unranker.
  */
-function createPeriodicUnranker({ rowCount, colCount, lattice = 'king', torus = false, diagonals = null }, onProgress) {
-  if (!Object.hasOwn(PERIODIC_LATTICES, lattice) || colCount < 2 || rowCount < (torus ? 2 : 1)) {
+function createCylinderTorusUnranker({ rowCount, colCount, lattice = 'king', torus = false, diagonals = null }, onProgress) {
+  if (!Object.hasOwn(CYLINDER_TORUS_LATTICES, lattice) || colCount < 2 || rowCount < (torus ? 2 : 1)) {
     throw new RangeError('The circumference must be at least 2 and a torus needs at least 2 rows.');
   }
 
-  const scan = createPeriodicScan(rowCount, colCount, lattice, torus);
+  const scan = createCylinderTorusScan(rowCount, colCount, lattice, torus);
   const startCount = torus ? 2 ** colCount : 1;
   const classTotals = new Map();
   const totals = [];
   const polynomials = diagonals === null ? null : readClassPolynomials({ rowCount, colCount, lattice, torus });
   const countClass = start =>
-    polynomials === null ? buildPeriodicTable(scan, start, false)[start] : readClassPolynomial(polynomials, scan, start)[diagonals] ?? BigInt(0);
+    polynomials === null ? buildCylinderTorusTable(scan, start, false)[start] : readClassPolynomial(polynomials, scan, start)[diagonals] ?? BigInt(0);
 
   for (let start = 0; start < startCount; start++) {
     const smallest = smallestRotation(start, colCount);
@@ -284,12 +284,12 @@ function createPeriodicUnranker({ rowCount, colCount, lattice = 'king', torus = 
 
 /**
  * Counts the domicule tilings of a cylinder or a torus by the number of diagonal pieces, with the
- * scan of createPeriodicUnranker; the coefficients add up to the number of tilings.
- * @param {Object} options The board, as for createPeriodicUnranker.
+ * scan of createCylinderTorusUnranker; the coefficients add up to the number of tilings.
+ * @param {Object} options The board, as for createCylinderTorusUnranker.
  * @returns {BigInt[]} The coefficients, from 0 diagonal pieces up.
  */
-function countPeriodicDiagonals({ rowCount, colCount, lattice = 'king', torus = false }) {
-  const scan = createPeriodicScan(rowCount, colCount, lattice, torus);
+function countCylinderTorusDiagonals({ rowCount, colCount, lattice = 'king', torus = false }) {
+  const scan = createCylinderTorusScan(rowCount, colCount, lattice, torus);
   const polynomials = readClassPolynomials({ rowCount, colCount, lattice, torus });
   const startCount = torus ? 2 ** colCount : 1;
   const counts = [];
@@ -301,13 +301,13 @@ function countPeriodicDiagonals({ rowCount, colCount, lattice = 'king', torus = 
   return Array.from(counts, count => count ?? BigInt(0));
 }
 
-function readPeriodicTable({ scan, tables, diagonals }, start) {
+function readCylinderTorusTable({ scan, tables, diagonals }, start) {
   if (!tables.has(start)) {
-    if (tables.size >= PERIODIC_CACHED_TABLES) {
+    if (tables.size >= CYLINDER_TORUS_CACHED_TABLES) {
       tables.delete(tables.keys().next().value);
     }
 
-    tables.set(start, diagonals === null ? buildPeriodicTable(scan, start, true) : buildPeriodicPolynomialTable(scan, start, true));
+    tables.set(start, diagonals === null ? buildCylinderTorusTable(scan, start, true) : buildCylinderTorusPolynomialTable(scan, start, true));
   }
 
   return tables.get(start);
@@ -316,11 +316,11 @@ function readPeriodicTable({ scan, tables, diagonals }, start) {
 /**
  * Returns the tiling of a cylinder or a torus with the given 0-based rank. A piece covers the
  * cell (row, col) and the cell (row + dr, col + dc) taken modulo the board.
- * @param {Object} unranker The result of createPeriodicUnranker.
+ * @param {Object} unranker The result of createCylinderTorusUnranker.
  * @param {BigInt} rank The 0-based rank, lower than unranker.total.
  * @returns {{ row: number, col: number, dr: number, dc: number }[]} The tiling.
  */
-function unrankPeriodicTiling(unranker, rank) {
+function unrankCylinderTorusTiling(unranker, rank) {
   const { scan, totals, total } = unranker;
 
   if (rank < BigInt(0) || rank >= total) {
@@ -335,7 +335,7 @@ function unrankPeriodicTiling(unranker, rank) {
     start++;
   }
 
-  const table = readPeriodicTable(unranker, start);
+  const table = readCylinderTorusTable(unranker, start);
   const filtered = unranker.diagonals !== null;
   const pieces = [];
   let left = unranker.diagonals;
@@ -376,5 +376,5 @@ function unrankPeriodicTiling(unranker, rank) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { canUnrankPeriodic, createPeriodicUnranker, unrankPeriodicTiling, countPeriodicDiagonals, PERIODIC_LATTICES };
+  module.exports = { canUnrankCylinderTorus, createCylinderTorusUnranker, unrankCylinderTorusTiling, countCylinderTorusDiagonals, CYLINDER_TORUS_LATTICES };
 }

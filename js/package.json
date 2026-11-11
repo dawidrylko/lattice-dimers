@@ -68,7 +68,7 @@
     "benchmark:compare": "cd .. && node benchmarks/full.js compare",
     "benchmark:noise": "cd .. && node benchmarks/container.js --noise",
     "test": "cd .. && node --test js/test/",
-    "render": "cd .. && node js/dominoTilingRenderer.js",
+    "render": "cd .. && node js/tilingRenderer.js",
     "test:render": "cd .. && node --test js/test/render.test.js",
     "test:benchmarks": "cd .. && node --test benchmarks/test/",
     "test:spec": "cd .. && node --test harness/spec.test.js",

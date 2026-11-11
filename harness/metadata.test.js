@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { test } = require('node:test');
@@ -251,6 +252,55 @@ function checkReadmeSolvers() {
   return errors;
 }
 
+function listTrackedFiles() {
+  const { stdout, stderr, status, error } = spawnSync('git', ['ls-files'], { cwd: ROOT_DIRECTORY, encoding: 'utf-8' });
+
+  if (error || status !== 0) {
+    throw error || new Error(`git ls-files failed: ${stderr.trim()}`);
+  }
+
+  return stdout.split('\n').filter(Boolean);
+}
+
+function readLicensePaths() {
+  const [, section = ''] = read('README.md').split(/^## License$/m);
+  const text = section.split(/^## /m)[0];
+  const markers = { 'CC BY 4.0': 'CC BY 4.0 covers', 'CC BY-SA 4.0': 'The entry texts', MIT: 'Everything else is MIT' };
+  const starts = Object.values(markers).map(marker => text.indexOf(marker));
+  const pathsOf = start => (text.slice(start, Math.min(...starts.filter(other => other > start), text.length)).match(/`[^`\s]*\/[^`\s]*`/g) ?? []).map(token => token.slice(1, -1));
+
+  if (starts.includes(-1)) {
+    throw new Error(`The License section of README.md must contain ${Object.values(markers).map(marker => JSON.stringify(marker)).join(', ')}.`);
+  }
+
+  return Object.fromEntries(Object.keys(markers).map((license, index) => [license, pathsOf(starts[index])]));
+}
+
+function matchesPath(file, pattern) {
+  const source = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replaceAll('*', '[^/]*');
+
+  return new RegExp(`^${source}${pattern.endsWith('/') ? '' : '$'}`).test(file);
+}
+
+function checkLicenses() {
+  const files = listTrackedFiles();
+  const paths = readLicensePaths();
+  const listed = (license, file) => paths[license].some(pattern => matchesPath(file, pattern));
+  const licenseOf = file => (listed('MIT', file) && /\.(sh|py|js|c|gp)$/.test(file) ? 'MIT' : ['CC BY-SA 4.0', 'CC BY 4.0'].find(license => listed(license, file)) ?? 'MIT');
+  const isCode = file => /\.(sh|py|js|c|gp)$/.test(file);
+  const isData = file => /^research\/.*\/(data|out|logs)\//.test(file) || /^research\/.*\/(out|time|log)_[^/]*\.txt$/.test(file);
+  const isOeisText = file => /^oeis\/A\d{6}\/A\d{6}\.txt$/.test(file);
+
+  return [
+    ...Object.entries(paths).flatMap(([license, patterns]) =>
+      patterns.filter(pattern => !files.some(file => matchesPath(file, pattern))).map(pattern => `The ${license} path ${pattern} in the License section of README.md matches no tracked file.`)
+    ),
+    ...files.filter(isData).filter(file => licenseOf(file) !== 'CC BY 4.0').map(file => `${file} is data, but the License section of README.md gives it ${licenseOf(file)}.`),
+    ...files.filter(isCode).filter(file => licenseOf(file) !== 'MIT').map(file => `${file} is a program, but the License section of README.md gives it ${licenseOf(file)}.`),
+    ...files.filter(isOeisText).filter(file => licenseOf(file) !== 'CC BY-SA 4.0').map(file => `${file} is OEIS content, but the License section of README.md gives it ${licenseOf(file)}.`),
+  ];
+}
+
 function runCheck(name, check) {
   test(name, () => {
     assert.deepEqual(check(), []);
@@ -265,3 +315,4 @@ runCheck('that js/package.json is private', checkPrivate);
 runCheck('the OEIS keywords against oeis/', checkKeywords);
 runCheck('the notes against the site menu', checkSiteMenu);
 runCheck('the links of oeis/ to the notes and the redirects', checkOeisLinks);
+runCheck('the License section of README.md against the tracked files', checkLicenses);
