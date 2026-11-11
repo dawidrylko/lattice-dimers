@@ -9,7 +9,7 @@ from lattice_dimers.core import calculate_log2_bound, combine_checked_residues, 
 MAX_SHORTER_SIDE = 30
 SCRATCH_COUNTS = 1 << 19
 USAGE = (
-    "Usage: python3 -m lattice_dimers.solvers.all_lattices_rectangle_modular -r <rowCount> -c <colCount> [-j <jobs>] "
+    "Usage: python3 -m lattice_dimers.solvers.any_lattice_rectangle_modular -r <rowCount> -c <colCount> [-j <jobs>] "
     "[--lattice king|triangular|square]"
 )
 
@@ -23,7 +23,7 @@ LATTICES = {
 
 def list_offsets(cols, c, has_below, lattice):
     """Lists the bits, by their index, a free cell in column c can cover with its partner, like listOffsets of
-    js/solvers/all-lattices-rectangle-bigint.js: right and down, down-left on the king's graph, down-right on the
+    js/solvers/any-lattice-rectangle-bigint.js: right and down, down-left on the king's graph, down-right on the
     triangular lattice and the king's graph."""
     down_left, down_right = LATTICES[lattice]
     has_right = c + 1 < cols
@@ -55,7 +55,7 @@ def read_lattice(argv):
 
 def count_modulo(task):
     """Counts the tilings modulo a prime with the broken-profile dynamic programming of countModulo in
-    js/solvers/all-lattices-rectangle-modular.js, with tables of 32-bit counts reduced modulo the prime as there.
+    js/solvers/any-lattice-rectangle-modular.js, with tables of 32-bit counts reduced modulo the prime as there.
 
     Bit i of a state tells whether the cell i places ahead of the current one is already covered. A state has
     cols + 2 bits, but the top one is clear before every cell step, since a step shifts the state right after
@@ -108,7 +108,7 @@ def count_modulo(task):
 
 
 def calculate_total_tiling_combinations(row_count, col_count, lattice="king", jobs=None):
-    """Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/all-lattices-rectangle-modular.js:
+    """Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/any-lattice-rectangle-modular.js:
     enough primes for the Kahn-Lovasz bound of the king's graph, which also bounds the triangular and the square
     lattice, plus one more prime that the result is checked against."""
     if not is_valid_size(row_count) or not is_valid_size(col_count) or lattice not in LATTICES:

@@ -1,7 +1,7 @@
 {
   "rejections": [
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "4",
@@ -11,7 +11,7 @@
       "message": "at most 20"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "21",
@@ -23,7 +23,7 @@
       "message": "at most 20"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "4",
@@ -33,7 +33,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "1",
@@ -44,7 +44,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "4",
@@ -56,7 +56,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "1",
@@ -67,7 +67,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "2abc",
@@ -77,7 +77,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "9007199254740992",
@@ -87,7 +87,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-c",
         "4"
@@ -95,7 +95,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "4",
@@ -107,7 +107,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "4",
@@ -118,7 +118,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "4",
@@ -128,7 +128,7 @@
       "message": "at most 24"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "25",
@@ -139,7 +139,7 @@
       "message": "at most 24"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "4",
@@ -151,7 +151,7 @@
       "message": "at most 24"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "4",
@@ -161,7 +161,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "1",
@@ -172,7 +172,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "2abc",
@@ -182,7 +182,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "+4",
@@ -192,7 +192,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "9007199254740992",
@@ -202,7 +202,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
@@ -212,7 +212,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-c",
         "4"
@@ -220,7 +220,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "4",
@@ -232,7 +232,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "4",
@@ -243,7 +243,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "4",
@@ -255,7 +255,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "4",
@@ -267,7 +267,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
         "30",
@@ -279,7 +279,7 @@
       "message": "at most 29"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
         "40",
@@ -291,7 +291,7 @@
       "message": "because a JavaScript array holds fewer than 2^32 states"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
         "2abc",
@@ -303,7 +303,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
         "-2",
@@ -315,7 +315,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
         "9007199254740992",
@@ -327,7 +327,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-c",
         "2",
@@ -337,7 +337,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
         "31",
@@ -349,7 +349,7 @@
       "message": "at most 30"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
         "40",
@@ -361,7 +361,7 @@
       "message": "because the states are indexed with 32-bit integers"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
         "2abc",
@@ -373,7 +373,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
         "-2",
@@ -385,7 +385,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
         "9007199254740992",
@@ -397,7 +397,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-c",
         "2",
@@ -407,7 +407,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
         "2",
@@ -421,7 +421,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
         "2",
@@ -435,7 +435,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
         "4",
@@ -447,7 +447,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
         "4",
@@ -458,7 +458,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
         "4",
@@ -470,7 +470,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
         "4",
@@ -529,7 +529,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "domino-rectangle-number",
+      "algorithm": "domino-rectangle-float",
       "args": [
         "-r",
         "31",
@@ -539,7 +539,7 @@
       "message": "at most 30"
     },
     {
-      "algorithm": "domino-rectangle-number",
+      "algorithm": "domino-rectangle-float",
       "args": [
         "-r",
         "40",
@@ -549,7 +549,7 @@
       "message": "the rows are indexed with 32-bit integers"
     },
     {
-      "algorithm": "domino-rectangle-number",
+      "algorithm": "domino-rectangle-float",
       "args": [
         "-r",
         "2abc",
@@ -559,7 +559,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "domino-rectangle-number",
+      "algorithm": "domino-rectangle-float",
       "args": [
         "-r",
         "-2",
@@ -569,7 +569,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "domino-rectangle-number",
+      "algorithm": "domino-rectangle-float",
       "args": [
         "-r",
         "9007199254740992",
@@ -579,7 +579,7 @@
       "message": "Usage"
     },
     {
-      "algorithm": "domino-rectangle-number",
+      "algorithm": "domino-rectangle-float",
       "args": [
         "-c",
         "2"
@@ -1409,109 +1409,109 @@
       "expectedResult": "627013566048,0,11126459816320,0,90028202462720,0,439519304120320,0,1443601349140480,0,3367029545074688,0,5736158801035264,0,7229473511964672,0,6750073566265344,0,4627956991262720,0,2283742726979584,0,783500416385024,0,176555904991232,0,23736136761344,0,1589137899520,0,34359738368,0"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "rowCount": 0,
       "colCount": 5,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "rowCount": 5,
       "colCount": 0,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "rowCount": 1,
       "colCount": 1,
       "expectedResult": "0"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "rowCount": 1,
       "colCount": 2,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "rowCount": 2,
       "colCount": 1,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "rowCount": 10,
       "colCount": 1,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "rowCount": 1,
       "colCount": 40,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "rowCount": 3,
       "colCount": 3,
       "expectedResult": "0"
     },
     {
-      "algorithm": "all-lattices-rectangle-modular",
+      "algorithm": "any-lattice-rectangle-modular",
       "rowCount": 2,
       "colCount": 31,
       "expectedResult": "1431655765"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "rowCount": 0,
       "colCount": 5,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "rowCount": 5,
       "colCount": 0,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "rowCount": 1,
       "colCount": 1,
       "expectedResult": "0"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "rowCount": 1,
       "colCount": 2,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "rowCount": 2,
       "colCount": 1,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "rowCount": 10,
       "colCount": 1,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "rowCount": 1,
       "colCount": 40,
       "expectedResult": "1"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "rowCount": 3,
       "colCount": 3,
       "expectedResult": "0"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "rowCount": 2,
       "colCount": 31,
       "expectedResult": "1431655765"
@@ -1569,7 +1569,7 @@
   ],
   "memory": [
     {
-      "algorithm": "all-lattices-cylinder-torus-modular",
+      "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
         "2",
@@ -1582,7 +1582,7 @@
     }
   ],
   "timeSpan": {
-    "algorithm": "all-lattices-cylinder-torus-modular",
+    "algorithm": "any-lattice-cylinder-torus-modular",
     "args": [
       "-r",
       "10",
@@ -1626,7 +1626,7 @@
       "sha256": "6488b667ff760a16bfc85a7c521694eb9426dc95693031e846465b1d4be17d1d"
     },
     {
-      "algorithm": "all-lattices-cylinder-torus-bigint",
+      "algorithm": "any-lattice-cylinder-torus-bigint",
       "args": [
         "-r",
         "1200",
@@ -1637,7 +1637,7 @@
       "sha256": "c5383b3d8e3b655a376b1163dee796fc63bcdcb27bff6e167da2f72c61e560e5"
     },
     {
-      "algorithm": "all-lattices-rectangle-bigint",
+      "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
         "2",

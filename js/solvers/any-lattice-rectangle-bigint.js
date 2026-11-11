@@ -87,7 +87,7 @@ function __main__() {
 
   if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !Object.hasOwn(LATTICES, lattice)) {
     console.error(
-      'Usage: node js/solvers/all-lattices-rectangle-bigint.js -r <rowCount> -c <colCount> [--lattice king|triangular|square]',
+      'Usage: node js/solvers/any-lattice-rectangle-bigint.js -r <rowCount> -c <colCount> [--lattice king|triangular|square]',
     );
     process.exit(1);
   }

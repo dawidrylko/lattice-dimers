@@ -15,7 +15,7 @@ function verifierOf({ expectedResult }, algorithm) {
     return (expected, actual) => expected === actual;
   }
 
-  return algorithm === 'domino-rectangle-number' && typeof expectedResult === 'number' ? verifyInt : verifyBigInt;
+  return algorithm === 'domino-rectangle-float' && typeof expectedResult === 'number' ? verifyInt : verifyBigInt;
 }
 
 test('every algorithm in JavaScript runs at least one known count', () => {
@@ -65,10 +65,10 @@ describe('parity', () => {
 });
 
 describe('precision', () => {
-  const solver = solverPathOf('domino-rectangle-number');
+  const solver = solverPathOf('domino-rectangle-float');
 
   for (const { rowCount, colCount, expected, warns } of cli.precision) {
-    test(`domino-rectangle-number on ${rowCount} x ${colCount}`, () => {
+    test(`domino-rectangle-float on ${rowCount} x ${colCount}`, () => {
       const { status, stdout, stderr } = runNode([solver, ...argsOf({ rowCount, colCount })], { timeout: REJECTION_TIMEOUT });
 
       assert.equal(status, 0, `Exit code ${status}: ${stderr.trim()}`);
@@ -119,6 +119,6 @@ describe('time', () => {
   }
 });
 
-test('a count written without quotes outside domino-rectangle-number compares as an exact integer', () => {
-  assert.equal(verifierOf({ expectedResult: 1e30 }, 'all-lattices-cylinder-torus-modular'), verifyBigInt);
+test('a count written without quotes outside domino-rectangle-float compares as an exact integer', () => {
+  assert.equal(verifierOf({ expectedResult: 1e30 }, 'any-lattice-cylinder-torus-modular'), verifyBigInt);
 });

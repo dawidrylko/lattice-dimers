@@ -51,7 +51,7 @@ def count_modulo(board):
     reduced modulo the prime as there.
 
     A state is the window of cols + 2 bits and, with cols >= 3, the extra bit above it, and holds a block of
-    coefficients: entry k is the coefficient of x^k. As in all_lattices_cylinder_torus_modular, shifting a state by one
+    coefficients: entry k is the coefficient of x^k. As in any_lattice_cylinder_torus_modular, shifting a state by one
     bit maps a contiguous range of states onto another, so a cell step needs no index arrays: the table is reshaped
     into views where one axis is the bit a move covers, and every move adds one view of the current table onto one view
     of the next, a diagonal move one entry higher. The column where the extra bit joins the window only swaps which axis

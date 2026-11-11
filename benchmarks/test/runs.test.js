@@ -33,6 +33,18 @@ test('a run made before the rename of the diagonal solvers is read under their n
   assert.equal(resultFileOf(directory, 'domicule-rectangle-polynomial-modular.rs_4x4.txt'), path.join(directory, 'domicule-rectangle-polynomial-modular.rs_4x4.txt'));
 });
 
+test('a run made before the rename of 2026-11-11 is read under the any-lattice and float ids', t => {
+  const directory = makeTemporaryDirectory(t, 'renamed-lattice-benchmark-');
+
+  ['all-lattices-cylinder-torus-modular.js_4x4-king-torus.txt', 'all_lattices_cylinder_torus_bigint.py_4x4-square-cylinder.txt', 'domino_rectangle_number.py_4x4.txt'].forEach(file =>
+    fs.writeFileSync(path.join(directory, file), ''),
+  );
+
+  assert.deepEqual(listJavaScriptResults(directory, 'any-lattice-cylinder-torus-'), ['any-lattice-cylinder-torus-modular.js_4x4-king-torus.txt']);
+  assert.equal(resultFileOf(directory, 'any_lattice_cylinder_torus_bigint.py_4x4-square-cylinder.txt'), path.join(directory, 'all_lattices_cylinder_torus_bigint.py_4x4-square-cylinder.txt'));
+  assert.equal(resultFileOf(directory, 'domino_rectangle_float.py_4x4.txt'), path.join(directory, 'domino_rectangle_number.py_4x4.txt'));
+});
+
 test('a table of solvers newer than the complete run reads the newest clean run that measured them', t => {
   const root = makeTemporaryDirectory(t, 'series-benchmark-');
   const run = (name, environment, files) => {

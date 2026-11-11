@@ -24,7 +24,7 @@ const {
   combineRanks,
 } = require('../renderer');
 const { CYLINDER_TORUS_LATTICES, countCylinderTorusDiagonals } = require('../renderer/cylinderTorus');
-const cylinderTorusReference = require('../solvers/all-lattices-cylinder-torus-bigint.js');
+const cylinderTorusReference = require('../solvers/any-lattice-cylinder-torus-bigint.js');
 const crypto = require('crypto');
 const { createRandom } = require('../renderer/cftp');
 const fs = require('fs');
@@ -1132,7 +1132,7 @@ const unrankTestCases = testCasesOf('domino-rectangle-formula').filter(
   ({ rowCount, colCount }) => rowCount * colCount > MAX_CELLS && canUnrank({ rowCount, colCount }),
 );
 const domiculeTestCases = testCasesOf('domicule-rectangle-bigint').filter(canUnrankDomicule);
-const triangularTestCases = testCasesOf('all-lattices-rectangle-bigint').filter(({ lattice, ...board }) => lattice === 'triangular' && canUnrankDomicule(board));
+const triangularTestCases = testCasesOf('any-lattice-rectangle-bigint').filter(({ lattice, ...board }) => lattice === 'triangular' && canUnrankDomicule(board));
 const named = ({ name }) => name;
 
 suite('renderer', testCases, runTest);

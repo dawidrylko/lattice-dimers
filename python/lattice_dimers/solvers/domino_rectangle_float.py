@@ -7,7 +7,7 @@ from lattice_dimers.core import parse_args, start_timer
 MAX_SHORTER_SIDE = 30
 MAX_EXACT_COUNT = 2**53 - 1
 FIRST_EXPONENT_COUNT = 1e21
-USAGE = "Usage: python3 -m lattice_dimers.solvers.domino_rectangle_number -r <rowCount> -c <colCount>"
+USAGE = "Usage: python3 -m lattice_dimers.solvers.domino_rectangle_float -r <rowCount> -c <colCount>"
 SHORTER_SIDE_TOO_LONG = (
     f"The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because the rows are indexed with 32-bit integers."
 )
@@ -18,7 +18,7 @@ NOT_EXACT = (
 
 def search_tile_arrangements(current_row, next_row, col_count, current_mask, col_index, next_mask):
     """Fills the free cells of one row from col_index on, like searchTileArrangements of
-    js/solvers/domino-rectangle-number.js. The counts are doubles added in the order of the JavaScript solver, so a
+    js/solvers/domino-rectangle-float.js. The counts are doubles added in the order of the JavaScript solver, so a
     count above 2^53 rounds to the same value."""
     if col_index >= col_count:
         next_row[next_mask] += current_row[current_mask]

@@ -6,7 +6,7 @@ const { parseArgs } = require('../js/core');
 const exec = require('./executor');
 const { RESULTS_DIRECTORY, describeEnvironment, runDirectoryName } = require('./environment');
 const { listImplementations, algorithmOf, javaScriptFileOf } = require('../js/core/registry');
-const { LATTICES } = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
+const { LATTICES } = require('../js/solvers/any-lattice-cylinder-torus-bigint.js');
 const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 
 const ENVIRONMENT = describeEnvironment();
@@ -14,16 +14,16 @@ const BENCHMARK_DIRECTORY = path.join(RESULTS_DIRECTORY, runDirectoryName(ENVIRO
 const MACHINE_KEYS = ['architecture', 'cpu', 'host', 'timing'];
 const SOLVER_TIME = /^time ([\d.]+) ms$/m;
 const LANGUAGE_KEYS = { '.rs': 'rust', '.py': 'python' };
-const NUMBER_GROUP = { files: [javaScriptFileOf('domino-rectangle-number')], testCases: testCasesOf('domino-rectangle-number').filter(isEvenSquare) };
+const NUMBER_GROUP = { files: [javaScriptFileOf('domino-rectangle-float')], testCases: testCasesOf('domino-rectangle-float').filter(isEvenSquare) };
 const DOMINO_GROUP = {
   files: ['domino-rectangle-bigint', 'domino-rectangle-formula'].map(javaScriptFileOf),
   testCases: testCasesOf('domino-rectangle-formula'),
 };
 const DOMICULE_FILES = ['domicule-rectangle-bigint', 'domicule-rectangle-modular'].map(javaScriptFileOf);
-const CYLINDER_TORUS_FILES = ['all-lattices-cylinder-torus-bigint', 'all-lattices-cylinder-torus-modular'].map(javaScriptFileOf);
+const CYLINDER_TORUS_FILES = ['any-lattice-cylinder-torus-bigint', 'any-lattice-cylinder-torus-modular'].map(javaScriptFileOf);
 const DIAGONAL_FILES = ['domicule-rectangle-polynomial-bigint', 'domicule-rectangle-polynomial-modular'].map(javaScriptFileOf);
 const CYLINDER_TORUS_DIAGONAL_FILES = ['domicule-cylinder-torus-polynomial-bigint', 'domicule-cylinder-torus-polynomial-modular'].map(javaScriptFileOf);
-const CYLINDER_TORUS_CASES = testCasesOf('all-lattices-cylinder-torus-modular');
+const CYLINDER_TORUS_CASES = testCasesOf('any-lattice-cylinder-torus-modular');
 const DIAGONAL_CASES = testCasesOf('domicule-rectangle-polynomial-modular');
 const CYLINDER_TORUS_DIAGONAL_CASES = testCasesOf('domicule-cylinder-torus-polynomial-modular');
 const DOMICULE_BOARDS = [...testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare), { rowCount: 20, colCount: 20 }];

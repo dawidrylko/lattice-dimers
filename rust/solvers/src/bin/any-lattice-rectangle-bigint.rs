@@ -3,10 +3,10 @@ use std::process::ExitCode;
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
 const MAX_SHORTER_SIDE: u64 = 29;
-const USAGE: &str = "Usage: all-lattices-rectangle-bigint -r <rowCount> -c <colCount> [--lattice king|triangular|square]";
+const USAGE: &str = "Usage: any-lattice-rectangle-bigint -r <rowCount> -c <colCount> [--lattice king|triangular|square]";
 
 /// Lists the bits a free cell in column c can cover with its partner, like listOffsets of
-/// js/solvers/all-lattices-rectangle-bigint.js: right and down, down-left on the king's graph, down-right on the
+/// js/solvers/any-lattice-rectangle-bigint.js: right and down, down-left on the king's graph, down-right on the
 /// triangular lattice and the king's graph.
 fn list_offsets(cols: usize, c: usize, has_below: bool, (down_left, down_right): (bool, bool)) -> Vec<usize> {
     let has_right = c + 1 < cols;
@@ -32,7 +32,7 @@ fn list_offsets(cols: usize, c: usize, has_below: bool, (down_left, down_right):
 }
 
 /// Says which diagonals a lattice has, down-left and down-right, like LATTICES in
-/// js/solvers/all-lattices-rectangle-bigint.js.
+/// js/solvers/any-lattice-rectangle-bigint.js.
 fn diagonals_of(lattice: &str) -> Option<(bool, bool)> {
     match lattice {
         "square" => Some((false, false)),
@@ -51,7 +51,7 @@ fn read_lattice(argv: &[String]) -> Option<(bool, bool)> {
 }
 
 /// Counts the tilings of a rectangle on a lattice with the broken-profile method of
-/// js/solvers/all-lattices-rectangle-bigint.js. Bit i of a state tells whether the cell i places ahead of the
+/// js/solvers/any-lattice-rectangle-bigint.js. Bit i of a state tells whether the cell i places ahead of the
 /// current one is already covered, and a state has cols + 2 bits.
 fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, lattice: (bool, bool)) -> BigInt {
     let rows = row_count.max(col_count);

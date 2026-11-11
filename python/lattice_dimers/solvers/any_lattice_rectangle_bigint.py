@@ -4,7 +4,7 @@ from lattice_dimers.core import parse_args, start_timer
 
 MAX_SHORTER_SIDE = 29
 USAGE = (
-    "Usage: python3 -m lattice_dimers.solvers.all_lattices_rectangle_bigint -r <rowCount> -c <colCount> "
+    "Usage: python3 -m lattice_dimers.solvers.any_lattice_rectangle_bigint -r <rowCount> -c <colCount> "
     "[--lattice king|triangular|square]"
 )
 SHORTER_SIDE_TOO_LONG = (
@@ -21,7 +21,7 @@ LATTICES = {
 
 def list_offsets(cols, c, has_below, lattice):
     """Lists the bits a free cell in column c can cover with its partner, like listOffsets of
-    js/solvers/all-lattices-rectangle-bigint.js: right and down, down-left on the king's graph, down-right on the
+    js/solvers/any-lattice-rectangle-bigint.js: right and down, down-left on the king's graph, down-right on the
     triangular lattice and the king's graph."""
     down_left, down_right = LATTICES[lattice]
     has_right = c + 1 < cols
@@ -53,7 +53,7 @@ def read_lattice(argv):
 
 def calculate_total_tiling_combinations(row_count, col_count, lattice="king"):
     """Counts the tilings of a rectangle on a lattice with the broken-profile method of
-    js/solvers/all-lattices-rectangle-bigint.js. Bit i
+    js/solvers/any-lattice-rectangle-bigint.js. Bit i
     of a state tells whether the cell i places ahead of the current one is already covered, and a state has
     cols + 2 bits."""
     rows = max(row_count, col_count)

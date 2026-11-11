@@ -15,11 +15,11 @@ figure(svgs, `4 of the ${total} tilings of the triangular lattice on the cylinde
 
 ## The Modular solver
 
-[`all-lattices-cylinder-torus-modular.js`](../../js/solvers/all-lattices-cylinder-torus-modular.js) goes cell by cell, from the empty state to the empty state, with a state of the next $w + 2$ cells. It counts modulo primes below $2^{31}$, the Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`all-lattices-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs), and in Python, [`all_lattices_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py).
+[`any-lattice-cylinder-torus-modular.js`](../../js/solvers/any-lattice-cylinder-torus-modular.js) goes cell by cell, from the empty state to the empty state, with a state of the next $w + 2$ cells. It counts modulo primes below $2^{31}$, the Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`any-lattice-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-modular.rs), and in Python, [`any_lattice_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_modular.py).
 
 ## The BigInt solver
 
-[`all-lattices-cylinder-torus-bigint.js`](../../js/solvers/all-lattices-cylinder-torus-bigint.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. The same algorithm is in Rust, [`all-lattices-cylinder-torus-bigint.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs), and in Python, [`all_lattices_cylinder_torus_bigint.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py).
+[`any-lattice-cylinder-torus-bigint.js`](../../js/solvers/any-lattice-cylinder-torus-bigint.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row, and the cylinder count is the entry of the $h$-th power of this row transfer matrix from the empty row to the empty row. The same algorithm is in Rust, [`any-lattice-cylinder-torus-bigint.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-bigint.rs), and in Python, [`any_lattice_cylinder_torus_bigint.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_bigint.py).
 
 ## The counts
 
@@ -28,8 +28,8 @@ Two solvers count the same boards by different methods, and the cell below compa
 Circumference 2 has multiple edges, because on a ring of two cells a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate piece, so one row of two cells has 2 tilings. A row of odd circumference has an odd number of cells, so the counts vanish at odd heights.
 
 ```js run
-const { calculateTotalTilingCombinations } = require('./js/solvers/all-lattices-cylinder-torus-bigint.js');
-const modular = require('./js/solvers/all-lattices-cylinder-torus-modular.js');
+const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
+const modular = require('./js/solvers/any-lattice-cylinder-torus-modular.js');
 
 nb.heights = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 nb.widths = [2, 3, 4, 5, 6, 7, 8];
@@ -71,7 +71,7 @@ table(['board', 'OEIS', 'checked at'], [['w = 2', 'A002605', `h = ${nb.heights.j
 
 ## Verification
 
-The `BigInt` solver agrees with A002605 and the modular solver with the `BigInt` one at $h = 8$, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular cylinders of [`spec/cases/all-lattices-cylinder-torus-bigint.json`](../../spec/cases/all-lattices-cylinder-torus-bigint.json) through both of them.
+The `BigInt` solver agrees with A002605 and the modular solver with the `BigInt` one at $h = 8$, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both of them.
 
 ## References
 

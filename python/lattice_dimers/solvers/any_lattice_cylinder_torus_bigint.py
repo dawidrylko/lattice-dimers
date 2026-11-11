@@ -9,7 +9,7 @@ LATTICES = {
     "king": (-1, 0, 1),
 }
 USAGE = (
-    "Usage: python3 -m lattice_dimers.solvers.all_lattices_cylinder_torus_bigint -r <rowCount> -c <circumference> "
+    "Usage: python3 -m lattice_dimers.solvers.any_lattice_cylinder_torus_bigint -r <rowCount> -c <circumference> "
     "[--torus] [--twisted] [--lattice king|triangular|square]\n"
     "The circumference is at least 2, and a torus has at least 2 rows."
 )
@@ -17,7 +17,7 @@ USAGE = (
 
 def list_row_transitions(cols, lattice):
     """Lists the (next, crossings) pairs of every row state, like listRowTransitions of
-    js/solvers/all-lattices-cylinder-torus-bigint.js: a covered cell is skipped, two free cells take a horizontal piece, the
+    js/solvers/any-lattice-cylinder-torus-bigint.js: a covered cell is skipped, two free cells take a horizontal piece, the
     first and the last column take one across the seam, and a free cell sends a piece to the next row for every shift."""
     shifts = LATTICES[lattice]
     all_transitions = []
@@ -109,7 +109,7 @@ def main(argv):
 
     if col_count > MAX_CIRCUMFERENCE:
         print(
-            f"The circumference can be at most {MAX_CIRCUMFERENCE}; use all_lattices_cylinder_torus_modular for larger boards.",
+            f"The circumference can be at most {MAX_CIRCUMFERENCE}; use any_lattice_cylinder_torus_modular for larger boards.",
             file=sys.stderr,
         )
         return 1

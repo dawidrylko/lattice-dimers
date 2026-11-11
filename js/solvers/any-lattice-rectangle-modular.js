@@ -2,13 +2,13 @@ const os = require('os');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 const { parseArgs, startTimer } = require('../core');
 const { listPrimes, calculateLog2Bound, combineResidues } = require('../core/modular');
-const { listOffsets, LATTICES } = require('./all-lattices-rectangle-bigint.js');
+const { listOffsets, LATTICES } = require('./any-lattice-rectangle-bigint.js');
 
 const MAX_SHORTER_SIDE = 30;
 
 /**
  * Counts the tilings modulo a prime with the same broken-profile dynamic programming as
- * all-lattices-rectangle-bigint.js. Bit i of a state tells whether the cell i places ahead
+ * any-lattice-rectangle-bigint.js. Bit i of a state tells whether the cell i places ahead
  * of the current one is already covered; a state has cols + 2 bits. Only additions are
  * needed, so the counts are kept in Uint32Array tables.
  * @param {number} rows The number of rows (the longer side).
@@ -129,7 +129,7 @@ async function __main__() {
 
   if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !(jobs > 0) || !Object.hasOwn(LATTICES, lattice)) {
     console.error(
-      'Usage: node js/solvers/all-lattices-rectangle-modular.js -r <rowCount> -c <colCount> [-j <jobs>] [--lattice king|triangular|square]',
+      'Usage: node js/solvers/any-lattice-rectangle-modular.js -r <rowCount> -c <colCount> [-j <jobs>] [--lattice king|triangular|square]',
     );
     process.exit(1);
   }

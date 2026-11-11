@@ -3,7 +3,7 @@ use std::process::ExitCode;
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
 const MAX_CIRCUMFERENCE: u64 = 20;
-const USAGE: &str = "Usage: all-lattices-cylinder-torus-bigint -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square]\nThe circumference is at least 2, and a torus has at least 2 rows.";
+const USAGE: &str = "Usage: any-lattice-cylinder-torus-bigint -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square]\nThe circumference is at least 2, and a torus has at least 2 rows.";
 
 #[derive(Clone, Copy)]
 struct Transition {
@@ -21,7 +21,7 @@ fn shifts_of(lattice: &str) -> Option<&'static [i64]> {
 }
 
 /// Fills the free cells of one row from column c on, like fill in listRowTransitions of
-/// js/solvers/all-lattices-cylinder-torus-bigint.js: a covered cell is skipped, two free cells take a horizontal piece, the
+/// js/solvers/any-lattice-cylinder-torus-bigint.js: a covered cell is skipped, two free cells take a horizontal piece, the
 /// first and the last column take one across the seam, and a free cell sends a piece to the next row for every shift.
 fn fill(cols: usize, shifts: &[i64], c: usize, filled: u32, next: u32, crossings: u32, transitions: &mut Vec<Transition>) {
     if c == cols {
@@ -125,7 +125,7 @@ fn main() -> ExitCode {
     };
 
     if col_count > MAX_CIRCUMFERENCE {
-        eprintln!("The circumference can be at most {MAX_CIRCUMFERENCE}; use all-lattices-cylinder-torus-modular for larger boards.");
+        eprintln!("The circumference can be at most {MAX_CIRCUMFERENCE}; use any-lattice-cylinder-torus-modular for larger boards.");
         return ExitCode::FAILURE;
     }
 

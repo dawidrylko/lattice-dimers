@@ -1,5 +1,5 @@
 {
-  "algorithm": "all-lattices-rectangle-bigint",
+  "algorithm": "any-lattice-rectangle-modular",
   "testCases": [
     {
       "rowCount": 0,
@@ -54,6 +54,24 @@
       "colCount": 16,
       "lattice": "triangular",
       "expectedResult": "1605069789666171761821497455215339670984192"
+    },
+    {
+      "rowCount": 18,
+      "colCount": 18,
+      "lattice": "triangular",
+      "expectedResult": "1455255321774390092885507228295705260380068623855112704"
+    },
+    {
+      "rowCount": 20,
+      "colCount": 20,
+      "lattice": "triangular",
+      "expectedResult": "40688743896992170203191431324562552341814139043192585054582874060800"
+    },
+    {
+      "rowCount": 22,
+      "colCount": 22,
+      "lattice": "triangular",
+      "expectedResult": "35083207380678584162566597156870677159047202784247299966451478652635521236497807360"
     },
     {
       "rowCount": 4,

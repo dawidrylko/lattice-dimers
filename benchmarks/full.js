@@ -39,14 +39,14 @@ const GROWTH_FLOORS = [
 ];
 const INSTRUCTION_BOARDS = [
   { id: 'domino-rectangle-formula', args: ['-r', '20', '-c', '20'] },
-  { id: 'domino-rectangle-number', args: ['-r', '8', '-c', '8'] },
+  { id: 'domino-rectangle-float', args: ['-r', '8', '-c', '8'] },
   { id: 'domino-rectangle-bigint', args: ['-r', '8', '-c', '8'] },
   { id: 'domicule-rectangle-modular', args: ['-r', '8', '-c', '8', '-j', '1'] },
   { id: 'domicule-rectangle-bigint', args: ['-r', '8', '-c', '8'] },
   { id: 'domicule-rectangle-polynomial-modular', args: ['-r', '6', '-c', '6', '-j', '1'] },
   { id: 'domicule-rectangle-polynomial-bigint', args: ['-r', '6', '-c', '6'] },
-  { id: 'all-lattices-cylinder-torus-modular', args: ['-r', '8', '-c', '8', '--lattice', 'king', '-j', '1'] },
-  { id: 'all-lattices-cylinder-torus-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'king'] },
+  { id: 'any-lattice-cylinder-torus-modular', args: ['-r', '8', '-c', '8', '--lattice', 'king', '-j', '1'] },
+  { id: 'any-lattice-cylinder-torus-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'king'] },
   { id: 'domicule-cylinder-torus-polynomial-modular', args: ['-r', '8', '-c', '8', '-j', '1'] },
   { id: 'domicule-cylinder-torus-polynomial-bigint', args: ['-r', '6', '-c', '6'] },
 ];

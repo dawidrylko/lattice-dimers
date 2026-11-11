@@ -1,5 +1,5 @@
 {
-  "algorithm": "all-lattices-cylinder-torus-modular",
+  "algorithm": "any-lattice-cylinder-torus-modular",
   "testCases": [
     {
       "rowCount": 10,

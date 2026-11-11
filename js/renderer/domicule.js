@@ -14,7 +14,7 @@ const KING_STEPS = [
 /**
  * Lists the cells a free cell can be matched with, as offsets in row-major order:
  * right, down-left, down and down-right, the order of domicule-rectangle-bigint.js. The
- * triangular lattice has no down-left diagonal, as in all-lattices-rectangle-bigint.js.
+ * triangular lattice has no down-left diagonal, as in any-lattice-rectangle-bigint.js.
  * @param {number} index The cell.
  * @param {number} rowCount The number of rows.
  * @param {number} colCount The number of columns.

@@ -6,7 +6,7 @@ const { describe, test } = require('node:test');
 const { parseArgs } = require('../core');
 const { listPrimes, combineCheckedResidues } = require('../core/modular');
 const { testCasesOf } = require('../core/cases');
-const cylinderTorusModular = require('../solvers/all-lattices-cylinder-torus-modular.js');
+const cylinderTorusModular = require('../solvers/any-lattice-cylinder-torus-modular.js');
 const { capThreads } = require('../solvers/domicule-rectangle-polynomial-modular.js');
 const { capThreads: cylinderTorusThreads } = require('../solvers/domicule-cylinder-torus-polynomial-modular.js');
 const { ROOT_DIRECTORY, REJECTION_TIMEOUT, runNode } = require('./support');
@@ -106,8 +106,8 @@ describe('rejections of the library and of a worker that exits', () => {
   const solver = name => path.join(SOLVERS_DIRECTORY, name);
   const exitingWorkerCases = [
     'domicule-rectangle-modular',
-    'all-lattices-cylinder-torus-modular',
-    'all-lattices-rectangle-modular',
+    'any-lattice-cylinder-torus-modular',
+    'any-lattice-rectangle-modular',
     'domicule-rectangle-polynomial-modular',
     'domicule-cylinder-torus-polynomial-modular',
   ].map(algorithm => ({
@@ -117,8 +117,8 @@ describe('rejections of the library and of a worker that exits', () => {
   }));
   const libraryCases = [
     {
-      name: 'all-lattices-cylinder-torus-bigint on a torus of one row',
-      args: ['-e', `require(${JSON.stringify(solver('all-lattices-cylinder-torus-bigint.js'))}).calculateTotalTilingCombinations({ rowCount: 1, colCount: 4, torus: true })`],
+      name: 'any-lattice-cylinder-torus-bigint on a torus of one row',
+      args: ['-e', `require(${JSON.stringify(solver('any-lattice-cylinder-torus-bigint.js'))}).calculateTotalTilingCombinations({ rowCount: 1, colCount: 4, torus: true })`],
       message: 'a torus needs at least 2 rows',
     },
     {
@@ -138,10 +138,10 @@ describe('rejections of the library and of a worker that exits', () => {
       message: 'circumference must be at least 2',
     },
     {
-      name: 'all-lattices-cylinder-torus-modular on a circumference of one',
+      name: 'any-lattice-cylinder-torus-modular on a circumference of one',
       args: [
         '-e',
-        `require(${JSON.stringify(solver('all-lattices-cylinder-torus-modular.js'))}).calculateTotalTilingCombinations({ rowCount: 4, colCount: 1 }).catch(error => { console.error(error.message); process.exit(1); })`,
+        `require(${JSON.stringify(solver('any-lattice-cylinder-torus-modular.js'))}).calculateTotalTilingCombinations({ rowCount: 4, colCount: 1 }).catch(error => { console.error(error.message); process.exit(1); })`,
       ],
       message: 'circumference must be at least 2',
     },
@@ -203,8 +203,8 @@ describe('modules without a worker count', () => {
   const fourByFour = algorithm => testCasesOf(algorithm).find(({ rowCount, colCount }) => rowCount === 4 && colCount === 4);
   const modules = [
     ['domicule-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('domicule-rectangle-modular')],
-    ['all-lattices-cylinder-torus-modular.js', 'calculateTotalTilingCombinations', fourByFour('all-lattices-cylinder-torus-bigint')],
-    ['all-lattices-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('all-lattices-rectangle-bigint')],
+    ['any-lattice-cylinder-torus-modular.js', 'calculateTotalTilingCombinations', fourByFour('any-lattice-cylinder-torus-bigint')],
+    ['any-lattice-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('any-lattice-rectangle-bigint')],
     ['domicule-rectangle-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('domicule-rectangle-polynomial-bigint')],
     ['domicule-cylinder-torus-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('domicule-cylinder-torus-polynomial-bigint')],
   ];
