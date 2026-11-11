@@ -86,10 +86,14 @@ The code is MIT, see [LICENSE](LICENSE). Text and data are licensed under
 - text: `research/king-entropy/paper/`, `research/king-entropy/proofs/`, `research/king-entropy/notes/`,
   `research/king-entropy/release/`, `research/king-entropy/replication/REPORT.md` and `notes/`;
 - data: `research/king-entropy/data/`, `research/king-entropy/out/`, `research/king-entropy/logs/`,
-  `research/king-entropy/replication/out/`, the outputs `research/king-entropy/log-convexity/out_*.txt` and
+  `research/king-entropy/rerun/`, `research/king-entropy/replication/out/`, the outputs `research/king-entropy/log-convexity/out_*.txt` and
   `research/king-entropy/log-convexity/time_*.txt`, the JSON files in `spec/cases/` and the measurements in `benchmarks/results/`.
 
-Everything else is MIT, in particular all programs and scripts: `rust/`, `python/`, `js/`, `oeis/`, `site/`, `harness/`, `research/king-entropy/src/`,
+The entry texts `oeis/*/A*.txt` are copies of OEIS content, which the OEIS Foundation licenses under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), see [LICENSES/CC-BY-SA-4.0.txt](LICENSES/CC-BY-SA-4.0.txt);
+they keep that license.
+
+Everything else is MIT, in particular all programs and scripts: `rust/`, `python/`, `js/`, the programs in `oeis/`, `site/`, `harness/`, `research/king-entropy/src/`,
 `research/king-entropy/log-convexity/*.py` and the code in `research/king-entropy/replication/`.
 
 ## Author

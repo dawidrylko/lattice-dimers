@@ -19,9 +19,9 @@ function selectNumbering(board, diagonals) {
 
     return {
       key: diagonals === null ? board.id : `${board.id}/${diagonals}`,
-      large: diagonals !== null || !canUnrankPeriodic(options),
-      create: onProgress => createPeriodicUnranker(options, onProgress),
-      unrank: unrankPeriodicTiling,
+      large: diagonals !== null || !canUnrankCylinderTorus(options),
+      create: onProgress => createCylinderTorusUnranker(options, onProgress),
+      unrank: unrankCylinderTorusTiling,
     };
   }
 

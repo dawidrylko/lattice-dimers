@@ -203,7 +203,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 
 | number | file | script |
 | --- | --- | --- |
-| Python 3.13, numpy 2.5.3, mpmath 1.4.1, scipy 1.18.1 | `README.md`, `src/requirements.txt` | - |
+| Python 3.13, numpy 2.5.3, mpmath 1.4.1, scipy 1.18.1 | `README.md`, `src/requirements.txt` at the tag `king-entropy-v1.0.0`; `src/requirements.txt` now pins numpy 2.5.4, under which the outputs CI compares are unchanged | - |
 | four cores, about 16 GiB, two machines | see the note below | - |
 | 8.4 GiB, 22.5 min | `data/eig/eig_king_cyl_w25_p1.json` | `src/cylw.py king cyl 25 1` |
 | 17 min | `logs/time_bounds.txt` (wall 1042.1 s) | `src/timed.py python3 -u src/bounds.py 24` |

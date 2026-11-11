@@ -38,7 +38,7 @@ const stored = require('./js/core/cases')
   .filter(({ rowCount, colCount, torus }) => torus && rowCount === colCount && rowCount >= 2 && rowCount % 2 === 0)
   .map(({ rowCount, expectedResult }) => ({ side: rowCount, diagonals: expectedResult.split(',') }))
   .sort((a, b) => a.side - b.side);
-const gallery = nb.context.periodicDiagonals.filter(({ surface, side }) => surface === 'torus' && side >= 2);
+const gallery = nb.context.cylinderTorusDiagonals.filter(({ surface, side }) => surface === 'torus' && side >= 2);
 const both = gallery.filter(g => stored.some(s => s.side === g.side));
 const differing = both.filter(g => stored.find(s => s.side === g.side).diagonals.join() !== g.diagonals.join());
 
@@ -67,21 +67,21 @@ print(`The 4 × 4 torus, k = 0, 1, 2, ...: ${stored.find(({ side }) => side === 
 Average time of the count inside each solver, without the start of its process, from the newest benchmark run in [`benchmarks/results`](../../benchmarks/results) that measured these solvers.
 
 ```js run
-const { formatTime, periodicDiagonalBenchmark, periodicDiagonalRun } = nb.context;
+const { formatTime, cylinderTorusDiagonalBenchmark, cylinderTorusDiagonalRun } = nb.context;
 
-if (!periodicDiagonalRun) {
+if (!cylinderTorusDiagonalRun) {
   print('These solvers have no benchmark run yet.');
 } else {
   table(
     ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
-    periodicDiagonalBenchmark
+    cylinderTorusDiagonalBenchmark
       .filter(({ surface }) => surface === 'torus')
       .map(r => [
         `${r.rowCount}×${r.colCount}`,
         ...[r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
       ]),
   );
-  print(`Run: ${periodicDiagonalRun}`);
+  print(`Run: ${cylinderTorusDiagonalRun}`);
 }
 ```
 

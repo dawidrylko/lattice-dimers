@@ -5,14 +5,14 @@ const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 
 const testCasesDomino = testCasesOf('domino-rectangle-formula');
 const testCasesDomicule = testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare);
-const testCasesPeriodic = testCasesOf('all-lattices-cylinder-torus-modular');
+const testCasesCylinderTorus = testCasesOf('all-lattices-cylinder-torus-modular');
 const testCasesDiagonal = testCasesOf('domicule-rectangle-polynomial-modular');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
-const periodicModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
+const cylinderTorusModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
 const diagonalReference = require('../js/solvers/domicule-rectangle-polynomial-bigint.js');
 const { listImplementations } = require('../js/core/registry');
-const { countPeriodicDiagonals } = require('../js/renderer/periodic');
+const { countCylinderTorusDiagonals } = require('../js/renderer/cylinderTorus');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
 const { readBenchmarkRuns, findSeriesRun, listJavaScriptResults, describeMissing, formerResultName, resultFileOf } = require('./benchmarkRuns');
@@ -24,18 +24,18 @@ const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OUTPUT_DIRECTORY = path.join(ROOT_DIRECTORY, 'dist', 'site');
 const BENCHMARK_ROOT = 'benchmarks/results';
 const RESULT_FILE = /_(\d+)x(\d+)\.txt$/;
-const PERIODIC_RESULT_FILE = /_(\d+)x(\d+)-(\w+)-(torus|cylinder)\.txt$/;
+const CYLINDER_TORUS_RESULT_FILE = /_(\d+)x(\d+)-(\w+)-(torus|cylinder)\.txt$/;
 const { latest: BENCHMARK_RUN } = readBenchmarkRuns();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
-const PERIODIC_DIAGONAL_PREFIX = 'domicule-cylinder-torus-polynomial-';
-const PERIODIC_DIAGONAL_RESULT_FILE = /_(\d+)x(\d+)-(torus|cylinder)\.txt$/;
-const PERIODIC_DIAGONAL_RUN = findSeriesRun(PERIODIC_DIAGONAL_PREFIX, path.join(ROOT_DIRECTORY, BENCHMARK_ROOT));
+const CYLINDER_TORUS_DIAGONAL_PREFIX = 'domicule-cylinder-torus-polynomial-';
+const CYLINDER_TORUS_DIAGONAL_RESULT_FILE = /_(\d+)x(\d+)-(torus|cylinder)\.txt$/;
+const CYLINDER_TORUS_DIAGONAL_RUN = findSeriesRun(CYLINDER_TORUS_DIAGONAL_PREFIX, path.join(ROOT_DIRECTORY, BENCHMARK_ROOT));
 const BROWSER_SCRIPTS = ['js/renderer/svg.js', 'js/renderer/rank.js'];
 const WORKER_SCRIPTS = [
   'js/renderer/unrank.js',
   'js/renderer/cftp.js',
   'js/renderer/domicule.js',
-  'js/renderer/periodic.js',
+  'js/renderer/cylinderTorus.js',
   'js/renderer/rank.js',
   'site/worker.js',
 ];
@@ -89,9 +89,9 @@ const DOMICULE_BOARDS = [
   { rowCount: 18, colCount: 18, mode: 'random' },
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
-const PERIODIC_SIDES = [2, 4, 6, 8, 10];
-const PERIODIC_FILTER_MEMORY = { '10x10-diagonal-torus': '800 MB' };
-const PERIODIC_PIECES = [
+const CYLINDER_TORUS_SIDES = [2, 4, 6, 8, 10];
+const CYLINDER_TORUS_FILTER_MEMORY = { '10x10-diagonal-torus': '800 MB' };
+const CYLINDER_TORUS_PIECES = [
   { pieces: 'domino', lattice: 'square', suffix: '' },
   { pieces: 'domicule', lattice: 'king', suffix: '-diagonal' },
 ];
@@ -141,15 +141,15 @@ function countTilings(board) {
   return testCase.expectedResult;
 }
 
-const periodicCounts = new Map();
+const cylinderTorusCounts = new Map();
 
 /**
  * Finds the stored count of a cylinder or torus that is not twisted.
- * @param {Object} board The board, as for countPeriodicTilings.
+ * @param {Object} board The board, as for countCylinderTorusTilings.
  * @returns {Object|undefined} The case of spec/cases/, if there is one.
  */
-function findPeriodicCase({ rowCount, colCount, lattice, torus }) {
-  return testCasesPeriodic.find(
+function findCylinderTorusCase({ rowCount, colCount, lattice, torus }) {
+  return testCasesCylinderTorus.find(
     t => t.rowCount === rowCount && t.colCount === colCount && t.lattice === lattice && !t.torus === !torus && !t.twisted,
   );
 }
@@ -157,11 +157,11 @@ function findPeriodicCase({ rowCount, colCount, lattice, torus }) {
 /**
  * Reads the stored count of a board in a benchmark table. The tables never count a board: the
  * largest boards a run measures take the modular solver longer than the whole build should.
- * @param {Object} board The board, as for countPeriodicTilings.
+ * @param {Object} board The board, as for countCylinderTorusTilings.
  * @returns {string} The number of tilings.
  */
-function readStoredPeriodicCount(board) {
-  const known = findPeriodicCase(board);
+function readStoredCylinderTorusCount(board) {
+  const known = findCylinderTorusCase(board);
 
   if (!known) {
     const { rowCount, colCount, lattice, torus } = board;
@@ -183,23 +183,23 @@ function readStoredPeriodicCount(board) {
  * @property {boolean} board.torus Whether the rows are periodic too.
  * @returns {Promise<string>} The number of tilings.
  */
-function countPeriodicTilings({ rowCount, colCount, lattice, torus }) {
+function countCylinderTorusTilings({ rowCount, colCount, lattice, torus }) {
   const key = `${rowCount}x${colCount}-${lattice}-${torus ? 'torus' : 'cylinder'}`;
 
-  if (!periodicCounts.has(key)) {
-    const known = findPeriodicCase({ rowCount, colCount, lattice, torus });
+  if (!cylinderTorusCounts.has(key)) {
+    const known = findCylinderTorusCase({ rowCount, colCount, lattice, torus });
 
-    periodicCounts.set(
+    cylinderTorusCounts.set(
       key,
       known
         ? Promise.resolve(known.expectedResult)
-        : periodicModular
+        : cylinderTorusModular
             .calculateTotalTilingCombinations({ rowCount, colCount, lattice, torus, jobs: os.availableParallelism() })
             .then(String),
     );
   }
 
-  return periodicCounts.get(key);
+  return cylinderTorusCounts.get(key);
 }
 
 /**
@@ -226,15 +226,15 @@ function countDiagonalTilings({ rowCount, colCount }, total) {
 /**
  * Counts the domicule tilings of a cylinder or a torus by the number of diagonal pieces with the
  * gallery's transfer, and checks them against the number of tilings and, for no diagonal piece, the domino count.
- * @param {Object} board The board, as for countPeriodicTilings.
+ * @param {Object} board The board, as for countCylinderTorusTilings.
  * @param {string} total The number of tilings.
  * @returns {Promise<string[]>} The coefficients, from 0 diagonal pieces up.
  */
-async function countPeriodicDiagonalTilings(board, total) {
-  const coefficients = countPeriodicDiagonals(board);
+async function countCylinderTorusDiagonalTilings(board, total) {
+  const coefficients = countCylinderTorusDiagonals(board);
   const sum = coefficients.reduce((acc, count) => acc + count, BigInt(0));
   const surface = `${board.rowCount}x${board.colCount} ${board.torus ? 'torus' : 'cylinder'}`;
-  const dominoes = await countPeriodicTilings({ ...board, lattice: 'square' });
+  const dominoes = await countCylinderTorusTilings({ ...board, lattice: 'square' });
 
   if (String(sum) !== total) {
     throw new Error(`The diagonal counts of the ${surface} add up to ${sum}, not ${total}.`);
@@ -359,10 +359,10 @@ function buildDomiculeBenchmark(totals) {
  * @param {string} lattice The lattice of the result files: king for the domicules, square for the dominoes.
  * @returns {Promise<Object[]>} One row per board, the tori first.
  */
-async function buildPeriodicBenchmark(lattice) {
+async function buildCylinderTorusBenchmark(lattice) {
   const prefix = 'all-lattices-cylinder-torus-';
   const boards = listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
-    .map(fileName => fileName.match(PERIODIC_RESULT_FILE))
+    .map(fileName => fileName.match(CYLINDER_TORUS_RESULT_FILE))
     .filter(match => match && match[3] === lattice)
     .map(([, rowCount, colCount, , surface]) => `${surface}/${rowCount}x${colCount}`)
     .filter((board, index, all) => all.indexOf(board) === index)
@@ -380,7 +380,7 @@ async function buildPeriodicBenchmark(lattice) {
       rowCount,
       colCount,
       surface,
-      tilings: readStoredPeriodicCount({ rowCount, colCount, lattice, torus: surface === 'torus' }),
+      tilings: readStoredCylinderTorusCount({ rowCount, colCount, lattice, torus: surface === 'torus' }),
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
       bigintMissing: readMissingReasons('all-lattices-cylinder-torus-bigint', `${rowCount}x${colCount}`, `-${lattice}-${surface}`),
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
@@ -422,16 +422,16 @@ function buildDiagonalBenchmark(totals) {
  * pieces, from the newest clean run that measured them, which may not be the run of the other tables.
  * @returns {Object[]} One row per board, the tori first; none before such a run exists.
  */
-function buildPeriodicDiagonalBenchmark() {
-  if (PERIODIC_DIAGONAL_RUN === null) {
+function buildCylinderTorusDiagonalBenchmark() {
+  if (CYLINDER_TORUS_DIAGONAL_RUN === null) {
     return [];
   }
 
-  const directory = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, PERIODIC_DIAGONAL_RUN);
-  const prefix = PERIODIC_DIAGONAL_PREFIX;
+  const directory = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, CYLINDER_TORUS_DIAGONAL_RUN);
+  const prefix = CYLINDER_TORUS_DIAGONAL_PREFIX;
 
   return listJavaScriptResults(directory, prefix)
-    .map(fileName => fileName.match(PERIODIC_DIAGONAL_RESULT_FILE))
+    .map(fileName => fileName.match(CYLINDER_TORUS_DIAGONAL_RESULT_FILE))
     .filter(Boolean)
     .map(([, rowCount, colCount, surface]) => `${surface}/${rowCount}x${colCount}`)
     .filter((board, index, all) => all.indexOf(board) === index)
@@ -447,7 +447,7 @@ function buildPeriodicDiagonalBenchmark() {
         rowCount,
         colCount,
         surface,
-        tilings: readStoredPeriodicCount({ rowCount, colCount, lattice: 'king', torus: surface === 'torus' }),
+        tilings: readStoredCylinderTorusCount({ rowCount, colCount, lattice: 'king', torus: surface === 'torus' }),
         bigint: readAverageTime(directory, `${prefix}bigint.js${suffix}`),
         bigintLanguages: readLanguages(`${prefix}bigint`, suffix, directory),
         bigintMissing: readMissingReasons(`${prefix}bigint`, `${rowCount}x${colCount}`, `-${surface}`, directory),
@@ -732,15 +732,15 @@ async function __main__() {
     });
   }
 
-  const periodicBoards = [];
+  const cylinderTorusBoards = [];
 
-  for (const { pieces, lattice, suffix } of PERIODIC_PIECES) {
+  for (const { pieces, lattice, suffix } of CYLINDER_TORUS_PIECES) {
     for (const surface of ['cylinder', 'torus']) {
-      for (const side of PERIODIC_SIDES) {
+      for (const side of CYLINDER_TORUS_SIDES) {
         const board = { rowCount: side, colCount: side, lattice, torus: surface === 'torus' };
-        const total = await countPeriodicTilings(board);
+        const total = await countCylinderTorusTilings(board);
         const id = `${side}x${side}${suffix}-${surface}`;
-        periodicBoards.push({
+        cylinderTorusBoards.push({
           id,
           pieces,
           surface,
@@ -748,8 +748,8 @@ async function __main__() {
           rowCount: side,
           colCount: side,
           total,
-          ...(pieces === 'domicule' && { diagonals: await countPeriodicDiagonalTilings(board, total) }),
-          ...(PERIODIC_FILTER_MEMORY[id] && { filterMemory: PERIODIC_FILTER_MEMORY[id] }),
+          ...(pieces === 'domicule' && { diagonals: await countCylinderTorusDiagonalTilings(board, total) }),
+          ...(CYLINDER_TORUS_FILTER_MEMORY[id] && { filterMemory: CYLINDER_TORUS_FILTER_MEMORY[id] }),
         });
       }
     }
@@ -771,18 +771,18 @@ async function __main__() {
         total: countTilings(board),
       })),
       ...domiculeBoards,
-      ...periodicBoards,
+      ...cylinderTorusBoards,
     ],
     benchmark: buildBenchmark(),
     domiculeBenchmark: buildDomiculeBenchmark(domiculeTotals),
-    periodicBenchmark: await buildPeriodicBenchmark('king'),
-    dominoPeriodicBenchmark: await buildPeriodicBenchmark('square'),
+    cylinderTorusBenchmark: await buildCylinderTorusBenchmark('king'),
+    dominoCylinderTorusBenchmark: await buildCylinderTorusBenchmark('square'),
     diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
-    periodicDiagonalBenchmark: buildPeriodicDiagonalBenchmark(),
+    cylinderTorusDiagonalBenchmark: buildCylinderTorusDiagonalBenchmark(),
     environment: readEnvironment(BENCHMARK_DIRECTORY),
-    periodicDiagonalRun: PERIODIC_DIAGONAL_RUN && {
-      directory: `${BENCHMARK_ROOT}/${PERIODIC_DIAGONAL_RUN}`,
-      environment: readEnvironment(path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, PERIODIC_DIAGONAL_RUN)),
+    cylinderTorusDiagonalRun: CYLINDER_TORUS_DIAGONAL_RUN && {
+      directory: `${BENCHMARK_ROOT}/${CYLINDER_TORUS_DIAGONAL_RUN}`,
+      environment: readEnvironment(path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, CYLINDER_TORUS_DIAGONAL_RUN)),
     },
   };
   const notes = listNotes();
@@ -791,12 +791,12 @@ async function __main__() {
     benchmark: data.benchmark,
     benchmarkRun: `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`,
     domiculeBenchmark: data.domiculeBenchmark,
-    periodicBenchmark: data.periodicBenchmark,
-    dominoPeriodicBenchmark: data.dominoPeriodicBenchmark,
+    cylinderTorusBenchmark: data.cylinderTorusBenchmark,
+    dominoCylinderTorusBenchmark: data.dominoCylinderTorusBenchmark,
     diagonalBenchmark: data.diagonalBenchmark,
-    periodicDiagonalBenchmark: data.periodicDiagonalBenchmark,
-    periodicDiagonalRun: data.periodicDiagonalRun,
-    periodicDiagonals: periodicBoards
+    cylinderTorusDiagonalBenchmark: data.cylinderTorusDiagonalBenchmark,
+    cylinderTorusDiagonalRun: data.cylinderTorusDiagonalRun,
+    cylinderTorusDiagonals: cylinderTorusBoards
       .filter(({ diagonals }) => diagonals)
       .map(({ surface, rowCount, diagonals }) => ({ surface, side: rowCount, diagonals })),
     countDomicule: board => countDomiculeTilings(board).then(BigInt),

@@ -38,21 +38,21 @@ const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGES = [['Rust', '#icon-rust'], ['Python', '#icon-python'], ['JavaScript', '#icon-javascript']];
 const solverColumns = (solver, languages) => LANGUAGES.filter(([name]) => languages.includes(name)).map(([name, icon]) => ({ name: `${solver}, ${name}`, icon: `${solver} ${icon}` }));
 const MODULAR_AND_BIGINT = [solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])];
-const PERIODIC_DIAGONAL_MEASURED = findSeriesRun('domicule-cylinder-torus-polynomial-') !== null;
+const CYLINDER_TORUS_DIAGONAL_MEASURED = findSeriesRun('domicule-cylinder-torus-polynomial-') !== null;
 const SHOWN_ROWS = id =>
-  `document.querySelectorAll('#${id} tr').length > 0 || (${!PERIODIC_DIAGONAL_MEASURED} && /^(cylinder|torus)-diagonal-/.test('${id}') && !document.querySelector('.bench-group:not([hidden]) [data-unmeasured]').hidden)`;
+  `document.querySelectorAll('#${id} tr').length > 0 || (${!CYLINDER_TORUS_DIAGONAL_MEASURED} && /^(cylinder|torus)-diagonal-/.test('${id}') && !document.querySelector('.bench-group:not([hidden]) [data-unmeasured]').hidden)`;
 const LANGUAGE_TABLES = [
   ['domino/rectangle', 'domino-benchmark', 'DATA.benchmark', '36', 'FORMULA_AND_BIGINT_LANGUAGES', [solverColumns('Formula', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])]],
-  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'cylinder')", '121', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
-  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoPeriodicBenchmark.filter(r => r.surface === 'torus')", '272', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoCylinderTorusBenchmark.filter(r => r.surface === 'cylinder')", '121', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoCylinderTorusBenchmark.filter(r => r.surface === 'torus')", '272', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
   ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
-  ['domicule/cylinder', 'cylinder-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
-  ['domicule/torus', 'torus-benchmark', "DATA.periodicBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/cylinder', 'cylinder-benchmark', "DATA.cylinderTorusBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domicule/torus', 'torus-benchmark', "DATA.cylinderTorusBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
   ['domicule/rectangle/diagonal', 'diagonal-benchmark', 'DATA.diagonalBenchmark', '280', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
-  ...(PERIODIC_DIAGONAL_MEASURED
+  ...(CYLINDER_TORUS_DIAGONAL_MEASURED
     ? [
-        ['domicule/cylinder/diagonal', 'cylinder-diagonal-benchmark', "DATA.periodicDiagonalBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
-        ['domicule/torus/diagonal', 'torus-diagonal-benchmark', "DATA.periodicDiagonalBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+        ['domicule/cylinder/diagonal', 'cylinder-diagonal-benchmark', "DATA.cylinderTorusDiagonalBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+        ['domicule/torus/diagonal', 'torus-diagonal-benchmark', "DATA.cylinderTorusDiagonalBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
       ]
     : []),
 ];
@@ -1523,8 +1523,8 @@ async function checkBenchmark(page, baseUrl, width) {
     ['benchmark/tori', 'domicule/torus', 'torus-benchmark-rows', null],
     ['benchmark/domicule/rectangle/diagonal', 'domicule/rectangle/diagonal', 'diagonal-benchmark-rows', 'some'],
     ['benchmark/diagonals', 'domicule/rectangle/diagonal', 'diagonal-benchmark-rows', null],
-    ['benchmark/domicule/cylinder/diagonal', 'domicule/cylinder/diagonal', 'cylinder-diagonal-benchmark-rows', PERIODIC_DIAGONAL_MEASURED ? 'some' : null],
-    ['benchmark/domicule/torus/diagonal', 'domicule/torus/diagonal', 'torus-diagonal-benchmark-rows', PERIODIC_DIAGONAL_MEASURED ? 'some' : null],
+    ['benchmark/domicule/cylinder/diagonal', 'domicule/cylinder/diagonal', 'cylinder-diagonal-benchmark-rows', CYLINDER_TORUS_DIAGONAL_MEASURED ? 'some' : null],
+    ['benchmark/domicule/torus/diagonal', 'domicule/torus/diagonal', 'torus-diagonal-benchmark-rows', CYLINDER_TORUS_DIAGONAL_MEASURED ? 'some' : null],
     ['benchmark/domino/torus/diagonal', 'domino/torus', 'domino-torus-benchmark-rows', null],
     ['benchmark/domino/hexagon', 'domino/rectangle', 'domino-benchmark-rows', null],
   ]) {
@@ -1818,18 +1818,18 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       `document.querySelector('#benchmark-pieces button[data-pieces=${p}]').click(); document.querySelector('#benchmark-surfaces button[data-surface=${surface}]').click(); document.querySelector('#benchmark-counts button[data-count=${count}]').click()`,
     );
     await page.waitFor(
-      `!document.querySelector('${group}').hidden && (document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0 || (${!PERIODIC_DIAGONAL_MEASURED} && ${surface !== 'rectangle' && count === 'diagonal'}))`,
+      `!document.querySelector('${group}').hidden && (document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr').length > 0 || (${!CYLINDER_TORUS_DIAGONAL_MEASURED} && ${surface !== 'rectangle' && count === 'diagonal'}))`,
       `the ${view} rows`,
     );
     cardLinks.push(await page.evaluate(READ_CARD_LINKS));
     const run = await page.evaluate(`(() => {
       const section = document.getElementById('benchmark');
       const links = [...section.querySelectorAll('a[href*="benchmarks/results/"]')].filter(link => link.checkVisibility()).map(link => (new URL(link.href).pathname.endsWith('/' + link.textContent) ? link.textContent : 'a link to another run than ' + link.textContent));
-      return { runs: section.innerText.split('Run on ').length - 1, links, periodic: DATA.periodicDiagonalRun?.directory ?? null };
+      return { runs: section.innerText.split('Run on ').length - 1, links, cylinderTorus: DATA.cylinderTorusDiagonalRun?.directory ?? null };
     })()`);
     const ownRun = surface !== 'rectangle' && count === 'diagonal';
-    const wanted = ownRun ? (run.periodic ? 1 : 0) : 1;
-    const linked = run.links.length === wanted && run.links.every(link => !ownRun || link === run.periodic);
+    const wanted = ownRun ? (run.cylinderTorus ? 1 : 0) : 1;
+    const linked = run.links.length === wanted && run.links.every(link => !ownRun || link === run.cylinderTorus);
 
     if (run.runs !== wanted || !linked) {
       problems.push(`the ${view} table shows ${run.runs} run lines linking ${run.links.join(', ') || 'nothing'}; it should show ${wanted}, for ${ownRun ? 'its own run' : 'the main run'}`);

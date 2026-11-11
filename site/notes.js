@@ -433,14 +433,14 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', lattice, surface =
     unranker = renderer.createDiagonalUnranker({ rowCount, colCount, diagonals });
     unrank = renderer.unrankDiagonalTiling;
   } else if (surface !== 'rectangle') {
-    unranker = renderer.createPeriodicUnranker({
+    unranker = renderer.createCylinderTorusUnranker({
       rowCount,
       colCount,
       lattice: lattice ?? (pieces === 'domino' ? 'square' : 'king'),
       torus: surface === 'torus',
       diagonals: diagonals ?? null,
     });
-    unrank = renderer.unrankPeriodicTiling;
+    unrank = renderer.unrankCylinderTorusTiling;
   } else if (pieces === 'domino' && lattice === undefined) {
     unranker = renderer.createUnranker({ rowCount, colCount });
     unrank = renderer.unrankTiling;
