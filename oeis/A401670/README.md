@@ -14,7 +14,7 @@ Approved 9 November 2026, revision #6.
 
 | file | content |
 | --- | --- |
-| [A401670.txt](A401670.txt) | the full entry text as published |
+| [A401670.txt](A401670.txt) | the full entry text as published, with the data on one `%S` line and without the keyword `new` |
 | [b401670.txt](b401670.txt) | $n = 0, \dots, 8$, the terms of the data line, from [`spec/cases/all-lattices-cylinder-torus-modular.json`](../../spec/cases/all-lattices-cylinder-torus-modular.json); not submitted |
 | [A401670.gp](A401670.gp) | the program of the `%o` lines, with `T(h, w)` for the $h \times w$ torus |
 
