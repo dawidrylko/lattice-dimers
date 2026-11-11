@@ -32,6 +32,15 @@ const NAV = [
   },
 ];
 
+const DIAGONAL_PIECES_REDIRECT = {
+  to: 'domicules/rectangles-by-diagonal-pieces',
+  sections: {
+    'numbering-by-diagonal-pieces': '#numbering',
+    'the-polynomial': '#the-problem',
+    'cylinders-and-tori': 'domicules/cylinders-by-diagonal-pieces#the-counts',
+  },
+};
+
 const NOTE_REDIRECTS = {
   a004003: { to: 'dominoes/rectangles' },
   a239273: { to: 'domicules/rectangles' },
@@ -66,22 +75,15 @@ const NOTE_REDIRECTS = {
   },
   tori: { to: 'domicules/tori', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
   torus: { to: 'domicules/tori', sections: { 'the-king-s-graph-on-the-2n-2n-torus-a401670': '#the-2n-2n-torus-a401670' } },
-  diagonals: { to: 'domicules/rectangles-by-diagonal-pieces' },
+  diagonals: DIAGONAL_PIECES_REDIRECT,
   'dominoes/rectangle': { to: 'dominoes/rectangles' },
   'dominoes/cylinder': { to: 'dominoes/cylinders' },
   'dominoes/torus': { to: 'dominoes/tori' },
   'domicules/rectangle': { to: 'domicules/rectangles' },
   'domicules/cylinder': { to: 'domicules/cylinders' },
   'domicules/torus': { to: 'domicules/tori' },
-  'domicules/diagonals': { to: 'domicules/rectangles-by-diagonal-pieces' },
-  'domicules/diagonal-pieces': {
-    to: 'domicules/rectangles-by-diagonal-pieces',
-    sections: {
-      'numbering-by-diagonal-pieces': '#numbering',
-      'the-polynomial': '#the-problem',
-      'cylinders-and-tori': 'domicules/cylinders-by-diagonal-pieces#the-counts',
-    },
-  },
+  'domicules/diagonals': DIAGONAL_PIECES_REDIRECT,
+  'domicules/diagonal-pieces': DIAGONAL_PIECES_REDIRECT,
   'triangular/cylinder': { to: 'triangular-lattice/cylinders' },
   'triangular/torus': { to: 'triangular-lattice/tori' },
 };

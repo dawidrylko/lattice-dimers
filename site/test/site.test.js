@@ -221,6 +221,8 @@ const MOVED_SECTIONS = [
   ['torus', 'the-king-s-graph-on-the-2n-2n-torus-a401670', 'domicules/tori', 'the-2n-2n-torus-a401670'],
   ['domicules/diagonal-pieces', 'the-polynomial', 'domicules/rectangles-by-diagonal-pieces', 'the-problem'],
   ['domicules/diagonal-pieces', 'cylinders-and-tori', 'domicules/cylinders-by-diagonal-pieces', 'the-counts'],
+  ['diagonals', 'cylinders-and-tori', 'domicules/cylinders-by-diagonal-pieces', 'the-counts'],
+  ['domicules/diagonals', 'numbering-by-diagonal-pieces', 'domicules/rectangles-by-diagonal-pieces', 'numbering'],
 ];
 const MENU_GROUPS = ['Dominoes', 'Domicules', 'Triangular lattice'];
 const NOTE_FAILURES = ['DIFFERS FROM OEIS'];
