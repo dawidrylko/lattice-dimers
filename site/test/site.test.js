@@ -162,7 +162,7 @@ const NOTES = [
     slug: 'triangular-lattice/rectangles',
     cells: 5, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Triangular lattice: tilings of the 2n × 2n board (not in the OEIS)',
+    h1: 'Triangular lattice: tilings of the 2n × 2n board (A401988)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'The counts', 'The entropy per site', 'PARI/GP', 'Verification', 'References'],
   },
   {

@@ -10,10 +10,11 @@ Entries of the [OEIS](https://oeis.org/) this repository has contributed to. Eac
 | [OEIS A401669](https://oeis.org/draft/A401669) | [decimal expansion of the entropy per site of the dimers of the king's graph](A401669/) | [A401669.txt](A401669/A401669.txt) | — | — |
 | [OEIS A401670](https://oeis.org/A401670) | [domicule tilings of the 2n × 2n torus](A401670/) | [A401670.txt](A401670/A401670.txt) | [b401670.txt](A401670/b401670.txt) | [A401670.gp](A401670/A401670.gp) |
 | [OEIS A401673](https://oeis.org/A401673) | [domicule tilings of the 2n × 2n square by the number of diagonal domicules](A401673/) | [A401673.txt](A401673/A401673.txt) | [b401673.txt](A401673/b401673.txt) | [A401673.gp](A401673/A401673.gp) |
+| [OEIS A401988](https://oeis.org/draft/A401988) | [tilings of the 2n × 2n board on the triangular lattice](A401988/) | [A401988.txt](A401988/A401988.txt) | [b401988.txt](A401988/b401988.txt) | [A401988.gp](A401988/A401988.gp) |
 
 ## Files
 
 The entry texts `A*.txt` are in the OEIS internal format. Published lines come from `https://oeis.org/search?q=id:<A-number>&fmt=text`; a proposed draft exists only as the HTML of its draft page, and its text is reconstructed from that page. A new entry is given in full, with the data on one `%S` line; an existing entry holds only the lines this repository contributed.
 
-The b-files `b*.txt` are rebuilt by `node oeis/buildBFiles.js` from the exact counts committed in this repository; the README of each entry names the source. The programs `A*.gp` hold the PARI/GP programs of the entry texts, laid out over several lines; `A401670.gp` also defines `T(h, w)` for the $h \times w$ torus.
+The b-files `b*.txt` are rebuilt by `node oeis/buildBFiles.js` from the exact counts committed in this repository; the README of each entry names the source. A b-file longer than those counts has its own generator `b<number>.js` next to it, and `buildBFiles.js` checks only the terms the counts cover, as for A401988. The programs `A*.gp` hold the PARI/GP programs of the entry texts, laid out over several lines; `A401670.gp` also defines `T(h, w)` for the $h \times w$ torus.
 

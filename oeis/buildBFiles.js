@@ -11,12 +11,16 @@ const LAST_TORUS = 8;
 const LAST_DIAGONAL_ROW = 10;
 const TORUS_FILE = 'spec/cases/all-lattices-cylinder-torus-modular.json';
 const DIAGONAL_FILE = 'spec/cases/domicule-rectangle-polynomial-modular.json';
+const TRIANGULAR_FILE = 'spec/cases/all-lattices-rectangle-modular.json';
+const LAST_TRIANGULAR_SQUARE = 11;
+const GENERATORS = { 'A401988/b401988.txt': 'node oeis/A401988/b401988.js 0 37' };
 const SOURCES = {
   'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
   'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A239273/b239273.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A401670/b401670.txt': TORUS_FILE,
   'A401673/b401673.txt': DIAGONAL_FILE,
+  'A401988/b401988.txt': TRIANGULAR_FILE,
 };
 
 function readStrips() {
@@ -128,6 +132,24 @@ function readDiagonalRows() {
   });
 }
 
+function readTriangularSquares() {
+  const squares = new Map([[0, '1']]);
+
+  for (const { rowCount, colCount, lattice, expectedResult } of readTestCases(TRIANGULAR_FILE)) {
+    if (lattice === 'triangular' && rowCount === colCount && rowCount % 2 === 0) {
+      squares.set(rowCount / 2, expectedResult);
+    }
+  }
+
+  return Array.from({ length: LAST_TRIANGULAR_SQUARE + 1 }, (_, n) => {
+    if (!squares.has(n)) {
+      throw new Error(`No count for the ${2 * n} X ${2 * n} triangular board in ${TRIANGULAR_FILE}.`);
+    }
+
+    return squares.get(n);
+  });
+}
+
 function formatBFile(terms) {
   return terms.map((term, index) => `${index} ${term}\n`).join('');
 }
@@ -155,6 +177,7 @@ function buildBFiles() {
     'A239273/b239273.txt': formatBFile(squares),
     'A401670/b401670.txt': formatBFile(readTori()),
     'A401673/b401673.txt': formatBFile(triangle),
+    'A401988/b401988.txt': formatBFile(readTriangularSquares()),
   };
 }
 
@@ -166,6 +189,11 @@ function main() {
     const file = path.join(__dirname, name);
     const terms = content.split('\n').length - 1;
 
+    if (!check && GENERATORS[name]) {
+      console.log(`Skipped ${name}: ${GENERATORS[name]} > oeis/${name} rebuilds it in full.`);
+      continue;
+    }
+
     if (!check) {
       fs.writeFileSync(file, content);
       console.log(`Wrote ${name}: ${terms} terms.`);
@@ -174,10 +202,12 @@ function main() {
 
     process.stdout.write(`Checking ${name} (${terms} terms) against ${SOURCES[name]}... `);
 
-    if (fs.existsSync(file) && fs.readFileSync(file, 'utf-8') === content) {
+    const stored = fs.existsSync(file) ? fs.readFileSync(file, 'utf-8') : null;
+
+    if (stored !== null && (GENERATORS[name] ? stored.startsWith(content) : stored === content)) {
       console.log('Passed!');
     } else {
-      console.error(`Failed! Run node oeis/buildBFiles.js to rebuild ${name}.`);
+      console.error(`Failed! Run ${GENERATORS[name] ?? 'node oeis/buildBFiles.js'} to rebuild ${name}.`);
       passed = false;
     }
   }

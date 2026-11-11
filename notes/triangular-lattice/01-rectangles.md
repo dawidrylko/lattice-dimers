@@ -1,4 +1,4 @@
-# Triangular lattice: tilings of the 2n × 2n board (not in the OEIS)
+# Triangular lattice: tilings of the 2n × 2n board (A401988)
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html) has the results. It counts the perfect matchings of the triangular lattice on the $2n \times 2n$ board and on $h \times w$ rectangles, boards with no glued edges. The project counts this lattice for comparison with [dominoes](../dominoes/01-rectangles.md) and [domicules](../domicules/01-rectangles.md) on the same boards; the gallery does not draw it. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) glue the edges.
 
@@ -23,7 +23,7 @@ The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modu
 
 ## The counts
 
-The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/all-lattices-rectangle-modular.json`](../../spec/cases/all-lattices-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The OEIS was searched by terms on 11 November 2026 and has no entry for these counts.
+The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/all-lattices-rectangle-modular.json`](../../spec/cases/all-lattices-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are [OEIS A401988](https://oeis.org/draft/A401988) [3]; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.
 
 ```js run
 const reference = require('./js/solvers/all-lattices-rectangle-bigint.js');
@@ -96,10 +96,10 @@ print(`s = ${s}`);
 
 ## PARI/GP
 
-The counts follow also from Kasteleyn's theorem [2]: the board is a planar graph, every inner face is a triangle, and a sign on every edge that makes each triangle carry an odd number of clockwise edges turns the number of tilings into the Pfaffian of a skew-symmetric matrix $K$, so $a(n) = \sqrt{\det K}$. [`rectangles.gp`](rectangles.gp) builds $K$ with the sign $-1$ on the horizontal and vertical edges from the even rows and $+1$ elsewhere, where $K_{ab} = 1$ orients the edge from $a$ to $b$; with the rows drawn downwards, every triangle then has one or three clockwise edges. CI runs it on the boards up to $16 \times 16$ of `spec/cases/`, and [`harness/spec.test.js`](../../harness/spec.test.js) checks the parity of every triangle on boards up to $12 \times 12$, so the two methods are independent. The program moves to `oeis/` with an OEIS entry.
+The counts follow also from Kasteleyn's theorem [2]: the board is a planar graph, every inner face is a triangle, and a sign on every edge that makes each triangle carry an odd number of clockwise edges turns the number of tilings into the Pfaffian of a skew-symmetric matrix $K$, so $a(n) = \sqrt{\det K}$. [`A401988.gp`](../../oeis/A401988/A401988.gp) builds $K$ with the sign $-1$ on the horizontal and vertical edges from the even rows and $+1$ elsewhere, where $K_{ab} = 1$ orients the edge from $a$ to $b$; with the rows drawn downwards, every triangle then has one or three clockwise edges. CI runs it on the boards up to $16 \times 16$ of `spec/cases/`, and [`harness/spec.test.js`](../../harness/spec.test.js) checks the parity of every triangle on boards up to $12 \times 12$, so the two methods are independent.
 
 ```js run
-print(require('fs').readFileSync(require('path').join(nb.context.root, 'notes/triangular-lattice/rectangles.gp'), 'utf-8').trim());
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A401988/A401988.gp'), 'utf-8').trim());
 ```
 
 ## Verification
@@ -119,3 +119,4 @@ The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`pyt
 
 1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)
 2. P. W. Kasteleyn. The statistics of dimers on a lattice. *Physica* 27(12):1209-1225, 1961. [doi:10.1016/0031-8914(61)90063-5](https://doi.org/10.1016/0031-8914%2861%2990063-5)
+3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A401988](https://oeis.org/draft/A401988). [oeis.org](https://oeis.org)
