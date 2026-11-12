@@ -7,7 +7,7 @@ const testCasesDomino = testCasesOf('domino-rectangle-formula');
 const testCasesDomicule = testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare);
 const testCasesCylinderTorus = testCasesOf('any-lattice-cylinder-torus-modular');
 const testCasesDiagonal = testCasesOf('domicule-rectangle-polynomial-modular');
-const testCasesTriangular = testCasesOf('all-lattices-rectangle-modular').filter(t => t.lattice === 'triangular');
+const testCasesTriangular = testCasesOf('any-lattice-rectangle-modular').filter(t => t.lattice === 'triangular');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
 const cylinderTorusModular = require('../js/solvers/any-lattice-cylinder-torus-modular.js');
@@ -775,7 +775,7 @@ async function __main__() {
     const total = findTriangularCount(board);
 
     if (total === null) {
-      throw new Error(`No count of the ${board.rowCount}x${board.colCount} triangular lattice in spec/cases/all-lattices-rectangle-modular.json, which the gallery needs.`);
+      throw new Error(`No count of the ${board.rowCount}x${board.colCount} triangular lattice in spec/cases/any-lattice-rectangle-modular.json, which the gallery needs.`);
     }
 
     return { id: `${board.rowCount}x${board.colCount}-triangular`, pieces: 'triangular', surface: 'rectangle', mode: 'pages', ...board, total };
