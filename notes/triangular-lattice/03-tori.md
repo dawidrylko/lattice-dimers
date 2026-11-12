@@ -21,6 +21,10 @@ figure(svgs, `4 of the ${total} tilings of the triangular lattice on the 8 × 8 
 
 [`all-lattices-cylinder-torus-bigint.js`](../../js/solvers/all-lattices-cylinder-torus-bigint.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix. The same algorithm is in Rust, [`all-lattices-cylinder-torus-bigint.rs`](../../rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs), and in Python, [`all_lattices_cylinder_torus_bigint.py`](../../python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py).
 
+## Numbering
+
+The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-by-cell scan of the modular solver, as it numbers the [domino tilings of tori](../dominoes/03-tori.md#numbering): the tilings are ordered by $S$ and then by the scan, and one table per rotation class gives every count. The Random button draws a uniformly random number, so the sample is exact.
+
 ## The counts
 
 For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate piece. Boards up to $8 \times 8$ go through both solvers, $10 \times 10$ and $12 \times 12$ through the modular one, and every count that `spec/cases/` stores is compared with it. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for triangular tori.

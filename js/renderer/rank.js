@@ -40,7 +40,7 @@ function listPieceOffsets(pieces, index, rowCount, colCount) {
 
   return [
     ...(hasRight ? [1] : []),
-    ...(hasBelow && col > 0 ? [colCount - 1] : []),
+    ...(pieces === 'domicule' && hasBelow && col > 0 ? [colCount - 1] : []),
     ...(hasBelow ? [colCount] : []),
     ...(hasBelow && hasRight ? [colCount + 1] : []),
   ];
@@ -96,7 +96,7 @@ function listRankTerms(pieces, rowCount, colCount, tilings) {
  * unrankDomiculeTiling, without their tables: one backward scan keeps a single row of
  * completion counts, as a Uint32Array, and adds the counts each tiling skips.
  * @param {Object} options The board.
- * @property {string} options.pieces "domino" or "domicule".
+ * @property {string} options.pieces "domino", "domicule" or "triangular" (the triangular lattice).
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
  * @param {Array<Object[]>} tilings The tilings.

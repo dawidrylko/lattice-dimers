@@ -51,7 +51,7 @@ These are the JavaScript implementations, the third of three languages. The cont
 
 ## Renderer
 
-[`renderer/`](renderer) numbers tilings, rebuilds any tiling from its number without listing the ones before, samples domino tilings exactly with coupling from the past and domicule tilings with a Markov chain, and draws them as SVG or ASCII. [`tilingRenderer.js`](tilingRenderer.js) is its command line:
+[`renderer/`](renderer) numbers tilings, rebuilds any tiling from its number without listing the ones before, samples domino tilings exactly with coupling from the past and domicule and triangular lattice tilings with a Markov chain, and draws them as SVG or ASCII. [`tilingRenderer.js`](tilingRenderer.js) is its command line:
 
 ```sh
 pnpm -C js render -r 8 -c 8 -o 5000 -l 200              # tilings 5001-5200 of 12,988,816, as SVG sheets in output/8x8/
