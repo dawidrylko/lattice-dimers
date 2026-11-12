@@ -1198,3 +1198,9 @@ test('countTilings counts in a child process and skips boards whose table is too
   assert.equal(countTilings({ rowCount: 3, colCount: 3 }), '0');
   assert.equal(countTilings({ rowCount: 30, colCount: 30 }), null);
 });
+
+test('the cylinder and torus unranker rejects a negative side of an empty board', () => {
+  for (const board of [{ rowCount: 0, colCount: -3 }, { rowCount: -2, colCount: 0, torus: true }]) {
+    assert.throws(() => createCylinderTorusUnranker(board), RangeError, JSON.stringify(board));
+  }
+});

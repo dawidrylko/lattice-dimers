@@ -1525,6 +1525,7 @@ async function checkChrome(page, baseUrl, width) {
 
 async function checkBenchmark(page, baseUrl, width) {
   const problems = [];
+  const sides = Array.from({ length: 11 }, (_, i) => `${2 * i}×${2 * i}`).join(' ');
 
   for (const [hash, view, rows, complete] of [
     ['benchmark', 'domino/rectangle', 'domino-benchmark-rows', null],
@@ -1554,6 +1555,7 @@ async function checkBenchmark(page, baseUrl, width) {
       const wraps = [...section.querySelectorAll('.bench-group:not([hidden]) .table-wrap')];
       const times = row => [...row.cells].slice(2, -1).map(cell => cell.textContent);
       return {
+        timed: wraps.map(wrap => [wrap.querySelector('table').id, [...wrap.querySelectorAll('tbody tr')].filter(row => times(row).some(time => time !== '-')).length]),
         shown: !section.hidden && document.getElementById('gallery').hidden,
         overflow: Math.max(...wraps.map(wrap => wrap.scrollWidth - wrap.clientWidth)),
         hidden: wraps.flatMap(wrap => {
@@ -1578,7 +1580,7 @@ async function checkBenchmark(page, baseUrl, width) {
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
           const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map(cell => ({ dash: cell.textContent.trim() === '-', reason: cell.querySelector('span[title]')?.title ?? '' })));
-          const noted = [...group.querySelectorAll('.note:not([hidden])')].some(note => note.textContent.startsWith('A dash is a board'));
+          const noted = [...group.querySelectorAll('.note:not([hidden])')].some(note => note.textContent.startsWith('A dash marks a board'));
           return [
             ...(cells.some(cell => cell.dash && !cell.reason.startsWith('not measured: ')) ? [table.id + ' has a dash with no reason'] : []),
             ...(cells.some(cell => cell.dash) !== noted ? [table.id + (noted ? ' explains dashes it does not show' : ' shows a dash it does not explain')] : []),
@@ -1587,8 +1589,6 @@ async function checkBenchmark(page, baseUrl, width) {
         unnamed: wraps.filter(wrap => !wrap.querySelector('table').getAttribute('aria-label')).length,
       };
     })()`);
-
-    const sides = Array.from({ length: 11 }, (_, i) => `${2 * i}×${2 * i}`).join(' ');
 
     for (const [id, boards] of state.boards.filter(([, boards]) => boards !== sides)) {
       problems.push(`#${hash}: ${id} lists ${boards} instead of every board from 0×0 to 20×20`);
@@ -1622,9 +1622,21 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${hash} has no time for ${state.missing.join(', ')} and no rows in ${state.empty.join(', ')}`);
     }
 
+    for (const [id] of complete ? state.timed.filter(([, count]) => count === 0) : []) {
+      problems.push(`#${hash}: ${id} shows no time at all`);
+    }
+
     if (!/^Run on \d{4}-\d{2}-\d{2} on .+ \(.+\), in a container with \d+ cores and \d+ GB, with Node\.js /.test(state.environment)) {
       problems.push(`#${hash} has no environment`);
     }
+  }
+
+  const triangular = await page.evaluate(
+    `['rectangle', 'cylinder', 'torus'].map(surface => ['triangular-' + surface + '-benchmark', [...document.querySelectorAll('#triangular-' + surface + '-benchmark-rows tr')].map(row => row.cells[0].textContent).join(' ')])`,
+  );
+
+  for (const [id, boards] of triangular.filter(([, boards]) => boards !== sides)) {
+    problems.push(`${id} lists ${boards} instead of every board from 0×0 to 20×20`);
   }
 
   await loadSite(page, baseUrl, width, 'benchmark/domicule/rectangle/diagonal');

@@ -245,9 +245,10 @@ function canUnrankCylinderTorus({ rowCount, colCount, lattice = 'king' }) {
  * @returns {{ rowCount: number, colCount: number, totals: BigInt[], total: BigInt }} The unranker.
  */
 function createCylinderTorusUnranker({ rowCount, colCount, lattice = 'king', torus = false, diagonals = null }, onProgress) {
-  const empty = rowCount * colCount === 0;
+  const sizes = Number.isInteger(rowCount) && Number.isInteger(colCount) && rowCount >= 0 && colCount >= 0;
+  const empty = sizes && rowCount * colCount === 0;
 
-  if (!Object.hasOwn(CYLINDER_TORUS_LATTICES, lattice) || (!empty && (colCount < 2 || rowCount < (torus ? 2 : 1)))) {
+  if (!Object.hasOwn(CYLINDER_TORUS_LATTICES, lattice) || !sizes || (!empty && (colCount < 2 || rowCount < (torus ? 2 : 1)))) {
     throw new RangeError('The circumference must be at least 2 and a torus needs at least 2 rows unless the board has no cells.');
   }
 
