@@ -92,7 +92,7 @@ const SHEET_BOARDS = [
   '10x10-diagonal-torus',
 ];
 const CONFIRMATION_BOARDS = ['10x10-diagonal-torus?diagonals=20'];
-const SAMPLE_BOARDS = ['18x18', '16x16-diagonal', '20x20'];
+const SAMPLE_BOARDS = ['18x18', '16x16-diagonal', '20x20', '18x18-triangular'];
 const NOTES = [
   { slug: 'research', cells: 2 },
   {
@@ -163,21 +163,21 @@ const NOTES = [
     cells: 5, figures: 1,
     group: 'Triangular lattice',
     h1: 'Triangular lattice: tilings of the 2n × 2n board (A401988)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'The counts', 'The entropy per site', 'PARI/GP', 'Verification', 'References'],
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'The entropy per site', 'PARI/GP', 'Verification', 'References'],
   },
   {
     slug: 'triangular-lattice/cylinders',
     cells: 3, figures: 1,
     group: 'Triangular lattice',
     h1: 'Triangular lattice: tilings of cylinders (A002605)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'The counts', 'What the OEIS has', 'Verification', 'References'],
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Verification', 'References'],
   },
   {
     slug: 'triangular-lattice/tori',
     cells: 2, figures: 1,
     group: 'Triangular lattice',
     h1: 'Triangular lattice: tilings of the 2n × 2n torus (not in the OEIS)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'The counts', 'Verification', 'References'],
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
   },
 ];
 const SOLVER_SECTION = { 'how-the-counts-are-made': 'the-modular-solver' };
@@ -657,6 +657,16 @@ async function checkPieces(page, baseUrl, width) {
 
   if (straight.boards.some(id => id.endsWith('-diagonal')) || straight.legend !== 2) {
     problems.push(`domino view shows ${straight.boards.join(', ')} with ${straight.legend} legend entries`);
+  }
+
+  await page.evaluate("document.querySelector('#pieces [data-pieces=triangular]').click()");
+  await page.waitFor("location.hash === '#gallery/20x20-triangular/1'", 'the switch to the 20x20 triangular lattice');
+  await page.waitFor("document.querySelector('#sheet svg .d')", 'the 20x20 triangular lattice sample');
+  const triangular = await read();
+  const antidiagonal = await page.evaluate("document.querySelectorAll('#sheet svg .a').length");
+
+  if (!triangular.boards.length || triangular.boards.some(id => !id.endsWith('-triangular')) || triangular.legend !== 3 || antidiagonal) {
+    problems.push(`triangular lattice view shows ${triangular.boards.join(', ')} with ${triangular.legend} legend entries and ${antidiagonal} ↙ pieces`);
   }
 
   return problems;
@@ -1425,7 +1435,14 @@ async function checkMenus(page, width) {
     problems.push(`at ${width} px clicking ${before.menus[0].label} then ${before.menus[1].label} leaves ${switched.menus.filter(menu => menu.open).map(menu => menu.label).join(', ') || 'no menu'} open`);
   }
 
-  await clickAt(page, [Math.round(switched.width / 2), Math.round(before.height + 400)]);
+  const blank = [2, Math.round(before.height + 400)];
+  const target = await page.evaluate(`document.elementFromPoint(${blank[0]}, ${blank[1]})?.closest('a, button, summary, input, select, label')?.outerHTML ?? null`);
+
+  if (target) {
+    problems.push(`at ${width} px the point for a click outside the menus lands on ${target}`);
+  }
+
+  await clickAt(page, blank);
   const outside = await page.evaluate(READ_MENUS);
 
   if (outside.menus.some(menu => menu.open)) {
@@ -1828,11 +1845,12 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       return { runs: section.innerText.split('Run on ').length - 1, links, cylinderTorus: DATA.cylinderTorusDiagonalRun?.directory ?? null };
     })()`);
     const ownRun = surface !== 'rectangle' && count === 'diagonal';
-    const wanted = ownRun ? (run.cylinderTorus ? 1 : 0) : 1;
+    const unmeasured = p === 'triangular';
+    const wanted = unmeasured ? 0 : ownRun ? (run.cylinderTorus ? 1 : 0) : 1;
     const linked = run.links.length === wanted && run.links.every(link => !ownRun || link === run.cylinderTorus);
 
     if (run.runs !== wanted || !linked) {
-      problems.push(`the ${view} table shows ${run.runs} run lines linking ${run.links.join(', ') || 'nothing'}; it should show ${wanted}, for ${ownRun ? 'its own run' : 'the main run'}`);
+      problems.push(`the ${view} table shows ${run.runs} run lines linking ${run.links.join(', ') || 'nothing'}; it should show ${wanted}, for ${unmeasured ? 'no run' : ownRun ? 'its own run' : 'the main run'}`);
     }
     const times = await page.evaluate(
       "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) tbody tr')].flatMap(row => [...row.cells].slice(2, -1).map(cell => cell.textContent))",
@@ -1885,6 +1903,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     'diagonal-benchmark': 'domicules/rectangles-by-diagonal-pieces',
     'cylinder-diagonal-benchmark': 'domicules/cylinders-by-diagonal-pieces',
     'torus-diagonal-benchmark': 'domicules/tori-by-diagonal-pieces',
+    'triangular-rectangle-benchmark': 'triangular-lattice/rectangles',
+    'triangular-cylinder-benchmark': 'triangular-lattice/cylinders',
+    'triangular-torus-benchmark': 'triangular-lattice/tori',
   };
   const expected = label => {
     const [table, solver] = label.split(/[ ,]/);
@@ -1899,9 +1920,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     problems.push(`at ${width} px the solver links of the benchmark cards are wrong: ${wrongCards.map(({ label, problem, display, tapped }) => `${label} ${problem || `display ${display}, tapped ${tapped}`}`).join('; ')}`);
   }
 
-  if (headers.length !== 54 || wrong.length) {
+  if (headers.length !== 72 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 54 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 72 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 
@@ -2034,7 +2055,7 @@ const CHECKS = {
   picker: { label: 'board picker', run: checkPicker },
   confirmation: { label: 'diagonal filter confirmation', run: checkConfirmation },
   samples: { label: 'numbered samples', run: checkSamples },
-  pieces: { label: 'dominoes and domicules switch', run: checkPieces },
+  pieces: { label: 'pieces switch', run: checkPieces },
   styles: { label: 'sheet style switch', run: checkStyles },
   labels: { label: 'long tiling numbers', run: checkLongLabels },
   history: { label: 'random jump and back', run: checkHistory },
