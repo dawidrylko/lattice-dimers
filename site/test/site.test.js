@@ -1435,7 +1435,14 @@ async function checkMenus(page, width) {
     problems.push(`at ${width} px clicking ${before.menus[0].label} then ${before.menus[1].label} leaves ${switched.menus.filter(menu => menu.open).map(menu => menu.label).join(', ') || 'no menu'} open`);
   }
 
-  await clickAt(page, [Math.round(switched.width / 2), Math.round(before.height + 400)]);
+  const blank = [2, Math.round(before.height + 400)];
+  const target = await page.evaluate(`document.elementFromPoint(${blank[0]}, ${blank[1]})?.closest('a, button, summary, input, select, label')?.outerHTML ?? null`);
+
+  if (target) {
+    problems.push(`at ${width} px the point for a click outside the menus lands on ${target}`);
+  }
+
+  await clickAt(page, blank);
   const outside = await page.evaluate(READ_MENUS);
 
   if (outside.menus.some(menu => menu.open)) {
