@@ -39,7 +39,7 @@ const PROGRAMS = [
   },
   {
     files: ['oeis/A401670/A401670.gp'],
-    testCases: testCasesOf('all-lattices-cylinder-torus-modular')
+    testCases: testCasesOf('any-lattice-cylinder-torus-modular')
       .filter(({ lattice, torus, twisted, colCount }) => lattice === 'king' && torus && !twisted && colCount <= MAX_TORUS_CIRCUMFERENCE)
       .map(({ rowCount, colCount, expectedResult }) => ({ call: `T(${rowCount}, ${colCount})`, expectedResult }))
       .concat({ call: 'a(2)', expectedResult: '17552' }),
@@ -56,7 +56,7 @@ const PROGRAMS = [
   },
   {
     files: ['oeis/A401988/A401988.gp'],
-    testCases: testCasesOf('all-lattices-rectangle-modular')
+    testCases: testCasesOf('any-lattice-rectangle-modular')
       .filter(({ lattice, rowCount, colCount }) => lattice === 'triangular' && rowCount === colCount && rowCount % 2 === 0 && rowCount <= MAX_TRIANGULAR_SIDE)
       .map(({ rowCount, expectedResult }) => ({ call: `a(${rowCount / 2})`, expectedResult })),
   },

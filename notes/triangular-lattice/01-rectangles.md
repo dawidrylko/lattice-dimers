@@ -15,11 +15,11 @@ figure(svgs, `4 of the ${total} tilings of the triangular lattice on the 8 × 8 
 
 ## The Modular solver
 
-The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modulo a prime $p < 2^{31}$. [`all-lattices-rectangle-modular.js`](../../js/solvers/all-lattices-rectangle-modular.js) counts modulo several primes in parallel worker threads, rebuilds the exact count with the Chinese remainder theorem, and checks it against one more prime. The number of primes comes from the Kahn-Lovász bound of the king's graph, as in the [domicule solver](../domicules/01-rectangles.md#the-modular-solver): the triangular lattice is a subgraph of the king's graph, so its count is below that bound too. The same algorithm is in Rust, [`all-lattices-rectangle-modular.rs`](../../rust/solvers/src/bin/all-lattices-rectangle-modular.rs), and in Python, [`all_lattices_rectangle_modular.py`](../../python/lattice_dimers/solvers/all_lattices_rectangle_modular.py). `--lattice` chooses the square lattice, the triangular lattice or the king's graph.
+The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modulo a prime $p < 2^{31}$. [`any-lattice-rectangle-modular.js`](../../js/solvers/any-lattice-rectangle-modular.js) counts modulo several primes in parallel worker threads, rebuilds the exact count with the Chinese remainder theorem, and checks it against one more prime. The number of primes comes from the Kahn-Lovász bound of the king's graph, as in the [domicule solver](../domicules/01-rectangles.md#the-modular-solver): the triangular lattice is a subgraph of the king's graph, so its count is below that bound too. The same algorithm is in Rust, [`any-lattice-rectangle-modular.rs`](../../rust/solvers/src/bin/any-lattice-rectangle-modular.rs), and in Python, [`any_lattice_rectangle_modular.py`](../../python/lattice_dimers/solvers/any_lattice_rectangle_modular.py). `--lattice` chooses the square lattice, the triangular lattice or the king's graph.
 
 ## The BigInt solver
 
-[`all-lattices-rectangle-bigint.js`](../../js/solvers/all-lattices-rectangle-bigint.js) goes cell by cell in row-major order, the transfer by cells of the [domicule solver](../domicules/01-rectangles.md#the-bigint-solver). A free cell is matched with a later cell: its right, down or down-right neighbour on the triangular lattice, also its down-left neighbour on the king's graph, and only right or down on the square lattice. The farthest cell a state has to remember lies $w + 1$ places ahead, so a state has $w + 2$ bits. The counts are `BigInt`, and so are those of its Rust and Python implementations, [`all-lattices-rectangle-bigint.rs`](../../rust/solvers/src/bin/all-lattices-rectangle-bigint.rs) and [`all_lattices_rectangle_bigint.py`](../../python/lattice_dimers/solvers/all_lattices_rectangle_bigint.py). In every language this solver is the reference of the modular one.
+[`any-lattice-rectangle-bigint.js`](../../js/solvers/any-lattice-rectangle-bigint.js) goes cell by cell in row-major order, the transfer by cells of the [domicule solver](../domicules/01-rectangles.md#the-bigint-solver). A free cell is matched with a later cell: its right, down or down-right neighbour on the triangular lattice, also its down-left neighbour on the king's graph, and only right or down on the square lattice. The farthest cell a state has to remember lies $w + 1$ places ahead, so a state has $w + 2$ bits. The counts are `BigInt`, and so are those of its Rust and Python implementations, [`any-lattice-rectangle-bigint.rs`](../../rust/solvers/src/bin/any-lattice-rectangle-bigint.rs) and [`any_lattice_rectangle_bigint.py`](../../python/lattice_dimers/solvers/any_lattice_rectangle_bigint.py). In every language this solver is the reference of the modular one.
 
 ## Numbering
 
@@ -31,13 +31,13 @@ From $16 \times 16$ to $20 \times 20$ the gallery runs the Markov chain of the [
 
 ## The counts
 
-The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/all-lattices-rectangle-modular.json`](../../spec/cases/all-lattices-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are [OEIS A401988](https://oeis.org/draft/A401988) [3]; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.
+The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are [OEIS A401988](https://oeis.org/draft/A401988) [3]; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.
 
 ```js run
-const reference = require('./js/solvers/all-lattices-rectangle-bigint.js');
-const modular = require('./js/solvers/all-lattices-rectangle-modular.js');
+const reference = require('./js/solvers/any-lattice-rectangle-bigint.js');
+const modular = require('./js/solvers/any-lattice-rectangle-modular.js');
 const stored = require('./js/core/cases')
-  .testCasesOf('all-lattices-rectangle-modular')
+  .testCasesOf('any-lattice-rectangle-modular')
   .filter(({ lattice, rowCount, colCount }) => lattice === 'triangular' && rowCount === colCount);
 const rows = [];
 
@@ -69,7 +69,7 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 `T(h, w)` counts the tilings of an $h \times w$ board. Swapping rows and columns maps the diagonal that runs down to the right onto itself, so the table is symmetric, and its diagonal of even sides is $a(n)$.
 
 ```js run
-const { calculateTotalTilingCombinations } = require('./js/solvers/all-lattices-rectangle-bigint.js');
+const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-rectangle-bigint.js');
 const sides = [1, 2, 3, 4, 5, 6, 7, 8];
 
 table(
@@ -114,7 +114,7 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 Every count on this page is checked in more than one independent way:
 
-- the `BigInt` and the modular solver agree, in Rust, Python and JavaScript, on every board of [`spec/cases/all-lattices-rectangle-bigint.json`](../../spec/cases/all-lattices-rectangle-bigint.json) and [`spec/cases/all-lattices-rectangle-modular.json`](../../spec/cases/all-lattices-rectangle-modular.json);
+- the `BigInt` and the modular solver agree, in Rust, Python and JavaScript, on every board of [`spec/cases/any-lattice-rectangle-bigint.json`](../../spec/cases/any-lattice-rectangle-bigint.json) and [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json);
 - the same solvers on the square lattice and on the king's graph give the stored domino and domicule counts;
 - a listing of every tiling agrees on the triangular boards of up to 40 cells;
 - the Kasteleyn determinant of the PARI/GP program agrees up to $16 \times 16$ in CI;

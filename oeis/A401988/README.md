@@ -15,7 +15,7 @@ Proposed 11 November 2026, revision #9 of the draft.
 | file | content |
 | --- | --- |
 | [A401988.txt](A401988.txt) | the full entry text, reconstructed from the draft page |
-| [b401988.txt](b401988.txt) | $n = 0, \dots, 37$, from [`b401988.js`](b401988.js); identical to the file uploaded with the draft; its terms up to $n = 11$ are checked against [`spec/cases/all-lattices-rectangle-modular.json`](../../spec/cases/all-lattices-rectangle-modular.json) |
+| [b401988.txt](b401988.txt) | $n = 0, \dots, 37$, from [`b401988.js`](b401988.js); identical to the file uploaded with the draft; its terms up to $n = 11$ are checked against [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json) |
 | [A401988.gp](A401988.gp) | the program of the `%o` lines |
 | [b401988.js](b401988.js) | the generator of the b-file |
 

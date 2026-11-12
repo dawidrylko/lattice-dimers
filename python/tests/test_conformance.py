@@ -14,7 +14,7 @@ SPEC = ROOT / "spec"
 REJECTION_TIMEOUT = 30
 MEMORY_TIMEOUT = 120
 MEMORY_LIMIT_BYTES = 256 * 2**20
-PRECISION_ALGORITHM = "domino-rectangle-number"
+PRECISION_ALGORITHM = "domino-rectangle-float"
 
 
 def load(path):

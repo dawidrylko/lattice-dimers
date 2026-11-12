@@ -87,7 +87,7 @@ if (!cylinderTorusDiagonalRun) {
 
 ## Verification
 
-The two solvers agree with each other, with the domino count of `all-lattices-cylinder-torus-bigint` at $k = 0$ and with its king's graph count summed over $k$, and on the tori of up to 16 cells with every tiling listed one by one. The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
+The two solvers agree with each other, with the domino count of `any-lattice-cylinder-torus-bigint` at $k = 0$ and with its king's graph count summed over $k$, and on the tori of up to 16 cells with every tiling listed one by one. The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
 

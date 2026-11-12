@@ -8,7 +8,7 @@ const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 
 describe('data', () => {
-  const testCasesNumber = testCasesOf('domino-rectangle-number').filter(isEvenSquare);
+  const testCasesNumber = testCasesOf('domino-rectangle-float').filter(isEvenSquare);
   const testCasesFormula = testCasesOf('domino-rectangle-formula');
   const exact = new Map(testCasesFormula.map(({ rowCount, colCount, expectedResult }) => [`${rowCount}x${colCount}`, expectedResult]));
 
@@ -34,7 +34,7 @@ describe('data', () => {
 });
 
 describe('rectangles on three lattices', () => {
-  const rectangles = testCasesOf('all-lattices-rectangle-modular');
+  const rectangles = testCasesOf('any-lattice-rectangle-modular');
   const storedOf = algorithm =>
     new Map(testCasesOf(algorithm).map(({ rowCount, colCount, expectedResult }) => [`${rowCount}x${colCount}`, String(expectedResult)]));
   const anchors = { square: storedOf('domino-rectangle-bigint'), king: storedOf('domicule-rectangle-bigint') };
@@ -133,7 +133,7 @@ describe('rectangles on three lattices', () => {
 });
 
 describe('cylinder and torus diagonal anchors', () => {
-  const cylinderTorus = require('../js/solvers/all-lattices-cylinder-torus-bigint.js');
+  const cylinderTorus = require('../js/solvers/any-lattice-cylinder-torus-bigint.js');
   const anchored = testCasesOf('domicule-cylinder-torus-polynomial-modular').filter(({ rowCount, colCount }) => rowCount * colCount <= 64);
 
   test('at least 20 cylinder and torus rows are small enough to anchor', () => {
@@ -447,24 +447,24 @@ test('every cylinder and torus of the benchmark run the site shows has a stored 
   const { latest } = readBenchmarkRuns();
   const directory = path.join(ROOT_DIRECTORY, 'benchmarks', 'results', latest);
   const stored = new Set(
-    testCasesOf('all-lattices-cylinder-torus-modular')
+    testCasesOf('any-lattice-cylinder-torus-modular')
       .filter(({ twisted }) => !twisted)
       .map(({ rowCount, colCount, lattice, torus }) => `${rowCount}x${colCount}-${lattice}-${torus ? 'torus' : 'cylinder'}`),
   );
-  const measured = listJavaScriptResults(directory, 'all-lattices-cylinder-torus-')
+  const measured = listJavaScriptResults(directory, 'any-lattice-cylinder-torus-')
     .map(fileName => fileName.match(/_(\d+x\d+-(?:king|square)-(?:torus|cylinder))\.txt$/))
     .filter(Boolean)
     .map(([, board]) => board);
 
   assert.ok(measured.length > 0);
-  assert.deepEqual([...new Set(measured.filter(board => !stored.has(board)))], [], 'Add these counts to spec/cases/all-lattices-cylinder-torus-modular.json.');
+  assert.deepEqual([...new Set(measured.filter(board => !stored.has(board)))], [], 'Add these counts to spec/cases/any-lattice-cylinder-torus-modular.json.');
 });
 
 test('every board of the cylinder and torus diagonal run the site shows has a stored king count', () => {
   const { findSeriesRun, listJavaScriptResults } = require('../site/benchmarkRuns');
   const run = findSeriesRun('domicule-cylinder-torus-polynomial-');
   const stored = new Set(
-    testCasesOf('all-lattices-cylinder-torus-modular')
+    testCasesOf('any-lattice-cylinder-torus-modular')
       .filter(({ lattice, twisted }) => lattice === 'king' && !twisted)
       .map(({ rowCount, colCount, torus }) => `${rowCount}x${colCount}-${torus ? 'torus' : 'cylinder'}`),
   );
@@ -475,5 +475,5 @@ test('every board of the cylinder and torus diagonal run the site shows has a st
         .filter(Boolean)
         .map(([, board]) => board);
 
-  assert.deepEqual([...new Set(measured.filter(board => !stored.has(board)))], [], 'Add these king counts to spec/cases/all-lattices-cylinder-torus-modular.json.');
+  assert.deepEqual([...new Set(measured.filter(board => !stored.has(board)))], [], 'Add these king counts to spec/cases/any-lattice-cylinder-torus-modular.json.');
 });

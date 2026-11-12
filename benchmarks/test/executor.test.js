@@ -7,9 +7,9 @@ const executor = require('../executor');
 const { ROOT_DIRECTORY, makeTemporaryDirectory, withEnvironment } = require('./support');
 
 const BOARD = { rowCount: 2, colCount: 2 };
-const JAVASCRIPT = path.join(ROOT_DIRECTORY, 'js', 'solvers', 'domino-rectangle-number.js');
-const PYTHON = 'python/lattice_dimers/solvers/domino_rectangle_number.py';
-const RUST = 'rust/solvers/src/bin/domino-rectangle-number.rs';
+const JAVASCRIPT = path.join(ROOT_DIRECTORY, 'js', 'solvers', 'domino-rectangle-float.js');
+const PYTHON = 'python/lattice_dimers/solvers/domino_rectangle_float.py';
+const RUST = 'rust/solvers/src/bin/domino-rectangle-float.rs';
 const NOT_BUILT = 'does not exist; build it with cargo build --release in rust/.';
 const STALE = 'is older than the .rs files it is built from; rebuild it with cargo build --release in rust/.';
 
@@ -24,7 +24,7 @@ const guard = action => {
 describe('executor', () => {
   const absoluteTarget = path.join(os.tmpdir(), 'cargo-target');
   const staleTarget = fs.mkdtempSync(path.join(os.tmpdir(), 'stale-target-'));
-  const staleBinary = path.join(staleTarget, 'release', 'domino-rectangle-number');
+  const staleBinary = path.join(staleTarget, 'release', 'domino-rectangle-float');
 
   before(() => {
     fs.mkdirSync(path.dirname(staleBinary));
@@ -35,29 +35,29 @@ describe('executor', () => {
   after(() => fs.rmSync(staleTarget, { recursive: true, force: true }));
 
   const cases = [
-    ['a bare name in js/solvers', 'domino-rectangle-number.js', {}, `"${process.execPath}" "${JAVASCRIPT}" -r 2 -c 2`],
-    ['a root-relative JavaScript file', 'js/solvers/domino-rectangle-number.js', {}, `"${process.execPath}" "${JAVASCRIPT}" -r 2 -c 2`],
-    ['python3', PYTHON, { PYTHON: undefined }, '"python3" "-I" "-m" "lattice_dimers.solvers.domino_rectangle_number" -r 2 -c 2'],
-    ['$PYTHON', PYTHON, { PYTHON: '/opt/python' }, '"/opt/python" "-I" "-m" "lattice_dimers.solvers.domino_rectangle_number" -r 2 -c 2'],
+    ['a bare name in js/solvers', 'domino-rectangle-float.js', {}, `"${process.execPath}" "${JAVASCRIPT}" -r 2 -c 2`],
+    ['a root-relative JavaScript file', 'js/solvers/domino-rectangle-float.js', {}, `"${process.execPath}" "${JAVASCRIPT}" -r 2 -c 2`],
+    ['python3', PYTHON, { PYTHON: undefined }, '"python3" "-I" "-m" "lattice_dimers.solvers.domino_rectangle_float" -r 2 -c 2'],
+    ['$PYTHON', PYTHON, { PYTHON: '/opt/python' }, '"/opt/python" "-I" "-m" "lattice_dimers.solvers.domino_rectangle_float" -r 2 -c 2'],
     [
       'the Rust binary in rust/target',
       RUST,
       { CARGO_TARGET_DIR: undefined },
-      () => `"${path.join(ROOT_DIRECTORY, 'rust', 'target', 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
+      () => `"${path.join(ROOT_DIRECTORY, 'rust', 'target', 'release', 'domino-rectangle-float')}" -r 2 -c 2`,
     ],
     [
       'a relative $CARGO_TARGET_DIR',
       RUST,
       { CARGO_TARGET_DIR: 'build' },
-      () => `"${path.join(ROOT_DIRECTORY, 'rust', 'build', 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
+      () => `"${path.join(ROOT_DIRECTORY, 'rust', 'build', 'release', 'domino-rectangle-float')}" -r 2 -c 2`,
     ],
     [
       'an absolute $CARGO_TARGET_DIR',
       RUST,
       { CARGO_TARGET_DIR: absoluteTarget },
-      () => `"${path.join(absoluteTarget, 'release', 'domino-rectangle-number')}" -r 2 -c 2`,
+      () => `"${path.join(absoluteTarget, 'release', 'domino-rectangle-float')}" -r 2 -c 2`,
     ],
-    ['an unknown language', 'domino-rectangle-number.ts', {}, 'an error: domino-rectangle-number.ts is not a .rs, .py or .js implementation.'],
+    ['an unknown language', 'domino-rectangle-float.ts', {}, 'an error: domino-rectangle-float.ts is not a .rs, .py or .js implementation.'],
   ];
 
   for (const [name, fileName, environment, expected] of cases) {
@@ -71,7 +71,7 @@ describe('executor', () => {
   test('a Rust binary that was not built', () => {
     const actual = withEnvironment({ CARGO_TARGET_DIR: absoluteTarget }, () => guard(() => executor(RUST, BOARD)));
 
-    assert.equal(actual, `an error: Execution failed: ${path.join(absoluteTarget, 'release', 'domino-rectangle-number')} ${NOT_BUILT}`);
+    assert.equal(actual, `an error: Execution failed: ${path.join(absoluteTarget, 'release', 'domino-rectangle-float')} ${NOT_BUILT}`);
   });
 
   test('a Rust binary older than the Rust sources', () => {

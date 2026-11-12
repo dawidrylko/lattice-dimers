@@ -28,7 +28,7 @@ describe('the plan of a full run', () => {
   });
 
   test('the name of a solver does not make a cylinder a torus', () => {
-    assert.equal(estimateBoard({ seriesName: 'all-lattices-cylinder-torus-modular.js-king-cylinder', previousSeconds: 1, earlierSeconds: 0 }), 4.4);
+    assert.equal(estimateBoard({ seriesName: 'any-lattice-cylinder-torus-modular.js-king-cylinder', previousSeconds: 1, earlierSeconds: 0 }), 4.4);
   });
 
   test('the instruction count is read from the output of Cachegrind', () => {

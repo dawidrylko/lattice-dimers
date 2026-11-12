@@ -1,9 +1,9 @@
 {
   "firstCases": 7,
   "algorithms": {
-    "all-lattices-cylinder-torus-bigint": { "maxTorusSide": 8 },
-    "all-lattices-cylinder-torus-modular": { "firstCasesPlusBoardsOf": "all-lattices-cylinder-torus-bigint" },
-    "all-lattices-rectangle-modular": { "firstCasesPlusBoardsOf": "all-lattices-rectangle-bigint" },
+    "any-lattice-cylinder-torus-bigint": { "maxTorusSide": 8 },
+    "any-lattice-cylinder-torus-modular": { "firstCasesPlusBoardsOf": "any-lattice-cylinder-torus-bigint" },
+    "any-lattice-rectangle-modular": { "firstCasesPlusBoardsOf": "any-lattice-rectangle-bigint" },
     "domicule-cylinder-torus-polynomial-modular": { "firstCasesPlusBoardsOf": "domicule-cylinder-torus-polynomial-bigint" },
     "domicule-rectangle-polynomial-modular": { "firstCasesPlusBoardsOf": "domicule-rectangle-polynomial-bigint" },
     "domicule-rectangle-bigint": { "maxSquareSide": 16 },

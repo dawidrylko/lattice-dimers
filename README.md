@@ -29,17 +29,17 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 | --- | --- | --- | --- |
 | `domino-rectangle-formula` | [✅](rust/solvers/src/bin/domino-rectangle-formula.rs) | [✅](python/lattice_dimers/solvers/domino_rectangle_formula.py) | [✅](js/solvers/domino-rectangle-formula.js) |
 | `domino-rectangle-bigint` | [✅](rust/solvers/src/bin/domino-rectangle-bigint.rs) | [✅](python/lattice_dimers/solvers/domino_rectangle_bigint.py) | [✅](js/solvers/domino-rectangle-bigint.js) |
-| `domino-rectangle-number` | [✅](rust/solvers/src/bin/domino-rectangle-number.rs) | [✅](python/lattice_dimers/solvers/domino_rectangle_number.py) | [✅](js/solvers/domino-rectangle-number.js) |
+| `domino-rectangle-float` | [✅](rust/solvers/src/bin/domino-rectangle-float.rs) | [✅](python/lattice_dimers/solvers/domino_rectangle_float.py) | [✅](js/solvers/domino-rectangle-float.js) |
 | `domicule-rectangle-modular` | [✅](rust/solvers/src/bin/domicule-rectangle-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_modular.py) | [✅](js/solvers/domicule-rectangle-modular.js) |
 | `domicule-rectangle-bigint` | [✅](rust/solvers/src/bin/domicule-rectangle-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_bigint.py) | [✅](js/solvers/domicule-rectangle-bigint.js) |
 | `domicule-rectangle-polynomial-modular` | [✅](rust/solvers/src/bin/domicule-rectangle-polynomial-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_polynomial_modular.py) | [✅](js/solvers/domicule-rectangle-polynomial-modular.js) |
 | `domicule-rectangle-polynomial-bigint` | [✅](rust/solvers/src/bin/domicule-rectangle-polynomial-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_rectangle_polynomial_bigint.py) | [✅](js/solvers/domicule-rectangle-polynomial-bigint.js) |
 | `domicule-cylinder-torus-polynomial-modular` | [✅](rust/solvers/src/bin/domicule-cylinder-torus-polynomial-modular.rs) | [✅](python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_modular.py) | [✅](js/solvers/domicule-cylinder-torus-polynomial-modular.js) |
 | `domicule-cylinder-torus-polynomial-bigint` | [✅](rust/solvers/src/bin/domicule-cylinder-torus-polynomial-bigint.rs) | [✅](python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_bigint.py) | [✅](js/solvers/domicule-cylinder-torus-polynomial-bigint.js) |
-| `all-lattices-cylinder-torus-modular` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-modular.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_modular.py) | [✅](js/solvers/all-lattices-cylinder-torus-modular.js) |
-| `all-lattices-cylinder-torus-bigint` | [✅](rust/solvers/src/bin/all-lattices-cylinder-torus-bigint.rs) | [✅](python/lattice_dimers/solvers/all_lattices_cylinder_torus_bigint.py) | [✅](js/solvers/all-lattices-cylinder-torus-bigint.js) |
-| `all-lattices-rectangle-modular` | [✅](rust/solvers/src/bin/all-lattices-rectangle-modular.rs) | [✅](python/lattice_dimers/solvers/all_lattices_rectangle_modular.py) | [✅](js/solvers/all-lattices-rectangle-modular.js) |
-| `all-lattices-rectangle-bigint` | [✅](rust/solvers/src/bin/all-lattices-rectangle-bigint.rs) | [✅](python/lattice_dimers/solvers/all_lattices_rectangle_bigint.py) | [✅](js/solvers/all-lattices-rectangle-bigint.js) |
+| `any-lattice-cylinder-torus-modular` | [✅](rust/solvers/src/bin/any-lattice-cylinder-torus-modular.rs) | [✅](python/lattice_dimers/solvers/any_lattice_cylinder_torus_modular.py) | [✅](js/solvers/any-lattice-cylinder-torus-modular.js) |
+| `any-lattice-cylinder-torus-bigint` | [✅](rust/solvers/src/bin/any-lattice-cylinder-torus-bigint.rs) | [✅](python/lattice_dimers/solvers/any_lattice_cylinder_torus_bigint.py) | [✅](js/solvers/any-lattice-cylinder-torus-bigint.js) |
+| `any-lattice-rectangle-modular` | [✅](rust/solvers/src/bin/any-lattice-rectangle-modular.rs) | [✅](python/lattice_dimers/solvers/any_lattice_rectangle_modular.py) | [✅](js/solvers/any-lattice-rectangle-modular.js) |
+| `any-lattice-rectangle-bigint` | [✅](rust/solvers/src/bin/any-lattice-rectangle-bigint.rs) | [✅](python/lattice_dimers/solvers/any_lattice_rectangle_bigint.py) | [✅](js/solvers/any-lattice-rectangle-bigint.js) |
 
 ## Results
 

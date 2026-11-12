@@ -1,5 +1,5 @@
 {
-  "algorithm": "domino-rectangle-number",
+  "algorithm": "domino-rectangle-float",
   "testCases": [
     {
       "rowCount": 0,

@@ -83,7 +83,7 @@ def test_long_coefficient_under_digit_limit():
 SCRATCH_CASES = [
     ("domicule-rectangle-modular", "calculate_total_tiling_combinations", board_of("domicule-rectangle-modular", 7, 6)),
     ("domicule-rectangle-polynomial-modular", "calculate_diagonal_polynomial", board_of("domicule-rectangle-polynomial-bigint", 5, 6)),
-    ("all-lattices-rectangle-modular", "calculate_total_tiling_combinations", board_of("all-lattices-rectangle-modular", 7, 6)),
+    ("any-lattice-rectangle-modular", "calculate_total_tiling_combinations", board_of("any-lattice-rectangle-modular", 7, 6)),
 ]
 
 
@@ -102,9 +102,9 @@ def test_scratch_array_of_one_count(monkeypatch, algorithm, method, case):
 
 
 UNKNOWN_PROCESSOR_CASES = [
-    ("all-lattices-cylinder-torus-modular", "calculate_total_tiling_combinations", board_of("all-lattices-cylinder-torus-bigint", 4, 4)),
+    ("any-lattice-cylinder-torus-modular", "calculate_total_tiling_combinations", board_of("any-lattice-cylinder-torus-bigint", 4, 4)),
     ("domicule-rectangle-modular", "calculate_total_tiling_combinations", board_of("domicule-rectangle-modular", 4, 4)),
-    ("all-lattices-rectangle-modular", "calculate_total_tiling_combinations", board_of("all-lattices-rectangle-modular", 4, 4)),
+    ("any-lattice-rectangle-modular", "calculate_total_tiling_combinations", board_of("any-lattice-rectangle-modular", 4, 4)),
     ("domicule-rectangle-polynomial-modular", "calculate_diagonal_polynomial", board_of("domicule-rectangle-polynomial-bigint", 4, 4)),
 ]
 
@@ -127,7 +127,7 @@ def test_unknown_processor_count(algorithm, method, case):
     )
     lattice = case.get("lattice")
     torus = bool(case.get("torus"))
-    surface = {"lattice": lattice, **({"torus": torus} if "torus" in case or algorithm.startswith("all-lattices-cylinder-torus-") else {})} if lattice else {}
+    surface = {"lattice": lattice, **({"torus": torus} if "torus" in case or algorithm.startswith("any-lattice-cylinder-torus-") else {})} if lattice else {}
     board = json.dumps({"row_count": case["rowCount"], "col_count": case["colCount"], **surface})
     args = ["-r", case["rowCount"], "-c", case["colCount"], *(["--lattice", lattice] if lattice else []), *(["--torus"] if torus else [])]
     result = run_script(script, module_of(algorithm), board, *args)

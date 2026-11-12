@@ -26,20 +26,20 @@ autobenches = false
 lattice-dimers-core = { path = "core" }
 
 [[bin]]
-name = "all-lattices-cylinder-torus-bigint"
-path = "solvers/src/bin/all-lattices-cylinder-torus-bigint.rs"
+name = "any-lattice-cylinder-torus-bigint"
+path = "solvers/src/bin/any-lattice-cylinder-torus-bigint.rs"
 
 [[bin]]
-name = "all-lattices-cylinder-torus-modular"
-path = "solvers/src/bin/all-lattices-cylinder-torus-modular.rs"
+name = "any-lattice-cylinder-torus-modular"
+path = "solvers/src/bin/any-lattice-cylinder-torus-modular.rs"
 
 [[bin]]
-name = "all-lattices-rectangle-bigint"
-path = "solvers/src/bin/all-lattices-rectangle-bigint.rs"
+name = "any-lattice-rectangle-bigint"
+path = "solvers/src/bin/any-lattice-rectangle-bigint.rs"
 
 [[bin]]
-name = "all-lattices-rectangle-modular"
-path = "solvers/src/bin/all-lattices-rectangle-modular.rs"
+name = "any-lattice-rectangle-modular"
+path = "solvers/src/bin/any-lattice-rectangle-modular.rs"
 
 [[bin]]
 name = "domicule-cylinder-torus-polynomial-bigint"
@@ -74,8 +74,8 @@ name = "domino-rectangle-formula"
 path = "solvers/src/bin/domino-rectangle-formula.rs"
 
 [[bin]]
-name = "domino-rectangle-number"
-path = "solvers/src/bin/domino-rectangle-number.rs"
+name = "domino-rectangle-float"
+path = "solvers/src/bin/domino-rectangle-float.rs"
 
 [[test]]
 name = "conformance"

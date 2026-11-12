@@ -80,7 +80,7 @@ for (let n = 1; n <= 5; n++) {
 
 ## The BigInt solver
 
-[`domino-rectangle-bigint.js`](../../js/solvers/domino-rectangle-bigint.js) counts tilings directly with a transfer by rows. It scans the board row by row and keeps, for every bitmask of the cells of the current row that a vertical domino from the row above already covers, the number of ways to reach it. A row is filled by a depth-first search that places horizontal dominoes in free pairs and starts vertical ones into the next row. The table has $2^{w}$ entries per row, so the cost grows with the shorter side and the solver turns the board so that it is the row width. Named after the JavaScript type, it keeps the counts as integers of any size, and its Rust and Python implementations, [`domino-rectangle-bigint.rs`](../../rust/solvers/src/bin/domino-rectangle-bigint.rs) and [`domino_rectangle_bigint.py`](../../python/lattice_dimers/solvers/domino_rectangle_bigint.py), do the same. [`domino-rectangle-number.js`](../../js/solvers/domino-rectangle-number.js) runs the same scan with JavaScript numbers and is exact only while they stay below $2^{53}$ (up to $10 \times 10$); [`domino-rectangle-number.rs`](../../rust/solvers/src/bin/domino-rectangle-number.rs) and [`domino_rectangle_number.py`](../../python/lattice_dimers/solvers/domino_rectangle_number.py) use the same doubles and round to the same values.
+[`domino-rectangle-bigint.js`](../../js/solvers/domino-rectangle-bigint.js) counts tilings directly with a transfer by rows. It scans the board row by row and keeps, for every bitmask of the cells of the current row that a vertical domino from the row above already covers, the number of ways to reach it. A row is filled by a depth-first search that places horizontal dominoes in free pairs and starts vertical ones into the next row. The table has $2^{w}$ entries per row, so the cost grows with the shorter side and the solver turns the board so that it is the row width. Named after the JavaScript type, it keeps the counts as integers of any size, and its Rust and Python implementations, [`domino-rectangle-bigint.rs`](../../rust/solvers/src/bin/domino-rectangle-bigint.rs) and [`domino_rectangle_bigint.py`](../../python/lattice_dimers/solvers/domino_rectangle_bigint.py), do the same. [`domino-rectangle-float.js`](../../js/solvers/domino-rectangle-float.js) runs the same scan with JavaScript numbers and is exact only while they stay below $2^{53}$ (up to $10 \times 10$); [`domino-rectangle-float.rs`](../../rust/solvers/src/bin/domino-rectangle-float.rs) and [`domino_rectangle_float.py`](../../python/lattice_dimers/solvers/domino_rectangle_float.py) use the same doubles and round to the same values.
 
 ## Numbering
 
@@ -117,7 +117,7 @@ The formula solver evaluates the resultant, the two transfer solvers scan the bo
 ```js run
 const formula = require('./js/solvers/domino-rectangle-formula.js');
 const transfer = require('./js/solvers/domino-rectangle-bigint.js');
-const number = require('./js/solvers/domino-rectangle-number.js');
+const number = require('./js/solvers/domino-rectangle-float.js');
 const known = require('./js/core/cases').testCasesOf('domino-rectangle-formula');
 
 const rows = [];

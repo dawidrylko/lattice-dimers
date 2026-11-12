@@ -7,7 +7,7 @@ const MAX_CIRCUMFERENCE = 20;
 
 /**
  * Lists the moves of a free cell in column c of a king's graph cylinder, as listMoves of
- * all-lattices-cylinder-torus-modular.js does, with whether the piece is diagonal instead of
+ * any-lattice-cylinder-torus-modular.js does, with whether the piece is diagonal instead of
  * whether it crosses the seam. Bit i of a state is the cell i places ahead in row-major order;
  * a piece from column 0 to the last column of the next row is kept in the extra bit wrapBit
  * when cols >= 3.
@@ -49,7 +49,7 @@ function listMoves(cols, c, hasBelow, wrapBit) {
 
 /**
  * Counts the domicule tilings of a cylinder or a torus by the number of diagonal pieces modulo a
- * prime, cell by cell, with the states of all-lattices-cylinder-torus-modular.js and a block of
+ * prime, cell by cell, with the states of any-lattice-cylinder-torus-modular.js and a block of
  * coefficients per state: entry k is the coefficient of x^k. Before cell p at most p pieces are
  * placed, so only the coefficients up to x^p are visited. A torus runs the smallest rotation of
  * every start set S, weighted by the number of its rotations.
@@ -170,7 +170,7 @@ function countModulo({ rows, cols, torus, prime }) {
 }
 
 /**
- * Bounds log2 of the number of tilings as calculateLog2Bound of all-lattices-cylinder-torus-modular.js
+ * Bounds log2 of the number of tilings as calculateLog2Bound of any-lattice-cylinder-torus-modular.js
  * does on the king's graph: every piece is one of the at most m moves of its cell, so a cylinder
  * has at most m^(N/2) tilings and a torus, with its 2^cols start sets, at most 2^cols m^(N/2).
  * @param {Object} board The board.
@@ -200,7 +200,7 @@ function capThreads(jobs, cols, degree, memory = os.totalmem()) {
 
 /**
  * Counts the tilings by the number of diagonal pieces exactly: every coefficient is at most the
- * number of tilings, so the bound of all-lattices-cylinder-torus-modular.js on the king's graph
+ * number of tilings, so the bound of any-lattice-cylinder-torus-modular.js on the king's graph
  * sets the number of primes, and one more prime checks every coefficient. A torus is counted with
  * its shorter side as the circumference.
  * @param {Object} options The board and the number of worker threads.

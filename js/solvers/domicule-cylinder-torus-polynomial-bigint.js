@@ -4,7 +4,7 @@ const MAX_CIRCUMFERENCE = 20;
 const SHIFTS = [-1, 0, 1];
 
 /**
- * Lists the row transitions of a king's graph cylinder, as in all-lattices-cylinder-torus-bigint.js,
+ * Lists the row transitions of a king's graph cylinder, as in any-lattice-cylinder-torus-bigint.js,
  * with the number of diagonal pieces each one places: a piece sent from column c to column c + d
  * of the next row is diagonal when d is -1 or 1. Columns are taken modulo the circumference, so
  * on a circumference of 2 the two diagonals of a cell are two separate pieces.
@@ -56,7 +56,7 @@ function listRowTransitions(cols) {
  * runs of a start set S onto the runs of its rotations and keeps every piece diagonal or
  * straight, so only the smallest rotation of each S is run, weighted by the number of its
  * rotations. A torus is counted with its shorter side as the circumference. At x = 1 the
- * polynomial gives the count of all-lattices-cylinder-torus-bigint.js on the king's graph, at
+ * polynomial gives the count of any-lattice-cylinder-torus-bigint.js on the king's graph, at
  * x = 0 its count on the square lattice.
  * @param {Object} options The board.
  * @property {number} options.rowCount The number of rows (the height).

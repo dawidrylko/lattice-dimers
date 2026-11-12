@@ -19,10 +19,10 @@ macro_rules! binaries {
 }
 
 binaries!(
-    "all-lattices-cylinder-torus-bigint",
-    "all-lattices-cylinder-torus-modular",
-    "all-lattices-rectangle-bigint",
-    "all-lattices-rectangle-modular",
+    "any-lattice-cylinder-torus-bigint",
+    "any-lattice-cylinder-torus-modular",
+    "any-lattice-rectangle-bigint",
+    "any-lattice-rectangle-modular",
     "domicule-cylinder-torus-polynomial-bigint",
     "domicule-cylinder-torus-polynomial-modular",
     "domicule-rectangle-polynomial-bigint",
@@ -31,7 +31,7 @@ binaries!(
     "domicule-rectangle-modular",
     "domino-rectangle-bigint",
     "domino-rectangle-formula",
-    "domino-rectangle-number"
+    "domino-rectangle-float"
 );
 
 const MEMORY_LIMIT_BYTES: u64 = 256 * 1024 * 1024;
@@ -257,7 +257,7 @@ fn parity() {
 fn precision() {
     let entries = spec("cli.json")["precision"].as_array().unwrap().clone();
     let failures = failures_of(&entries, |entry| {
-        let id = "domino-rectangle-number";
+        let id = "domino-rectangle-float";
         let args = board_args(entry);
         let result = run(id, &args, SHORT);
         let (expected, warns) = (entry["expected"].as_str().unwrap(), entry["warns"].as_bool().unwrap());

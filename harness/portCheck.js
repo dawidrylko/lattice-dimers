@@ -17,13 +17,13 @@ function listFiles(directory) {
 }
 
 const HOLDS_THE_BOARDS_OF = {
-  'all-lattices-cylinder-torus-modular': ['all-lattices-cylinder-torus-bigint'],
-  'all-lattices-rectangle-modular': ['all-lattices-rectangle-bigint'],
+  'any-lattice-cylinder-torus-modular': ['any-lattice-cylinder-torus-bigint'],
+  'any-lattice-rectangle-modular': ['any-lattice-rectangle-bigint'],
   'domicule-cylinder-torus-polynomial-modular': ['domicule-cylinder-torus-polynomial-bigint'],
   'domicule-rectangle-polynomial-modular': ['domicule-rectangle-polynomial-bigint'],
   'domicule-rectangle-bigint': ['domicule-rectangle-modular'],
   'domicule-rectangle-modular': ['domicule-rectangle-bigint'],
-  'domino-rectangle-bigint': ['domino-rectangle-formula', 'domino-rectangle-number'],
+  'domino-rectangle-bigint': ['domino-rectangle-formula', 'domino-rectangle-float'],
 };
 
 function familyOf(algorithm) {

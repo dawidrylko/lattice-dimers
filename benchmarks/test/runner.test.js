@@ -12,7 +12,7 @@ describe('rejections', () => {
   const cases = [
     { args: ['-n', '1', '--only', 'missing.js'], message: 'Usage' },
     { args: ['-n', '1', '-o', '99'], message: 'No test cases' },
-    { args: ['-n', '1', '--domicule', '--only', 'domino-rectangle-number.js'], message: 'Usage' },
+    { args: ['-n', '1', '--domicule', '--only', 'domino-rectangle-float.js'], message: 'Usage' },
     { args: ['-n', '1', '--torus', '--only', 'domicule-rectangle-bigint.js'], message: 'Usage' },
     { args: ['-n', '1', '--torus', '--diagonal'], message: 'Usage' },
     { args: ['-n', '1', '--torus', '--lattice', 'hexagonal'], message: 'Usage' },
@@ -45,17 +45,17 @@ describe('usage line', () => {
 describe('result files by surface', () => {
   const fileOf = ({ file }, suffix) => `${path.basename(file)}_${suffix}.txt`;
   const cases = [
-    { args: ['--torus', '--only', 'all-lattices-cylinder-torus-modular.js'], file: 'all-lattices-cylinder-torus-modular.js_2x2-king-torus.txt' },
-    ...listImplementations('all-lattices-cylinder-torus-bigint').flatMap(implementation => [
-      { args: ['--cylinder', '--only', 'all-lattices-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-king-cylinder') },
-      { args: ['--cylinder', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-square-cylinder') },
-      { args: ['--cylinder', '--lattice', 'triangular', '--only', 'all-lattices-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-triangular-cylinder') },
-      { args: ['--torus', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-square-torus') },
+    { args: ['--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], file: 'any-lattice-cylinder-torus-modular.js_2x2-king-torus.txt' },
+    ...listImplementations('any-lattice-cylinder-torus-bigint').flatMap(implementation => [
+      { args: ['--cylinder', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-king-cylinder') },
+      { args: ['--cylinder', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-square-cylinder') },
+      { args: ['--cylinder', '--lattice', 'triangular', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-triangular-cylinder') },
+      { args: ['--torus', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-square-torus') },
     ]),
-    ...listImplementations('all-lattices-cylinder-torus-modular').flatMap(implementation => [
-      { args: ['--torus', '--only', 'all-lattices-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-king-torus') },
-      { args: ['--torus', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-square-torus') },
-      { args: ['--cylinder', '--lattice', 'square', '--only', 'all-lattices-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-square-cylinder') },
+    ...listImplementations('any-lattice-cylinder-torus-modular').flatMap(implementation => [
+      { args: ['--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-king-torus') },
+      { args: ['--torus', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-square-torus') },
+      { args: ['--cylinder', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-square-cylinder') },
     ]),
     ...['domicule-cylinder-torus-polynomial-bigint', 'domicule-cylinder-torus-polynomial-modular'].flatMap(algorithm =>
       listImplementations(algorithm).flatMap(implementation => [
@@ -65,7 +65,7 @@ describe('result files by surface', () => {
     ),
     ...[
       ['domino-rectangle-formula', []],
-      ['domino-rectangle-number', []],
+      ['domino-rectangle-float', []],
       ['domino-rectangle-bigint', []],
       ['domicule-rectangle-polynomial-bigint', ['--diagonal']],
       ['domicule-rectangle-bigint', ['--domicule']],
@@ -126,7 +126,7 @@ describe('a run', () => {
 
   test('refuses a count that differs from spec/cases', t => {
     const benchmarkRoot = makeTemporaryDirectory(t, 'domino-benchmark-');
-    const { status, stderr } = runRunner(benchmarkRoot, ['-n', '1', '-m', '1', '--torus', '--only', 'all-lattices-cylinder-torus-modular.js'], { PYTHON: WRONG_COUNT });
+    const { status, stderr } = runRunner(benchmarkRoot, ['-n', '1', '-m', '1', '--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], { PYTHON: WRONG_COUNT });
 
     assert.notEqual(status, 0, 'A wrong count was not refused.');
     assert.ok(stderr.includes('counted 1 instead of 24'), stderr.trim());
@@ -134,7 +134,7 @@ describe('a run', () => {
 
   test('refuses a Python whose version cannot be read', t => {
     const benchmarkRoot = makeTemporaryDirectory(t, 'domino-benchmark-');
-    const { status, stderr } = runRunner(benchmarkRoot, ['-n', '1', '-m', '1', '--torus', '--only', 'all-lattices-cylinder-torus-modular.js'], {
+    const { status, stderr } = runRunner(benchmarkRoot, ['-n', '1', '-m', '1', '--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], {
       PYTHON: path.join(benchmarkRoot, 'missing-python'),
     });
 

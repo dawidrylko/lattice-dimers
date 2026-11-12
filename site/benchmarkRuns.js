@@ -5,6 +5,10 @@ const RESULTS_DIRECTORY = path.join(__dirname, '..', 'benchmarks', 'results');
 const FORMER_NAMES = [
   ['domicule-rectangle-polynomial-', 'diagonal-pieces-'],
   ['domicule_rectangle_polynomial_', 'diagonal_pieces_'],
+  ['any-lattice-', 'all-lattices-'],
+  ['any_lattice_', 'all_lattices_'],
+  ['domino-rectangle-float', 'domino-rectangle-number'],
+  ['domino_rectangle_float', 'domino_rectangle_number'],
 ];
 
 /**

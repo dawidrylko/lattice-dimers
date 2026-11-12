@@ -5,10 +5,10 @@ use std::thread;
 use lattice_dimers_core::{BigInt, Timer, calculate_log2_bound, combine_checked_residues, list_primes, parse_args, run_workers};
 
 const MAX_SHORTER_SIDE: u64 = 30;
-const USAGE: &str = "Usage: all-lattices-rectangle-modular -r <rowCount> -c <colCount> [-j <jobs>] [--lattice king|triangular|square]";
+const USAGE: &str = "Usage: any-lattice-rectangle-modular -r <rowCount> -c <colCount> [-j <jobs>] [--lattice king|triangular|square]";
 
 /// Lists the bits a free cell in column c can cover with its partner, like listOffsets of
-/// js/solvers/all-lattices-rectangle-bigint.js: right and down, down-left on the king's graph, down-right on the
+/// js/solvers/any-lattice-rectangle-bigint.js: right and down, down-left on the king's graph, down-right on the
 /// triangular lattice and the king's graph.
 fn list_offsets(cols: usize, c: usize, has_below: bool, (down_left, down_right): (bool, bool)) -> Vec<usize> {
     let has_right = c + 1 < cols;
@@ -34,7 +34,7 @@ fn list_offsets(cols: usize, c: usize, has_below: bool, (down_left, down_right):
 }
 
 /// Says which diagonals a lattice has, down-left and down-right, like LATTICES in
-/// js/solvers/all-lattices-rectangle-bigint.js.
+/// js/solvers/any-lattice-rectangle-bigint.js.
 fn diagonals_of(lattice: &str) -> Option<(bool, bool)> {
     match lattice {
         "square" => Some((false, false)),
@@ -58,7 +58,7 @@ fn add(next: &mut [u32], target: usize, count: u32, prime: u32) {
 }
 
 /// Counts the tilings modulo a prime with the broken-profile dynamic programming of countModulo in
-/// js/solvers/all-lattices-rectangle-modular.js. Bit i of a state tells whether the cell i places ahead of the
+/// js/solvers/any-lattice-rectangle-modular.js. Bit i of a state tells whether the cell i places ahead of the
 /// current one is already covered; a state has cols + 2 bits, and the counts are kept in tables of u32.
 fn count_modulo(rows: usize, cols: usize, prime: u32, lattice: (bool, bool)) -> u32 {
     let state_count = 1usize << (cols + 2);
@@ -94,7 +94,7 @@ fn count_modulo(rows: usize, cols: usize, prime: u32, lattice: (bool, bool)) -> 
     current[0]
 }
 
-/// Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/all-lattices-rectangle-modular.js:
+/// Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/any-lattice-rectangle-modular.js:
 /// enough primes for the Kahn-Lovasz bound of the king's graph, which also bounds the triangular and the square
 /// lattice, plus one more prime that the result is checked against.
 fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, lattice: (bool, bool), jobs: usize) -> Result<BigInt, String> {

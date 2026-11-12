@@ -5,12 +5,12 @@ const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 
 const testCasesDomino = testCasesOf('domino-rectangle-formula');
 const testCasesDomicule = testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare);
-const testCasesCylinderTorus = testCasesOf('all-lattices-cylinder-torus-modular');
+const testCasesCylinderTorus = testCasesOf('any-lattice-cylinder-torus-modular');
 const testCasesDiagonal = testCasesOf('domicule-rectangle-polynomial-modular');
-const testCasesTriangular = testCasesOf('all-lattices-rectangle-modular').filter(t => t.lattice === 'triangular');
+const testCasesTriangular = testCasesOf('any-lattice-rectangle-modular').filter(t => t.lattice === 'triangular');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
-const cylinderTorusModular = require('../js/solvers/all-lattices-cylinder-torus-modular.js');
+const cylinderTorusModular = require('../js/solvers/any-lattice-cylinder-torus-modular.js');
 const diagonalReference = require('../js/solvers/domicule-rectangle-polynomial-bigint.js');
 const { listImplementations } = require('../js/core/registry');
 const { countCylinderTorusDiagonals } = require('../js/renderer/cylinderTorus');
@@ -178,7 +178,7 @@ function readStoredCylinderTorusCount(board) {
   if (!known) {
     const { rowCount, colCount, lattice, torus } = board;
     throw new Error(
-      `No count of the ${rowCount}x${colCount} ${lattice} ${torus ? 'torus' : 'cylinder'} in spec/cases/all-lattices-cylinder-torus-modular.json, which the benchmark table needs.`,
+      `No count of the ${rowCount}x${colCount} ${lattice} ${torus ? 'torus' : 'cylinder'} in spec/cases/any-lattice-cylinder-torus-modular.json, which the benchmark table needs.`,
     );
   }
 
@@ -372,7 +372,7 @@ function buildDomiculeBenchmark(totals) {
  * @returns {Promise<Object[]>} One row per board, the tori first.
  */
 async function buildCylinderTorusBenchmark(lattice) {
-  const prefix = 'all-lattices-cylinder-torus-';
+  const prefix = 'any-lattice-cylinder-torus-';
   const boards = listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
     .map(fileName => fileName.match(CYLINDER_TORUS_RESULT_FILE))
     .filter(match => match && match[3] === lattice)
@@ -394,10 +394,10 @@ async function buildCylinderTorusBenchmark(lattice) {
       surface,
       tilings: readStoredCylinderTorusCount({ rowCount, colCount, lattice, torus: surface === 'torus' }),
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
-      bigintMissing: readMissingReasons('all-lattices-cylinder-torus-bigint', `${rowCount}x${colCount}`, `-${lattice}-${surface}`),
+      bigintMissing: readMissingReasons('any-lattice-cylinder-torus-bigint', `${rowCount}x${colCount}`, `-${lattice}-${surface}`),
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
-      languages: readLanguages('all-lattices-cylinder-torus-modular', suffix),
-      bigintLanguages: readLanguages('all-lattices-cylinder-torus-bigint', suffix),
+      languages: readLanguages('any-lattice-cylinder-torus-modular', suffix),
+      bigintLanguages: readLanguages('any-lattice-cylinder-torus-bigint', suffix),
     });
   }
 
@@ -775,7 +775,7 @@ async function __main__() {
     const total = findTriangularCount(board);
 
     if (total === null) {
-      throw new Error(`No count of the ${board.rowCount}x${board.colCount} triangular lattice in spec/cases/all-lattices-rectangle-modular.json, which the gallery needs.`);
+      throw new Error(`No count of the ${board.rowCount}x${board.colCount} triangular lattice in spec/cases/any-lattice-rectangle-modular.json, which the gallery needs.`);
     }
 
     return { id: `${board.rowCount}x${board.colCount}-triangular`, pieces: 'triangular', surface: 'rectangle', mode: 'pages', ...board, total };

@@ -8,7 +8,7 @@ const { listImplementations } = require('../js/core/registry');
 const BOARDS = [
   { id: 'domicule-rectangle-modular', args: ['-r', '18', '-c', '18', '-j', '4'] },
   { id: 'domino-rectangle-bigint', args: ['-r', '16', '-c', '16'] },
-  { id: 'all-lattices-cylinder-torus-modular', args: ['-r', '16', '-c', '16', '--lattice', 'king', '-j', '4'] },
+  { id: 'any-lattice-cylinder-torus-modular', args: ['-r', '16', '-c', '16', '--lattice', 'king', '-j', '4'] },
 ];
 const SOLVER_TIME = /^time ([\d.]+) ms$/m;
 
