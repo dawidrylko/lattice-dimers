@@ -75,7 +75,11 @@ function listRowTransitions(cols, lattice) {
  */
 function calculateTotalTilingCombinations({ rowCount, colCount, lattice = 'king', torus = false, twisted = false }) {
   if (!isValidBoard({ rowCount, colCount }, torus) || !Object.hasOwn(LATTICES, lattice)) {
-    throw new Error('The circumference must be at least 2, a torus needs at least 2 rows, and the lattice is square, triangular or king.');
+    throw new Error('The circumference must be at least 2, a torus needs at least 2 rows unless the board has no cells, and the lattice is square, triangular or king.');
+  }
+
+  if (rowCount * colCount === 0) {
+    return BigInt(1);
   }
 
   const transitions = listRowTransitions(colCount, lattice);
@@ -115,7 +119,11 @@ function calculateTotalTilingCombinations({ rowCount, colCount, lattice = 'king'
 }
 
 function isValidBoard({ rowCount, colCount }, torus) {
-  return Number.isInteger(rowCount) && rowCount >= (torus ? 2 : 0) && Number.isInteger(colCount) && colCount >= 2;
+  if (!Number.isInteger(rowCount) || !Number.isInteger(colCount) || rowCount < 0 || colCount < 0) {
+    return false;
+  }
+
+  return rowCount * colCount === 0 || (colCount >= 2 && (!torus || rowCount >= 2));
 }
 
 function __main__() {
@@ -129,7 +137,7 @@ function __main__() {
   if (!isValidBoard(options, torus) || !Object.hasOwn(LATTICES, lattice)) {
     console.error(
       'Usage: node js/solvers/any-lattice-cylinder-torus-bigint.js -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square]\n' +
-        'The circumference is at least 2, and a torus has at least 2 rows.',
+        'The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.',
     );
     process.exit(1);
   }

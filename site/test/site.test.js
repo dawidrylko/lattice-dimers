@@ -879,7 +879,7 @@ async function checkSurfaces(page, baseUrl, width) {
   await page.settle();
   const torus = await page.evaluate(READ_SHEET);
 
-  if (torus.boards.join() !== [2, 4, 6, 8, 10].map(side => `${side}x${side}-diagonal-torus`).join() || torus.surface !== 'torus') {
+  if (torus.boards.join() !== [0, 2, 4, 6, 8, 10].map(side => `${side}x${side}-diagonal-torus`).join() || torus.surface !== 'torus') {
     problems.push(`torus picker shows ${torus.boards.join(', ')} with ${torus.surface} pressed`);
   }
 
@@ -1564,9 +1564,10 @@ async function checkBenchmark(page, baseUrl, width) {
           });
         }).length,
         empty: wraps.filter(wrap => !wrap.querySelectorAll('tbody tr').length).map(wrap => wrap.querySelector('table').id),
+        boards: wraps.map(wrap => [wrap.querySelector('table').id, [...wrap.querySelectorAll('tbody tr')].map(row => row.cells[0].textContent).join(' ')]),
         missing: wraps.flatMap(wrap =>
           [...wrap.querySelectorAll('tbody tr')]
-            .filter(row => row.cells[0].textContent !== '0×0')
+            .filter(row => times(row).some(time => time !== '-'))
             .filter(row => ('${complete}' === 'every' ? times(row).includes('-') : times(row).every(time => time === '-')))
             .map(row => row.cells[0].textContent),
         ),
@@ -1576,18 +1577,22 @@ async function checkBenchmark(page, baseUrl, width) {
         rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
-          const headers = [...table.tHead.rows[0].cells];
-          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: headers[i + 2].textContent.trim().startsWith('BigInt'), reason: cell.querySelector('span[title]')?.title ?? '' })));
-          const noted = [...group.querySelectorAll('.note:not([hidden])')].some(note => note.textContent.startsWith('A dash under BigInt'));
+          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map(cell => ({ dash: cell.textContent.trim() === '-', reason: cell.querySelector('span[title]')?.title ?? '' })));
+          const noted = [...group.querySelectorAll('.note:not([hidden])')].some(note => note.textContent.startsWith('A dash is a board'));
           return [
-            ...(cells.some(cell => cell.dash && !cell.bigint) ? [table.id + ' has a dash outside BigInt'] : []),
-            ...(cells.some(cell => cell.dash && !cell.reason.startsWith('not measured: ')) ? [table.id + ' has a dash with no reason from plan.json'] : []),
+            ...(cells.some(cell => cell.dash && !cell.reason.startsWith('not measured: ')) ? [table.id + ' has a dash with no reason'] : []),
             ...(cells.some(cell => cell.dash) !== noted ? [table.id + (noted ? ' explains dashes it does not show' : ' shows a dash it does not explain')] : []),
           ];
         }),
         unnamed: wraps.filter(wrap => !wrap.querySelector('table').getAttribute('aria-label')).length,
       };
     })()`);
+
+    const sides = Array.from({ length: 11 }, (_, i) => `${2 * i}×${2 * i}`).join(' ');
+
+    for (const [id, boards] of state.boards.filter(([, boards]) => boards !== sides)) {
+      problems.push(`#${hash}: ${id} lists ${boards} instead of every board from 0×0 to 20×20`);
+    }
 
     if (state.dashes.length) {
       problems.push(`#${hash}: ${state.dashes.join(', ')}`);

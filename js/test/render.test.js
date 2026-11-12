@@ -137,6 +137,7 @@ const CYLINDER_TORUS_FULL_CHECK_LIMIT = BigInt(20000);
 const cylinderTorusUnrankTestCases = ['square', 'triangular', 'king'].flatMap(lattice =>
   [false, true].flatMap(torus =>
     [
+      { rowCount: 0, colCount: 0 },
       { rowCount: 2, colCount: 2 },
       { rowCount: 3, colCount: 2 },
       { rowCount: 2, colCount: 3 },
@@ -149,6 +150,7 @@ const cylinderTorusUnrankTestCases = ['square', 'triangular', 'king'].flatMap(la
 );
 const cylinderTorusDiagonalTestCases = [false, true].flatMap(torus =>
   [
+    { rowCount: 0, colCount: 0 },
     { rowCount: 2, colCount: 2 },
     { rowCount: 3, colCount: 2 },
     { rowCount: 2, colCount: 3 },
@@ -206,6 +208,7 @@ const SEAM_PATHS = {
   t: 'M12 12H76M12 44H76',
   u: 'M42.5 9V15M42.5 41V47M45.5 9V15M45.5 41V47',
 };
+const emptyBoardSheetTestCases = [{ rowCount: 0, colCount: 0, surface: 'cylinder' }, { rowCount: 0, colCount: 0, surface: 'torus' }];
 const sublabelTestCases = [
   { rowCount: 4, colCount: 4, choices: ['4 diagonal', '4 diag.', '4'], shown: '4 diagonal' },
   { rowCount: 2, colCount: 2, choices: ['2 diagonal', '2 diag.', '2'], shown: '2' },
@@ -1075,6 +1078,15 @@ function runCylinderTorusSheetTest({ tiling, copies, edges, ...options }) {
   }
 }
 
+function runEmptyBoardSheetTest({ rowCount, colCount, surface }) {
+  const sheet = renderSheet([[]], 1, { rowCount, colCount, surface });
+  const seams = ['s', 'm', 't', 'u'].filter(className => sheet.includes(`<path class="${className}"`));
+
+  if (seams.length || sheet.includes('<svg x=') || !sheet.includes('>#1</text>')) {
+    assert.fail(`The empty ${surface} draws ${seams.length ? `glued edge marks ${seams.join(', ')}` : 'a clipped board or no label'}.`);
+  }
+}
+
 function runSublabelTest({ choices, shown, ...options }) {
   const sheet = renderSheet([[]], 1, { ...options, sublabels: [choices] });
   const sublabel = sheet.match(/<text class="n"[^>]*>([^<]*)<\/text>/);
@@ -1165,6 +1177,7 @@ suite('domicule shape', domiculeShapeTestCases, runDomiculeShapeTest);
 suite('cylinder and torus unrank', cylinderTorusUnrankTestCases, runCylinderTorusUnrankTest);
 suite('cylinder and torus diagonal pieces', cylinderTorusDiagonalTestCases, runCylinderTorusDiagonalTest);
 suite('cylinder and torus sheet', cylinderTorusSheetTestCases, runCylinderTorusSheetTest);
+suite('empty board sheet', emptyBoardSheetTestCases, runEmptyBoardSheetTest);
 suite('glued edge marks', [{ rowCount: 2, colCount: 4 }], runSeamGeometryTest);
 suite('second label line', sublabelTestCases, runSublabelTest);
 suite('sheet without labels', unlabelledTestCases, runUnlabelledTest);

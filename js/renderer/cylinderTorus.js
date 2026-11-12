@@ -237,7 +237,7 @@ function canUnrankCylinderTorus({ rowCount, colCount, lattice = 'king' }) {
  * As in the solvers, each edge of a circumference 2 counts as a separate piece.
  * @param {Object} options The board.
  * @property {number} options.rowCount The number of rows.
- * @property {number} options.colCount The circumference, at least 2.
+ * @property {number} options.colCount The circumference, at least 2 unless the board has no cells.
  * @property {string} [options.lattice] One of square, triangular, king.
  * @property {boolean} [options.torus] Whether the rows are periodic too.
  * @property {number|null} [options.diagonals] Number only the tilings with this many diagonal pieces.
@@ -245,8 +245,16 @@ function canUnrankCylinderTorus({ rowCount, colCount, lattice = 'king' }) {
  * @returns {{ rowCount: number, colCount: number, totals: BigInt[], total: BigInt }} The unranker.
  */
 function createCylinderTorusUnranker({ rowCount, colCount, lattice = 'king', torus = false, diagonals = null }, onProgress) {
-  if (!Object.hasOwn(CYLINDER_TORUS_LATTICES, lattice) || colCount < 2 || rowCount < (torus ? 2 : 1)) {
-    throw new RangeError('The circumference must be at least 2 and a torus needs at least 2 rows.');
+  const empty = rowCount * colCount === 0;
+
+  if (!Object.hasOwn(CYLINDER_TORUS_LATTICES, lattice) || (!empty && (colCount < 2 || rowCount < (torus ? 2 : 1)))) {
+    throw new RangeError('The circumference must be at least 2 and a torus needs at least 2 rows unless the board has no cells.');
+  }
+
+  if (empty) {
+    const total = diagonals === null || diagonals === 0 ? BigInt(1) : BigInt(0);
+
+    return { rowCount, colCount, diagonals, scan: { cellCount: 0, colCount }, tables: new Map(), totals: [total], total };
   }
 
   const scan = createCylinderTorusScan(rowCount, colCount, lattice, torus);
@@ -289,6 +297,10 @@ function createCylinderTorusUnranker({ rowCount, colCount, lattice = 'king', tor
  * @returns {BigInt[]} The coefficients, from 0 diagonal pieces up.
  */
 function countCylinderTorusDiagonals({ rowCount, colCount, lattice = 'king', torus = false }) {
+  if (rowCount * colCount === 0) {
+    return [BigInt(1)];
+  }
+
   const scan = createCylinderTorusScan(rowCount, colCount, lattice, torus);
   const polynomials = readClassPolynomials({ rowCount, colCount, lattice, torus });
   const startCount = torus ? 2 ** colCount : 1;
@@ -325,6 +337,10 @@ function unrankCylinderTorusTiling(unranker, rank) {
 
   if (rank < BigInt(0) || rank >= total) {
     throw new RangeError(`Rank must be between 0 and ${total - BigInt(1)}.`);
+  }
+
+  if (scan.cellCount === 0) {
+    return [];
   }
 
   let remaining = rank;

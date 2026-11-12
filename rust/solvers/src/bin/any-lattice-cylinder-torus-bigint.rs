@@ -3,7 +3,7 @@ use std::process::ExitCode;
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
 const MAX_CIRCUMFERENCE: u64 = 20;
-const USAGE: &str = "Usage: any-lattice-cylinder-torus-bigint -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square]\nThe circumference is at least 2, and a torus has at least 2 rows.";
+const USAGE: &str = "Usage: any-lattice-cylinder-torus-bigint -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square]\nThe circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.";
 
 #[derive(Clone, Copy)]
 struct Transition {
@@ -92,6 +92,10 @@ fn run(transitions: &[Vec<Transition>], rows: usize, start: usize, twisted: bool
 }
 
 fn calculate_total_tiling_combinations(rows: usize, cols: usize, shifts: &[i64], torus: bool, twisted: bool) -> BigInt {
+    if rows == 0 || cols == 0 {
+        return BigInt::from_u64(1);
+    }
+
     let transitions = list_row_transitions(cols, shifts);
 
     if !torus {
@@ -116,8 +120,13 @@ fn main() -> ExitCode {
     };
     let torus = argv.iter().any(|arg| arg == "--torus");
     let twisted = argv.iter().any(|arg| arg == "--twisted");
-    let row_count = options.get("rowCount").copied().flatten().filter(|rows| *rows >= if torus { 2 } else { 0 });
-    let col_count = options.get("colCount").copied().flatten().filter(|cols| *cols >= 2);
+    let (row_count, col_count) = options
+        .get("rowCount")
+        .copied()
+        .flatten()
+        .zip(options.get("colCount").copied().flatten())
+        .filter(|&(rows, cols)| rows == 0 || cols == 0 || (cols >= 2 && (!torus || rows >= 2)))
+        .unzip();
 
     let (Some(row_count), Some(col_count), Some(shifts)) = (row_count, col_count, shifts) else {
         eprintln!("{USAGE}");

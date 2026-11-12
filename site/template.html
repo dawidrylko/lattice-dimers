@@ -292,7 +292,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="domino-cylinder-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
+      <p class="note">A dash is a board that solver was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domino" data-surface="torus" hidden>
       <div class="table-wrap">
@@ -301,7 +301,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="domino-torus-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
+      <p class="note">A dash is a board that solver was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="rectangle" hidden>
       <div class="table-wrap">
@@ -318,7 +318,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="diagonal-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
+      <p class="note">A dash is a board that solver was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="cylinder" hidden>
       <div class="table-wrap">
@@ -327,7 +327,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="cylinder-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
+      <p class="note">A dash is a board that solver was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="cylinder" data-count="diagonal" data-run="cylinder-torus-diagonal" hidden>
       <div class="table-wrap">
@@ -336,7 +336,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="cylinder-diagonal-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
+      <p class="note">A dash is a board that solver was not measured on; the dash's tooltip says why.</p>
       <p class="note" data-unmeasured hidden>These solvers have no benchmark run yet.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="torus" hidden>
@@ -346,7 +346,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="torus-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
+      <p class="note">A dash is a board that solver was not measured on; the dash's tooltip says why.</p>
     </div>
     <div class="bench-group" data-pieces="domicule" data-surface="torus" data-count="diagonal" data-run="cylinder-torus-diagonal" hidden>
       <div class="table-wrap">
@@ -355,7 +355,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="torus-diagonal-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">A dash under BigInt is a board it was not measured on; the dash's tooltip says why.</p>
+      <p class="note">A dash is a board that solver was not measured on; the dash's tooltip says why.</p>
       <p class="note" data-unmeasured hidden>These solvers have no benchmark run yet.</p>
     </div>
     <div class="bench-group" data-pieces="triangular" data-surface="rectangle" data-run="triangular" hidden>
@@ -1030,20 +1030,20 @@ $('load-table').addEventListener('click', () => {
 });
 
 const FORMULA_AND_BIGINT_LANGUAGES = [
-  { read: r => r.languages.rs },
-  { read: r => r.languages.py },
-  { read: r => r.formula },
-  { read: r => r.bigintLanguages.rs },
-  { read: r => r.bigintLanguages.py },
-  { read: r => r.bigint },
+  { read: r => r.languages.rs, missing: r => r.missing.formula.rs },
+  { read: r => r.languages.py, missing: r => r.missing.formula.py },
+  { read: r => r.formula, missing: r => r.missing.formula.js },
+  { read: r => r.bigintLanguages.rs, missing: r => r.missing.bigint.rs },
+  { read: r => r.bigintLanguages.py, missing: r => r.missing.bigint.py },
+  { read: r => r.bigint, missing: r => r.missing.bigint.js },
 ];
 const MODULAR_AND_BIGINT_LANGUAGES = [
-  { read: r => r.languages.rs },
-  { read: r => r.languages.py },
-  { read: r => r.modular },
-  { read: r => r.bigintLanguages.rs, missing: r => r.bigintMissing?.rs },
-  { read: r => r.bigintLanguages.py, missing: r => r.bigintMissing?.py },
-  { read: r => r.bigint, missing: r => r.bigintMissing?.js },
+  { read: r => r.languages.rs, missing: r => r.missing.modular.rs },
+  { read: r => r.languages.py, missing: r => r.missing.modular.py },
+  { read: r => r.modular, missing: r => r.missing.modular.js },
+  { read: r => r.bigintLanguages.rs, missing: r => r.missing.bigint.rs },
+  { read: r => r.bigintLanguages.py, missing: r => r.missing.bigint.py },
+  { read: r => r.bigint, missing: r => r.missing.bigint.js },
 ];
 
 const UNMEASURED_TRIANGULAR = MODULAR_AND_BIGINT_LANGUAGES.map(() => ({
@@ -1101,7 +1101,7 @@ document.querySelectorAll('[data-unmeasured]').forEach(note => (note.hidden = DA
 document.querySelectorAll('#benchmark .bench-group').forEach(group => {
   const dashed = [...group.querySelectorAll('tbody td')].some(cell => cell.textContent.trim() === '-');
   group.querySelectorAll('.note').forEach(note => {
-    if (note.textContent.startsWith('A dash under BigInt')) note.hidden = !dashed;
+    if (note.textContent.startsWith('A dash is a board')) note.hidden = !dashed;
   });
 });
 

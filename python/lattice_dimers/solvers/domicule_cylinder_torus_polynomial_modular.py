@@ -12,7 +12,7 @@ SCRATCH_COUNTS = 1 << 19
 USAGE = (
     "Usage: python3 -m lattice_dimers.solvers.domicule_cylinder_torus_polynomial_modular -r <rowCount> -c <circumference> "
     "[--torus] [-j <jobs>]\n"
-    "The circumference is at least 2, and a torus has at least 2 rows."
+    "The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells."
 )
 
 
@@ -188,7 +188,10 @@ def calculate_diagonal_polynomial(row_count, col_count, torus=False, jobs=None):
     so the bound sets the number of primes, and one more prime checks every coefficient. A torus is counted with its
     shorter side as the circumference."""
     if not is_valid_board(row_count, col_count, torus):
-        raise ValueError("The circumference must be at least 2, and a torus needs at least 2 rows.")
+        raise ValueError("The circumference must be at least 2, and a torus needs at least 2 rows unless the board has no cells.")
+
+    if row_count * col_count == 0:
+        return [1]
 
     transpose = torus and row_count < col_count
     rows = col_count if transpose else row_count
@@ -208,12 +211,10 @@ def calculate_diagonal_polynomial(row_count, col_count, torus=False, jobs=None):
 
 
 def is_valid_board(row_count, col_count, torus):
-    return (
-        isinstance(row_count, int)
-        and row_count >= (2 if torus else 0)
-        and isinstance(col_count, int)
-        and col_count >= 2
-    )
+    if not isinstance(row_count, int) or not isinstance(col_count, int) or row_count < 0 or col_count < 0:
+        return False
+
+    return row_count * col_count == 0 or (col_count >= 2 and (not torus or row_count >= 2))
 
 
 def main(argv):

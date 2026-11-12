@@ -59,11 +59,11 @@ function listSquareBoards(minSide, maxSide, options = {}) {
 function listGroups(lattice) {
   return {
     '--domicule': [{ files: DOMICULE_FILES, testCases: DOMICULE_BOARDS }],
-    '--torus': [{ files: CYLINDER_TORUS_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice, torus: true }), CYLINDER_TORUS_CASES) }],
-    '--cylinder': [{ files: CYLINDER_TORUS_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { lattice }), CYLINDER_TORUS_CASES) }],
+    '--torus': [{ files: CYLINDER_TORUS_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice, torus: true }), CYLINDER_TORUS_CASES) }],
+    '--cylinder': [{ files: CYLINDER_TORUS_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice }), CYLINDER_TORUS_CASES) }],
     '--diagonal': [{ files: DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
-    '--diagonal-cylinder': [{ files: CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { torus: false }), CYLINDER_TORUS_DIAGONAL_CASES) }],
-    '--diagonal-torus': [{ files: CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(2, 20, { torus: true }), CYLINDER_TORUS_DIAGONAL_CASES) }],
+    '--diagonal-cylinder': [{ files: CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { torus: false }), CYLINDER_TORUS_DIAGONAL_CASES) }],
+    '--diagonal-torus': [{ files: CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { torus: true }), CYLINDER_TORUS_DIAGONAL_CASES) }],
   };
 }
 

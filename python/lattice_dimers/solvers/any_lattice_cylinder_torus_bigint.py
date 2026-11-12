@@ -11,7 +11,7 @@ LATTICES = {
 USAGE = (
     "Usage: python3 -m lattice_dimers.solvers.any_lattice_cylinder_torus_bigint -r <rowCount> -c <circumference> "
     "[--torus] [--twisted] [--lattice king|triangular|square]\n"
-    "The circumference is at least 2, and a torus has at least 2 rows."
+    "The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells."
 )
 
 
@@ -53,6 +53,9 @@ def list_row_transitions(cols, lattice):
 
 
 def calculate_total_tiling_combinations(row_count, col_count, lattice="king", torus=False, twisted=False):
+    if row_count * col_count == 0:
+        return 1
+
     transitions = list_row_transitions(col_count, lattice)
     signed = [[(target, -1 if twisted and crossings % 2 else 1) for target, crossings in row] for row in transitions]
 
@@ -77,12 +80,10 @@ def calculate_total_tiling_combinations(row_count, col_count, lattice="king", to
 
 
 def is_valid_board(row_count, col_count, torus):
-    return (
-        isinstance(row_count, int)
-        and row_count >= (2 if torus else 0)
-        and isinstance(col_count, int)
-        and col_count >= 2
-    )
+    if not isinstance(row_count, int) or not isinstance(col_count, int) or row_count < 0 or col_count < 0:
+        return False
+
+    return row_count * col_count == 0 or (col_count >= 2 and (not torus or row_count >= 2))
 
 
 def read_lattice(argv):
