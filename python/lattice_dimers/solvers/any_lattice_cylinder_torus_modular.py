@@ -17,7 +17,7 @@ LATTICES = {
 USAGE = (
     "Usage: python3 -m lattice_dimers.solvers.any_lattice_cylinder_torus_modular -r <rowCount> -c <circumference> "
     "[--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\n"
-    "The circumference is at least 2, and a torus has at least 2 rows."
+    "The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells."
 )
 
 
@@ -180,8 +180,11 @@ def calculate_total_tiling_combinations(row_count, col_count, lattice="king", to
     js/solvers/any-lattice-cylinder-torus-modular.js."""
     if not is_valid_board(row_count, col_count, torus) or lattice not in LATTICES:
         raise ValueError(
-            "The circumference must be at least 2, a torus needs at least 2 rows, and the lattice is square, triangular or king."
+            "The circumference must be at least 2, a torus needs at least 2 rows unless the board has no cells, and the lattice is square, triangular or king."
         )
+
+    if row_count * col_count == 0:
+        return 1
 
     transpose = torus and not twisted and row_count < col_count
     rows = col_count if transpose else row_count
@@ -199,12 +202,10 @@ def calculate_total_tiling_combinations(row_count, col_count, lattice="king", to
 
 
 def is_valid_board(row_count, col_count, torus):
-    return (
-        isinstance(row_count, int)
-        and row_count >= (2 if torus else 0)
-        and isinstance(col_count, int)
-        and col_count >= 2
-    )
+    if not isinstance(row_count, int) or not isinstance(col_count, int) or row_count < 0 or col_count < 0:
+        return False
+
+    return row_count * col_count == 0 or (col_count >= 2 and (not torus or row_count >= 2))
 
 
 def read_lattice(argv):

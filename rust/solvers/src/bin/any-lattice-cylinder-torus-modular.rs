@@ -5,7 +5,7 @@ use std::thread;
 use lattice_dimers_core::{BigInt, Timer, combine_checked_residues, list_primes, parse_args, run_workers};
 
 const MAX_CIRCUMFERENCE: u64 = 24;
-const USAGE: &str = "Usage: any-lattice-cylinder-torus-modular -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows.";
+const USAGE: &str = "Usage: any-lattice-cylinder-torus-modular -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.";
 
 #[derive(Clone, Copy)]
 struct Lattice {
@@ -191,6 +191,10 @@ fn calculate_total_tiling_combinations(
     twisted: bool,
     jobs: usize,
 ) -> Result<BigInt, String> {
+    if row_count == 0 || col_count == 0 {
+        return Ok(BigInt::from_u64(1));
+    }
+
     let transpose = torus && !twisted && row_count < col_count;
     let (rows, cols) = if transpose { (col_count, row_count) } else { (row_count, col_count) };
 
@@ -219,8 +223,13 @@ fn main() -> ExitCode {
         None => Some(thread::available_parallelism().map_or(1, NonZero::get) as u64),
         Some(value) => *value,
     };
-    let row_count = options.get("rowCount").copied().flatten().filter(|rows| *rows >= if torus { 2 } else { 0 });
-    let col_count = options.get("colCount").copied().flatten().filter(|cols| *cols >= 2);
+    let (row_count, col_count) = options
+        .get("rowCount")
+        .copied()
+        .flatten()
+        .zip(options.get("colCount").copied().flatten())
+        .filter(|&(rows, cols)| rows == 0 || cols == 0 || (cols >= 2 && (!torus || rows >= 2)))
+        .unzip();
 
     let (Some(row_count), Some(col_count), Some(lattice), Some(jobs)) = (row_count, col_count, lattice, jobs.filter(|jobs| *jobs > 0))
     else {

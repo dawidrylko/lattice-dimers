@@ -40,9 +40,9 @@ const PROGRAMS = [
   {
     files: ['oeis/A401670/A401670.gp'],
     testCases: testCasesOf('any-lattice-cylinder-torus-modular')
-      .filter(({ lattice, torus, twisted, colCount }) => lattice === 'king' && torus && !twisted && colCount <= MAX_TORUS_CIRCUMFERENCE)
+      .filter(({ lattice, torus, twisted, rowCount, colCount }) => lattice === 'king' && torus && !twisted && rowCount >= 2 && colCount <= MAX_TORUS_CIRCUMFERENCE)
       .map(({ rowCount, colCount, expectedResult }) => ({ call: `T(${rowCount}, ${colCount})`, expectedResult }))
-      .concat({ call: 'a(2)', expectedResult: '17552' }),
+      .concat({ call: 'a(0)', expectedResult: '1' }, { call: 'a(2)', expectedResult: '17552' }),
   },
   {
     files: ['oeis/A401673/A401673.gp'],

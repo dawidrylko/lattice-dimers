@@ -216,7 +216,7 @@ function renderTiling(tiling, label, sublabel, offsetX, offsetY, options) {
   const { rowCount, colCount, style, surface } = options;
   const boardWidth = colCount * CELL_SIZE;
   const boardHeight = rowCount * CELL_SIZE;
-  const wrapped = SURFACES.includes(surface);
+  const wrapped = SURFACES.includes(surface) && rowCount * colCount > 0;
   const pieces = tiling.map(normalize).flatMap(piece => (wrapped ? wrapPiece(piece, rowCount, colCount, surface) : [piece]));
   const renderers = RENDERERS[style];
   const drawn = [

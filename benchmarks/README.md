@@ -18,7 +18,7 @@ A measurement can take days, so it can run in parts from the same commit. `pnpm 
 
 ## Results
 
-A run lives in `results/<commit>-node<version>-python<version>-rust<version>/`, so a comparison answers whether a change to the algorithms or an update of a toolchain improved anything or caused a regression. The site reads the newest run whose `environment.json` says `complete: true` and `dirty: false`.
+A run lives in `results/<commit>-node<version>-python<version>-rust<version>/`, so a comparison answers whether a change to the algorithms or an update of a toolchain improved anything or caused a regression. The site reads the newest run whose `environment.json` says `complete: true` and `dirty: false`. Every table of the Benchmarks tab lists every square board from 0 × 0 to 20 × 20, while the notebooks show only the boards the run measured. Where a solver has no time, the cell shows a dash. Its tooltip gives the reason `plan.json` records, says that the run predates the 0 × 0 board or did not reach the board, or, on the triangular lattice, that no run has measured it.
 
 Each result file holds two times per run. The time of the count is what the solver measures itself with `--time` ([`spec/contract.md`](../spec/contract.md)), and the site compares it. The process time adds the start of Node.js, Python or the binary. Modular solvers run with a fixed number of threads (`--jobs` of the command, 4 by default), since they would otherwise take it from the cores and memory of the machine.
 
@@ -54,6 +54,8 @@ This setup is a stopgap. The final environment will be a dedicated Linux machine
 [`results/ee071e57836d-node26.11.1-python3.14.5-rust1.99.1`](results/ee071e57836d-node26.11.1-python3.14.5-rust1.99.1) ran with `--board-budget-hours 1` and 4 threads on an Apple M4 with 16 GB, with Docker at 5 cores and 12 GB. It measured 413 boards in 12 hours of solver time. Resumed from the same commit with `--board-budget-hours 2` on 2026-11-07, it added 3 square torus boards in 7 more hours: Modular 16 × 16 in Python and JavaScript, and BigInt 14 × 14 in Python. The two Modular boards took longer than their estimates, the Python one 3.6 hours against 1.8, and the BigInt board took 1.3 hours against 1.4.
 
 Its `plan.json` records 55 more boards of these solvers. Of these, 47 are over the budget. The other 8 failed. In 7 of them, three JavaScript BigInt series hit the default heap limit of Node.js, about 2 GB, which is not the memory of the machine, and the 4 larger boards after those three failures never started. The resumed run tried those three again, and they hit the same limit. The eighth, JavaScript `domicule-rectangle-polynomial-modular` 20 × 20, exceeded the time limit of one run, 24 minutes at this budget.
+
+The run also predates the 0 × 0 cylinder and torus, which the solvers rejected then; the runner lists them now, so the next run measures them.
 
 Most of this run predates the rename of 2026-11-08, so those files and their entries of `plan.json` keep the former ids `diagonal-pieces-*` and `diagonal_pieces_*`. The site and `pnpm -C js benchmark:compare` read them under `domicule-rectangle-polynomial-*` through `FORMER_NAMES` in [`site/benchmarkRuns.js`](../site/benchmarkRuns.js), which can go once this run is replaced. The whole run also predates the rename of 2026-11-11, so its files and the entries of `plan.json` and `instructions.json` keep `all-lattices-*` and `domino-rectangle-number`, read the same way under `any-lattice-*` and `domino-rectangle-float`.
 

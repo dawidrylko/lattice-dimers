@@ -3,7 +3,7 @@ use std::process::ExitCode;
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
 const MAX_CIRCUMFERENCE: u64 = 20;
-const USAGE: &str = "Usage: domicule-cylinder-torus-polynomial-bigint -r <rowCount> -c <circumference> [--torus]\nThe circumference is at least 2, and a torus has at least 2 rows.";
+const USAGE: &str = "Usage: domicule-cylinder-torus-polynomial-bigint -r <rowCount> -c <circumference> [--torus]\nThe circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.";
 
 #[derive(Clone, Copy)]
 struct Transition {
@@ -105,6 +105,10 @@ fn run(transitions: &[Vec<Transition>], rows: usize, degree: usize, start: usize
 /// with k diagonal pieces. A torus runs the smallest rotation of every start set, weighted by the number of its
 /// rotations, and takes its shorter side as the circumference.
 fn calculate_diagonal_polynomial(row_count: usize, col_count: usize, torus: bool) -> Result<Vec<BigInt>, String> {
+    if row_count == 0 || col_count == 0 {
+        return Ok(vec![BigInt::from_u64(1)]);
+    }
+
     let transpose = torus && row_count < col_count;
     let (rows, cols) = if transpose { (col_count, row_count) } else { (row_count, col_count) };
     let degree = rows * cols / 2;
@@ -147,8 +151,13 @@ fn main() -> ExitCode {
     let argv: Vec<String> = std::env::args().skip(1).collect();
     let options = parse_args(&argv, &[("-r", "rowCount"), ("-c", "colCount")]);
     let torus = argv.iter().any(|arg| arg == "--torus");
-    let row_count = options.get("rowCount").copied().flatten().filter(|rows| *rows >= if torus { 2 } else { 0 });
-    let col_count = options.get("colCount").copied().flatten().filter(|cols| *cols >= 2);
+    let (row_count, col_count) = options
+        .get("rowCount")
+        .copied()
+        .flatten()
+        .zip(options.get("colCount").copied().flatten())
+        .filter(|&(rows, cols)| rows == 0 || cols == 0 || (cols >= 2 && (!torus || rows >= 2)))
+        .unzip();
 
     let (Some(row_count), Some(col_count)) = (row_count, col_count) else {
         eprintln!("{USAGE}");

@@ -208,7 +208,11 @@ function capThreads(jobs, cols, degree, memory = os.totalmem()) {
  */
 async function calculateDiagonalPolynomial({ rowCount, colCount, torus = false, jobs = os.availableParallelism() }) {
   if (!isValidBoard({ rowCount, colCount }, torus)) {
-    throw new Error('The circumference must be at least 2, and a torus needs at least 2 rows.');
+    throw new Error('The circumference must be at least 2, and a torus needs at least 2 rows unless the board has no cells.');
+  }
+
+  if (rowCount * colCount === 0) {
+    return [BigInt(1)];
   }
 
   const transpose = torus && rowCount < colCount;
@@ -233,7 +237,11 @@ async function calculateDiagonalPolynomial({ rowCount, colCount, torus = false, 
 }
 
 function isValidBoard({ rowCount, colCount }, torus) {
-  return Number.isInteger(rowCount) && rowCount >= (torus ? 2 : 0) && Number.isInteger(colCount) && colCount >= 2;
+  if (!Number.isInteger(rowCount) || !Number.isInteger(colCount) || rowCount < 0 || colCount < 0) {
+    return false;
+  }
+
+  return rowCount * colCount === 0 || (colCount >= 2 && (!torus || rowCount >= 2));
 }
 
 async function __main__() {
@@ -245,7 +253,7 @@ async function __main__() {
   if (!isValidBoard(options, torus) || !(jobs > 0)) {
     console.error(
       'Usage: node js/solvers/domicule-cylinder-torus-polynomial-modular.js -r <rowCount> -c <circumference> [--torus] [-j <jobs>]\n' +
-        'The circumference is at least 2, and a torus has at least 2 rows.',
+        'The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.',
     );
     process.exit(1);
   }

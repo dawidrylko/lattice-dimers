@@ -6,7 +6,7 @@ use std::thread;
 use lattice_dimers_core::{Timer, combine_checked_residues, list_primes, parse_args, run_workers};
 
 const MAX_CIRCUMFERENCE: u64 = 20;
-const USAGE: &str = "Usage: domicule-cylinder-torus-polynomial-modular -r <rowCount> -c <circumference> [--torus] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows.";
+const USAGE: &str = "Usage: domicule-cylinder-torus-polynomial-modular -r <rowCount> -c <circumference> [--torus] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.";
 
 #[cfg(target_os = "macos")]
 const SYSCONF_NAMES: Option<(c_int, c_int)> = Some((200, 29));
@@ -226,6 +226,10 @@ fn cap_threads(jobs: u64, cols: usize, degree: usize, memory: u64) -> u64 {
 /// so the bound sets the number of primes, and one more prime checks every coefficient. A torus is counted with its
 /// shorter side as the circumference.
 fn calculate_diagonal_polynomial(row_count: usize, col_count: usize, torus: bool, jobs: u64) -> Result<Vec<String>, String> {
+    if row_count == 0 || col_count == 0 {
+        return Ok(vec!["1".to_string()]);
+    }
+
     let transpose = torus && row_count < col_count;
     let (rows, cols) = if transpose { (col_count, row_count) } else { (row_count, col_count) };
     let degree = rows * cols / 2;
@@ -259,8 +263,13 @@ fn main() -> ExitCode {
         None => Some(thread::available_parallelism().map_or(1, NonZero::get) as u64),
         Some(value) => *value,
     };
-    let row_count = options.get("rowCount").copied().flatten().filter(|rows| *rows >= if torus { 2 } else { 0 });
-    let col_count = options.get("colCount").copied().flatten().filter(|cols| *cols >= 2);
+    let (row_count, col_count) = options
+        .get("rowCount")
+        .copied()
+        .flatten()
+        .zip(options.get("colCount").copied().flatten())
+        .filter(|&(rows, cols)| rows == 0 || cols == 0 || (cols >= 2 && (!torus || rows >= 2)))
+        .unzip();
 
     let (Some(row_count), Some(col_count), Some(jobs)) = (row_count, col_count, jobs.filter(|jobs| *jobs > 0)) else {
         eprintln!("{USAGE}");

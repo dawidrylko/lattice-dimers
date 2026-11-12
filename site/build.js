@@ -67,6 +67,7 @@ const AUTHOR = {
   sameAs: 'https://orcid.org/0009-0008-6307-9015',
 };
 const GALLERY_BOARDS = [
+  { rowCount: 0, colCount: 0 },
   { rowCount: 2, colCount: 2 },
   { rowCount: 4, colCount: 4 },
   { rowCount: 6, colCount: 6 },
@@ -79,6 +80,7 @@ const GALLERY_BOARDS = [
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
 const DOMICULE_BOARDS = [
+  { rowCount: 0, colCount: 0 },
   { rowCount: 2, colCount: 2 },
   { rowCount: 4, colCount: 4 },
   { rowCount: 6, colCount: 6 },
@@ -90,14 +92,16 @@ const DOMICULE_BOARDS = [
   { rowCount: 18, colCount: 18, mode: 'random' },
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
-const CYLINDER_TORUS_SIDES = [2, 4, 6, 8, 10];
+const CYLINDER_TORUS_SIDES = [0, 2, 4, 6, 8, 10];
 const CYLINDER_TORUS_FILTER_MEMORY = { '10x10-diagonal-torus': '800 MB' };
 const CYLINDER_TORUS_PIECES = [
   { pieces: 'domino', lattice: 'square', suffix: '' },
   { pieces: 'domicule', lattice: 'king', suffix: '-diagonal' },
   { pieces: 'triangular', lattice: 'triangular', suffix: '-triangular' },
 ];
-const TRIANGULAR_BENCHMARK_SIDES = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+const BENCHMARK_SIDES = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+const NOT_REACHED = 'not measured: the run did not reach this board';
+const EMPTY_BOARD_UNMEASURED = 'not measured: the run predates the 0 × 0 board';
 const DIAGONAL_FILTER_MAX_SIDE = 10;
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const COMPUTED = 'every output on this page was produced during that build from the files of this repository';
@@ -308,28 +312,46 @@ function readAverageTime(directory, fileName) {
   };
 }
 
+/**
+ * Lists the boards of a benchmark table: every even square from 0 × 0 to 20 × 20 on each surface,
+ * and any other board the run measured, so a board the run did not reach shows a row of dashes.
+ * @param {Object[]} measured The boards with a result file, with their surface if the table has more than one.
+ * @param {(string|undefined)[]} surfaces The surfaces of the table, the tori first.
+ * @returns {Object[]} The boards, by surface and then by size.
+ */
+function listBenchmarkBoards(measured, surfaces) {
+  const boards = [...measured];
+
+  for (const surface of surfaces) {
+    for (const side of BENCHMARK_SIDES) {
+      if (!boards.some(board => board.surface === surface && board.rowCount === side && board.colCount === side)) {
+        boards.push({ ...(surface && { surface }), rowCount: side, colCount: side });
+      }
+    }
+  }
+
+  return boards.sort(
+    (a, b) => (b.surface ?? '').localeCompare(a.surface ?? '') || a.rowCount * a.colCount - b.rowCount * b.colCount || a.rowCount - b.rowCount,
+  );
+}
+
+function listMeasuredBoards(directory, prefix, pattern, read) {
+  return listJavaScriptResults(directory, prefix)
+    .map(fileName => fileName.match(pattern))
+    .filter(Boolean)
+    .map(read)
+    .filter(Boolean)
+    .filter((board, index, all) => all.findIndex(other => other.surface === board.surface && other.rowCount === board.rowCount && other.colCount === board.colCount) === index);
+}
+
 function buildBenchmark() {
   const prefix = 'domino-rectangle-';
-  const tilingsBySize = new Map(
-    testCasesDomino.map(t => [`${t.rowCount}x${t.colCount}`, t.expectedResult]),
-  );
-  const sizes = listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
-    .map(fileName => fileName.match(RESULT_FILE))
-    .filter(Boolean)
-    .map(([, rowCount, colCount]) => ({
-      rowCount: Number(rowCount),
-      colCount: Number(colCount),
-    }))
-    .filter(
-      (size, index, all) =>
-        all.findIndex(
-          s => s.rowCount === size.rowCount && s.colCount === size.colCount,
-        ) === index,
-    )
-    .sort((a, b) => a.rowCount * a.colCount - b.rowCount * b.colCount);
+  const tilingsBySize = new Map(testCasesDomino.map(t => [`${t.rowCount}x${t.colCount}`, t.expectedResult]));
+  const measured = listMeasuredBoards(BENCHMARK_DIRECTORY, prefix, RESULT_FILE, ([, rowCount, colCount]) => ({ rowCount: Number(rowCount), colCount: Number(colCount) }));
 
-  return sizes.map(({ rowCount, colCount }) => {
+  return listBenchmarkBoards(measured, [undefined]).map(({ rowCount, colCount }) => {
     const suffix = `_${rowCount}x${colCount}.txt`;
+    const board = { rowCount, colCount };
     return {
       rowCount,
       colCount,
@@ -338,32 +360,29 @@ function buildBenchmark() {
       formula: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}formula.js${suffix}`),
       languages: readLanguages('domino-rectangle-formula', suffix),
       bigintLanguages: readLanguages('domino-rectangle-bigint', suffix),
+      missing: { formula: readMissingReasons('domino-rectangle-formula', board, ''), bigint: readMissingReasons('domino-rectangle-bigint', board, '') },
     };
   });
 }
 
 function buildDomiculeBenchmark(totals) {
   const prefix = 'domicule-rectangle-';
+  const measured = listMeasuredBoards(BENCHMARK_DIRECTORY, prefix, RESULT_FILE, ([, rowCount, colCount]) => ({ rowCount: Number(rowCount), colCount: Number(colCount) }));
 
-  return listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
-    .map(fileName => fileName.match(RESULT_FILE))
-    .filter(Boolean)
-    .map(([, rowCount, colCount]) => `${rowCount}x${colCount}`)
-    .filter((size, index, all) => all.indexOf(size) === index)
-    .map(size => size.split('x').map(Number))
-    .sort(([a], [b]) => a - b)
-    .map(([rowCount, colCount]) => {
-      const suffix = `_${rowCount}x${colCount}.txt`;
-      return {
-        rowCount,
-        colCount,
-        tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
-        bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
-        modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
-        languages: readLanguages('domicule-rectangle-modular', suffix),
-        bigintLanguages: readLanguages('domicule-rectangle-bigint', suffix),
-      };
-    });
+  return listBenchmarkBoards(measured, [undefined]).map(({ rowCount, colCount }) => {
+    const suffix = `_${rowCount}x${colCount}.txt`;
+    const board = { rowCount, colCount };
+    return {
+      rowCount,
+      colCount,
+      tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
+      bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
+      modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
+      languages: readLanguages('domicule-rectangle-modular', suffix),
+      bigintLanguages: readLanguages('domicule-rectangle-bigint', suffix),
+      missing: { modular: readMissingReasons('domicule-rectangle-modular', board, ''), bigint: readMissingReasons('domicule-rectangle-bigint', board, '') },
+    };
+  });
 }
 
 /**
@@ -373,58 +392,50 @@ function buildDomiculeBenchmark(totals) {
  */
 async function buildCylinderTorusBenchmark(lattice) {
   const prefix = 'any-lattice-cylinder-torus-';
-  const boards = listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
-    .map(fileName => fileName.match(CYLINDER_TORUS_RESULT_FILE))
-    .filter(match => match && match[3] === lattice)
-    .map(([, rowCount, colCount, , surface]) => `${surface}/${rowCount}x${colCount}`)
-    .filter((board, index, all) => all.indexOf(board) === index)
-    .map(board => {
-      const [surface, size] = board.split('/');
-      const [rowCount, colCount] = size.split('x').map(Number);
-      return { surface, rowCount, colCount };
-    })
-    .sort((a, b) => b.surface.localeCompare(a.surface) || a.rowCount - b.rowCount);
-  const rows = [];
+  const measured = listMeasuredBoards(BENCHMARK_DIRECTORY, prefix, CYLINDER_TORUS_RESULT_FILE, ([, rowCount, colCount, fileLattice, surface]) =>
+    fileLattice === lattice ? { surface, rowCount: Number(rowCount), colCount: Number(colCount) } : null,
+  );
 
-  for (const { surface, rowCount, colCount } of boards) {
+  return listBenchmarkBoards(measured, ['torus', 'cylinder']).map(({ surface, rowCount, colCount }) => {
     const suffix = `_${rowCount}x${colCount}-${lattice}-${surface}.txt`;
-    rows.push({
+    const board = { rowCount, colCount, lattice, torus: surface === 'torus' };
+    const seriesSuffix = `-${lattice}-${surface}`;
+    const isMeasured = measured.some(other => other.surface === surface && other.rowCount === rowCount && other.colCount === colCount);
+    return {
       rowCount,
       colCount,
       surface,
-      tilings: readStoredCylinderTorusCount({ rowCount, colCount, lattice, torus: surface === 'torus' }),
+      tilings: isMeasured ? readStoredCylinderTorusCount(board) : findCylinderTorusCase(board)?.expectedResult ?? null,
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
-      bigintMissing: readMissingReasons('any-lattice-cylinder-torus-bigint', `${rowCount}x${colCount}`, `-${lattice}-${surface}`),
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
       languages: readLanguages('any-lattice-cylinder-torus-modular', suffix),
       bigintLanguages: readLanguages('any-lattice-cylinder-torus-bigint', suffix),
-    });
-  }
-
-  return rows;
+      missing: {
+        modular: readMissingReasons('any-lattice-cylinder-torus-modular', board, seriesSuffix),
+        bigint: readMissingReasons('any-lattice-cylinder-torus-bigint', board, seriesSuffix),
+      },
+    };
+  });
 }
 
 /**
- * Lists the boards of the triangular lattice tables of the Benchmarks tab, the boards the runner
- * would measure that have a count: every rectangle and torus stored in spec/cases/, and the
- * cylinders stored there or counted for the gallery. No run has measured these solvers yet, so
- * the rows have no times.
+ * Lists the boards of the triangular lattice tables of the Benchmarks tab, every even square from
+ * 0 × 0 to 20 × 20, with the count stored in spec/cases/ or counted for the gallery when there is
+ * one. No run has measured these solvers yet, so the rows have no times.
  * @returns {Promise<Object[]>} One row per board, with its surface.
  */
 async function buildTriangularBenchmark() {
   const rows = [];
 
   for (const surface of ['rectangle', 'cylinder', 'torus']) {
-    for (const side of TRIANGULAR_BENCHMARK_SIDES) {
+    for (const side of BENCHMARK_SIDES) {
       const board = { rowCount: side, colCount: side, lattice: 'triangular', torus: surface === 'torus' };
       const tilings =
         surface === 'rectangle'
           ? findTriangularCount(board)
           : findCylinderTorusCase(board)?.expectedResult ?? (CYLINDER_TORUS_SIDES.includes(side) ? await countCylinderTorusTilings(board) : null);
 
-      if (tilings !== null) {
-        rows.push({ rowCount: side, colCount: side, surface, tilings });
-      }
+      rows.push({ rowCount: side, colCount: side, surface, tilings });
     }
   }
 
@@ -433,27 +444,25 @@ async function buildTriangularBenchmark() {
 
 function buildDiagonalBenchmark(totals) {
   const prefix = 'domicule-rectangle-polynomial-';
+  const measured = listMeasuredBoards(BENCHMARK_DIRECTORY, prefix, RESULT_FILE, ([, rowCount, colCount]) => ({ rowCount: Number(rowCount), colCount: Number(colCount) }));
 
-  return listJavaScriptResults(BENCHMARK_DIRECTORY, prefix)
-    .map(fileName => fileName.match(RESULT_FILE))
-    .filter(Boolean)
-    .map(([, rowCount, colCount]) => `${rowCount}x${colCount}`)
-    .filter((size, index, all) => all.indexOf(size) === index)
-    .map(size => size.split('x').map(Number))
-    .sort(([a], [b]) => a - b)
-    .map(([rowCount, colCount]) => {
-      const suffix = `_${rowCount}x${colCount}.txt`;
-      return {
-        rowCount,
-        colCount,
-        tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
-        bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
-        bigintLanguages: readLanguages('domicule-rectangle-polynomial-bigint', suffix),
-        bigintMissing: readMissingReasons('domicule-rectangle-polynomial-bigint', `${rowCount}x${colCount}`, ''),
-        modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
-        languages: readLanguages('domicule-rectangle-polynomial-modular', suffix),
-      };
-    });
+  return listBenchmarkBoards(measured, [undefined]).map(({ rowCount, colCount }) => {
+    const suffix = `_${rowCount}x${colCount}.txt`;
+    const board = { rowCount, colCount };
+    return {
+      rowCount,
+      colCount,
+      tilings: totals.get(`${rowCount}x${colCount}`) ?? null,
+      bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
+      bigintLanguages: readLanguages('domicule-rectangle-polynomial-bigint', suffix),
+      modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
+      languages: readLanguages('domicule-rectangle-polynomial-modular', suffix),
+      missing: {
+        modular: readMissingReasons('domicule-rectangle-polynomial-modular', board, ''),
+        bigint: readMissingReasons('domicule-rectangle-polynomial-bigint', board, ''),
+      },
+    };
+  });
 }
 
 /**
@@ -468,45 +477,66 @@ function buildCylinderTorusDiagonalBenchmark() {
 
   const directory = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, CYLINDER_TORUS_DIAGONAL_RUN);
   const prefix = CYLINDER_TORUS_DIAGONAL_PREFIX;
+  const measured = listMeasuredBoards(directory, prefix, CYLINDER_TORUS_DIAGONAL_RESULT_FILE, ([, rowCount, colCount, surface]) => ({
+    surface,
+    rowCount: Number(rowCount),
+    colCount: Number(colCount),
+  }));
 
-  return listJavaScriptResults(directory, prefix)
-    .map(fileName => fileName.match(CYLINDER_TORUS_DIAGONAL_RESULT_FILE))
-    .filter(Boolean)
-    .map(([, rowCount, colCount, surface]) => `${surface}/${rowCount}x${colCount}`)
-    .filter((board, index, all) => all.indexOf(board) === index)
-    .map(board => {
-      const [surface, size] = board.split('/');
-      const [rowCount, colCount] = size.split('x').map(Number);
-      return { surface, rowCount, colCount };
-    })
-    .sort((a, b) => b.surface.localeCompare(a.surface) || a.rowCount - b.rowCount)
-    .map(({ surface, rowCount, colCount }) => {
-      const suffix = `_${rowCount}x${colCount}-${surface}.txt`;
-      return {
-        rowCount,
-        colCount,
-        surface,
-        tilings: readStoredCylinderTorusCount({ rowCount, colCount, lattice: 'king', torus: surface === 'torus' }),
-        bigint: readAverageTime(directory, `${prefix}bigint.js${suffix}`),
-        bigintLanguages: readLanguages(`${prefix}bigint`, suffix, directory),
-        bigintMissing: readMissingReasons(`${prefix}bigint`, `${rowCount}x${colCount}`, `-${surface}`, directory),
-        modular: readAverageTime(directory, `${prefix}modular.js${suffix}`),
-        languages: readLanguages(`${prefix}modular`, suffix, directory),
-      };
-    });
+  return listBenchmarkBoards(measured, ['torus', 'cylinder']).map(({ surface, rowCount, colCount }) => {
+    const suffix = `_${rowCount}x${colCount}-${surface}.txt`;
+    const board = { rowCount, colCount, lattice: 'king', torus: surface === 'torus' };
+    const isMeasured = measured.some(other => other.surface === surface && other.rowCount === rowCount && other.colCount === colCount);
+    return {
+      rowCount,
+      colCount,
+      surface,
+      tilings: isMeasured ? readStoredCylinderTorusCount(board) : findCylinderTorusCase(board)?.expectedResult ?? null,
+      bigint: readAverageTime(directory, `${prefix}bigint.js${suffix}`),
+      bigintLanguages: readLanguages(`${prefix}bigint`, suffix, directory),
+      modular: readAverageTime(directory, `${prefix}modular.js${suffix}`),
+      languages: readLanguages(`${prefix}modular`, suffix, directory),
+      missing: {
+        modular: readMissingReasons(`${prefix}modular`, board, `-${surface}`, directory),
+        bigint: readMissingReasons(`${prefix}bigint`, board, `-${surface}`, directory),
+      },
+    };
+  });
 }
 
-function readMissingReasons(algorithm, board, seriesSuffix, directory = BENCHMARK_DIRECTORY) {
+/**
+ * Says why each implementation of a solver has no time on a board: the reason plan.json records,
+ * or, for a board it does not list, that the run predates the empty board or did not reach it.
+ * A reason is shown only where the time is missing.
+ * @returns {Object} The reason per language.
+ */
+function readMissingReasons(algorithm, { rowCount, colCount }, seriesSuffix, directory = BENCHMARK_DIRECTORY) {
   const plan = path.join(directory, 'plan.json');
   const { budgetHours, notMeasured } = fs.existsSync(plan) ? JSON.parse(fs.readFileSync(plan, 'utf-8')) : { budgetHours: null, notMeasured: [] };
+  const board = `${rowCount}x${colCount}`;
+  const fallback = rowCount * colCount === 0 ? EMPTY_BOARD_UNMEASURED : NOT_REACHED;
 
   return Object.fromEntries(
     listImplementations(algorithm).map(({ language, file }) => {
       const name = `${path.basename(file)}${seriesSuffix}`;
       const entry = notMeasured.find(({ series, board: other }) => (series === name || series === formerResultName(name)) && other === board);
 
-      return [language, entry ? describeMissing(entry, budgetHours) : null];
+      return [language, entry ? describeMissing(entry, budgetHours) : fallback];
     }),
+  );
+}
+
+/**
+ * Keeps the rows of a benchmark table that the run measured in at least one language: the
+ * notebooks show times, while the site's tables list every board with a dash and its reason.
+ * @param {Object[]} rows The rows of one table.
+ * @returns {Object[]} The rows with a time.
+ */
+function listMeasuredRows(rows) {
+  return rows.filter(row =>
+    [row.formula, row.modular, row.bigint, ...Object.values(row.languages ?? {}), ...Object.values(row.bigintLanguages ?? {})].some(
+      result => result && result.average !== null,
+    ),
   );
 }
 
@@ -838,13 +868,13 @@ async function __main__() {
   const notes = listNotes();
   await buildNotes(notes, {
     root: ROOT_DIRECTORY,
-    benchmark: data.benchmark,
+    benchmark: listMeasuredRows(data.benchmark),
     benchmarkRun: `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`,
-    domiculeBenchmark: data.domiculeBenchmark,
-    cylinderTorusBenchmark: data.cylinderTorusBenchmark,
-    dominoCylinderTorusBenchmark: data.dominoCylinderTorusBenchmark,
-    diagonalBenchmark: data.diagonalBenchmark,
-    cylinderTorusDiagonalBenchmark: data.cylinderTorusDiagonalBenchmark,
+    domiculeBenchmark: listMeasuredRows(data.domiculeBenchmark),
+    cylinderTorusBenchmark: listMeasuredRows(data.cylinderTorusBenchmark),
+    dominoCylinderTorusBenchmark: listMeasuredRows(data.dominoCylinderTorusBenchmark),
+    diagonalBenchmark: listMeasuredRows(data.diagonalBenchmark),
+    cylinderTorusDiagonalBenchmark: listMeasuredRows(data.cylinderTorusDiagonalBenchmark),
     cylinderTorusDiagonalRun: data.cylinderTorusDiagonalRun,
     cylinderTorusDiagonals: cylinderTorusBoards
       .filter(({ diagonals }) => diagonals)

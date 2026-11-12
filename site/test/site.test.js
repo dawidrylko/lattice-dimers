@@ -879,7 +879,7 @@ async function checkSurfaces(page, baseUrl, width) {
   await page.settle();
   const torus = await page.evaluate(READ_SHEET);
 
-  if (torus.boards.join() !== [2, 4, 6, 8, 10].map(side => `${side}x${side}-diagonal-torus`).join() || torus.surface !== 'torus') {
+  if (torus.boards.join() !== [0, 2, 4, 6, 8, 10].map(side => `${side}x${side}-diagonal-torus`).join() || torus.surface !== 'torus') {
     problems.push(`torus picker shows ${torus.boards.join(', ')} with ${torus.surface} pressed`);
   }
 
@@ -1525,6 +1525,7 @@ async function checkChrome(page, baseUrl, width) {
 
 async function checkBenchmark(page, baseUrl, width) {
   const problems = [];
+  const sides = Array.from({ length: 11 }, (_, i) => `${2 * i}×${2 * i}`).join(' ');
 
   for (const [hash, view, rows, complete] of [
     ['benchmark', 'domino/rectangle', 'domino-benchmark-rows', null],
@@ -1554,6 +1555,7 @@ async function checkBenchmark(page, baseUrl, width) {
       const wraps = [...section.querySelectorAll('.bench-group:not([hidden]) .table-wrap')];
       const times = row => [...row.cells].slice(2, -1).map(cell => cell.textContent);
       return {
+        timed: wraps.map(wrap => [wrap.querySelector('table').id, [...wrap.querySelectorAll('tbody tr')].filter(row => times(row).some(time => time !== '-')).length]),
         shown: !section.hidden && document.getElementById('gallery').hidden,
         overflow: Math.max(...wraps.map(wrap => wrap.scrollWidth - wrap.clientWidth)),
         hidden: wraps.flatMap(wrap => {
@@ -1564,30 +1566,46 @@ async function checkBenchmark(page, baseUrl, width) {
           });
         }).length,
         empty: wraps.filter(wrap => !wrap.querySelectorAll('tbody tr').length).map(wrap => wrap.querySelector('table').id),
+        boards: wraps.map(wrap => [wrap.querySelector('table').id, [...wrap.querySelectorAll('tbody tr')].map(row => row.cells[0].textContent).join(' ')]),
         missing: wraps.flatMap(wrap =>
           [...wrap.querySelectorAll('tbody tr')]
-            .filter(row => row.cells[0].textContent !== '0×0')
-            .filter(row => ('${complete}' === 'every' ? times(row).includes('-') : times(row).every(time => time === '-')))
+            .filter(row => '${complete}' === 'every' && times(row).some(time => time !== '-') && times(row).includes('-'))
             .map(row => row.cells[0].textContent),
         ),
+        gaps: wraps.flatMap(wrap => {
+          const rows = [...wrap.querySelectorAll('tbody tr')];
+          const columns = rows.length ? rows[0].cells.length - 3 : 0;
+          return Array.from({ length: columns }, (_, j) => {
+            const cell = row => row.cells[j + 2];
+            const last = rows.findLastIndex(row => cell(row).textContent.trim() !== '-');
+            return rows
+              .slice(0, Math.max(last, 0))
+              .filter(row => cell(row).querySelector('span[title]')?.title === 'not measured: the run did not reach this board')
+              .map(row => wrap.querySelector('table').id + ' ' + row.cells[0].textContent + ' column ' + (j + 1));
+          }).flat();
+        }),
         environment: section.querySelector('.environment').textContent,
         titles: section.querySelectorAll('.bench-group h2, .bench-group h3').length,
         older: section.innerText.split('benchmarks/results/').length > 2 || /pnpm/.test(section.textContent),
         rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
-          const headers = [...table.tHead.rows[0].cells];
-          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map((cell, i) => ({ dash: cell.textContent.trim() === '-', bigint: headers[i + 2].textContent.trim().startsWith('BigInt'), reason: cell.querySelector('span[title]')?.title ?? '' })));
-          const noted = [...group.querySelectorAll('.note:not([hidden])')].some(note => note.textContent.startsWith('A dash under BigInt'));
+          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map(cell => ({ dash: cell.textContent.trim() === '-', reason: cell.querySelector('span[title]')?.title ?? '' })));
+          const counts = [...table.tBodies[0].rows].map(row => row.cells[1]).filter(cell => cell.textContent.trim() === '-');
+          const noted = [...group.querySelectorAll('.note:not([hidden])')].some(note => note.textContent.startsWith('A dash marks a board'));
           return [
-            ...(cells.some(cell => cell.dash && !cell.bigint) ? [table.id + ' has a dash outside BigInt'] : []),
-            ...(cells.some(cell => cell.dash && !cell.reason.startsWith('not measured: ')) ? [table.id + ' has a dash with no reason from plan.json'] : []),
+            ...(cells.some(cell => cell.dash && !cell.reason.startsWith('not measured: ')) ? [table.id + ' has a dash with no reason'] : []),
+            ...(counts.some(cell => cell.querySelector('span[title]')?.title !== 'count not stored in spec/cases') ? [table.id + ' has a count dash with no reason'] : []),
             ...(cells.some(cell => cell.dash) !== noted ? [table.id + (noted ? ' explains dashes it does not show' : ' shows a dash it does not explain')] : []),
           ];
         }),
         unnamed: wraps.filter(wrap => !wrap.querySelector('table').getAttribute('aria-label')).length,
       };
     })()`);
+
+    for (const [id, boards] of state.boards.filter(([, boards]) => boards !== sides)) {
+      problems.push(`#${hash}: ${id} lists ${boards} instead of every board from 0×0 to 20×20`);
+    }
 
     if (state.dashes.length) {
       problems.push(`#${hash}: ${state.dashes.join(', ')}`);
@@ -1617,9 +1635,25 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${hash} has no time for ${state.missing.join(', ')} and no rows in ${state.empty.join(', ')}`);
     }
 
+    if (state.gaps.length) {
+      problems.push(`#${hash}: no time and no recorded reason below a measured board in ${state.gaps.join(', ')}`);
+    }
+
+    for (const [id] of complete ? state.timed.filter(([, count]) => count === 0) : []) {
+      problems.push(`#${hash}: ${id} shows no time at all`);
+    }
+
     if (!/^Run on \d{4}-\d{2}-\d{2} on .+ \(.+\), in a container with \d+ cores and \d+ GB, with Node\.js /.test(state.environment)) {
       problems.push(`#${hash} has no environment`);
     }
+  }
+
+  const triangular = await page.evaluate(
+    `['rectangle', 'cylinder', 'torus'].map(surface => ['triangular-' + surface + '-benchmark', [...document.querySelectorAll('#triangular-' + surface + '-benchmark-rows tr')].map(row => row.cells[0].textContent).join(' ')])`,
+  );
+
+  for (const [id, boards] of triangular.filter(([, boards]) => boards !== sides)) {
+    problems.push(`${id} lists ${boards} instead of every board from 0×0 to 20×20`);
   }
 
   await loadSite(page, baseUrl, width, 'benchmark/domicule/rectangle/diagonal');
@@ -2118,4 +2152,19 @@ describe('site', () => {
     test(`site test ${index + 1} of ${siteTestCases.length} for ${CHECKS[testCase.check].label} at ${testCase.width} px`, () =>
       runTest(page, baseUrl, testCase));
   });
+});
+
+test('the time tables of the notebooks list only boards the run measured', () => {
+  const pages = ['dominoes/rectangles', 'dominoes/cylinders', 'dominoes/tori', 'domicules/rectangles', 'domicules/cylinders', 'domicules/tori', 'domicules/rectangles-by-diagonal-pieces', 'domicules/cylinders-by-diagonal-pieces', 'domicules/tori-by-diagonal-pieces'];
+  const unmeasured = pages.flatMap(page => {
+    const html = fs.readFileSync(path.join(SITE_DIRECTORY, 'notes', `${page}.html`), 'utf-8');
+    const tables = [...html.matchAll(/<table><thead><tr><th>board<\/th><th>[^<]*(?:Rust|Python|JavaScript)[\s\S]*?<\/table>/g)].map(([table]) => table);
+    return tables.flatMap(table =>
+      [...table.matchAll(/<tr><td>([^<]+)<\/td>((?:<td>[^<]*<\/td>)+)<\/tr>/g)]
+        .filter(([, , cells]) => [...cells.matchAll(/<td>([^<]*)<\/td>/g)].every(([, cell]) => cell.trim() === '-'))
+        .map(([, board]) => `${page} ${board}`),
+    );
+  });
+
+  assert.deepEqual(unmeasured, []);
 });

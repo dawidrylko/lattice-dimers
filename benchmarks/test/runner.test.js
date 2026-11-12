@@ -45,22 +45,22 @@ describe('usage line', () => {
 describe('result files by surface', () => {
   const fileOf = ({ file }, suffix) => `${path.basename(file)}_${suffix}.txt`;
   const cases = [
-    { args: ['--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], file: 'any-lattice-cylinder-torus-modular.js_2x2-king-torus.txt' },
+    { args: ['--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], file: 'any-lattice-cylinder-torus-modular.js_0x0-king-torus.txt' },
     ...listImplementations('any-lattice-cylinder-torus-bigint').flatMap(implementation => [
-      { args: ['--cylinder', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-king-cylinder') },
-      { args: ['--cylinder', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-square-cylinder') },
-      { args: ['--cylinder', '--lattice', 'triangular', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-triangular-cylinder') },
-      { args: ['--torus', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '2x2-square-torus') },
+      { args: ['--cylinder', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '0x0-king-cylinder') },
+      { args: ['--cylinder', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '0x0-square-cylinder') },
+      { args: ['--cylinder', '--lattice', 'triangular', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '0x0-triangular-cylinder') },
+      { args: ['--torus', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-bigint.js'], file: fileOf(implementation, '0x0-square-torus') },
     ]),
     ...listImplementations('any-lattice-cylinder-torus-modular').flatMap(implementation => [
-      { args: ['--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-king-torus') },
-      { args: ['--torus', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-square-torus') },
-      { args: ['--cylinder', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '2x2-square-cylinder') },
+      { args: ['--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '0x0-king-torus') },
+      { args: ['--torus', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '0x0-square-torus') },
+      { args: ['--cylinder', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '0x0-square-cylinder') },
     ]),
     ...['domicule-cylinder-torus-polynomial-bigint', 'domicule-cylinder-torus-polynomial-modular'].flatMap(algorithm =>
       listImplementations(algorithm).flatMap(implementation => [
-        { args: ['--diagonal-cylinder', '--only', `${algorithm}.js`], file: fileOf(implementation, '2x2-cylinder') },
-        { args: ['--diagonal-torus', '--only', `${algorithm}.js`], file: fileOf(implementation, '2x2-torus') },
+        { args: ['--diagonal-cylinder', '--only', `${algorithm}.js`], file: fileOf(implementation, '0x0-cylinder') },
+        { args: ['--diagonal-torus', '--only', `${algorithm}.js`], file: fileOf(implementation, '0x0-torus') },
       ]),
     ),
     ...[
@@ -126,7 +126,7 @@ describe('a run', () => {
 
   test('refuses a count that differs from spec/cases', t => {
     const benchmarkRoot = makeTemporaryDirectory(t, 'domino-benchmark-');
-    const { status, stderr } = runRunner(benchmarkRoot, ['-n', '1', '-m', '1', '--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], { PYTHON: WRONG_COUNT });
+    const { status, stderr } = runRunner(benchmarkRoot, ['-n', '1', '-o', '1', '-m', '1', '--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], { PYTHON: WRONG_COUNT });
 
     assert.notEqual(status, 0, 'A wrong count was not refused.');
     assert.ok(stderr.includes('counted 1 instead of 24'), stderr.trim());
