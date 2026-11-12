@@ -1569,10 +1569,21 @@ async function checkBenchmark(page, baseUrl, width) {
         boards: wraps.map(wrap => [wrap.querySelector('table').id, [...wrap.querySelectorAll('tbody tr')].map(row => row.cells[0].textContent).join(' ')]),
         missing: wraps.flatMap(wrap =>
           [...wrap.querySelectorAll('tbody tr')]
-            .filter(row => times(row).some(time => time !== '-'))
-            .filter(row => ('${complete}' === 'every' ? times(row).includes('-') : times(row).every(time => time === '-')))
+            .filter(row => '${complete}' === 'every' && times(row).some(time => time !== '-') && times(row).includes('-'))
             .map(row => row.cells[0].textContent),
         ),
+        gaps: wraps.flatMap(wrap => {
+          const rows = [...wrap.querySelectorAll('tbody tr')];
+          const columns = rows.length ? rows[0].cells.length - 3 : 0;
+          return Array.from({ length: columns }, (_, j) => {
+            const cell = row => row.cells[j + 2];
+            const last = rows.findLastIndex(row => cell(row).textContent.trim() !== '-');
+            return rows
+              .slice(0, Math.max(last, 0))
+              .filter(row => cell(row).querySelector('span[title]')?.title === 'not measured: the run did not reach this board')
+              .map(row => wrap.querySelector('table').id + ' ' + row.cells[0].textContent + ' column ' + (j + 1));
+          }).flat();
+        }),
         environment: section.querySelector('.environment').textContent,
         titles: section.querySelectorAll('.bench-group h2, .bench-group h3').length,
         older: section.innerText.split('benchmarks/results/').length > 2 || /pnpm/.test(section.textContent),
@@ -1622,6 +1633,10 @@ async function checkBenchmark(page, baseUrl, width) {
 
     if (complete && (state.missing.length || state.empty.length)) {
       problems.push(`#${hash} has no time for ${state.missing.join(', ')} and no rows in ${state.empty.join(', ')}`);
+    }
+
+    if (state.gaps.length) {
+      problems.push(`#${hash}: no time and no recorded reason below a measured board in ${state.gaps.join(', ')}`);
     }
 
     for (const [id] of complete ? state.timed.filter(([, count]) => count === 0) : []) {
@@ -2140,7 +2155,7 @@ describe('site', () => {
 });
 
 test('the time tables of the notebooks list only boards the run measured', () => {
-  const pages = ['dominoes/cylinders', 'dominoes/tori', 'domicules/rectangles', 'domicules/cylinders', 'domicules/tori', 'domicules/rectangles-by-diagonal-pieces', 'domicules/cylinders-by-diagonal-pieces', 'domicules/tori-by-diagonal-pieces'];
+  const pages = ['dominoes/rectangles', 'dominoes/cylinders', 'dominoes/tori', 'domicules/rectangles', 'domicules/cylinders', 'domicules/tori', 'domicules/rectangles-by-diagonal-pieces', 'domicules/cylinders-by-diagonal-pieces', 'domicules/tori-by-diagonal-pieces'];
   const unmeasured = pages.flatMap(page => {
     const html = fs.readFileSync(path.join(SITE_DIRECTORY, 'notes', `${page}.html`), 'utf-8');
     const tables = [...html.matchAll(/<table><thead><tr><th>board<\/th><th>[^<]*(?:Rust|Python|JavaScript)[\s\S]*?<\/table>/g)].map(([table]) => table);

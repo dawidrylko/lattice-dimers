@@ -18,7 +18,7 @@ A measurement can take days, so it can run in parts from the same commit. `pnpm 
 
 ## Results
 
-A run lives in `results/<commit>-node<version>-python<version>-rust<version>/`, so a comparison answers whether a change to the algorithms or an update of a toolchain improved anything or caused a regression. The site reads the newest run whose `environment.json` says `complete: true` and `dirty: false`. Every table lists every square board from 0 × 0 to 20 × 20. Where a solver has no time, the cell shows a dash; its tooltip gives the reason `plan.json` records, or says that the run did not reach the board.
+A run lives in `results/<commit>-node<version>-python<version>-rust<version>/`, so a comparison answers whether a change to the algorithms or an update of a toolchain improved anything or caused a regression. The site reads the newest run whose `environment.json` says `complete: true` and `dirty: false`. Every table of the Benchmarks tab lists every square board from 0 × 0 to 20 × 20, while the notebooks show only the boards the run measured. Where a solver has no time, the cell shows a dash. Its tooltip gives the reason `plan.json` records, says that the run predates the 0 × 0 board or did not reach the board, or, on the triangular lattice, that no run has measured it.
 
 Each result file holds two times per run. The time of the count is what the solver measures itself with `--time` ([`spec/contract.md`](../spec/contract.md)), and the site compares it. The process time adds the start of Node.js, Python or the binary. Modular solvers run with a fixed number of threads (`--jobs` of the command, 4 by default), since they would otherwise take it from the cores and memory of the machine.
 
