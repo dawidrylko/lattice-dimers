@@ -2136,3 +2136,18 @@ describe('site', () => {
       runTest(page, baseUrl, testCase));
   });
 });
+
+test('the time tables of the notebooks list only boards the run measured', () => {
+  const pages = ['dominoes/cylinders', 'dominoes/tori', 'domicules/rectangles', 'domicules/cylinders', 'domicules/tori', 'domicules/rectangles-by-diagonal-pieces', 'domicules/cylinders-by-diagonal-pieces', 'domicules/tori-by-diagonal-pieces'];
+  const unmeasured = pages.flatMap(page => {
+    const html = fs.readFileSync(path.join(SITE_DIRECTORY, 'notes', `${page}.html`), 'utf-8');
+    const tables = [...html.matchAll(/<table><thead><tr><th>board<\/th><th>[^<]*(?:Rust|Python|JavaScript)[\s\S]*?<\/table>/g)].map(([table]) => table);
+    return tables.flatMap(table =>
+      [...table.matchAll(/<tr><td>([^<]+)<\/td>((?:<td>[^<]*<\/td>)+)<\/tr>/g)]
+        .filter(([, , cells]) => [...cells.matchAll(/<td>([^<]*)<\/td>/g)].every(([, cell]) => cell.trim() === '-'))
+        .map(([, board]) => `${page} ${board}`),
+    );
+  });
+
+  assert.deepEqual(unmeasured, []);
+});

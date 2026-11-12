@@ -526,6 +526,20 @@ function readMissingReasons(algorithm, { rowCount, colCount }, seriesSuffix, dir
   );
 }
 
+/**
+ * Keeps the rows of a benchmark table that the run measured in at least one language: the
+ * notebooks show times, while the site's tables list every board with a dash and its reason.
+ * @param {Object[]} rows The rows of one table.
+ * @returns {Object[]} The rows with a time.
+ */
+function listMeasuredRows(rows) {
+  return rows.filter(row =>
+    [row.formula, row.modular, row.bigint, ...Object.values(row.languages ?? {}), ...Object.values(row.bigintLanguages ?? {})].some(
+      result => result && result.average !== null,
+    ),
+  );
+}
+
 function readLanguages(algorithm, suffix, directory = BENCHMARK_DIRECTORY) {
   return Object.fromEntries(
     listImplementations(algorithm)
@@ -854,13 +868,13 @@ async function __main__() {
   const notes = listNotes();
   await buildNotes(notes, {
     root: ROOT_DIRECTORY,
-    benchmark: data.benchmark,
+    benchmark: listMeasuredRows(data.benchmark),
     benchmarkRun: `${BENCHMARK_ROOT}/${BENCHMARK_RUN}`,
-    domiculeBenchmark: data.domiculeBenchmark,
-    cylinderTorusBenchmark: data.cylinderTorusBenchmark,
-    dominoCylinderTorusBenchmark: data.dominoCylinderTorusBenchmark,
-    diagonalBenchmark: data.diagonalBenchmark,
-    cylinderTorusDiagonalBenchmark: data.cylinderTorusDiagonalBenchmark,
+    domiculeBenchmark: listMeasuredRows(data.domiculeBenchmark),
+    cylinderTorusBenchmark: listMeasuredRows(data.cylinderTorusBenchmark),
+    dominoCylinderTorusBenchmark: listMeasuredRows(data.dominoCylinderTorusBenchmark),
+    diagonalBenchmark: listMeasuredRows(data.diagonalBenchmark),
+    cylinderTorusDiagonalBenchmark: listMeasuredRows(data.cylinderTorusDiagonalBenchmark),
     cylinderTorusDiagonalRun: data.cylinderTorusDiagonalRun,
     cylinderTorusDiagonals: cylinderTorusBoards
       .filter(({ diagonals }) => diagonals)
