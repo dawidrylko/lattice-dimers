@@ -1580,9 +1580,11 @@ async function checkBenchmark(page, baseUrl, width) {
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
           const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map(cell => ({ dash: cell.textContent.trim() === '-', reason: cell.querySelector('span[title]')?.title ?? '' })));
+          const counts = [...table.tBodies[0].rows].map(row => row.cells[1]).filter(cell => cell.textContent.trim() === '-');
           const noted = [...group.querySelectorAll('.note:not([hidden])')].some(note => note.textContent.startsWith('A dash marks a board'));
           return [
             ...(cells.some(cell => cell.dash && !cell.reason.startsWith('not measured: ')) ? [table.id + ' has a dash with no reason'] : []),
+            ...(counts.some(cell => cell.querySelector('span[title]')?.title !== 'count not stored in spec/cases') ? [table.id + ' has a count dash with no reason'] : []),
             ...(cells.some(cell => cell.dash) !== noted ? [table.id + (noted ? ' explains dashes it does not show' : ' shows a dash it does not explain')] : []),
           ];
         }),

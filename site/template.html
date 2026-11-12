@@ -1080,7 +1080,7 @@ function renderSolverRows(table, rows, solvers) {
         ? fmt(measured[0])
         : `<span title="${solverNames}">${runs.map(count => (count === null ? '-' : fmt(count))).join(' / ')}</span>`;
       const times = solvers.map(({ missing }, i) => ms(results[i], missing ? missing(r) : null));
-      return [`${r.rowCount}×${r.colCount}`, r.tilings === null ? '-' : num(r.tilings), ...times, runsCell];
+      return [`${r.rowCount}×${r.colCount}`, r.tilings === null ? '<span title="count not stored in spec/cases">-</span>' : num(r.tilings), ...times, runsCell];
     })
     .map(cells => `<tr role="row">${cells.map((cell, i) => labelledCell(cell, columns[i])).join('')}</tr>`)
     .join('');
