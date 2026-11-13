@@ -43,7 +43,7 @@ Research code, data and papers on dimer coverings of two lattices: the square la
 
 ## Results
 
-The king's graph is not planar, and its boards with both sides at least 3 admit no Pfaffian orientation, so Kasteleyn's method does not apply. Transfer matrices on cylinders of circumference up to 25, split by a conserved parity, give the entropy per site; computer-assisted certificates prove a two-sided bound.
+The king's graph is not planar, and its boards with both sides at least 3 and an even number of cells admit no Pfaffian orientation, so Kasteleyn's method does not apply. Transfer matrices on cylinders of circumference up to 25, split by a conserved parity, give the entropy per site; computer-assisted certificates prove a two-sided bound.
 
 | quantity | value | status |
 | --- | --- | --- |

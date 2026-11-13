@@ -27,11 +27,11 @@ tilings. Evaluated with floating-point cosines the product loses its last digits
 a(n) = (-1)^n \mathrm{Res}\bigl(P(x), P(-x)\bigr), \qquad P(x^2) = U_{2n}(x/2)
 ```
 
-where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is the determinant of the Sylvester matrix, an integer matrix of size $2n$, and fraction-free Bareiss elimination [3] keeps every intermediate value an integer. Neither square roots nor floating point are involved, and $20 \times 20$ takes milliseconds. The same formula is a two-line PARI/GP program in [`oeis/A004003/A004003.gp`](../../oeis/A004003/A004003.gp).
+where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is the determinant of the Sylvester matrix, an integer matrix of size $2n$, and fraction-free Bareiss elimination [3] keeps every intermediate value an integer. Neither square roots nor floating point are involved, and $20 \times 20$ takes milliseconds. The same formula is a one-line PARI/GP program in [`oeis/A004003/A004003.gp`](../../oeis/A004003/A004003.gp).
 
 ### Why the product needs exact arithmetic
 
-The closed form as a floating-point product, next to the exact value. The relative error stays near $10^{-16}$, but once the count has more than 16 digits the last ones are wrong.
+The closed form as a floating-point product, next to the exact value. The relative error stays below $10^{-14}$ on these boards, but once the count has more than 16 digits the last ones are wrong.
 
 ```js run
 const formula = require('./js/solvers/domino-rectangle-formula.js');
@@ -112,7 +112,7 @@ The number of a sampled tiling needs no table either. A scan from the last cell 
 
 ## The counts
 
-The formula solver evaluates the resultant, the two transfer solvers scan the board. The `Number` solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about five minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
+The formula solver evaluates the resultant, the two transfer solvers scan the board. The float solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer in JavaScript needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
 
 ```js run
 const formula = require('./js/solvers/domino-rectangle-formula.js');
@@ -128,7 +128,7 @@ for (let n = 0; n <= 10; n++) {
   const viaTransfer = n <= 7 ? transfer.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
   const viaNumber = n <= 5 ? number.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
   const expected = known.find(t => t.rowCount === side && t.colCount === side).expectedResult;
-  const methods = ['formula', viaTransfer !== null && 'BigInt', viaNumber !== null && 'Number'].filter(Boolean);
+  const methods = ['formula', viaTransfer !== null && 'BigInt', viaNumber !== null && 'float'].filter(Boolean);
   const agree = String(viaFormula) === expected && (viaTransfer === null || viaTransfer === viaFormula) && (viaNumber === null || BigInt(viaNumber) === viaFormula);
 
   if (!agree) {
@@ -170,7 +170,7 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A00
 
 Every count on this page is checked in more than one independent way:
 
-- the formula and `BigInt` solvers agree with each other and with A004003 up to $20 \times 20$, the `Number` solver up to $10 \times 10$;
+- the formula and `BigInt` solvers agree with each other and with A004003 up to $20 \times 20$, the float solver up to $10 \times 10$;
 - the PARI/GP program runs in CI against the same data;
 - unranking is checked against an enumeration of every tiling of the small boards, and every unranked tiling is checked for coverage;
 - coupling from the past is checked with chi-squared tests on $2 \times 2$ and $4 \times 4$.

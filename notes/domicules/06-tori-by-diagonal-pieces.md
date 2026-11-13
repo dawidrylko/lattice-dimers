@@ -81,7 +81,7 @@ if (!cylinderTorusDiagonalRun) {
         ...[r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
       ]),
   );
-  print(`Run: ${cylinderTorusDiagonalRun}`);
+  print(`Run: ${cylinderTorusDiagonalRun.directory}`);
 }
 ```
 

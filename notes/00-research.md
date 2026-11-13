@@ -11,7 +11,7 @@ Both are archived on Zenodo with the code and data: the paper as [10.5281/zenodo
 
 ## Abstract
 
-We compute the entropy per site $s$ of the perfect matchings of the king's graph. The graph is not planar, and its boards with both sides at least 3 admit no Pfaffian orientation, so Kasteleyn's method does not apply. Row transfer matrices on cylinders of circumference up to 25, split by a conserved parity of the dimers crossing a loop, converge exponentially; a Lüscher-type extrapolation with predictive backtests and an error budget gives a non-rigorous estimate of $s$ with an error bar of $6 \cdot 10^{-16}$. Computer-assisted Collatz-Wielandt certificates, combined with a bound for the matchings across a cut that depends on the runs of crossing cells, prove a two-sided bound. We also estimate the surface free energy of a free edge, the corner free energy, which gives the asymptotics of A239273, and the decay length of the splitting between the two parity sectors.
+We compute the entropy per site $s$ of the perfect matchings of the king's graph. The graph is not planar, and its boards with both sides at least 3 and an even number of cells admit no Pfaffian orientation, so Kasteleyn's method does not apply. Row transfer matrices on cylinders of circumference up to 25, split by a conserved parity of the dimers crossing a loop, converge exponentially; a Lüscher-type extrapolation with predictive backtests and an error budget gives a non-rigorous estimate of $s$ with an error bar of $6 \cdot 10^{-16}$. Computer-assisted Collatz-Wielandt certificates, combined with a bound for the matchings across a cut that depends on the runs of crossing cells, prove a two-sided bound. We also estimate the surface free energy of a free edge, the corner free energy, which gives the asymptotics of A239273, and the decay length of the splitting between the two parity sectors.
 
 ## Main results
 
@@ -21,7 +21,7 @@ The entropy per site is defined through the number $Z(m, n)$ of perfect matching
 s = \lim_{m, n \to \infty} \frac{\log Z(m, n)}{mn}.
 ```
 
-The 14 digits of $s$ shared by both ends of its error bar are the data of [OEIS A401669](https://oeis.org/draft/A401669).
+The 14 digits of $s$ shared by both ends of its error bar are the data of the draft [OEIS A401669](https://oeis.org/draft/A401669), which the editors have not yet approved.
 
 ```js run
 const fs = require('fs');
@@ -123,9 +123,9 @@ table(['n', 'board', 'digits of a(n)', 'relative error of C d^(n²) f^(-n)', 'fa
 
 ## Method in brief
 
-The matchings of a strip of width $w$ are counted row by row with a transfer matrix on $2^w$ states. On cylinders, the parity of the dimers that cross a fixed loop is conserved by the transfer matrix for even circumference and by its square for odd circumference. That splits the matrix into two sectors and makes the leading eigenvalues converge exponentially in $w$. The growth rates of cylinders up to $w = 25$ are extrapolated with several finite-size models; the spread of the models, predictive backtests on smaller widths and a check for a hidden mode make up the error budget of $6 \cdot 10^{-16}$. A torus has no boundary, so on the king's graph tori $\log(Z/2)/L^2$ approaches $s$ with no fit; the [notebook on domicules on tori](domicules/03-tori.md) compares the two up to $16 \times 16$.
+The matchings of a strip of width $w$ are counted row by row with a transfer matrix on $2^w$ states. On cylinders, the parity of the dimers that cross a fixed loop is conserved by the transfer matrix for even circumference and by its square for odd circumference. That splits the matrix into two sectors, and in the data the growth rate per site of each converges exponentially in $w$. The growth rates of cylinders up to $w = 25$ are extrapolated with several finite-size models; the spread of the models, predictive backtests on smaller widths and a check for a hidden mode make up the error budget of $6 \cdot 10^{-16}$. A torus has no boundary, so on the king's graph tori $\log(Z/2)/L^2$ approaches $s$ with no fit; the [notebook on domicules on tori](domicules/03-tori.md) compares the two up to $16 \times 16$.
 
-Superadditivity of strips and a lower Collatz-Wielandt certificate on the free strip of width 24 give the lower bound. An upper certificate for a transfer matrix that weights the open side of a strip by the runs of crossing cells gives the upper bound. The certificates are evaluated in IEEE binary64 arithmetic with a rounding analysis that makes them rigorous; the cut identity and the strip inequalities behind them are proved in the paper and, in addition, audited in exact arithmetic on small boards. A separate script checks that no king board with both sides at least 3 has a Pfaffian orientation.
+Superadditivity of strips and a lower Collatz-Wielandt certificate on the free strip of width 24 give the lower bound. An upper certificate for a transfer matrix that weights the open side of a strip by the runs of crossing cells gives the upper bound. The certificates are evaluated in IEEE binary64 arithmetic with a rounding analysis that makes them rigorous; the cut identity and the strip inequalities behind them are proved in the paper and, in addition, audited in exact arithmetic on small boards. A separate script checks the certificate that the $3 \times 4$ king board has no Pfaffian orientation, from which the paper proves the same for every board with both sides at least 3 and an even number of cells.
 
 The directory `replication/` recomputes the counts, the spectra and the certificates with code written from scratch, including a C program that extends the cylinders to circumference 28; its verdicts are in [replication/REPORT.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/replication/REPORT.md).
 

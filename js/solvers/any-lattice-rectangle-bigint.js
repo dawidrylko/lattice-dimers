@@ -31,7 +31,7 @@ function listOffsets(cols, colIndex, hasBelow, lattice) {
 
 /**
  * Counts the perfect matchings of a rectangle on the square lattice, the triangular lattice
- * (one diagonal in every cell, the one that runs down to the right) or the king's graph.
+ * (one diagonal in every square face, the one that runs down to the right) or the king's graph.
  * The cells are processed one by one in row-major order (the broken-profile method).
  * Bit i of a state tells whether the cell i places ahead of the current one is already
  * covered. The farthest cell a state has to remember is colCount + 1 places ahead, so a state
