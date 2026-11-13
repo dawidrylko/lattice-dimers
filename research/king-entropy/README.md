@@ -57,7 +57,7 @@ python3 -m pip install -r src/requirements.txt
 | `src/hidden_oos.py` | out-of-sample check of the hidden mode against w = 27 from the independent code in `replication/` (not part of the budget) |
 | `src/runweight.py` | run-weighted open-strip upper bound (schemes `3state`, `1bit`, `phi`); `--disk DIR` keeps the third vector in a memory-mapped file |
 | `src/corner.py` | corner free energy kappa from the exact square counts, asymptotics of A239273, s from exact counts alone |
-| `src/pfaff_rigor.py` | GF(2) certificate that king boards with both sides >= 3 have no Pfaffian orientation, with planar controls |
+| `src/pfaff_rigor.py` | GF(2) certificate that king boards with both sides >= 3 and an even number of cells have no Pfaffian orientation, with planar controls |
 | `src/surface.py` | surface free energy sigma from free strips |
 | `src/lcert.py` | certified log-convexity tests of (L) at m = 25, 26 in extended precision with a rigorous error bound |
 | `log-convexity/` | why (L) is not structural: J-symmetry and Krein signature (`log-convexity/symmetry.py`), partial sign-reversing involution (`log-convexity/involution.py`), (L_inf) tests at other weights (`log-convexity/linf.py`), the two modes and their crossing along equal diagonal weights (`log-convexity/modes.py`), with their outputs |

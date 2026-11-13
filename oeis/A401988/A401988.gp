@@ -1,8 +1,8 @@
 \\ Tilings of the 2n X 2n board on the triangular lattice (OEIS A401988) = perfect matchings of the grid graph with the diagonal
 \\ edges (x, y) - (x+1, y+1). K is a Kasteleyn matrix: the edges (1, 0) and (0, 1) from a cell with even x carry
-\\ the sign -1, every other edge +1, and K[a, b] = 1 orients the edge from a to b. Drawn with x as the row and y as
-\\ the column, every triangular face then has an odd number of clockwise edges, so det(K) = Pf(K)^2 is the square of
-\\ the number of tilings.
+\\ the sign -1, every other edge +1, and K[a, b] = 1 orients the edge from a to b. Drawn with the rows x downwards and
+\\ the columns y to the right, every triangular face then has an odd number of counterclockwise edges, so det(K) = Pf(K)^2
+\\ is the square of the number of tilings.
 a(n) = {
   my(L = 2*n, K = matrix(L^2, L^2), D = [1, 0; 0, 1; 1, 1]);
   if (n == 0, return(1));

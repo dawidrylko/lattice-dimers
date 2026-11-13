@@ -112,7 +112,7 @@ The number of a sampled tiling needs no table either. A scan from the last cell 
 
 ## The counts
 
-The formula solver evaluates the resultant, the two transfer solvers scan the board. The float solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
+The formula solver evaluates the resultant, the two transfer solvers scan the board. The float solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer in JavaScript needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
 
 ```js run
 const formula = require('./js/solvers/domino-rectangle-formula.js');
