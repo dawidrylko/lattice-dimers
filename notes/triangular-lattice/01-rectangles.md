@@ -104,7 +104,7 @@ print(`s = ${s}`);
 
 ## PARI/GP
 
-The counts follow also from Kasteleyn's theorem [2]: the board is a planar graph, every inner face is a triangle, and a sign on every edge that makes each triangle carry an odd number of clockwise edges turns the number of tilings into the Pfaffian of a skew-symmetric matrix $K$, so $a(n) = \sqrt{\det K}$. [`A401988.gp`](../../oeis/A401988/A401988.gp) builds $K$ with the sign $-1$ on the horizontal and vertical edges from the even rows and $+1$ elsewhere, where $K_{ab} = 1$ orients the edge from $a$ to $b$; with the rows drawn downwards, every triangle then has one or three clockwise edges. CI runs it on the boards up to $16 \times 16$ of `spec/cases/`, and [`harness/spec.test.js`](../../harness/spec.test.js) checks the parity of every triangle on boards up to $12 \times 12$, so the two methods are independent.
+The counts follow also from Kasteleyn's theorem [2]: the board is a planar graph, every inner face is a triangle, and a sign on every edge that makes each triangle carry an odd number of clockwise edges turns the number of tilings into the Pfaffian of a skew-symmetric matrix $K$, so $a(n) = \sqrt{\det K}$. [`A401988.gp`](../../oeis/A401988/A401988.gp) builds $K$ with the sign $-1$ on the horizontal and vertical edges from the even rows and $+1$ elsewhere, where $K_{ab} = 1$ orients the edge from $a$ to $b$; with the rows drawn downwards and the columns to the right, every triangle then has one or three counterclockwise edges, the same condition in the mirror image. CI runs it on the boards up to $16 \times 16$ of `spec/cases/`, and [`harness/spec.test.js`](../../harness/spec.test.js) checks the parity of every triangle on boards up to $12 \times 12$, so the two methods are independent.
 
 ```js run
 print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A401988/A401988.gp'), 'utf-8').trim());
@@ -128,4 +128,4 @@ The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`pyt
 
 1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)
 2. L. Lovász and M. D. Plummer. *Matching Theory*. Annals of Discrete Mathematics 29, North-Holland, Amsterdam, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322.
-3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A401988](https://oeis.org/draft/A401988). [oeis.org](https://oeis.org)
+3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, draft entry [OEIS A401988](https://oeis.org/draft/A401988). [oeis.org](https://oeis.org)
