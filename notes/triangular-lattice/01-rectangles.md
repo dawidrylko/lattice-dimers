@@ -1,10 +1,10 @@
 # Triangular lattice: tilings of the 2n × 2n board (A401988)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html) has the results. It counts the perfect matchings of the triangular lattice on the $2n \times 2n$ board and on $h \times w$ rectangles, boards with no glued edges. The project counts this lattice for comparison with [dominoes](../dominoes/01-rectangles.md) and [domicules](../domicules/01-rectangles.md) on the same boards; the gallery does not draw it. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) glue the edges.
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html) has the results. It counts the perfect matchings of the triangular lattice on the $2n \times 2n$ board and on $h \times w$ rectangles, boards with no glued edges. The project counts this lattice for comparison with [dominoes](../dominoes/01-rectangles.md) and [domicules](../domicules/01-rectangles.md) on the same boards. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) glue the edges.
 
 ## The problem
 
-The triangular lattice [1] is the square lattice with one diagonal in every cell, here the one that runs down to the right. A tiling uses dominoes and diagonal pieces in that one direction, so it lies between a domino tiling, which has no diagonal piece, and a domicule tiling, which may use both diagonals. The $2 \times 2$ board has 2 tilings, one fewer than with domicules, whose third tiling uses both diagonals, and the $8 \times 8$ board has 1,848,358,752. The drawings show 4 of them, spread over a numbering by a table of completion counts of the [cell-by-cell scan](#the-bigint-solver), as the [domicule rectangles](../domicules/01-rectangles.md#numbering) are numbered without the down-left move.
+The triangular lattice [1] is the square lattice with one diagonal in every square face, here the one that runs down to the right. A tiling uses dominoes and diagonal pieces in that one direction, so it lies between a domino tiling, which has no diagonal piece, and a domicule tiling, which may use both diagonals. The $2 \times 2$ board has 2 tilings, one fewer than with domicules, whose third tiling uses both diagonals, and the $8 \times 8$ board has 1,848,358,752. The drawings show 4 of them, spread over a numbering by a table of completion counts of the [cell-by-cell scan](#the-bigint-solver), as the [domicule rectangles](../domicules/01-rectangles.md#numbering) are numbered without the down-left move.
 
 ```js run
 const { drawTilings } = require('./site/notes.js');
@@ -31,7 +31,7 @@ From $16 \times 16$ to $20 \times 20$ the gallery runs the Markov chain of the [
 
 ## The counts
 
-The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are [OEIS A401988](https://oeis.org/draft/A401988) [3]; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.
+The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are proposed as [OEIS A401988](https://oeis.org/draft/A401988) [3], a draft that the editors have not yet approved; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.
 
 ```js run
 const reference = require('./js/solvers/any-lattice-rectangle-bigint.js');
@@ -127,5 +127,5 @@ The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`pyt
 ## References
 
 1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)
-2. P. W. Kasteleyn. The statistics of dimers on a lattice. *Physica* 27(12):1209-1225, 1961. [doi:10.1016/0031-8914(61)90063-5](https://doi.org/10.1016/0031-8914%2861%2990063-5)
+2. L. Lovász and M. D. Plummer. *Matching Theory*. Annals of Discrete Mathematics 29, North-Holland, Amsterdam, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322.
 3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A401988](https://oeis.org/draft/A401988). [oeis.org](https://oeis.org)
