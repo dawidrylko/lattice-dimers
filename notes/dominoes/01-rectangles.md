@@ -27,7 +27,7 @@ tilings. Evaluated with floating-point cosines the product loses its last digits
 a(n) = (-1)^n \mathrm{Res}\bigl(P(x), P(-x)\bigr), \qquad P(x^2) = U_{2n}(x/2)
 ```
 
-where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is the determinant of the Sylvester matrix, an integer matrix of size $2n$, and fraction-free Bareiss elimination [3] keeps every intermediate value an integer. Neither square roots nor floating point are involved, and $20 \times 20$ takes milliseconds. The same formula is a two-line PARI/GP program in [`oeis/A004003/A004003.gp`](../../oeis/A004003/A004003.gp).
+where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is the determinant of the Sylvester matrix, an integer matrix of size $2n$, and fraction-free Bareiss elimination [3] keeps every intermediate value an integer. Neither square roots nor floating point are involved, and $20 \times 20$ takes milliseconds. The same formula is a one-line PARI/GP program in [`oeis/A004003/A004003.gp`](../../oeis/A004003/A004003.gp).
 
 ### Why the product needs exact arithmetic
 
@@ -112,7 +112,7 @@ The number of a sampled tiling needs no table either. A scan from the last cell 
 
 ## The counts
 
-The formula solver evaluates the resultant, the two transfer solvers scan the board. The `Number` solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about five minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
+The formula solver evaluates the resultant, the two transfer solvers scan the board. The `Number` solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
 
 ```js run
 const formula = require('./js/solvers/domino-rectangle-formula.js');
