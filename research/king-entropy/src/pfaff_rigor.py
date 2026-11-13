@@ -1,4 +1,4 @@
-"""No Pfaffian orientation for king boards with both sides >= 3 (Theorem 2.1 of the paper).
+"""No Pfaffian orientation for king boards with both sides >= 3 and an even number of cells (Theorem 2.1 of the paper).
 
 usage: python3 src/pfaff_rigor.py > out/out_pfaff.txt
 
