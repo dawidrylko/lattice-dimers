@@ -153,7 +153,7 @@ The square lattice is critical, and its ratio drifts with $L$ well above 2. On t
 
 [The paper](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf) explains the constant: it splits the cylinder transfer matrix of even circumference $w$ by the parity of the dimers crossing a loop around the axis, and the two sector values $f^{(0)}_w > s > f^{(1)}_w$ approach $s$ exponentially fast. A torus of even side $L$ is the trace of the $L$-th power of that matrix, so each sector contributes about $e^{sL^2}$ and $Z \approx 2 e^{sL^2}$. How fast the ratio gets there is a separate question: on the king's graph the distance to 2 shrinks by a factor of about 8 per step of 2 in $L$. The approach to 2 and the factor 8 are observations on the boards of the table, not proofs.
 
-With no surface term, $\log(Z/2)/L^2$ can be compared with $s$ directly. The difference shrinks exponentially in $L$, with no fit and no extrapolation model. It is a check on the value of $s$ from the paper, because the constant 2 was itself read off against $s$.
+With no surface term, $\log(Z/2)/L^2$ can be compared with $s$ directly. The difference shrinks exponentially in $L$, with no fit and no extrapolation model. It is a consistency check on the value of $s$ from the paper and not an independent estimate, because the constant 2 was itself read off against $s$.
 
 ```js run
 const s = nb.entropy.king;
