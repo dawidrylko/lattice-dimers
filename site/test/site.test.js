@@ -125,10 +125,10 @@ const NOTES = [
   },
   {
     slug: 'domicules/cylinders',
-    cells: 4, figures: 1,
+    cells: 5, figures: 1,
     group: 'Domicules',
-    h1: 'Domicules: tilings of cylinders (A002532, A062510)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'Verification', 'References'],
+    h1: 'Domicules: tilings of cylinders (A002532, A062510, A402163)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'PARI/GP', 'Verification', 'References'],
   },
   {
     slug: 'domicules/tori',

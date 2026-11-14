@@ -8,6 +8,7 @@ const LAST_DOMINO_SQUARE = 44;
 const LAST_ANTIDIAGONAL = 46;
 const LAST_SQUARE = 12;
 const LAST_TORUS = 8;
+const LAST_CYLINDER = 11;
 const LAST_DIAGONAL_ROW = 10;
 const TORUS_FILE = 'spec/cases/any-lattice-cylinder-torus-modular.json';
 const DIAGONAL_FILE = 'spec/cases/domicule-rectangle-polynomial-modular.json';
@@ -26,13 +27,14 @@ const SOURCES = {
   'A401670/b401670.txt': TORUS_FILE,
   'A401673/b401673.txt': DIAGONAL_FILE,
   'A401988/b401988.txt': TRIANGULAR_FILE,
+  'A402163/b402163.txt': `${TORUS_FILE} and ${path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY)}`,
 };
 
-function readStrips(lattice) {
+function readStrips(lattice, boundary = 'free') {
   const strips = new Map();
 
   for (const file of fs.readdirSync(ZEX_DIRECTORY).sort()) {
-    const match = file.match(new RegExp(`^zex_${lattice}_free_m(\\d+)_K\\d+\\.json$`));
+    const match = file.match(new RegExp(`^zex_${lattice}_${boundary}_m(\\d+)_K\\d+\\.json$`));
 
     if (!match) {
       continue;
@@ -101,6 +103,33 @@ function readTori() {
     }
 
     return tori.get(n);
+  });
+}
+
+function readCylinders() {
+  const strips = readStrips('king', 'cyl');
+  const squares = new Map([[0, '1']]);
+
+  for (const { rowCount, colCount, lattice, torus, twisted, expectedResult } of readTestCases(TORUS_FILE)) {
+    if (lattice === 'king' && !torus && !twisted && rowCount === colCount && rowCount % 2 === 0) {
+      squares.set(rowCount / 2, expectedResult);
+    }
+  }
+
+  return Array.from({ length: LAST_CYLINDER + 1 }, (_, n) => {
+    const strip = strips.get(2 * n) ?? [];
+    const stored = squares.get(n);
+    const computed = strip[2 * n];
+
+    if (stored !== undefined && computed !== undefined && stored !== computed) {
+      throw new Error(`The ${2 * n} X ${2 * n} cylinder differs between ${TORUS_FILE} and ${path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY)}.`);
+    }
+
+    if (stored === undefined && computed === undefined) {
+      throw new Error(`No count for the ${2 * n} X ${2 * n} cylinder.`);
+    }
+
+    return stored ?? computed;
   });
 }
 
@@ -184,6 +213,7 @@ function buildBFiles() {
     'A401670/b401670.txt': formatBFile(readTori()),
     'A401673/b401673.txt': formatBFile(triangle),
     'A401988/b401988.txt': formatBFile(readTriangularSquares()),
+    'A402163/b402163.txt': formatBFile(readCylinders()),
   };
 }
 

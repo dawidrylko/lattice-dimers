@@ -13,7 +13,7 @@ The notebooks are grouped as the site menu groups them: the notes of each kind o
   - [Tori](dominoes/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/tori.html)): domino tilings of tori and A335586.
 - Domicules:
   - [Rectangles](domicules/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html)): domicule tilings of the 2n × 2n board, A239273, up to 20 × 20, the modular solver and the Markov chain.
-  - [Cylinders](domicules/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html)): domicule tilings of cylinders, the king's graph on the cylinder.
+  - [Cylinders](domicules/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html)): domicule tilings of cylinders, the king's graph on the cylinder, and the 2n × 2n cylinders, A402163.
   - [Tori](domicules/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html)): domicule tilings of tori, A401670, the torus count of three lattices over $e^{sL^2}$ and the seam sign.
   - By diagonal pieces:
     - [Rectangles](domicules/04-rectangles-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles-by-diagonal-pieces.html)): domicule tilings of the 2n × 2n board by the number of diagonal pieces, A401673, and their weighted counts.
