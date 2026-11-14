@@ -9,7 +9,7 @@
 
 ## Status
 
-Approved 1 November 2026, revision #40.
+Approved 11 November 2026, revision #42.
 
 ## Files
 

@@ -8,7 +8,7 @@
 
 ## Status
 
-Approved 15 October 2026, revision #45.
+Approved 11 November 2026, revision #51.
 
 ## Files
 
