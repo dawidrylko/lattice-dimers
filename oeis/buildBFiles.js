@@ -13,21 +13,26 @@ const TORUS_FILE = 'spec/cases/any-lattice-cylinder-torus-modular.json';
 const DIAGONAL_FILE = 'spec/cases/domicule-rectangle-polynomial-modular.json';
 const TRIANGULAR_FILE = 'spec/cases/any-lattice-rectangle-modular.json';
 const LAST_TRIANGULAR_SQUARE = 11;
-const GENERATORS = { 'A401988/b401988.txt': 'node oeis/A401988/b401988.js 0 37' };
+const TRIANGULAR_STRIP = 4;
+const GENERATORS = {
+  'A309117/b309117.txt': 'node oeis/A309117/b309117.js 0 1000',
+  'A401988/b401988.txt': 'node oeis/A401988/b401988.js 0 37',
+};
 const SOURCES = {
   'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
   'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A239273/b239273.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
+  'A309117/b309117.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A401670/b401670.txt': TORUS_FILE,
   'A401673/b401673.txt': DIAGONAL_FILE,
   'A401988/b401988.txt': TRIANGULAR_FILE,
 };
 
-function readStrips() {
+function readStrips(lattice) {
   const strips = new Map();
 
   for (const file of fs.readdirSync(ZEX_DIRECTORY).sort()) {
-    const match = file.match(/^zex_king_free_m(\d+)_K\d+\.json$/);
+    const match = file.match(new RegExp(`^zex_${lattice}_free_m(\\d+)_K\\d+\\.json$`));
 
     if (!match) {
       continue;
@@ -155,7 +160,7 @@ function formatBFile(terms) {
 }
 
 function buildBFiles() {
-  const strips = readStrips();
+  const strips = readStrips('king');
   const array = [];
 
   for (let antidiagonal = 0; antidiagonal <= LAST_ANTIDIAGONAL; antidiagonal++) {
@@ -175,6 +180,7 @@ function buildBFiles() {
     'A004003/b004003.txt': formatBFile(dominoes),
     'A239264/b239264.txt': formatBFile(array),
     'A239273/b239273.txt': formatBFile(squares),
+    'A309117/b309117.txt': formatBFile(readStrips('tri').get(TRIANGULAR_STRIP)),
     'A401670/b401670.txt': formatBFile(readTori()),
     'A401673/b401673.txt': formatBFile(triangle),
     'A401988/b401988.txt': formatBFile(readTriangularSquares()),
