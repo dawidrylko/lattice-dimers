@@ -1,4 +1,4 @@
-# Domicules: tilings of cylinders (A002532, A062510)
+# Domicules: tilings of cylinders (A002532, A062510, A402163)
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html) has the results. It counts the domicule tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom; they are the perfect matchings of the king's graph on the cylinder. The same boards are counted with [dominoes](../dominoes/02-cylinders.md) and on the [triangular lattice](../triangular-lattice/02-cylinders.md); the [rectangles notebook](01-rectangles.md) counts domicules on boards with no glued edge.
 
@@ -59,6 +59,8 @@ table(
 
 The OEIS has the cylinders of circumference 2, [OEIS A002532](https://oeis.org/A002532), and those of height 2, [OEIS A062510](https://oeis.org/A062510), each shifted by one [1]. The cell checks both against the table, with the terms of the entries as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
 
+The $2n \times 2n$ cylinders are the draft entry [OEIS A402163](https://oeis.org/draft/A402163) [1], submitted on 14 November 2026 with a b-file of $n = 0, \dots, 11$, [`oeis/A402163/b402163.txt`](../../oeis/A402163/b402163.txt). The cell checks the square boards of the table, $2 \times 2$ to $8 \times 8$, against that b-file.
+
 ```js run
 const terms = [0n, 1n];
 
@@ -78,11 +80,24 @@ if (column.length) {
   throw new Error(`the cylinders of height 2 differ from A062510 at w = ${column.join(', ')}`);
 }
 
+const bFile = require('fs')
+  .readFileSync(require('path').join(nb.context.root, 'oeis/A402163/b402163.txt'), 'utf-8')
+  .trim()
+  .split('\n')
+  .map(line => BigInt(line.split(' ')[1]));
+const squares = nb.widths.filter(w => w % 2 === 0 && nb.heights.includes(w));
+const diagonal = squares.filter(w => nb.count(w, w) !== bFile[w / 2]);
+
+if (diagonal.length) {
+  throw new Error(`the 2n × 2n cylinders differ from A402163 at 2n = ${diagonal.join(', ')}`);
+}
+
 table(
   ['board', 'OEIS', 'checked at'],
   [
     ['w = 2', 'A002532', `h = ${nb.heights.join(', ')}`],
     ['h = 2', 'A062510', `w = ${nb.widths.join(', ')}`],
+    ['w = h = 2n', 'A402163', `2n = ${squares.join(', ')}`],
   ],
 );
 ```
@@ -106,11 +121,19 @@ table(
 print(`Run: ${nb.context.benchmarkRun}`);
 ```
 
+## PARI/GP
+
+The cylinder count as the entry of the power of the row transfer matrix from the empty row to the empty row in [`oeis/A402163/A402163.gp`](../../oeis/A402163/A402163.gp), checked in CI against the king's graph cylinders of the test data up to circumference 8.
+
+```js run
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402163/A402163.gp'), 'utf-8').trim());
+```
+
 ## Verification
 
-The `BigInt` solver agrees with the OEIS entries above and the modular solver with the `BigInt` one at $h = 8$, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the king's graph cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both of them.
+The `BigInt` solver agrees with the OEIS entries above and the modular solver with the `BigInt` one at $h = 8$, the PARI/GP program runs in CI against the king's graph cylinders of the test data, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the king's graph cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both of them.
 
 ## References
 
-1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A002532](https://oeis.org/A002532) and [OEIS A062510](https://oeis.org/A062510). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A002532](https://oeis.org/A002532) and [OEIS A062510](https://oeis.org/A062510) and draft entry [OEIS A402163](https://oeis.org/draft/A402163). [oeis.org](https://oeis.org)
 2. D. Ryłko. The dimer entropy of the king's graph. Preprint, October 2026. [doi:10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056)

@@ -126,7 +126,7 @@ const NOTE_SUMMARIES = {
   'dominoes/cylinders': 'Notebook: domino tilings of cylinders, checked against the OEIS entries of every circumference up to 8.',
   'dominoes/tori': 'Notebook: domino tilings of tori, the 2n × 2n torus (A335586) by two solvers.',
   'domicules/rectangles': 'Notebook: domicule tilings of the 2n × 2n board (A239273) up to 20 × 20, the modular solver, the Markov chain and how every count is checked.',
-  'domicules/cylinders': "Notebook: domicule tilings of cylinders, the perfect matchings of the king's graph on the cylinder.",
+  'domicules/cylinders': "Notebook: domicule tilings of cylinders, the perfect matchings of the king's graph on the cylinder, and the 2n × 2n cylinders (A402163).",
   'domicules/tori': "Notebook: domicule tilings of tori (A401670); the king's graph torus count over e^(sL²) tends to 2, compared with two other lattices.",
   'domicules/rectangles-by-diagonal-pieces': 'Notebook: domicule tilings of the 2n × 2n board by the number of diagonal pieces, up to 20 × 20 (A401673), and their weighted counts.',
   'domicules/cylinders-by-diagonal-pieces': 'Notebook: domicule tilings of cylinders by the number of diagonal pieces, checked against the gallery up to 10 × 10.',

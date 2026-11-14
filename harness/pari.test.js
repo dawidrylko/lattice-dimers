@@ -12,6 +12,7 @@ const GP_TIMEOUT = 300000;
 const OUTPUT_MARKER = 'END OF PROGRAMS';
 const MAX_DOMICULE_SQUARE_SIDE = 12;
 const MAX_TORUS_CIRCUMFERENCE = 8;
+const MAX_CYLINDER_CIRCUMFERENCE = 8;
 const MAX_DIAGONAL_SIDE = 8;
 const MAX_TRIANGULAR_SIDE = 16;
 const PROGRAMS = [
@@ -45,6 +46,13 @@ const PROGRAMS = [
       .concat({ call: 'a(0)', expectedResult: '1' }, { call: 'a(2)', expectedResult: '17552' }),
   },
   {
+    files: ['oeis/A402163/A402163.gp'],
+    testCases: testCasesOf('any-lattice-cylinder-torus-modular')
+      .filter(({ lattice, torus, twisted, colCount }) => lattice === 'king' && !torus && !twisted && colCount >= 2 && colCount <= MAX_CYLINDER_CIRCUMFERENCE)
+      .map(({ rowCount, colCount, expectedResult }) => ({ call: `T(${rowCount}, ${colCount})`, expectedResult }))
+      .concat({ call: 'a(0)', expectedResult: '1' }, { call: 'a(1)', expectedResult: '9' }),
+  },
+  {
     files: ['oeis/A401673/A401673.gp'],
     testCases: testCasesOf('domicule-rectangle-polynomial-modular')
       .filter(({ rowCount, colCount }) => Math.max(rowCount, colCount) <= MAX_DIAGONAL_SIDE)
@@ -68,6 +76,7 @@ const ENTRY_PROGRAMS = {
   A401670: 'vector(5, n, a(n-1))',
   A401673: 'concat(vector(4, n, row(n-1)))',
   A401988: 'vector(6, n, a(n-1))',
+  A402163: 'vector(5, n, a(n-1))',
 };
 
 function runGp(programs, calls) {
