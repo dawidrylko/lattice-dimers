@@ -58,6 +58,10 @@ for (const [key, [quoted, value]] of Object.entries(errors)) {
   }
 }
 
+if (Number(errbar.budget).toExponential(1) !== '2.7e-16') {
+  throw new Error(`s: the page quotes the error budget 2.7e-16, the data says ${errbar.budget}`);
+}
+
 if (nearest(xi, 6) !== '1.236091' || 5 * Number(xiChange) > 1e-6) {
   throw new Error(`xi: the page says 1.236091 ± 1e-6, the data says ${xi} (last change ${xiChange})`);
 }

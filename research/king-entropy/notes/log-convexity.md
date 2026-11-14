@@ -49,9 +49,9 @@ exponential correction), float error ≲ 1e-15. So (L∞) holds for 2q ≤ 24; b
 
 Odd m and cylinders are included. Shape of the king margin
 μ_q = log Z(2q−2) + log Z(2q+2) − 2 log Z(2q): strictly decreasing in q for every m tested,
-≈ 0.4 m at 2q = 2, last computed ratio μ_q/μ_{q−1} 0.16-0.20 on free strips of width m ≥ 5
-(0.25, 0.19, 0.13 at m = 2, 3, 4) and 0.10-0.13 on cylinders (→ μ₂/μ₁ of A = T²), minimum always at the
-largest q. No dip at intermediate q, nothing that shrinks with m: no candidate region for a
+≈ 0.4 m at 2q = 2, with the last computed ratio μ_q/μ_{q−1} 0.16-0.20 on free strips of width m ≥ 5
+(→ μ₂/μ₁ of A = T², 0.18-0.20 for m = 5...10 in `out/out_lspec.txt`; 0.25, 0.19, 0.13 at m = 2, 3, 4)
+and 0.10-0.13 on cylinders, minimum always at the largest q. No dip at intermediate q, nothing that shrinks with m: no candidate region for a
 counterexample was found.
 
 **All q at fixed m (non-rigorous).** (L) for q → ∞ holds iff the leading subdominant e₀-visible

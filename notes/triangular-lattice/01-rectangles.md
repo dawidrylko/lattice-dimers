@@ -133,7 +133,7 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 Every count on this page is checked in more than one independent way:
 
-- the `BigInt` and the modular solver agree, in Rust, Python and JavaScript, on every board of [`spec/cases/any-lattice-rectangle-bigint.json`](../../spec/cases/any-lattice-rectangle-bigint.json), which ends at $16 \times 16$; the larger boards of [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json), up to $22 \times 22$, go through the modular solver alone, in the three languages;
+- the `BigInt` and the modular solver agree, in Rust, Python and JavaScript, on every board of [`spec/cases/any-lattice-rectangle-bigint.json`](../../spec/cases/any-lattice-rectangle-bigint.json), the squares up to $16 \times 16$ and seven rectangles, the longest $2 \times 40$; the squares $18 \times 18$, $20 \times 20$ and $22 \times 22$ of [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json) go through the modular solver alone, in the three languages;
 - the same solvers on the square lattice and on the king's graph give the stored domino and domicule counts;
 - a listing of every tiling agrees on the triangular boards of up to 40 cells;
 - the Kasteleyn determinant of the PARI/GP program agrees up to $16 \times 16$ in CI, and the b-file that [`oeis/A401988/b401988.js`](../../oeis/A401988/b401988.js) builds from the same determinant agrees with the stored squares up to $22 \times 22$;
