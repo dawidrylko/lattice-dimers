@@ -14,8 +14,8 @@ test sigma or kappa at the paper's precision, and s is the real check.
 
 ## 1. Encoding
 
-The paper leaves the encoding open (`paper/king-entropy.tex`, the paragraph on corner transfer
-matrices): the two diagonals of a unit square cross, so the king's graph is not planar and its dimer
+The paper as published leaves the encoding open (`paper/king-entropy.tex` at the tag
+`king-entropy-v1.0.0`, the paragraph on corner transfer matrices): the two diagonals of a unit square cross, so the king's graph is not planar and its dimer
 model is not a plain vertex model on the square lattice. Here each diagonal is routed through one
 corner of its square:
 

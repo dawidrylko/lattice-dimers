@@ -234,7 +234,7 @@ const diagonalUnrankTestCases = [
 }));
 const domiculeRandomTestCases = [
   { rowCount: 2, colCount: 2, expectedResult: 3, criticalValue: 13.82 },
-  { rowCount: 4, colCount: 4, expectedResult: 280, criticalValue: 357.8 },
+  { rowCount: 4, colCount: 4, expectedResult: 280, criticalValue: 357.7 },
   { rowCount: 2, colCount: 2, lattice: 'triangular', expectedResult: 2, criticalValue: 10.83 },
   { rowCount: 4, colCount: 4, lattice: 'triangular', expectedResult: 56, criticalValue: 93.17 },
 ];

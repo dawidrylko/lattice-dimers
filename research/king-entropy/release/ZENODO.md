@@ -114,7 +114,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      before 53b3180 wrote it. An input whose content at `HEAD` equals its content at the anchor is
      skipped: a commit that changed it and a later one that changed it back make no output stale. The rename commits fc5e453 and
      0cfbfaa changed only file paths, in docstrings, comments, printed labels and the input path of
-     `src/hidden_oos.py` (`README.md`, "Renamed before king-entropy-v1.0.0"), so they make no output
+     `src/hidden_oos.py` (the `README.md` of the tag `king-entropy-v1.0.0`, "Renamed before king-entropy-v1.0.0"), so they make no output
      stale; the `grep` keeps them from serving as the anchor of `out/out_hidden_oos.txt` and
      `out/out_derived.txt`, whose labels they edited. Every other commit listed means stale, including
      one that changes only a comment or a docstring, and including 9ddb2fb, which moved the files and

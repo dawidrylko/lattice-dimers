@@ -49,7 +49,8 @@ exponential correction), float error ≲ 1e-15. So (L∞) holds for 2q ≤ 24; b
 
 Odd m and cylinders are included. Shape of the king margin
 μ_q = log Z(2q−2) + log Z(2q+2) − 2 log Z(2q): strictly decreasing in q for every m tested,
-≈ 0.4 m at 2q = 2, ratio μ_q/μ_{q−1} → 0.18-0.20 (= μ₂/μ₁ of A = T²), minimum always at the
+≈ 0.4 m at 2q = 2, last computed ratio μ_q/μ_{q−1} 0.16-0.20 on free strips of width m ≥ 5
+(0.25, 0.19, 0.13 at m = 2, 3, 4) and 0.10-0.13 on cylinders (→ μ₂/μ₁ of A = T²), minimum always at the
 largest q. No dip at intermediate q, nothing that shrinks with m: no candidate region for a
 counterexample was found.
 
@@ -64,7 +65,8 @@ deep in the asymptotic regime (constant ratio).
 2. **Stieltjes moments (Hankel PSD of the transfer moments).** Z(2q, m) would be a moment
    sequence of a positive measure iff all Hankel matrices [Z(2(i+j))], [Z(2(i+j+1))] are PSD.
    Exact leading minors (`src/ltest.py`, Bareiss): a negative minor appears for every free width
-   m ≥ 3 (m = 3: H1 at size 3; m = 4: H0 at size 4; ...) and every cylinder m ≥ 7. Spectral
+   m ≥ 3 (m = 3: H1 at size 3; m = 4: H0 at size 4; ...) and every cylinder m = 7...18; at
+   m = 19...22 no minor up to the sizes tested (6 to 8) is negative. Spectral
    reason (`src/lspec.py`): e₀-visible eigenvalues of A = T² that are non-real (m ≥ 4) or real
    negative (λ purely imaginary; m = 3, 5, 7, 9), all small (|μ|/μ₁ ≤ 0.047 at m = 10).
    (L) is only the 2×2 consecutive-minor part of this; the full moment structure is false.
@@ -81,12 +83,13 @@ deep in the asymptotic regime (constant ratio).
    with weights (x_dl, x_dr) = (1, ½) it fails first at m = 5 (14 of 19 q) and, among m ≤ 9, only
    at m = 5, 8, 9; (1, ¼) fails at m = 5, 6, 8, 9, and (1, 1/10) and (1, 0) at every m = 5...9,
    (1, ¾) at m = 9 (5 of 19, first at 2q = 30). Not monotone in m: (1, ¾) has no violation
-   for m = 10...13 (2q ≤ 38), and (1, 9/10), (1, 19/20) have none for m ≤ 16, 2q ≤ 78
+   for m = 10...13 (2q ≤ 38), and (1, 9/10), (1, 19/20) have none for m = 5...16, 2q ≤ 78
    (`python3 src/lweight.py big` → `out/out_lweight_big.txt`); the failures sit mostly on odd m and at
    large q, i.e. they come from an oscillating (non-real or negatively weighted) subleading
    eigenvalue, which never shows up with equal diagonal weights (`src/lspec.py`: μ₂ real, c₂ > 0).
 
-   *Erratum (2026-10-17): false for larger m or q; see the erratum under the status paragraph
+   *Erratum (2026-10-17): false for larger m or q, and for (1, 9/10) already at m = 4, below the
+   widths tested; see the erratum under the status paragraph
    and §5.*
 
 ## 3. Exact reformulations (both verified)
@@ -153,7 +156,7 @@ visible with weight -K eps^2 (K = 0.70, 1.31, 1.63 at m = 4, 5, 8; constant over
 m = 8 from 2q = 86, at m = 12 from 2q = 112; (1, 19/20) fails at m = 8 from 2q = 118. The onsets
 predicted from the spectrum match exactly at m = 4 and 8; the prediction is computed only for
 m <= 10, so m = 12 is found, not predicted. Control (1, 1): 0/199, 0/129, 0/69. The earlier tests
-of §2.5 stopped at 2q <= 78.
+of §2.5 ran m = 5...16 and stopped at 2q <= 78.
 
 Sector-wise (L). The J-symmetrised transfer H(M+M^T)/2 has no violation where tested: m <= 9,
 2q <= 38 for the weights (1, 1/2), (1, 3/4), (1, 0), (1, 9/10), and (1, 9/10) at m = 8 up to
