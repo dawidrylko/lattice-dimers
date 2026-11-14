@@ -56,9 +56,17 @@ function readBigIntArg(argv, flag) {
 }
 
 function randomBigInt(below) {
-  const bytes = crypto.randomBytes(String(below).length);
+  const size = String(below).length;
+  const range = BigInt(256) ** BigInt(size);
+  const limit = range - (range % below);
 
-  return BigInt(`0x${bytes.toString('hex')}`) % below;
+  for (;;) {
+    const value = BigInt(`0x${crypto.randomBytes(size).toString('hex')}`);
+
+    if (value < limit) {
+      return value % below;
+    }
+  }
 }
 
 function* unrankRange(pieces, unranker, offset, count) {

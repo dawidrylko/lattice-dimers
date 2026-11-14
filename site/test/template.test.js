@@ -31,3 +31,17 @@ test('the Random button keeps a draw below the largest multiple of the count', (
   assert.equal(randomBelow(7n), 6n);
   assert.equal(state.calls, 1);
 });
+
+test('the Random button draws again when the draw equals that multiple', () => {
+  const { randomBelow, state } = loadRandomBelow([999999994, 0]);
+
+  assert.equal(randomBelow(7n), 0n);
+  assert.equal(state.calls, 2);
+});
+
+test('the Random button joins two draws for a count of two digits', () => {
+  const { randomBelow, state } = loadRandomBelow([20, 0]);
+
+  assert.equal(randomBelow(12n), 8n);
+  assert.equal(state.calls, 2);
+});

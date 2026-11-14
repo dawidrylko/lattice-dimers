@@ -48,6 +48,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | the benchmark runner measured a Rust binary older than its sources, since only the test executor checked its age | #115 | `test:benchmarks`, the runner refuses a Rust binary that was not built (new) | `launchBuilt` made to return `launch` |
 | the Python solver failed with a `TypeError` when `os.process_cpu_count()` gave `None`, on the command line and as a module without `jobs` | #89 | `test`, module test when the number of processors is unknown (new), which runs both | `or 1` removed from either default of `jobs`, each on its own |
 | with two Rust binaries, an edit to the root of one in `rust/solvers/src/bin` made the executor refuse the other, which cargo does not rebuild for it | #92 | `test`, Rust source tests and the executor test for a binary older than only its own root (new) | `rustSourcesModifiedAt` taking every `.rs` file under `rust/` again (the source tests), or `fileName` passed for `resolve(fileName)` in `executeSolver` (the executor test) |
+| `--random` of the renderer took the remainder of its draw for the number of the tiling, so on the 2 × 2 board of domicules the first of the three tilings came up 86 times in 256 | #138 | `test:render`, command line random number (new) | `js/tilingRenderer.js` from `d565810` |
 
 ## Site
 
