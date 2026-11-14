@@ -84,11 +84,14 @@ function checkKeywords() {
   const packageKeywords = JSON.parse(read('js/package.json'))
     .keywords.filter(keyword => /^a\d{6}$/.test(keyword))
     .map(keyword => keyword.toUpperCase());
+  const listedIn = (file, pattern) => ((read(file).match(pattern) ?? [])[1] ?? '').match(/OEIS A\d{6}/g)?.map(keyword => keyword.slice('OEIS '.length)) ?? [];
   const errors = [];
 
   for (const [file, listed] of [
     ['CITATION.cff', citation],
     ['js/package.json', packageKeywords],
+    ['the meta tag of site/template.html', listedIn('site/template.html', /<meta name="keywords" content="([^"]*)">/)],
+    ['the JSON-LD of site/build.js', listedIn('site/build.js', /keywords: "([^"]*)"/)],
   ]) {
     if ([...listed].sort().join(',') !== entries.join(',')) {
       errors.push(`The OEIS keywords of ${file} are ${listed.join(', ')}, the entries in oeis/ are ${entries.join(', ')}.`);

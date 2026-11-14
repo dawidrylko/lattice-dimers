@@ -6,7 +6,7 @@
 <title>Lattice Dimers: the dimer entropy of the king's graph and every tiling of a 2n × 2n board | Dawid Ryłko</title>
 <meta name="description" content="Research on lattice dimers: the entropy per site of the king's graph dimers with rigorous bounds, and domino (OEIS A004003) and domicule (OEIS A239273) tilings counted exactly up to 20×20, with a paper, notebooks and a gallery.">
 <meta name="author" content="Dawid Ryłko">
-<meta name="keywords" content="dimer model, king's graph, perfect matchings, entropy per site, transfer matrix, Collatz-Wielandt bounds, Pfaffian orientation, domicule tiling, domino tiling, OEIS A004003, OEIS A239264, OEIS A239273, PARI/GP, combinatorics, statistical mechanics">
+<meta name="keywords" content="dimer model, king's graph, perfect matchings, entropy per site, transfer matrix, Collatz-Wielandt bounds, Pfaffian orientation, domicule tiling, domino tiling, OEIS A004003, OEIS A239264, OEIS A239273, OEIS A309117, OEIS A401669, OEIS A401670, OEIS A401673, OEIS A401988, OEIS A402163, PARI/GP, combinatorics, statistical mechanics">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
@@ -675,13 +675,19 @@ function goToTiling(board, number, diagonals) {
 
 function randomBelow(limit) {
   const digits = String(limit).length + 8;
-  let value = '';
 
-  while (value.length < digits) {
-    value += String(Math.floor(Math.random() * 1e9)).padStart(9, '0');
+  for (;;) {
+    let value = '';
+
+    while (value.length < digits) {
+      value += String(Math.floor(Math.random() * 1e9)).padStart(9, '0');
+    }
+
+    const range = 10n ** BigInt(value.length);
+    const number = BigInt(value);
+
+    if (number < range - (range % limit)) return number % limit;
   }
-
-  return BigInt(value) % limit;
 }
 
 function sheetColumns(board) {

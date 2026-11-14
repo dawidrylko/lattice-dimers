@@ -89,6 +89,8 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | a link to a notebook section put its heading flush with the screen edge | #102 | `test:site`, notes, margin above a heading (new) | a build of `ae77034` |
 | the front-page tilings were not square | `f3b5023` | `test:render`, sheet without labels and readme images | `svg.js` and `readme-images.js` from `f3b5023^` |
 | a tab link in the intro of the main page navigated to its fragment, so it dropped the board the gallery showed | #101 | `test:site`, main page | `#intro-sections` taken out of the tab click handler in a built copy |
+| the site build counted every measured cylinder and torus that `spec/cases/` did not hold, the 16 × 16 square torus alone for 28 minutes | #119 | `test:spec`, the stored count of every measured cylinder and torus | the 16 × 16 square torus taken out of `spec/cases/any-lattice-cylinder-torus-modular.json` |
+| the Random button of the gallery took the remainder of its draw, so the first tilings came up more often, by less than one part in 10⁸ | #138 | `test:site`, `template.test.js` (new) | `site/template.html` from `d565810` |
 
 ## Benchmarks
 
@@ -108,6 +110,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | `CITATION.cff` and `package.json` described an older repository | `310a1a2` | `test:metadata` | both files from `310a1a2^` |
 | `package.json` could be published to npm | `1a1445b` | `test:metadata`, private (new) | `"private": true` removed |
 | links to OEIS entries came in three forms | `f3b5023` | `test:markdown`, links to OEIS entries; `test:oeis`, the table | the old form `OEIS [A401670](../oeis/A401670/README.md)` in a note; `oeis/README.md` from `f3b5023^` |
+| the keywords of the site named three of the nine OEIS entries | #138 | `test:metadata`, the OEIS keywords of the site (new) | `site/template.html` and `site/build.js` from `d565810` |
 
 ## Research scripts
 
