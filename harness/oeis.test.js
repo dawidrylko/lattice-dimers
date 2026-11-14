@@ -536,10 +536,13 @@ function checkDraftLinks() {
 }
 
 const GENERATOR_TERMS = 13;
+const FULL_GENERATORS = ['A309117'];
 
 function checkGenerator(entry) {
   const { bFile, generator } = entryFiles(entry);
-  const { status, stdout, stderr } = spawnSync(process.execPath, [path.join(OEIS_DIRECTORY, entry, generator), '0', String(GENERATOR_TERMS - 1)], {
+  const lines = read(entry, bFile).replace(/\n$/, '').split('\n');
+  const count = FULL_GENERATORS.includes(entry) ? lines.length : GENERATOR_TERMS;
+  const { status, stdout, stderr } = spawnSync(process.execPath, [path.join(OEIS_DIRECTORY, entry, generator), '0', String(count - 1)], {
     encoding: 'utf-8',
   });
 
@@ -547,9 +550,9 @@ function checkGenerator(entry) {
     return [`oeis/${entry}/${generator} failed: ${stderr.trim()}`];
   }
 
-  const expected = read(entry, bFile).split('\n').slice(0, GENERATOR_TERMS).join('\n') + '\n';
+  const expected = lines.slice(0, count).join('\n') + '\n';
 
-  return stdout === expected ? [] : [`oeis/${entry}/${generator} 0 ${GENERATOR_TERMS - 1} does not print the first ${GENERATOR_TERMS} lines of ${bFile}.`];
+  return stdout === expected ? [] : [`oeis/${entry}/${generator} 0 ${count - 1} does not print the first ${count} lines of ${bFile}.`];
 }
 
 const checks = [
