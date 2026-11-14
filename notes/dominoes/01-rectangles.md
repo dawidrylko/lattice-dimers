@@ -175,7 +175,7 @@ Every count on this page is checked in more than one independent way:
 - unranking is checked against an enumeration of every tiling of the small boards, and every unranked tiling is checked for coverage;
 - coupling from the past is checked with chi-squared tests on $2 \times 2$ and $4 \times 4$.
 
-The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
+The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
 

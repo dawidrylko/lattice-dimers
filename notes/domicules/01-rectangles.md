@@ -93,7 +93,7 @@ Domicule tilings have no lattice structure like the domino rotations, so [coupli
 
 ### Is the Markov chain uniform?
 
-On $4 \times 4$ the chain can be compared with the exact answer: 280 tilings, each should appear equally often. A chi-squared statistic above 357.8 (279 degrees of freedom, $p = 0.001$) would reject uniformity.
+On $4 \times 4$ the chain can be compared with the exact answer: 280 tilings, each should appear equally often. A chi-squared statistic above 357.7 (279 degrees of freedom, $p = 0.001$) would reject uniformity.
 
 ```js run
 const { sampleDomiculeTiling } = require('./js/renderer');
@@ -111,9 +111,9 @@ for (let i = 0; i < samples; i++) {
 const expected = samples / 280;
 const chiSquared = [...counts.values()].reduce((sum, observed) => sum + (observed - expected) ** 2 / expected, (280 - counts.size) * expected);
 print(`distinct tilings seen: ${counts.size} of 280`);
-print(`chi-squared: ${chiSquared.toFixed(1)} (limit 357.8)`);
+print(`chi-squared: ${chiSquared.toFixed(1)} (limit 357.7)`);
 
-if (counts.size !== 280 || chiSquared > 357.8) {
+if (counts.size !== 280 || chiSquared > 357.7) {
   throw new Error('the chain fails the uniformity test');
 }
 ```
@@ -190,13 +190,13 @@ print(['A239264', 'A239273'].map(a => require('fs').readFileSync(require('path')
 
 Every count on this page is checked in more than one independent way:
 
-- the two domicule solvers agree with A239273 and the data section of A239264;
+- the two domicule solvers agree with A239273 and with the A239264 rectangles of the test data;
 - the PARI/GP programs run in CI against the same data;
 - unranking is checked against an enumeration of every tiling of the small boards, and every unranked tiling is checked for coverage;
 - the Markov chain is checked with chi-squared tests on $2 \times 2$ and $4 \times 4$;
 - the modular solver checks every result against an extra prime.
 
-The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
+The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
 

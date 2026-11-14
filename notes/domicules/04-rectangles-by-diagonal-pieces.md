@@ -194,7 +194,7 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 ## Verification
 
-The two solvers agree with each other, with A004003 at $k = 0$ and with A239273 summed over $k$. The PARI/GP program runs in CI against the same data. The tests are in [`harness/`](../../harness), the known values in [`spec/cases/`](../../spec/cases).
+The two solvers agree with each other, with A004003 at $k = 0$ and with A239273 summed over $k$. The PARI/GP program runs in CI against the same data. The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
 

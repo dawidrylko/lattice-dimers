@@ -6,7 +6,7 @@ Question: does the Calkin-Wilf (CW) lower bound
 
 hold for perfect matchings of the king's graph, and can it be proven?
 Everything below is produced by `python3 src/cw.py > out/out_cw.txt` (code at
-`0357d17`, run at `73a0628`, 214 s); free-strip `a_k` and certified lambdas
+`3e678c5`, run at `0dc5f14`, 579 s); free-strip `a_k` and certified lambdas
 come from `src/bounds.py 24` (`data/bounds.json`), `s` from `src/estimate.py` (`data/z2.json`).
 
 **Verdict: neither proven nor refuted.** The standard proof is impossible

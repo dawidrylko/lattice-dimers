@@ -48,6 +48,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | the benchmark runner measured a Rust binary older than its sources, since only the test executor checked its age | #115 | `test:benchmarks`, the runner refuses a Rust binary that was not built (new) | `launchBuilt` made to return `launch` |
 | the Python solver failed with a `TypeError` when `os.process_cpu_count()` gave `None`, on the command line and as a module without `jobs` | #89 | `test`, module test when the number of processors is unknown (new), which runs both | `or 1` removed from either default of `jobs`, each on its own |
 | with two Rust binaries, an edit to the root of one in `rust/solvers/src/bin` made the executor refuse the other, which cargo does not rebuild for it | #92 | `test`, Rust source tests and the executor test for a binary older than only its own root (new) | `rustSourcesModifiedAt` taking every `.rs` file under `rust/` again (the source tests), or `fileName` passed for `resolve(fileName)` in `executeSolver` (the executor test) |
+| `--random` of the renderer took the remainder of its draw for the number of the tiling, so on the 2 × 2 board of domicules the first of the three tilings came up 86 times in 256 | #138 | `test:render`, command line random number (new) | `js/tilingRenderer.js` from `d565810` |
 
 ## Site
 
@@ -89,6 +90,8 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | a link to a notebook section put its heading flush with the screen edge | #102 | `test:site`, notes, margin above a heading (new) | a build of `ae77034` |
 | the front-page tilings were not square | `f3b5023` | `test:render`, sheet without labels and readme images | `svg.js` and `readme-images.js` from `f3b5023^` |
 | a tab link in the intro of the main page navigated to its fragment, so it dropped the board the gallery showed | #101 | `test:site`, main page | `#intro-sections` taken out of the tab click handler in a built copy |
+| the site build counted every measured cylinder and torus that `spec/cases/` did not hold, the 16 × 16 square torus alone for 28 minutes | #119 | `test:spec`, the stored count of every measured cylinder and torus | the 16 × 16 square torus taken out of `spec/cases/any-lattice-cylinder-torus-modular.json` |
+| the Random button of the gallery took the remainder of its draw, so the first tilings came up more often, by less than one part in 10⁸ | #138 | `test:site`, `template.test.js` (new) | `site/template.html` from `d565810` |
 
 ## Benchmarks
 
@@ -108,6 +111,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | `CITATION.cff` and `package.json` described an older repository | `310a1a2` | `test:metadata` | both files from `310a1a2^` |
 | `package.json` could be published to npm | `1a1445b` | `test:metadata`, private (new) | `"private": true` removed |
 | links to OEIS entries came in three forms | `f3b5023` | `test:markdown`, links to OEIS entries; `test:oeis`, the table | the old form `OEIS [A401670](../oeis/A401670/README.md)` in a note; `oeis/README.md` from `f3b5023^` |
+| the keywords of the site named three of the nine OEIS entries | #138 | `test:metadata`, the OEIS keywords of the site (new) | `site/template.html` and `site/build.js` from `d565810` |
 
 ## Research scripts
 

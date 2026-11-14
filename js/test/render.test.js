@@ -38,6 +38,11 @@ const UNRANK_SAMPLE_SIZE = 1000;
 const RANDOM_SEED = 2024;
 const SAMPLES_PER_TILING = 200;
 const CLI_TIMEOUT = 30000;
+const randomNumberTestCases = [
+  { name: 'a draw above the largest multiple of the count is drawn again', below: BigInt(3), draws: [[255], [1]], expected: BigInt(1) },
+  { name: 'a draw below that multiple is kept', below: BigInt(3), draws: [[254]], expected: BigInt(2) },
+  { name: 'a count of four digits takes four bytes a draw', below: BigInt(1000), draws: [[255, 255, 254, 216], [0, 0, 3, 233]], expected: BigInt(1) },
+];
 const labelWidthTestCases = [
   { rowCount: 16, colCount: 16, first: BigInt('125468628332598003063877133633598664929040628978461090301') },
   { rowCount: 14, colCount: 14, first: BigInt('8212337965975290675433764125340416032951') },
@@ -234,7 +239,7 @@ const diagonalUnrankTestCases = [
 }));
 const domiculeRandomTestCases = [
   { rowCount: 2, colCount: 2, expectedResult: 3, criticalValue: 13.82 },
-  { rowCount: 4, colCount: 4, expectedResult: 280, criticalValue: 357.8 },
+  { rowCount: 4, colCount: 4, expectedResult: 280, criticalValue: 357.7 },
   { rowCount: 2, colCount: 2, lattice: 'triangular', expectedResult: 2, criticalValue: 10.83 },
   { rowCount: 4, colCount: 4, lattice: 'triangular', expectedResult: 56, criticalValue: 93.17 },
 ];
@@ -909,6 +914,16 @@ function runDomiculeReachTest(testCase) {
   }
 }
 
+function runRandomNumberTest({ below, draws, expected }) {
+  const source = (fs.readFileSync(path.join(ROOT_DIRECTORY, 'js', 'tilingRenderer.js'), 'utf-8').match(/function randomBigInt\(below\) \{[\s\S]*?\n\}\n/) ?? [])[0];
+  const sizes = [];
+  const randomBytes = size => Buffer.from(draws[sizes.push(size) - 1]);
+
+  assert.ok(source, 'js/tilingRenderer.js must define randomBigInt(below).');
+  assert.equal(new Function('crypto', `${source}; return randomBigInt;`)({ randomBytes })(below), expected);
+  assert.deepEqual(sizes, draws.map(draw => draw.length));
+}
+
 function runCliTest({ rowCount, colCount, args, env = {}, status, output }) {
   const result = spawnSync(
     process.execPath,
@@ -1192,6 +1207,8 @@ suite('command line', cliTestCases, runCliTest);
 suite('chart', chartTestCases, runChartTest, named);
 suite('notebook helper', notebookHelperTestCases, runNotebookHelperTest, named);
 suite('figure', figureTestCases, runFigureTest, named);
+
+suite('command line random number', randomNumberTestCases, runRandomNumberTest, named);
 
 test('countTilings counts in a child process and skips boards whose table is too large', () => {
   assert.equal(countTilings({ rowCount: 8, colCount: 8 }), '12988816');

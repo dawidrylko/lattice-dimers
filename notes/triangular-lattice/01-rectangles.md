@@ -66,15 +66,34 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 ### Rectangles
 
-`T(h, w)` counts the tilings of an $h \times w$ board. Swapping rows and columns maps the diagonal that runs down to the right onto itself, so the table is symmetric, and its diagonal of even sides is $a(n)$.
+`T(h, w)` counts the tilings of an $h \times w$ board. Swapping rows and columns maps the diagonal that runs down to the right onto itself, so the table is symmetric, and its diagonal of even sides is $a(n)$. Its row $h = 4$ is [OEIS A309117](https://oeis.org/A309117), and its row $h = 3$ at even $w$ is [OEIS A011900](https://oeis.org/A011900) [3]; the cell checks both, the first against [`oeis/A309117/b309117.txt`](../../oeis/A309117/b309117.txt) and the second against the recurrence of the entry.
 
 ```js run
 const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-rectangle-bigint.js');
 const sides = [1, 2, 3, 4, 5, 6, 7, 8];
+const count = (h, w) => calculateTotalTilingCombinations({ rowCount: h, colCount: w, lattice: 'triangular' });
+const a309117 = require('fs')
+  .readFileSync(require('path').join(nb.context.root, 'oeis/A309117/b309117.txt'), 'utf-8')
+  .trim()
+  .split('\n')
+  .map(line => line.split(' ')[1]);
+const a011900 = [1n, 3n];
+
+while (a011900.length <= sides.length / 2) {
+  a011900.push(6n * a011900.at(-1) - a011900.at(-2) - 2n);
+}
+
+if (sides.some(w => String(count(4, w)) !== a309117[w])) {
+  throw new Error('the row h = 4 differs from A309117');
+}
+
+if (a011900.slice(1).some((term, index) => count(3, 2 * (index + 1)) !== term)) {
+  throw new Error('the row h = 3 differs from A011900 at even w');
+}
 
 table(
   ['h \\ w', ...sides.map(String)],
-  sides.map(h => [String(h), ...sides.map(w => String(calculateTotalTilingCombinations({ rowCount: h, colCount: w, lattice: 'triangular' })))]),
+  sides.map(h => [String(h), ...sides.map(w => String(count(h, w)))]),
 );
 ```
 
@@ -114,10 +133,10 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 Every count on this page is checked in more than one independent way:
 
-- the `BigInt` and the modular solver agree, in Rust, Python and JavaScript, on every board of [`spec/cases/any-lattice-rectangle-bigint.json`](../../spec/cases/any-lattice-rectangle-bigint.json) and [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json);
+- the `BigInt` and the modular solver agree, in Rust, Python and JavaScript, on every board of [`spec/cases/any-lattice-rectangle-bigint.json`](../../spec/cases/any-lattice-rectangle-bigint.json), the squares up to $16 \times 16$ and seven rectangles, the longest $2 \times 40$; the squares $18 \times 18$, $20 \times 20$ and $22 \times 22$ of [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json) go through the modular solver alone, in the three languages;
 - the same solvers on the square lattice and on the king's graph give the stored domino and domicule counts;
 - a listing of every tiling agrees on the triangular boards of up to 40 cells;
-- the Kasteleyn determinant of the PARI/GP program agrees up to $16 \times 16$ in CI;
+- the Kasteleyn determinant of the PARI/GP program agrees up to $16 \times 16$ in CI, and the b-file that [`oeis/A401988/b401988.js`](../../oeis/A401988/b401988.js) builds from the same determinant agrees with the stored squares up to $22 \times 22$;
 - the numbering of the drawings is checked against the count, and every numbered tiling for coverage and for the missing down-left diagonal;
 - the Markov chain is checked with chi-squared tests on $2 \times 2$ and $4 \times 4$, and for reaching every tiling of the $2 \times 3$, $3 \times 4$, $4 \times 5$ and $5 \times 4$ boards;
 - the modular solver checks every result against an extra prime.
@@ -128,4 +147,4 @@ The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`pyt
 
 1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)
 2. L. Lovász and M. D. Plummer. *Matching Theory*. Annals of Discrete Mathematics 29, North-Holland, Amsterdam, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322.
-3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, draft entry [OEIS A401988](https://oeis.org/draft/A401988). [oeis.org](https://oeis.org)
+3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A309117](https://oeis.org/A309117) and [OEIS A011900](https://oeis.org/A011900) and draft entry [OEIS A401988](https://oeis.org/draft/A401988). [oeis.org](https://oeis.org)

@@ -58,6 +58,10 @@ for (const [key, [quoted, value]] of Object.entries(errors)) {
   }
 }
 
+if (Number(errbar.budget).toExponential(1) !== '2.7e-16') {
+  throw new Error(`s: the page quotes the error budget 2.7e-16, the data says ${errbar.budget}`);
+}
+
 if (nearest(xi, 6) !== '1.236091' || 5 * Number(xiChange) > 1e-6) {
   throw new Error(`xi: the page says 1.236091 ± 1e-6, the data says ${xi} (last change ${xiChange})`);
 }
@@ -123,7 +127,7 @@ table(['n', 'board', 'digits of a(n)', 'relative error of C d^(n²) f^(-n)', 'fa
 
 ## Method in brief
 
-The matchings of a strip of width $w$ are counted row by row with a transfer matrix on $2^w$ states. On cylinders, the parity of the dimers that cross a fixed loop is conserved by the transfer matrix for even circumference and by its square for odd circumference. That splits the matrix into two sectors, and in the data the growth rate per site of each converges exponentially in $w$. The growth rates of cylinders up to $w = 25$ are extrapolated with several finite-size models; the spread of the models, predictive backtests on smaller widths and a check for a hidden mode make up the error budget of $6 \cdot 10^{-16}$. A torus has no boundary, so on the king's graph tori $\log(Z/2)/L^2$ approaches $s$ with no fit; the [notebook on domicules on tori](domicules/03-tori.md) compares the two up to $16 \times 16$.
+The matchings of a strip of width $w$ are counted row by row with a transfer matrix on $2^w$ states. On cylinders, the parity of the dimers that cross a fixed loop is conserved by the transfer matrix for even circumference and by its square for odd circumference. That splits the matrix into two sectors, and in the data the growth rate per site of each converges exponentially in $w$. The growth rates of cylinders up to $w = 25$ are extrapolated with several finite-size models; the spread of the models, predictive backtests on smaller widths, a check for a hidden mode and the rounding of the float64 eigenvalues make up an error budget of $2.7 \cdot 10^{-16}$, and the quoted error bar of $6 \cdot 10^{-16}$ is a little more than twice that. A torus has no boundary, so on the king's graph tori $\log(Z/2)/L^2$ approaches $s$ with no fit; the [notebook on domicules on tori](domicules/03-tori.md) compares the two up to $16 \times 16$.
 
 Superadditivity of strips and a lower Collatz-Wielandt certificate on the free strip of width 24 give the lower bound. An upper certificate for a transfer matrix that weights the open side of a strip by the runs of crossing cells gives the upper bound. The certificates are evaluated in IEEE binary64 arithmetic with a rounding analysis that makes them rigorous; the cut identity and the strip inequalities behind them are proved in the paper and, in addition, audited in exact arithmetic on small boards. A separate script checks the certificate that the $3 \times 4$ king board has no Pfaffian orientation, from which the paper proves the same for every board with both sides at least 3 and an even number of cells.
 

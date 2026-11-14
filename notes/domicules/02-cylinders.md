@@ -31,7 +31,7 @@ Two solvers count the same boards by different methods, and the cell below compa
 
 Circumference 2 has multiple edges, because on a ring of two cells a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate piece, so one row of two cells has 2 tilings. A row of odd circumference has an odd number of cells, so the counts vanish at odd heights.
 
-For fixed $w$ the counts grow like $\lambda_w^h$, with $\lambda_w$ the leading eigenvalue of the cylinder transfer matrix that [the paper](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf) [2] extrapolates in $w$.
+For fixed $w$ the counts grow like $\lambda_w^h$, with $\lambda_w$ the leading eigenvalue of the cylinder transfer matrix; [the paper](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf) [2] extrapolates its growth rate per site, $\log \lambda_w / w$, in $w$.
 
 ```js run
 const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
