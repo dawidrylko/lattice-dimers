@@ -49,6 +49,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | the Python solver failed with a `TypeError` when `os.process_cpu_count()` gave `None`, on the command line and as a module without `jobs` | #89 | `test`, module test when the number of processors is unknown (new), which runs both | `or 1` removed from either default of `jobs`, each on its own |
 | with two Rust binaries, an edit to the root of one in `rust/solvers/src/bin` made the executor refuse the other, which cargo does not rebuild for it | #92 | `test`, Rust source tests and the executor test for a binary older than only its own root (new) | `rustSourcesModifiedAt` taking every `.rs` file under `rust/` again (the source tests), or `fileName` passed for `resolve(fileName)` in `executeSolver` (the executor test) |
 | `--random` of the renderer took the remainder of its draw for the number of the tiling, so on the 2 × 2 board of domicules the first of the three tilings came up 86 times in 256 | #138 | `test:render`, command line random number (new) | `js/tilingRenderer.js` from `d565810` |
+| the Python diagonal Modular solver, today `domicule-rectangle-polynomial-modular`, printed an empty line instead of a message on a board too long to allocate | `c087852` | `python -m pytest python/tests`, rejection of `-r 9007199254740991 -c 1` with "Invalid array length" | `except (MemoryError, ValueError) as error` printing the error |
 
 ## Site
 
@@ -92,11 +93,15 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | a tab link in the intro of the main page navigated to its fragment, so it dropped the board the gallery showed | #101 | `test:site`, main page | `#intro-sections` taken out of the tab click handler in a built copy |
 | the site build counted every measured cylinder and torus that `spec/cases/` did not hold, the 16 × 16 square torus alone for 28 minutes | #119 | `test:spec`, the stored count of every measured cylinder and torus | the 16 × 16 square torus taken out of `spec/cases/any-lattice-cylinder-torus-modular.json` |
 | the Random button of the gallery took the remainder of its draw, so the first tilings came up more often, by less than one part in 10⁸ | #138 | `test:site`, `template.test.js` (new) | `site/template.html` from `d565810` |
+| the gallery and the Benchmarks tab named the diagonal pieces control two ways, the gallery "Diagonal pieces" with a "Highlight diagonal pieces" checkbox | #123 | `test:site`, benchmark times, the labels of the pickers and of the diagonal pieces controls, which #128 renamed Count | in a built copy, the gallery's `counts-label` read `Diagonal pieces` and its checkbox `Highlight diagonal pieces`, since the diff of #123 no longer applies |
+| the cylinder and torus tables by diagonal pieces showed two "Run on" lines, one for the main run and one for their own | #123 | `test:site`, benchmark times, one run line per view | in a built copy, a run note of its own put back in both groups beside `#benchmark-run` |
+| the gallery's Diagonal pieces select gave the number of tilings in every option, which the gallery line already gives for the chosen one | #125 | `test:site`, diagonal filter and highlight, the option texts | in a built copy, `` `k = ${k} (${fmt(count)} tilings)` `` for each option, since the diff of #125 no longer applies |
 
 ## Benchmarks
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
+| a dash for a board over budget named the budget of the run, not the 0.25 h its own series ran with, once #123 moved that series into the run | #123 | `test:benchmarks`, dash for an entry of `plan.json` with a budget of its own | `budgetHours` for `ownBudgetHours ?? budgetHours` in `describeMissing` |
 | a run overwrote a month measured on another machine | `3d9cb08` | `test`, benchmark guard test | `checkDirectory` removed |
 | `-o` past every case wrote `environment.json` first | `8298d43` | `test`, empty selection test (new) | the environment saved before the check |
 
