@@ -1185,6 +1185,15 @@ suite('domicule random uniformity', domiculeRandomTestCases, runDomiculeUniformi
 suite('domicule random validity', domiculeRandomValidityTestCases, runDomiculeValidityTest);
 suite('domicule chain reach', domiculeReachTestCases, runDomiculeReachTest);
 
+test('the domicule unrankers keep colCount + 1 bits of state', () => {
+  const board = { rowCount: 4, colCount: 5 };
+
+  assert.equal(createDomiculeUnranker(board).table[0].length, 2 ** 6);
+  assert.equal(createDiagonalUnranker({ ...board, diagonals: 2 }).table[0].length, 2 ** 6);
+  assert.equal(canUnrankDomicule({ rowCount: 40, colCount: 12 }), true);
+  assert.equal(canUnrankDomicule({ rowCount: 41, colCount: 12 }), false);
+});
+
 test('domicule sampler rejects a lattice other than king or triangular', () => {
   assert.throws(() => sampleDomiculeTiling({ rowCount: 2, colCount: 2, lattice: 'square' }), /lattice king or triangular/);
 });
