@@ -87,7 +87,7 @@ const DOMICULE_BOARDS = [
   { rowCount: 8, colCount: 8 },
   { rowCount: 10, colCount: 10 },
   { rowCount: 12, colCount: 12 },
-  { rowCount: 14, colCount: 14, memory: '200 MB' },
+  { rowCount: 14, colCount: 14, memory: '100 MB' },
   { rowCount: 16, colCount: 16, mode: 'random' },
   { rowCount: 18, colCount: 18, mode: 'random' },
   { rowCount: 20, colCount: 20, mode: 'random' },
