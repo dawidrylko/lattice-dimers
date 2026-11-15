@@ -113,7 +113,9 @@ def physical_memory():
 
 def cap_threads(jobs, cols, degree, memory):
     """Caps the number of worker threads like capThreads of js/solvers/domicule-rectangle-polynomial-modular.js, with its
-    table sizes, so that every language runs the same number of threads, although the tables here have no parities."""
+    table sizes, so that every language runs the same number of threads, although the tables here have no parities.
+    The estimate covers the tables alone and leaves no margin for the NumPy temporaries of accumulate past
+    SCRATCH_COUNTS; keeping the workers to half the memory covers those."""
     bytes_per_worker = 2 ** (cols + 1) * (2 * 4 * (degree // 2 + 1) + 2)
 
     return max(1, min(jobs, memory // 2 // bytes_per_worker))
