@@ -17,7 +17,7 @@ function calculateDiagonalPolynomial({ rowCount, colCount }) {
   const rows = Math.max(rowCount, colCount);
   const cols = Math.min(rowCount, colCount);
   const degree = Math.floor((rows * cols) / 2);
-  const stateCount = 2 ** (cols + 2);
+  const stateCount = 2 ** (cols + 1);
   const zero = () => new Array(degree + 1).fill(BigInt(0));
   let current = Array.from({ length: stateCount }, () => null);
   current[0] = zero();

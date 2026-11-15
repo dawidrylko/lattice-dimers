@@ -21,7 +21,7 @@ const UNREACHED = 2;
 function countModulo({ rows, cols, prime }) {
   const degree = Math.floor((rows * cols) / 2);
   const width = Math.floor(degree / 2) + 1;
-  const stateCount = 2 ** (cols + 2);
+  const stateCount = 2 ** (cols + 1);
   let current = new Uint32Array(stateCount * width);
   let next = new Uint32Array(stateCount * width);
   let parity = new Uint8Array(stateCount).fill(UNREACHED);
@@ -112,7 +112,7 @@ function countModulo({ rows, cols, prime }) {
  * @returns {number} The number of threads to run, at least 1.
  */
 function capThreads(jobs, cols, degree, memory = os.totalmem()) {
-  const bytesPerWorker = 2 ** (cols + 2) * (2 * 4 * (Math.floor(degree / 2) + 1) + 2);
+  const bytesPerWorker = 2 ** (cols + 1) * (2 * 4 * (Math.floor(degree / 2) + 1) + 2);
 
   return Math.max(1, Math.min(jobs, Math.floor(memory / 2 / bytesPerWorker)));
 }
@@ -162,7 +162,7 @@ async function __main__() {
 
   if (Math.min(options.rowCount, options.colCount) > MAX_SHORTER_SIDE) {
     console.error(
-      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}, because every worker thread keeps half the polynomial of every state in memory (about 3.4 GB at 20 x 20; -j sets the number of threads).`,
+      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}, because every worker thread keeps half the polynomial of every state in memory (about 1.7 GB at 20 x 20; -j sets the number of threads).`,
     );
     process.exit(1);
   }

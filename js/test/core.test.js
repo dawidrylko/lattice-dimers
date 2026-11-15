@@ -82,7 +82,7 @@ describe('limits', () => {
   });
 
   test('threads for 20x20 on 16 GB', () => {
-    assert.equal(capThreads(10, 20, 200, 16 * gigabytes), 2);
+    assert.equal(capThreads(10, 20, 200, 16 * gigabytes), 5);
   });
 
   test('threads for 6x6 on 16 GB', () => {

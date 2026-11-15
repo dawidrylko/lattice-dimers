@@ -113,8 +113,10 @@ def physical_memory():
 
 def cap_threads(jobs, cols, degree, memory):
     """Caps the number of worker threads like capThreads of js/solvers/domicule-rectangle-polynomial-modular.js, with its
-    table sizes, so that every language runs the same number of threads, although the tables here take half of that."""
-    bytes_per_worker = 2 ** (cols + 2) * (2 * 4 * (degree // 2 + 1) + 2)
+    table sizes, so that every language runs the same number of threads, although the tables here have no parities.
+    The estimate covers the tables alone and leaves no margin for the NumPy temporaries of accumulate past
+    SCRATCH_COUNTS; keeping the workers to half the memory covers those."""
+    bytes_per_worker = 2 ** (cols + 1) * (2 * 4 * (degree // 2 + 1) + 2)
 
     return max(1, min(jobs, memory // 2 // bytes_per_worker))
 
@@ -159,7 +161,7 @@ def main(argv):
     if min(row_count, col_count) > MAX_SHORTER_SIDE:
         print(
             f"The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because every worker thread keeps half "
-            "the polynomial of every state in memory (about 3.4 GB at 20 x 20; -j sets the number of threads).",
+            "the polynomial of every state in memory (about 1.7 GB at 20 x 20; -j sets the number of threads).",
             file=sys.stderr,
         )
         return 1

@@ -1,6 +1,6 @@
 const { parseArgs, startTimer } = require('../core');
 
-const MAX_SHORTER_SIDE = 29;
+const MAX_SHORTER_SIDE = 30;
 
 /**
  * Counts the domicule tilings of a board (OEIS A239264), which are the perfect matchings
@@ -9,7 +9,9 @@ const MAX_SHORTER_SIDE = 29;
  * Bit i of a state tells whether the cell i places ahead of the current one is already
  * covered. A cell is matched only with a later cell (right, down-left, down or
  * down-right), so the farthest cell a state has to remember is colCount + 1 places ahead
- * and a state has colCount + 2 bits.
+ * and a state has colCount + 2 bits. The top one is clear before every cell step, since a
+ * step shifts the state right after setting at most that bit, so the tables hold the
+ * 2^(colCount + 1) states below it.
  * @param {number} rowCount The number of rows.
  * @param {number} colCount The number of columns.
  * @returns {BigInt} The number of tilings.
@@ -17,7 +19,7 @@ const MAX_SHORTER_SIDE = 29;
 function calculateTotalTilingCombinations({ rowCount, colCount }) {
   const rows = Math.max(rowCount, colCount);
   const cols = Math.min(rowCount, colCount);
-  const stateCount = 2 ** (cols + 2);
+  const stateCount = 2 ** (cols + 1);
   let current = new Array(stateCount).fill(BigInt(0));
   current[0] = BigInt(1);
 
@@ -73,7 +75,7 @@ function __main__() {
 
   if (Math.min(options.rowCount, options.colCount) > MAX_SHORTER_SIDE) {
     console.error(
-      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}, because a JavaScript array holds fewer than 2^32 states.`,
+      `The shorter side of the board can be at most ${MAX_SHORTER_SIDE}, because the states are indexed with 32-bit integers.`,
     );
     process.exit(1);
   }

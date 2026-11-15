@@ -50,7 +50,7 @@ def calculate_diagonal_polynomial(row_count, col_count):
     rows = max(row_count, col_count)
     cols = min(row_count, col_count)
     degree = rows * cols // 2
-    state_count = 1 << (cols + 2)
+    state_count = 1 << (cols + 1)
     current = [None] * state_count
     current[0] = [1] + [0] * degree
 

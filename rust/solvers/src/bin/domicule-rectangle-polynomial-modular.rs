@@ -69,7 +69,7 @@ struct Tables {
 fn count_modulo(rows: usize, cols: usize, prime: u32) -> Result<Vec<u32>, String> {
     let degree = rows * cols / 2;
     let width = degree / 2 + 1;
-    let state_count = 1usize << (cols + 2);
+    let state_count = 1usize << (cols + 1);
     let mut current = Tables { counts: vec![0u32; state_count * width], parity: vec![UNREACHED; state_count] };
     let mut next = Tables { counts: vec![0u32; state_count * width], parity: vec![UNREACHED; state_count] };
     current.counts[0] = 1 % prime;
@@ -149,7 +149,7 @@ fn add(current: &Tables, next: &mut Tables, (source, target, diagonal): (usize, 
 /// js/solvers/domicule-rectangle-polynomial-modular.js: each keeps two tables of half a polynomial per state in 32-bit
 /// counts and two parity tables.
 fn cap_threads(jobs: u64, cols: usize, degree: usize, memory: u64) -> u64 {
-    let bytes_per_worker = (1u128 << (cols + 2)) * (2 * 4 * (degree as u128 / 2 + 1) + 2);
+    let bytes_per_worker = (1u128 << (cols + 1)) * (2 * 4 * (degree as u128 / 2 + 1) + 2);
 
     u64::try_from(u128::from(memory / 2) / bytes_per_worker).unwrap_or(u64::MAX).min(jobs).max(1)
 }
@@ -200,7 +200,7 @@ fn main() -> ExitCode {
 
     if row_count.min(col_count) > MAX_SHORTER_SIDE {
         eprintln!(
-            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because every worker thread keeps half the polynomial of every state in memory (about 3.4 GB at 20 x 20; -j sets the number of threads)."
+            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because every worker thread keeps half the polynomial of every state in memory (about 1.7 GB at 20 x 20; -j sets the number of threads)."
         );
         return ExitCode::FAILURE;
     }
@@ -235,7 +235,7 @@ mod tests {
 
     #[test]
     fn caps_the_threads_like_the_javascript_solver() {
-        assert_eq!(cap_threads(10, 20, 200, 16 * GIGABYTES), 2);
+        assert_eq!(cap_threads(10, 20, 200, 16 * GIGABYTES), 5);
         assert_eq!(cap_threads(4, 6, 18, 16 * GIGABYTES), 4);
         assert_eq!(cap_threads(3, 20, 200, GIGABYTES), 1);
         assert_eq!(cap_threads(3, 20, 200, 0), 1);

@@ -140,7 +140,7 @@ def test_unknown_processor_count(algorithm, method, case):
 @pytest.mark.parametrize(
     "jobs, cols, degree, memory, expected",
     [
-        pytest.param(10, 20, 200, 16 * GIGABYTE, 2, id="20x20-on-16GB"),
+        pytest.param(10, 20, 200, 16 * GIGABYTE, 5, id="20x20-on-16GB"),
         pytest.param(4, 6, 18, 16 * GIGABYTE, 4, id="6x6-on-16GB"),
         pytest.param(3, 20, 200, GIGABYTE, 1, id="20x20-on-1GB"),
     ],

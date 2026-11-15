@@ -38,7 +38,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | counting 5 × 100000 crashed V8 | `0fd7e3d` | `test:render`, `2x100000` at 128 MB | the `try` around the count removed |
 | `process.exit` after printing cut a piped result on macOS | `0fd7e3d` | `test`, exit test (new); job `macOS`, `test:render` `2x20000` | `process.exit(0)` after the last line; `process.exit(1)` for `process.exitCode = 1` in the renderer |
 | a worker that exited without a result left exit code 0 and no output | `93f74fe` | `test`, rejection with `js/test/fixtures/exitingWorker.js` | the `exit` listener removed |
-| the domicule BigInt solver accepted a shorter side of 30 | `93f74fe` | `test`, rejection of 30 × 30 | the cap raised to 30 |
+| the domicule BigInt solver accepted a shorter side of 30, whose 2^(cols + 2) states did not fit 32-bit indices | `93f74fe`, `be9a2fe` | `test`, rejection of 31 × 31, the first side whose 2^(cols + 1) states do not fit | the cap raised to 31 |
 | domicule styles changed the domino SVG | `106a9df` | `test:render`, domino output hash | diagonal styles in every sheet |
 | no hint to turn a domicule board | `106a9df` | `test:render`, `2x20 --domicule` | the hint removed |
 | usage lines named the paths before the move to `src/` | `4a11337` | `test`, usage tests (new) | `Usage: node domicule-rectangle-modular.js` |

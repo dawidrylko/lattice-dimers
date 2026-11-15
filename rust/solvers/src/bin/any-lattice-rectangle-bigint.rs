@@ -2,7 +2,7 @@ use std::process::ExitCode;
 
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
-const MAX_SHORTER_SIDE: u64 = 29;
+const MAX_SHORTER_SIDE: u64 = 30;
 const USAGE: &str = "Usage: any-lattice-rectangle-bigint -r <rowCount> -c <colCount> [--lattice king|triangular|square]";
 
 /// Lists the bits a free cell in column c can cover with its partner, like listOffsets of
@@ -52,11 +52,13 @@ fn read_lattice(argv: &[String]) -> Option<(bool, bool)> {
 
 /// Counts the tilings of a rectangle on a lattice with the broken-profile method of
 /// js/solvers/any-lattice-rectangle-bigint.js. Bit i of a state tells whether the cell i places ahead of the
-/// current one is already covered, and a state has cols + 2 bits.
+/// current one is already covered. A state has cols + 2 bits, but the top one is clear before every cell step,
+/// since a step shifts the state right after setting at most that bit, so the tables hold the 2^(cols + 1) states
+/// below it.
 fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, lattice: (bool, bool)) -> BigInt {
     let rows = row_count.max(col_count);
     let cols = row_count.min(col_count);
-    let state_count = 1usize << (cols + 2);
+    let state_count = 1usize << (cols + 1);
     let mut current = vec![BigInt::zero(); state_count];
     current[0] = BigInt::from_u64(1);
 
@@ -100,7 +102,7 @@ fn main() -> ExitCode {
 
     if row_count.min(col_count) > MAX_SHORTER_SIDE {
         eprintln!(
-            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because a JavaScript array holds fewer than 2^32 states."
+            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because the states are indexed with 32-bit integers."
         );
         return ExitCode::FAILURE;
     }

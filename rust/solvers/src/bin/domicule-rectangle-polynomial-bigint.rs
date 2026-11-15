@@ -48,7 +48,7 @@ fn calculate_diagonal_polynomial(row_count: usize, col_count: usize) -> Vec<BigI
     let rows = row_count.max(col_count);
     let cols = row_count.min(col_count);
     let degree = rows * cols / 2;
-    let state_count = 1usize << (cols + 2);
+    let state_count = 1usize << (cols + 1);
     let mut current: Vec<Option<Vec<BigInt>>> = vec![None; state_count];
     let mut start = vec![BigInt::zero(); degree + 1];
     start[0] = BigInt::from_u64(1);
