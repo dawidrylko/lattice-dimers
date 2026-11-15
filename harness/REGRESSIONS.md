@@ -50,7 +50,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | with two Rust binaries, an edit to the root of one in `rust/solvers/src/bin` made the executor refuse the other, which cargo does not rebuild for it | #92 | `test`, Rust source tests and the executor test for a binary older than only its own root (new) | `rustSourcesModifiedAt` taking every `.rs` file under `rust/` again (the source tests), or `fileName` passed for `resolve(fileName)` in `executeSolver` (the executor test) |
 | `--random` of the renderer took the remainder of its draw for the number of the tiling, so on the 2 × 2 board of domicules the first of the three tilings came up 86 times in 256 | #138 | `test:render`, command line random number (new) | `js/tilingRenderer.js` from `d565810` |
 | the Python diagonal Modular solver, today `domicule-rectangle-polynomial-modular`, printed an empty line instead of a message on a board too long to allocate | `c087852` | `python -m pytest python/tests`, rejection of `-r 9007199254740991 -c 1` with "Invalid array length" | `except (MemoryError, ValueError) as error` printing the error |
-| the Rust diagonal Modular solver, today `domicule-rectangle-polynomial-modular`, aborted on an odd board too long to allocate | `c087852` | `cargo test --release`, conformance rejections, `-r 9007199254740991 -c 1` with "Invalid array length" | `vec!["0".to_string(); degree + 1]` for the odd board |
+| the Rust diagonal Modular solver, today `domicule-rectangle-polynomial-modular`, aborted on an odd board too long to allocate | `c087852` | `cargo test --workspace --release`, conformance rejections, `-r 9007199254740991 -c 1` with "Invalid array length" | `vec!["0".to_string(); degree + 1]` for the odd board |
 
 ## Site
 
