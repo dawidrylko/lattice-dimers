@@ -2,10 +2,10 @@ import sys
 
 from lattice_dimers.core import parse_args, start_timer
 
-MAX_SHORTER_SIDE = 29
+MAX_SHORTER_SIDE = 30
 USAGE = "Usage: python3 -m lattice_dimers.solvers.domicule_rectangle_bigint -r <rowCount> -c <colCount>"
 SHORTER_SIDE_TOO_LONG = (
-    f"The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because a JavaScript array holds fewer than 2^32 states."
+    f"The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because the states are indexed with 32-bit integers."
 )
 
 

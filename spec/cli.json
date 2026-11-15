@@ -270,13 +270,13 @@
       "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
-        "30",
+        "31",
         "-c",
-        "30",
+        "31",
         "--lattice",
         "triangular"
       ],
-      "message": "at most 29"
+      "message": "at most 30"
     },
     {
       "algorithm": "any-lattice-rectangle-bigint",
@@ -284,11 +284,11 @@
         "-r",
         "40",
         "-c",
-        "30",
+        "31",
         "--lattice",
         "triangular"
       ],
-      "message": "because a JavaScript array holds fewer than 2^32 states"
+      "message": "because the states are indexed with 32-bit integers"
     },
     {
       "algorithm": "any-lattice-rectangle-bigint",
@@ -798,11 +798,11 @@
       "algorithm": "domicule-rectangle-bigint",
       "args": [
         "-r",
-        "30",
+        "31",
         "-c",
-        "30"
+        "31"
       ],
-      "message": "at most 29"
+      "message": "at most 30"
     },
     {
       "algorithm": "domicule-rectangle-bigint",
@@ -810,9 +810,9 @@
         "-r",
         "40",
         "-c",
-        "30"
+        "31"
       ],
-      "message": "because a JavaScript array holds fewer than 2^32 states"
+      "message": "because the states are indexed with 32-bit integers"
     },
     {
       "algorithm": "domicule-rectangle-bigint",

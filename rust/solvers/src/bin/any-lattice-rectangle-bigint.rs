@@ -2,7 +2,7 @@ use std::process::ExitCode;
 
 use lattice_dimers_core::{BigInt, Timer, parse_args};
 
-const MAX_SHORTER_SIDE: u64 = 29;
+const MAX_SHORTER_SIDE: u64 = 30;
 const USAGE: &str = "Usage: any-lattice-rectangle-bigint -r <rowCount> -c <colCount> [--lattice king|triangular|square]";
 
 /// Lists the bits a free cell in column c can cover with its partner, like listOffsets of
@@ -102,7 +102,7 @@ fn main() -> ExitCode {
 
     if row_count.min(col_count) > MAX_SHORTER_SIDE {
         eprintln!(
-            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because a JavaScript array holds fewer than 2^32 states."
+            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because the states are indexed with 32-bit integers."
         );
         return ExitCode::FAILURE;
     }
