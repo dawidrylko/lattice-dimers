@@ -200,7 +200,7 @@ fn main() -> ExitCode {
 
     if row_count.min(col_count) > MAX_SHORTER_SIDE {
         eprintln!(
-            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because every worker thread keeps half the polynomial of every state in memory (about 3.4 GB at 20 x 20; -j sets the number of threads)."
+            "The shorter side of the board can be at most {MAX_SHORTER_SIDE}, because every worker thread keeps half the polynomial of every state in memory (about 1.7 GB at 20 x 20; -j sets the number of threads)."
         );
         return ExitCode::FAILURE;
     }
