@@ -1,6 +1,6 @@
 # Regressions
 
-Every defect fixed in this repository, the check that fails if it comes back, and how that was shown. Each fix was undone in a scratch copy of the repository and the check was run on that copy: it failed, and it passes on the repository. "Undone as" names what was put back: the old lines, or the file from the fix's parent commit (`<commit>^`) where the fix replaced the file or its content. Checked on 1 November 2026; the runners and CI jobs are described in [README.md](README.md).
+Every defect fixed in this repository, the check that fails if it comes back, and how that was shown. When its row was added, the first rows on 1 November 2026, each fix was undone in a scratch copy of the repository and the check was run on that copy: it failed, and it passes on the repository. "Undone as" names what was put back: the old lines, or the file from the fix's parent commit (`<commit>^`) where the fix replaced the file or its content. The runners and CI jobs are described in [README.md](README.md).
 
 A new fix adds its row here with the check that guards it.
 
@@ -49,6 +49,8 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | the Python solver failed with a `TypeError` when `os.process_cpu_count()` gave `None`, on the command line and as a module without `jobs` | #89 | `test`, module test when the number of processors is unknown (new), which runs both | `or 1` removed from either default of `jobs`, each on its own |
 | with two Rust binaries, an edit to the root of one in `rust/solvers/src/bin` made the executor refuse the other, which cargo does not rebuild for it | #92 | `test`, Rust source tests and the executor test for a binary older than only its own root (new) | `rustSourcesModifiedAt` taking every `.rs` file under `rust/` again (the source tests), or `fileName` passed for `resolve(fileName)` in `executeSolver` (the executor test) |
 | `--random` of the renderer took the remainder of its draw for the number of the tiling, so on the 2 × 2 board of domicules the first of the three tilings came up 86 times in 256 | #138 | `test:render`, command line random number (new) | `js/tilingRenderer.js` from `d565810` |
+| the Python diagonal Modular solver, today `domicule-rectangle-polynomial-modular`, printed an empty line instead of a message on a board too long to allocate | `c087852` | `python -m pytest python/tests`, rejection of `-r 9007199254740991 -c 1` with "Invalid array length" | `except (MemoryError, ValueError) as error` printing the error |
+| the Rust diagonal Modular solver, today `domicule-rectangle-polynomial-modular`, aborted on an odd board too long to allocate | `c087852` | `cargo test --workspace --release`, conformance rejections, `-r 9007199254740991 -c 1` with "Invalid array length" | `vec!["0".to_string(); degree + 1]` for the odd board |
 
 ## Site
 
@@ -92,11 +94,15 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | a tab link in the intro of the main page navigated to its fragment, so it dropped the board the gallery showed | #101 | `test:site`, main page | `#intro-sections` taken out of the tab click handler in a built copy |
 | the site build counted every measured cylinder and torus that `spec/cases/` did not hold, the 16 × 16 square torus alone for 28 minutes | #119 | `test:spec`, the stored count of every measured cylinder and torus | the 16 × 16 square torus taken out of `spec/cases/any-lattice-cylinder-torus-modular.json` |
 | the Random button of the gallery took the remainder of its draw, so the first tilings came up more often, by less than one part in 10⁸ | #138 | `test:site`, `template.test.js` (new) | `site/template.html` from `d565810` |
+| the gallery and the Benchmarks tab named the same control two ways: "Diagonal pieces" with a "Highlight diagonal pieces" checkbox in the gallery, "Count: All tilings / By diagonal pieces" in the Benchmarks tab | #123 | `test:site`, benchmark times, the labels of the pickers and of the Highlight switch. Both tabs have read Count since #128 | in a built copy, the gallery's `counts-label` read `Diagonal pieces` and its Highlight switch `Highlight diagonal pieces`, since the diff of #123 no longer applies |
+| a view of the cylinder and torus tables by diagonal pieces showed two "Run on" lines | #123 | `test:site`, benchmark times, one run line per view | in a built copy, a run note of its own put back in both groups beside `#benchmark-run`. Results of that series moved back to a run of their own would still show one line, which this check accepts |
+| the k select of the gallery gave the number of tilings in every option, which the gallery line already gives for the chosen one | #125 | `test:site`, diagonal filter and highlight, the option texts | in a built copy, `` `k = ${k} (${fmt(count)} tilings)` `` for each option, since the diff of #125 no longer applies |
 
 ## Benchmarks
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
+| a dash for a board over budget named the budget of the run, not the 0.25 h its own series ran with, once #123 moved that series into the run | #123 | `test:benchmarks`, dash for an entry of `plan.json` with a budget of its own | `budgetHours` for `ownBudgetHours ?? budgetHours` in `describeMissing` |
 | a run overwrote a month measured on another machine | `3d9cb08` | `test`, benchmark guard test | `checkDirectory` removed |
 | `-o` past every case wrote `environment.json` first | `8298d43` | `test`, empty selection test (new) | the environment saved before the check |
 
