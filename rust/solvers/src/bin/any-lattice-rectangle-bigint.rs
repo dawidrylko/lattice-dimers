@@ -52,11 +52,13 @@ fn read_lattice(argv: &[String]) -> Option<(bool, bool)> {
 
 /// Counts the tilings of a rectangle on a lattice with the broken-profile method of
 /// js/solvers/any-lattice-rectangle-bigint.js. Bit i of a state tells whether the cell i places ahead of the
-/// current one is already covered, and a state has cols + 2 bits.
+/// current one is already covered. A state has cols + 2 bits, but the top one is clear before every cell step,
+/// since a step shifts the state right after setting at most that bit, so the tables hold the 2^(cols + 1) states
+/// below it.
 fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, lattice: (bool, bool)) -> BigInt {
     let rows = row_count.max(col_count);
     let cols = row_count.min(col_count);
-    let state_count = 1usize << (cols + 2);
+    let state_count = 1usize << (cols + 1);
     let mut current = vec![BigInt::zero(); state_count];
     current[0] = BigInt::from_u64(1);
 

@@ -59,9 +59,11 @@ fn add(next: &mut [u32], target: usize, count: u32, prime: u32) {
 
 /// Counts the tilings modulo a prime with the broken-profile dynamic programming of countModulo in
 /// js/solvers/any-lattice-rectangle-modular.js. Bit i of a state tells whether the cell i places ahead of the
-/// current one is already covered; a state has cols + 2 bits, and the counts are kept in tables of u32.
+/// current one is already covered. A state has cols + 2 bits, but the top one is clear before every cell step,
+/// since a step shifts the state right after setting at most that bit, so the tables hold the 2^(cols + 1) states
+/// below it, in counts of u32.
 fn count_modulo(rows: usize, cols: usize, prime: u32, lattice: (bool, bool)) -> u32 {
-    let state_count = 1usize << (cols + 2);
+    let state_count = 1usize << (cols + 1);
     let mut current = vec![0u32; state_count];
     let mut next = vec![0u32; state_count];
     current[0] = 1 % prime;

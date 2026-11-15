@@ -8,7 +8,9 @@ const MAX_SHORTER_SIDE = 30;
 /**
  * Counts the domicule tilings modulo a prime with the same broken-profile dynamic
  * programming as domicule-rectangle-bigint.js. Bit i of a state tells whether the cell
- * i places ahead of the current one is already covered; a state has cols + 2 bits.
+ * i places ahead of the current one is already covered. A state has cols + 2 bits, but
+ * the top one is clear before every cell step, since a step shifts the state right after
+ * setting at most that bit, so the tables hold the 2^(cols + 1) states below it.
  * Only additions are needed, so the counts are kept in Uint32Array tables.
  * @param {number} rows The number of rows (the longer side).
  * @param {number} cols The number of columns (the shorter side).
@@ -16,7 +18,7 @@ const MAX_SHORTER_SIDE = 30;
  * @returns {number} The number of tilings modulo the prime.
  */
 function countModulo(rows, cols, prime) {
-  const stateCount = 2 ** (cols + 2);
+  const stateCount = 2 ** (cols + 1);
   let current = new Uint32Array(stateCount);
   let next = new Uint32Array(stateCount);
   current[0] = 1 % prime;
