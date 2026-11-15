@@ -38,9 +38,12 @@ None of substance. Minor, last digits only:
   from 13.4 to 9.99" should end at 10.0. In the same way the 16th decimal of f_13, f_15, f_19 in Table 1
   and of both sector values at w = 20 in Section 3.1 is one unit off the long double value (differences
   <= 8e-17, within the paper's float64 error of 6.2e-17 per site plus rounding to 16 decimals). No
-  effect on the result. `out/analyze_eig.txt` sections 2, 3.
+  effect on the result. `out/analyze_eig.txt` sections 2, 3. Fixed on master (eeedb9a, in
+  `king-entropy-v1.0.0`): the Table 1 caption gives the extended-precision row at w = 25 and the
+  text ends the drift at 10.0.
 - **Section 5.1, "|rho(K, L) - kappa| <= 6.2e-8 for min(K, L) >= 20"**: the maximum is 6.249e-8
-  (at 20 x 20, with either kappa), so the bound holds only as 6.25e-8. `out/corner.txt`.
+  (at 20 x 20, with either kappa), so the bound holds only as 6.25e-8. `out/corner.txt`. Fixed on
+  master (eeedb9a, in `king-entropy-v1.0.0`): 6.3e-8.
 - **Section 7, "overestimates s by 2.6 % and 1.2 %"**: (Bethe - s)/s is 2.68 % for the triangular
   lattice; 2.6 % is (Bethe - s)/Bethe. `out/misc.txt`. Fixed on master (872d605: 2.7 %).
 
