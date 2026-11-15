@@ -78,14 +78,14 @@ table(
     `${side}×${side}`,
     (2 ** side).toLocaleString('en-US'),
     (2 ** (side + 1)).toLocaleString('en-US'),
-    ((side * side + 1) * 2 ** (side + 2)).toLocaleString('en-US'),
+    ((side * side + 1) * 2 ** (side + 1)).toLocaleString('en-US'),
   ]),
 );
 ```
 
 ## Numbering
 
-Up to $14 \times 14$ the gallery numbers every tiling with a table of completion counts of the [cell-by-cell scan](#the-bigint-solver), as it numbers the [domino tilings](../dominoes/01-rectangles.md#numbering). The table has $(hw + 1) \cdot 2^{w+2}$ entries, and drawing the number at random gives an exactly uniform tiling.
+Up to $14 \times 14$ the gallery numbers every tiling with a table of completion counts of the [cell-by-cell scan](#the-bigint-solver), as it numbers the [domino tilings](../dominoes/01-rectangles.md#numbering). The table has $(hw + 1) \cdot 2^{w+1}$ entries, as many states per cell as the solver keeps: the table holds the state before a cell is covered, when the farthest covered cell lies only $w$ places ahead. Drawing the number at random gives an exactly uniform tiling.
 
 ### Sampling with a Markov chain
 

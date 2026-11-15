@@ -61,20 +61,21 @@ function isDiagonalOffset(index, offset, colCount) {
 
 /**
  * Checks whether the domicule unranking table for a board fits in memory.
- * A state remembers colCount + 2 cells, so the table is four times wider than the domino one.
+ * A state remembers colCount + 1 cells, so the table is twice as wide as the domino one.
  * @param {Object} options Board dimensions.
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
  * @returns {boolean} True if the board can be unranked.
  */
 function canUnrankDomicule({ rowCount, colCount }) {
-  return (rowCount * colCount + 1) * 2 ** (colCount + 2) <= MAX_DOMICULE_TABLE_SIZE;
+  return (rowCount * colCount + 1) * 2 ** (colCount + 1) <= MAX_DOMICULE_TABLE_SIZE;
 }
 
 /**
  * Builds a table of completion counts for the domicule broken-profile scan.
  * table[i][state] is the number of ways to finish the tiling when the cells before i are
- * covered and bit j of state tells whether cell i + j is already covered.
+ * covered and bit j of state tells whether cell i + j is already covered. The farthest cell a
+ * piece from before i can cover is i + colCount, so a state has colCount + 1 bits.
  * @param {Object} options Board dimensions.
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
@@ -88,7 +89,7 @@ function createDomiculeUnranker({ rowCount, colCount, lattice = 'king' }, onProg
   }
 
   const cellCount = rowCount * colCount;
-  const stateCount = 2 ** (colCount + 2);
+  const stateCount = 2 ** (colCount + 1);
   const zero = BigInt(0);
   const table = new Array(cellCount + 1);
 
@@ -184,7 +185,7 @@ function unrankDomiculeTiling({ rowCount, colCount, lattice, table, total }, ran
  */
 function createDiagonalUnranker({ rowCount, colCount, diagonals }, onProgress) {
   const cellCount = rowCount * colCount;
-  const stateCount = 2 ** (colCount + 2);
+  const stateCount = 2 ** (colCount + 1);
   const zero = BigInt(0);
   const table = new Array(cellCount + 1);
 
