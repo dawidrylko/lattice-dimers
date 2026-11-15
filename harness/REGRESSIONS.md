@@ -1,6 +1,6 @@
 # Regressions
 
-Every defect fixed in this repository, the check that fails if it comes back, and how that was shown. Each fix was undone in a scratch copy of the repository and the check was run on that copy: it failed, and it passes on the repository. "Undone as" names what was put back: the old lines, or the file from the fix's parent commit (`<commit>^`) where the fix replaced the file or its content. Checked on 1 November 2026; the runners and CI jobs are described in [README.md](README.md).
+Every defect fixed in this repository, the check that fails if it comes back, and how that was shown. Each fix was undone in a scratch copy of the repository and the check was run on that copy: it failed, and it passes on the repository. "Undone as" names what was put back: the old lines, or the file from the fix's parent commit (`<commit>^`) where the fix replaced the file or its content. Each row was checked when it was added, the first ones on 1 November 2026; the runners and CI jobs are described in [README.md](README.md).
 
 A new fix adds its row here with the check that guards it.
 
