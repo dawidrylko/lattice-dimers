@@ -68,19 +68,6 @@ describe('the plan of a full run', () => {
     assert.equal(compareRuns(path.join(benchmarkRoot, 'a'), path.join(benchmarkRoot, 'b'))[0]?.ratio, 2);
   });
 
-  test('a comparison pairs a run made before the rename of the diagonal solvers with a newer one', t => {
-    const benchmarkRoot = makeTemporaryDirectory(t, 'renamed-benchmark-');
-    const write = (run, name, text) => {
-      fs.mkdirSync(path.join(benchmarkRoot, run), { recursive: true });
-      fs.writeFileSync(path.join(benchmarkRoot, run, name), text);
-    };
-
-    write('a', 'diagonal-pieces-modular.rs_4x4.txt', '1. Execution Time: 10 ms, Process Time: 11 ms\n');
-    write('b', 'domicule-rectangle-polynomial-modular.rs_4x4.txt', '1. Execution Time: 5 ms, Process Time: 6 ms\n');
-
-    assert.deepEqual(compareRuns(path.join(benchmarkRoot, 'a'), path.join(benchmarkRoot, 'b')).map(({ name, ratio }) => [name, ratio]), [['domicule-rectangle-polynomial-modular.rs_4x4.txt', 0.5]]);
-  });
-
   test('the site reads the newest complete and clean run', t => {
     const benchmarkRoot = makeTemporaryDirectory(t, 'domino-benchmark-');
     const write = (run, text) => {

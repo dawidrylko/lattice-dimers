@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { test } = require('node:test');
-const { listJavaScriptResults, describeMissing, resultFileOf, findSeriesRun } = require('../../site/benchmarkRuns.js');
+const { listJavaScriptResults, describeMissing, findSeriesRun } = require('../../site/benchmarkRuns.js');
 const { makeTemporaryDirectory } = require('./support');
 
 test('a benchmark table reads the JavaScript results only', t => {
@@ -21,28 +21,6 @@ test('a benchmark table leaves out a longer solver id that starts with its prefi
 
   assert.deepEqual(listJavaScriptResults(directory, 'domicule-rectangle-'), ['domicule-rectangle-bigint.js_2x2.txt']);
   assert.deepEqual(listJavaScriptResults(directory, 'domicule-rectangle-polynomial-'), ['domicule-rectangle-polynomial-bigint.js_20x20.txt']);
-});
-
-test('a run made before the rename of the diagonal solvers is read under their new id', t => {
-  const directory = makeTemporaryDirectory(t, 'renamed-benchmark-');
-
-  ['diagonal-pieces-modular.js_4x4.txt', 'diagonal_pieces_modular.py_4x4.txt'].forEach(file => fs.writeFileSync(path.join(directory, file), ''));
-
-  assert.deepEqual(listJavaScriptResults(directory, 'domicule-rectangle-polynomial-'), ['domicule-rectangle-polynomial-modular.js_4x4.txt']);
-  assert.equal(resultFileOf(directory, 'domicule_rectangle_polynomial_modular.py_4x4.txt'), path.join(directory, 'diagonal_pieces_modular.py_4x4.txt'));
-  assert.equal(resultFileOf(directory, 'domicule-rectangle-polynomial-modular.rs_4x4.txt'), path.join(directory, 'domicule-rectangle-polynomial-modular.rs_4x4.txt'));
-});
-
-test('a run made before the rename of 2026-11-11 is read under the any-lattice and float ids', t => {
-  const directory = makeTemporaryDirectory(t, 'renamed-lattice-benchmark-');
-
-  ['all-lattices-cylinder-torus-modular.js_4x4-king-torus.txt', 'all_lattices_cylinder_torus_bigint.py_4x4-square-cylinder.txt', 'domino_rectangle_number.py_4x4.txt'].forEach(file =>
-    fs.writeFileSync(path.join(directory, file), ''),
-  );
-
-  assert.deepEqual(listJavaScriptResults(directory, 'any-lattice-cylinder-torus-'), ['any-lattice-cylinder-torus-modular.js_4x4-king-torus.txt']);
-  assert.equal(resultFileOf(directory, 'any_lattice_cylinder_torus_bigint.py_4x4-square-cylinder.txt'), path.join(directory, 'all_lattices_cylinder_torus_bigint.py_4x4-square-cylinder.txt'));
-  assert.equal(resultFileOf(directory, 'domino_rectangle_float.py_4x4.txt'), path.join(directory, 'domino_rectangle_number.py_4x4.txt'));
 });
 
 test('a table of solvers newer than the complete run reads the newest clean run that measured them', t => {

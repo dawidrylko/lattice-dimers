@@ -1,0 +1,14 @@
+Average Execution Time: 4.777 ms
+Average Process Time: 56.804 ms
+Load Average Before: see host-load-9c2c0e92a821.txt
+---
+1. Execution Time: 4.548 ms, Process Time: 53.518 ms
+2. Execution Time: 4.013 ms, Process Time: 58.093 ms
+3. Execution Time: 4.718 ms, Process Time: 58.832 ms
+4. Execution Time: 4.099 ms, Process Time: 58.146 ms
+5. Execution Time: 7.429 ms, Process Time: 63.865 ms
+6. Execution Time: 4.599 ms, Process Time: 57.83 ms
+7. Execution Time: 4.351 ms, Process Time: 52.035 ms
+8. Execution Time: 4.544 ms, Process Time: 58.016 ms
+9. Execution Time: 4.738 ms, Process Time: 57.88 ms
+10. Execution Time: 4.736 ms, Process Time: 49.82 ms

@@ -1,0 +1,332 @@
+[
+  {
+    "file": "domino-rectangle-formula.rs",
+    "board": "-r 20 -c 20",
+    "counts": [
+      3861638,
+      3861638,
+      3861638
+    ],
+    "instructions": 3861638
+  },
+  {
+    "file": "domino_rectangle_formula.py",
+    "board": "-r 20 -c 20",
+    "counts": [
+      226309385,
+      191509811,
+      191961546
+    ],
+    "instructions": 191961546
+  },
+  {
+    "file": "domino-rectangle-formula.js",
+    "board": "-r 20 -c 20",
+    "counts": [
+      111798810,
+      107880700,
+      109227765
+    ],
+    "instructions": 109227765
+  },
+  {
+    "file": "domino-rectangle-float.rs",
+    "board": "-r 8 -c 8",
+    "counts": [
+      1211270,
+      1211270,
+      1211270
+    ],
+    "instructions": 1211270
+  },
+  {
+    "file": "domino_rectangle_float.py",
+    "board": "-r 8 -c 8",
+    "counts": [
+      253571179,
+      253752485,
+      253622541
+    ],
+    "instructions": 253622541
+  },
+  {
+    "file": "domino-rectangle-float.js",
+    "board": "-r 8 -c 8",
+    "counts": [
+      178026234,
+      178151591,
+      180131005
+    ],
+    "instructions": 178151591
+  },
+  {
+    "file": "domino-rectangle-bigint.rs",
+    "board": "-r 8 -c 8",
+    "counts": [
+      1723950,
+      1723950,
+      1723950
+    ],
+    "instructions": 1723950
+  },
+  {
+    "file": "domino_rectangle_bigint.py",
+    "board": "-r 8 -c 8",
+    "counts": [
+      247604442,
+      247438095,
+      247578554
+    ],
+    "instructions": 247578554
+  },
+  {
+    "file": "domino-rectangle-bigint.js",
+    "board": "-r 8 -c 8",
+    "counts": [
+      257264920,
+      256131480,
+      257001305
+    ],
+    "instructions": 257001305
+  },
+  {
+    "file": "domicule-rectangle-modular.rs",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      2632881,
+      2632908,
+      2632881
+    ],
+    "instructions": 2632881
+  },
+  {
+    "file": "domicule_rectangle_modular.py",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      682265894,
+      682320055,
+      680581609
+    ],
+    "instructions": 682265894
+  },
+  {
+    "file": "domicule-rectangle-modular.js",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      530641644,
+      537435759,
+      531346752
+    ],
+    "instructions": 531346752
+  },
+  {
+    "file": "domicule-rectangle-bigint.rs",
+    "board": "-r 8 -c 8",
+    "counts": [
+      7798154,
+      7798154,
+      7798154
+    ],
+    "instructions": 7798154
+  },
+  {
+    "file": "domicule_rectangle_bigint.py",
+    "board": "-r 8 -c 8",
+    "counts": [
+      219410866,
+      219639734,
+      219575601
+    ],
+    "instructions": 219575601
+  },
+  {
+    "file": "domicule-rectangle-bigint.js",
+    "board": "-r 8 -c 8",
+    "counts": [
+      171424534,
+      168350896,
+      174800217
+    ],
+    "instructions": 171424534
+  },
+  {
+    "file": "domicule-rectangle-polynomial-modular.rs",
+    "board": "-r 6 -c 6 -j 1",
+    "counts": [
+      1675401,
+      1675428,
+      1675401
+    ],
+    "instructions": 1675401
+  },
+  {
+    "file": "domicule_rectangle_polynomial_modular.py",
+    "board": "-r 6 -c 6 -j 1",
+    "counts": [
+      614552497,
+      595556974,
+      614264316
+    ],
+    "instructions": 614264316
+  },
+  {
+    "file": "domicule-rectangle-polynomial-modular.js",
+    "board": "-r 6 -c 6 -j 1",
+    "counts": [
+      395142073,
+      396895684,
+      394388894
+    ],
+    "instructions": 395142073
+  },
+  {
+    "file": "domicule-rectangle-polynomial-bigint.rs",
+    "board": "-r 6 -c 6",
+    "counts": [
+      6421760,
+      6421760,
+      6421760
+    ],
+    "instructions": 6421760
+  },
+  {
+    "file": "domicule_rectangle_polynomial_bigint.py",
+    "board": "-r 6 -c 6",
+    "counts": [
+      215388459,
+      215565334,
+      215935339
+    ],
+    "instructions": 215565334
+  },
+  {
+    "file": "domicule-rectangle-polynomial-bigint.js",
+    "board": "-r 6 -c 6",
+    "counts": [
+      160239441,
+      160938468,
+      165207761
+    ],
+    "instructions": 160938468
+  },
+  {
+    "file": "any-lattice-cylinder-torus-modular.rs",
+    "board": "-r 8 -c 8 --lattice king -j 1",
+    "counts": [
+      9162898,
+      9162898,
+      9162898
+    ],
+    "instructions": 9162898
+  },
+  {
+    "file": "any_lattice_cylinder_torus_modular.py",
+    "board": "-r 8 -c 8 --lattice king -j 1",
+    "counts": [
+      752783719,
+      766384147,
+      766301834
+    ],
+    "instructions": 766301834
+  },
+  {
+    "file": "any-lattice-cylinder-torus-modular.js",
+    "board": "-r 8 -c 8 --lattice king -j 1",
+    "counts": [
+      1017530783,
+      1021167232,
+      1016277683
+    ],
+    "instructions": 1017530783
+  },
+  {
+    "file": "any-lattice-cylinder-torus-bigint.rs",
+    "board": "-r 6 -c 6 --lattice king",
+    "counts": [
+      1020380,
+      1020380,
+      1020380
+    ],
+    "instructions": 1020380
+  },
+  {
+    "file": "any_lattice_cylinder_torus_bigint.py",
+    "board": "-r 6 -c 6 --lattice king",
+    "counts": [
+      209675888,
+      209879219,
+      209637236
+    ],
+    "instructions": 209675888
+  },
+  {
+    "file": "any-lattice-cylinder-torus-bigint.js",
+    "board": "-r 6 -c 6 --lattice king",
+    "counts": [
+      134813056,
+      138318548,
+      131620341
+    ],
+    "instructions": 134813056
+  },
+  {
+    "file": "domicule-cylinder-torus-polynomial-modular.rs",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      32316739,
+      32316739,
+      32316739
+    ],
+    "instructions": 32316739
+  },
+  {
+    "file": "domicule_cylinder_torus_polynomial_modular.py",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      1077830916,
+      1077218150,
+      1077422049
+    ],
+    "instructions": 1077422049
+  },
+  {
+    "file": "domicule-cylinder-torus-polynomial-modular.js",
+    "board": "-r 8 -c 8 -j 1",
+    "counts": [
+      3401053314,
+      3395434973,
+      3392838477
+    ],
+    "instructions": 3395434973
+  },
+  {
+    "file": "domicule-cylinder-torus-polynomial-bigint.rs",
+    "board": "-r 6 -c 6",
+    "counts": [
+      5218161,
+      5218161,
+      5218161
+    ],
+    "instructions": 5218161
+  },
+  {
+    "file": "domicule_cylinder_torus_polynomial_bigint.py",
+    "board": "-r 6 -c 6",
+    "counts": [
+      238514355,
+      238513945,
+      238454117
+    ],
+    "instructions": 238513945
+  },
+  {
+    "file": "domicule-cylinder-torus-polynomial-bigint.js",
+    "board": "-r 6 -c 6",
+    "counts": [
+      202556372,
+      204725269,
+      201692964
+    ],
+    "instructions": 202556372
+  }
+]
