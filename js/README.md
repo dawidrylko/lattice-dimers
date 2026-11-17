@@ -1,6 +1,6 @@
 # Solvers and renderer
 
-The notebooks in [`notes`](../notes/README.md) explain how each count is made, the [dominoes](../notes/dominoes/01-rectangles.md) and [domicules](../notes/domicules/01-rectangles.md) notebooks also how the gallery numbers and samples the tilings; this page lists the programs and how to run them.
+The notebooks in [`notes`](../notes/README.md) explain how each count is made, the [dominoes](../notes/dominoes/01-rectangles.md), [triangular lattice](../notes/triangular-lattice/01-rectangles.md) and [domicules](../notes/domicules/01-rectangles.md) notebooks also how the gallery numbers and samples the tilings; this page lists the programs and how to run them.
 
 ## Quick start
 
