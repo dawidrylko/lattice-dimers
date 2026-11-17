@@ -91,7 +91,7 @@ const SHEET_BOARDS = [
   '10x10-diagonal-cylinder',
   '10x10-diagonal-torus',
 ];
-const CONFIRMATION_BOARDS = ['10x10-diagonal-torus?diagonals=20'];
+const CONFIRMATION_BOARDS = ['10x10-diagonal-torus?diagonals=20', '10x10-triangular-torus?diagonals=20'];
 const SAMPLE_BOARDS = ['18x18', '16x16-diagonal', '20x20', '18x18-triangular'];
 const NOTES = [
   { slug: 'research', cells: 2 },
@@ -955,6 +955,8 @@ async function checkSurfaces(page, baseUrl, width) {
   for (const [hash, meta] of [
     ['gallery/4x4-diagonal-torus/1?diagonals=4', '4×4 torus · 8,384 tilings with 4 diagonal pieces (of 17,552)'],
     ['gallery/4x4-diagonal-cylinder/1?diagonals=8', '4×4 cylinder · 16 tilings with 8 diagonal pieces (of 2,649)'],
+    ['gallery/4x4-triangular-torus/1?diagonals=4', '4×4 torus · 608 tilings with 4 diagonal pieces (of 1,920)'],
+    ['gallery/4x4-triangular-cylinder/1?diagonals=8', '4×4 cylinder · 1 tiling with 8 diagonal pieces (of 412)'],
   ]) {
     const filtered = await showBoard(page, hash, `the ${hash} sheet`);
 
@@ -1059,10 +1061,10 @@ async function checkDiagonals(page, baseUrl, width) {
 
   await page.evaluate("document.getElementById('highlight').click()");
 
-  for (const [board, filtered] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', true], ['10x10-diagonal-torus', true], ['2x2-diagonal', true]]) {
+  for (const [board, filtered] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', true], ['10x10-diagonal-torus', true], ['2x2-diagonal', true], ['12x12-triangular', false], ['4x4-triangular', true], ['4x4-triangular-cylinder', true], ['10x10-triangular-torus', true]]) {
     const state = await showBoard(page, `gallery/${board}/1`, `the ${board} sheet`);
 
-    if (!state.picker || state.filter.counts !== filtered || state.filter.shown || !/diagonal pieces?:/.test(state.tip)) {
+    if (!state.picker || state.filter.counts !== filtered || state.filter.shown || !/diagonal pieces?(:| ↘)/.test(state.tip)) {
       problems.push(`${board} filter: ${JSON.stringify(state.filter)}, tooltip ${state.tip}`);
     }
   }
@@ -1932,6 +1934,16 @@ async function checkBenchmarkCells(page, baseUrl, width) {
 
     if (odd.length || dashes.length) {
       problems.push(`the ${view} table shows ${[...odd, ...dashes].join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing value -`);
+    }
+
+    if (width < 920) {
+      const beside = await page.evaluate(
+        "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) table.languages tbody tr')].filter(row => row.cells.length === 9 && Math.round(row.cells[5].getBoundingClientRect().left) !== Math.round(row.cells[2].getBoundingClientRect().left)).map(row => row.cells[0].textContent)",
+      );
+
+      if (beside.length) {
+        problems.push(`at ${width} px the ${view} cards put the fourth solver of ${beside.join(', ')} beside the first three instead of under the first`);
+      }
     }
   }
 

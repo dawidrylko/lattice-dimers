@@ -251,7 +251,7 @@ function createDiagonalUnranker({ rowCount, colCount, diagonals, lattice = 'king
 }
 
 /**
- * Returns the domicule tiling with the given 0-based rank among those with the unranker's
+ * Returns the tiling of the unranker's lattice with the given 0-based rank among those with its
  * number of diagonal pieces, in the order of unrankDomiculeTiling.
  * @param {Object} unranker The result of createDiagonalUnranker.
  * @param {BigInt} rank The 0-based rank, lower than unranker.total.

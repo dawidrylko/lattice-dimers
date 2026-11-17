@@ -30,7 +30,7 @@ The gallery can also number only the tilings of a cylinder with $k$ diagonal pie
 
 ## The counts
 
-On an even circumference the chessboard colouring goes on across the seam, so a diagonal piece still covers two cells of one colour and a domino two of different colours, and $k$ is even. Unlike the board with no glued edge, the $n \times n$ cylinder has a tiling with only diagonal pieces, and exactly one: the cells with $r - c \equiv d \pmod n$ form a path of $n$ cells joined by diagonals, one cell in every row, and a path with an even number of cells has a single perfect matching.
+On an even circumference the chessboard colouring goes on across the seam, so a diagonal piece still covers two cells of one colour and a domino two of different colours, and $k$ is even. Unlike the board with no glued edge, the $n \times n$ cylinder with $n$ even has a tiling with only diagonal pieces, and exactly one: the cells with $r - c \equiv d \pmod n$ form a path of $n$ cells joined by diagonals, one cell in every row, and a path with an even number of cells has a single perfect matching.
 
 The cell below checks the gallery's scan against the stored counts of the solvers on every board both count. The table gives, for each $n \times n$ cylinder in `spec/cases/`, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces. When the OEIS was searched by the terms of the $4 \times 4$ cylinder on 17 November 2026, it had no such row.
 

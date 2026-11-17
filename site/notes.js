@@ -398,7 +398,7 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
  * @property {string} [options.pieces] 'domino' or 'domicule'.
  * @property {string} [options.lattice] 'triangular' in place of pieces.
  * @property {string} [options.surface] 'rectangle', 'cylinder' or 'torus'.
- * @property {number} [options.diagonals] Only the domicule tilings with this many diagonal pieces, as the
+ * @property {number} [options.diagonals] Only the domicule or triangular lattice tilings with this many diagonal pieces, as the
  * gallery numbers them under the By diagonal pieces count; the label under each tiling then gives that number.
  * @property {Array<number|bigint>} [options.ranks] The 0-based numbers of the tilings to draw.
  * @property {number} [options.spread] In place of ranks: this many tilings, evenly spaced over the numbering.
