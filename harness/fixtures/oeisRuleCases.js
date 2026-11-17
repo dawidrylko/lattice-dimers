@@ -718,6 +718,21 @@ const CASES = [
   },
   {
     rule: 'example-aligned',
+    source: 'constructed: rows that each end with a comma are rows, not wrapped lines',
+    entry: 'A401673',
+    before: [
+      ['e', '  1,'],
+      ['e', '  2, 1,'],
+      ['e', '  36, 126, 105,'],
+    ],
+    after: [
+      ['e', '   1,'],
+      ['e', '   2,   1,'],
+      ['e', '  36, 126, 105,'],
+    ],
+  },
+  {
+    rule: 'example-aligned',
     source: 'constructed: two rows are already a table',
     entry: 'A401673',
     before: [

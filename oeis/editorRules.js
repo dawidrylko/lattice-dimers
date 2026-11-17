@@ -872,28 +872,47 @@ const RULES = [
   {
     id: 'example-aligned',
     field: 'EXAMPLE',
-    text: 'Rows of numbers in EXAMPLE, a triangle or an array, are aligned on the right: in every column the numbers end at the same position. A row wrapped onto the next line, the first part ending with a comma, is left out.',
+    text: 'Rows of numbers in EXAMPLE, a triangle or an array, are aligned on the right: in every column the numbers end at the same position. In rows that end with a semicolon, a row wrapped onto the next line, the first part ending with a comma, is left out.',
     source: [edit('A401673', 6, 'Alois P. Heinz', '2026-11-02', 'the rows of "Triangle begins:" right-aligned by column')],
     check(info) {
-      const groups = [];
-      let group = [];
-      let wrapped = false;
+      const blocks = [];
+      let block = [];
 
       for (const line of info.lines) {
-        const row = line.type === 'e' && NUMERIC_ROW.test(line.value);
-        const continued = wrapped && row;
-
-        wrapped = row && /,\s*$/.test(line.value);
-
-        if (row && !wrapped && !continued) {
-          group.push(line);
+        if (line.type === 'e' && NUMERIC_ROW.test(line.value)) {
+          block.push(line);
         } else {
-          groups.push(group);
-          group = [];
+          blocks.push(block);
+          block = [];
         }
       }
 
-      groups.push(group);
+      blocks.push(block);
+
+      const groups = blocks.flatMap(rows => {
+        if (!rows.some(row => /;\s*$/.test(row.value))) {
+          return [rows];
+        }
+
+        const parts = [];
+        let part = [];
+        let wrapped = false;
+
+        for (const row of rows) {
+          const continued = wrapped;
+
+          wrapped = /,\s*$/.test(row.value);
+
+          if (wrapped || continued) {
+            parts.push(part);
+            part = [];
+          } else {
+            part.push(row);
+          }
+        }
+
+        return [...parts, part];
+      });
 
       return groups
         .filter(rows => rows.length > 1)
