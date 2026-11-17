@@ -23,6 +23,10 @@ Proposed 14 November 2026, revision #7 of the draft.
 
 ## Notes
 
+The three generators run the same method in Rust, Python and JavaScript, each in its own code. They count the cylinder cell by cell modulo primes, which is the entry of the power of the row transfer matrix of [`A402163.gp`](A402163.gp) from the empty row to the empty row taken one cell at a time, with the pieces across the seam. On the $2 \times 2$ cylinder those pieces are separate edges, as the entry counts them. They take as many primes below $2^{31}$ as the Kahn-Lovasz bound needs, $a(n) \le \prod_v (d_v!)^{1/(2 d_v)}$ with $d_v = 8$ inside and $5$ on the two free rows, and for $n = 1$, where the graph has multiple edges, $5^{2n^2}$; one more prime checks each term.
+
+`rust/target/release/b402163 0 11` (after `cargo build --release` in `rust/`) prints the whole b-file in 49 s, `python3 -I oeis/A402163/b402163.py 0 11` (after `python3 -m pip install -e python`) in 256 s and `node oeis/A402163/b402163.js 0 11` in 171 s, all three on the 10 cores of an Apple M4 on 17 November 2026. So CI runs all three up to $n = 9$. These last terms are in [`spec/limits.json`](../../spec/limits.json), and `FULL_CASES=1` runs every term in all three.
+
 The program is the one of [A401670](../A401670/A401670.gp) with one change: the cylinder count is the entry of the power of the row transfer matrix from the empty row to the empty row, where the torus count is its trace.
 
 $a(0), \dots, a(7)$ come also from the row transfer in exact integers, `node js/solvers/any-lattice-cylinder-torus-bigint.js -r 14 -c 14 --lattice king` for $a(7)$ in 20 s on 14 November 2026; the $16 \times 16$ cylinder ran out of the 4 GB heap of Node.js. $a(2), \dots, a(11)$ agree between the modular solver of the site and `research/king-entropy/src/zexact.py`, two programs that go cell by cell modulo primes. For $a(11)$, `node js/solvers/any-lattice-cylinder-torus-modular.js -r 22 -c 22 --lattice king -j 4` took 290 s and printed the count of `zex_king_cyl_m22_K22.json`.

@@ -23,4 +23,8 @@ Approved 11 November 2026, revision #51.
 
 ## Notes
 
+The three generators run the same method in Rust, Python and JavaScript, each in its own code: the dynamic programming of the generators of [A239264](../A239264/README.md), modulo primes, on the $2n \times 2n$ board.
+
+`rust/target/release/b239273 0 12` (after `cargo build --release` in `rust/`) prints the whole b-file in 95 s, `python3 -I oeis/A239273/b239273.py 0 12` (after `python3 -m pip install -e python`) in 462 s and `node oeis/A239273/b239273.js 0 12` in 596 s, all three on the 10 cores of an Apple M4 on 17 November 2026. So CI runs the Rust generator up to $n = 10$ and the Python and JavaScript ones up to $n = 9$. These last terms are in [`spec/limits.json`](../../spec/limits.json), and `FULL_CASES=1` runs every term in all three.
+
 The b-file stops at $n = 12$ because $a(13)$ needs the $26 \times 26$ board.

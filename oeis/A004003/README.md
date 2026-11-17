@@ -24,4 +24,6 @@ Approved 11 November 2026, revision #172.
 
 ## Notes
 
+The three generators run the same method in Rust, Python and JavaScript, each in its own code: they evaluate the resultant of [`A004003.gp`](A004003.gp) in exact integers as the determinant of the Sylvester matrix by fraction-free elimination. `rust/target/release/b004003 0 44` (after `cargo build --release` in `rust/`), `python3 -I oeis/A004003/b004003.py 0 44` and `node oeis/A004003/b004003.js 0 44` each print the whole b-file, in 1.5 s, 1.4 s and 0.6 s on an Apple M4 on 17 November 2026, so [`spec/limits.json`](../../spec/limits.json) gives each of the three the last term of the b-file, and CI compares their whole output with the b-file.
+
 The b-file is not a contribution: it reproduces the published one from the formula. $a(45)$ has 1015 digits, more than a b-file line may hold.
