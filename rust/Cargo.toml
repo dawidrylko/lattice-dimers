@@ -93,9 +93,25 @@ path = "solvers/src/bin/domino-rectangle-formula.rs"
 name = "domino-rectangle-float"
 path = "solvers/src/bin/domino-rectangle-float.rs"
 
+[[bin]]
+name = "b309117"
+path = "../oeis/A309117/b309117.rs"
+
+[[bin]]
+name = "b401988"
+path = "../oeis/A401988/b401988.rs"
+
+[[bin]]
+name = "b402345"
+path = "../oeis/A402345/b402345.rs"
+
 [[test]]
 name = "conformance"
 path = "tests/conformance.rs"
+
+[[test]]
+name = "generators"
+path = "tests/generators.rs"
 
 [dev-dependencies]
 libc = "0.2.191"

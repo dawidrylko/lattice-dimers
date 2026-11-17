@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { test } = require('node:test');
 const { splitDefinitions } = require('../oeis/editorRules');
@@ -17,6 +18,8 @@ const LINE_ORDER = 'ISTUNCDHFeptoYKOAE';
 const MAX_TERM_DIGITS = 1000;
 const TEXT_EXTENSIONS = ['.md', '.txt', '.js', '.json', '.html', '.tex', '.bib', '.cff'];
 const SUBMITTED_DRAFTS = ['research/king-entropy/release/oeis-draft.txt'];
+const GENERATOR_LANGUAGES = ['rs', 'py', 'js'];
+const GENERATOR_LIMITS = JSON.parse(fs.readFileSync(path.join(ROOT_DIRECTORY, 'spec', 'limits.json'), 'utf-8')).generators;
 
 function listEntries() {
   return fs
@@ -32,6 +35,7 @@ function entryFiles(entry) {
     text: `${entry}.txt`,
     bFile: `b${number}.txt`,
     program: `${entry}.gp`,
+    generators: GENERATOR_LANGUAGES.map(language => `b${number}.${language}`),
     generator: `b${number}.js`,
   };
 }
@@ -104,13 +108,18 @@ function checkLayout() {
   }
 
   for (const entry of listEntries()) {
-    const { text, bFile, program, generator } = entryFiles(entry);
-    const allowed = ['README.md', text, bFile, program, generator];
+    const { text, bFile, program, generators } = entryFiles(entry);
+    const allowed = ['README.md', text, bFile, program, ...generators];
+    const present = generators.filter(name => exists(entry, name));
 
     for (const name of fs.readdirSync(path.join(OEIS_DIRECTORY, entry)).filter(name => !name.startsWith('.'))) {
       if (!allowed.includes(name)) {
         errors.push(`oeis/${entry}/${name} is not one of ${allowed.join(', ')}.`);
       }
+    }
+
+    if (present.length > 0 && present.length < generators.length) {
+      errors.push(`oeis/${entry} has the generators ${present.join(', ')}; a generator comes in all three languages, ${generators.join(', ')}.`);
     }
 
     for (const name of ['README.md', text]) {
@@ -225,8 +234,8 @@ function checkEntryReadme(entry) {
     }
   }
 
-  const { text, bFile, program, generator } = entryFiles(entry);
-  const files = [text, bFile, program, generator].filter(name => exists(entry, name));
+  const { text, bFile, program, generators } = entryFiles(entry);
+  const files = [text, bFile, program, ...generators].filter(name => exists(entry, name));
   const listed = readFilesSection(lines);
 
   if (listed.map(([name]) => name).join(',') !== files.join(',')) {
@@ -503,38 +512,287 @@ function checkDraftLinks() {
   return errors;
 }
 
-const GENERATOR_TERMS = 13;
-const FULL_GENERATORS = ['A309117', 'A402345'];
+const REJECTED_RANGES = [[], ['1'], ['3', '2'], ['x', '2'], ['+1', '2'], ['0', '1', '2']];
+const GENERATOR_SETUP = [
+  'spec/limits.json',
+  'rust/Cargo.toml',
+  'rust/Cargo.lock',
+  'rust/tests/generators.rs',
+  'python/pyproject.toml',
+  'python/tests/test_generators.py',
+  'js/package.json',
+  'js/.nvmrc',
+  'harness/oeis.test.js',
+  '.github/workflows/ci.yml',
+];
+const SKIP_GENERATORS = process.env.GENERATOR_CHECKS === 'skip';
+const WORKFLOW = path.join(ROOT_DIRECTORY, '.github', 'workflows', 'ci.yml');
+const GATE_STEP = 'Select the generator checks';
+
+function readBFileLines(entry) {
+  return read(entry, entryFiles(entry).bFile).replace(/\n$/, '').split('\n');
+}
+
+function listGeneratorEntries() {
+  return listEntries().filter(entry => entryFiles(entry).generators.every(name => exists(entry, name)));
+}
+
+function checkGeneratorWiring() {
+  const errors = [];
+  const entries = listGeneratorEntries();
+  const cargo = fs.readFileSync(path.join(ROOT_DIRECTORY, 'rust', 'Cargo.toml'), 'utf-8');
+  const rustTest = fs.readFileSync(path.join(ROOT_DIRECTORY, 'rust', 'tests', 'generators.rs'), 'utf-8');
+  const limited = Object.keys(GENERATOR_LIMITS ?? {});
+
+  if (limited.join(',') !== entries.join(',')) {
+    errors.push(`The generators of spec/limits.json are ${limited.join(', ')} instead of ${entries.join(', ')}.`);
+  }
+
+  for (const entry of entries) {
+    const number = entry.slice(1);
+    const lastIndex = readBFileLines(entry).length - 1;
+    const limits = GENERATOR_LIMITS?.[entry] ?? {};
+    const valid = Object.values(limits).every(last => Number.isInteger(last) && last >= 0 && last <= lastIndex);
+
+    if (Object.keys(limits).join(',') !== GENERATOR_LANGUAGES.join(',') || !valid) {
+      errors.push(`spec/limits.json must give ${entry} a last term from 0 to ${lastIndex} for each of ${GENERATOR_LANGUAGES.join(', ')}.`);
+    }
+
+    if (!cargo.includes(`[[bin]]\nname = "b${number}"\npath = "../oeis/${entry}/b${number}.rs"\n`)) {
+      errors.push(`rust/Cargo.toml has no [[bin]] b${number} with the path ../oeis/${entry}/b${number}.rs.`);
+    }
+
+    if (!rustTest.includes(`check("${entry}", env!("CARGO_BIN_EXE_b${number}"))`)) {
+      errors.push(`rust/tests/generators.rs does not check b${number}.`);
+    }
+  }
+
+  return errors;
+}
+
+function resolvePythonImport(file, dots, name) {
+  const base = dots ? path.join(path.dirname(file), ...Array(dots.length - 1).fill('..')) : 'python';
+  const target = path.join(base, ...name.split('.').filter(Boolean));
+
+  return fs.existsSync(path.join(ROOT_DIRECTORY, target)) ? path.join(target, '__init__.py') : `${target}.py`;
+}
+
+function followImports(start, importsOf) {
+  const files = new Set([start]);
+  const pending = [start];
+
+  while (pending.length > 0) {
+    const file = pending.pop();
+
+    for (const imported of importsOf(file, fs.readFileSync(path.join(ROOT_DIRECTORY, file), 'utf-8'))) {
+      if (!files.has(imported)) {
+        files.add(imported);
+        pending.push(imported);
+      }
+    }
+  }
+
+  return [...files];
+}
+
+function listGeneratorInputs(entry) {
+  const { bFile, generators } = entryFiles(entry);
+  const [rust, python, javascript] = generators.map(name => path.join('oeis', entry, name));
+  const inputs = [path.join('oeis', entry, bFile), ...generators.map(name => path.join('oeis', entry, name))];
+
+  if (/\blattice_dimers_core\b/.test(fs.readFileSync(path.join(ROOT_DIRECTORY, rust), 'utf-8'))) {
+    inputs.push(...fs.readdirSync(path.join(ROOT_DIRECTORY, 'rust', 'core', 'src')).map(name => path.join('rust', 'core', 'src', name)));
+  }
+
+  inputs.push(
+    ...followImports(python, (file, content) =>
+      [...content.matchAll(/^(?:from|import) (\.*)((?:lattice_dimers)?[\w.]*)/gm)]
+        .filter(([, dots, name]) => dots || name.startsWith('lattice_dimers'))
+        .flatMap(([, dots, name]) => [
+          resolvePythonImport(file, dots, name),
+          ...(dots ? [] : [path.join('python', 'lattice_dimers', '__init__.py')]),
+        ]),
+    ),
+    ...followImports(javascript, (file, content) =>
+      [...content.matchAll(/require\('(\.{1,2}\/[^']+)'\)/g)].map(([, target]) =>
+        path.relative(ROOT_DIRECTORY, require.resolve(path.join(ROOT_DIRECTORY, path.dirname(file), target))),
+      ),
+    ),
+  );
+
+  return inputs.map(input => input.split(path.sep).join('/'));
+}
+
+function checkGeneratorGate() {
+  const source = readGateInputs();
+
+  if (!source) {
+    return ['.github/workflows/ci.yml has no GENERATOR_INPUTS pattern.'];
+  }
+
+  const pattern = new RegExp(source);
+  const inputs = new Set([...GENERATOR_SETUP, ...listGeneratorEntries().flatMap(listGeneratorInputs)]);
+
+  return [...inputs]
+    .filter(input => !pattern.test(input))
+    .map(input => `The GENERATOR_INPUTS pattern of .github/workflows/ci.yml does not match ${input}, which the generators depend on.`);
+}
+
+function readGateInputs() {
+  return (fs.readFileSync(WORKFLOW, 'utf-8').match(/^ +GENERATOR_INPUTS: '([^']+)'$/m) ?? [])[1];
+}
+
+function readGateScript() {
+  const lines = fs.readFileSync(WORKFLOW, 'utf-8').split('\n');
+  const indent = line => line.length - line.trimStart().length;
+  const start = lines.findIndex(line => line.trim() === `- name: ${GATE_STEP}`);
+  const run = lines.findIndex((line, index) => start !== -1 && index > start && line.trim() === 'run: |');
+
+  if (run === -1) {
+    return null;
+  }
+
+  const end = lines.findIndex((line, index) => index > run && line.trim() !== '' && indent(line) <= indent(lines[run]));
+  const body = lines.slice(run + 1, end === -1 ? lines.length : end);
+  const margin = Math.min(...body.filter(line => line.trim() !== '').map(indent));
+
+  return body.map(line => line.slice(margin)).join('\n');
+}
+
+function runGateScript(script, inputs, changes) {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'generator-gate-'));
+  const repository = path.join(directory, 'repository');
+  const githubEnv = path.join(directory, 'github-env');
+  const environment = { ...process.env, GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1', GIT_AUTHOR_NAME: 'gate', GIT_AUTHOR_EMAIL: 'gate@example.com', GIT_COMMITTER_NAME: 'gate', GIT_COMMITTER_EMAIL: 'gate@example.com' };
+  const git = (...args) => {
+    const result = spawnSync('git', ['-c', 'init.defaultBranch=master', ...args], { cwd: repository, env: environment, encoding: 'utf-8' });
+
+    if (result.status !== 0) {
+      throw new Error(`git ${args.join(' ')} failed: ${result.stderr}`);
+    }
+  };
+  const write = files => {
+    for (const file of files) {
+      fs.mkdirSync(path.dirname(path.join(repository, file)), { recursive: true });
+      fs.writeFileSync(path.join(repository, file), `${file}\n`);
+    }
+  };
+
+  const moves = (changes ?? []).filter(change => change.includes(' -> ')).map(change => change.split(' -> '));
+
+  try {
+    write(['README.md', ...moves.map(([from]) => from)]);
+    git('init', '-q');
+    git('add', '-A');
+    git('commit', '-qm', 'base');
+
+    if (changes) {
+      git('switch', '-qc', 'change');
+      write(changes.filter(change => !change.includes(' -> ')));
+
+      for (const [from, to] of moves) {
+        fs.mkdirSync(path.dirname(path.join(repository, to)), { recursive: true });
+        git('mv', from, to);
+      }
+
+      git('add', '-A');
+      git('commit', '-qm', 'change');
+      git('switch', '-q', 'master');
+      git('merge', '-q', '--no-ff', '-m', 'merge', 'change');
+    }
+
+    fs.writeFileSync(path.join(directory, 'step.sh'), script);
+    fs.writeFileSync(githubEnv, '');
+
+    const { status } = spawnSync('bash', ['--noprofile', '--norc', '-eo', 'pipefail', path.join(directory, 'step.sh')], {
+      cwd: repository,
+      env: { ...environment, GENERATOR_INPUTS: inputs, GITHUB_ENV: githubEnv },
+      encoding: 'utf-8',
+    });
+
+    return { status, skip: fs.readFileSync(githubEnv, 'utf-8').includes('GENERATOR_CHECKS=skip') };
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+}
+
+function checkGateScript() {
+  const inputs = readGateInputs();
+  const script = readGateScript();
+
+  if (!inputs || !script) {
+    return [`.github/workflows/ci.yml has no step "${GATE_STEP}" with GENERATOR_INPUTS and a run script.`];
+  }
+
+  const others = Array.from({ length: 3000 }, (_, index) => `zz/a-changed-file-that-no-generator-reads-${String(index).padStart(4, '0')}.txt`);
+  const cases = [
+    ['a changed generator', ['oeis/A309117/b309117.rs'], false],
+    ['a changed entry README', ['oeis/A309117/README.md'], true],
+    ['a changed generator among 3000 other changed files', ['oeis/A309117/b309117.rs', ...others], false],
+    ['a file of rust/core/ moved out of it', ['rust/core/src/modular.rs -> zz/modular.rs'], false],
+  ];
+  const errors = cases
+    .filter(([, changes, skip]) => {
+      const result = runGateScript(script, inputs, changes);
+
+      return result.status !== 0 || result.skip !== skip;
+    })
+    .map(([name, , skip]) => `The step "${GATE_STEP}" of .github/workflows/ci.yml does not ${skip ? 'skip' : 'run'} the generators for ${name}.`);
+
+  if (runGateScript(script, inputs, null).status === 0) {
+    errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail on a commit without the parent it compares with.`);
+  }
+
+  return errors;
+}
 
 function checkGenerator(entry) {
   const { bFile, generator } = entryFiles(entry);
-  const lines = read(entry, bFile).replace(/\n$/, '').split('\n');
-  const count = FULL_GENERATORS.includes(entry) ? lines.length : GENERATOR_TERMS;
-  const { status, stdout, stderr } = spawnSync(process.execPath, [path.join(OEIS_DIRECTORY, entry, generator), '0', String(count - 1)], {
-    encoding: 'utf-8',
-  });
+  const lines = readBFileLines(entry);
+  const last = process.env.FULL_CASES === '1' ? lines.length - 1 : GENERATOR_LIMITS?.[entry]?.js;
+  const run = args => spawnSync(process.execPath, [path.join(OEIS_DIRECTORY, entry, generator), ...args], { encoding: 'utf-8' });
+
+  if (!Number.isInteger(last)) {
+    return [`spec/limits.json gives no last term of ${entry} for js.`];
+  }
+
+  const { status, stdout, stderr } = run(['0', String(last)]);
 
   if (status !== 0) {
     return [`oeis/${entry}/${generator} failed: ${stderr.trim()}`];
   }
 
-  const expected = lines.slice(0, count).join('\n') + '\n';
+  const errors = [];
 
-  return stdout === expected ? [] : [`oeis/${entry}/${generator} 0 ${count - 1} does not print the first ${count} lines of ${bFile}.`];
+  if (stdout !== lines.slice(0, last + 1).join('\n') + '\n') {
+    errors.push(`oeis/${entry}/${generator} 0 ${last} does not print the first ${last + 1} lines of ${bFile}.`);
+  }
+
+  for (const args of REJECTED_RANGES) {
+    const rejected = run(args);
+
+    if (rejected.status !== 2 || rejected.stdout !== '' || !rejected.stderr.startsWith('Usage: ')) {
+      errors.push(`oeis/${entry}/${generator} ${args.join(' ')} does not exit with 2 and print its usage.`);
+    }
+  }
+
+  return errors;
 }
 
 const checks = [
   ['the layout of oeis/', checkLayout],
   ['the table of oeis/README.md', checkTable],
+  ['the generators in spec/limits.json, rust/Cargo.toml and rust/tests', checkGeneratorWiring],
+  ['the files the generators depend on in the GENERATOR_INPUTS pattern of CI', checkGeneratorGate],
+  ['the step of CI that selects the generator checks, on merge commits', checkGateScript],
   ...listEntries().flatMap(entry => {
-    const { text, bFile, program, generator } = entryFiles(entry);
+    const { text, bFile, program } = entryFiles(entry);
 
     return [
       [`oeis/${entry}/README.md`, () => checkEntryReadme(entry)],
       [`oeis/${entry}/${text}`, () => checkEntryText(entry)],
       ...(exists(entry, bFile) ? [[`oeis/${entry}/${bFile}`, () => [...checkBFile(entry), ...checkBFileFacts(entry)]]] : []),
       ...(exists(entry, program) ? [[`oeis/${entry}/${program}`, () => checkProgram(entry)]] : []),
-      ...(exists(entry, generator) ? [[`oeis/${entry}/${generator}`, () => checkGenerator(entry)]] : []),
     ];
   }),
   ['links to approved entries and drafts', checkDraftLinks],
@@ -543,5 +801,13 @@ const checks = [
 for (const [name, check] of checks) {
   test(name, () => {
     assert.deepEqual(check(), []);
+  });
+}
+
+for (const entry of listGeneratorEntries()) {
+  const skip = SKIP_GENERATORS && 'GENERATOR_CHECKS=skip: nothing the generators depend on changed';
+
+  test(`oeis/${entry}/${entryFiles(entry).generator}`, { skip }, () => {
+    assert.deepEqual(checkGenerator(entry), []);
   });
 }

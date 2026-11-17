@@ -21,7 +21,12 @@ function transitions(width) {
   return next;
 }
 
-const [from, to] = process.argv.slice(2).map(Number);
+const range = process.argv.slice(2);
+if (range.length !== 2 || !range.every(arg => /^[0-9]+$/.test(arg)) || Number(range[0]) > Number(range[1])) {
+  console.error('Usage: b309117.js <first n> <last n>');
+  process.exit(2);
+}
+const [from, to] = range.map(Number);
 const next = transitions(WIDTH);
 let counts = Array.from({ length: 1 << WIDTH }, (_, state) => (state === 0 ? 1n : 0n));
 for (let n = 0; n <= to; n++) {

@@ -24,4 +24,4 @@ python3 -I -m lattice_dimers.solvers.domicule_rectangle_modular -r 8 -c 8
 python3 -I -m lattice_dimers.solvers.any_lattice_cylinder_torus_modular -r 10 -c 10 --torus
 ```
 
-`python -m pip install -e "python[test]"` adds pytest, and `python -m pytest python/tests` runs the modules with `python -I -m` on the boards of [`spec/cases`](../spec/cases/README.md), within [`spec/limits.json`](../spec/limits.json) unless `FULL_CASES=1`.
+`python -m pip install -e "python[test]"` adds pytest, and `python -m pytest python/tests` runs the modules with `python -I -m` on the boards of [`spec/cases`](../spec/cases/README.md), within [`spec/limits.json`](../spec/limits.json) unless `FULL_CASES=1`, and the Python [generators](../docs/glossary.md) of the b-files, `oeis/A<number>/b<number>.py`, with `python -I` up to the last terms of `spec/limits.json` (`tests/test_generators.py`).
