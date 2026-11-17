@@ -182,7 +182,7 @@ test('the generator checks run on push, schedule and dispatch, and on a pull req
   assert.match(jobs.get(GATE_JOB), new RegExp(`^ {6}- name: ${GATE_STEP}\\n {8}if: github\\.event_name == 'pull_request'$`, 'm'));
   assert.equal(runSelection(undefined), 'generator-checks=run\n', 'With no gate, on push, schedule and dispatch, the generator checks must run.');
 
-  for (const [changes, choice] of [[['oeis/A309117/b309117.rs'], 'run'], [['docs/glossary.md'], 'skip']]) {
+  for (const [changes, choice] of [[['oeis/A309117/b309117.rs'], 'run'], [['rust/core/src/zażółć.rs'], 'run'], [['docs/glossary.md'], 'skip']]) {
     const gate = runGateScript(script, inputs, changes);
 
     assert.equal(gate.status, 0, gate.stderr);
@@ -239,10 +239,17 @@ test('Changes runs every job on push, schedule and dispatch, and on a pull reque
     [['.github/workflows/ci.yml'], gated],
     [['spec/cases/domino-rectangle-bigint.json'], gated],
     [['js/pnpm-lock.yaml'], gated],
+    [['js/package.json'], gated],
+    [['js/.nvmrc'], gated],
+    [['rust/Cargo.toml'], gated],
+    [['rust/Cargo.lock'], gated],
+    [['python/pyproject.toml'], gated],
+    [['research/king-entropy/src/requirements.txt'], gated],
+    [['"notes/a\\"b.md"'], gated],
     [['rust/core/src/lib.rs'], gated],
     [['python/lattice_dimers/core/modular.py'], gated],
     [['js/core/modular.js'], gated],
-    [['rust/src/bin/domino-rectangle-bigint.rs'], ['rust', 'benchmarks']],
+    [['rust/solvers/src/bin/domino-rectangle-bigint.rs'], ['rust', 'benchmarks']],
     [['oeis/A309117/b309117.rs'], ['rust']],
     [['oeis/A309117/b309117.py'], ['python']],
     [['oeis/A309117/b309117.txt'], ['rust', 'python', ...site]],
@@ -271,7 +278,7 @@ test('Changes runs every job on push, schedule and dispatch, and on a pull reque
   assert.throws(() => selectJobs(['docs/glossary.md'], 'pull_request', { ...readStepEnv(JOB_STEP), RUST_INPUTS: '(' }), /grep failed with status 2/);
 });
 
-test('Changes runs every job when a pull request deletes or moves a file, and fails when it cannot tell what changed', () => {
+test('Changes runs every job when a pull request deletes or moves a file, reads names as git writes them, and fails when it cannot tell what changed', () => {
   const gated = [...readJobs().keys()].filter(job => !UNGATED_JOBS.includes(job));
   const script = readStepScript(JOB_STEP);
   const env = { ...readStepEnv(JOB_STEP), EVENT: 'pull_request' };
@@ -282,6 +289,11 @@ test('Changes runs every job when a pull request deletes or moves a file, and fa
     assert.equal(result.status, 0, result.stderr);
     assert.deepEqual(readChosenJobs(result.githubOutput), gated, `A pull request that makes the change ${changes} does not run every job.`);
   }
+
+  const named = runStepInRepository(script, env, ['notes/zażółć.md']);
+
+  assert.equal(named.status, 0, named.stderr);
+  assert.deepEqual(readChosenJobs(named.githubOutput), ['site-build', 'site-tests'], 'A pull request that changes notes/zażółć.md does not run the site jobs alone.');
 
   const unmerged = runStepInRepository(script, env, ['docs/glossary.md'], { merge: false });
 

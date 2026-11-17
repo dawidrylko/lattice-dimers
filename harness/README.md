@@ -4,7 +4,7 @@ Each language tests itself on the shared data: [`spec/cases/`](../spec/cases/REA
 
 A short run stops `domino-rectangle-bigint` and `domicule-rectangle-bigint` at the 16 × 16 square and `any-lattice-cylinder-torus-bigint` at the 8 × 8 torus. `any-lattice-cylinder-torus-modular`, `any-lattice-rectangle-modular`, `any-lattice-cylinder-torus-polynomial-modular`, `any-lattice-rectangle-polynomial-modular`, `domicule-rectangle-polynomial-modular` and `domicule-cylinder-torus-polynomial-modular` run their first seven cases and the boards of their BigInt twins.
 
-The commands below run in CI on each pull request and after each merge to master. The exception is `pnpm -C js test:render`. It is part of `pnpm -C js test` and runs alone only on macOS.
+The commands below run in CI after each merge to master, and on a pull request that changes a file their job reads. The exception is `pnpm -C js test:render`. It is part of `pnpm -C js test` and runs alone only on macOS.
 
 Each CI job runs on its own runner. `Changes` decides which jobs run and whether the b-file generators run, and the other jobs wait for it. `Rust` runs `cargo test` and `cargo clippy --workspace --all-targets -- -D warnings`. `Repository` runs `test:spec`, `test:oeis`, `test:markdown`, `test:numbers`, `test:metadata`, `test:ci` and `test:pari`.
 
