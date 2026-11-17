@@ -5,6 +5,7 @@ const os = require('os');
 const path = require('path');
 const { test } = require('node:test');
 const { splitDefinitions } = require('../oeis/editorRules');
+const { WORKFLOW, readStepScript } = require('./workflow');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OEIS_DIRECTORY = path.join(ROOT_DIRECTORY, 'oeis');
@@ -526,7 +527,6 @@ const GENERATOR_SETUP = [
   '.github/workflows/ci.yml',
 ];
 const SKIP_GENERATORS = process.env.GENERATOR_CHECKS === 'skip';
-const WORKFLOW = path.join(ROOT_DIRECTORY, '.github', 'workflows', 'ci.yml');
 const GATE_STEP = 'Select the generator checks';
 
 function readBFileLines(entry) {
@@ -643,20 +643,7 @@ function readGateInputs() {
 }
 
 function readGateScript() {
-  const lines = fs.readFileSync(WORKFLOW, 'utf-8').split('\n');
-  const indent = line => line.length - line.trimStart().length;
-  const start = lines.findIndex(line => line.trim() === `- name: ${GATE_STEP}`);
-  const run = lines.findIndex((line, index) => start !== -1 && index > start && line.trim() === 'run: |');
-
-  if (run === -1) {
-    return null;
-  }
-
-  const end = lines.findIndex((line, index) => index > run && line.trim() !== '' && indent(line) <= indent(lines[run]));
-  const body = lines.slice(run + 1, end === -1 ? lines.length : end);
-  const margin = Math.min(...body.filter(line => line.trim() !== '').map(indent));
-
-  return body.map(line => line.slice(margin)).join('\n');
+  return readStepScript(GATE_STEP);
 }
 
 function runGateScript(script, inputs, changes, { merge = true } = {}) {

@@ -11,7 +11,10 @@ requires-python = ">=3.13"
 dependencies = ["numpy==2.5.4"]
 
 [project.optional-dependencies]
-test = ["pytest==9.2.0"]
+test = ["pytest==9.2.0", "pytest-xdist==3.8.0"]
 
 [tool.setuptools.packages.find]
 include = ["lattice_dimers*"]
+
+[tool.pytest.ini_options]
+markers = ["timing: compares a reported time with the wall time of the process, so CI runs it alone, after the parallel run"]

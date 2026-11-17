@@ -7,6 +7,7 @@ const { spawn } = require('child_process');
 const { after, before, describe, test } = require('node:test');
 const { DOMICULE_SWEEPS } = require('../../js/renderer');
 const { findSeriesRun } = require('../benchmarkRuns');
+const { selectShard } = require('./shard');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..', '..');
 const SITE_DIRECTORY = path.resolve(process.env.SITE_DIRECTORY || path.join(ROOT_DIRECTORY, 'dist', 'site'));
@@ -2199,8 +2200,8 @@ describe('site', () => {
     }
   });
 
-  siteTestCases.forEach((testCase, index) => {
-    test(`site test ${index + 1} of ${siteTestCases.length} for ${CHECKS[testCase.check].label} at ${testCase.width} px`, () =>
+  selectShard(siteTestCases, process.env.SITE_TEST_SHARD).forEach(testCase => {
+    test(`site test ${siteTestCases.indexOf(testCase) + 1} of ${siteTestCases.length} for ${CHECKS[testCase.check].label} at ${testCase.width} px`, () =>
       runTest(page, baseUrl, testCase));
   });
 });
