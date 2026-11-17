@@ -89,7 +89,7 @@ for (const [w, entry, terms] of entries) {
 table(['board', 'OEIS', 'checked at'], rows);
 ```
 
-The $2n \times 2n$ cylinders are the draft entry [OEIS A402345](https://oeis.org/draft/A402345) [1], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the rows above hold $a(1)$ to $a(4)$. The cell checks the square boards $2 \times 2$ to $14 \times 14$ against that b-file.
+The $2n \times 2n$ cylinders are the entry [OEIS A402345](https://oeis.org/A402345) [1], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the rows above hold $a(1)$ to $a(4)$. The cell checks the square boards $2 \times 2$ to $14 \times 14$ against that b-file.
 
 ```js run
 const bFile = require('fs')
@@ -140,4 +140,4 @@ The `BigInt` solver agrees with every OEIS entry above and the modular solver wi
 
 ## References
 
-1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A000129](https://oeis.org/A000129), [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478), [OEIS A028479](https://oeis.org/A028479) and the draft [OEIS A402345](https://oeis.org/draft/A402345). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A000129](https://oeis.org/A000129), [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478), [OEIS A028479](https://oeis.org/A028479) and [OEIS A402345](https://oeis.org/A402345). [oeis.org](https://oeis.org)
