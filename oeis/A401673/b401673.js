@@ -6,26 +6,28 @@ function evaluate(cols, prime, weight) {
   const size = 2 ** (cols + 1);
   let current = new Uint32Array(size), next = new Uint32Array(size);
   const moves = Array.from({ length: cols }, (_, c) => {
-    const list = [[2 ** cols, 1]];
-    if (c + 1 < cols) list.push([2, 1], [2 ** (cols + 1), weight]);
-    if (c > 0) list.push([2 ** (cols - 1), weight]);
-    return list;
+    const bits = [2 ** cols], factors = [1];
+    if (c + 1 < cols) bits.push(2, 2 ** (cols + 1)), factors.push(1, weight);
+    if (c > 0) bits.push(2 ** (cols - 1)), factors.push(weight);
+    return { bits, factors };
   });
-  const add = (t, v) => {
-    const x = next[t] + v;
-    next[t] = x >= prime ? x - prime : x;
-  };
   current[0] = 1;
   for (let cell = 0; cell < cols * cols; cell++) {
+    const { bits, factors } = moves[cell % cols];
     next.fill(0);
     for (let s = 0; s < size; s++) {
       const v = current[s];
       if (v === 0) continue;
       if (s & 1) {
-        add(s >>> 1, v);
+        const t = s >>> 1, x = next[t] + v;
+        next[t] = x >= prime ? x - prime : x;
         continue;
       }
-      for (const [b, w] of moves[cell % cols]) if (!(s & b)) add((s | b) >>> 1, w === 1 ? v : (v * w) % prime);
+      for (let i = 0; i < bits.length; i++) {
+        if (s & bits[i]) continue;
+        const t = (s | bits[i]) >>> 1, x = next[t] + (factors[i] === 1 ? v : (v * factors[i]) % prime);
+        next[t] = x >= prime ? x - prime : x;
+      }
     }
     [current, next] = [next, current];
   }

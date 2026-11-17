@@ -32,6 +32,16 @@ def test_generator_prints_its_b_file(generator):
 
 
 @pytest.mark.parametrize("generator", GENERATORS, ids=lambda generator: generator.stem)
+@pytest.mark.parametrize("n", [0, 1])
+def test_generator_prints_one_term(generator, n):
+    lines = (generator.parent / f"b{generator.parent.name[1:]}.txt").read_text(encoding="utf-8").splitlines(keepends=True)
+    result = run(generator, [str(n), str(n)])
+
+    assert result.returncode == 0, result.stderr
+    assert result.stdout == lines[n], f"{generator.name} {n} {n} does not print line {n} of its b-file alone"
+
+
+@pytest.mark.parametrize("generator", GENERATORS, ids=lambda generator: generator.stem)
 @pytest.mark.parametrize("args", REJECTED, ids=lambda args: " ".join(args) or "none")
 def test_generator_rejects_a_wrong_range(generator, args):
     result = run(generator, args)

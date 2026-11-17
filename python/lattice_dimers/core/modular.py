@@ -82,5 +82,5 @@ def combine_checked_residues(residues, primes, signed=False):
 
 def run_workers(work, tasks, jobs):
     """Runs work on every task in its own thread, at most jobs at a time, and returns the results in order."""
-    with ThreadPoolExecutor(max_workers=min(jobs, len(tasks))) as executor:
+    with ThreadPoolExecutor(max_workers=max(1, min(jobs, len(tasks)))) as executor:
         return list(executor.map(work, tasks))

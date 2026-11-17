@@ -16,8 +16,11 @@ Approved 11 November 2026, revision #42.
 | file | content |
 | --- | --- |
 | [A239264.txt](A239264.txt) | the `%H` and `%o` lines contributed |
-| [b239264.txt](b239264.txt) | antidiagonals 0..46, 1128 terms, rebuilt from the strip counts in [`research/king-entropy/data/zex`](../../research/king-entropy/data/zex); identical to the published b-file on 1 November 2026 |
+| [b239264.txt](b239264.txt) | antidiagonals 0..46, 1128 terms, printed alike by the generators [`b239264.rs`](b239264.rs), [`b239264.py`](b239264.py) and [`b239264.js`](b239264.js); identical to the published b-file on 1 November 2026; its terms up to antidiagonal 46 are checked against the strip counts in [`research/king-entropy/data/zex`](../../research/king-entropy/data/zex) |
 | [A239264.gp](A239264.gp) | the program of the `%o` lines, `T(h, w)` |
+| [b239264.rs](b239264.rs) | the generator of the b-file in Rust |
+| [b239264.py](b239264.py) | the generator of the b-file in Python |
+| [b239264.js](b239264.js) | the generator of the b-file in JavaScript |
 
 ## Notes
 

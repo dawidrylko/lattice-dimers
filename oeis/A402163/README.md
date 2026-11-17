@@ -15,8 +15,11 @@ Proposed 14 November 2026, revision #7 of the draft.
 | file | content |
 | --- | --- |
 | [A402163.txt](A402163.txt) | the full entry text, reconstructed from the draft page |
-| [b402163.txt](b402163.txt) | $n = 0, \dots, 11$, from [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json) up to $n = 10$ and from [`zex_king_cyl_m22_K22.json`](../../research/king-entropy/data/zex/zex_king_cyl_m22_K22.json) for $n = 11$; identical to the file uploaded with the draft |
+| [b402163.txt](b402163.txt) | $n = 0, \dots, 11$, printed alike by the generators [`b402163.rs`](b402163.rs), [`b402163.py`](b402163.py) and [`b402163.js`](b402163.js); identical to the file uploaded with the draft; its terms up to $n = 10$ are checked against [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json) and $n = 11$ against [`zex_king_cyl_m22_K22.json`](../../research/king-entropy/data/zex/zex_king_cyl_m22_K22.json) |
 | [A402163.gp](A402163.gp) | the program of the `%o` lines, with `T(h, w)` for the $h \times w$ cylinder |
+| [b402163.rs](b402163.rs) | the generator of the b-file in Rust |
+| [b402163.py](b402163.py) | the generator of the b-file in Python |
+| [b402163.js](b402163.js) | the generator of the b-file in JavaScript |
 
 ## Notes
 

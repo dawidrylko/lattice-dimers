@@ -15,8 +15,11 @@ Approved 9 November 2026, revision #6.
 | file | content |
 | --- | --- |
 | [A401670.txt](A401670.txt) | the full entry text as published, with the data on one `%S` line and without the keyword `new` |
-| [b401670.txt](b401670.txt) | $n = 0, \dots, 8$, the terms of the data line, from [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json); not submitted |
+| [b401670.txt](b401670.txt) | $n = 0, \dots, 8$, the terms of the data line, printed alike by the generators [`b401670.rs`](b401670.rs), [`b401670.py`](b401670.py) and [`b401670.js`](b401670.js); not submitted; its terms up to $n = 8$ are checked against [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json) |
 | [A401670.gp](A401670.gp) | the program of the `%o` lines, with `T(h, w)` for the $h \times w$ torus |
+| [b401670.rs](b401670.rs) | the generator of the b-file in Rust |
+| [b401670.py](b401670.py) | the generator of the b-file in Python |
+| [b401670.js](b401670.js) | the generator of the b-file in JavaScript |
 
 ## Notes
 

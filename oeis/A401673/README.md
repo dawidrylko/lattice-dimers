@@ -15,8 +15,11 @@ Approved 9 November 2026, revision #9.
 | file | content |
 | --- | --- |
 | [A401673.txt](A401673.txt) | the full entry text as published, with the data on one `%S` line and without the keyword `new` |
-| [b401673.txt](b401673.txt) | rows 0..10, 396 terms, rebuilt from [`spec/cases/domicule-rectangle-polynomial-modular.json`](../../spec/cases/domicule-rectangle-polynomial-modular.json); identical to the published b-file on 11 November 2026 |
+| [b401673.txt](b401673.txt) | rows 0..10, 396 terms, printed alike by the generators [`b401673.rs`](b401673.rs), [`b401673.py`](b401673.py) and [`b401673.js`](b401673.js); identical to the published b-file on 11 November 2026; its terms up to row 10 are checked against [`spec/cases/domicule-rectangle-polynomial-modular.json`](../../spec/cases/domicule-rectangle-polynomial-modular.json) |
 | [A401673.gp](A401673.gp) | the program of the `%o` lines |
+| [b401673.rs](b401673.rs) | the generator of the b-file in Rust |
+| [b401673.py](b401673.py) | the generator of the b-file in Python |
+| [b401673.js](b401673.js) | the generator of the b-file in JavaScript |
 
 ## Notes
 

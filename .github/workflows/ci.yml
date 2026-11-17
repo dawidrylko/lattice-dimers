@@ -33,7 +33,7 @@ jobs:
       - name: Select the generator checks
         if: github.event_name == 'pull_request'
         env:
-          GENERATOR_INPUTS: '^(oeis/A[0-9]{6}/b[0-9]{6}\.(txt|rs|py|js)$|rust/core/|rust/Cargo\.(toml|lock)$|rust/tests/generators\.rs$|python/lattice_dimers/(__init__\.py$|core/)|python/pyproject\.toml$|python/tests/test_generators\.py$|js/package\.json$|js/\.nvmrc$|harness/oeis\.test\.js$|spec/limits\.json$|\.github/workflows/ci\.yml$)'
+          GENERATOR_INPUTS: '^(oeis/A[0-9]{6}/b[0-9]{6}\.(txt|rs|py|js)$|rust/core/|rust/Cargo\.(toml|lock)$|rust/tests/generators\.rs$|python/lattice_dimers/(__init__\.py$|core/)|python/pyproject\.toml$|python/tests/test_generators\.py$|js/package\.json$|js/\.nvmrc$|js/core/|harness/oeis\.test\.js$|spec/limits\.json$|\.github/workflows/ci\.yml$)'
         run: |
           if ! git rev-parse --verify -q HEAD^2 > /dev/null; then
             echo "HEAD has no second parent here, so the files the pull request changes are unknown." >&2

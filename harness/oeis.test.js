@@ -513,6 +513,7 @@ function checkDraftLinks() {
 }
 
 const REJECTED_RANGES = [[], ['1'], ['3', '2'], ['x', '2'], ['+1', '2'], ['0', '1', '2']];
+const SINGLE_TERMS = [0, 1];
 const GENERATOR_SETUP = [
   'spec/limits.json',
   'rust/Cargo.toml',
@@ -696,6 +697,14 @@ function checkGenerator(entry) {
 
   if (stdout !== lines.slice(0, last + 1).join('\n') + '\n') {
     errors.push(`oeis/${entry}/${generator} 0 ${last} does not print the first ${last + 1} lines of ${bFile}.`);
+  }
+
+  for (const n of SINGLE_TERMS) {
+    const single = run([String(n), String(n)]);
+
+    if (single.status !== 0 || single.stdout !== `${lines[n]}\n`) {
+      errors.push(`oeis/${entry}/${generator} ${n} ${n} does not print line ${n} of ${bFile} alone: ${single.stderr.trim()}`);
+    }
   }
 
   for (const args of REJECTED_RANGES) {
