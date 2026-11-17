@@ -695,6 +695,40 @@ const CASES = [
       ['e', '  ...'],
     ],
   },
+  {
+    rule: 'links-authors',
+    source: 'constructed: Jr. joins the name before it, so three authors still want "and"',
+    entry: 'A004003',
+    before: [['H', 'John Doe, Jr., Mary Roe, Ann Poe, <a href="https://doi.org/10.37236/1314">A constructed title</a>, 2026.']],
+    after: [['H', 'John Doe, Jr., Mary Roe, and Ann Poe, <a href="https://doi.org/10.37236/1314">A constructed title</a>, 2026.']],
+  },
+  {
+    rule: 'links-title-truncated',
+    source: 'constructed: the one-character ellipsis and a space before </a>',
+    entry: 'A004003',
+    before: [['H', 'Lior Pachter, <a href="https://doi.org/10.37236/1314">Combinatorial approaches and conjectures … </a>, Elec. J. Comb. 4 (1997) #R29.']],
+    after: [['H', `Lior Pachter, <a href="https://doi.org/10.37236/1314">${PACHTER_TITLE}</a>, Elec. J. Comb. 4 (1997) #R29.`]],
+  },
+  {
+    rule: 'formula-program',
+    source: 'constructed: "see PROG" points to the program as "see PARI program" does',
+    entry: 'A402163',
+    before: a402163(A402163_DATA, [['F', 'a(n) = (M_{2n}^(2n))[0,0]; see PROG.']]),
+    after: a402163(A402163_DATA),
+  },
+  {
+    rule: 'example-aligned',
+    source: 'constructed: two rows are already a table',
+    entry: 'A401673',
+    before: [
+      ['e', '  1;'],
+      ['e', '  36, 126;'],
+    ],
+    after: [
+      ['e', '   1;'],
+      ['e', '  36, 126;'],
+    ],
+  },
 ];
 
 const CLEAN = [
@@ -797,6 +831,27 @@ const CLEAN = [
       ['e', A402163_EXAMPLE],
       ['e', '  1, 9, 2649;'],
     ],
+  },
+  {
+    rule: 'example-aligned',
+    source: 'a row wrapped onto the next line is left out of the columns',
+    entry: 'A401673',
+    rows: [
+      ['e', 'Triangle begins:'],
+      ['e', '     1;'],
+      ['e', '     2,     1;'],
+      ['e', '    36,   126,    105,     12,       1;'],
+      ['e', '  6728, 84132, 413932, 934213, 1000638, 491689, 99554,'],
+      ['e', '  6638, 36, 1;'],
+      ['e', '  ...'],
+    ],
+  },
+  {
+    rule: 'crossrefs-reverse',
+    source: 'a CROSSREFS sentence that names the entry itself asks nothing of it',
+    entry: 'A401673',
+    rows: [['Y', 'Column k=0, T(n, 0) of A401673, gives A004003.']],
+    options: { mode: 'draft', others: [{ entry: 'A004003', live: true, rows: [['Y', 'Column k=0 of A401673.']] }] },
   },
 ];
 

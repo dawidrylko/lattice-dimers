@@ -58,6 +58,10 @@ function said(entry, revision, editor, date, ...quotes) {
   return `${entry} #${revision}, ${editor}, ${date}: ${quotes.map(quote => `"${quote}"`).join('; ')}`;
 }
 
+function noted(entry, under, editor, date, ...quotes) {
+  return `${entry}, Discussion note under #${under}, ${editor}, ${date}: ${quotes.map(quote => `"${quote}"`).join('; ')}`;
+}
+
 function edit(entry, revision, editor, date, description) {
   return `${entry} #${revision}, ${editor}, ${date}: ${description}`;
 }
@@ -69,7 +73,7 @@ const RULES = [
     text: `DATA holds every term that fits in about ${DATA_WIDTH} characters, counted with the spaces the OEIS shows; the next term of the b-file must not fit. ${DATA_WIDTH} is where Michel Marcus left A402163 (#5, 287 characters); Alois P. Heinz wrote 260 on A309117 (#8), the figure of the Style Sheet, which an editor passes while a term still fits.`,
     source: [
       said('A402163', 5, 'Michel Marcus', '2026-11-14', 'there was room for another term : added'),
-      said('A401988', 6, 'Michel Marcus', '2026-11-11', 'data wants more terms'),
+      noted('A401988', 6, 'Michel Marcus', '2026-11-11', 'data wants more terms'),
       said('A309117', 8, 'Alois P. Heinz', '2019-07-13', '<=260 char in data section usually'),
       'SS "How many terms do we need?": "about 260 characters including spaces and commas"',
     ],
@@ -94,7 +98,7 @@ const RULES = [
   {
     id: 'data-rows',
     field: 'DATA',
-    text: `The DATA of a triangle or an array ends on a row boundary, and a further whole row is added while it fits in about ${DATA_WIDTH} characters.`,
+    text: `The DATA of a triangle or an array ends on a row boundary. A further whole row that would still fit in about ${DATA_WIDTH} characters gives advice: no editor has asked for one.`,
     source: [edit('A401673', 5, 'Alois P. Heinz', '2026-11-02', 'the rest of row n=4 appended')],
     check(info) {
       if (!info.full || !info.table) {
@@ -132,7 +136,7 @@ const RULES = [
       const nextRow = Array.from({ length: length(row) }, (unused, index) => termAt(info, info.offset + total + index));
 
       return nextRow.every(term => term !== undefined) && displayWidth([...info.data, ...nextRow]) <= DATA_WIDTH
-        ? [finding(info.of('S')[0], `Row ${row} still fits in DATA (${displayWidth([...info.data, ...nextRow])} characters): add it.`)]
+        ? [finding(info.of('S')[0], `Row ${row} still fits in DATA (${displayWidth([...info.data, ...nextRow])} characters): consider adding it.`, 'advice')]
         : [];
     },
   },
@@ -307,7 +311,7 @@ const RULES = [
   {
     id: 'crossrefs-reverse',
     field: 'CROSSREFS',
-    text: 'An entry named in a CROSSREFS sentence, as in "Row sums give A239273.", names this entry back in its own CROSSREFS, as "Row sums of A401673."; a Cf. list needs no reply.',
+    text: 'An entry named in a CROSSREFS sentence, as in "Row sums give A239273.", names this entry back in its own CROSSREFS, as "Row sums of A401673."; a Cf. list needs no reply. A missing reply is a defect for an entry with a copy in oeis/ and advice for any other, such as a general sequence like A000012.',
     source: [
       edit('A239273', 46, 'Alois P. Heinz', '2026-11-02', '"Row sums of A401673." added, after A401673 said "Row sums give A239273."'),
       edit('A004003', 169, 'Dawid Ryłko', '2026-11-11', '"Column k=0 of A401673." added, after A401673 said "Column k=0 gives A004003."'),
@@ -336,7 +340,13 @@ const RULES = [
           }
 
           if (!parseEntry(other.text).some(item => item.type === 'Y' && item.value.includes(info.entry))) {
-            findings.push(finding(line, `${target} does not name ${info.entry} back: add the converse sentence to the CROSSREFS of ${target}.`));
+            findings.push(
+              finding(
+                line,
+                `${target} does not name ${info.entry} back: add the converse sentence to the CROSSREFS of ${target}.`,
+                listEntries().includes(target) ? undefined : 'advice',
+              ),
+            );
           }
         }
       }
@@ -413,7 +423,7 @@ const RULES = [
   {
     id: 'links-authors',
     field: 'LINKS',
-    text: 'A list of several authors before a link joins the last one with "and".',
+    text: 'A list of three or more authors before a link joins the last one with "and". Two names give a note, since the second can be a title.',
     source: [edit('A004003', 140, 'Michel Marcus', '2025', '"and" added before the last of five and of three authors')],
     check(info) {
       return info
@@ -423,14 +433,18 @@ const RULES = [
 
           return !/ and /.test(authors) && leadingPeople(authors).length > 1;
         })
-        .map(line => finding(line, 'Join the last author with "and".'));
+        .map(line =>
+          leadingPeople(linkAuthors(line.value)).length > 2
+            ? finding(line, 'Join the last author with "and".')
+            : finding(line, 'If both names before the link are authors, join them with "and"; a title before the link is fine.', 'note'),
+        );
     },
   },
   {
     id: 'links-order',
     field: 'LINKS',
     text: "LINKS starts with the b-file, then goes alphabetically by the first author's last name, and ends with the index entries.",
-    source: [said('A401988', 6, 'Michel Marcus', '2026-11-11', '3rd link should be 2nd position'), 'SS "Links"'],
+    source: [noted('A401988', 6, 'Michel Marcus', '2026-11-11', '3rd link should be 2nd position'), 'SS "Links"'],
     check(info) {
       if (!info.full) {
         return [];
@@ -546,7 +560,7 @@ const RULES = [
     id: 'links-notes-canonical',
     field: 'LINKS',
     text: 'A link into the notebooks names the page itself, not an address that redirects.',
-    source: [edit('A401670', 4, 'Jason Yuen', '2026-11-03', 'notes/torus.html became notes/tori.html after the rename had left the old page a redirect')],
+    source: [edit('A401670', 4, 'Jason Yuen', '2026-11-03', 'notes/torus.html became notes/tori.html')],
     check(info) {
       if (!info.notes) {
         return [];
@@ -597,7 +611,7 @@ const RULES = [
     field: 'LINKS',
     text: 'The b-file link reads "Table of n, a(n) for n = a..b", "Rows n = a..b of triangle, flattened" for a triangle read by rows, "Antidiagonals n = a..b, flattened" for an array read by antidiagonals.',
     source: [
-      edit('A239264', 27, 'Dawid Ryłko', '2026-10-15', '#26, the upload of b239264_2.txt, wrote "Table of n, a(n) for n = 0..1034"; #27 set it back to "Antidiagonals n = 0..44, flattened"'),
+      edit('A239264', 27, 'Dawid Ryłko', '2026-10-15', 'the link line of #26, which came with b239264_2.txt, read "Table of n, a(n) for n = 0..1034"; #27 set it back to "Antidiagonals n = 0..44, flattened"'),
     ],
     check(info) {
       if (!info.bFileLink || !info.name) {
@@ -619,7 +633,7 @@ const RULES = [
     field: 'LINKS',
     text: 'The b-file link is credited to the one person who made the file; terms taken from an earlier file are credited after </a>, as "(terms 0..36 from Alois P. Heinz)".',
     source: [
-      said(
+      noted(
         'A239264',
         28,
         'Sean A. Irvine',
@@ -663,8 +677,8 @@ const RULES = [
   {
     id: 'bfile-credit-kept',
     field: 'LINKS',
-    text: 'A new upload keeps the credit that stood after </a> in the b-file line; the upload form drops it.',
-    source: [edit('A239264', 36, 'Dawid Ryłko', '2026-11-01', '#35, the upload of b239264_3.txt, dropped the credit "(antidiagonals 0..36 from Alois P. Heinz)"; #36 put it back')],
+    text: 'A new upload keeps the credit that stood after </a> in the b-file line; check the line after every upload.',
+    source: [edit('A239264', 36, 'Dawid Ryłko', '2026-11-01', 'the link line of #35, which came with b239264_3.txt, had no credit "(antidiagonals 0..36 from Alois P. Heinz)"; #36 put it back')],
     check(info) {
       if (!info.previous || !info.bFileLink) {
         return [];
@@ -703,7 +717,7 @@ const RULES = [
     field: 'all',
     text: `The account name is "${ACCOUNT}"; outside LINKS and AUTHOR it appears only as the signature "_${ACCOUNT}_, Mon dd yyyy" that ~~~~ writes.`,
     source: [
-      said('A004003', 161, 'Michel Marcus', '2026-10-15, in the Discussion', 'you must sign with ~~~~', 'you must use same name as you registered'),
+      noted('A004003', 161, 'Michel Marcus', '2026-10-15', 'you must sign with ~~~~', 'you must use same name as you registered'),
       edit('A239273', 48, 'Alois P. Heinz', '2026-11-11', '"Dawid Rylko" became "Dawid Ryłko" in the b-file link'),
     ],
     check(info) {
@@ -804,7 +818,7 @@ const RULES = [
     field: 'COMMENTS, FORMULA',
     text: 'Wording stays true when more terms or digits or another reference are added: a source is cited as "Ryłko (2026)", never as "the Zenodo preprint", and no sentence depends on how many terms or digits are listed.',
     source: [
-      said(
+      noted(
         'A401669',
         4,
         'Sean A. Irvine',
@@ -858,14 +872,20 @@ const RULES = [
   {
     id: 'example-aligned',
     field: 'EXAMPLE',
-    text: 'Rows of numbers in EXAMPLE, a triangle or an array, are aligned on the right: in every column the numbers end at the same position.',
+    text: 'Rows of numbers in EXAMPLE, a triangle or an array, are aligned on the right: in every column the numbers end at the same position. A row wrapped onto the next line, the first part ending with a comma, is left out.',
     source: [edit('A401673', 6, 'Alois P. Heinz', '2026-11-02', 'the rows of "Triangle begins:" right-aligned by column')],
     check(info) {
       const groups = [];
       let group = [];
+      let wrapped = false;
 
       for (const line of info.lines) {
-        if (line.type === 'e' && NUMERIC_ROW.test(line.value)) {
+        const row = line.type === 'e' && NUMERIC_ROW.test(line.value);
+        const continued = wrapped && row;
+
+        wrapped = row && /,\s*$/.test(line.value);
+
+        if (row && !wrapped && !continued) {
           group.push(line);
         } else {
           groups.push(group);
@@ -1402,10 +1422,13 @@ async function readDraftHtml(entry, file) {
     return fs.readFileSync(file === '-' ? 0 : file, 'utf-8');
   }
 
-  const response = await fetch(`https://oeis.org/draft/${entry}`, { signal: AbortSignal.timeout(30000) });
+  const url = `https://oeis.org/draft/${entry}`;
+  const response = await fetch(url, { signal: AbortSignal.timeout(30000) }).catch(error => {
+    throw new Error(`${url} could not be fetched (${error.cause?.message ?? error.message}); save the page with curl and pass the file.`);
+  });
 
   if (!response.ok) {
-    throw new Error(`https://oeis.org/draft/${entry} answered HTTP ${response.status}`);
+    throw new Error(`${url} answered HTTP ${response.status}`);
   }
 
   return response.text();
@@ -1432,8 +1455,12 @@ function parseArguments(argv) {
   for (let index = 0; index < argv.length; index++) {
     if (argv[index] === '--print') {
       flags.print = true;
-    } else if (argv[index] === '--related' && argv[index + 1]) {
-      flags.related.push(argv[++index]);
+    } else if (argv[index] === '--related') {
+      if (!argv[index + 1] || argv[index + 1].startsWith('--')) {
+        flags.invalid = true;
+      } else {
+        flags.related.push(argv[++index]);
+      }
     } else {
       positional.push(argv[index]);
     }
@@ -1520,14 +1547,15 @@ async function lintDraft(mode, target, extra, flags) {
   }
 
   const results = lintEntry(text, options);
+  const report = flags.print ? console.error : console.log;
 
-  formatFindings(results, []).forEach(line => console.log(line));
+  formatFindings(results, []).forEach(line => report(line));
 
   if (!options.bFile) {
-    console.log(`No b-file for ${entry}: data-fill and data-rows could not look past DATA; pass the b-file with --file <entry text> <b-file>.`);
+    report(`No b-file for ${entry}: data-fill and data-rows could not look past DATA; pass the b-file with --file <entry text> <b-file>.`);
   }
 
-  console.log(summarize(results, []));
+  report(summarize(results, []));
 
   return results.some(result => result.level === 'defect') ? 1 : 0;
 }
@@ -1535,6 +1563,12 @@ async function lintDraft(mode, target, extra, flags) {
 async function main(argv) {
   const { flags, positional } = parseArguments(argv);
   const [mode, target, extra] = positional;
+
+  if (flags.invalid) {
+    console.error(`--related needs the path of a saved entry text.\n${USAGE}`);
+
+    return 2;
+  }
 
   if (mode === '--rules') {
     RULES.forEach(rule => console.log(`${rule.id} (${rule.field}${rule.level ? `, ${rule.level}` : ''}): ${rule.text}\n  source: ${rule.source.join('; ')}`));

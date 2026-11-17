@@ -132,6 +132,54 @@ test('a CROSSREFS sentence naming an entry without a full copy gives a note in a
   assert.deepEqual(repository, []);
 });
 
+test('a missing converse sentence is a defect for an entry in oeis/ and advice for any other', () => {
+  const text = '%Y A999990 Row sums give A239273. Column k=0 gives A000012.\n';
+  const others = [
+    { entry: 'A239273', live: true, text: '%Y A239273 Cf. A004003.\n' },
+    { entry: 'A000012', live: true, text: '%Y A000012 Cf. A000027.\n' },
+  ];
+  const results = lintEntry(text, { entry: 'A999990', mode: 'draft', others }).filter(result => result.rule === 'crossrefs-reverse');
+
+  assert.deepEqual(
+    results.map(result => `${result.level} ${result.message.slice(0, 7)}`),
+    ['defect A239273', 'advice A000012'],
+  );
+});
+
+test('a triangle cut inside a row is a defect and a further whole row is advice', () => {
+  const levels = expect =>
+    CASES.filter(item => item.rule === 'data-rows' && (item.expect ?? '') === expect).flatMap(item =>
+      lintEntry(entryText(item.entry, item.before), caseOptions(item))
+        .filter(result => result.rule === 'data-rows')
+        .map(result => result.level),
+    );
+
+  assert.deepEqual(levels(''), ['defect']);
+  assert.deepEqual(levels('Row 4 still fits'), ['advice']);
+});
+
+test('DATA takes the next term at 290 characters with spaces and not at 291', () => {
+  const fill = first => {
+    const terms = [first, ...Array.from({ length: 24 }, () => '1234567890')];
+    const text = entryText('A999990', [['S', terms.slice(0, -1).join(',')], ['O', '0,1']]);
+
+    return lintEntry(text, { entry: 'A999990', notes: NOTES, bFile: terms.map((term, index) => [String(index), term]) }).filter(result => result.rule === 'data-fill');
+  };
+
+  assert.match(fill('12')[0]?.message ?? '', /still fits \(290\)/);
+  assert.deepEqual(fill('123'), []);
+});
+
+test('two names before a link give a note, since the second can be a title', () => {
+  const text = '%H A004003 Laura Florescu, Domino Tilings, <a href="https://doi.org/10.37236/1314">A constructed title</a>, 2015.\n';
+  const results = lintEntry(text, { entry: 'A004003', notes: NOTES }).filter(result => result.rule === 'links-authors');
+
+  assert.deepEqual(
+    results.map(result => result.level),
+    ['note'],
+  );
+});
+
 test('the draft page parses into the entry text', () => {
   const text = parseDraftPage(fs.readFileSync(DRAFT_PAGE, 'utf-8'), 'A402163');
   const lines = text.trimEnd().split('\n');
@@ -188,16 +236,22 @@ test('the command line lints the repository and a draft page and lists the rules
   assert.doesNotMatch(draft.stdout, /No b-file/);
   assert.match(printed.stdout, /^%K A402163 nonn$/m);
   assert.doesNotMatch(printed.stdout, /changed/);
+  assert.deepEqual(
+    printed.stdout.trimEnd().split('\n').filter(line => !/^%[A-Za-z] A402163 /.test(line)),
+    [],
+  );
+  assert.match(printed.stderr, /^0 defect\(s\), \d+ advice, /m);
   assert.equal(file.status, 1, file.stdout + file.stderr);
   assert.match(file.stdout, /defect \[comment-provenance\]/);
 });
 
-test('the command line refuses an unknown entry, a missing file and a bad argument', () => {
+test('the command line refuses an unknown entry, a missing file, a bad argument and --related without a path', () => {
   const run = args => spawnSync(process.execPath, [path.join(ROOT_DIRECTORY, 'oeis', 'editorRules.js'), ...args], { encoding: 'utf-8' });
   const unknown = run(['A999999']);
   const missing = run(['--file', path.join(ROOT_DIRECTORY, 'oeis', 'A999999', 'A999999.txt')]);
   const page = run(['--draft', 'A402163', path.join(ROOT_DIRECTORY, 'oeis', 'missing.html')]);
   const bad = run(['--fix']);
+  const related = run(['--draft', 'A402163', DRAFT_PAGE, '--related']);
 
   assert.equal(unknown.status, 2);
   assert.match(unknown.stderr, /No entry A999999 in oeis\//);
@@ -206,6 +260,8 @@ test('the command line refuses an unknown entry, a missing file and a bad argume
   assert.equal(page.status, 2);
   assert.equal(bad.status, 2);
   assert.match(bad.stderr, /Usage:/);
+  assert.equal(related.status, 2);
+  assert.match(related.stderr, /--related needs the path/);
 });
 
 test('a draft without a b-file says that DATA was checked alone', () => {
