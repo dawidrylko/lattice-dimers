@@ -1,0 +1,80 @@
+                    <div class=resultline></div>
+                    <div class=resultbar>All edits since published version (omitting small deletions for readability):</div>
+            <div class=resultline></div>
+    <div>
+        <div class=entry>
+                    <div class=section>
+                        <div class=sectname>NAME</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><del>allocated for Dawid Ryłko</del></tt></p>
+                <p class="diffs"><tt><ins>Number of domicule tilings of a 2n X 2n cylindrical grid.</ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>DATA</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><ins>1, 9, 2649, 77481277, 218443636071809, 57427497888371336885449, 1395563348793812044332013274776713, 3128916537327542580980996959564887390713928173, 646956954129715568786996558103553266832772491709888662811137, 12335487571209436768383230060812575724495333522296724603496099865472598819137</ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>OFFSET</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><ins>0,2</ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>COMMENTS</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><ins>For n &gt; 1, a(n) is the number of perfect matchings of the strong product P_2n X C_2n, which is the king's graph on the 2n X 2n cylinder. For n = 1 the cylinder has multiple edges, and each of them counts as a separate piece, as in <a href="/A401670" title="Number of domicule tilings of a 2n X 2n toroidal grid.">A401670</a>.</ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>LINKS</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><ins>Dawid Ryłko, &lt;a href=&quot;/<a href="/A402163" title="allocated for Dawid Ryłko">A402163</a>/b402163_1.txt&quot;&gt;Table of n, a(n) for n = 0..11&lt;/a&gt;</ins></tt></p>
+                <p class="diffs"><tt><ins>Dawid Ryłko, &lt;a href=&quot;https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html&quot;&gt;Domicules: tilings of cylinders&lt;/a&gt;.</ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>EXAMPLE</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><ins>a(1) = 9: on the 2 X 2 cylinder each cell is joined to its row neighbor by 2 edges, to its column neighbor by 1 edge and to the diagonal cell by 2 edges, so a(1) = 2*2 + 1*1 + 2*2 = 9.</ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>PROG</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><ins>(PARI) \\ M(w): row transfer matrix of the cylinder of circumference w; a(n) goes from the empty row to the empty row.</ins></tt></p>
+                <p class="diffs"><tt><ins>R(w, c, f, t) = {my(v = []); if(c == w, return([t])); if(bittest(f, c), return(R(w, c+1, f, t))); if(c+1 &lt; w &amp;&amp; !bittest(f, c+1), v = concat(v, R(w, c+2, f + 2^c + 2^(c+1), t))); if(c == 0 &amp;&amp; !bittest(f, w-1), v = concat(v, R(w, 1, f + 1 + 2^(w-1), t))); for(d = -1, 1, my(j = (c+d) % w); if(!bittest(t, j), v = concat(v, R(w, c+1, f + 2^c, t + 2^j)))); v};</ins></tt></p>
+                <p class="diffs"><tt><ins>M(w) = {my(A = matrix(2^w, 2^w)); for(f = 0, 2^w-1, my(v = R(w, 0, f, 0)); for(i = 1, #v, A[f+1, v[i]+1]++)); A};</ins></tt></p>
+                <p class="diffs"><tt><ins>a(n) = (M(2*n)^(2*n))[1, 1];</ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>CROSSREFS</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><ins>Cf. <a href="/A239264" title="Number A(n,k) of domicule tilings of a k X n grid; square array A(n,k), n&gt;=0, k&gt;=0, read by antidiagonals.">A239264</a>, <a href="/A239273" title="Number of domicule tilings of a 2n X 2n square grid.">A239273</a> (2n X 2n square), <a href="/A401670" title="Number of domicule tilings of a 2n X 2n toroidal grid.">A401670</a> (2n X 2n torus), <a href="/A401669" title="Decimal expansion of the entropy per site of the dimer coverings (perfect matchings) of the king's graph (square lattice wit...">A401669</a>.</ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>KEYWORD</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><del>allocated</del></tt></p>
+                <p class="diffs"><tt><ins><span title="a sequence of nonnegative numbers">nonn</span>,<span title="edited within the last two weeks">changed</span></ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>AUTHOR</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><ins><a href="/wiki/User:Dawid_Ryłko">Dawid Ryłko</a>, Nov 14 2026</ins></tt></p>
+                        </div>
+                        </div>
+                    <div class=section>
+                        <div class=sectname>STATUS</div>
+                        <div class=sectbody>
+                <p class="diffs"><tt><del>approved</del></tt></p>
+                <p class="diffs"><tt><ins>proposed</ins></tt></p>
+                </div>
+                </div>
+        </div>
+    </div>

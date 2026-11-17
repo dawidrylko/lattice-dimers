@@ -121,6 +121,8 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | `package.json` could be published to npm | `1a1445b` | `test:metadata`, private (new) | `"private": true` removed |
 | links to OEIS entries came in three forms | `f3b5023` | `test:markdown`, links to OEIS entries; `test:oeis`, the table | the old form `OEIS [A401670](../oeis/A401670/README.md)` in a note; `oeis/README.md` from `f3b5023^` |
 | the keywords of the site named three of the nine OEIS entries | #138 | `test:metadata`, the OEIS keywords of the site (new) | `site/template.html` and `site/build.js` from `d565810` |
+| the OEIS editors corrected the same kinds of defect in entry texts from this repository: DATA cut short, `more` next to a b-file, how the terms were checked in COMMENTS, a formula that points to the program, a program copied from a related entry, links to notes that redirect, missing MathWorld links, the order and form of LINKS and CROSSREFS, signatures, EXTENSIONS for b-file terms | the OEIS revisions named in [`fixtures/oeisRuleCases.js`](fixtures/oeisRuleCases.js) | `test:oeis`, the editor rules, one case per correction (new) | each case holds the text from before the edit; the copy of A402163 with its DATA cut back to a(0)-a(8) |
+| the copy of A402163 kept the keyword `changed` that the OEIS sets on its own | #149 | `test:oeis`, the entry texts against the editor rules (new) | `%K A402163 nonn,changed` |
 
 ## Research scripts
 
