@@ -60,7 +60,12 @@ function primesBelow(start, count) {
 }
 function isqrt(n) { if (n < 2n) return n; let x = 1n << BigInt(Math.ceil(n.toString(2).length / 2) + 1); for (;;) { const y = (x + n / x) / 2n; if (y >= x) return x; x = y; } }
 
-const [from, to] = process.argv.slice(2).map(Number);
+const range = process.argv.slice(2);
+if (range.length !== 2 || !range.every(arg => /^[0-9]+$/.test(arg)) || Number(range[0]) > Number(range[1])) {
+  console.error('Usage: b401988.js <first n> <last n>');
+  process.exit(2);
+}
+const [from, to] = range.map(Number);
 for (let n = from; n <= to; n++) {
   const L = 2 * n;
   if (L === 0) { console.log(n, '1'); continue; }

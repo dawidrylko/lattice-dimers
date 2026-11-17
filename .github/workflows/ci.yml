@@ -24,6 +24,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - name: Select the generator checks
+        if: github.event_name == 'pull_request'
+        env:
+          GENERATOR_INPUTS: '^(oeis/A[0-9]{6}/b[0-9]{6}\.(txt|rs|py|js)$|rust/core/|rust/Cargo\.(toml|lock)$|rust/tests/generators\.rs$|python/lattice_dimers/(__init__\.py$|core/)|python/pyproject\.toml$|python/tests/test_generators\.py$|js/package\.json$|js/\.nvmrc$|harness/oeis\.test\.js$|spec/limits\.json$|\.github/workflows/ci\.yml$)'
+        run: |
+          if ! git rev-parse --verify -q HEAD^2 > /dev/null; then
+            echo "HEAD has no second parent here, so the files the pull request changes are unknown." >&2
+            exit 1
+          fi
+          changed=$(git diff --name-only --no-renames HEAD^1 HEAD)
+          status=0
+          grep -qE "$GENERATOR_INPUTS" <<< "$changed" || status=$?
+          if [ "$status" -eq 0 ]; then
+            echo "The pull request changes what the b-file generators depend on, so they run."
+          elif [ "$status" -eq 1 ]; then
+            echo "GENERATOR_CHECKS=skip" >> "$GITHUB_ENV"
+            echo "The pull request changes nothing the b-file generators depend on, so their checks skip."
+          else
+            echo "grep failed with status $status on GENERATOR_INPUTS." >&2
+            exit 1
+          fi
       - uses: pnpm/action-setup@v6
         with:
           package_json_file: js/package.json

@@ -47,5 +47,10 @@ function a(n) {
   return resultant(P, Q);
 }
 
-const [from, to] = process.argv.slice(2).map(Number);
+const range = process.argv.slice(2);
+if (range.length !== 2 || !range.every(arg => /^[0-9]+$/.test(arg)) || Number(range[0]) > Number(range[1])) {
+  console.error('Usage: b402345.js <first n> <last n>');
+  process.exit(2);
+}
+const [from, to] = range.map(Number);
 for (let n = from; n <= to; n++) console.log(n, a(n).toString());
