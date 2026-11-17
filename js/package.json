@@ -80,6 +80,7 @@
     "test:markdown": "cd .. && node --test harness/markdown.test.js",
     "test:numbers": "cd .. && node --test harness/numbers.test.js",
     "test:metadata": "cd .. && node --test harness/metadata.test.js",
+    "test:ci": "cd .. && node --test harness/ci.test.js",
     "test:site": "cd .. && node --test site/test/",
     "site:build": "cd .. && node site/build.js",
     "readme:images": "cd .. && node site/readme-images.js"

@@ -208,6 +208,7 @@ def test_memory(case):
     assert peak <= MEMORY_LIMIT_BYTES, f"peak {peak / 2**20:.0f} MiB of at most {MEMORY_LIMIT_BYTES / 2**20:.0f} MiB"
 
 
+@pytest.mark.timing
 @pytest.mark.skipif("py" not in ALGORITHMS[CLI["timeSpan"]["algorithm"]], reason="no Python implementation")
 def test_time_span():
     started = time.perf_counter()
