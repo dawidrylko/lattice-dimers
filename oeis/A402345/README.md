@@ -1,6 +1,6 @@
 # A402345
 
-[OEIS A402345](https://oeis.org/draft/A402345): number of domino tilings of the $2n \times 2n$ cylinder.
+[OEIS A402345](https://oeis.org/A402345): number of domino tilings of the $2n \times 2n$ cylinder.
 
 ## Contribution
 
@@ -8,14 +8,14 @@
 
 ## Status
 
-Proposed 17 November 2026, revision #6 of the draft.
+Approved 17 November 2026, revision #12.
 
 ## Files
 
 | file | content |
 | --- | --- |
-| [A402345.txt](A402345.txt) | the full entry text, reconstructed from the draft page |
-| [b402345.txt](b402345.txt) | $n = 0, \dots, 44$, identical to the file uploaded with the draft as `b402345_1.txt`, from [`b402345.js`](b402345.js); its terms up to $n = 10$ are checked against [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json) |
+| [A402345.txt](A402345.txt) | the full entry text as published, with the data on one `%S` line and without the keyword `new` |
+| [b402345.txt](b402345.txt) | $n = 0, \dots, 44$, from [`b402345.js`](b402345.js); identical to the b-file the OEIS installed on 17 November 2026; its terms up to $n = 10$ are checked against [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json) |
 | [A402345.gp](A402345.gp) | the program of the `%o` lines |
 | [b402345.js](b402345.js) | the generator of the b-file |
 
