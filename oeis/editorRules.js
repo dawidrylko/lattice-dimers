@@ -35,6 +35,9 @@ const MATHWORLD = [
   { page: 'PerfectMatching', label: 'Perfect Matching', trigger: /perfect matching|domicule|dimer covering/i },
   { page: 'KingGraph', label: 'King Graph', trigger: /king'?s graph/i },
 ];
+const DOI_LINK = /<a href="https?:\/\/(?:dx\.)?doi\.org\/([^"]+)">([^<]*)<\/a>/i;
+const OPEN_DOI = /^10\.(?:5281\/zenodo|48550\/arxiv)\./i;
+const ARXIV_LINK = /href="https?:\/\/arxiv\.org\/abs\//i;
 const SIZE = '(?:\\d+|\\d*[hknmw])';
 const BOARD_SIZES = [
   new RegExp(`(?:^|[\\s(])${SIZE} x ${SIZE}(?=$|[\\s,.;:)])`, 'g'),
@@ -607,6 +610,40 @@ const RULES = [
     },
   },
   {
+    id: 'links-arxiv-version',
+    field: 'LINKS',
+    level: 'advice',
+    text: 'A DOI link to an article that is not open access has a line for its arXiv version beside it, with the same title. Offline the script cannot see whether the article is open or on arXiv, so it advises; a Zenodo or arXiv DOI is open and needs none.',
+    source: [
+      edit('A401988', 13, 'Vaclav Kotesovec', '2026-11-17', 'the arXiv version of Fendley, Moessner and Sondhi added beside the line of its DOI'),
+      noted('A401988', 13, 'Vaclav Kotesovec', '2026-11-17', 'The article is not open access, so I am including a link to the arXiv version.'),
+    ],
+    check(info) {
+      if (!info.full) {
+        return [];
+      }
+
+      const lines = info.of('H');
+      const versions = lines.filter(line => ARXIV_LINK.test(line.value)).map(line => plainTitle(line.value.replace(/<[^>]*>/g, ' ')));
+
+      return lines
+        .filter(line => {
+          const doi = line.value.match(DOI_LINK);
+
+          if (!doi || OPEN_DOI.test(doi[1]) || ARXIV_LINK.test(line.value)) {
+            return false;
+          }
+
+          const title = plainTitle(doi[2]);
+
+          return title === '' || !versions.some(version => version.includes(title));
+        })
+        .map(line =>
+          finding(line, 'If the article is not open access and is on arXiv, add its arXiv version beside this line: "<authors>, <a href="https://arxiv.org/abs/<id>"><same title></a>, arXiv:<id> [<class>], <year>."'),
+        );
+    },
+  },
+  {
     id: 'bfile-link-text',
     field: 'LINKS',
     text: 'The b-file link reads "Table of n, a(n) for n = a..b", "Rows n = a..b of triangle, flattened" for a triangle read by rows, "Antidiagonals n = a..b, flattened" for an array read by antidiagonals.',
@@ -1163,6 +1200,13 @@ function evaluate(expression, n) {
   const value = sum();
 
   return position === tokens.length && Number.isInteger(value) ? value : null;
+}
+
+function plainTitle(text) {
+  return decodeHtml(text)
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim();
 }
 
 function linkAuthors(value) {

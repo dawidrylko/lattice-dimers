@@ -46,7 +46,9 @@ const A401988_NAME =
 const A401988_BFILE = 'Dawid Ryłko, <a href="/A401988/b401988_2.txt">Table of n, a(n) for n = 0..37</a>';
 const A401988_FENDLEY =
   'Paul Fendley, R. Moessner and S. L. Sondhi, <a href="https://doi.org/10.1103/PhysRevB.66.214513">Classical dimers on the triangular lattice</a>, Phys. Rev. B 66 (2002), 214513.';
-const A401988_NOTES = 'Dawid Ryłko, <a href="https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html">Triangular lattice: rectangles</a>.';
+const A401988_FENDLEY_ARXIV =
+  'Paul Fendley, R. Moessner and S. L. Sondhi, <a href="https://arxiv.org/abs/cond-mat/0206159">Classical dimers on the triangular lattice</a>, arXiv:cond-mat/0206159 [cond-mat.stat-mech], 2002-3.';
+const A401988_NOTES = 'Dawid Ryłko,<a href="https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html">Triangular lattice: rectangles</a>.';
 const A401673_NAME = 'Triangle read by rows: T(n,k) is the number of domicule tilings of the 2n X 2n square with exactly 2k diagonal domicules, 0 <= k <= n^2.';
 const A402163_NAME = 'Number of domicule tilings of a 2n X 2n cylindrical grid.';
 const A402163_BFILE = 'Dawid Ryłko, <a href="/A402163/b402163_1.txt">Table of n, a(n) for n = 0..11</a>';
@@ -292,6 +294,13 @@ const CASES = [
     entry: 'A401988',
     before: a401988(11, [A401988_BFILE, A401988_FENDLEY, A401988_NOTES]),
     after: a401988(11, [A401988_BFILE, A401988_FENDLEY, A401988_NOTES, 'Eric Weisstein\'s World of Mathematics, <a href="https://mathworld.wolfram.com/PerfectMatching.html">Perfect Matching</a>.']),
+  },
+  {
+    rule: 'links-arxiv-version',
+    source: 'A401988 #12 -> #13, Vaclav Kotesovec',
+    entry: 'A401988',
+    before: a401988(11, [A401988_BFILE, A401988_FENDLEY, A401988_NOTES]),
+    after: a401988(11, [A401988_BFILE, A401988_FENDLEY, A401988_FENDLEY_ARXIV, A401988_NOTES]),
   },
   {
     rule: 'bfile-link-text',
@@ -779,6 +788,26 @@ const CLEAN = [
     source: 'narrowed after review: the identifier as the link text',
     entry: 'A004003',
     rows: [['H', 'Henry Cohn, 2-adic behavior of numbers of domino tilings, <a href="https://arxiv.org/abs/math/0008222">arXiv:math/0008222</a> [math.CO], 2000.']],
+  },
+  {
+    rule: 'links-arxiv-version',
+    source: 'narrowed: a Zenodo record and an arXiv DOI are open',
+    entry: 'A401988',
+    rows: a401988(11, [
+      A401988_BFILE,
+      'Dawid Ryłko, <a href="https://doi.org/10.5281/zenodo.23686056">The dimer entropy of the king\'s graph</a>, Zenodo preprint, 2026.',
+      'Henry Cohn, <a href="https://doi.org/10.48550/arXiv.math/0008222">2-adic behavior of numbers of domino tilings</a>, 2000.',
+    ]),
+  },
+  {
+    rule: 'links-arxiv-version',
+    source: 'narrowed: the arXiv version with its identifier as the link text and the title before it',
+    entry: 'A401988',
+    rows: a401988(11, [
+      A401988_BFILE,
+      A401988_FENDLEY,
+      'Paul Fendley, R. Moessner and S. L. Sondhi, Classical dimers on the triangular lattice, <a href="https://arxiv.org/abs/cond-mat/0206159">arXiv:cond-mat/0206159</a> [cond-mat.stat-mech], 2002.',
+    ]),
   },
   {
     rule: 'links-authors',

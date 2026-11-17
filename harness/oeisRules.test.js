@@ -114,7 +114,7 @@ test('an accepted finding covers only the line it names', () => {
 test('advice rules never block and everything else is a defect', () => {
   assert.deepEqual(
     RULES.filter(rule => rule.level !== undefined).map(rule => `${rule.id}:${rule.level}`),
-    ['links-mathworld:advice', 'program-shared:advice'],
+    ['links-mathworld:advice', 'links-arxiv-version:advice', 'program-shared:advice'],
   );
 });
 
