@@ -44,7 +44,9 @@ fn evaluate(cols: usize, prime: u32, weight: u64) -> u32 {
             for &(bit, factor) in &moves[cell % cols] {
                 if state & bit == 0 {
                     let target = (state | bit) >> 1;
-                    next[target] = ((u64::from(next[target]) + u64::from(count) * factor) % u64::from(prime)) as u32;
+                    let added = if factor == 1 { count } else { (u64::from(count) * factor % u64::from(prime)) as u32 };
+                    let sum = next[target] + added;
+                    next[target] = if sum >= prime { sum - prime } else { sum };
                 }
             }
         }

@@ -79,24 +79,14 @@ fn count_rows(cols: usize, rows: usize, start: usize, prime: u32) -> u32 {
     current[start]
 }
 
-fn count_tilings(cols: usize, prime: u32, orbits: &[(usize, u64)]) -> u32 {
-    let total = orbits
-        .iter()
-        .fold(0u64, |total, &(start, weight)| (total + weight * u64::from(count_rows(cols, cols, start, prime))) % u64::from(prime));
-
-    total as u32
-}
-
-fn log2_bound(cols: usize, torus: bool) -> f64 {
-    let cells = (cols * cols) as f64;
-
+fn log2_bound(cols: usize) -> f64 {
     if cols < 3 {
-        return cells / 2.0 * 5f64.log2() + if torus { cols as f64 } else { 0.0 };
+        return (cols * cols) as f64 / 2.0 * 5f64.log2();
     }
 
     let share = |degree: usize| (2..=degree).map(|k| (k as f64).log2()).sum::<f64>() / (2 * degree) as f64;
 
-    if torus { cells * share(8) } else { cols as f64 * (2.0 * share(5) + (cols - 2) as f64 * share(8)) }
+    cols as f64 * (2.0 * share(5) + (cols - 2) as f64 * share(8))
 }
 
 fn read_range() -> (usize, usize) {
@@ -122,37 +112,21 @@ fn main() {
     let sides: Vec<usize> = (first.max(1)..=last).map(|n| 2 * n).collect();
     let primes: BTreeMap<usize, Vec<u32>> = sides
         .iter()
-        .map(|&cols| (cols, list_primes(((log2_bound(cols, false) + 1.0) / 30.0).ceil() as usize + 1)))
+        .map(|&cols| (cols, list_primes(((log2_bound(cols) + 1.0) / 30.0).ceil() as usize + 1)))
         .collect();
-    let orbits: BTreeMap<usize, Vec<(usize, u64)>> = sides.iter().map(|&cols| (cols, vec![(0, 1)])).collect();
-    let mut tasks: Vec<(usize, u32, usize, usize)> = Vec::new();
+    let tasks: Vec<(usize, u32)> = sides.iter().flat_map(|&cols| primes[&cols].iter().map(move |&prime| (cols, prime))).collect();
+    let results = run_workers(&tasks, jobs, |&(cols, prime)| count_rows(cols, cols, 0, prime));
+    let mut residues: BTreeMap<usize, Vec<u32>> = BTreeMap::new();
 
-    for &cols in &sides {
-        let count = orbits[&cols].len();
-        let chunk = count.div_ceil(jobs.min(count));
-
-        for &prime in &primes[&cols] {
-            for from in (0..count).step_by(chunk) {
-                tasks.push((cols, prime, from, (from + chunk).min(count)));
-            }
-        }
-    }
-
-    let results = run_workers(&tasks, jobs, |&(cols, prime, from, to)| count_tilings(cols, prime, &orbits[&cols][from..to]));
-    let mut sums: BTreeMap<(usize, u32), u64> = BTreeMap::new();
-
-    for (&(cols, prime, _, _), residue) in tasks.iter().zip(results) {
-        let sum = sums.entry((cols, prime)).or_default();
-        *sum = (*sum + u64::from(residue)) % u64::from(prime);
+    for (&(cols, _), residue) in tasks.iter().zip(results) {
+        residues.entry(cols).or_default().push(residue);
     }
 
     for n in first..=last {
         let count = if n == 0 {
             BigInt::from_u64(1)
         } else {
-            let primes = &primes[&(2 * n)];
-            let residues: Vec<u32> = primes.iter().map(|&prime| sums[&(2 * n, prime)] as u32).collect();
-            combine_checked_residues(&residues, primes, false).unwrap_or_else(|message| {
+            combine_checked_residues(&residues[&(2 * n)], &primes[&(2 * n)], false).unwrap_or_else(|message| {
                 eprintln!("{message}");
                 process::exit(1);
             })

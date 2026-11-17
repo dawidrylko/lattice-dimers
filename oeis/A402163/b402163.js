@@ -48,21 +48,14 @@ function countRows({ cols, rows, start, prime }) {
   return current[start];
 }
 
-function countTilings({ cols, rows, prime, starts, weights }) {
-  let total = 0;
-  starts.forEach((start, i) => (total = (total + weights[i] * countRows({ cols, rows, start, prime })) % prime));
-  return total;
-}
-
-function log2Bound(cols, torus) {
-  const cells = cols * cols;
-  if (cols < 3) return (cells / 2) * Math.log2(5) + (torus ? cols : 0);
+function log2Bound(cols) {
+  if (cols < 3) return ((cols * cols) / 2) * Math.log2(5);
   const share = degree => {
     let log2Factorial = 0;
     for (let k = 2; k <= degree; k++) log2Factorial += Math.log2(k);
     return log2Factorial / (2 * degree);
   };
-  return torus ? cells * share(8) : cols * (2 * share(5) + (cols - 2) * share(8));
+  return cols * (2 * share(5) + (cols - 2) * share(8));
 }
 
 async function main() {
@@ -75,8 +68,8 @@ async function main() {
   const jobs = os.availableParallelism();
   const sides = [];
   for (let n = Math.max(from, 1); n <= to; n++) sides.push(2 * n);
-  const primes = new Map(sides.map(cols => [cols, listPrimes(Math.ceil((log2Bound(cols, false) + 1) / 30) + 1)]));
-  const tasks = sides.flatMap(cols => primes.get(cols).map(prime => ({ cols, rows: cols, prime, starts: [0], weights: [1] })));
+  const primes = new Map(sides.map(cols => [cols, listPrimes(Math.ceil((log2Bound(cols) + 1) / 30) + 1)]));
+  const tasks = sides.flatMap(cols => primes.get(cols).map(prime => ({ cols, rows: cols, start: 0, prime })));
   const results = await runWorkers(__filename, tasks, jobs);
   const residues = new Map();
   tasks.forEach(({ cols }, i) => residues.set(cols, [...(residues.get(cols) ?? []), results[i]]));
@@ -87,4 +80,4 @@ async function main() {
 }
 
 if (isMainThread) main();
-else parentPort.postMessage(countTilings(workerData));
+else parentPort.postMessage(countRows(workerData));

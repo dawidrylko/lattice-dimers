@@ -53,26 +53,20 @@ def count_rows(cols, rows, start, prime):
     return int(current[0, start])
 
 
-def count_tilings(task):
-    cols, prime, orbits = task
-    total = 0
+def count_cylinder(task):
+    cols, prime = task
 
-    for start, weight in orbits:
-        total = (total + weight * count_rows(cols, cols, start, prime)) % prime
-
-    return total
+    return count_rows(cols, cols, 0, prime)
 
 
-def log2_bound(cols, torus):
-    cells = cols * cols
-
+def log2_bound(cols):
     if cols < 3:
-        return cells / 2 * math.log2(5) + (cols if torus else 0)
+        return cols * cols / 2 * math.log2(5)
 
     def share(degree):
         return sum(math.log2(k) for k in range(2, degree + 1)) / (2 * degree)
 
-    return cells * share(8) if torus else cols * (2 * share(5) + (cols - 2) * share(8))
+    return cols * (2 * share(5) + (cols - 2) * share(8))
 
 
 def main(argv):
@@ -81,25 +75,18 @@ def main(argv):
         return 2
 
     first, last = int(argv[0]), int(argv[1])
-    jobs = os.process_cpu_count() or 1
     sides = [2 * n for n in range(max(first, 1), last + 1)]
-    primes = {cols: list_primes(math.ceil((log2_bound(cols, False) + 1) / 30) + 1) for cols in sides}
-    tasks = []
+    primes = {cols: list_primes(math.ceil((log2_bound(cols) + 1) / 30) + 1) for cols in sides}
+    tasks = [(cols, prime) for cols in sides for prime in primes[cols]]
+    results = run_workers(count_cylinder, tasks, os.process_cpu_count() or 1)
+    residues = {}
 
-    for cols in sides:
-        orbits = [(0, 1)]
-        chunk = -(-len(orbits) // min(jobs, len(orbits)))
-        tasks += [(cols, prime, orbits[i : i + chunk]) for prime in primes[cols] for i in range(0, len(orbits), chunk)]
-
-    results = run_workers(count_tilings, tasks, jobs)
-    sums = {}
-
-    for (cols, prime, _), residue in zip(tasks, results):
-        sums[cols, prime] = (sums.get((cols, prime), 0) + residue) % prime
+    for (cols, _), residue in zip(tasks, results):
+        residues.setdefault(cols, []).append(residue)
 
     for n in range(first, last + 1):
         cols = 2 * n
-        print(n, 1 if n == 0 else combine_checked_residues([sums[cols, prime] for prime in primes[cols]], primes[cols]))
+        print(n, 1 if n == 0 else combine_checked_residues(residues[cols], primes[cols]))
 
     return 0
 
