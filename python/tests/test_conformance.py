@@ -108,7 +108,7 @@ def listed_cases():
         pytest.param(algorithm, case, id=case_id(algorithm, case))
         for algorithm in PYTHON_IDS
         for index, case in enumerate(cases_of(algorithm))
-        if full or keeps(algorithm, case, index)
+        if case.get("source") != "oeis" and (full or keeps(algorithm, case, index))
     ]
 
 

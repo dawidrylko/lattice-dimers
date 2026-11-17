@@ -1,6 +1,6 @@
 # Benchmarks
 
-One command measures everything, in one container with pinned Node.js, Python and Rust ([`Dockerfile`](Dockerfile)):
+One command measures every solver on the square lattice and the king's graph, in one container with pinned Node.js, Python and Rust ([`Dockerfile`](Dockerfile)). The triangular lattice is left out: the full run measures no board of it, and `any-lattice-rectangle-*` has no group.
 
 ```sh
 pnpm -C js benchmark                           # every solver
@@ -10,7 +10,7 @@ pnpm -C js benchmark:compare <run directory> <run directory>
 
 `pnpm -C js benchmark` ([`container.js`](container.js)) builds the image from the current commit and refuses uncommitted changes. It also refuses to start while the host load is above 2, unless given `--force-load`, and samples the host load every minute to `results/host-load-<commit>.txt`, because a container only sees the load of its own virtual machine.
 
-Inside it, [`full.js`](full.js) runs every implementation of every solver 10 times on each board up to 20 × 20, cheapest board first. It estimates a board from the one before: the last growth seen, but at least the growth of the state count. Boards of the largest solvers would take years, so `--board-budget-hours <hours>` caps one board in one language. A board whose 10 runs would exceed it is not started, and `plan.json` records it with its estimate. Without it the command starts every board. A board that runs out of memory or time is recorded there too; any other failure, such as a wrong count, stops the run and leaves it incomplete. A rerun of the same commit and toolchains resumes, so a higher budget only adds boards. A resume keeps its directory after a change of Docker's memory, and `--force` accepts another machine.
+Inside it, [`full.js`](full.js) runs every implementation of every solver 10 times on each board up to 20 × 20 of the square lattice and the king's graph, cheapest board first. It estimates a board from the one before: the last growth seen, but at least the growth of the state count. Boards of the largest solvers would take years, so `--board-budget-hours <hours>` caps one board in one language. A board whose 10 runs would exceed it is not started, and `plan.json` records it with its estimate. Without it the command starts every board. A board that runs out of memory or time is recorded there too; any other failure, such as a wrong count, stops the run and leaves it incomplete. A rerun of the same commit and toolchains resumes, so a higher budget only adds boards. A resume keeps its directory after a change of Docker's memory, and `--force` accepts another machine.
 
 ## Batches
 
@@ -18,7 +18,7 @@ A measurement can take days, so it can run in parts from the same commit. `pnpm 
 
 ## Results
 
-A run lives in `results/<commit>-node<version>-python<version>-rust<version>/`, so a comparison answers whether a change to the algorithms or an update of a toolchain improved anything or caused a regression. The site reads the newest run whose `environment.json` says `complete: true` and `dirty: false`. Every table of the Benchmarks tab lists every square board from 0 × 0 to 20 × 20, while the notebooks show only the boards the run measured. Where a solver has no time, the cell shows a dash. Its tooltip gives the reason `plan.json` records, says that the run predates the 0 × 0 board or did not reach the board, or, on the triangular lattice, that no run has measured it.
+A run lives in `results/<commit>-node<version>-python<version>-rust<version>/`, so a comparison answers whether a change to the algorithms or an update of a toolchain improved anything or caused a regression. The site reads the newest run whose `environment.json` says `complete: true` and `dirty: false`. Every table of the Benchmarks tab lists every square board from 0 × 0 to 20 × 20, while the notebooks show only the boards the run measured. Where a solver has no time, the cell shows a dash. Its tooltip gives the reason `plan.json` records, says that the run predates the 0 × 0 board or did not reach the board, or, on the triangular lattice, that the full run leaves it out.
 
 Each result file holds two times per run. The time of the count is what the solver measures itself with `--time` ([`spec/contract.md`](../spec/contract.md)), and the site compares it. The process time adds the start of Node.js, Python or the binary. Modular solvers run with a fixed number of threads (`--jobs` of the command, 4 by default), since they would otherwise take it from the cores and memory of the machine.
 

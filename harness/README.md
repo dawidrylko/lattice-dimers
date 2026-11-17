@@ -1,6 +1,6 @@
 # Tests
 
-Each language tests itself on the shared data: [`spec/cases/`](../spec/cases/README.md), [`spec/limits.json`](../spec/limits.json) and [`spec/cli.json`](../spec/cli.json). The tests take a short run by default, and `FULL_CASES=1` runs every known term.
+Each language tests itself on the shared data: [`spec/cases/`](../spec/cases/README.md), [`spec/limits.json`](../spec/limits.json) and [`spec/cli.json`](../spec/cli.json). The tests take a short run by default, and `FULL_CASES=1` runs every known term but the counts copied from the OEIS, which no solver here has counted.
 
 A short run stops `domino-rectangle-bigint` and `domicule-rectangle-bigint` at the 16 × 16 square and `any-lattice-cylinder-torus-bigint` at the 8 × 8 torus. `any-lattice-cylinder-torus-modular`, `any-lattice-rectangle-modular`, `domicule-rectangle-polynomial-modular` and `domicule-cylinder-torus-polynomial-modular` run their first seven cases and the boards of their BigInt twins.
 
@@ -24,7 +24,7 @@ The commands below run in CI on each pull request, in this order, apart from `pn
 
 [REGRESSIONS.md](REGRESSIONS.md) lists every defect fixed so far, the check that fails if it comes back, and how that was shown.
 
-`FULL_CASES=1` runs every known term in any of the three languages. It takes hours in JavaScript and Python, the 16 × 16 torus alone about 75 minutes, and runs outside CI.
+`FULL_CASES=1` runs every known term but the copied counts in any of the three languages. It takes hours in JavaScript and Python, the 16 × 16 torus alone about 75 minutes, and runs outside CI.
 
 The CI job `Research` runs the Python checks of [`research/king-entropy`](../research/king-entropy/README.md): `src/test_paths.py`, `src/test_timed.py`, `src/test_regressions.py`, reruns of `src/derived.py`, `src/errbar.py`, `src/hidden_oos.py`, `src/lspec.py` and `src/ltest.py` against their files in `out/` and of `replication/analyze_eig.py` and `replication/compare_eig.py` against theirs in `replication/out/`, and the syntax of `.zenodo.json`.
 

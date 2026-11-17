@@ -56,6 +56,8 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
+| the Runs column of a benchmark table showed a dash with no tooltip where no implementation had a time | #146 | `test:site`, benchmark table, a dash with no reason, now over the Runs column too | the site of `e9f13b2` built in a copy |
+| the footer named the MIT license only, while `notes/` and the data are CC BY 4.0 | #146 | `test:site`, shared header and footer, both licenses (new) | the site of `e9f13b2` built in a copy |
 | the domino rectangle table scrolled sideways at 721 to 739 px in Verdana, with the 12-digit count of 10 × 10 in full | `00ac79c` | `test:site`, benchmark table at 920 px | counts shortened from 13 digits |
 | the domicule torus table scrolled 12 px sideways at 721 px in DejaVu Sans on CI, and the nine columns of the domino rectangle table up to 118 px at 721 to 919 px in Verdana | `fd3de8d` | `test:site`, benchmark table at 919 and 920 px | the 919 px media query back at 720 px |
 | on a card the BigInt times of the domino rectangle table followed the Formula ones on the same line, and those of the domicule rectangle table the Modular ones | `fd3de8d`, `7410247` | `test:site`, benchmark table at 375, 786 and 919 px | the table out of the `td:nth-child(6)` rule |
@@ -102,6 +104,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
+| the cylinder and torus series of `full.js` lost their growth floors when #132 renamed `all-lattices-*` to `any-lattice-*`, so their boards were estimated with the floor of 4.4 instead of up to 51 | #146 | `test:benchmarks`, the growth floors under the any-lattice ids and every floor matching a series of the full run (new) | the floors keyed to `all[-_]lattices` as on `e9f13b2` |
 | a dash for a board over budget named the budget of the run, not the 0.25 h its own series ran with, once #123 moved that series into the run | #123 | `test:benchmarks`, dash for an entry of `plan.json` with a budget of its own | `budgetHours` for `ownBudgetHours ?? budgetHours` in `describeMissing` |
 | a run overwrote a month measured on another machine | `3d9cb08` | `test`, benchmark guard test | `checkDirectory` removed |
 | `-o` past every case wrote `environment.json` first | `8298d43` | `test`, empty selection test (new) | the environment saved before the check |

@@ -82,7 +82,7 @@ print(`Run: ${nb.context.benchmarkRun}`);
 
 ## Verification
 
-The two cylinder and torus solvers agree with each other and with [OEIS A335586](https://oeis.org/A335586) and [OEIS A253678](https://oeis.org/A253678), and the modular solver also with [OEIS A281679](https://oeis.org/A281679). `FULL_CASES=1 node --test js/test/conformance.test.js` runs the tori of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both solvers and those of `spec/cases/any-lattice-cylinder-torus-modular.json` through the modular one.
+The two cylinder and torus solvers agree with each other and with [OEIS A335586](https://oeis.org/A335586) and [OEIS A253678](https://oeis.org/A253678), and the modular solver also with [OEIS A281679](https://oeis.org/A281679). `FULL_CASES=1 node --test js/test/conformance.test.js` runs the tori of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both solvers and those of `spec/cases/any-lattice-cylinder-torus-modular.json` through the modular one, all but the 18 × 18 and 20 × 20 tori, whose counts are copied from A335586.
 
 ## References
 
