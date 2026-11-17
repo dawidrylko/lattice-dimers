@@ -20,3 +20,10 @@ The entry texts `A*.txt` are in the OEIS internal format. Published lines come f
 
 The b-files `b*.txt` are rebuilt by `node oeis/buildBFiles.js` from the exact counts committed in this repository; the README of each entry names the source. A b-file longer than those counts has its own generator `b<number>.js` next to it, and `buildBFiles.js` checks only the terms the counts cover, as for A309117 and A401988. The programs `A*.gp` hold the PARI/GP programs of the entry texts, laid out over several lines; `A401670.gp` and `A402163.gp` also define `T(h, w)`, for the $h \times w$ torus and the $h \times w$ cylinder.
 
+## Editor rules
+
+[`editorRules.js`](editorRules.js) turns what the OEIS editors corrected in these entries, and what the [OEIS Style Sheet](https://oeis.org/wiki/Style_Sheet) asks for, into checks on an entry text, one rule per correction with the revision that made it. `node oeis/editorRules.js --rules` lists them with their sources.
+
+`node oeis/editorRules.js` checks the entry texts here, and `node oeis/editorRules.js A401670` one of them. A finding that the entry on the OEIS still has, or that waits for the copy of a draft to be synced after approval, is kept in `ACCEPTED` with its reason; the test fails when it no longer fires, so the list shrinks with the copies.
+
+`node oeis/editorRules.js --draft <A-number> <draft page .html>` checks a draft before it is submitted: it rebuilds the text from the block of edits on the saved draft page (`-` reads the page from standard input, and with no file the script fetches it), and `--print` shows that text. `node oeis/editorRules.js --file <entry .txt> [b-file]` checks a text in the internal format before it goes into the form. Both exit with 1 on any finding.

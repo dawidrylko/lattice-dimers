@@ -3,11 +3,12 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { test } = require('node:test');
+const { splitDefinitions } = require('../oeis/editorRules');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OEIS_DIRECTORY = path.join(ROOT_DIRECTORY, 'oeis');
 const ENTRY_PATTERN = /^A\d{6}$/;
-const ROOT_FILES = ['README.md', 'buildBFiles.js'];
+const ROOT_FILES = ['README.md', 'buildBFiles.js', 'editorRules.js'];
 const TABLE_HEADER = '| entry | sequence | entry text | b-file | PARI/GP |';
 const NO_FILE = '—';
 const SECTIONS = ['Contribution', 'Status', 'Files'];
@@ -422,39 +423,6 @@ function checkProgram(entry) {
   }
 
   return errors;
-}
-
-function splitDefinitions(program) {
-  const definitions = [];
-  let depth = 0;
-  let current = '';
-
-  for (let i = 0; i < program.length; i++) {
-    const character = program[i];
-
-    if (character === '"') {
-      let end = i + 1;
-
-      while (end < program.length && program[end] !== '"') {
-        end += program[end] === '\\' ? 2 : 1;
-      }
-
-      current += program.slice(i, end + 1);
-      i = end;
-    } else if (program.startsWith('\\\\', i)) {
-      i = program.indexOf('\n', i) === -1 ? program.length : program.indexOf('\n', i) - 1;
-    } else if (program.startsWith('/*', i)) {
-      i = program.indexOf('*/', i) === -1 ? program.length : program.indexOf('*/', i) + 1;
-    } else if (character === ';' && depth === 0) {
-      definitions.push(current);
-      current = '';
-    } else if (!/\s/.test(character)) {
-      depth += '({['.includes(character) ? 1 : ')}]'.includes(character) ? -1 : 0;
-      current += character;
-    }
-  }
-
-  return [...definitions, current].filter(Boolean);
 }
 
 function checkBFileFacts(entry) {
