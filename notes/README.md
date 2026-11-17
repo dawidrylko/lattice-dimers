@@ -16,7 +16,7 @@ The notebooks are grouped as the site menu groups them: the notes of each kind o
   - [Cylinders](triangular-lattice/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html)): the triangular lattice on cylinders, for comparison.
   - [Tori](triangular-lattice/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori.html)): the triangular lattice on 2n × 2n tori, for comparison.
   - By diagonal pieces:
-    - [Rectangles](triangular-lattice/04-rectangles-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles-by-diagonal-pieces.html)): tilings of the triangular lattice on the 2n × 2n board by the number of diagonal pieces, their bound of 2n² − 2n and the tilings that reach it.
+    - [Rectangles](triangular-lattice/04-rectangles-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles-by-diagonal-pieces.html)): tilings of the triangular lattice on the 2n × 2n board by the number of diagonal pieces, their bound of 2n² − 2n and the tilings that reach it, and their weighted counts.
     - [Cylinders](triangular-lattice/05-cylinders-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders-by-diagonal-pieces.html)): tilings of the triangular lattice on cylinders by the number of diagonal pieces.
     - [Tori](triangular-lattice/06-tori-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori-by-diagonal-pieces.html)): tilings of the triangular lattice on tori by the number of diagonal pieces, a third of them diagonal on average.
 - Domicules:

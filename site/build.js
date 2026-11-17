@@ -140,7 +140,7 @@ const NOTE_SUMMARIES = {
   'triangular-lattice/rectangles': 'Notebook: perfect matchings of the triangular lattice on the 2n × 2n board (A401988) and on rectangles, by a transfer and by the Kasteleyn determinant, counted for comparison with dominoes and domicules.',
   'triangular-lattice/cylinders': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
   'triangular-lattice/tori': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
-  'triangular-lattice/rectangles-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on the 2n × 2n board by the number of diagonal pieces, up to 16 × 16, with at most 2n² − 2n of them.',
+  'triangular-lattice/rectangles-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on the 2n × 2n board by the number of diagonal pieces, up to 16 × 16, with at most 2n² − 2n of them, and their weighted counts.',
   'triangular-lattice/cylinders-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on cylinders by the number of diagonal pieces, checked against the gallery up to 10 × 10.',
   'triangular-lattice/tori-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on tori by the number of diagonal pieces, checked against the gallery up to 10 × 10.',
 };
