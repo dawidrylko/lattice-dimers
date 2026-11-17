@@ -903,6 +903,51 @@
       "expectedResult": "1"
     },
     {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "triangular",
+      "expectedResult": "21595276379487753000398580864311424"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "triangular",
+      "expectedResult": "1421121792899322405620972418566478159370813696"
+    },
+    {
+      "rowCount": 18,
+      "colCount": 18,
+      "lattice": "triangular",
+      "expectedResult": "2883938119001938782548896645897475887755130321743262156288"
+    },
+    {
+      "rowCount": 20,
+      "colCount": 20,
+      "lattice": "triangular",
+      "expectedResult": "180480518263582684213855432207250604892829163870401601814682825443744768"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1272474085699328787087360000"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "6077620026393211843170739995972993024"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "895175319572867600647189566491699922102072115200"
+    },
+    {
       "rowCount": 18,
       "colCount": 18,
       "lattice": "square",
