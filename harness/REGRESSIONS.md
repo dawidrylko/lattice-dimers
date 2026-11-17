@@ -51,6 +51,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | `--random` of the renderer took the remainder of its draw for the number of the tiling, so on the 2 × 2 board of domicules the first of the three tilings came up 86 times in 256 | #138 | `test:render`, command line random number (new) | `js/tilingRenderer.js` from `d565810` |
 | the Python diagonal Modular solver, today `domicule-rectangle-polynomial-modular`, printed an empty line instead of a message on a board too long to allocate | `c087852` | `python -m pytest python/tests`, rejection of `-r 9007199254740991 -c 1` with "Invalid array length" | `except (MemoryError, ValueError) as error` printing the error |
 | the Rust diagonal Modular solver, today `domicule-rectangle-polynomial-modular`, aborted on an odd board too long to allocate | `c087852` | `cargo test --workspace --release`, conformance rejections, `-r 9007199254740991 -c 1` with "Invalid array length" | `vec!["0".to_string(); degree + 1]` for the odd board |
+| `run_workers` of the Python core failed with `ValueError` on an empty list of tasks, so the Python generators of A239264, A239273, A401670, A401673 and A402163 failed on `0 0`, and that of A239264 also on `1 1` | #157 | `python -m pytest python/tests`, a generator printing one term (new) | `max(1, ...)` removed from `run_workers` |
 
 ## Site
 

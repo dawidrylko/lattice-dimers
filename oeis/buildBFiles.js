@@ -301,4 +301,8 @@ function main() {
   process.exit((args.includes('--check') ? check() : build(entries.length > 0 ? entries : Object.keys(LAST_TERMS))) ? 0 : 1);
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { LAST_TERMS };
