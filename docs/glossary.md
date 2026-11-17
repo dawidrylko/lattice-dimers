@@ -51,7 +51,7 @@ A signed count weighs each tiling with a sign instead of counting it once. The o
 
 ## Site
 
-The site has the gallery and the benchmarks on its main page and the notebooks on their own pages. The header menu groups the notebooks by the kind of piece or lattice, and each group lists them by surface. The groups of the menu and the buttons of both Pieces switches go from the square lattice through the triangular lattice to the king's graph: Dominoes, Triangular lattice, Domicules. Each lattice has the edges of the one before it and one more diagonal in every square face, so the tilings of a board on each lattice include those on the one before it.
+The site has the gallery and the benchmarks on its main page and the notebooks on their own pages. The header menu groups the notebooks by the kind of piece or lattice, and each group lists them by surface. The groups of the menu and the buttons of both Pieces switches go from the square lattice through the triangular lattice to the king's graph: Dominoes, Triangular lattice, Domicules. Each lattice adds a diagonal to every square face of the one before it, the triangular lattice the one that runs down to the right and the king's graph the other, so the tilings of a board on each lattice include those on the one before it.
 
 | term | meaning | where it is used | avoid |
 | --- | --- | --- | --- |
