@@ -613,7 +613,7 @@ const RULES = [
     id: 'links-arxiv-version',
     field: 'LINKS',
     level: 'advice',
-    text: 'A DOI link to an article that is not open access has a line for its arXiv version beside it, which links https://arxiv.org/abs/<id> and gives the same title as its link text or just before the link. Offline the script cannot see whether the article is open or on arXiv, so it advises. A Zenodo or arXiv DOI is open and needs none, and a copy that holds only some lines of an entry is not checked.',
+    text: 'A DOI link to an article that is not open access has a line for its arXiv version beside it, which links https://arxiv.org/abs/<id> and gives the same title as its link text or just before the link, or an arXiv link on the line of the DOI itself. The script cannot tell the authors from the title before a link, so a title that ends that text counts. Offline the script cannot see whether the article is open or on arXiv, so it advises. A Zenodo or arXiv DOI is open and needs none, and a copy that holds only some lines of an entry is not checked.',
     source: [
       edit('A401988', 13, 'Vaclav Kotesovec', '2026-11-17', 'the arXiv version of Fendley, Moessner and Sondhi added beside the line of its DOI'),
       noted('A401988', 13, 'Vaclav Kotesovec', '2026-11-17', 'The article is not open access, so I am including a link to the arXiv version.'),
@@ -1209,7 +1209,7 @@ function plainTitle(text) {
 function namesTitle(value, title) {
   const lead = plainTitle(linkAuthors(value));
 
-  return lead === title || lead.endsWith(` ${title}`) || [...value.matchAll(/<a [^>]*>([^<]*)<\/a>/g)].some(([, text]) => plainTitle(text) === title);
+  return lead.endsWith(` ${title}`) || [...value.matchAll(/<a [^>]*>([^<]*)<\/a>/g)].some(([, text]) => plainTitle(text) === title);
 }
 
 function linkAuthors(value) {

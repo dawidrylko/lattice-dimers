@@ -319,6 +319,22 @@ const CASES = [
     ]),
   },
   {
+    rule: 'links-arxiv-version',
+    source: 'narrowed after review: the text before the link of another work whose title contains this one does not count',
+    entry: 'A401988',
+    before: a401988(11, [
+      A401988_BFILE,
+      A401988_FENDLEY,
+      'John Doe, Classical dimers on the triangular lattice revisited, <a href="https://arxiv.org/abs/2601.00001">arXiv:2601.00001</a> [cond-mat.stat-mech], 2026.',
+    ]),
+    after: a401988(11, [
+      A401988_BFILE,
+      A401988_FENDLEY,
+      A401988_FENDLEY_ARXIV,
+      'John Doe, Classical dimers on the triangular lattice revisited, <a href="https://arxiv.org/abs/2601.00001">arXiv:2601.00001</a> [cond-mat.stat-mech], 2026.',
+    ]),
+  },
+  {
     rule: 'bfile-link-text',
     source: 'A239264 #26 -> #27, Dawid Ryłko',
     entry: 'A239264',
