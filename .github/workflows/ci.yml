@@ -67,7 +67,8 @@ jobs:
         id: jobs
         env:
           EVENT: ${{ github.event_name }}
-          SHARED_INPUTS: '^(\.github/workflows/|spec/|rust/(core/|Cargo\.(toml|lock)$)|python/(lattice_dimers/core/|pyproject\.toml$)|js/(core/|package\.json$|pnpm-lock\.yaml$|\.nvmrc$)|research/king-entropy/src/requirements\.txt$)'
+          SHARED_INPUTS: '^(\.github/workflows/ci\.yml$|spec/|rust/Cargo\.(toml|lock)$|python/pyproject\.toml$|js/(package\.json|pnpm-lock\.yaml|\.nvmrc)$|research/king-entropy/src/requirements\.txt$)'
+          REPOSITORY_ONLY: '^(benchmarks|js|python|rust)/README\.md$'
           RUST_INPUTS: '^(rust/|oeis/A[0-9]{6}/b[0-9]{6}\.(rs|txt)$)'
           PYTHON_INPUTS: '^(python/|oeis/A[0-9]{6}/b[0-9]{6}\.(py|txt)$)'
           JAVASCRIPT_INPUTS: '^(js/|site/|\.github/assets/)'
@@ -95,6 +96,12 @@ jobs:
           else
             changes=$(git -c core.quotePath=false diff --name-status --no-renames HEAD^1 HEAD)
             files=$(cut -f2 <<< "$changes")
+            status=0
+            inputs=$(grep -vE "$REPOSITORY_ONLY" <<< "$files") || status=$?
+            if [ "$status" -gt 1 ]; then
+              echo "grep failed with status $status on $REPOSITORY_ONLY." >&2
+              exit 1
+            fi
             if matches '^D' "$changes"; then
               every=true
               echo "The pull request deletes or moves a file, so every job runs."
@@ -103,11 +110,11 @@ jobs:
               echo "The pull request changes a file whose name git quotes, so every job runs."
             elif matches "$SHARED_INPUTS" "$files"; then
               every=true
-              echo "The pull request changes the workflow, spec/, a toolchain file or a shared core, so every job runs."
+              echo "The pull request changes ci.yml, spec/ or a toolchain file, so every job runs."
             fi
           fi
           choose() {
-            if [ "$every" = true ] || matches "$2" "$files"; then
+            if [ "$every" = true ] || matches "$2" "$inputs"; then
               echo "$1=run" >> "$GITHUB_OUTPUT"
             else
               echo "$1=skip" >> "$GITHUB_OUTPUT"
