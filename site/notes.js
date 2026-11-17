@@ -421,8 +421,8 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', lattice, surface =
     throw new Error('drawTilings() takes either a list of ranks or a whole number spread of at least 1.');
   }
 
-  if (diagonals !== undefined && pieces !== 'domicule') {
-    throw new Error(`drawTilings() counts diagonal pieces of domicule tilings only, not of ${pieces} tilings.`);
+  if (diagonals !== undefined && pieces !== 'domicule' && lattice !== 'triangular') {
+    throw new Error(`drawTilings() counts diagonal pieces of domicule and triangular lattice tilings only, not of ${pieces} tilings.`);
   }
 
   const renderer = repositoryRequire('./js/renderer');
@@ -430,7 +430,7 @@ function drawTilings({ rowCount, colCount, pieces = 'domino', lattice, surface =
   let unrank;
 
   if (diagonals !== undefined && surface === 'rectangle') {
-    unranker = renderer.createDiagonalUnranker({ rowCount, colCount, diagonals });
+    unranker = renderer.createDiagonalUnranker({ rowCount, colCount, lattice: lattice ?? 'king', diagonals });
     unrank = renderer.unrankDiagonalTiling;
   } else if (surface !== 'rectangle') {
     unranker = renderer.createCylinderTorusUnranker({

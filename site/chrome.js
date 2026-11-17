@@ -13,10 +13,14 @@ const NAV = [
   },
   {
     label: 'Triangular lattice',
+    lead: 'All tilings',
     items: [
       { slug: 'triangular-lattice/rectangles', label: 'Rectangles' },
       { slug: 'triangular-lattice/cylinders', label: 'Cylinders' },
       { slug: 'triangular-lattice/tori', label: 'Tori' },
+      { slug: 'triangular-lattice/rectangles-by-diagonal-pieces', label: 'Rectangles', heading: 'By diagonal pieces' },
+      { slug: 'triangular-lattice/cylinders-by-diagonal-pieces', label: 'Cylinders', heading: 'By diagonal pieces' },
+      { slug: 'triangular-lattice/tori-by-diagonal-pieces', label: 'Tori', heading: 'By diagonal pieces' },
     ],
   },
   {

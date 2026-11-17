@@ -34,6 +34,10 @@ Each solver is a command-line program that prints the number of tilings of one b
 | [`domicule-rectangle-polynomial-modular.js`](solvers/domicule-rectangle-polynomial-modular.js) | the same | transfer by cells modulo primes |
 | [`domicule-cylinder-torus-polynomial-bigint.js`](solvers/domicule-cylinder-torus-polynomial-bigint.js) | domicule tilings of cylinders and tori by the number of diagonal pieces | transfer by rows, `BigInt` (reference) |
 | [`domicule-cylinder-torus-polynomial-modular.js`](solvers/domicule-cylinder-torus-polynomial-modular.js) | the same | transfer by cells modulo primes |
+| [`any-lattice-rectangle-polynomial-bigint.js`](solvers/any-lattice-rectangle-polynomial-bigint.js) | rectangles on the square lattice, the triangular lattice and the king's graph by the number of diagonal pieces | transfer by cells, `BigInt` (reference) |
+| [`any-lattice-rectangle-polynomial-modular.js`](solvers/any-lattice-rectangle-polynomial-modular.js) | the same | transfer by cells modulo primes |
+| [`any-lattice-cylinder-torus-polynomial-bigint.js`](solvers/any-lattice-cylinder-torus-polynomial-bigint.js) | cylinders and tori on the square lattice, the triangular lattice and the king's graph by the number of diagonal pieces | transfer by rows, `BigInt` (reference) |
+| [`any-lattice-cylinder-torus-polynomial-modular.js`](solvers/any-lattice-cylinder-torus-polynomial-modular.js) | the same | transfer by cells modulo primes |
 
 ```sh
 node js/solvers/domino-rectangle-formula.js -r 20 -c 20

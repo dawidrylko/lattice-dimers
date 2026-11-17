@@ -179,6 +179,27 @@ const NOTES = [
     h1: 'Triangular lattice: tilings of the 2n × 2n torus (not in the OEIS)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
   },
+  {
+    slug: 'triangular-lattice/rectangles-by-diagonal-pieces',
+    cells: 3, figures: 1,
+    group: 'Triangular lattice',
+    h1: 'Diagonal pieces: triangular lattice tilings of the 2n × 2n board by their count (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Verification', 'References'],
+  },
+  {
+    slug: 'triangular-lattice/cylinders-by-diagonal-pieces',
+    cells: 2, figures: 1,
+    group: 'Triangular lattice',
+    h1: 'Diagonal pieces: triangular lattice tilings of cylinders by their count (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
+  },
+  {
+    slug: 'triangular-lattice/tori-by-diagonal-pieces',
+    cells: 2, figures: 1,
+    group: 'Triangular lattice',
+    h1: 'Diagonal pieces: triangular lattice tilings of tori by their count (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
+  },
 ];
 const SOLVER_SECTION = { 'how-the-counts-are-made': 'the-modular-solver' };
 const OLD_SECTIONS = {
@@ -191,7 +212,7 @@ const OLD_SECTIONS = {
   'triangular-lattice/cylinders': SOLVER_SECTION,
   'triangular-lattice/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus': 'the-counts' },
 };
-const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule )?tilings of .+ \((A\d{6}( on the [^)]+)?(, A\d{6})*|not in the OEIS)\)$/;
+const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule |triangular lattice )?tilings of .+ \((A\d{6}( on the [^)]+)?(, A\d{6})*|not in the OEIS)\)$/;
 const NOTEBOOK_SKELETON = ['The problem', 'The Formula solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', '*', 'Running time', 'PARI/GP', 'Verification', 'References'];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes/rectangles'],
@@ -1480,8 +1501,8 @@ async function checkChrome(page, baseUrl, width) {
     problems.push(`menu entries whose address is not their label: ${home.misnamed.join(', ')}`);
   }
 
-  if (home.separated !== 'All tilings, By diagonal pieces') {
-    problems.push(`the menu headings are ${home.separated || 'none'} instead of All tilings, By diagonal pieces`);
+  if (home.separated !== 'All tilings, By diagonal pieces, All tilings, By diagonal pieces') {
+    problems.push(`the menu headings are ${home.separated || 'none'} instead of All tilings, By diagonal pieces in the Triangular lattice and the Domicules menus`);
   }
 
   if (home.groups !== MENU_GROUPS.join(', ')) {
@@ -1664,7 +1685,7 @@ async function checkBenchmark(page, baseUrl, width) {
   }
 
   const triangular = await page.evaluate(
-    `['rectangle', 'cylinder', 'torus'].map(surface => ['triangular-' + surface + '-benchmark', [...document.querySelectorAll('#triangular-' + surface + '-benchmark-rows tr')].map(row => row.cells[0].textContent).join(' ')])`,
+    `['rectangle', 'cylinder', 'torus'].flatMap(surface => ['', '-diagonal'].map(count => 'triangular-' + surface + count + '-benchmark')).map(id => [id, [...document.querySelectorAll('#' + id + '-rows tr')].map(row => row.cells[0].textContent).join(' ')])`,
   );
 
   for (const [id, boards] of triangular.filter(([, boards]) => boards !== sides)) {
@@ -1855,7 +1876,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const groups = await page.evaluate("[...document.querySelectorAll('#benchmark .bench-group')].map(group => group.dataset.pieces + '/' + group.dataset.surface + (group.dataset.count ? '/' + group.dataset.count : '')).sort().join()");
   const views = pieces.flatMap(p =>
     surfaces.flatMap(surface =>
-      p === 'domicule' ? counts.map(count => (count === 'all' ? `${p}/${surface}` : `${p}/${surface}/${count}`)) : [`${p}/${surface}`],
+      p !== 'domino' ? counts.map(count => (count === 'all' ? `${p}/${surface}` : `${p}/${surface}/${count}`)) : [`${p}/${surface}`],
     ),
   );
   const cardLinks = [];
@@ -1955,6 +1976,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     'triangular-rectangle-benchmark': 'triangular-lattice/rectangles',
     'triangular-cylinder-benchmark': 'triangular-lattice/cylinders',
     'triangular-torus-benchmark': 'triangular-lattice/tori',
+    'triangular-rectangle-diagonal-benchmark': 'triangular-lattice/rectangles-by-diagonal-pieces',
+    'triangular-cylinder-diagonal-benchmark': 'triangular-lattice/cylinders-by-diagonal-pieces',
+    'triangular-torus-diagonal-benchmark': 'triangular-lattice/tori-by-diagonal-pieces',
   };
   const expected = label => {
     const [table, solver] = label.split(/[ ,]/);
@@ -1969,9 +1993,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     problems.push(`at ${width} px the solver links of the benchmark cards are wrong: ${wrongCards.map(({ label, problem, display, tapped }) => `${label} ${problem || `display ${display}, tapped ${tapped}`}`).join('; ')}`);
   }
 
-  if (headers.length !== 72 || wrong.length) {
+  if (headers.length !== 90 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 72 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 90 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 

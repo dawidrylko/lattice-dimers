@@ -15,6 +15,10 @@ The notebooks are grouped as the site menu groups them: the notes of each kind o
   - [Rectangles](triangular-lattice/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html)): the triangular lattice on the 2n × 2n board (A401988) and on rectangles, for comparison, with the Kasteleyn determinant in PARI/GP.
   - [Cylinders](triangular-lattice/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html)): the triangular lattice on cylinders, for comparison.
   - [Tori](triangular-lattice/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori.html)): the triangular lattice on 2n × 2n tori, for comparison.
+  - By diagonal pieces:
+    - [Rectangles](triangular-lattice/04-rectangles-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles-by-diagonal-pieces.html)): tilings of the triangular lattice on the 2n × 2n board by the number of diagonal pieces, their bound of 2n² − 2n and the tilings that reach it.
+    - [Cylinders](triangular-lattice/05-cylinders-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders-by-diagonal-pieces.html)): tilings of the triangular lattice on cylinders by the number of diagonal pieces.
+    - [Tori](triangular-lattice/06-tori-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori-by-diagonal-pieces.html)): tilings of the triangular lattice on tori by the number of diagonal pieces, a third of them diagonal on average.
 - Domicules:
   - [Rectangles](domicules/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html)): domicule tilings of the 2n × 2n board, A239273, up to 20 × 20, the modular solver and the Markov chain.
   - [Cylinders](domicules/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html)): domicule tilings of cylinders, the king's graph on the cylinder, and the 2n × 2n cylinders, A402163.

@@ -19,6 +19,10 @@ There is one file per algorithm, `<id>.json` with the id of [`algorithms.json`](
 | [`domicule-rectangle-polynomial-modular.json`](domicule-rectangle-polynomial-modular.json) | the squares up to 20 × 20 (the first seven in a short run), then the other boards of its BigInt twin |
 | [`domicule-cylinder-torus-polynomial-bigint.json`](domicule-cylinder-torus-polynomial-bigint.json) | domicule cylinders up to 10 × 10 and tori up to 8 × 8 by diagonal pieces |
 | [`domicule-cylinder-torus-polynomial-modular.json`](domicule-cylinder-torus-polynomial-modular.json) | larger cylinders and tori, up to the 16 × 16 cylinder and the 12 × 12 torus (the first seven in a short run), then the boards of its BigInt twin |
+| [`any-lattice-rectangle-polynomial-bigint.json`](any-lattice-rectangle-polynomial-bigint.json) | rectangles by diagonal pieces on three lattices: the triangular squares up to 10 × 10, other triangular rectangles, and a few boards of the square lattice and the king's graph |
+| [`any-lattice-rectangle-polynomial-modular.json`](any-lattice-rectangle-polynomial-modular.json) | the triangular squares up to 16 × 16 (the first seven in a short run), then the other boards of its BigInt twin |
+| [`any-lattice-cylinder-torus-polynomial-bigint.json`](any-lattice-cylinder-torus-polynomial-bigint.json) | triangular cylinders up to 10 × 10 and tori up to 8 × 8 by diagonal pieces, and a few boards of the square lattice and the king's graph |
+| [`any-lattice-cylinder-torus-polynomial-modular.json`](any-lattice-cylinder-torus-polynomial-modular.json) | larger triangular cylinders and tori, up to the 14 × 14 cylinder and the 12 × 12 torus (the first seven in a short run), then the boards of its BigInt twin |
 
 Twin algorithms, whose ids differ only in the method, repeat the boards they share. `pnpm -C js test:spec` fails when twins hold different counts for a board ([`harness/portCheck.js`](../../harness/portCheck.js)). The OEIS programs and the research scripts read one file each: the modular file for tori and diagonal pieces, `domicule-rectangle-bigint.json` for domicules.
 

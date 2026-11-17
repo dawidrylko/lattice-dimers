@@ -34,12 +34,28 @@ name = "any-lattice-cylinder-torus-modular"
 path = "solvers/src/bin/any-lattice-cylinder-torus-modular.rs"
 
 [[bin]]
+name = "any-lattice-cylinder-torus-polynomial-bigint"
+path = "solvers/src/bin/any-lattice-cylinder-torus-polynomial-bigint.rs"
+
+[[bin]]
+name = "any-lattice-cylinder-torus-polynomial-modular"
+path = "solvers/src/bin/any-lattice-cylinder-torus-polynomial-modular.rs"
+
+[[bin]]
 name = "any-lattice-rectangle-bigint"
 path = "solvers/src/bin/any-lattice-rectangle-bigint.rs"
 
 [[bin]]
 name = "any-lattice-rectangle-modular"
 path = "solvers/src/bin/any-lattice-rectangle-modular.rs"
+
+[[bin]]
+name = "any-lattice-rectangle-polynomial-bigint"
+path = "solvers/src/bin/any-lattice-rectangle-polynomial-bigint.rs"
+
+[[bin]]
+name = "any-lattice-rectangle-polynomial-modular"
+path = "solvers/src/bin/any-lattice-rectangle-polynomial-modular.rs"
 
 [[bin]]
 name = "domicule-cylinder-torus-polynomial-bigint"
