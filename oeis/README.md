@@ -8,7 +8,7 @@ Entries of the [OEIS](https://oeis.org/) this repository has contributed to. Eac
 | [OEIS A239264](https://oeis.org/A239264) | [domicule tilings of the h × w rectangle](A239264/) | [A239264.txt](A239264/A239264.txt) | [b239264.txt](A239264/b239264.txt) | [A239264.gp](A239264/A239264.gp) |
 | [OEIS A239273](https://oeis.org/A239273) | [domicule tilings of the 2n × 2n square](A239273/) | [A239273.txt](A239273/A239273.txt) | [b239273.txt](A239273/b239273.txt) | [A239273.gp](A239273/A239273.gp) |
 | [OEIS A309117](https://oeis.org/A309117) | [the triangular lattice on the free strip of width 4](A309117/) | [A309117.txt](A309117/A309117.txt) | [b309117.txt](A309117/b309117.txt) | — |
-| [OEIS A401669](https://oeis.org/draft/A401669) | [decimal expansion of the entropy per site of the dimers of the king's graph](A401669/) | [A401669.txt](A401669/A401669.txt) | — | — |
+| [OEIS A401669](https://oeis.org/A401669) | [decimal expansion of the entropy per site of the dimers of the king's graph](A401669/) | [A401669.txt](A401669/A401669.txt) | — | — |
 | [OEIS A401670](https://oeis.org/A401670) | [domicule tilings of the 2n × 2n torus](A401670/) | [A401670.txt](A401670/A401670.txt) | [b401670.txt](A401670/b401670.txt) | [A401670.gp](A401670/A401670.gp) |
 | [OEIS A401673](https://oeis.org/A401673) | [domicule tilings of the 2n × 2n square by the number of diagonal pieces](A401673/) | [A401673.txt](A401673/A401673.txt) | [b401673.txt](A401673/b401673.txt) | [A401673.gp](A401673/A401673.gp) |
 | [OEIS A401988](https://oeis.org/draft/A401988) | [tilings of the 2n × 2n board on the triangular lattice](A401988/) | [A401988.txt](A401988/A401988.txt) | [b401988.txt](A401988/b401988.txt) | [A401988.gp](A401988/A401988.gp) |
