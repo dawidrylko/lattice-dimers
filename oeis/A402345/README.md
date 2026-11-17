@@ -8,7 +8,7 @@
 
 ## Status
 
-Proposed 17 November 2026, revision #2 of the draft.
+Proposed 17 November 2026, revision #5 of the draft.
 
 ## Files
 
