@@ -1,4 +1,4 @@
-# Dominoes: tilings of cylinders (A000129, A004253, A006253, A003729, A028477, A028478, A028479)
+# Dominoes: tilings of cylinders (A000129, A004253, A006253, A003729, A028477, A028478, A028479, A402345)
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html) has the results. It counts the domino tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom. The same boards are counted on the [triangular lattice](../triangular-lattice/02-cylinders.md) and with [domicules](../domicules/02-cylinders.md); the [rectangles notebook](01-rectangles.md) counts dominoes on boards with no glued edge.
 
@@ -89,6 +89,24 @@ for (const [w, entry, terms] of entries) {
 table(['board', 'OEIS', 'checked at'], rows);
 ```
 
+The $2n \times 2n$ cylinders are the draft entry [OEIS A402345](https://oeis.org/draft/A402345) [1], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the rows above hold $a(1)$ to $a(4)$. The cell checks the square boards $2 \times 2$ to $14 \times 14$ against that b-file.
+
+```js run
+const bFile = require('fs')
+  .readFileSync(require('path').join(nb.context.root, 'oeis/A402345/b402345.txt'), 'utf-8')
+  .trim()
+  .split('\n')
+  .map(line => BigInt(line.split(' ')[1]));
+const sides = [2, 4, 6, 8, 10, 12, 14];
+const diagonal = sides.filter(w => nb.count(w, w) !== bFile[w / 2]);
+
+if (diagonal.length) {
+  throw new Error(`the 2n × 2n cylinders differ from A402345 at 2n = ${diagonal.join(', ')}`);
+}
+
+table(['board', 'OEIS', 'checked at'], [['w = h = 2n', 'A402345', `2n = ${sides.join(', ')}`]]);
+```
+
 ## Running time
 
 Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../../benchmarks/results).
@@ -108,10 +126,18 @@ table(
 print(`Run: ${nb.context.benchmarkRun}`);
 ```
 
+## PARI/GP
+
+[`oeis/A402345/A402345.gp`](../../oeis/A402345/A402345.gp) counts the $2n \times 2n$ cylinder as a resultant. The cylinder is planar, and with the opposite sign on the edges across the seam its Kasteleyn matrix splits over the circumference, so the product over its eigenvalues is the resultant of the polynomial of [A004003](../../oeis/A004003/A004003.gp) with $Q(x) = 2 T_n((x+2)/2) + 2$. CI checks the program against the square boards of the test data up to $20 \times 20$, and [`oeis/A402345/b402345.js`](../../oeis/A402345/b402345.js) evaluates the same resultant in exact integers for the b-file.
+
+```js run
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402345/A402345.gp'), 'utf-8').trim());
+```
+
 ## Verification
 
 The `BigInt` solver agrees with every OEIS entry above and the modular solver with the `BigInt` one at $h = 8$, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both of them.
 
 ## References
 
-1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A000129](https://oeis.org/A000129), [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478) and [OEIS A028479](https://oeis.org/A028479). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A000129](https://oeis.org/A000129), [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478), [OEIS A028479](https://oeis.org/A028479) and the draft [OEIS A402345](https://oeis.org/draft/A402345). [oeis.org](https://oeis.org)

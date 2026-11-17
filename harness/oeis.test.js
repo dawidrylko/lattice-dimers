@@ -504,7 +504,7 @@ function checkDraftLinks() {
 }
 
 const GENERATOR_TERMS = 13;
-const FULL_GENERATORS = ['A309117'];
+const FULL_GENERATORS = ['A309117', 'A402345'];
 
 function checkGenerator(entry) {
   const { bFile, generator } = entryFiles(entry);
