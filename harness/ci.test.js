@@ -282,6 +282,7 @@ test('Changes runs every job on push, schedule and dispatch, and on a pull reque
   }
 
   assert.throws(() => selectJobs(['docs/glossary.md'], 'pull_request', { ...readStepEnv(JOB_STEP), RUST_INPUTS: '(' }), /grep failed with status 2/);
+  assert.throws(() => selectJobs(['docs/glossary.md'], 'pull_request', { ...readStepEnv(JOB_STEP), REPOSITORY_ONLY: '(' }), /grep failed with status 2 on \(/);
 });
 
 test('Changes runs every job when a pull request deletes or moves a file, reads names as git writes them, and fails when it cannot tell what changed', () => {
@@ -289,7 +290,7 @@ test('Changes runs every job when a pull request deletes or moves a file, reads 
   const script = readStepScript(JOB_STEP);
   const env = { ...readStepEnv(JOB_STEP), EVENT: 'pull_request' };
 
-  for (const changes of [['-research/king-entropy/notes.md'], ['docs/glossary.md -> docs/terms.md']]) {
+  for (const changes of [['-research/king-entropy/notes.md'], ['docs/glossary.md -> docs/terms.md'], ['-js/README.md'], ['js/README.md -> js/GUIDE.md']]) {
     const result = runStepInRepository(script, env, changes);
 
     assert.equal(result.status, 0, result.stderr);
