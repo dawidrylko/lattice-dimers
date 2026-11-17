@@ -273,7 +273,7 @@ function renderHeader({ root, current, notes }) {
 function renderFooter(lines = []) {
   const links = [
     '© <a href="https://dawidrylko.com" rel="author">Dawid Ryłko</a>',
-    `<a href="${REPOSITORY_URL}/blob/master/LICENSE">MIT License</a>`,
+    `<a href="${REPOSITORY_URL}#license">Code MIT, text and data CC BY 4.0</a>`,
     `<a href="${REPOSITORY_URL}">GitHub</a>`,
     'Blog posts (PL): <a href="https://dawidrylko.com/domino-tiling/" hreflang="pl">Domino Tiling</a>, <a href="https://dawidrylko.com/domino-tiling-library/" hreflang="pl">Domino tiling library</a>',
   ];

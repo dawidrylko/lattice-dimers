@@ -901,6 +901,24 @@
       "colCount": 0,
       "lattice": "square",
       "expectedResult": "1"
+    },
+    {
+      "rowCount": 18,
+      "colCount": 18,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "256955886436135671144699761794930161483776",
+      "oeis": "A335586",
+      "source": "oeis"
+    },
+    {
+      "rowCount": 20,
+      "colCount": 20,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "1078954848193193029138563587057364813268127147098112",
+      "oeis": "A335586",
+      "source": "oeis"
     }
   ]
 }

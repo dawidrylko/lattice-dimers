@@ -1463,6 +1463,10 @@ async function checkChrome(page, baseUrl, width) {
     problems.push(`the main page header or footer is incomplete: ${JSON.stringify(home)}`);
   }
 
+  if (!home.footer.includes('Code MIT, text and data CC BY 4.0 https://github.com/dawidrylko/lattice-dimers#license')) {
+    problems.push(`the footer does not name both licenses of the repository: ${home.footer}`);
+  }
+
   if (home.brandTag !== 'H1' || home.headings !== 1) {
     problems.push(`the main page has ${home.headings} h1 and its site name is a ${home.brandTag}`);
   }
@@ -1590,16 +1594,17 @@ async function checkBenchmark(page, baseUrl, width) {
         rule: getComputedStyle(section.querySelector('.run')).borderTopStyle,
         dashes: [...section.querySelectorAll('.bench-group:not([hidden])')].flatMap(group => {
           const table = group.querySelector('table');
-          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2, -1).map(cell => ({ dash: cell.textContent.trim() === '-', reason: cell.querySelector('span[title]')?.title ?? '' })));
+          const cells = [...table.tBodies[0].rows].flatMap(row => [...row.cells].slice(2).map(cell => ({ dash: cell.textContent.trim() === '-', reason: cell.querySelector('span[title]')?.title ?? '' })));
           const counts = [...table.tBodies[0].rows].map(row => row.cells[1]).filter(cell => cell.textContent.trim() === '-');
           const noted = [...group.querySelectorAll('.note:not([hidden])')].some(note => note.textContent.startsWith('A dash marks a board'));
           return [
             ...(cells.some(cell => cell.dash && !cell.reason.startsWith('not measured: ')) ? [table.id + ' has a dash with no reason'] : []),
-            ...(counts.some(cell => cell.querySelector('span[title]')?.title !== 'count not stored in spec/cases') ? [table.id + ' has a count dash with no reason'] : []),
+            ...(counts.some(cell => cell.querySelector('span[title]')?.title !== 'no count: the repository stores none for this board') ? [table.id + ' has a count dash with no reason'] : []),
             ...(cells.some(cell => cell.dash) !== noted ? [table.id + (noted ? ' explains dashes it does not show' : ' shows a dash it does not explain')] : []),
           ];
         }),
         unnamed: wraps.filter(wrap => !wrap.querySelector('table').getAttribute('aria-label')).length,
+        copied: [...section.querySelectorAll('.bench-group:not([hidden]) .note[data-copied]')].map(note => note.textContent),
       };
     })()`);
 
@@ -1609,6 +1614,11 @@ async function checkBenchmark(page, baseUrl, width) {
 
     if (state.dashes.length) {
       problems.push(`#${hash}: ${state.dashes.join(', ')}`);
+    }
+
+    const copied = view === 'domino/torus' ? ['The counts of 18\u00a0×\u00a018 and 20\u00a0×\u00a020 are copied from OEIS\u00a0A335586: no solver here has counted these boards.'] : [];
+    if (state.copied.join() !== copied.join()) {
+      problems.push(`#${hash} notes the counts copied from the OEIS as ${JSON.stringify(state.copied)}`);
     }
 
     if (state.older || state.rule !== 'none') {

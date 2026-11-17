@@ -72,11 +72,21 @@ function shortenArg(arg) {
 }
 
 /**
- * Selects the test cases of an algorithm that the default run counts, by the limits of spec/limits.json. FULL_CASES=1 selects all.
+ * Selects the test cases of an algorithm that a run counts. A count copied from the OEIS, marked with source "oeis", is
+ * never counted: no solver here reaches its board in a test run.
  * @param {string} algorithm The id of the algorithm in spec/algorithms.json.
  * @returns {Object[]} The test cases, in the order of their file.
  */
 function selectCases(algorithm) {
+  return limitCases(algorithm).filter(({ source }) => source !== 'oeis');
+}
+
+/**
+ * Limits the test cases of an algorithm by spec/limits.json. FULL_CASES=1 lifts the limits.
+ * @param {string} algorithm The id of the algorithm in spec/algorithms.json.
+ * @returns {Object[]} The test cases, in the order of their file.
+ */
+function limitCases(algorithm) {
   const testCases = testCasesOf(algorithm);
   const limit = limits.algorithms[algorithm];
 

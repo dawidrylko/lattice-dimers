@@ -27,6 +27,14 @@ describe('the plan of a full run', () => {
     assert.equal(estimateBoard({ seriesName: 'domicule_rectangle_polynomial_modular.py', previousSeconds: 1, earlierSeconds: 0 }), 5);
   });
 
+  test('the cylinder and torus solvers keep their growth floors under their any-lattice ids', () => {
+    assert.equal(estimateBoard({ seriesName: 'any-lattice-cylinder-torus-bigint.rs-king-torus', previousSeconds: 1, earlierSeconds: 0 }), 51);
+    assert.equal(estimateBoard({ seriesName: 'any_lattice_cylinder_torus_bigint.py-square-torus', previousSeconds: 1, earlierSeconds: 0 }), 23);
+    assert.equal(estimateBoard({ seriesName: 'any-lattice-cylinder-torus-bigint.js-king-cylinder', previousSeconds: 1, earlierSeconds: 0 }), 12.87);
+    assert.equal(estimateBoard({ seriesName: 'any-lattice-cylinder-torus-bigint.rs-square-cylinder', previousSeconds: 1, earlierSeconds: 0 }), 5.83);
+    assert.equal(estimateBoard({ seriesName: 'any-lattice-cylinder-torus-modular.rs-king-torus', previousSeconds: 1, earlierSeconds: 0 }), 16);
+  });
+
   test('the name of a solver does not make a cylinder a torus', () => {
     assert.equal(estimateBoard({ seriesName: 'any-lattice-cylinder-torus-modular.js-king-cylinder', previousSeconds: 1, earlierSeconds: 0 }), 4.4);
   });

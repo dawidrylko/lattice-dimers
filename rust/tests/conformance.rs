@@ -165,6 +165,10 @@ fn rust_algorithms() -> Vec<String> {
 }
 
 fn cases_to_run(id: &str) -> Vec<Value> {
+    limited_cases(id).into_iter().filter(|case| case["source"].as_str() != Some("oeis")).collect()
+}
+
+fn limited_cases(id: &str) -> Vec<Value> {
     let cases = cases_of(id);
     if std::env::var("FULL_CASES").is_ok_and(|value| value == "1") {
         return cases;

@@ -401,11 +401,13 @@ async function buildCylinderTorusBenchmark(lattice) {
     const board = { rowCount, colCount, lattice, torus: surface === 'torus' };
     const seriesSuffix = `-${lattice}-${surface}`;
     const isMeasured = measured.some(other => other.surface === surface && other.rowCount === rowCount && other.colCount === colCount);
+    const known = isMeasured ? null : findCylinderTorusCase(board);
     return {
       rowCount,
       colCount,
       surface,
-      tilings: isMeasured ? readStoredCylinderTorusCount(board) : findCylinderTorusCase(board)?.expectedResult ?? null,
+      tilings: isMeasured ? readStoredCylinderTorusCount(board) : known?.expectedResult ?? null,
+      copiedFrom: known?.source === 'oeis' ? known.oeis : null,
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
       languages: readLanguages('any-lattice-cylinder-torus-modular', suffix),
@@ -615,7 +617,7 @@ function buildJsonLd() {
         '@type': 'SoftwareSourceCode',
         name: 'Lattice Dimers',
         description:
-          "Code and data on dimers of the square lattice and the king's graph: transfer-matrix scripts, certificates and data for the entropy per site of the king's graph dimers, and exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, OEIS A239273): a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.",
+          "Code and data on dimers of the square lattice and the king's graph, with the triangular lattice counted for comparison: transfer-matrix scripts, certificates and data for the entropy per site of the king's graph dimers, and exact counts, numbering and sampling of domino tilings (OEIS A004003) and domicule tilings (OEIS A239264, OEIS A239273): a resultant form of the product formula, transfer-matrix solvers, a modular solver with the Chinese remainder theorem, PARI/GP programs and notebooks.",
         codeRepository: 'https://github.com/dawidrylko/lattice-dimers',
         programmingLanguage: ['Rust', 'Python', 'JavaScript'],
         runtimePlatform: 'Node.js',

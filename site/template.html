@@ -166,7 +166,7 @@ ul.intro li + li { margin-top: 4px; }
     <li><a href="#gallery" data-tab="gallery">Gallery</a>: numbers the tilings of a rectangle, a cylinder or a torus and draws any
       one of them; boards too large to number are sampled.</li>
     <li><a href="#benchmark" data-tab="benchmark">Benchmarks</a>: the exact counts and the running times of the solvers in Rust,
-      Python and JavaScript, on boards up to 20&nbsp;×&nbsp;20; the triangular lattice has counts only, as no run has measured it.</li>
+      Python and JavaScript, on boards up to 20&nbsp;×&nbsp;20; the triangular lattice has counts only, as the full benchmark run leaves it out.</li>
     <li>Notebooks, in the menu: the methods for <a href="notes/dominoes/rectangles.html">dominoes</a>,
       <a href="notes/domicules/rectangles.html">domicules</a> and
       <a href="notes/triangular-lattice/rectangles.html">the triangular lattice</a>, with code that runs whenever the site is
@@ -365,7 +365,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="triangular-rectangle-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">No benchmark run has measured these solvers on the triangular lattice yet, so the table gives the boards and their counts only.</p>
+      <p class="note">The full benchmark run leaves out the triangular lattice, so the table gives the boards and their counts only.</p>
     </div>
     <div class="bench-group" data-pieces="triangular" data-surface="cylinder" data-run="triangular" hidden>
       <div class="table-wrap">
@@ -374,7 +374,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="triangular-cylinder-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">No benchmark run has measured these solvers on the triangular lattice yet, so the table gives the boards and their counts only.</p>
+      <p class="note">The full benchmark run leaves out the triangular lattice, so the table gives the boards and their counts only.</p>
     </div>
     <div class="bench-group" data-pieces="triangular" data-surface="torus" data-run="triangular" hidden>
       <div class="table-wrap">
@@ -383,7 +383,7 @@ ul.intro li + li { margin-top: 4px; }
           <tbody id="triangular-torus-benchmark-rows" role="rowgroup"></tbody>
         </table>
       </div>
-      <p class="note">No benchmark run has measured these solvers on the triangular lattice yet, so the table gives the boards and their counts only.</p>
+      <p class="note">The full benchmark run leaves out the triangular lattice, so the table gives the boards and their counts only.</p>
     </div>
     <p class="note run">
       Mean time of the count each solver reports with <code>--time</code>. The tooltip of a time gives the whole process,
@@ -1054,7 +1054,7 @@ const MODULAR_AND_BIGINT_LANGUAGES = [
 
 const UNMEASURED_TRIANGULAR = MODULAR_AND_BIGINT_LANGUAGES.map(() => ({
   read: () => null,
-  missing: () => 'not measured: no benchmark run has measured the triangular lattice',
+  missing: () => 'not measured: the full benchmark run leaves out the triangular lattice',
 }));
 
 function columnLabel(th) {
@@ -1071,6 +1071,31 @@ function labelledCell(content, { name, text, icon, href }) {
     : `<td role="cell" data-label="${name}">${content}</td>`;
 }
 
+const NO_COUNT = 'no count: the repository stores none for this board';
+
+function listText(items) {
+  return items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items.at(-1)}` : items[0];
+}
+
+function countCell({ tilings, copiedFrom }) {
+  if (tilings === null) return `<span title="${NO_COUNT}">-</span>`;
+  if (!copiedFrom) return num(tilings);
+  return `<span class="num" title="${fmt(tilings)}, copied from OEIS ${copiedFrom}">${short(tilings)}</span>`;
+}
+
+function noteCopiedCounts(table, rows) {
+  const group = $(table).closest('.bench-group');
+  const copied = rows.filter(r => r.copiedFrom);
+  group.querySelector('.note[data-copied]')?.remove();
+  if (!copied.length) return;
+  const boards = listText(copied.map(r => `${r.rowCount}&nbsp;×&nbsp;${r.colCount}`));
+  const entries = listText([...new Set(copied.map(r => r.copiedFrom))].map(id => `<a href="https://oeis.org/${id}">OEIS&nbsp;${id}</a>`));
+  const text = copied.length > 1
+    ? `The counts of ${boards} are copied from ${entries}: no solver here has counted these boards.`
+    : `The count of ${boards} is copied from ${entries}: no solver here has counted this board.`;
+  group.querySelector('.table-wrap').insertAdjacentHTML('afterend', `<p class="note" data-copied>${text}</p>`);
+}
+
 function renderSolverRows(table, rows, solvers) {
   const columns = [...$(table).tHead.rows[0].cells].map(columnLabel);
   const solverNames = columns.slice(2, -1).map(({ name }) => name).join(' / ');
@@ -1078,18 +1103,20 @@ function renderSolverRows(table, rows, solvers) {
   $(`${table}-rows`).innerHTML = rows
     .map(r => {
       const results = solvers.map(({ read }) => read(r));
+      const reasons = solvers.map(({ missing }) => (missing ? missing(r) : null) || 'not run in this benchmark');
       const runs = results.map(result => (result ? result.runs : null));
       const measured = runs.filter(count => count !== null);
       const runsCell = measured.length === 0
-        ? '-'
+        ? `<span title="${new Set(reasons).size === 1 ? reasons[0] : 'not measured: each time gives its own reason'}">-</span>`
         : measured.every(count => count === measured[0])
         ? fmt(measured[0])
         : `<span title="${solverNames}">${runs.map(count => (count === null ? '-' : fmt(count))).join(' / ')}</span>`;
       const times = solvers.map(({ missing }, i) => ms(results[i], missing ? missing(r) : null));
-      return [`${r.rowCount}×${r.colCount}`, r.tilings === null ? '<span title="count not stored in spec/cases">-</span>' : num(r.tilings), ...times, runsCell];
+      return [`${r.rowCount}×${r.colCount}`, countCell(r), ...times, runsCell];
     })
     .map(cells => `<tr role="row">${cells.map((cell, i) => labelledCell(cell, columns[i])).join('')}</tr>`)
     .join('');
+  noteCopiedCounts(table, rows);
 }
 
 renderSolverRows('domino-benchmark', DATA.benchmark, FORMULA_AND_BIGINT_LANGUAGES);

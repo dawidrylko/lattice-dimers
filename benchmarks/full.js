@@ -24,11 +24,11 @@ const USAGE = 'Usage: node benchmarks/full.js [<solver id>] [--board-budget-hour
 const STATE_GROWTH = 4.4;
 const TORUS_GROWTH = 16;
 const GROWTH_FLOORS = [
-  [/^all[-_]lattices.*bigint.*king-torus/, 51],
-  [/^all[-_]lattices.*bigint.*square-torus/, 23],
-  [/^all[-_]lattices.*bigint.*king-cylinder/, 12.87],
-  [/^all[-_]lattices.*bigint.*square-cylinder/, 5.83],
-  [/^all[-_]lattices.*torus$/, TORUS_GROWTH],
+  [/^any[-_]lattice.*bigint.*king-torus/, 51],
+  [/^any[-_]lattice.*bigint.*square-torus/, 23],
+  [/^any[-_]lattice.*bigint.*king-cylinder/, 12.87],
+  [/^any[-_]lattice.*bigint.*square-cylinder/, 5.83],
+  [/^any[-_]lattice.*torus$/, TORUS_GROWTH],
   [/^domicule[-_]rectangle[-_]polynomial[-_]bigint/, 10],
   [/^domicule[-_]rectangle[-_]polynomial[-_]modular/, 5],
   [/^domicule[-_]cylinder[-_]torus[-_]polynomial[-_]bigint.*torus$/, 51],
