@@ -224,7 +224,7 @@ const MOVED_SECTIONS = [
   ['diagonals', 'cylinders-and-tori', 'domicules/cylinders-by-diagonal-pieces', 'the-counts'],
   ['domicules/diagonals', 'numbering-by-diagonal-pieces', 'domicules/rectangles-by-diagonal-pieces', 'numbering'],
 ];
-const MENU_GROUPS = ['Dominoes', 'Domicules', 'Triangular lattice'];
+const MENU_GROUPS = ['Dominoes', 'Triangular lattice', 'Domicules'];
 const NOTE_FAILURES = ['DIFFERS FROM OEIS'];
 const PAGE_CONTROLS = '#page-controls button, #page-controls input';
 const siteTestCases = [
@@ -1076,8 +1076,8 @@ async function checkLanding(page, baseUrl, width) {
     '#gallery',
     '#benchmark',
     'notes/dominoes/rectangles.html',
-    'notes/domicules/rectangles.html',
     'notes/triangular-lattice/rectangles.html',
+    'notes/domicules/rectangles.html',
     'notes/research.html',
     'papers/king-entropy.pdf',
     'papers/king-entropy-log-convexity.pdf',
@@ -1330,6 +1330,7 @@ const READ_CHROME = `(() => {
       return new URL(link.href).pathname.replace(/^.*\\/notes\\//, '').replace(/\\.html$/, '') === expected ? '' : link.getAttribute('href') + ' for ' + expected;
     }).filter(Boolean) : [],
     groups: header ? [...header.querySelectorAll('summary')].map(summary => summary.textContent.trim()).join(', ') : '',
+    pieces: ['#pieces', '#benchmark-pieces'].map(id => [...document.querySelectorAll(id + ' button')].map(button => button.textContent.trim()).join(', ')),
     separated: header ? [...header.querySelectorAll('nav .menu .menu-heading')].map(heading => heading.textContent.trim()).join(', ') : '',
     currentGroups: header ? [...header.querySelectorAll('summary[data-current][aria-current="true"]')].map(summary => summary.textContent.trim()) : [],
     linkGroup: (() => {
@@ -1485,6 +1486,10 @@ async function checkChrome(page, baseUrl, width) {
 
   if (home.groups !== MENU_GROUPS.join(', ')) {
     problems.push(`the menu groups are ${home.groups} instead of ${MENU_GROUPS.join(', ')}`);
+  }
+
+  for (const pieces of home.pieces.filter(buttons => buttons !== MENU_GROUPS.join(', '))) {
+    problems.push(`the Pieces buttons are ${pieces} instead of ${MENU_GROUPS.join(', ')}`);
   }
 
   problems.push(...(await checkMenus(page, width)));

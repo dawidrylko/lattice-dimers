@@ -12,6 +12,14 @@ const NAV = [
     ],
   },
   {
+    label: 'Triangular lattice',
+    items: [
+      { slug: 'triangular-lattice/rectangles', label: 'Rectangles' },
+      { slug: 'triangular-lattice/cylinders', label: 'Cylinders' },
+      { slug: 'triangular-lattice/tori', label: 'Tori' },
+    ],
+  },
+  {
     label: 'Domicules',
     lead: 'All tilings',
     items: [
@@ -21,14 +29,6 @@ const NAV = [
       { slug: 'domicules/rectangles-by-diagonal-pieces', label: 'Rectangles', heading: 'By diagonal pieces' },
       { slug: 'domicules/cylinders-by-diagonal-pieces', label: 'Cylinders', heading: 'By diagonal pieces' },
       { slug: 'domicules/tori-by-diagonal-pieces', label: 'Tori', heading: 'By diagonal pieces' },
-    ],
-  },
-  {
-    label: 'Triangular lattice',
-    items: [
-      { slug: 'triangular-lattice/rectangles', label: 'Rectangles' },
-      { slug: 'triangular-lattice/cylinders', label: 'Cylinders' },
-      { slug: 'triangular-lattice/tori', label: 'Tori' },
     ],
   },
 ];
@@ -205,6 +205,9 @@ const CHROME_CSS = `
 .site-nav .menu a { padding: 2px 0; }
 .site-nav .menu .menu-heading { margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
 .site-nav .menu a + .menu-heading { margin-top: 10px; }
+@media (min-width: 641px) {
+  .site-nav details:last-of-type .menu { left: auto; right: -12px; }
+}
 @media (max-width: 640px) {
   .site-nav { position: relative; }
   .site-nav details { position: static; }

@@ -168,8 +168,8 @@ ul.intro li + li { margin-top: 4px; }
     <li><a href="#benchmark" data-tab="benchmark">Benchmarks</a>: the exact counts and the running times of the solvers in Rust,
       Python and JavaScript, on boards up to 20&nbsp;×&nbsp;20; the triangular lattice has counts only, as the full benchmark run leaves it out.</li>
     <li>Notebooks, in the menu: the methods for <a href="notes/dominoes/rectangles.html">dominoes</a>,
-      <a href="notes/domicules/rectangles.html">domicules</a> and
-      <a href="notes/triangular-lattice/rectangles.html">the triangular lattice</a>, with code that runs whenever the site is
+      <a href="notes/triangular-lattice/rectangles.html">the triangular lattice</a> and
+      <a href="notes/domicules/rectangles.html">domicules</a>, with code that runs whenever the site is
       built.</li>
     <li><a href="notes/research.html">Research</a>: the entropy per site of domicule tilings, estimated at
       s&nbsp;=&nbsp;__RESEARCH_S__&nbsp;±&nbsp;__RESEARCH_DS__ and proved to lie between __RESEARCH_LOWER__ and
@@ -188,8 +188,8 @@ ul.intro li + li { margin-top: 4px; }
       <span class="label" id="pieces-label">Pieces</span>
       <div class="pieces" id="pieces" role="group" aria-labelledby="pieces-label">
         <button type="button" data-pieces="domino" title="Every piece covers two cells that share a side">Dominoes</button>
-        <button type="button" data-pieces="domicule" title="A piece may also cover two cells that share only a corner">Domicules</button>
         <button type="button" data-pieces="triangular" title="A piece may also cover two cells joined by the ↘ diagonal">Triangular lattice</button>
+        <button type="button" data-pieces="domicule" title="A piece may also cover two cells that share only a corner">Domicules</button>
       </div>
     </div>
     <div class="picker">
@@ -258,8 +258,8 @@ ul.intro li + li { margin-top: 4px; }
       <span class="label" id="benchmark-pieces-label">Pieces</span>
       <div class="pieces" id="benchmark-pieces" role="group" aria-labelledby="benchmark-pieces-label">
         <button type="button" data-pieces="domino" title="Every piece covers two cells that share a side">Dominoes</button>
-        <button type="button" data-pieces="domicule" title="A piece may also cover two cells that share only a corner">Domicules</button>
         <button type="button" data-pieces="triangular" title="A piece may also cover two cells joined by the ↘ diagonal">Triangular lattice</button>
+        <button type="button" data-pieces="domicule" title="A piece may also cover two cells that share only a corner">Domicules</button>
       </div>
     </div>
     <div class="picker">
@@ -615,8 +615,8 @@ function clamp(value, min, max) {
   return value < min ? min : value > max ? max : value;
 }
 
-const PIECE_NAMES = { domino: 'Domino', domicule: 'Domicule', triangular: 'Triangular lattice' };
-const BENCHMARK_PIECES = ['domino', 'domicule', 'triangular'];
+const PIECE_NAMES = { domino: 'Domino', triangular: 'Triangular lattice', domicule: 'Domicule' };
+const BENCHMARK_PIECES = ['domino', 'triangular', 'domicule'];
 const BENCHMARK_SURFACES = ['rectangle', 'cylinder', 'torus'];
 const BENCHMARK_ALIASES = {
   dominoes: ['domino', 'rectangle'],
