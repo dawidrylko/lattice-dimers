@@ -33,30 +33,45 @@ const SECTION_TYPES = {
 const LINE_ORDER = 'ISTUNCDHFeptoYKOAE';
 const MATHWORLD = [
   { page: 'PerfectMatching', label: 'Perfect Matching', trigger: /perfect matching|domicule|dimer covering/i },
-  { page: 'KingGraph', label: 'King Graph', trigger: /king'?s graph|domicule/i },
+  { page: 'KingGraph', label: 'King Graph', trigger: /king'?s graph/i },
 ];
+const SIZE = '(?:\\d+|\\d*[hknmw])';
+const BOARD_SIZES = [
+  new RegExp(`(?:^|[\\s(])${SIZE} x ${SIZE}(?=$|[\\s,.;:)])`, 'g'),
+  new RegExp(`(?:^|[\\s(])${SIZE}[xX]${SIZE}(?=$|[\\s,.;:)-])`, 'g'),
+  new RegExp(`(?:^|[\\s(])${SIZE}(?: by |-by-)${SIZE}(?=$|[\\s,.;:)])`, 'g'),
+];
+const ARITHMETIC = /\b(?:divid|multipl|replac|substitut)\w*[^.;]*$/i;
+const NUMERIC_ROW = /^\s*-?\d+(?:,\s*-?\d+)*(?:[,;]|,\s*\.\.\.)?\s*$/;
+const AUTHOR_SUFFIX = /^(?:Jr\.?|Sr\.?|II|III|IV|(?:\p{Lu}\.\s*)+)$/u;
+const PERSON = /^(?:\p{Lu}[\p{L}'’.-]*\s+){1,3}\p{Lu}[\p{L}'’-]+(?:, (?:Jr\.?|Sr\.?|II|III|IV))?$/u;
 const NON_ASCII_MATH = /[×−–—≤≥≠…→←↔∞·²³√π∑∏∫≈±‘’“” ]/;
 const MISSPELLED =
   /\b(?:behaviour\w*|colour\w*|generalis\w*|labell(?:ed|ing)|neighbour\w*|non-(?:composite|decreasing|empty|increasing|negative|positive|prime|square|squarefree|trivial|unit|zero)|nil-potent|cube-free|square-free|semi-prime|sub-matrix|proven|zeroes|zeroeth|occuring|ocurring|recurence|reccurrence|recuring|reccurring|cancelation|dependant|independant|dissectable|[nmij]th|\d+-(?:th|st|nd|rd))\b/i;
 const ONLINE_ONLY = /https?:\/\/|doi\.org|\barXiv\b|\bZenodo\b|Electronic Journal of Combinatorics|Elec(?:tron)?\. J\. Comb|Journal of Integer Sequences|J\. Integer Seq/i;
 const PROVENANCE =
-  /\bagree (?:between|with)\b|\bmodulo primes\b|\bChinese remainder\b|\bexact integers\b|\b(?:computed|checked|verified|recounted) (?:by|with|against)\b|\bcome from (?:a|the) transfer matrix\b|\bcomputed a\(\d+\)/i;
+  /\bagree between\b|\bmodulo primes\b|\bChinese remainder\b|\bexact integers\b|\b(?:computed|checked|verified|recounted) (?:with|against)\b|\bcome from (?:a|the) transfer matrix\b|\bcomputed a\(\d+\)/i;
 const NOT_FUTURE_PROOF =
-  /\b(?:the|this|our) (?:Zenodo )?(?:preprint|paper|article|report)\b|\bonly the \d+ (?:digits|terms)\b|\bthe \d+ (?:digits|terms) (?:listed|shown|given)\b|\bfix(?:es)? only the first\b|\b(?:truncated to|listed up to) the digits\b|\bdigits valid for the whole\b/i;
+  /\bthe Zenodo (?:preprint|paper|report|record)\b|\b(?:our|my) (?:preprint|paper|article|report)\b|\bonly the \d+ (?:digits|terms)\b|\bthe \d+ (?:digits|terms) (?:listed|shown|given)\b|\bfix(?:es)? only the first\b|\b(?:truncated to|listed up to) the digits\b|\bdigits valid for the whole\b/i;
 
-function ed(entry, revision, editor, date, quote) {
-  return `${entry} #${revision}, ${editor}, ${date}${quote ? `: "${quote}"` : ''}`;
+function said(entry, revision, editor, date, ...quotes) {
+  return `${entry} #${revision}, ${editor}, ${date}: ${quotes.map(quote => `"${quote}"`).join('; ')}`;
+}
+
+function edit(entry, revision, editor, date, description) {
+  return `${entry} #${revision}, ${editor}, ${date}: ${description}`;
 }
 
 const RULES = [
   {
     id: 'data-fill',
     field: 'DATA',
-    text: `DATA holds every term that fits in about ${DATA_WIDTH} characters, counted with the spaces the OEIS shows; the next term of the b-file must not fit.`,
+    text: `DATA holds every term that fits in about ${DATA_WIDTH} characters, counted with the spaces the OEIS shows; the next term of the b-file must not fit. ${DATA_WIDTH} is where Michel Marcus left A402163 (#5, 287 characters); Alois P. Heinz wrote 260 on A309117 (#8), the figure of the Style Sheet, which an editor passes while a term still fits.`,
     source: [
-      ed('A402163', 5, 'Michel Marcus', '2026-11-14', 'there was room for another term : added'),
-      ed('A401988', 6, 'Michel Marcus', '2026-11-11', 'data wants more terms'),
-      ed('A309117', 8, 'Alois P. Heinz', '2019-07-13', '<=260 char in data section usually'),
+      said('A402163', 5, 'Michel Marcus', '2026-11-14', 'there was room for another term : added'),
+      said('A401988', 6, 'Michel Marcus', '2026-11-11', 'data wants more terms'),
+      said('A309117', 8, 'Alois P. Heinz', '2019-07-13', '<=260 char in data section usually'),
+      'SS "How many terms do we need?": "about 260 characters including spaces and commas"',
     ],
     check(info) {
       if (!info.full || info.table || info.keywords.has('cons') || !info.bFile) {
@@ -80,7 +95,7 @@ const RULES = [
     id: 'data-rows',
     field: 'DATA',
     text: `The DATA of a triangle or an array ends on a row boundary, and a further whole row is added while it fits in about ${DATA_WIDTH} characters.`,
-    source: [ed('A401673', 5, 'Alois P. Heinz', '2026-11-02', 'the rest of row n=4 appended')],
+    source: [edit('A401673', 5, 'Alois P. Heinz', '2026-11-02', 'the rest of row n=4 appended')],
     check(info) {
       if (!info.full || !info.table) {
         return [];
@@ -125,7 +140,7 @@ const RULES = [
     id: 'keyword-more-bfile',
     field: 'KEYWORD',
     text: 'No keyword more when the entry links a b-file: the b-file already gives more terms.',
-    source: [ed('A402163', 6, 'Michel Marcus', '2026-11-14', 'no keyword more more, since we have a bfile')],
+    source: [said('A402163', 6, 'Michel Marcus', '2026-11-14', 'no keyword more more, since we have a bfile')],
     check(info) {
       return info.keywords.has('more') && info.bFileLink ? [finding(info.of('K')[0], 'Keyword more next to a b-file link: drop more.')] : [];
     },
@@ -149,7 +164,11 @@ const RULES = [
     id: 'keyword-consistency',
     field: 'KEYWORD',
     text: 'nonn or sign by the signs of the terms, cons for a decimal expansion, tabl or tabf for a triangle or an array read by rows or antidiagonals.',
-    source: ['KW (https://oeis.org/eishelp2.html#RK)', 'A239264, tabl for an array read by antidiagonals', 'A401673, tabf for an irregular triangle'],
+    source: [
+      'KW (https://oeis.org/eishelp2.html#RK)',
+      'the live A239264 carries tabl, an array read by antidiagonals (read 2026-11-17)',
+      'the live A401673 carries tabf, an irregular triangle (read 2026-11-17)',
+    ],
     check(info) {
       if (!info.full) {
         return [];
@@ -186,7 +205,7 @@ const RULES = [
     id: 'name-period',
     field: 'NAME',
     text: 'The NAME ends with a period.',
-    source: [ed('A309117', 5, 'Michel Marcus', '2019-07-13', 'a period added after the name')],
+    source: [edit('A309117', 5, 'Michel Marcus', '2019-07-13', 'a period added after the name')],
     check(info) {
       const line = info.of('N')[0];
 
@@ -197,7 +216,7 @@ const RULES = [
     id: 'name-index',
     field: 'NAME',
     text: 'The NAME says what n is.',
-    source: [ed('A309117', 9, 'Alois P. Heinz', '2019-07-13', 'The width is 4.  I guess you should write in name that the length is n.')],
+    source: [said('A309117', 9, 'Alois P. Heinz', '2019-07-13', 'The width is 4.  I guess you should write in name that the length is n.')],
     check(info) {
       const line = info.of('N')[0];
 
@@ -211,20 +230,24 @@ const RULES = [
   {
     id: 'capital-x',
     field: 'NAME, COMMENTS, FORMULA, EXAMPLE, CROSSREFS',
-    text: 'Board sizes are written n X n, with a capital X.',
+    text: 'Board sizes are written n X n, with a capital X between spaces, not n x n, nXn, n by n or n-by-n.',
     source: ['SS "Style for the name of a sequence"', 'A239264, "k X n grid"'],
     check(info) {
       return info
         .of('N', 'C', 'F', 'e', 'Y')
-        .filter(line => /(?:^|[\s(])(?:\d+|\d*[hknmw]) x (?:\d+|\d*[hknmw])(?=$|[\s,.;:)])/.test(line.value))
-        .map(line => finding(line, 'Write the size with a capital X: n X n.'));
+        .filter(line =>
+          BOARD_SIZES.some(pattern =>
+            [...line.value.matchAll(pattern)].some(match => !ARITHMETIC.test(line.value.slice(0, match.index + match[0].search(/\S/)))),
+          ),
+        )
+        .map(line => finding(line, 'Write the size with a capital X between spaces: n X n.'));
     },
   },
   {
     id: 'line-period',
     field: 'COMMENTS, FORMULA, CROSSREFS',
     text: 'A comment, formula or cross-reference line ends with a period, before its signature if it has one.',
-    source: [ed('A309117', 5, 'Michel Marcus', '2019-07-13', 'periods added after the g.f. and the crossrefs')],
+    source: [edit('A309117', 5, 'Michel Marcus', '2019-07-13', 'periods added after the g.f. and the crossrefs')],
     check(info) {
       const lines = info.of('C', 'F', 'Y');
 
@@ -242,7 +265,7 @@ const RULES = [
     id: 'crossrefs-form',
     field: 'CROSSREFS',
     text: 'CROSSREFS names A-numbers only: "Cf. A000001, A000002 (what it is)." or a sentence such as "Row sums give A000003."; no link, no repetition, not the entry itself.',
-    source: [ed('A309117', 5, 'Michel Marcus', '2019-07-13', '"A011900" became "Cf. A011900."'), 'SS "Crossrefs"'],
+    source: [edit('A309117', 5, 'Michel Marcus', '2019-07-13', '"A011900" became "Cf. A011900."'), 'SS "Crossrefs"'],
     check(info) {
       const findings = [];
       const seen = new Set();
@@ -282,10 +305,50 @@ const RULES = [
     },
   },
   {
+    id: 'crossrefs-reverse',
+    field: 'CROSSREFS',
+    text: 'An entry named in a CROSSREFS sentence, as in "Row sums give A239273.", names this entry back in its own CROSSREFS, as "Row sums of A401673."; a Cf. list needs no reply.',
+    source: [
+      edit('A239273', 46, 'Alois P. Heinz', '2026-11-02', '"Row sums of A401673." added, after A401673 said "Row sums give A239273."'),
+      edit('A004003', 169, 'Dawid Ryłko', '2026-11-11', '"Column k=0 of A401673." added, after A401673 said "Column k=0 gives A004003."'),
+      'the live A239264 does not name A401670, which lists it in a Cf. line (read 2026-11-17)',
+    ],
+    check(info) {
+      const findings = [];
+
+      for (const line of info.of('Y').filter(item => !/^Cf\b/.test(item.value))) {
+        for (const target of new Set(line.value.match(/A\d{6}/g) ?? [])) {
+          if (target === info.entry) {
+            continue;
+          }
+
+          const other = info.others.find(item => item.entry === target);
+          const known = other && (other.live || describe(other.text, { entry: target }).full);
+
+          if (!known) {
+            if (info.mode !== 'repo') {
+              findings.push(
+                finding(line, `${target} has no full copy here: check that its CROSSREFS name ${info.entry} back, or pass its text with --related.`, 'note'),
+              );
+            }
+
+            continue;
+          }
+
+          if (!parseEntry(other.text).some(item => item.type === 'Y' && item.value.includes(info.entry))) {
+            findings.push(finding(line, `${target} does not name ${info.entry} back: add the converse sentence to the CROSSREFS of ${target}.`));
+          }
+        }
+      }
+
+      return findings;
+    },
+  },
+  {
     id: 'links-period',
     field: 'LINKS',
     text: 'A link line other than the b-file ends with a period after the closing </a>.',
-    source: [ed('A239273', 50, 'Andrew Howroyd', '2026-11-11', 'periods added after "King Graph</a>" and "King\'s graph</a>"')],
+    source: [edit('A239273', 50, 'Andrew Howroyd', '2026-11-11', 'periods added after "King Graph</a>" and "King\'s graph</a>"')],
     check(info) {
       return info
         .of('H')
@@ -298,10 +361,10 @@ const RULES = [
     field: 'LINKS',
     text: 'Links use https, DOIs go through https://doi.org/ (not dx.doi.org) and arXiv through https://arxiv.org/abs/<id> (not arXiv.org or math.CO/).',
     source: [
-      ed('A004003', 149, 'Michel Marcus', '2026-02-11', 'http://dx.doi.org became https://doi.org'),
-      ed('A004003', 148, 'Michel Marcus', '2026-02-11', 'http://arXiv.org/abs/math.CO/ became https://arxiv.org/abs/math/'),
-      ed('A309117', 13, 'Sean A. Irvine', '2026-05-30', 'global edit 3122, https'),
-      ed('A004003', 162, 'Michel Marcus', '2026-10-15', 'three links moved to https'),
+      edit('A004003', 149, 'Michel Marcus', '2026-02-11', 'http://dx.doi.org became https://doi.org'),
+      edit('A004003', 148, 'Michel Marcus', '2026-02-11', 'http://arXiv.org/abs/math.CO/ became https://arxiv.org/abs/math/'),
+      edit('A309117', 13, 'Sean A. Irvine', '2026-05-30', 'global edit 3122, https'),
+      edit('A004003', 162, 'Michel Marcus', '2026-10-15', 'three links moved to https'),
     ],
     check(info) {
       const findings = [];
@@ -328,8 +391,8 @@ const RULES = [
   {
     id: 'links-arxiv-label',
     field: 'LINKS',
-    text: 'An arXiv link names its identifier after </a>: ", arXiv:<id> [<class>], <year>."',
-    source: [ed('A004003', 66, 'Michel Marcus', '2015', '", arXiv:math/0610925 [math.CO], 2006." added after the title')],
+    text: 'An arXiv link names its identifier outside the address, as ", arXiv:<id> [<class>], <year>." after </a> or as the link text.',
+    source: [edit('A004003', 66, 'Michel Marcus', '2015', '", arXiv:math/0610925 [math.CO], 2006." added after the title')],
     check(info) {
       return info
         .of('H')
@@ -342,7 +405,7 @@ const RULES = [
 
           const id = match[1].replace(/^math\.[A-Z]{2}\//, 'math/').replace(/v\d+$/, '');
 
-          return !line.value.split('</a>').slice(1).join('</a>').includes(`arXiv:${id}`);
+          return !line.value.replace(/href="[^"]*"/g, '').includes(`arXiv:${id}`);
         })
         .map(line => finding(line, 'Name the arXiv identifier after the title: ", arXiv:<id> [<class>], <year>."'));
     },
@@ -351,14 +414,14 @@ const RULES = [
     id: 'links-authors',
     field: 'LINKS',
     text: 'A list of several authors before a link joins the last one with "and".',
-    source: [ed('A004003', 140, 'Michel Marcus', '2025', '"and" added before the last of five and of three authors')],
+    source: [edit('A004003', 140, 'Michel Marcus', '2025', '"and" added before the last of five and of three authors')],
     check(info) {
       return info
         .of('H')
         .filter(line => {
           const authors = linkAuthors(line.value);
 
-          return authors.includes(', ') && !/ and /.test(authors);
+          return !/ and /.test(authors) && leadingPeople(authors).length > 1;
         })
         .map(line => finding(line, 'Join the last author with "and".'));
     },
@@ -367,7 +430,7 @@ const RULES = [
     id: 'links-order',
     field: 'LINKS',
     text: "LINKS starts with the b-file, then goes alphabetically by the first author's last name, and ends with the index entries.",
-    source: [ed('A401988', 6, 'Michel Marcus', '2026-11-11', '3rd link should be 2nd position'), 'SS "Links"'],
+    source: [said('A401988', 6, 'Michel Marcus', '2026-11-11', '3rd link should be 2nd position'), 'SS "Links"'],
     check(info) {
       if (!info.full) {
         return [];
@@ -403,7 +466,7 @@ const RULES = [
     id: 'links-rec-index',
     field: 'LINKS',
     text: 'An entry with a rational g.f. or a linear recurrence with constant coefficients has the index entry "<a href="/index/Rec#order_NN">Index entries for linear recurrences with constant coefficients</a>, signature (c_1,...,c_k).", NN the order in two digits, and the signature holds on the known terms.',
-    source: [ed('A309117', 17, 'Alois P. Heinz', '2026-11-11', 'order_08, signature (2,9,-4,-21,-4,9,2,-1) added')],
+    source: [edit('A309117', 17, 'Alois P. Heinz', '2026-11-11', 'order_08, signature (2,9,-4,-21,-4,9,2,-1) added')],
     check(info) {
       if (!info.full) {
         return [];
@@ -451,19 +514,39 @@ const RULES = [
     id: 'links-placeholder',
     field: 'LINKS',
     text: 'No placeholder text in a link.',
-    source: [ed('A004003', 123, 'N. J. A. Sloane', '2021', '"TITLE FOR LINK" replaced')],
+    source: [edit('A004003', 123, 'N. J. A. Sloane', '2021', '"TITLE FOR LINK" replaced')],
     check(info) {
       return info
         .of('H')
-        .filter(line => /TITLE FOR LINK|LINK TEXT/i.test(line.value))
+        .filter(line => /TITLE FOR LINK/i.test(line.value))
         .map(line => finding(line, 'Replace the placeholder with the title.'));
+    },
+  },
+  {
+    id: 'links-title-truncated',
+    field: 'LINKS',
+    text: 'A link names the full title of the work, never one cut short with "...".',
+    source: [
+      edit(
+        'A004003',
+        151,
+        'Michel Marcus',
+        '2026-02-11',
+        '"Combinatorial approaches and conjectures ..." became "Combinatorial Approaches and Conjectures for 2-Divisibility Problems Concerning Domino Tilings of Polyominoes"',
+      ),
+    ],
+    check(info) {
+      return info
+        .of('H')
+        .filter(line => /<a [^>]*>[^<]*(?:\.\.\.|…)\s*<\/a>/.test(line.value))
+        .map(line => finding(line, 'Write the full title of the work in the link.'));
     },
   },
   {
     id: 'links-notes-canonical',
     field: 'LINKS',
     text: 'A link into the notebooks names the page itself, not an address that redirects.',
-    source: [ed('A401670', 4, 'Jason Yuen', '2026-11-03', 'notes/torus.html became notes/tori.html after the rename had left the old page a redirect')],
+    source: [edit('A401670', 4, 'Jason Yuen', '2026-11-03', 'notes/torus.html became notes/tori.html after the rename had left the old page a redirect')],
     check(info) {
       if (!info.notes) {
         return [];
@@ -487,11 +570,12 @@ const RULES = [
   {
     id: 'links-mathworld',
     field: 'LINKS',
+    level: 'advice',
     text: "An entry on perfect matchings links Eric Weisstein's World of Mathematics, Perfect Matching; an entry on the king's graph also King Graph.",
     source: [
-      ed('A401988', 10, 'Andrew Howroyd', '2026-11-11', 'Perfect Matching added'),
-      ed('A239264', 41, 'Andrew Howroyd', '2026-11-11', 'King Graph and Perfect Matching added'),
-      ed('A239273', 50, 'Andrew Howroyd', '2026-11-11', 'Perfect Matching added'),
+      edit('A401988', 10, 'Andrew Howroyd', '2026-11-11', 'Perfect Matching added'),
+      edit('A239264', 41, 'Andrew Howroyd', '2026-11-11', 'King Graph and Perfect Matching added'),
+      edit('A239273', 50, 'Andrew Howroyd', '2026-11-11', 'Perfect Matching added'),
     ],
     check(info) {
       if (!info.full) {
@@ -512,7 +596,9 @@ const RULES = [
     id: 'bfile-link-text',
     field: 'LINKS',
     text: 'The b-file link reads "Table of n, a(n) for n = a..b", "Rows n = a..b of triangle, flattened" for a triangle read by rows, "Antidiagonals n = a..b, flattened" for an array read by antidiagonals.',
-    source: [ed('A239264', 27, 'Dawid Ryłko', '2026-10-15', 'the upload form wrote "Table of n, a(n) for n = 0..1034" for an array, set back to "Antidiagonals n = 0..44, flattened"')],
+    source: [
+      edit('A239264', 27, 'Dawid Ryłko', '2026-10-15', '#26, the upload of b239264_2.txt, wrote "Table of n, a(n) for n = 0..1034"; #27 set it back to "Antidiagonals n = 0..44, flattened"'),
+    ],
     check(info) {
       if (!info.bFileLink || !info.name) {
         return [];
@@ -533,14 +619,14 @@ const RULES = [
     field: 'LINKS',
     text: 'The b-file link is credited to the one person who made the file; terms taken from an earlier file are credited after </a>, as "(terms 0..36 from Alois P. Heinz)".',
     source: [
-      ed(
+      said(
         'A239264',
         28,
         'Sean A. Irvine',
         '2026-10-20',
         'Did Alois directly assist in creating these new rows of the b-file? If not, the new b-file should be "Dawid Rylko ..." rather than "Alois P. Heinz and Dawid Rylko"',
       ),
-      ed('A004003', 156, 'Alois P. Heinz', '2026-03-10', 'Table of n, a(n) for n=1..12000 (terms 1..500 from Jon E. Schoenfield, terms 501..1000 from Chai Wah Wu)'),
+      said('A004003', 156, 'Alois P. Heinz', '2026-03-10', 'Table of n, a(n) for n=1..12000 (terms 1..500 from Jon E. Schoenfield, terms 501..1000 from Chai Wah Wu)'),
     ],
     check(info) {
       if (!info.bFileLink) {
@@ -567,7 +653,7 @@ const RULES = [
     id: 'bfile-installed-name',
     field: 'LINKS',
     text: 'Once an entry is approved, its b-file link names b<n>.txt, the name the OEIS server installs the upload under.',
-    source: [ed('A401673', 9, 'OEIS Server', '2026-11-09', 'Installed first b-file as b401673.txt.')],
+    source: [said('A401673', 9, 'OEIS Server', '2026-11-09', 'Installed first b-file as b401673.txt.')],
     check(info) {
       return info.mode === 'repo' && info.status === 'Approved' && info.bFileLink && /\/b\d{6}_\d+\.txt"/.test(info.bFileLink.value)
         ? [finding(info.bFileLink, `The approved entry links b${info.entry.slice(1)}.txt.`)]
@@ -578,7 +664,7 @@ const RULES = [
     id: 'bfile-credit-kept',
     field: 'LINKS',
     text: 'A new upload keeps the credit that stood after </a> in the b-file line; the upload form drops it.',
-    source: [ed('A239264', 36, 'Dawid Ryłko', '2026-11-01', 'the credit "(antidiagonals 0..36 from Alois P. Heinz)", dropped by the upload form in #35, put back')],
+    source: [edit('A239264', 36, 'Dawid Ryłko', '2026-11-01', '#35, the upload of b239264_3.txt, dropped the credit "(antidiagonals 0..36 from Alois P. Heinz)"; #36 put it back')],
     check(info) {
       if (!info.previous || !info.bFileLink) {
         return [];
@@ -594,7 +680,7 @@ const RULES = [
     id: 'extensions-unneeded',
     field: 'EXTENSIONS',
     text: "No EXTENSIONS line for terms that are only in the b-file, nor anywhere in one's own new entry.",
-    source: [ed('A239273', 35, 'Stefano Spezia', '2026-10-15', 'No extension when adding or updating a bfile'), 'SS "Extensions"'],
+    source: [said('A239273', 35, 'Stefano Spezia', '2026-10-15', 'No extension when adding or updating a bfile'), 'SS "Extensions"'],
     check(info) {
       const findings = [];
 
@@ -617,8 +703,8 @@ const RULES = [
     field: 'all',
     text: `The account name is "${ACCOUNT}"; outside LINKS and AUTHOR it appears only as the signature "_${ACCOUNT}_, Mon dd yyyy" that ~~~~ writes.`,
     source: [
-      ed('A004003', 161, 'Michel Marcus', '2026-10-15', 'you must sign with ~~~~ / you must use same name as you registered'),
-      ed('A239273', 48, 'Alois P. Heinz', '2026-11-11', '"Dawid Rylko" became "Dawid Ryłko" in the b-file link'),
+      said('A004003', 161, 'Michel Marcus', '2026-10-15, in the Discussion', 'you must sign with ~~~~', 'you must use same name as you registered'),
+      edit('A239273', 48, 'Alois P. Heinz', '2026-11-11', '"Dawid Rylko" became "Dawid Ryłko" in the b-file link'),
     ],
     check(info) {
       const findings = [];
@@ -658,7 +744,7 @@ const RULES = [
     id: 'double-space',
     field: 'all but EXAMPLE',
     text: 'No double space in the text, nor inside a program line after its indentation. The Style Sheet allows two spaces after a sentence, but an editor removed exactly those.',
-    source: [ed('A004003', 165, 'Jason Yuen', '2026-10-17', 'double spaces removed in LINKS and MATHEMATICA')],
+    source: [edit('A004003', 165, 'Jason Yuen', '2026-10-17', 'double spaces removed in LINKS and MATHEMATICA')],
     check(info) {
       return info.lines
         .filter(line => (PROSE.includes(line.type) && line.value.includes('  ')) || (CODE.includes(line.type) && line.value.trimStart().includes('  ')))
@@ -669,7 +755,7 @@ const RULES = [
     id: 'formula-ie',
     field: 'FORMULA',
     text: 'In a formula an explanation follows "; i.e.," not ", i.e.,".',
-    source: [ed('A004003', 167, 'Sean A. Irvine', '2026-10-21', '", i.e.," became "; i.e.,"')],
+    source: [edit('A004003', 167, 'Sean A. Irvine', '2026-10-21', '", i.e.," became "; i.e.,"')],
     check(info) {
       return info
         .of('F')
@@ -681,11 +767,11 @@ const RULES = [
     id: 'formula-commentary',
     field: 'FORMULA',
     text: 'A FORMULA line states the formula; how it compares with another line is not part of it.',
-    source: [ed('A004003', 167, 'Sean A. Irvine', '2026-10-21', '"Unlike the resultant formula of Apr 13 2020, this gives a(n) directly ..." removed')],
+    source: [edit('A004003', 167, 'Sean A. Irvine', '2026-10-21', '"Unlike the resultant formula of Apr 13 2020, this gives a(n) directly ..." removed')],
     check(info) {
       return info
         .of('F')
-        .filter(line => /\b[Uu]nlike (?:the|a|an)\b|\bthis (?:formula )?gives\b/.test(line.value))
+        .filter(line => /\bunlike\b/i.test(line.value))
         .map(line => finding(line, 'Drop the comparison with other formulas.'));
     },
   },
@@ -693,11 +779,11 @@ const RULES = [
     id: 'formula-program',
     field: 'FORMULA',
     text: 'A FORMULA stands on its own: a(n) defined through the program ("see PARI program") is the program, which PROG already holds.',
-    source: [ed('A402163', 8, 'Andrew Howroyd', '2026-11-16', '"a(n) = (M_{2n}^(2n))[0,0], where M_w is the row transfer matrix ... (see PARI program)." removed')],
+    source: [edit('A402163', 8, 'Andrew Howroyd', '2026-11-16', '"a(n) = (M_{2n}^(2n))[0,0], where M_w is the row transfer matrix ... (see PARI program)." removed')],
     check(info) {
       return info
         .of('F')
-        .filter(line => /\bprogram\b|\bsee PROG\b/i.test(line.value))
+        .filter(line => /\bsee (?:the )?(?:[A-Za-z]+ )?program\b|\bsee PROG\b/i.test(line.value))
         .map(line => finding(line, 'A formula that points to the program: describe the method in a PROG comment instead.'));
     },
   },
@@ -705,7 +791,7 @@ const RULES = [
     id: 'comment-provenance',
     field: 'COMMENTS',
     text: 'COMMENTS do not tell how the terms were computed or cross-checked (which programs agree, primes, the Chinese remainder theorem); that belongs to the linked notebook.',
-    source: [ed('A402163', 8, 'Andrew Howroyd', '2026-11-16', '"Terms a(0)-a(7) agree between two transfer-matrix programs, ... so the Chinese remainder theorem gives the exact count." removed')],
+    source: [edit('A402163', 8, 'Andrew Howroyd', '2026-11-16', '"Terms a(0)-a(7) agree between two transfer-matrix programs, ... so the Chinese remainder theorem gives the exact count." removed')],
     check(info) {
       return info
         .of('C')
@@ -718,7 +804,7 @@ const RULES = [
     field: 'COMMENTS, FORMULA',
     text: 'Wording stays true when more terms or digits or another reference are added: a source is cited as "Ryłko (2026)", never as "the Zenodo preprint", and no sentence depends on how many terms or digits are listed.',
     source: [
-      ed(
+      said(
         'A401669',
         4,
         'Sean A. Irvine',
@@ -736,9 +822,10 @@ const RULES = [
   {
     id: 'program-shared',
     field: 'PROG',
+    level: 'advice',
     text: 'A program shared with a related entry lives in one entry, the lower A-number; the other gets a pointer line such as "a(n) = T(2*n, 2*n); \\\\ T(h, w) defined in A239264."',
     source: [
-      ed(
+      said(
         'A239273',
         37,
         'Andrew Howroyd',
@@ -766,6 +853,43 @@ const RULES = [
       }
 
       return findings;
+    },
+  },
+  {
+    id: 'example-aligned',
+    field: 'EXAMPLE',
+    text: 'Rows of numbers in EXAMPLE, a triangle or an array, are aligned on the right: in every column the numbers end at the same position.',
+    source: [edit('A401673', 6, 'Alois P. Heinz', '2026-11-02', 'the rows of "Triangle begins:" right-aligned by column')],
+    check(info) {
+      const groups = [];
+      let group = [];
+
+      for (const line of info.lines) {
+        if (line.type === 'e' && NUMERIC_ROW.test(line.value)) {
+          group.push(line);
+        } else {
+          groups.push(group);
+          group = [];
+        }
+      }
+
+      groups.push(group);
+
+      return groups
+        .filter(rows => rows.length > 1)
+        .flatMap(rows => {
+          const ends = rows.map(row => [...row.value.matchAll(/-?\d+/g)].map(match => match.index + match[0].length));
+
+          for (let index = 1; index < rows.length; index++) {
+            const column = ends[index].findIndex((end, position) => ends.slice(0, index).some(above => above[position] !== undefined && above[position] !== end));
+
+            if (column !== -1) {
+              return [finding(rows[index], `Column ${column + 1} ends at position ${ends[index][column]} here but elsewhere in the rows above: align the rows on the right.`)];
+            }
+          }
+
+          return [];
+        });
     },
   },
   {
@@ -807,13 +931,17 @@ const RULES = [
   {
     id: 'references-online',
     field: 'REFERENCES',
-    text: 'A reference that is online goes in LINKS, not REFERENCES: a URL, a DOI, arXiv, Zenodo, or a journal that exists only online.',
-    source: [ed('A004003', 73, 'Michel Marcus', '2016', 'Moved refs to links'), 'SS "References": "References to books, journal papers, and other material not found online."'],
+    text: 'A reference that is online is in LINKS: a URL, a DOI, arXiv, Zenodo, or a journal that exists only online. It may stay in REFERENCES too, which the Style Sheet calls "perfectly normal", once a LINKS line names its first author.',
+    source: [said('A004003', 73, 'Michel Marcus', '2016', 'Moved refs to links'), 'SS "References": "References to books, journal papers, and other material not found online."'],
     check(info) {
       return info
         .of('D')
-        .filter(line => ONLINE_ONLY.test(line.value))
-        .map(line => finding(line, 'An online reference: move it to LINKS with its link.'));
+        .filter(line => {
+          const surname = line.value.split(',')[0].trim().split(/\s+/).pop();
+
+          return ONLINE_ONLY.test(line.value) && !info.of('H').some(link => linkAuthors(link.value).includes(surname));
+        })
+        .map(line => finding(line, 'An online reference without its LINKS line: add it to LINKS with its link.'));
     },
   },
 ];
@@ -821,33 +949,84 @@ const RULES = [
 const APPROVED_AS_IS = 'approved with it, and the copy keeps the published text';
 const SYNCED_AFTER_APPROVAL = 'the copy of a draft is synced only after approval';
 const ACCEPTED = [
-  { entry: 'A239273', rule: 'signature-name', reason: 'the published PROG line still signs "_Dawid Rylko_" (#41); Alois P. Heinz renamed only the b-file link (#48)' },
-  { entry: 'A401669', rule: 'links-mathworld', reason: `${APPROVED_AS_IS} (#8, Sean A. Irvine, 2026-11-16)` },
-  { entry: 'A401670', rule: 'comment-provenance', reason: `${APPROVED_AS_IS} (#6, Sean A. Irvine, 2026-11-09), before Andrew Howroyd removed the same comment from A402163` },
-  { entry: 'A401670', rule: 'formula-program', reason: `${APPROVED_AS_IS} (#6, Sean A. Irvine, 2026-11-09), before Andrew Howroyd removed the same formula from A402163` },
-  { entry: 'A401670', rule: 'links-mathworld', reason: `${APPROVED_AS_IS} (#6, Sean A. Irvine, 2026-11-09)` },
+  {
+    entry: 'A239273',
+    rule: 'signature-name',
+    match: '_Dawid Rylko_',
+    reason: 'the published PROG line still signs "_Dawid Rylko_" (#41); Alois P. Heinz renamed only the b-file link (#48)',
+  },
+  {
+    entry: 'A401670',
+    rule: 'comment-provenance',
+    match: 'agree between two transfer-matrix programs',
+    reason: `${APPROVED_AS_IS} (#6, Sean A. Irvine, 2026-11-09), before Andrew Howroyd removed the same comment from A402163`,
+  },
+  {
+    entry: 'A401670',
+    rule: 'formula-program',
+    match: 'trace(M_{2n}^(2n))',
+    reason: `${APPROVED_AS_IS} (#6, Sean A. Irvine, 2026-11-09), before Andrew Howroyd removed the same formula from A402163`,
+  },
   {
     entry: 'A401670',
     rule: 'links-notes-canonical',
+    match: 'notes/tori.html',
     reason: "the published link names notes/tori.html, Jason Yuen's fix (#4); the notebook has since moved to notes/domicules/tori.html, to which tori.html redirects",
   },
-  { entry: 'A401673', rule: 'comment-provenance', reason: `${APPROVED_AS_IS} (#8, Sean A. Irvine, 2026-11-09), before Andrew Howroyd removed the same comment from A402163` },
-  { entry: 'A401673', rule: 'links-mathworld', reason: `${APPROVED_AS_IS} (#8, Sean A. Irvine, 2026-11-09)` },
-  { entry: 'A401673', rule: 'links-notes-canonical', reason: 'the published link names notes/diagonals.html, which redirects to notes/domicules/rectangles-by-diagonal-pieces.html' },
-  { entry: 'A401988', rule: 'comment-provenance', reason: `the sentence is still in the live draft (#12); ${SYNCED_AFTER_APPROVAL}` },
-  { entry: 'A401988', rule: 'links-mathworld', reason: `Andrew Howroyd added the link to the live draft (#10); ${SYNCED_AFTER_APPROVAL}` },
-  { entry: 'A402163', rule: 'comment-provenance', reason: `Andrew Howroyd removed the comment from the live draft (#8); ${SYNCED_AFTER_APPROVAL}` },
-  { entry: 'A402163', rule: 'formula-program', reason: `Andrew Howroyd removed the formula from the live draft (#8); ${SYNCED_AFTER_APPROVAL}` },
-  { entry: 'A402163', rule: 'links-mathworld', reason: `the links are missing from the live draft too (#9); ${SYNCED_AFTER_APPROVAL}` },
-  { entry: 'A402163', rule: 'program-shared', reason: `R and M are in the live draft too (#9); ${SYNCED_AFTER_APPROVAL}` },
+  {
+    entry: 'A401673',
+    rule: 'comment-provenance',
+    match: 'come from a transfer matrix in exact integers',
+    reason: `${APPROVED_AS_IS} (#8, Sean A. Irvine, 2026-11-09), before Andrew Howroyd removed the same comment from A402163`,
+  },
+  {
+    entry: 'A401673',
+    rule: 'links-notes-canonical',
+    match: 'notes/diagonals.html',
+    reason: 'the published link names notes/diagonals.html, which redirects to notes/domicules/rectangles-by-diagonal-pieces.html',
+  },
+  {
+    entry: 'A401988',
+    rule: 'comment-provenance',
+    match: 'A transfer matrix in exact integers gives the same terms.',
+    reason: `the sentence is still in the live draft (#12); ${SYNCED_AFTER_APPROVAL}`,
+  },
+  {
+    entry: 'A402163',
+    rule: 'comment-provenance',
+    match: 'agree between two transfer-matrix programs',
+    reason: `Andrew Howroyd removed the comment from the live draft (#8); ${SYNCED_AFTER_APPROVAL}`,
+  },
+  {
+    entry: 'A402163',
+    rule: 'formula-program',
+    match: '(M_{2n}^(2n))[0,0]',
+    reason: `Andrew Howroyd removed the formula from the live draft (#8); ${SYNCED_AFTER_APPROVAL}`,
+  },
 ];
+
+function leadingPeople(authors) {
+  const people = [];
+
+  for (const part of authors.split(', ')) {
+    if (AUTHOR_SUFFIX.test(part) && people.length > 0) {
+      people[people.length - 1] += `, ${part}`;
+    } else if (PERSON.test(part)) {
+      people.push(part);
+    } else {
+      break;
+    }
+  }
+
+  return people;
+}
 
 function withoutTitles(line) {
   return line.type === 'H' ? line.value.replace(/<a [^>]*>[\s\S]*?<\/a>/g, '<a></a>') : line.value;
 }
 
-function finding(line, message) {
-  return { line: line?.number ?? null, text: line ? `%${line.type} ${line.value}` : null, message };
+function finding(line, message, level) {
+  return { line: line?.number ?? null, text: line ? `%${line.type} ${line.value}` : null, message, ...(level ? { level } : {}) };
 }
 
 function displayWidth(terms) {
@@ -1074,7 +1253,7 @@ function describe(text, options = {}) {
 function lintEntry(text, options = {}) {
   const info = describe(text, options);
 
-  return RULES.flatMap(rule => rule.check(info).map(result => ({ entry: info.entry, rule: rule.id, ...result })));
+  return RULES.flatMap(rule => rule.check(info).map(result => ({ entry: info.entry, rule: rule.id, level: rule.level ?? 'defect', ...result })));
 }
 
 function listEntries() {
@@ -1146,7 +1325,11 @@ function decodeHtml(text) {
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&#x27;|&apos;/g, "'")
     .replace(/&nbsp;/g, ' ')
-    .replace(/&#(\d+);/g, (match, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#(\d+);|&#x([0-9a-f]+);/gi, (match, decimal, hex) => {
+      const code = decimal ? Number(decimal) : parseInt(hex, 16);
+
+      return code === 160 ? ' ' : String.fromCodePoint(code);
+    })
     .replace(/&amp;/g, '&');
 }
 
@@ -1192,12 +1375,26 @@ function parseDraftPage(html, entry) {
     .concat('\n');
 }
 
+function acceptedFor(result, accepted = ACCEPTED) {
+  return accepted.find(item => item.entry === result.entry && item.rule === result.rule && (result.text ?? '').includes(item.match)) ?? null;
+}
+
+function classify(result, accepted = ACCEPTED) {
+  return acceptedFor(result, accepted) ? 'accepted' : result.level;
+}
+
 function formatFindings(results, accepted = ACCEPTED) {
   return results.map(result => {
-    const known = accepted.find(item => item.entry === result.entry && item.rule === result.rule);
+    const known = acceptedFor(result, accepted);
 
-    return `${result.entry} ${known ? 'accepted' : 'defect'} [${result.rule}] line ${result.line ?? '-'}: ${result.message}${known ? ` (${known.reason})` : ''}`;
+    return `${result.entry} ${classify(result, accepted)} [${result.rule}] line ${result.line ?? '-'}: ${result.message}${known ? ` (${known.reason})` : ''}`;
   });
+}
+
+function summarize(results, accepted = ACCEPTED) {
+  const count = level => results.filter(result => classify(result, accepted) === level).length;
+
+  return `${count('defect')} defect(s), ${count('advice')} advice, ${count('note')} note(s), ${count('accepted')} accepted, against ${RULES.length} rules.`;
 }
 
 async function readDraftHtml(entry, file) {
@@ -1205,86 +1402,188 @@ async function readDraftHtml(entry, file) {
     return fs.readFileSync(file === '-' ? 0 : file, 'utf-8');
   }
 
-  const response = await fetch(`https://oeis.org/draft/${entry}`);
+  const response = await fetch(`https://oeis.org/draft/${entry}`, { signal: AbortSignal.timeout(30000) });
+
+  if (!response.ok) {
+    throw new Error(`https://oeis.org/draft/${entry} answered HTTP ${response.status}`);
+  }
 
   return response.text();
 }
 
+function readRelated(files) {
+  const lines = files.flatMap(file => parseEntry(fs.readFileSync(file, 'utf-8')));
+  const entries = [...new Set(lines.map(line => line.entry))];
+
+  return entries.map(entry => ({
+    entry,
+    live: true,
+    text: lines
+      .filter(line => line.entry === entry)
+      .map(line => `%${line.type} ${line.entry} ${line.value}`)
+      .join('\n'),
+  }));
+}
+
+function parseArguments(argv) {
+  const flags = { print: false, related: [] };
+  const positional = [];
+
+  for (let index = 0; index < argv.length; index++) {
+    if (argv[index] === '--print') {
+      flags.print = true;
+    } else if (argv[index] === '--related' && argv[index + 1]) {
+      flags.related.push(argv[++index]);
+    } else {
+      positional.push(argv[index]);
+    }
+  }
+
+  return { flags, positional };
+}
+
+function withoutSystemKeywords(text) {
+  return text.replace(/^(%K A\d{6} )(.*)$/m, (line, prefix, value) =>
+    prefix.concat(
+      value
+        .split(',')
+        .filter(keyword => !SYSTEM_KEYWORDS.includes(keyword))
+        .join(','),
+    ),
+  );
+}
+
+const USAGE = [
+  'Usage:',
+  '  node oeis/editorRules.js [A<number>]',
+  '  node oeis/editorRules.js --draft A<number> [draft page .html | -] [--related <file>]... [--print]',
+  '  node oeis/editorRules.js --file <entry text> [b-file] [--related <file>]... [--print]',
+  '  node oeis/editorRules.js --rules',
+].join('\n');
+
+async function lintDraft(mode, target, extra, flags) {
+  let text;
+  let entry;
+  let bFile;
+
+  if (mode === '--draft') {
+    entry = target;
+
+    if (!ENTRY_PATTERN.test(entry ?? '')) {
+      console.error(USAGE);
+
+      return 2;
+    }
+
+    text = parseDraftPage(await readDraftHtml(entry, extra), entry);
+
+    if (!text) {
+      console.error(`No "All edits since published version" block on the draft page of ${entry}.`);
+
+      return 2;
+    }
+  } else {
+    if (!target) {
+      console.error(USAGE);
+
+      return 2;
+    }
+
+    text = fs.readFileSync(target, 'utf-8');
+    entry = parseEntry(text)[0]?.entry;
+
+    if (!entry) {
+      console.error(`${target} holds no line of the form "%<type> A<number> <text>".`);
+
+      return 2;
+    }
+
+    bFile = extra ? parseBFile(fs.readFileSync(extra, 'utf-8')) : undefined;
+  }
+
+  if (flags.print) {
+    process.stdout.write(withoutSystemKeywords(text));
+  }
+
+  const repository = repoOptions(entry);
+  const related = readRelated(flags.related);
+  const options = {
+    ...repository,
+    mode: 'draft',
+    status: 'Proposed',
+    previous: listEntries().includes(entry) ? readEntryText(entry) : null,
+    others: [...repository.others.filter(other => !related.some(item => item.entry === other.entry)), ...related],
+  };
+
+  if (bFile) {
+    options.bFile = bFile;
+  }
+
+  const results = lintEntry(text, options);
+
+  formatFindings(results, []).forEach(line => console.log(line));
+
+  if (!options.bFile) {
+    console.log(`No b-file for ${entry}: data-fill and data-rows could not look past DATA; pass the b-file with --file <entry text> <b-file>.`);
+  }
+
+  console.log(summarize(results, []));
+
+  return results.some(result => result.level === 'defect') ? 1 : 0;
+}
+
 async function main(argv) {
-  if (argv[0] === '--rules') {
-    RULES.forEach(rule => console.log(`${rule.id} (${rule.field}): ${rule.text}\n  source: ${rule.source.join('; ')}`));
+  const { flags, positional } = parseArguments(argv);
+  const [mode, target, extra] = positional;
+
+  if (mode === '--rules') {
+    RULES.forEach(rule => console.log(`${rule.id} (${rule.field}${rule.level ? `, ${rule.level}` : ''}): ${rule.text}\n  source: ${rule.source.join('; ')}`));
 
     return 0;
   }
 
-  if (argv[0] === '--draft' || argv[0] === '--file') {
-    const print = argv.includes('--print');
-    const [mode, target, extra] = argv.filter(item => item !== '--print');
-    let text;
-    let entry;
-    let previous = null;
-    let bFile;
-
-    if (mode === '--draft') {
-      entry = target;
-
-      if (!ENTRY_PATTERN.test(entry ?? '')) {
-        console.error('Usage: node oeis/editorRules.js --draft A<number> [draft page .html | -] [--print]');
-
-        return 2;
-      }
-
-      text = parseDraftPage(await readDraftHtml(entry, extra), entry);
-
-      if (!text) {
-        console.error(`No "All edits since published version" block on the draft page of ${entry}.`);
-
-        return 2;
-      }
-
-      previous = listEntries().includes(entry) ? readEntryText(entry) : null;
-    } else {
-      text = fs.readFileSync(target, 'utf-8');
-      entry = parseEntry(text)[0]?.entry;
-      bFile = extra ? parseBFile(fs.readFileSync(extra, 'utf-8')) : undefined;
-    }
-
-    if (print) {
-      process.stdout.write(text);
-    }
-
-    const options = { ...repoOptions(entry), mode: 'draft', status: 'Proposed', previous };
-
-    if (bFile) {
-      options.bFile = bFile;
-    }
-
-    const results = lintEntry(text, options);
-
-    formatFindings(results, []).forEach(line => console.log(line));
-    console.log(`${results.length} finding(s) against ${RULES.length} rules.`);
-
-    return results.length > 0 ? 1 : 0;
+  if (mode === '--draft' || mode === '--file') {
+    return lintDraft(mode, target, extra, flags);
   }
 
-  const results = lintRepository().filter(result => !argv[0] || result.entry === argv[0]);
-  const lines = formatFindings(results);
+  if (mode !== undefined && (!ENTRY_PATTERN.test(mode) || target !== undefined)) {
+    console.error(USAGE);
 
-  lines.forEach(line => console.log(line));
+    return 2;
+  }
 
-  return lines.some(line => line.includes(' defect ')) ? 1 : 0;
+  if (mode !== undefined && !listEntries().includes(mode)) {
+    console.error(`No entry ${mode} in oeis/: the entries are ${listEntries().join(', ')}.`);
+
+    return 2;
+  }
+
+  const results = lintRepository().filter(result => !mode || result.entry === mode);
+
+  formatFindings(results).forEach(line => console.log(line));
+  console.log(summarize(results));
+
+  return results.some(result => classify(result) === 'defect') ? 1 : 0;
 }
 
 if (require.main === module) {
-  main(process.argv.slice(2)).then(code => {
-    process.exitCode = code;
-  });
+  main(process.argv.slice(2)).then(
+    code => {
+      process.exitCode = code;
+    },
+    error => {
+      console.error(error.message);
+      process.exitCode = 2;
+    },
+  );
 }
 
 module.exports = {
   ACCEPTED,
   DATA_WIDTH,
   RULES,
+  classify,
+  decodeHtml,
   describe,
   evaluate,
   lintEntry,

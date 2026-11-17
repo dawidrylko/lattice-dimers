@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const { parseBFile } = require('../../oeis/editorRules');
+
 const A402163_TERMS = [
   '1',
   '9',
@@ -90,6 +94,17 @@ function a239273(extra = []) {
 }
 
 const A309117_LENGTH = 'Number of perfect matchings on a triangular lattice of width 4 and length n.';
+const A401669_NAME =
+  "Decimal expansion of the entropy per site of the dimer coverings (perfect matchings) of the king's graph (square lattice with both diagonals), i.e., of domicule tilings.";
+const PERFECT_MATCHING = 'Eric Weisstein\'s World of Mathematics, <a href="https://mathworld.wolfram.com/PerfectMatching.html">Perfect Matching</a>.';
+const KING_GRAPH = 'Eric Weisstein\'s World of Mathematics, <a href="https://mathworld.wolfram.com/KingGraph.html">King Graph</a>.';
+const A401673_BFILE = parseBFile(fs.readFileSync(path.join(__dirname, '..', '..', 'oeis', 'A401673', 'b401673.txt'), 'utf-8'));
+const A239273_LIVE = [
+  ['N', 'Number of domicule tilings of a 2n X 2n square grid.'],
+  ['Y', 'Even bisection of main diagonal of A239264.'],
+  ['Y', 'Cf. A004003, A243510, A243424, A220638.'],
+];
+const PACHTER_TITLE = 'Combinatorial Approaches and Conjectures for 2-Divisibility Problems Concerning Domino Tilings of Polyominoes';
 
 const CASES = [
   {
@@ -346,16 +361,17 @@ const CASES = [
   },
   {
     rule: 'double-space',
-    source: 'A004003 #164 -> #165, Jason Yuen',
+    source: 'A004003 #164 -> #165, Jason Yuen: LINKS',
     entry: 'A004003',
-    before: [
-      ['H', 'P. W. Kasteleyn, <a href="https://doi.org/10.1063/1.1703953">Dimer statistics and phase transitions</a>, J. Mathematical Phys. 4 1963 287-293.  MR0153427 (27 #3394).'],
-      ['t', 'a[n_] := Round[ N[ Product[ 2*Cos[(2i*Pi)/(2n+1)] + 2*Cos[(2j*Pi)/(2n+1)] + 4,  {i, 1, n}, {j, 1, n}], 300] ]; Table[a[n], {n, 0, 12}] (* _Jean-François Alcover_, Jan 04 2012, after Maple *)'],
-    ],
-    after: [
-      ['H', 'P. W. Kasteleyn, <a href="https://doi.org/10.1063/1.1703953">Dimer statistics and phase transitions</a>, J. Mathematical Phys. 4 1963 287-293. MR0153427 (27 #3394).'],
-      ['t', 'a[n_] := Round[ N[ Product[ 2*Cos[(2i*Pi)/(2n+1)] + 2*Cos[(2j*Pi)/(2n+1)] + 4, {i, 1, n}, {j, 1, n}], 300] ]; Table[a[n], {n, 0, 12}] (* _Jean-François Alcover_, Jan 04 2012, after Maple *)'],
-    ],
+    before: [['H', 'P. W. Kasteleyn, <a href="https://doi.org/10.1063/1.1703953">Dimer statistics and phase transitions</a>, J. Mathematical Phys. 4 1963 287-293.  MR0153427 (27 #3394).']],
+    after: [['H', 'P. W. Kasteleyn, <a href="https://doi.org/10.1063/1.1703953">Dimer statistics and phase transitions</a>, J. Mathematical Phys. 4 1963 287-293. MR0153427 (27 #3394).']],
+  },
+  {
+    rule: 'double-space',
+    source: 'A004003 #164 -> #165, Jason Yuen: MATHEMATICA',
+    entry: 'A004003',
+    before: [['t', 'a[n_] := Round[ N[ Product[ 2*Cos[(2i*Pi)/(2n+1)] + 2*Cos[(2j*Pi)/(2n+1)] + 4,  {i, 1, n}, {j, 1, n}], 300] ]; Table[a[n], {n, 0, 12}] (* _Jean-François Alcover_, Jan 04 2012, after Maple *)']],
+    after: [['t', 'a[n_] := Round[ N[ Product[ 2*Cos[(2i*Pi)/(2n+1)] + 2*Cos[(2j*Pi)/(2n+1)] + 4, {i, 1, n}, {j, 1, n}], 300] ]; Table[a[n], {n, 0, 12}] (* _Jean-François Alcover_, Jan 04 2012, after Maple *)']],
   },
   {
     rule: 'formula-ie',
@@ -473,6 +489,315 @@ const CASES = [
     ],
     after: [['D', 'Darko Veljan, Kombinatorika s teorijom grafova (Croatian) (Combinatorics with Graph Theory) mentions the value 12988816 = 2^4*901^2 for the 8 X 8 case on page 4.']],
   },
+  {
+    rule: 'data-rows',
+    source: 'constructed from A401673: rows 0..3 while row 4 still fits, as Alois P. Heinz filled it (#5)',
+    entry: 'A401673',
+    before: a401673(A401673_DATA.split(',').slice(0, 18).join(','), 'nonn,tabf'),
+    after: a401673(A401673_DATA, 'nonn,tabf'),
+    options: { bFile: A401673_BFILE },
+    expect: 'Row 4 still fits',
+  },
+  {
+    rule: 'keyword-consistency',
+    source: 'KW, constructed: a negative term with nonn',
+    entry: 'A401988',
+    before: [['S', '1,-2,3'], ['N', 'Constructed.'], ['K', 'nonn'], ['O', '0,1']],
+    after: [['S', '1,-2,3'], ['N', 'Constructed.'], ['K', 'sign'], ['O', '0,1']],
+    expect: 'use sign',
+  },
+  {
+    rule: 'keyword-consistency',
+    source: 'KW, constructed: sign without a negative term',
+    entry: 'A402163',
+    before: a402163(A402163_DATA, [], 'sign'),
+    after: a402163(A402163_DATA),
+    expect: 'use nonn',
+  },
+  {
+    rule: 'keyword-consistency',
+    source: 'KW, on A401669 without cons',
+    entry: 'A401669',
+    before: [['S', '5,6,5,5,1,1,9,1,1,0,4,1,3,2'], ['N', A401669_NAME], ['K', 'nonn'], ['O', '0,1']],
+    after: [['S', '5,6,5,5,1,1,9,1,1,0,4,1,3,2'], ['N', A401669_NAME], ['K', 'nonn,cons'], ['O', '0,1']],
+    expect: 'cons',
+  },
+  {
+    rule: 'capital-x',
+    source: 'SS "Spelling and notation", constructed: 2nX2n',
+    entry: 'A402163',
+    before: [['N', 'Number of domicule tilings of a 2nX2n cylindrical grid.']],
+    after: [['N', A402163_NAME]],
+  },
+  {
+    rule: 'capital-x',
+    source: 'SS "Spelling and notation", constructed: n by n',
+    entry: 'A402163',
+    before: [['C', 'On the n by n cylinder the count is odd.']],
+    after: [['C', 'On the n X n cylinder the count is odd.']],
+  },
+  {
+    rule: 'capital-x',
+    source: 'SS "Spelling and notation", constructed: n-by-n',
+    entry: 'A402163',
+    before: [['C', 'On the n-by-n cylinder the count is odd.']],
+    after: [['C', 'On the n X n cylinder the count is odd.']],
+  },
+  {
+    rule: 'line-period',
+    source: 'constructed: a line ending with a colon continues on the next line of its field',
+    entry: 'A401673',
+    before: [['C', 'The first rows are:']],
+    after: [
+      ['C', 'The first rows are:'],
+      ['C', '1; 2, 1.'],
+    ],
+  },
+  {
+    rule: 'crossrefs-form',
+    source: 'SS "Crossrefs", constructed: an A-number twice',
+    entry: 'A309117',
+    before: [
+      ['Y', 'Cf. A011900, A307349.'],
+      ['Y', 'Cf. A011900.'],
+    ],
+    after: [['Y', 'Cf. A011900, A307349.']],
+    expect: 'appears twice',
+  },
+  {
+    rule: 'crossrefs-form',
+    source: 'SS "Crossrefs", constructed: the entry itself',
+    entry: 'A309117',
+    before: [['Y', 'Cf. A011900, A309117.']],
+    after: [['Y', 'Cf. A011900.']],
+    expect: 'the entry itself',
+  },
+  {
+    rule: 'crossrefs-form',
+    source: 'SS "Crossrefs", constructed: a link',
+    entry: 'A309117',
+    before: [['Y', 'Cf. <a href="/A011900">A011900</a>.']],
+    after: [['Y', 'Cf. A011900.']],
+    expect: 'A link in CROSSREFS',
+  },
+  {
+    rule: 'crossrefs-reverse',
+    source: 'A239273 #45 -> #46, Alois P. Heinz',
+    entry: 'A401673',
+    before: [['Y', 'Row sums give A239273.']],
+    after: [['Y', 'Row sums give A239273.']],
+    options: { mode: 'draft', others: [{ entry: 'A239273', live: true, rows: A239273_LIVE }] },
+    afterOptions: { mode: 'draft', others: [{ entry: 'A239273', live: true, rows: [...A239273_LIVE, ['Y', 'Row sums of A401673.']] }] },
+  },
+  {
+    rule: 'links-https',
+    source: 'A309117 #13, Sean A. Irvine: http',
+    entry: 'A309117',
+    before: [['H', 'Dawid Ryłko, <a href="http://dawidrylko.github.io/lattice-dimers/">Lattice dimers</a>.']],
+    after: [['H', 'Dawid Ryłko, <a href="https://dawidrylko.github.io/lattice-dimers/">Lattice dimers</a>.']],
+    expect: 'Use https',
+  },
+  {
+    rule: 'links-https',
+    source: 'A004003 #149, Michel Marcus: dx.doi.org',
+    entry: 'A004003',
+    before: [['H', 'M. Ciucu, <a href="https://dx.doi.org/10.1006/jcta.1996.2725">Enumeration of perfect matchings in graphs with reflective symmetry</a>, J. Combin. Theory Ser. A 77 (1997), 67-97.']],
+    after: [['H', 'M. Ciucu, <a href="https://doi.org/10.1006/jcta.1996.2725">Enumeration of perfect matchings in graphs with reflective symmetry</a>, J. Combin. Theory Ser. A 77 (1997), 67-97.']],
+    expect: 'Link the DOI',
+  },
+  {
+    rule: 'links-https',
+    source: 'A004003 #148, Michel Marcus: math.CO/',
+    entry: 'A004003',
+    before: [['H', 'H. Cohn, <a href="https://arxiv.org/abs/math.CO/0008222">2-adic behavior of numbers of domino tilings</a>, arXiv:math/0008222 [math.CO], 2000.']],
+    after: [['H', 'H. Cohn, <a href="https://arxiv.org/abs/math/0008222">2-adic behavior of numbers of domino tilings</a>, arXiv:math/0008222 [math.CO], 2000.']],
+    expect: 'Link arXiv',
+  },
+  {
+    rule: 'links-order',
+    source: 'SS "Links", constructed: the b-file second',
+    entry: 'A401988',
+    before: a401988(11, [A401988_FENDLEY, A401988_BFILE, A401988_NOTES]),
+    after: a401988(11, [A401988_BFILE, A401988_FENDLEY, A401988_NOTES]),
+    expect: 'b-file link first',
+  },
+  {
+    rule: 'links-order',
+    source: 'SS "Links", constructed: an index entry before a link',
+    entry: 'A401988',
+    before: a401988(11, [A401988_BFILE, '<a href="/index/Do#domino">Index entries for sequences related to dominoes</a>.', A401988_FENDLEY, A401988_NOTES]),
+    after: a401988(11, [A401988_BFILE, A401988_FENDLEY, A401988_NOTES, '<a href="/index/Do#domino">Index entries for sequences related to dominoes</a>.']),
+    expect: 'index entries last',
+  },
+  {
+    rule: 'links-rec-index',
+    source: 'A309117 #17, Alois P. Heinz, constructed: a wrong signature',
+    entry: 'A309117',
+    before: a309117(A309117_LENGTH, [
+      ['H', A309117_REC.replace('2,-1)', '2,1)')],
+      ['F', `${A309117_GF}.`],
+    ]),
+    after: a309117(A309117_LENGTH, [
+      ['H', A309117_REC],
+      ['F', `${A309117_GF}.`],
+    ]),
+    expect: 'signature fails',
+  },
+  {
+    rule: 'links-title-truncated',
+    source: 'A004003 #150 -> #151, Michel Marcus',
+    entry: 'A004003',
+    before: [['H', 'Lior Pachter, <a href="https://doi.org/10.37236/1314">Combinatorial approaches and conjectures ...</a>, Elec. J. Comb. 4 (1997) #R29.']],
+    after: [['H', `Lior Pachter, <a href="https://doi.org/10.37236/1314">${PACHTER_TITLE}</a>, Elec. J. Comb. 4 (1997) #R29.`]],
+  },
+  {
+    rule: 'links-notes-canonical',
+    source: 'constructed: a page the site does not have',
+    entry: 'A401670',
+    before: [['H', 'Dawid Ryłko, <a href="https://dawidrylko.github.io/lattice-dimers/notes/domicules/nowhere.html">Nowhere</a>.']],
+    after: [['H', 'Dawid Ryłko, <a href="https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html">Domicules: tilings of tori</a>.']],
+    expect: 'is not a page',
+  },
+  {
+    rule: 'links-mathworld',
+    source: "A239264 #40 -> #41, Andrew Howroyd: King Graph, constructed on the name of A401669, which says king's graph",
+    entry: 'A401669',
+    before: [['S', '5,6,5,5'], ['N', A401669_NAME], ['H', PERFECT_MATCHING]],
+    after: [['S', '5,6,5,5'], ['N', A401669_NAME], ['H', KING_GRAPH], ['H', PERFECT_MATCHING]],
+    expect: 'KingGraph',
+  },
+  {
+    rule: 'bfile-link-author',
+    source: 'A004003 #156, Alois P. Heinz: only a credit follows </a>; constructed tail',
+    entry: 'A239264',
+    before: [['N', A239264_NAME], ['H', 'Dawid Ryłko, <a href="/A239264/b239264_2.txt">Antidiagonals n = 0..44, flattened</a>, computed with PARI']],
+    after: [['N', A239264_NAME], ['H', 'Dawid Ryłko, <a href="/A239264/b239264_2.txt">Antidiagonals n = 0..44, flattened</a> (antidiagonals 0..36 from Alois P. Heinz)']],
+    expect: 'After </a>',
+  },
+  {
+    rule: 'example-aligned',
+    source: 'A401673 #5 -> #6, Alois P. Heinz',
+    entry: 'A401673',
+    before: [
+      ['e', 'Triangle begins:'],
+      ['e', '  1;'],
+      ['e', '  2, 1;'],
+      ['e', '  36, 126, 105, 12, 1;'],
+      ['e', '  6728, 84132, 413932, 934213, 1000638, 491689, 99554, 6638, 36, 1;'],
+      ['e', '  ...'],
+    ],
+    after: [
+      ['e', 'Triangle begins:'],
+      ['e', '     1;'],
+      ['e', '     2,     1;'],
+      ['e', '    36,   126,    105,     12,       1;'],
+      ['e', '  6728, 84132, 413932, 934213, 1000638, 491689, 99554, 6638, 36, 1;'],
+      ['e', '  ...'],
+    ],
+  },
 ];
 
-module.exports = { CASES };
+const CLEAN = [
+  {
+    rule: 'comment-provenance',
+    source: 'narrowed after review: "agree with" and "checked by" describe the mathematics',
+    entry: 'A402163',
+    rows: [
+      ['C', 'The first terms agree with the estimate exp(4*s*n^2), where s = A401669.'],
+      ['C', 'a(1) = 9 is checked by hand in EXAMPLE.'],
+    ],
+  },
+  {
+    rule: 'comment-future-proof',
+    source: 'narrowed after review: a cited paper is not a self-reference',
+    entry: 'A401988',
+    rows: [['C', 'The paper by Fendley, Moessner and Sondhi gives the entropy of the triangular lattice.']],
+  },
+  {
+    rule: 'formula-commentary',
+    source: 'narrowed after review: only a comparison with "unlike" is commentary',
+    entry: 'A239273',
+    rows: [['F', 'a(n) = T(2n, 2n), T as in A239264; this gives a(1) = 3.']],
+  },
+  {
+    rule: 'formula-program',
+    source: 'narrowed after review: a formula that only mentions a program stands on its own',
+    entry: 'A239273',
+    rows: [['F', 'a(n) = A239264(2n, 2n); the PARI program of A239264 computes the whole array.']],
+  },
+  {
+    rule: 'links-arxiv-label',
+    source: 'narrowed after review: the identifier as the link text',
+    entry: 'A004003',
+    rows: [['H', 'Henry Cohn, 2-adic behavior of numbers of domino tilings, <a href="https://arxiv.org/abs/math/0008222">arXiv:math/0008222</a> [math.CO], 2000.']],
+  },
+  {
+    rule: 'links-authors',
+    source: 'narrowed after review: one author followed by the title',
+    entry: 'A004003',
+    rows: [['H', 'Henry Cohn, 2-adic behavior of numbers of domino tilings, <a href="https://arxiv.org/abs/math/0008222">arXiv:math/0008222</a> [math.CO], 2000.']],
+  },
+  {
+    rule: 'links-authors',
+    source: 'narrowed after review: Jr. belongs to the name before it',
+    entry: 'A004003',
+    rows: [['H', 'John Doe, Jr., <a href="https://doi.org/10.37236/1314">A constructed title</a>, 2026.']],
+  },
+  {
+    rule: 'references-online',
+    source: 'SS "References": a reference in both REFERENCES and LINKS is "perfectly normal"',
+    entry: 'A004003',
+    rows: [
+      ['D', 'Lior Pachter, Combinatorial approaches and conjectures for 2-divisibility problems concerning domino tilings of polyominoes, Elec. J. Comb. 4 (1997) #R29.'],
+      ['H', `Lior Pachter, <a href="https://doi.org/10.37236/1314">${PACHTER_TITLE}</a>, Elec. J. Comb. 4 (1997) #R29.`],
+    ],
+  },
+  {
+    rule: 'capital-x',
+    source: 'narrowed after review: n by 2 after divide or replace, and 2x in a g.f., are arithmetic',
+    entry: 'A402163',
+    rows: [
+      ['C', 'For even n, divide n by 2 and use the formula for n/2.'],
+      ['C', 'Replace n by 2n in A239273 to get the square of side 4n.'],
+      ['F', 'G.f.: 1/(1 - 2x - x^2).'],
+    ],
+  },
+  {
+    rule: 'signature-own-draft',
+    source: 'SS "Programs": a signature is wanted once the entry is approved',
+    entry: 'A402163',
+    rows: a402163(A402163_DATA, [['o', '(PARI) a(n) = (M(2*n)^(2*n))[1, 1]; \\\\ _Dawid Ryłko_, Nov 14 2026']]),
+    options: { status: 'Approved' },
+  },
+  {
+    rule: 'links-mathworld',
+    source: "narrowed after review: domicule tilings ask for Perfect Matching, not King Graph, unless the text says king's graph",
+    entry: 'A402163',
+    rows: a402163(A402163_DATA, [['H', PERFECT_MATCHING]]),
+  },
+  {
+    rule: 'crossrefs-reverse',
+    source: 'the live A239264 does not name A401670 back, which lists it in a Cf. line',
+    entry: 'A401670',
+    rows: [['Y', 'Cf. A239264, A239273, A401669.']],
+    options: { mode: 'draft', others: [{ entry: 'A239264', live: true, rows: [['Y', 'Cf. A004003.']] }] },
+  },
+  {
+    rule: 'crossrefs-reverse',
+    source: 'a partial copy of an entry of someone else says nothing about its CROSSREFS',
+    entry: 'A401673',
+    rows: [['Y', 'Row sums give A239273.']],
+    options: { others: [{ entry: 'A239273', rows: [['H', 'Dawid Ryłko, <a href="/A239273/b239273.txt">Table of n, a(n) for n = 0..12</a>']] }] },
+  },
+  {
+    rule: 'example-aligned',
+    source: 'a sentence and a single row are not a table',
+    entry: 'A402163',
+    rows: [
+      ['e', A402163_EXAMPLE],
+      ['e', '  1, 9, 2649;'],
+    ],
+  },
+];
+
+module.exports = { CASES, CLEAN };

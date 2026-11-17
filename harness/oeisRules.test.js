@@ -3,8 +3,8 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { test } = require('node:test');
-const { ACCEPTED, RULES, evaluate, lintEntry, lintRepository, parseDraftPage, readNotes } = require('../oeis/editorRules');
-const { CASES } = require('./fixtures/oeisRuleCases');
+const { ACCEPTED, RULES, classify, decodeHtml, evaluate, lintEntry, lintRepository, parseDraftPage, readNotes } = require('../oeis/editorRules');
+const { CASES, CLEAN } = require('./fixtures/oeisRuleCases');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const DRAFT_PAGE = path.join(__dirname, 'fixtures', 'oeis-draft-A402163.html');
@@ -14,8 +14,8 @@ function entryText(entry, rows) {
   return rows.map(([type, value]) => `%${type} ${entry} ${value}`).join('\n') + '\n';
 }
 
-function caseOptions(item) {
-  const { previous, others, ...rest } = item.options ?? {};
+function caseOptions(item, options = item.options) {
+  const { previous, others, ...rest } = options ?? {};
 
   return {
     entry: item.entry,
@@ -23,24 +23,36 @@ function caseOptions(item) {
     notes: NOTES,
     ...rest,
     previous: previous ? entryText(item.entry, previous) : null,
-    others: (others ?? []).map(other => ({ entry: other.entry, text: entryText(other.entry, other.rows) })),
+    others: (others ?? []).map(other => ({ entry: other.entry, live: other.live, text: entryText(other.entry, other.rows) })),
   };
 }
 
-function fired(item, rows) {
-  return lintEntry(entryText(item.entry, rows), caseOptions(item))
+function fired(item, rows, options = item.options) {
+  return lintEntry(entryText(item.entry, rows), caseOptions(item, options))
     .filter(result => result.rule === item.rule)
     .map(result => result.message);
 }
 
-function isAccepted(result) {
-  return ACCEPTED.some(item => item.entry === result.entry && item.rule === result.rule);
-}
-
 for (const item of CASES) {
   test(`${item.rule}: ${item.source}`, () => {
-    assert.notDeepEqual(fired(item, item.before), [], 'the text before the edit passes the rule');
-    assert.deepEqual(fired(item, item.after), [], 'the text after the edit breaks the rule');
+    const before = fired(item, item.before);
+
+    assert.notDeepEqual(before, [], 'the text before the edit passes the rule');
+
+    if (item.expect) {
+      assert.ok(
+        before.some(message => message.includes(item.expect)),
+        `no finding says "${item.expect}": ${before.join(' | ')}`,
+      );
+    }
+
+    assert.deepEqual(fired(item, item.after, item.afterOptions ?? item.options), [], 'the text after the edit breaks the rule');
+  });
+}
+
+for (const item of CLEAN) {
+  test(`${item.rule} stays quiet: ${item.source}`, () => {
+    assert.deepEqual(fired(item, item.rows), []);
   });
 }
 
@@ -68,7 +80,7 @@ test('every rule has a unique id, a text and a source', () => {
 });
 
 test('the entries in oeis/ break no rule beyond the accepted findings', () => {
-  const defects = lintRepository().filter(result => !isAccepted(result));
+  const defects = lintRepository().filter(result => classify(result) === 'defect');
 
   assert.deepEqual(
     defects.map(result => `${result.entry} [${result.rule}] line ${result.line}: ${result.message}`),
@@ -80,13 +92,44 @@ test('every accepted finding still fires', () => {
   const results = lintRepository();
 
   assert.deepEqual(
-    ACCEPTED.filter(item => !results.some(result => result.entry === item.entry && result.rule === item.rule)).map(item => `${item.entry} [${item.rule}]`),
+    ACCEPTED.filter(item => !results.some(result => result.entry === item.entry && result.rule === item.rule && result.text.includes(item.match))).map(
+      item => `${item.entry} [${item.rule}] "${item.match}"`,
+    ),
     [],
   );
   assert.deepEqual(
-    ACCEPTED.filter(item => !RULES.some(rule => rule.id === item.rule)).map(item => item.rule),
+    ACCEPTED.filter(item => !RULES.some(rule => rule.id === item.rule && rule.level === undefined)).map(item => item.rule),
     [],
   );
+});
+
+test('an accepted finding covers only the line it names', () => {
+  const [accepted] = ACCEPTED;
+  const result = { entry: accepted.entry, rule: accepted.rule, level: 'defect', text: '%o another line' };
+
+  assert.equal(classify(result), 'defect');
+  assert.equal(classify({ ...result, text: `%o ${accepted.match}` }), 'accepted');
+});
+
+test('advice rules never block and everything else is a defect', () => {
+  assert.deepEqual(
+    RULES.filter(rule => rule.level !== undefined).map(rule => `${rule.id}:${rule.level}`),
+    ['links-mathworld:advice', 'program-shared:advice'],
+  );
+});
+
+test('a CROSSREFS sentence naming an entry without a full copy gives a note in a draft and nothing in the repository', () => {
+  const text = '%Y A401673 Row sums give A239273.\n';
+  const others = [{ entry: 'A239273', text: '%H A239273 Dawid Ryłko, <a href="/A239273/b239273.txt">Table of n, a(n) for n = 0..12</a>\n' }];
+  const draft = lintEntry(text, { entry: 'A401673', mode: 'draft', others }).filter(result => result.rule === 'crossrefs-reverse');
+  const repository = lintEntry(text, { entry: 'A401673', mode: 'repo', others }).filter(result => result.rule === 'crossrefs-reverse');
+
+  assert.deepEqual(
+    draft.map(result => result.level),
+    ['note'],
+  );
+  assert.match(draft[0].message, /--related/);
+  assert.deepEqual(repository, []);
 });
 
 test('the draft page parses into the entry text', () => {
@@ -108,6 +151,11 @@ test('the draft page parses into the entry text', () => {
   assert.equal(parseDraftPage('<html></html>', 'A402163'), null);
 });
 
+test('a no-break space of the draft page becomes a space', () => {
+  assert.equal(decodeHtml('Number&#160;of&#xA0;tilings&nbsp;of a 2n&#160;X&#160;2n grid.'), 'Number of tilings of a 2n X 2n grid.');
+  assert.equal(decodeHtml('&#8212;&amp;&lt;'), '\u2014&<');
+});
+
 test('the upper bound of k in the name of a triangle is evaluated', () => {
   assert.equal(evaluate('n^2', 3), 9);
   assert.equal(evaluate('floor(n^2/2)', 3), 4);
@@ -120,15 +168,49 @@ test('the upper bound of k in the name of a triangle is evaluated', () => {
 test('the command line lints the repository and a draft page and lists the rules', () => {
   const run = args => spawnSync(process.execPath, [path.join(ROOT_DIRECTORY, 'oeis', 'editorRules.js'), ...args], { encoding: 'utf-8' });
   const repository = run([]);
+  const single = run(['A402163']);
   const rules = run(['--rules']);
   const draft = run(['--draft', 'A402163', DRAFT_PAGE]);
+  const printed = run(['--draft', 'A402163', DRAFT_PAGE, '--print']);
+  const file = run(['--file', path.join(ROOT_DIRECTORY, 'oeis', 'A401988', 'A401988.txt')]);
 
   assert.equal(repository.status, 0, repository.stdout + repository.stderr);
   assert.doesNotMatch(repository.stdout, / defect /);
+  assert.match(repository.stdout, /^0 defect\(s\), \d+ advice, 0 note\(s\), \d+ accepted, against \d+ rules\.$/m);
+  assert.equal(single.status, 0, single.stdout + single.stderr);
+  assert.doesNotMatch(single.stdout, /^A(?!402163)\d{6} /m);
   assert.equal(rules.status, 0);
   assert.equal(rules.stdout.split('\n').filter(line => /^[a-z-]+ \(/.test(line)).length, RULES.length);
-  assert.equal(draft.status, 1, draft.stdout + draft.stderr);
-  assert.match(draft.stdout, /\[program-shared\]/);
-  assert.match(draft.stdout, /\[links-mathworld\]/);
+  assert.equal(draft.status, 0, draft.stdout + draft.stderr);
+  assert.match(draft.stdout, /advice \[program-shared\]/);
+  assert.match(draft.stdout, /advice \[links-mathworld\]/);
   assert.doesNotMatch(draft.stdout, /\[keyword-system\]/);
+  assert.doesNotMatch(draft.stdout, /No b-file/);
+  assert.match(printed.stdout, /^%K A402163 nonn$/m);
+  assert.doesNotMatch(printed.stdout, /changed/);
+  assert.equal(file.status, 1, file.stdout + file.stderr);
+  assert.match(file.stdout, /defect \[comment-provenance\]/);
+});
+
+test('the command line refuses an unknown entry, a missing file and a bad argument', () => {
+  const run = args => spawnSync(process.execPath, [path.join(ROOT_DIRECTORY, 'oeis', 'editorRules.js'), ...args], { encoding: 'utf-8' });
+  const unknown = run(['A999999']);
+  const missing = run(['--file', path.join(ROOT_DIRECTORY, 'oeis', 'A999999', 'A999999.txt')]);
+  const page = run(['--draft', 'A402163', path.join(ROOT_DIRECTORY, 'oeis', 'missing.html')]);
+  const bad = run(['--fix']);
+
+  assert.equal(unknown.status, 2);
+  assert.match(unknown.stderr, /No entry A999999 in oeis\//);
+  assert.equal(missing.status, 2);
+  assert.match(missing.stderr, /ENOENT/);
+  assert.equal(page.status, 2);
+  assert.equal(bad.status, 2);
+  assert.match(bad.stderr, /Usage:/);
+});
+
+test('a draft without a b-file says that DATA was checked alone', () => {
+  const html = fs.readFileSync(DRAFT_PAGE, 'utf-8').replaceAll('402163', '999998');
+  const result = spawnSync(process.execPath, [path.join(ROOT_DIRECTORY, 'oeis', 'editorRules.js'), '--draft', 'A999998', '-'], { encoding: 'utf-8', input: html });
+
+  assert.match(result.stdout, /^No b-file for A999998: /m);
 });
