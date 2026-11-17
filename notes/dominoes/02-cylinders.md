@@ -128,7 +128,7 @@ print(`Run: ${nb.context.benchmarkRun}`);
 
 ## PARI/GP
 
-The $2n \times 2n$ cylinder as a resultant in [`oeis/A402345/A402345.gp`](../../oeis/A402345/A402345.gp): the cylinder is planar, the Kasteleyn matrix with the opposite sign on the edges across the seam splits over the circumference, and the product over its eigenvalues is the resultant of the polynomial of [A004003](../../oeis/A004003/A004003.gp) with $Q(x) = 2 T_n((x+2)/2) + 2$. CI checks it against the square boards of the test data up to $20 \times 20$, and [`oeis/A402345/b402345.js`](../../oeis/A402345/b402345.js) evaluates the same resultant in exact integers for the b-file.
+[`oeis/A402345/A402345.gp`](../../oeis/A402345/A402345.gp) counts the $2n \times 2n$ cylinder as a resultant. The cylinder is planar, and with the opposite sign on the edges across the seam its Kasteleyn matrix splits over the circumference, so the product over its eigenvalues is the resultant of the polynomial of [A004003](../../oeis/A004003/A004003.gp) with $Q(x) = 2 T_n((x+2)/2) + 2$. CI checks the program against the square boards of the test data up to $20 \times 20$, and [`oeis/A402345/b402345.js`](../../oeis/A402345/b402345.js) evaluates the same resultant in exact integers for the b-file.
 
 ```js run
 print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402345/A402345.gp'), 'utf-8').trim());
