@@ -35,7 +35,7 @@ const MATHWORLD = [
   { page: 'PerfectMatching', label: 'Perfect Matching', trigger: /perfect matching|domicule|dimer covering/i },
   { page: 'KingGraph', label: 'King Graph', trigger: /king'?s graph/i },
 ];
-const DOI_LINK = /<a href="https?:\/\/(?:dx\.)?doi\.org\/([^"]+)">([^<]*)<\/a>/i;
+const DOI_LINK = /<a href="https:\/\/doi\.org\/([^"]+)">([^<]*)<\/a>/i;
 const OPEN_DOI = /^10\.(?:5281\/zenodo|48550\/arxiv)\./i;
 const ARXIV_LINK = /href="https?:\/\/arxiv\.org\/abs\//i;
 const SIZE = '(?:\\d+|\\d*[hknmw])';
@@ -613,7 +613,7 @@ const RULES = [
     id: 'links-arxiv-version',
     field: 'LINKS',
     level: 'advice',
-    text: 'A DOI link to an article that is not open access has a line for its arXiv version beside it, with the same title. Offline the script cannot see whether the article is open or on arXiv, so it advises; a Zenodo or arXiv DOI is open and needs none.',
+    text: 'A DOI link to an article that is not open access has a line for its arXiv version beside it, which links https://arxiv.org/abs/<id> and gives the same title as its link text or just before the link. Offline the script cannot see whether the article is open or on arXiv, so it advises. A Zenodo or arXiv DOI is open and needs none, and a copy that holds only some lines of an entry is not checked.',
     source: [
       edit('A401988', 13, 'Vaclav Kotesovec', '2026-11-17', 'the arXiv version of Fendley, Moessner and Sondhi added beside the line of its DOI'),
       noted('A401988', 13, 'Vaclav Kotesovec', '2026-11-17', 'The article is not open access, so I am including a link to the arXiv version.'),
@@ -624,22 +624,19 @@ const RULES = [
       }
 
       const lines = info.of('H');
-      const versions = lines.filter(line => ARXIV_LINK.test(line.value)).map(line => plainTitle(line.value.replace(/<[^>]*>/g, ' ')));
+      const versions = lines.filter(line => ARXIV_LINK.test(line.value));
 
       return lines
         .filter(line => {
           const doi = line.value.match(DOI_LINK);
 
-          if (!doi || OPEN_DOI.test(doi[1]) || ARXIV_LINK.test(line.value)) {
-            return false;
-          }
-
-          const title = plainTitle(doi[2]);
-
-          return title === '' || !versions.some(version => version.includes(title));
+          return doi && !OPEN_DOI.test(doi[1]) && !versions.some(version => namesTitle(version.value, plainTitle(doi[2])));
         })
         .map(line =>
-          finding(line, 'If the article is not open access and is on arXiv, add its arXiv version beside this line: "<authors>, <a href="https://arxiv.org/abs/<id>"><same title></a>, arXiv:<id> [<class>], <year>."'),
+          finding(
+            line,
+            'If the article is not open access (its DOI page shows that) and is on arXiv (search arxiv.org by its title), add its arXiv version beside this line: "<authors>, <a href="https://arxiv.org/abs/<id>"><same title></a>, arXiv:<id> [<class>], <year>."',
+          ),
         );
     },
   },
@@ -1207,6 +1204,12 @@ function plainTitle(text) {
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim();
+}
+
+function namesTitle(value, title) {
+  const lead = plainTitle(linkAuthors(value));
+
+  return lead === title || lead.endsWith(` ${title}`) || [...value.matchAll(/<a [^>]*>([^<]*)<\/a>/g)].some(([, text]) => plainTitle(text) === title);
 }
 
 function linkAuthors(value) {
