@@ -4,7 +4,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { describe, test, before, after } = require('node:test');
 const { runDirectoryName } = require('../environment');
-const { estimateBoard, parseInstructionCount, compareRuns } = require('../full');
+const { estimateBoard, parseInstructionCount, compareRuns, listSeries, GROWTH_FLOORS } = require('../full');
 const { compareSeries } = require('../measureVariance');
 const { readBenchmarkRuns } = require('../../site/benchmarkRuns.js');
 const { WRONG_COUNT, makeTemporaryDirectory, runNode } = require('./support');
@@ -33,6 +33,12 @@ describe('the plan of a full run', () => {
     assert.equal(estimateBoard({ seriesName: 'any-lattice-cylinder-torus-bigint.js-king-cylinder', previousSeconds: 1, earlierSeconds: 0 }), 12.87);
     assert.equal(estimateBoard({ seriesName: 'any-lattice-cylinder-torus-bigint.rs-square-cylinder', previousSeconds: 1, earlierSeconds: 0 }), 5.83);
     assert.equal(estimateBoard({ seriesName: 'any-lattice-cylinder-torus-modular.rs-king-torus', previousSeconds: 1, earlierSeconds: 0 }), 16);
+  });
+
+  test('every growth floor matches a series of the full run', () => {
+    const names = listSeries(4).map(({ name }) => name);
+
+    assert.deepEqual(GROWTH_FLOORS.map(([pattern]) => pattern).filter(pattern => !names.some(name => pattern.test(name))), []);
   });
 
   test('the name of a solver does not make a cylinder a torus', () => {

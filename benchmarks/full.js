@@ -339,4 +339,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { estimateBoard, parseInstructionCount, compareRuns, listSeries, growthFloor };
+module.exports = { estimateBoard, parseInstructionCount, compareRuns, listSeries, growthFloor, GROWTH_FLOORS };
