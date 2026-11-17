@@ -14,10 +14,12 @@ const TORUS_FILE = 'spec/cases/any-lattice-cylinder-torus-modular.json';
 const DIAGONAL_FILE = 'spec/cases/domicule-rectangle-polynomial-modular.json';
 const TRIANGULAR_FILE = 'spec/cases/any-lattice-rectangle-modular.json';
 const LAST_TRIANGULAR_SQUARE = 11;
+const LAST_DOMINO_CYLINDER = 10;
 const TRIANGULAR_STRIP = 4;
 const GENERATORS = {
   'A309117/b309117.txt': 'node oeis/A309117/b309117.js 0 1000',
   'A401988/b401988.txt': 'node oeis/A401988/b401988.js 0 37',
+  'A402345/b402345.txt': 'node oeis/A402345/b402345.js 0 44',
 };
 const SOURCES = {
   'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
@@ -28,6 +30,7 @@ const SOURCES = {
   'A401673/b401673.txt': DIAGONAL_FILE,
   'A401988/b401988.txt': TRIANGULAR_FILE,
   'A402163/b402163.txt': `${TORUS_FILE} and ${path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY)}`,
+  'A402345/b402345.txt': TORUS_FILE,
 };
 
 function readStrips(lattice, boundary = 'free') {
@@ -184,6 +187,24 @@ function readTriangularSquares() {
   });
 }
 
+function readDominoCylinders() {
+  const squares = new Map([[0, '1']]);
+
+  for (const { rowCount, colCount, lattice, torus, twisted, expectedResult } of readTestCases(TORUS_FILE)) {
+    if (lattice === 'square' && !torus && !twisted && rowCount === colCount && rowCount % 2 === 0) {
+      squares.set(rowCount / 2, expectedResult);
+    }
+  }
+
+  return Array.from({ length: LAST_DOMINO_CYLINDER + 1 }, (_, n) => {
+    if (!squares.has(n)) {
+      throw new Error(`No count for the ${2 * n} X ${2 * n} domino cylinder in ${TORUS_FILE}.`);
+    }
+
+    return squares.get(n);
+  });
+}
+
 function formatBFile(terms) {
   return terms.map((term, index) => `${index} ${term}\n`).join('');
 }
@@ -214,6 +235,7 @@ function buildBFiles() {
     'A401673/b401673.txt': formatBFile(triangle),
     'A401988/b401988.txt': formatBFile(readTriangularSquares()),
     'A402163/b402163.txt': formatBFile(readCylinders()),
+    'A402345/b402345.txt': formatBFile(readDominoCylinders()),
   };
 }
 

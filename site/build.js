@@ -129,7 +129,7 @@ const NOTE_PROVENANCE = {
 const NOTE_SUMMARIES = {
   research: "The entropy per site of the king's graph dimers: an estimate with error bar 6·10⁻¹⁶, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
   'dominoes/rectangles': 'Notebook: domino tilings of the 2n × 2n board (A004003) by three methods, how the gallery numbers and samples them, and how every count is checked.',
-  'dominoes/cylinders': 'Notebook: domino tilings of cylinders, checked against the OEIS entries of every circumference up to 8.',
+  'dominoes/cylinders': 'Notebook: domino tilings of cylinders, checked against the OEIS entries of every circumference up to 8, and the 2n × 2n cylinders (A402345).',
   'dominoes/tori': 'Notebook: domino tilings of tori, the 2n × 2n torus (A335586) by two solvers.',
   'domicules/rectangles': 'Notebook: domicule tilings of the 2n × 2n board (A239273) up to 20 × 20, the modular solver, the Markov chain and how every count is checked.',
   'domicules/cylinders': "Notebook: domicule tilings of cylinders, the perfect matchings of the king's graph on the cylinder, and the 2n × 2n cylinders (A402163).",
@@ -637,7 +637,7 @@ function buildJsonLd() {
         programmingLanguage: ['Rust', 'Python', 'JavaScript'],
         runtimePlatform: 'Node.js',
         license: 'https://opensource.org/licenses/MIT',
-        keywords: "dimer model, king's graph, entropy per site, transfer matrix, domino tiling, domicule tiling, perfect matchings, OEIS A004003, OEIS A239264, OEIS A239273, OEIS A309117, OEIS A401669, OEIS A401670, OEIS A401673, OEIS A401988, OEIS A402163, combinatorics",
+        keywords: "dimer model, king's graph, entropy per site, transfer matrix, domino tiling, domicule tiling, perfect matchings, OEIS A004003, OEIS A239264, OEIS A239273, OEIS A309117, OEIS A401669, OEIS A401670, OEIS A401673, OEIS A401988, OEIS A402163, OEIS A402345, combinatorics",
         author: AUTHOR,
         isBasedOn: 'https://oeis.org/A004003',
         subjectOf: {

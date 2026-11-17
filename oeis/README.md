@@ -13,12 +13,13 @@ Entries of the [OEIS](https://oeis.org/) this repository has contributed to. Eac
 | [OEIS A401673](https://oeis.org/A401673) | [domicule tilings of the 2n × 2n square by the number of diagonal pieces](A401673/) | [A401673.txt](A401673/A401673.txt) | [b401673.txt](A401673/b401673.txt) | [A401673.gp](A401673/A401673.gp) |
 | [OEIS A401988](https://oeis.org/draft/A401988) | [tilings of the 2n × 2n board on the triangular lattice](A401988/) | [A401988.txt](A401988/A401988.txt) | [b401988.txt](A401988/b401988.txt) | [A401988.gp](A401988/A401988.gp) |
 | [OEIS A402163](https://oeis.org/draft/A402163) | [domicule tilings of the 2n × 2n cylinder](A402163/) | [A402163.txt](A402163/A402163.txt) | [b402163.txt](A402163/b402163.txt) | [A402163.gp](A402163/A402163.gp) |
+| [OEIS A402345](https://oeis.org/draft/A402345) | [domino tilings of the 2n × 2n cylinder](A402345/) | [A402345.txt](A402345/A402345.txt) | [b402345.txt](A402345/b402345.txt) | [A402345.gp](A402345/A402345.gp) |
 
 ## Files
 
 The entry texts `A*.txt` are in the OEIS internal format. Published lines come from `https://oeis.org/search?q=id:<A-number>&fmt=text`, without the keywords `new` and `changed` that the OEIS sets for a while on its own; a proposed draft exists only as the HTML of its draft page, and its text is reconstructed from that page. A new entry is given in full, with the data on one `%S` line; an existing entry holds only the lines this repository contributed.
 
-The b-files `b*.txt` are rebuilt by `node oeis/buildBFiles.js` from the exact counts committed in this repository; the README of each entry names the source. A b-file longer than those counts has its own generator `b<number>.js` next to it, and `buildBFiles.js` checks only the terms the counts cover, as for A309117 and A401988. The programs `A*.gp` hold the PARI/GP programs of the entry texts, laid out over several lines; `A401670.gp` and `A402163.gp` also define `T(h, w)`, for the $h \times w$ torus and the $h \times w$ cylinder.
+The b-files `b*.txt` are rebuilt by `node oeis/buildBFiles.js` from the exact counts committed in this repository; the README of each entry names the source. A b-file longer than those counts has its own generator `b<number>.js` next to it, and `buildBFiles.js` checks only the terms the counts cover, as for A309117, A401988 and A402345. The programs `A*.gp` hold the PARI/GP programs of the entry texts, laid out over several lines; `A401670.gp` and `A402163.gp` also define `T(h, w)`, for the $h \times w$ torus and the $h \times w$ cylinder.
 
 ## Editor rules
 

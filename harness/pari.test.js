@@ -53,6 +53,12 @@ const PROGRAMS = [
       .concat({ call: 'a(0)', expectedResult: '1' }, { call: 'a(1)', expectedResult: '9' }),
   },
   {
+    files: ['oeis/A402345/A402345.gp'],
+    testCases: testCasesOf('any-lattice-cylinder-torus-modular')
+      .filter(({ lattice, torus, twisted, rowCount, colCount }) => lattice === 'square' && !torus && !twisted && rowCount === colCount && rowCount % 2 === 0)
+      .map(({ rowCount, expectedResult }) => ({ call: `a(${rowCount / 2})`, expectedResult })),
+  },
+  {
     files: ['oeis/A401673/A401673.gp'],
     testCases: testCasesOf('domicule-rectangle-polynomial-modular')
       .filter(({ rowCount, colCount }) => Math.max(rowCount, colCount) <= MAX_DIAGONAL_SIDE)
@@ -77,6 +83,7 @@ const ENTRY_PROGRAMS = {
   A401673: 'concat(vector(4, n, row(n-1)))',
   A401988: 'vector(6, n, a(n-1))',
   A402163: 'vector(5, n, a(n-1))',
+  A402345: 'vector(12, n, a(n-1))',
 };
 
 function runGp(programs, calls) {
