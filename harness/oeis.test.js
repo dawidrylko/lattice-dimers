@@ -1,11 +1,10 @@
 const assert = require('node:assert/strict');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const { test } = require('node:test');
 const { splitDefinitions } = require('../oeis/editorRules');
-const { WORKFLOW, readStepScript } = require('./workflow');
+const { GATE_STEP, readGateInputs, readGateScript, runGateScript } = require('./workflow');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OEIS_DIRECTORY = path.join(ROOT_DIRECTORY, 'oeis');
@@ -527,7 +526,6 @@ const GENERATOR_SETUP = [
   '.github/workflows/ci.yml',
 ];
 const SKIP_GENERATORS = process.env.GENERATOR_CHECKS === 'skip';
-const GATE_STEP = 'Select the generator checks';
 
 function readBFileLines(entry) {
   return read(entry, entryFiles(entry).bFile).replace(/\n$/, '').split('\n');
@@ -636,77 +634,6 @@ function checkGeneratorGate() {
   return [...inputs]
     .filter(input => !pattern.test(input))
     .map(input => `The GENERATOR_INPUTS pattern of .github/workflows/ci.yml does not match ${input}, which the generators depend on.`);
-}
-
-function readGateInputs() {
-  return (fs.readFileSync(WORKFLOW, 'utf-8').match(/^ +GENERATOR_INPUTS: '([^']+)'$/m) ?? [])[1];
-}
-
-function readGateScript() {
-  return readStepScript(GATE_STEP);
-}
-
-function runGateScript(script, inputs, changes, { merge = true } = {}) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'generator-gate-'));
-  const repository = path.join(directory, 'repository');
-  const githubEnv = path.join(directory, 'github-env');
-  const environment = { ...process.env, GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1', GIT_AUTHOR_NAME: 'gate', GIT_AUTHOR_EMAIL: 'gate@example.com', GIT_COMMITTER_NAME: 'gate', GIT_COMMITTER_EMAIL: 'gate@example.com' };
-  const git = (...args) => {
-    const result = spawnSync('git', ['-c', 'init.defaultBranch=master', ...args], { cwd: repository, env: environment, encoding: 'utf-8' });
-
-    if (result.status !== 0) {
-      throw new Error(`git ${args.join(' ')} failed: ${result.stderr}`);
-    }
-  };
-  const write = files => {
-    for (const file of files) {
-      fs.mkdirSync(path.dirname(path.join(repository, file)), { recursive: true });
-      fs.writeFileSync(path.join(repository, file), `${file}\n`);
-    }
-  };
-
-  const moves = (changes ?? []).filter(change => change.includes(' -> ')).map(change => change.split(' -> '));
-
-  try {
-    write(['README.md', ...moves.map(([from]) => from)]);
-    git('init', '-q');
-    git('add', '-A');
-    git('commit', '-qm', 'base');
-
-    if (changes) {
-      if (merge) {
-        git('switch', '-qc', 'change');
-      }
-
-      write(changes.filter(change => !change.includes(' -> ')));
-
-      for (const [from, to] of moves) {
-        fs.mkdirSync(path.dirname(path.join(repository, to)), { recursive: true });
-        git('mv', from, to);
-      }
-
-      git('add', '-A');
-      git('commit', '-qm', 'change');
-
-      if (merge) {
-        git('switch', '-q', 'master');
-        git('merge', '-q', '--no-ff', '-m', 'merge', 'change');
-      }
-    }
-
-    fs.writeFileSync(path.join(directory, 'step.sh'), script);
-    fs.writeFileSync(githubEnv, '');
-
-    const { status, stderr } = spawnSync('bash', ['--noprofile', '--norc', '-eo', 'pipefail', path.join(directory, 'step.sh')], {
-      cwd: repository,
-      env: { ...environment, GENERATOR_INPUTS: inputs, GITHUB_ENV: githubEnv },
-      encoding: 'utf-8',
-    });
-
-    return { status, stderr, skip: fs.readFileSync(githubEnv, 'utf-8').includes('GENERATOR_CHECKS=skip') };
-  } finally {
-    fs.rmSync(directory, { recursive: true, force: true });
-  }
 }
 
 function checkGateScript() {

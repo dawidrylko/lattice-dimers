@@ -4,9 +4,17 @@ Each language tests itself on the shared data: [`spec/cases/`](../spec/cases/REA
 
 A short run stops `domino-rectangle-bigint` and `domicule-rectangle-bigint` at the 16 × 16 square and `any-lattice-cylinder-torus-bigint` at the 8 × 8 torus. `any-lattice-cylinder-torus-modular`, `any-lattice-rectangle-modular`, `any-lattice-cylinder-torus-polynomial-modular`, `any-lattice-rectangle-polynomial-modular`, `domicule-rectangle-polynomial-modular` and `domicule-cylinder-torus-polynomial-modular` run their first seven cases and the boards of their BigInt twins.
 
-The commands below run in CI on each pull request and after each merge to master, apart from `pnpm -C js test:render`, which is part of `pnpm -C js test` and runs alone only on macOS. Each CI job runs on its own runner. `Changes` decides whether the b-file generators run, and `Rust` (`cargo test` and `cargo clippy --workspace --all-targets -- -D warnings`), `Python` and `Repository` (`test:spec`, `test:oeis`, `test:markdown`, `test:numbers`, `test:metadata`, `test:ci` and `test:pari`) start when it ends. `JavaScript`, `Benchmarks`, `Site build`, `macOS` and `Research` start at once, and `Site tests 1 of 2` and `2 of 2` share out the browser cases of the site that `Site build` built. The required check `Check` passes only when every other job succeeded; a failed, cancelled or skipped job fails it.
+The commands below run in CI on each pull request and after each merge to master. The exception is `pnpm -C js test:render`. It is part of `pnpm -C js test` and runs alone only on macOS.
 
-pytest runs on four workers (`-n 4`), apart from the tests marked `timing`. They compare a reported time with the wall time of the process, so they run alone after the others, with no other worker loading the runner. A newer run of a pull request cancels the older one. A run on master is never cancelled once it has started; of the runs that wait behind it, GitHub keeps only the newest, whose commit holds the merges of the others. `pnpm -C js test:benchmarks` needs the Rust binaries of `cargo build --release` and the Python package. To pick tests, use `--test-name-pattern` in `node --test` and `-k` in pytest; a filter in `cargo test` picks a whole group of the Rust tests.
+Each CI job runs on its own runner. `Changes` decides whether the b-file generators run. `Rust` (`cargo test` and `cargo clippy --workspace --all-targets -- -D warnings`), `Python` and `Repository` (`test:spec`, `test:oeis`, `test:markdown`, `test:numbers`, `test:metadata`, `test:ci` and `test:pari`) wait for it. `JavaScript`, `Benchmarks`, `Site build`, `macOS` and `Research` start at once.
+
+`Site tests 1 of 2` and `2 of 2` share out the browser cases of the site that `Site build` built. The other site tests run in shard 1. The required check is `Check`. It passes only when every other job succeeded, so a failed, cancelled or skipped job fails it.
+
+pytest runs on four workers (`-n 4`), apart from the tests marked `timing`. These compare a reported time with the wall time of the process. They run alone, after the others. That way no other worker loads the runner while they measure.
+
+Pull requests and master differ here. A newer run of a pull request cancels the older one, while a run on master is never cancelled once it has started. The weekly run and a run started by hand on master wait in the same queue as the runs after a merge. Of the runs waiting there, GitHub keeps only the newest, whose commit holds the merges of the others.
+
+`pnpm -C js test:benchmarks` needs the Rust binaries of `cargo build --release` and the Python package. To pick tests, use `--test-name-pattern` in `node --test` and `-k` in pytest. `cargo test` is coarser. Its filter picks a whole group of the Rust tests.
 
 | command | runner | what it checks |
 | --- | --- | --- |

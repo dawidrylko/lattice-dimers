@@ -7,7 +7,7 @@ const { spawn } = require('child_process');
 const { after, before, describe, test } = require('node:test');
 const { DOMICULE_SWEEPS } = require('../../js/renderer');
 const { findSeriesRun } = require('../benchmarkRuns');
-const { selectShard } = require('./shard');
+const { selectShard, runsUnshardedTests } = require('./shard');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..', '..');
 const SITE_DIRECTORY = path.resolve(process.env.SITE_DIRECTORY || path.join(ROOT_DIRECTORY, 'dist', 'site'));
@@ -2206,7 +2206,9 @@ describe('site', () => {
   });
 });
 
-test('the time tables of the notebooks list only boards the run measured', () => {
+const skip = !runsUnshardedTests(process.env.SITE_TEST_SHARD) && 'runs in shard 1';
+
+test('the time tables of the notebooks list only boards the run measured', { skip }, () => {
   const pages = ['dominoes/rectangles', 'dominoes/cylinders', 'dominoes/tori', 'domicules/rectangles', 'domicules/cylinders', 'domicules/tori', 'domicules/rectangles-by-diagonal-pieces', 'domicules/cylinders-by-diagonal-pieces', 'domicules/tori-by-diagonal-pieces'];
   const unmeasured = pages.flatMap(page => {
     const html = fs.readFileSync(path.join(SITE_DIRECTORY, 'notes', `${page}.html`), 'utf-8');

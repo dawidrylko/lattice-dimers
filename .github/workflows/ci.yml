@@ -51,8 +51,10 @@ jobs:
             echo "grep failed with status $status on GENERATOR_INPUTS." >&2
             exit 1
           fi
-      - id: selection
-        run: echo "generator-checks=${GENERATOR_CHECKS:-run}" >> "$GITHUB_OUTPUT"
+      - name: Pass on the choice of the generator checks
+        id: selection
+        run: |
+          echo "generator-checks=${GENERATOR_CHECKS:-run}" >> "$GITHUB_OUTPUT"
 
   rust:
     name: Rust
@@ -198,7 +200,7 @@ jobs:
           name: site
           path: dist/site
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 7
 
   site-tests:
     name: Site tests ${{ matrix.shard }} of ${{ strategy.job-total }}
