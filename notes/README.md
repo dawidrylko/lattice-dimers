@@ -9,7 +9,7 @@ The notebooks are grouped as the site menu groups them: the notes of each kind o
 - [Research](00-research.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/research.html)): the king's graph paper in brief, with its results read from `research/king-entropy/data/` and the asymptotics of A239273 checked against the exact terms.
 - Dominoes:
   - [Rectangles](dominoes/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/rectangles.html)): domino tilings of the 2n × 2n board, A004003, by three methods, the resultant, numbering, sampling by coupling from the past and the running time.
-  - [Cylinders](dominoes/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html)): domino tilings of cylinders and the OEIS entry of every circumference up to 8.
+  - [Cylinders](dominoes/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html)): domino tilings of cylinders, the OEIS entry of every circumference up to 8, and the 2n × 2n cylinders, A402345.
   - [Tori](dominoes/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/tori.html)): domino tilings of tori and A335586.
 - Triangular lattice:
   - [Rectangles](triangular-lattice/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html)): the triangular lattice on the 2n × 2n board (A401988) and on rectangles, for comparison, with the Kasteleyn determinant in PARI/GP.

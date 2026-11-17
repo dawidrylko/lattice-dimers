@@ -104,10 +104,10 @@ const NOTES = [
   },
   {
     slug: 'dominoes/cylinders',
-    cells: 4, figures: 1,
+    cells: 6, figures: 1,
     group: 'Dominoes',
-    h1: 'Dominoes: tilings of cylinders (A000129, A004253, A006253, A003729, A028477, A028478, A028479)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'Verification', 'References'],
+    h1: 'Dominoes: tilings of cylinders (A000129, A004253, A006253, A003729, A028477, A028478, A028479, A402345)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'PARI/GP', 'Verification', 'References'],
   },
   {
     slug: 'dominoes/tori',
