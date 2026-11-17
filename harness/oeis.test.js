@@ -710,13 +710,13 @@ function runGateScript(script, inputs, changes, { merge = true } = {}) {
     fs.writeFileSync(path.join(directory, 'step.sh'), script);
     fs.writeFileSync(githubEnv, '');
 
-    const { status } = spawnSync('bash', ['--noprofile', '--norc', '-eo', 'pipefail', path.join(directory, 'step.sh')], {
+    const { status, stderr } = spawnSync('bash', ['--noprofile', '--norc', '-eo', 'pipefail', path.join(directory, 'step.sh')], {
       cwd: repository,
       env: { ...environment, GENERATOR_INPUTS: inputs, GITHUB_ENV: githubEnv },
       encoding: 'utf-8',
     });
 
-    return { status, skip: fs.readFileSync(githubEnv, 'utf-8').includes('GENERATOR_CHECKS=skip') };
+    return { status, stderr, skip: fs.readFileSync(githubEnv, 'utf-8').includes('GENERATOR_CHECKS=skip') };
   } finally {
     fs.rmSync(directory, { recursive: true, force: true });
   }
@@ -749,11 +749,13 @@ function checkGateScript() {
     errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail on a commit without the parent it compares with.`);
   }
 
-  if (runGateScript(script, inputs, ['oeis/A309117/README.md'], { merge: false }).status === 0) {
+  const failsWith = (result, message) => result.status !== 0 && !result.skip && result.stderr.includes(message);
+
+  if (!failsWith(runGateScript(script, inputs, ['oeis/A309117/README.md'], { merge: false }), 'no second parent')) {
     errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail on a commit that is not a merge commit.`);
   }
 
-  if (runGateScript(script, '(', ['oeis/A309117/README.md']).status === 0) {
+  if (!failsWith(runGateScript(script, '(', ['oeis/A309117/README.md']), 'grep failed with status 2')) {
     errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail when grep cannot read the GENERATOR_INPUTS pattern.`);
   }
 
