@@ -9,6 +9,7 @@ const { testCasesOf } = require('../core/cases');
 const cylinderTorusModular = require('../solvers/any-lattice-cylinder-torus-modular.js');
 const { capThreads } = require('../solvers/domicule-rectangle-polynomial-modular.js');
 const { capThreads: cylinderTorusThreads } = require('../solvers/domicule-cylinder-torus-polynomial-modular.js');
+const { capThreads: anyLatticeCylinderTorusThreads } = require('../solvers/any-lattice-cylinder-torus-polynomial-modular.js');
 const { ROOT_DIRECTORY, REJECTION_TIMEOUT, runNode } = require('./support');
 
 const EXITING_WORKER = path.join(__dirname, 'fixtures', 'exitingWorker.js');
@@ -97,6 +98,13 @@ describe('limits', () => {
     assert.equal(cylinderTorusThreads(10, 12, 72, 16 * gigabytes), 10);
   });
 
+  test('cylinder and torus threads without the down-left diagonal need no wrap bit', () => {
+    assert.deepEqual(
+      ['king', 'triangular', 'square'].map(lattice => anyLatticeCylinderTorusThreads(40, 16, 128, lattice, 16 * gigabytes)),
+      [15, 31, 31],
+    );
+  });
+
   test('threads for 20x20 on 1 GB', () => {
     assert.equal(capThreads(3, 20, 200, gigabytes), 1);
   });
@@ -110,6 +118,8 @@ describe('rejections of the library and of a worker that exits', () => {
     'any-lattice-rectangle-modular',
     'domicule-rectangle-polynomial-modular',
     'domicule-cylinder-torus-polynomial-modular',
+    'any-lattice-rectangle-polynomial-modular',
+    'any-lattice-cylinder-torus-polynomial-modular',
   ].map(algorithm => ({
     name: `${algorithm} with a worker that exits before it sends a result`,
     args: ['--require', EXITING_WORKER, solver(`${algorithm}.js`), '-r', '2', '-c', '2', '-j', '1'],
@@ -134,6 +144,27 @@ describe('rejections of the library and of a worker that exits', () => {
       args: [
         '-e',
         `require(${JSON.stringify(solver('domicule-cylinder-torus-polynomial-modular.js'))}).calculateDiagonalPolynomial({ rowCount: 4, colCount: 1 }).catch(error => { console.error(error.message); process.exit(1); })`,
+      ],
+      message: 'circumference must be at least 2',
+    },
+    {
+      name: 'any-lattice-rectangle-polynomial-bigint on an unknown lattice',
+      args: ['-e', `require(${JSON.stringify(solver('any-lattice-rectangle-polynomial-bigint.js'))}).calculateDiagonalPolynomial({ rowCount: 2, colCount: 2, lattice: 'hexagonal' })`],
+      message: 'The lattice is square, triangular or king, not hexagonal.',
+    },
+    {
+      name: 'any-lattice-cylinder-torus-polynomial-bigint on a torus of one row',
+      args: [
+        '-e',
+        `require(${JSON.stringify(solver('any-lattice-cylinder-torus-polynomial-bigint.js'))}).calculateDiagonalPolynomial({ rowCount: 1, colCount: 4, torus: true, lattice: 'triangular' })`,
+      ],
+      message: 'a torus needs at least 2 rows',
+    },
+    {
+      name: 'any-lattice-cylinder-torus-polynomial-modular on a circumference of one',
+      args: [
+        '-e',
+        `require(${JSON.stringify(solver('any-lattice-cylinder-torus-polynomial-modular.js'))}).calculateDiagonalPolynomial({ rowCount: 4, colCount: 1, lattice: 'triangular' }).catch(error => { console.error(error.message); process.exit(1); })`,
       ],
       message: 'circumference must be at least 2',
     },
@@ -207,6 +238,8 @@ describe('modules without a worker count', () => {
     ['any-lattice-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('any-lattice-rectangle-bigint')],
     ['domicule-rectangle-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('domicule-rectangle-polynomial-bigint')],
     ['domicule-cylinder-torus-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('domicule-cylinder-torus-polynomial-bigint')],
+    ['any-lattice-rectangle-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('any-lattice-rectangle-polynomial-bigint')],
+    ['any-lattice-cylinder-torus-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('any-lattice-cylinder-torus-polynomial-bigint')],
   ];
 
   for (const [fileName, method, { expectedResult, ...board }] of modules) {

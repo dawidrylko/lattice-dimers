@@ -91,7 +91,7 @@ const SHEET_BOARDS = [
   '10x10-diagonal-cylinder',
   '10x10-diagonal-torus',
 ];
-const CONFIRMATION_BOARDS = ['10x10-diagonal-torus?diagonals=20'];
+const CONFIRMATION_BOARDS = ['10x10-diagonal-torus?diagonals=20', '10x10-triangular-torus?diagonals=20'];
 const SAMPLE_BOARDS = ['18x18', '16x16-diagonal', '20x20', '18x18-triangular'];
 const NOTES = [
   { slug: 'research', cells: 2 },
@@ -179,6 +179,27 @@ const NOTES = [
     h1: 'Triangular lattice: tilings of the 2n × 2n torus (not in the OEIS)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
   },
+  {
+    slug: 'triangular-lattice/rectangles-by-diagonal-pieces',
+    cells: 4, figures: 1,
+    group: 'Triangular lattice',
+    h1: 'Diagonal pieces: triangular lattice tilings of the 2n × 2n board by their count (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Verification', 'References'],
+  },
+  {
+    slug: 'triangular-lattice/cylinders-by-diagonal-pieces',
+    cells: 2, figures: 1,
+    group: 'Triangular lattice',
+    h1: 'Diagonal pieces: triangular lattice tilings of cylinders by their count (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
+  },
+  {
+    slug: 'triangular-lattice/tori-by-diagonal-pieces',
+    cells: 2, figures: 1,
+    group: 'Triangular lattice',
+    h1: 'Diagonal pieces: triangular lattice tilings of tori by their count (not in the OEIS)',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
+  },
 ];
 const SOLVER_SECTION = { 'how-the-counts-are-made': 'the-modular-solver' };
 const OLD_SECTIONS = {
@@ -191,7 +212,7 @@ const OLD_SECTIONS = {
   'triangular-lattice/cylinders': SOLVER_SECTION,
   'triangular-lattice/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus': 'the-counts' },
 };
-const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule )?tilings of .+ \((A\d{6}( on the [^)]+)?(, A\d{6})*|not in the OEIS)\)$/;
+const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule |triangular lattice )?tilings of .+ \((A\d{6}( on the [^)]+)?(, A\d{6})*|not in the OEIS)\)$/;
 const NOTEBOOK_SKELETON = ['The problem', 'The Formula solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', '*', 'Running time', 'PARI/GP', 'Verification', 'References'];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes/rectangles'],
@@ -934,6 +955,8 @@ async function checkSurfaces(page, baseUrl, width) {
   for (const [hash, meta] of [
     ['gallery/4x4-diagonal-torus/1?diagonals=4', '4×4 torus · 8,384 tilings with 4 diagonal pieces (of 17,552)'],
     ['gallery/4x4-diagonal-cylinder/1?diagonals=8', '4×4 cylinder · 16 tilings with 8 diagonal pieces (of 2,649)'],
+    ['gallery/4x4-triangular-torus/1?diagonals=4', '4×4 torus · 608 tilings with 4 diagonal pieces (of 1,920)'],
+    ['gallery/4x4-triangular-cylinder/1?diagonals=8', '4×4 cylinder · 1 tiling with 8 diagonal pieces (of 412)'],
   ]) {
     const filtered = await showBoard(page, hash, `the ${hash} sheet`);
 
@@ -1038,10 +1061,10 @@ async function checkDiagonals(page, baseUrl, width) {
 
   await page.evaluate("document.getElementById('highlight').click()");
 
-  for (const [board, filtered] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', true], ['10x10-diagonal-torus', true], ['2x2-diagonal', true]]) {
+  for (const [board, filtered] of [['12x12-diagonal', false], ['4x4-diagonal-cylinder', true], ['10x10-diagonal-torus', true], ['2x2-diagonal', true], ['12x12-triangular', false], ['4x4-triangular', true], ['4x4-triangular-cylinder', true], ['10x10-triangular-torus', true]]) {
     const state = await showBoard(page, `gallery/${board}/1`, `the ${board} sheet`);
 
-    if (!state.picker || state.filter.counts !== filtered || state.filter.shown || !/diagonal pieces?:/.test(state.tip)) {
+    if (!state.picker || state.filter.counts !== filtered || state.filter.shown || !/diagonal pieces?(:| ↘)/.test(state.tip)) {
       problems.push(`${board} filter: ${JSON.stringify(state.filter)}, tooltip ${state.tip}`);
     }
   }
@@ -1480,8 +1503,8 @@ async function checkChrome(page, baseUrl, width) {
     problems.push(`menu entries whose address is not their label: ${home.misnamed.join(', ')}`);
   }
 
-  if (home.separated !== 'All tilings, By diagonal pieces') {
-    problems.push(`the menu headings are ${home.separated || 'none'} instead of All tilings, By diagonal pieces`);
+  if (home.separated !== 'All tilings, By diagonal pieces, All tilings, By diagonal pieces') {
+    problems.push(`the menu headings are ${home.separated || 'none'} instead of All tilings, By diagonal pieces in the Triangular lattice and the Domicules menus`);
   }
 
   if (home.groups !== MENU_GROUPS.join(', ')) {
@@ -1664,7 +1687,7 @@ async function checkBenchmark(page, baseUrl, width) {
   }
 
   const triangular = await page.evaluate(
-    `['rectangle', 'cylinder', 'torus'].map(surface => ['triangular-' + surface + '-benchmark', [...document.querySelectorAll('#triangular-' + surface + '-benchmark-rows tr')].map(row => row.cells[0].textContent).join(' ')])`,
+    `['rectangle', 'cylinder', 'torus'].flatMap(surface => ['', '-diagonal'].map(count => 'triangular-' + surface + count + '-benchmark')).map(id => [id, [...document.querySelectorAll('#' + id + '-rows tr')].map(row => row.cells[0].textContent).join(' ')])`,
   );
 
   for (const [id, boards] of triangular.filter(([, boards]) => boards !== sides)) {
@@ -1855,7 +1878,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   const groups = await page.evaluate("[...document.querySelectorAll('#benchmark .bench-group')].map(group => group.dataset.pieces + '/' + group.dataset.surface + (group.dataset.count ? '/' + group.dataset.count : '')).sort().join()");
   const views = pieces.flatMap(p =>
     surfaces.flatMap(surface =>
-      p === 'domicule' ? counts.map(count => (count === 'all' ? `${p}/${surface}` : `${p}/${surface}/${count}`)) : [`${p}/${surface}`],
+      p !== 'domino' ? counts.map(count => (count === 'all' ? `${p}/${surface}` : `${p}/${surface}/${count}`)) : [`${p}/${surface}`],
     ),
   );
   const cardLinks = [];
@@ -1912,6 +1935,16 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     if (odd.length || dashes.length) {
       problems.push(`the ${view} table shows ${[...odd, ...dashes].join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing value -`);
     }
+
+    if (width < 920) {
+      const beside = await page.evaluate(
+        "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) table.languages tbody tr')].filter(row => row.cells.length === 9 && Math.round(row.cells[5].getBoundingClientRect().left) !== Math.round(row.cells[2].getBoundingClientRect().left)).map(row => row.cells[0].textContent)",
+      );
+
+      if (beside.length) {
+        problems.push(`at ${width} px the ${view} cards put the fourth solver of ${beside.join(', ')} beside the first three instead of under the first`);
+      }
+    }
   }
 
   const headers = await page.evaluate(`(async () => {
@@ -1955,6 +1988,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     'triangular-rectangle-benchmark': 'triangular-lattice/rectangles',
     'triangular-cylinder-benchmark': 'triangular-lattice/cylinders',
     'triangular-torus-benchmark': 'triangular-lattice/tori',
+    'triangular-rectangle-diagonal-benchmark': 'triangular-lattice/rectangles-by-diagonal-pieces',
+    'triangular-cylinder-diagonal-benchmark': 'triangular-lattice/cylinders-by-diagonal-pieces',
+    'triangular-torus-diagonal-benchmark': 'triangular-lattice/tori-by-diagonal-pieces',
   };
   const expected = label => {
     const [table, solver] = label.split(/[ ,]/);
@@ -1969,9 +2005,9 @@ async function checkBenchmarkCells(page, baseUrl, width) {
     problems.push(`at ${width} px the solver links of the benchmark cards are wrong: ${wrongCards.map(({ label, problem, display, tapped }) => `${label} ${problem || `display ${display}, tapped ${tapped}`}`).join('; ')}`);
   }
 
-  if (headers.length !== 72 || wrong.length) {
+  if (headers.length !== 90 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 72 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 90 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 

@@ -38,7 +38,7 @@ const stored = require('./js/core/cases')
   .filter(({ rowCount, colCount, torus }) => !torus && rowCount === colCount && rowCount >= 2 && rowCount % 2 === 0)
   .map(({ rowCount, expectedResult }) => ({ side: rowCount, diagonals: expectedResult.split(',') }))
   .sort((a, b) => a.side - b.side);
-const gallery = nb.context.cylinderTorusDiagonals.filter(({ surface, side }) => surface === 'cylinder' && side >= 2);
+const gallery = nb.context.cylinderTorusDiagonals.filter(({ pieces, surface, side }) => pieces === 'domicule' && surface === 'cylinder' && side >= 2);
 const both = gallery.filter(g => stored.some(s => s.side === g.side));
 const differing = both.filter(g => stored.find(s => s.side === g.side).diagonals.join() !== g.diagonals.join());
 

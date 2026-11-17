@@ -13,6 +13,8 @@ DIGIT_LIMIT = 640
 GIGABYTE = 2**30
 MODULAR_DIAGONAL = "lattice_dimers.solvers.domicule_rectangle_polynomial_modular"
 MODULAR_CYLINDER_TORUS_DIAGONAL = "lattice_dimers.solvers.domicule_cylinder_torus_polynomial_modular"
+MODULAR_LATTICE_DIAGONAL = "lattice_dimers.solvers.any_lattice_rectangle_polynomial_modular"
+MODULAR_LATTICE_CYLINDER_TORUS_DIAGONAL = "lattice_dimers.solvers.any_lattice_cylinder_torus_polynomial_modular"
 
 
 def load(path):
@@ -84,6 +86,7 @@ SCRATCH_CASES = [
     ("domicule-rectangle-modular", "calculate_total_tiling_combinations", board_of("domicule-rectangle-modular", 7, 6)),
     ("domicule-rectangle-polynomial-modular", "calculate_diagonal_polynomial", board_of("domicule-rectangle-polynomial-bigint", 5, 6)),
     ("any-lattice-rectangle-modular", "calculate_total_tiling_combinations", board_of("any-lattice-rectangle-modular", 7, 6)),
+    ("any-lattice-rectangle-polynomial-modular", "calculate_diagonal_polynomial", board_of("any-lattice-rectangle-polynomial-bigint", 5, 6)),
 ]
 
 
@@ -106,6 +109,8 @@ UNKNOWN_PROCESSOR_CASES = [
     ("domicule-rectangle-modular", "calculate_total_tiling_combinations", board_of("domicule-rectangle-modular", 4, 4)),
     ("any-lattice-rectangle-modular", "calculate_total_tiling_combinations", board_of("any-lattice-rectangle-modular", 4, 4)),
     ("domicule-rectangle-polynomial-modular", "calculate_diagonal_polynomial", board_of("domicule-rectangle-polynomial-bigint", 4, 4)),
+    ("any-lattice-rectangle-polynomial-modular", "calculate_diagonal_polynomial", board_of("any-lattice-rectangle-polynomial-bigint", 4, 4)),
+    ("any-lattice-cylinder-torus-polynomial-modular", "calculate_diagonal_polynomial", board_of("any-lattice-cylinder-torus-polynomial-bigint", 4, 4)),
 ]
 
 
@@ -184,3 +189,48 @@ def test_cylinder_torus_cap_threads(jobs, cols, degree, memory, expected):
     cap_threads = importlib.import_module(MODULAR_CYLINDER_TORUS_DIAGONAL).cap_threads
 
     assert cap_threads(jobs, cols, degree, memory) == expected
+
+
+def test_lattice_cap_threads():
+    cap_threads = importlib.import_module(MODULAR_LATTICE_DIAGONAL).cap_threads
+
+    assert cap_threads(10, 20, 200, 16 * GIGABYTE) == 5
+    assert cap_threads(4, 6, 18, 16 * GIGABYTE) == 4
+    assert cap_threads(3, 20, 200, GIGABYTE) == 1
+
+
+LATTICE_CYLINDER_TORUS_CASES = [
+    next(case for case in cases_of("any-lattice-cylinder-torus-polynomial-bigint") if (case["rowCount"], case["colCount"], bool(case.get("torus"))) == key and case["lattice"] == lattice)
+    for lattice, key in [("triangular", (4, 3, False)), ("triangular", (4, 4, True)), ("square", (3, 4, True)), ("king", (3, 4, True)), ("king", (2, 3, True))]
+]
+
+
+@pytest.mark.parametrize(
+    "case",
+    [pytest.param(case, id=f"{case['lattice']}-{case['rowCount']}x{case['colCount']}{'-torus' if case.get('torus') else ''}") for case in LATTICE_CYLINDER_TORUS_CASES],
+)
+def test_lattice_cylinder_torus_scratch_array_of_one_count(monkeypatch, case):
+    solver = importlib.import_module(MODULAR_LATTICE_CYLINDER_TORUS_DIAGONAL)
+    monkeypatch.setattr(solver, "SCRATCH_COUNTS", 1)
+    monkeypatch.setattr(solver, "BATCH_COUNTS", 1)
+
+    result = solver.calculate_diagonal_polynomial(case["rowCount"], case["colCount"], case["lattice"], bool(case.get("torus")), 2)
+
+    assert joined(result) == case["expectedResult"]
+
+
+@pytest.mark.parametrize(
+    "jobs, cols, degree, lattice, memory, expected",
+    [
+        pytest.param(10, 20, 200, "king", 64 * GIGABYTE, 2, id="king-20x20-on-64GB"),
+        pytest.param(10, 20, 200, "triangular", 64 * GIGABYTE, 5, id="triangular-20x20-on-64GB"),
+        pytest.param(10, 20, 200, "square", 64 * GIGABYTE, 5, id="square-20x20-on-64GB"),
+        pytest.param(4, 6, 18, "king", 16 * GIGABYTE, 4, id="king-6x6-on-16GB"),
+        pytest.param(3, 20, 200, "king", GIGABYTE, 1, id="king-20x20-on-1GB"),
+        pytest.param(9, 2, 31, "triangular", 0, 1, id="unknown-memory"),
+    ],
+)
+def test_lattice_cylinder_torus_cap_threads(jobs, cols, degree, lattice, memory, expected):
+    cap_threads = importlib.import_module(MODULAR_LATTICE_CYLINDER_TORUS_DIAGONAL).cap_threads
+
+    assert cap_threads(jobs, cols, degree, lattice, memory) == expected

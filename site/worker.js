@@ -30,7 +30,7 @@ function selectNumbering(board, diagonals) {
     return {
       key: `${board.id}/${diagonals}`,
       large: true,
-      create: onProgress => createDiagonalUnranker({ ...board, diagonals }, onProgress),
+      create: onProgress => createDiagonalUnranker({ ...board, lattice: PIECE_LATTICES[board.pieces], diagonals }, onProgress),
       unrank: unrankDiagonalTiling,
     };
   }

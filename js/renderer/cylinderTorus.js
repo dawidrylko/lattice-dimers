@@ -292,7 +292,7 @@ function createCylinderTorusUnranker({ rowCount, colCount, lattice = 'king', tor
 }
 
 /**
- * Counts the domicule tilings of a cylinder or a torus by the number of diagonal pieces, with the
+ * Counts the tilings of a cylinder or a torus on the given lattice by the number of diagonal pieces, with the
  * scan of createCylinderTorusUnranker; the coefficients add up to the number of tilings.
  * @param {Object} options The board, as for createCylinderTorusUnranker.
  * @returns {BigInt[]} The coefficients, from 0 diagonal pieces up.

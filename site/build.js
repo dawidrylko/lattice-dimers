@@ -6,12 +6,15 @@ const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 const testCasesDomino = testCasesOf('domino-rectangle-formula');
 const testCasesDomicule = testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare);
 const testCasesCylinderTorus = testCasesOf('any-lattice-cylinder-torus-modular');
-const testCasesDiagonal = testCasesOf('domicule-rectangle-polynomial-modular');
+const testCasesDiagonal = {
+  king: testCasesOf('domicule-rectangle-polynomial-modular'),
+  triangular: testCasesOf('any-lattice-rectangle-polynomial-modular').filter(t => t.lattice === 'triangular'),
+};
 const testCasesTriangular = testCasesOf('any-lattice-rectangle-modular').filter(t => t.lattice === 'triangular');
 const { DOMICULE_SWEEPS } = require('../js/renderer');
 const domiculeModular = require('../js/solvers/domicule-rectangle-modular.js');
 const cylinderTorusModular = require('../js/solvers/any-lattice-cylinder-torus-modular.js');
-const diagonalReference = require('../js/solvers/domicule-rectangle-polynomial-bigint.js');
+const diagonalReference = require('../js/solvers/any-lattice-rectangle-polynomial-bigint.js');
 const { listImplementations } = require('../js/core/registry');
 const { countCylinderTorusDiagonals } = require('../js/renderer/cylinderTorus');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
@@ -93,7 +96,7 @@ const DOMICULE_BOARDS = [
   { rowCount: 20, colCount: 20, mode: 'random' },
 ];
 const CYLINDER_TORUS_SIDES = [0, 2, 4, 6, 8, 10];
-const CYLINDER_TORUS_FILTER_MEMORY = { '10x10-diagonal-torus': '800 MB' };
+const CYLINDER_TORUS_FILTER_MEMORY = { '10x10-diagonal-torus': '800 MB', '10x10-triangular-torus': '700 MB' };
 const CYLINDER_TORUS_PIECES = [
   { pieces: 'domino', lattice: 'square', suffix: '' },
   { pieces: 'domicule', lattice: 'king', suffix: '-diagonal' },
@@ -119,6 +122,9 @@ const NOTE_PROVENANCE = {
   'triangular-lattice/rectangles': `${COMPUTED}; the rows the solver column marks as spec/cases/ are stored counts, which the build checked, and the entropy s comes from research/king-entropy/.`,
   'triangular-lattice/cylinders': `${COMPUTED}.`,
   'triangular-lattice/tori': `${COMPUTED}.`,
+  'triangular-lattice/rectangles-by-diagonal-pieces': `${COMPUTED}; the rows the solver column marks as spec/cases/ are stored counts, which the build checked.`,
+  'triangular-lattice/cylinders-by-diagonal-pieces': `${COMPUTED}; the counts are stored in spec/cases/ and checked against the gallery's scan.`,
+  'triangular-lattice/tori-by-diagonal-pieces': `${COMPUTED}; the counts are stored in spec/cases/ and checked against the gallery's scan.`,
 };
 const NOTE_SUMMARIES = {
   research: "The entropy per site of the king's graph dimers: an estimate with error bar 6·10⁻¹⁶, rigorous bounds, the surface and corner free energies, and the asymptotics of A239273.",
@@ -134,6 +140,9 @@ const NOTE_SUMMARIES = {
   'triangular-lattice/rectangles': 'Notebook: perfect matchings of the triangular lattice on the 2n × 2n board (A401988) and on rectangles, by a transfer and by the Kasteleyn determinant, counted for comparison with dominoes and domicules.',
   'triangular-lattice/cylinders': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules.',
   'triangular-lattice/tori': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
+  'triangular-lattice/rectangles-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on the 2n × 2n board by the number of diagonal pieces, up to 16 × 16, with at most 2n² − 2n of them, and their weighted counts.',
+  'triangular-lattice/cylinders-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on cylinders by the number of diagonal pieces, checked against the gallery up to 10 × 10.',
+  'triangular-lattice/tori-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on tori by the number of diagonal pieces, checked against the gallery up to 10 × 10.',
 };
 
 function countTilings(board) {
@@ -219,29 +228,35 @@ function countCylinderTorusTilings({ rowCount, colCount, lattice, torus }) {
 }
 
 /**
- * Reads the domicule tilings of a board by the number of diagonal pieces from spec/cases/, or counts
- * them with the reference solver, and checks that they add up to the number of tilings.
+ * Reads the tilings of a board by the number of diagonal pieces from spec/cases/, or counts them
+ * with the reference solver, and checks that they add up to the number of tilings.
  * @param {Object} board The board.
  * @param {string} total The number of tilings.
+ * @param {string} lattice 'king' for domicules, 'triangular' for the triangular lattice.
  * @returns {string[]} The coefficients, from 0 diagonal pieces up.
  */
-function countDiagonalTilings({ rowCount, colCount }, total) {
-  const known = testCasesDiagonal.find(t => t.rowCount === rowCount && t.colCount === colCount);
+function countDiagonalTilings({ rowCount, colCount }, total, lattice) {
+  const known = testCasesDiagonal[lattice].find(t => t.rowCount === rowCount && t.colCount === colCount);
   const coefficients = known
     ? known.expectedResult.split(',')
-    : diagonalReference.calculateDiagonalPolynomial({ rowCount, colCount }).map(String);
+    : diagonalReference.calculateDiagonalPolynomial({ rowCount, colCount, lattice }).map(String);
   const sum = coefficients.reduce((acc, count) => acc + BigInt(count), BigInt(0));
 
   if (String(sum) !== total) {
-    throw new Error(`The diagonal counts of ${rowCount}x${colCount} add up to ${sum}, not ${total}.`);
+    throw new Error(`The diagonal counts of the ${rowCount}x${colCount} ${lattice} board add up to ${sum}, not ${total}.`);
   }
 
   return coefficients;
 }
 
+function hasDiagonalFilter(board) {
+  return !board.mode && Math.max(board.rowCount, board.colCount) <= DIAGONAL_FILTER_MAX_SIDE;
+}
+
 /**
- * Counts the domicule tilings of a cylinder or a torus by the number of diagonal pieces with the
- * gallery's transfer, and checks them against the number of tilings and, for no diagonal piece, the domino count.
+ * Counts the tilings of a cylinder or a torus by the number of diagonal pieces with the gallery's
+ * transfer, on the lattice of the board, and checks them against the number of tilings and, for
+ * no diagonal piece, the domino count.
  * @param {Object} board The board, as for countCylinderTorusTilings.
  * @param {string} total The number of tilings.
  * @returns {Promise<string[]>} The coefficients, from 0 diagonal pieces up.
@@ -249,7 +264,7 @@ function countDiagonalTilings({ rowCount, colCount }, total) {
 async function countCylinderTorusDiagonalTilings(board, total) {
   const coefficients = countCylinderTorusDiagonals(board);
   const sum = coefficients.reduce((acc, count) => acc + count, BigInt(0));
-  const surface = `${board.rowCount}x${board.colCount} ${board.torus ? 'torus' : 'cylinder'}`;
+  const surface = `${board.rowCount}x${board.colCount} ${board.lattice} ${board.torus ? 'torus' : 'cylinder'}`;
   const dominoes = await countCylinderTorusTilings({ ...board, lattice: 'square' });
 
   if (String(sum) !== total) {
@@ -790,7 +805,6 @@ async function __main__() {
 
   for (const board of DOMICULE_BOARDS) {
     const total = await countDomiculeTilings(board);
-    const filtered = !board.mode && Math.max(board.rowCount, board.colCount) <= DIAGONAL_FILTER_MAX_SIDE;
 
     domiculeBoards.push({
       id: `${board.rowCount}x${board.colCount}-diagonal`,
@@ -799,7 +813,7 @@ async function __main__() {
       mode: 'pages',
       ...board,
       total,
-      ...(filtered && { diagonals: countDiagonalTilings(board, total) }),
+      ...(hasDiagonalFilter(board) && { diagonals: countDiagonalTilings(board, total, 'king') }),
     });
   }
 
@@ -810,7 +824,15 @@ async function __main__() {
       throw new Error(`No count of the ${board.rowCount}x${board.colCount} triangular lattice in spec/cases/any-lattice-rectangle-modular.json, which the gallery needs.`);
     }
 
-    return { id: `${board.rowCount}x${board.colCount}-triangular`, pieces: 'triangular', surface: 'rectangle', mode: 'pages', ...board, total };
+    return {
+      id: `${board.rowCount}x${board.colCount}-triangular`,
+      pieces: 'triangular',
+      surface: 'rectangle',
+      mode: 'pages',
+      ...board,
+      total,
+      ...(hasDiagonalFilter(board) && { diagonals: countDiagonalTilings(board, total, 'triangular') }),
+    };
   });
   const cylinderTorusBoards = [];
 
@@ -828,7 +850,7 @@ async function __main__() {
           rowCount: side,
           colCount: side,
           total,
-          ...(pieces === 'domicule' && { diagonals: await countCylinderTorusDiagonalTilings(board, total) }),
+          ...(pieces !== 'domino' && { diagonals: await countCylinderTorusDiagonalTilings(board, total) }),
           ...(CYLINDER_TORUS_FILTER_MEMORY[id] && { filterMemory: CYLINDER_TORUS_FILTER_MEMORY[id] }),
         });
       }
@@ -880,7 +902,7 @@ async function __main__() {
     cylinderTorusDiagonalRun: data.cylinderTorusDiagonalRun,
     cylinderTorusDiagonals: cylinderTorusBoards
       .filter(({ diagonals }) => diagonals)
-      .map(({ surface, rowCount, diagonals }) => ({ surface, side: rowCount, diagonals })),
+      .map(({ pieces, surface, rowCount, diagonals }) => ({ pieces, surface, side: rowCount, diagonals })),
     countDomicule: board => countDomiculeTilings(board).then(BigInt),
     roundDecimal,
     logCount,

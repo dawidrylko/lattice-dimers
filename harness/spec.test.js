@@ -209,6 +209,101 @@ describe('cylinder and torus diagonal pieces listed one by one', () => {
   }
 });
 
+describe('diagonal anchors on every lattice', () => {
+  const rectangle = require('../js/solvers/any-lattice-rectangle-bigint.js');
+  const cylinderTorus = require('../js/solvers/any-lattice-cylinder-torus-bigint.js');
+  const anchored = [
+    ...testCasesOf('any-lattice-rectangle-polynomial-modular').map(testCase => ({ ...testCase, count: rectangle.calculateTotalTilingCombinations })),
+    ...testCasesOf('any-lattice-cylinder-torus-polynomial-modular').map(testCase => ({ ...testCase, count: cylinderTorus.calculateTotalTilingCombinations })),
+  ].filter(({ rowCount, colCount }) => rowCount * colCount <= 64);
+
+  test('at least 30 rows on every lattice are small enough to anchor', () => {
+    assert.ok(anchored.length >= 30, `Only ${anchored.length} rows of spec/cases/ are anchored.`);
+    assert.deepEqual([...new Set(anchored.map(({ lattice }) => lattice))].sort(), ['king', 'square', 'triangular']);
+  });
+
+  for (const { rowCount, colCount, lattice, torus = false, expectedResult, count } of anchored) {
+    test(`${rowCount}x${colCount} ${lattice} ${count === rectangle.calculateTotalTilingCombinations ? 'rectangle' : torus ? 'torus' : 'cylinder'}`, () => {
+      const coefficients = expectedResult.split(',').map(BigInt);
+      const total = on => BigInt(count({ rowCount, colCount, lattice: on, torus }));
+
+      assert.equal(coefficients.reduce((sum, c) => sum + c, BigInt(0)), total(lattice), 'The sum of the coefficients differs from the count on the lattice.');
+      assert.equal(coefficients[0], total('square'), 'The constant coefficient differs from the domino count.');
+    });
+  }
+});
+
+describe('diagonal pieces on every lattice listed one by one', () => {
+  const SHIFTS = { square: [0], triangular: [0, 1], king: [-1, 0, 1] };
+  const listCoefficients = ({ rowCount, colCount, lattice, surface }) => {
+    const cells = rowCount * colCount;
+    const id = (r, c) => r * colCount + c;
+    const edges = Array.from({ length: cells }, () => []);
+    const join = (a, b, diagonal) => {
+      edges[a].push({ other: b, diagonal });
+      edges[b].push({ other: a, diagonal });
+    };
+    const glued = surface !== 'rectangle';
+
+    for (let r = 0; r < rowCount; r++) {
+      for (let c = 0; c < colCount; c++) {
+        if (c + 1 < colCount || glued) {
+          join(id(r, c), id(r, (c + 1) % colCount), 0);
+        }
+
+        if (r + 1 < rowCount || surface === 'torus') {
+          SHIFTS[lattice]
+            .filter(d => glued || (c + d >= 0 && c + d < colCount))
+            .forEach(d => join(id(r, c), id((r + 1) % rowCount, (c + d + colCount) % colCount), d === 0 ? 0 : 1));
+        }
+      }
+    }
+
+    const counts = new Array(Math.floor(cells / 2) + 1).fill(0);
+    const covered = new Array(cells).fill(false);
+    const place = (from, diagonals) => {
+      const cell = covered.indexOf(false, from);
+
+      if (cell === -1) {
+        counts[diagonals]++;
+        return;
+      }
+
+      covered[cell] = true;
+      edges[cell]
+        .filter(({ other }) => other !== cell && !covered[other])
+        .forEach(({ other, diagonal }) => {
+          covered[other] = true;
+          place(cell + 1, diagonals + diagonal);
+          covered[other] = false;
+        });
+      covered[cell] = false;
+    };
+
+    place(0, 0);
+
+    return counts.join(',');
+  };
+  const small = [
+    ...testCasesOf('any-lattice-rectangle-polynomial-bigint').map(testCase => ({ ...testCase, surface: 'rectangle' })),
+    ...testCasesOf('any-lattice-cylinder-torus-polynomial-bigint').map(testCase => ({ ...testCase, surface: testCase.torus ? 'torus' : 'cylinder' })),
+  ].filter(({ rowCount, colCount }) => rowCount >= 1 && rowCount * colCount <= 20);
+
+  test('at least 20 boards are small enough to list, on every lattice and surface', () => {
+    assert.ok(small.length >= 20, `Only ${small.length} boards of spec/cases/ have at most 20 cells.`);
+    assert.deepEqual([...new Set(small.map(({ lattice, surface }) => `${lattice} ${surface}`))].sort(), [
+      'king cylinder', 'king rectangle', 'king torus', 'square cylinder', 'square rectangle', 'square torus',
+      'triangular cylinder', 'triangular rectangle', 'triangular torus',
+    ]);
+  });
+
+  for (const testCase of small) {
+    test(`${testCase.rowCount}x${testCase.colCount} ${testCase.lattice} ${testCase.surface}`, () => {
+      assert.equal(listCoefficients(testCase), testCase.expectedResult);
+    });
+  }
+});
+
 describe('diagonal anchors', () => {
   const find = (testCases, rowCount, colCount) =>
     testCases.find(t => (t.rowCount === rowCount && t.colCount === colCount) || (t.rowCount === colCount && t.colCount === rowCount));

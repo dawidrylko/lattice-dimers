@@ -171,7 +171,8 @@ function unrankDomiculeTiling({ rowCount, colCount, lattice, table, total }, ran
 }
 
 /**
- * Builds the counting table of the domicule tilings with a given number of diagonal pieces.
+ * Builds the counting table of the tilings with a given number of diagonal pieces, on the king's
+ * graph or on the triangular lattice.
  * table[i][state][r] is the number of ways to finish the tiling with exactly r diagonal pieces
  * when the cells before i are covered as in createDomiculeUnranker; a state that cannot be
  * finished holds null, and r stops at the requested number. Fewer than r = diagonals - i
@@ -180,10 +181,15 @@ function unrankDomiculeTiling({ rowCount, colCount, lattice, table, total }, ran
  * @property {number} options.rowCount The number of rows.
  * @property {number} options.colCount The number of columns.
  * @property {number} options.diagonals The number of diagonal pieces.
+ * @property {string} [options.lattice] 'king' for domicules, 'triangular' for the triangular lattice.
  * @param {function(number): void} [onProgress] Called with the completed fraction after every board row.
- * @returns {{ rowCount: number, colCount: number, diagonals: number, table: Array<Array<BigInt[]|null>>, total: BigInt }} The unranker.
+ * @returns {{ rowCount: number, colCount: number, lattice: string, diagonals: number, table: Array<Array<BigInt[]|null>>, total: BigInt }} The unranker.
  */
-function createDiagonalUnranker({ rowCount, colCount, diagonals }, onProgress) {
+function createDiagonalUnranker({ rowCount, colCount, diagonals, lattice = 'king' }, onProgress) {
+  if (!['king', 'triangular'].includes(lattice)) {
+    throw new Error(`createDiagonalUnranker() takes lattice king or triangular, not ${lattice}.`);
+  }
+
   const cellCount = rowCount * colCount;
   const stateCount = 2 ** (colCount + 1);
   const zero = BigInt(0);
@@ -195,7 +201,7 @@ function createDiagonalUnranker({ rowCount, colCount, diagonals }, onProgress) {
   for (let index = cellCount - 1; index >= 0; index--) {
     const next = table[index + 1];
     const current = new Array(stateCount).fill(null);
-    const moves = listOffsets(index, rowCount, colCount).map(offset => ({
+    const moves = listOffsets(index, rowCount, colCount, lattice).map(offset => ({
       bit: 2 ** offset,
       diagonal: isDiagonalOffset(index, offset, colCount),
     }));
@@ -241,17 +247,17 @@ function createDiagonalUnranker({ rowCount, colCount, diagonals }, onProgress) {
     }
   }
 
-  return { rowCount, colCount, diagonals, table, total: table[0][0]?.[diagonals] ?? zero };
+  return { rowCount, colCount, lattice, diagonals, table, total: table[0][0]?.[diagonals] ?? zero };
 }
 
 /**
- * Returns the domicule tiling with the given 0-based rank among those with the unranker's
+ * Returns the tiling of the unranker's lattice with the given 0-based rank among those with its
  * number of diagonal pieces, in the order of unrankDomiculeTiling.
  * @param {Object} unranker The result of createDiagonalUnranker.
  * @param {BigInt} rank The 0-based rank, lower than unranker.total.
  * @returns {{ row: number, col: number, dr: number, dc: number }[]} The tiling.
  */
-function unrankDiagonalTiling({ rowCount, colCount, diagonals, table, total }, rank) {
+function unrankDiagonalTiling({ rowCount, colCount, lattice, diagonals, table, total }, rank) {
   if (rank < BigInt(0) || rank >= total) {
     throw new RangeError(`Rank must be between 0 and ${total - BigInt(1)}.`);
   }
@@ -269,7 +275,7 @@ function unrankDiagonalTiling({ rowCount, colCount, diagonals, table, total }, r
     }
 
     const next = table[index + 1];
-    const offsets = listOffsets(index, rowCount, colCount).filter(offset => !(state & 2 ** offset));
+    const offsets = listOffsets(index, rowCount, colCount, lattice).filter(offset => !(state & 2 ** offset));
 
     for (let i = 0; i < offsets.length; i++) {
       const target = (state + 2 ** offsets[i]) >>> 1;

@@ -237,6 +237,19 @@ const diagonalUnrankTestCases = [
     t => t.rowCount === board.rowCount && t.colCount === board.colCount,
   ).expectedResult,
 }));
+const triangularDiagonalUnrankTestCases = [
+  { rowCount: 2, colCount: 2 },
+  { rowCount: 3, colCount: 4 },
+  { rowCount: 4, colCount: 3 },
+  { rowCount: 4, colCount: 4, order: true },
+  { rowCount: 6, colCount: 6 },
+].map(board => ({
+  ...board,
+  lattice: 'triangular',
+  expectedResult: testCasesOf('any-lattice-rectangle-polynomial-modular').find(
+    t => t.lattice === 'triangular' && t.rowCount === board.rowCount && t.colCount === board.colCount,
+  ).expectedResult,
+}));
 const domiculeRandomTestCases = [
   { rowCount: 2, colCount: 2, expectedResult: 3, criticalValue: 13.82 },
   { rowCount: 4, colCount: 4, expectedResult: 280, criticalValue: 357.7 },
@@ -798,6 +811,8 @@ const figureTestCases = [
         [{ pieces: 'domicule', surface: 'cylinder', ranks: [661] }, 'Domicule tiling number 662 of a 4 by 4 cylinder'],
         [{ pieces: 'domino', surface: 'torus', ranks: [0] }, 'Domino tiling number 1 of a 4 by 4 torus'],
         [{ pieces: 'domicule', diagonals: 8, ranks: [0] }, 'Domicule tiling number 1 with 8 diagonal pieces of a 4 by 4 rectangle'],
+        [{ lattice: 'triangular', diagonals: 2, ranks: [0] }, 'Triangular lattice tiling number 1 with 2 diagonal pieces of a 4 by 4 rectangle'],
+        [{ lattice: 'triangular', surface: 'torus', diagonals: 4, ranks: [0] }, 'Triangular lattice tiling number 1 with 4 diagonal pieces of a 4 by 4 torus'],
         [{ lattice: 'triangular', surface: 'torus', ranks: [0] }, 'Triangular lattice tiling number 1 of a 4 by 4 torus'],
       ].every(([options, name]) => drawTilings({ rowCount: 4, colCount: 4, ...options }).svgs[0].includes(`aria-label="${name}"`)),
   },
@@ -886,7 +901,7 @@ const figureTestCases = [
         drawTilings({ rowCount: 4, colCount: 4, surface: 'cylinder', diagonals: 2, ranks: [0] });
         return false;
       } catch (error) {
-        return error.message.includes('domicule tilings only');
+        return error.message.includes('domicule and triangular lattice tilings only');
       }
     },
   },
@@ -1194,6 +1209,10 @@ test('the domicule unrankers keep colCount + 1 bits of state', () => {
   assert.equal(canUnrankDomicule({ rowCount: 41, colCount: 12 }), false);
 });
 
+test('diagonal unranker rejects a lattice other than king or triangular', () => {
+  assert.throws(() => createDiagonalUnranker({ rowCount: 2, colCount: 2, lattice: 'square', diagonals: 0 }), /lattice king or triangular/);
+});
+
 test('domicule sampler rejects a lattice other than king or triangular', () => {
   assert.throws(() => sampleDomiculeTiling({ rowCount: 2, colCount: 2, lattice: 'square' }), /lattice king or triangular/);
 });
@@ -1206,6 +1225,7 @@ suite('glued edge marks', [{ rowCount: 2, colCount: 4 }], runSeamGeometryTest);
 suite('second label line', sublabelTestCases, runSublabelTest);
 suite('sheet without labels', unlabelledTestCases, runUnlabelledTest);
 suite('diagonal unrank', diagonalUnrankTestCases, runDiagonalUnrankTest);
+suite('triangular diagonal unrank', triangularDiagonalUnrankTestCases, runDiagonalUnrankTest);
 suite('sheet style', styleTestCases, runStyleTest);
 suite('engraving containment', engravingContainmentTestCases, runEngravingContainmentTest);
 suite('domino output', [{ rowCount: 4, colCount: 4 }], runDominoOutputTest);
