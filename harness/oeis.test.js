@@ -659,7 +659,7 @@ function readGateScript() {
   return body.map(line => line.slice(margin)).join('\n');
 }
 
-function runGateScript(script, inputs, changes) {
+function runGateScript(script, inputs, changes, { merge = true } = {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'generator-gate-'));
   const repository = path.join(directory, 'repository');
   const githubEnv = path.join(directory, 'github-env');
@@ -687,7 +687,10 @@ function runGateScript(script, inputs, changes) {
     git('commit', '-qm', 'base');
 
     if (changes) {
-      git('switch', '-qc', 'change');
+      if (merge) {
+        git('switch', '-qc', 'change');
+      }
+
       write(changes.filter(change => !change.includes(' -> ')));
 
       for (const [from, to] of moves) {
@@ -697,8 +700,11 @@ function runGateScript(script, inputs, changes) {
 
       git('add', '-A');
       git('commit', '-qm', 'change');
-      git('switch', '-q', 'master');
-      git('merge', '-q', '--no-ff', '-m', 'merge', 'change');
+
+      if (merge) {
+        git('switch', '-q', 'master');
+        git('merge', '-q', '--no-ff', '-m', 'merge', 'change');
+      }
     }
 
     fs.writeFileSync(path.join(directory, 'step.sh'), script);
@@ -741,6 +747,14 @@ function checkGateScript() {
 
   if (runGateScript(script, inputs, null).status === 0) {
     errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail on a commit without the parent it compares with.`);
+  }
+
+  if (runGateScript(script, inputs, ['oeis/A309117/README.md'], { merge: false }).status === 0) {
+    errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail on a commit that is not a merge commit.`);
+  }
+
+  if (runGateScript(script, '(', ['oeis/A309117/README.md']).status === 0) {
+    errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail when grep cannot read the GENERATOR_INPUTS pattern.`);
   }
 
   return errors;
