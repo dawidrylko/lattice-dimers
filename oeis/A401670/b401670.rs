@@ -132,7 +132,7 @@ fn list_orbits(cols: usize) -> Vec<(usize, u64)> {
                 image = rotate(image);
             }
 
-            (images.first() == Some(&set)).then(|| (set, images.len() as u64))
+            (images.first() == Some(&set)).then_some((set, images.len() as u64))
         })
         .collect()
 }
