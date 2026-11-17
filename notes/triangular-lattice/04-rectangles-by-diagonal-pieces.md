@@ -121,6 +121,63 @@ const rows = Object.entries(nb.rows)
 table(['n', 'board', 'share of diagonal pieces', 'variance per site'], rows);
 ```
 
+## Weighted counts
+
+The polynomial gives the weighted count for any $x$. The cell prints $\log P(x) / (4n^2)$, the free energy per site of the weighted board, at the six weights of the [domicule table](../domicules/04-rectangles-by-diagonal-pieces.md#weighted-counts): $x = 0$ (dominoes), $1/2$, $1$ (the triangular lattice), $3/2$, $2$ and $3$. The chart draws it for every $x$ from 0 to 3 on four boards, with dots at the same six weights. Two tilings placed side by side tile the joined board, so $\log P(x)$ is superadditive in each side, and the value of a free board never exceeds the free energy per site of the infinite lattice at the same $x$. That is $G/\pi = 0.2915\ldots$ at $x = 0$, with $G$ Catalan's constant, and at $x = 1$ the entropy per site of the triangular lattice [1], $s = 0.4285\ldots$, which the cell reads from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`. The cell stops the build when a board of the table reaches either value.
+
+```js run
+const fs = require('fs');
+const path = require('path');
+const { logCount, root } = nb.context;
+const validate = fs.readFileSync(path.join(root, 'research/king-entropy/out/out_validate.txt'), 'utf-8');
+const squareEntropy = 0.29156090403081878;
+const triangularEntropy = Number(validate.match(/Kasteleyn Bloch average, 64x64 grid: s_tri = ([0-9.]+)/)[1]);
+const weights = [[0, 1], [1, 2], [1, 1], [3, 2], [2, 1], [3, 1]];
+const evaluate = (row, [p, q]) => {
+  const degree = row.length - 1;
+
+  return row.reduce((sum, c, j) => sum + c * BigInt(p) ** BigInt(2 * j) * BigInt(q) ** BigInt(2 * (degree - j)), 0n);
+};
+
+table(
+  ['n', 'board', ...weights.map(([p, q]) => `x = ${q === 1 ? p : `${p}/${q}`}`)],
+  Object.entries(nb.rows)
+    .filter(([n]) => Number(n) >= 3)
+    .map(([n, row]) => {
+      const cells = 4 * Number(n) * Number(n);
+      const values = weights.map(([p, q]) => (logCount(evaluate(row, [p, q])) - 2 * (row.length - 1) * Math.log(q)) / cells);
+
+      if (!(values[0] < squareEntropy && values[2] < triangularEntropy)) {
+        throw new Error(`the ${2 * n}×${2 * n} board reaches the free energy per site of the infinite lattice`);
+      }
+
+      return [n, `${2 * n}×${2 * n}`, ...values.map(value => value.toFixed(6))];
+    }),
+);
+
+const freeEnergy = (row, x) => {
+  const terms = row.map((c, j) => (c === 0n ? -Infinity : logCount(c) + (j === 0 ? 0 : 2 * j * Math.log(x))));
+  const top = Math.max(...terms);
+
+  return top + Math.log(terms.reduce((sum, t) => sum + Math.exp(t - top), 0));
+};
+const shown = [5, 6, 7, 8].filter(n => nb.rows[n]);
+const xs = Array.from({ length: 61 }, (_, i) => i / 20);
+
+chart({
+  title: 'log P(x) / (4n²) against the weight x of a diagonal piece, for boards 2n × 2n',
+  x: { label: 'weight x of a diagonal piece', min: 0, max: 3, ticks: [0, 0.5, 1, 1.5, 2, 2.5, 3] },
+  y: { label: 'log P(x) / (4n²)', min: 0.2, max: 0.7, ticks: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7] },
+  series: shown.map((n, i) => ({
+    name: `${2 * n}×${2 * n}`,
+    color: `var(--ordinal-${i + 1})`,
+    points: xs.map(x => [x, freeEnergy(nb.rows[n], x) / (4 * n * n)]),
+    markers: weights.map(([p, q]) => p / q).map(x => [x, freeEnergy(nb.rows[n], x) / (4 * n * n)]),
+  })),
+  describe: ([x, value]) => `x = ${x}, log P(x)/(4n²) = ${value.toFixed(6)}`,
+});
+```
+
 ## Verification
 
 The two solvers agree with each other in Rust, Python and JavaScript, with A004003 at $k = 0$ and with A401988 summed over $k$, on the rectangles of up to 20 cells with every tiling listed one by one, and on the king's graph and the square lattice with the domicule polynomial and the domino count. The numbering by diagonal pieces is checked against these counts up to $6 \times 6$, its first and last tiling of every $k$ for coverage, for the number of diagonal pieces and for the missing down-left diagonal, and on the $4 \times 4$ board for the order of the full numbering. The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).

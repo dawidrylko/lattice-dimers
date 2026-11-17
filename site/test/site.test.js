@@ -181,10 +181,10 @@ const NOTES = [
   },
   {
     slug: 'triangular-lattice/rectangles-by-diagonal-pieces',
-    cells: 3, figures: 1,
+    cells: 4, figures: 1,
     group: 'Triangular lattice',
     h1: 'Diagonal pieces: triangular lattice tilings of the 2n × 2n board by their count (not in the OEIS)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Verification', 'References'],
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Verification', 'References'],
   },
   {
     slug: 'triangular-lattice/cylinders-by-diagonal-pieces',
