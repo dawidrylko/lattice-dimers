@@ -16,7 +16,7 @@ const { listImplementations } = require('../js/core/registry');
 const { countCylinderTorusDiagonals } = require('../js/renderer/cylinderTorus');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
-const { readBenchmarkRuns, findSeriesRun, listJavaScriptResults, describeMissing, formerResultName, resultFileOf } = require('./benchmarkRuns');
+const { readBenchmarkRuns, findSeriesRun, listJavaScriptResults, describeMissing } = require('./benchmarkRuns');
 const { DEFAULT_BOARD } = require('./defaultBoard');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -295,7 +295,7 @@ function escapeHtml(text) {
 }
 
 function readAverageTime(directory, fileName) {
-  const file = resultFileOf(directory, fileName);
+  const file = path.join(directory, fileName);
 
   if (!fs.existsSync(file)) {
     return null;
@@ -519,7 +519,7 @@ function readMissingReasons(algorithm, { rowCount, colCount }, seriesSuffix, dir
   return Object.fromEntries(
     listImplementations(algorithm).map(({ language, file }) => {
       const name = `${path.basename(file)}${seriesSuffix}`;
-      const entry = notMeasured.find(({ series, board: other }) => (series === name || series === formerResultName(name)) && other === board);
+      const entry = notMeasured.find(({ series, board: other }) => series === name && other === board);
 
       return [language, entry ? describeMissing(entry, budgetHours) : fallback];
     }),

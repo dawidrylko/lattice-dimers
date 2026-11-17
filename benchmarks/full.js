@@ -17,7 +17,6 @@ const {
   saveExecutionResults,
 } = require('./runner');
 const { RESULTS_DIRECTORY } = require('./environment');
-const { formerResultName } = require('../site/benchmarkRuns');
 
 const RUNS = 10;
 const DEFAULT_JOBS = 4;
@@ -271,11 +270,9 @@ function compareRuns(before, after) {
   const beforeTimes = read(before);
   const afterTimes = read(after);
 
-  const beforeOf = name => beforeTimes[name] ?? beforeTimes[formerResultName(name)];
-
   return Object.keys(afterTimes)
-    .filter(name => beforeOf(name) > 0 && afterTimes[name] > 0)
-    .map(name => ({ name, before: beforeOf(name), after: afterTimes[name], ratio: Number((afterTimes[name] / beforeOf(name)).toFixed(3)) }))
+    .filter(name => beforeTimes[name] > 0 && afterTimes[name] > 0)
+    .map(name => ({ name, before: beforeTimes[name], after: afterTimes[name], ratio: Number((afterTimes[name] / beforeTimes[name]).toFixed(3)) }))
     .sort((a, b) => b.ratio - a.ratio);
 }
 
