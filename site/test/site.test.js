@@ -36,6 +36,7 @@ const CONTENT_TYPES = {
 const VIEWPORT_HEIGHT = 900;
 const MOBILE_TABLE_WIDTH = 919;
 const THREE_SOLVER_CARD_WIDTH = 1099;
+const NOTE_COLUMN_WIDTH = 1100;
 const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGES = [['Rust', '#icon-rust'], ['Python', '#icon-python'], ['JavaScript', '#icon-javascript']];
 const solverColumns = (solver, languages) => LANGUAGES.filter(([name]) => languages.includes(name)).map(([name, icon]) => ({ name: `${solver}, ${name}`, icon: `${solver} ${icon}` }));
@@ -1218,6 +1219,7 @@ async function checkNotes(page, baseUrl, width) {
       cells: document.querySelectorAll('.cell').length,
       outputs: [...document.querySelectorAll('.output td, pre.output')].map(cell => cell.textContent.trim()),
       sideways: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      wide: [...document.querySelectorAll('.table-wrap.output')].filter(wrap => wrap.scrollWidth > wrap.clientWidth).length,
       unresolved: /undefined|\\u0000/.test(document.querySelector('article').textContent),
       math: document.querySelectorAll('.math').length,
       katex: document.querySelectorAll('.katex').length,
@@ -1300,6 +1302,10 @@ async function checkNotes(page, baseUrl, width) {
 
     if (state.sideways > 0) {
       problems.push(`${slug} scrolls ${state.sideways} px sideways`);
+    }
+
+    if (width >= NOTE_COLUMN_WIDTH && state.wide > 0) {
+      problems.push(`${slug} scrolls ${state.wide} of its tables sideways at ${width} px`);
     }
 
     if (state.charts.some(count => count !== 1)) {

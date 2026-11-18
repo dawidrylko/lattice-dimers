@@ -18,7 +18,6 @@ const LATTICES = {
   ],
 };
 const NOT_PLANAR = "The king's graph is not planar, so a Pfaffian does not count its tilings. Pass --lattice square or --lattice triangular.";
-const LIMIT = `The board can have at most ${MAX_CELLS} cells, because every worker thread keeps a matrix of cells x cells entries.`;
 
 /**
  * Numbers the cells so that the elimination of pfaffianModulo stays narrow. The cells of one line
@@ -115,10 +114,12 @@ function countModulo(board, matrix = new Float64Array((board.rows * board.cols) 
 
 /**
  * Bounds log2 of the number of tilings, as the Modular twin does: its transfer places every
- * piece from one cell, which picks one of at most m moves, right, left across the seam, down
- * and on the triangular lattice down to the right, so a cylinder has at most m^(N/2) tilings. A
- * torus also picks the cells of its first row that are covered from the last one, on either
- * side, so it has at most 2^side m^(N/2) with its shorter side.
+ * piece from one cell, which picks one of at most m moves, so a cylinder of N cells has at most
+ * m^(N/2) tilings. The moves are right, left across the seam, down and on the triangular lattice
+ * down to the right: m is 3 on the square lattice, 4 on the triangular one and 2 on a cylinder
+ * of one row, which has no move down. A torus also picks the cells of its first row that are
+ * covered from the last one, and its rows and columns can be swapped, so it has at most
+ * 2^side m^(N/2) with its shorter side.
  * @param {Object} board The board.
  * @returns {number} The bound.
  */
@@ -143,10 +144,6 @@ async function calculateTotalTilingCombinations({ rowCount, colCount, lattice, t
 
   if (!isValidBoard({ rowCount, colCount }, torus) || !Object.hasOwn(LATTICES, lattice)) {
     throw new Error('The circumference must be at least 2, a torus needs at least 2 rows unless the board has no cells, and the lattice is square or triangular.');
-  }
-
-  if (rowCount * colCount > MAX_CELLS) {
-    throw new Error(LIMIT);
   }
 
   if (rowCount * colCount === 0) {
@@ -199,7 +196,7 @@ async function __main__() {
   }
 
   if (options.rowCount * options.colCount > MAX_CELLS) {
-    console.error(LIMIT);
+    console.error(`The board can have at most ${MAX_CELLS} cells, because every worker thread keeps a matrix of cells x cells entries.`);
     process.exit(1);
   }
 
@@ -220,4 +217,4 @@ if (!isMainThread) {
   });
 }
 
-module.exports = { calculateTotalTilingCombinations, countModulo, calculateLog2Bound, fillMatrix, numberCells, LATTICES, MAX_CELLS };
+module.exports = { calculateTotalTilingCombinations, countModulo, calculateLog2Bound, LATTICES };

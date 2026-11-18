@@ -102,13 +102,13 @@ def calculate_log2_bound(rows, cols, lattice, torus):
 def calculate_total_tiling_combinations(row_count, col_count, lattice, torus=False, jobs=None):
     """Counts the tilings exactly, like calculateTotalTilingCombinations of
     js/solvers/any-lattice-cylinder-torus-pfaffian.js."""
+    if lattice == "king":
+        raise ValueError(NOT_PLANAR)
+
     if not is_valid_board(row_count, col_count, torus) or lattice not in LATTICES:
         raise ValueError(
             "The circumference must be at least 2, a torus needs at least 2 rows unless the board has no cells, and the lattice is square or triangular."
         )
-
-    if row_count * col_count > MAX_CELLS:
-        raise ValueError(limit_message())
 
     if row_count * col_count == 0:
         return 1
@@ -123,10 +123,6 @@ def calculate_total_tiling_combinations(row_count, col_count, lattice, torus=Fal
     residues = run_workers(count_modulo, tasks, jobs or os.process_cpu_count() or 1)
 
     return max(abs(combine_checked_residues(list(column), primes, True)) for column in zip(*residues))
-
-
-def limit_message():
-    return f"The board can have at most {MAX_CELLS} cells, because every worker thread keeps a matrix of cells x cells entries."
 
 
 def is_valid_board(row_count, col_count, torus):
@@ -162,7 +158,10 @@ def main(argv):
         return 1
 
     if row_count * col_count > MAX_CELLS:
-        print(limit_message(), file=sys.stderr)
+        print(
+            f"The board can have at most {MAX_CELLS} cells, because every worker thread keeps a matrix of cells x cells entries.",
+            file=sys.stderr,
+        )
         return 1
 
     stop_timer = start_timer(argv)

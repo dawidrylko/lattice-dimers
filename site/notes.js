@@ -181,11 +181,11 @@ function createCellHelpers() {
   };
   const helpers = {
     print: (...values) => text.push(values.map(String).join(' ')),
-    table: (headers, rows) => {
+    table: (headers, rows, { wrapHeaders = false } = {}) => {
       flush();
       outputs.push(
         [
-          '<div class="table-wrap output"><table>',
+          `<div class="table-wrap output"><table${wrapHeaders ? ' class="wrap-headers"' : ''}>`,
           `<thead><tr>${headers.map(header => `<th>${escapeHtml(header)}</th>`).join('')}</tr></thead>`,
           `<tbody>${rows.map(row => `<tr>${row.map(cell => `<td${String(cell).length > 24 ? ' class="long"' : ''}>${escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody>`,
           '</table></div>',

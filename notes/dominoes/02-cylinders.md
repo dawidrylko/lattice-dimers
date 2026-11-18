@@ -15,7 +15,11 @@ figure(svgs, `4 of the ${total} domino tilings of the cylinder of circumference 
 
 ## The Pfaffian solver
 
-[`any-lattice-cylinder-torus-pfaffian.js`](../../js/solvers/any-lattice-cylinder-torus-pfaffian.js) counts in polynomial time: it eliminates a matrix of $wh \times wh$ entries. The cylinder is a planar graph, so by Kasteleyn's theorem [2] a sign on every edge makes the number of tilings the absolute value of the Pfaffian of a skew-symmetric matrix. The solver computes two Pfaffians, one with the edges across the seam as they are and one with their signs flipped. One of the two is the count up to sign. The other is the difference between the tilings with an even and with an odd number of dominoes across the seam, so the solver returns the larger absolute value. Inside the board it uses the signs of [`A401988.gp`](../../oeis/A401988/A401988.gp), alternating by rows or, when the number of rows is odd, by columns. It counts modulo primes, below $2^{31}$ in Rust and Python and below $2^{26}$ in JavaScript, where a sum of two products of residues has to stay exact in a double. The Chinese remainder theorem rebuilds the count, and one more prime checks it. A board has at most 1600 cells, because every thread keeps the whole matrix. The same algorithm is in Rust, [`any-lattice-cylinder-torus-pfaffian.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-pfaffian.rs), and in Python, [`any_lattice_cylinder_torus_pfaffian.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_pfaffian.py).
+[`any-lattice-cylinder-torus-pfaffian.js`](../../js/solvers/any-lattice-cylinder-torus-pfaffian.js) counts in polynomial time: it eliminates a matrix of $wh \times wh$ entries. The cylinder is a planar graph, so by Kasteleyn's theorem [2] a sign on every edge makes the number of tilings the absolute value of the Pfaffian of a skew-symmetric matrix. The solver computes two Pfaffians, one with the edges across the seam as they are and one with their signs flipped. One of the two is the count up to sign. The other is the difference between the tilings with an even and with an odd number of dominoes across the seam, so the solver returns the larger absolute value. Inside the board it uses the signs of [`A401988.gp`](../../oeis/A401988/A401988.gp), alternating by rows or, when the number of rows is odd, by columns.
+
+The solver counts modulo primes. They are below $2^{31}$ in Rust and Python and below $2^{26}$ in JavaScript, where a sum of two products of residues has to stay exact in a double. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
+
+A board has at most 1600 cells. That is a limit of memory, because every thread keeps a whole matrix. The same algorithm is in Rust, [`any-lattice-cylinder-torus-pfaffian.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-pfaffian.rs), and in Python, [`any_lattice_cylinder_torus_pfaffian.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_pfaffian.py).
 
 ## The Modular solver
 
@@ -95,7 +99,7 @@ for (const [w, entry, terms] of entries) {
 table(['board', 'OEIS', 'checked at'], rows);
 ```
 
-The $2n \times 2n$ cylinders are the entry [OEIS A402345](https://oeis.org/A402345) [1], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the rows above hold $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $14 \times 14$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ with the Pfaffian one.
+The $2n \times 2n$ cylinders are the entry [OEIS A402345](https://oeis.org/A402345) [1], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the rows above hold $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $14 \times 14$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ and $40 \times 40$ with the Pfaffian one.
 
 ```js run
 const bFile = require('fs')
@@ -105,7 +109,7 @@ const bFile = require('fs')
   .map(line => BigInt(line.split(' ')[1]));
 const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-cylinder-torus-pfaffian.js');
 const sides = [2, 4, 6, 8, 10, 12, 14];
-const pfaffianSides = [...sides, 16, 18, 20];
+const pfaffianSides = [...sides, 16, 18, 20, 40];
 const diagonal = sides.filter(w => nb.count(w, w) !== bFile[w / 2]);
 
 for (const w of pfaffianSides) {
@@ -143,6 +147,7 @@ table(
     `${r.rowCount}×${r.colCount}`,
     ...[...pfaffian(r), r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
   ]),
+  { wrapHeaders: true },
 );
 print(`Run: ${nb.context.benchmarkRun}`);
 
@@ -161,7 +166,7 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 ## Verification
 
-The `BigInt` solver agrees with every OEIS entry above, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. The Pfaffian solver also agrees with A402345 up to $20 \times 20$, and its count of the $40 \times 40$ cylinder in [`spec/cases/any-lattice-cylinder-torus-pfaffian.json`](../../spec/cases/any-lattice-cylinder-torus-pfaffian.json) is the term $a(20)$ of the b-file. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
+The `BigInt` solver agrees with every OEIS entry above, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. The Pfaffian solver also agrees with A402345 up to $20 \times 20$ and at $40 \times 40$, the largest board it takes. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
 
 ## References
 

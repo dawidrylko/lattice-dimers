@@ -1,5 +1,7 @@
 import numpy as np
 
+from .modular import LARGEST_PRIME_BOUND
+
 
 def pfaffian_modulo(matrix, prime):
     """Computes the Pfaffian of a skew-symmetric matrix modulo a prime below 2^31, like pfaffianModulo of
@@ -17,6 +19,9 @@ def pfaffian_modulo(matrix, prime):
     of the columns that change on both sides of the diagonal. Where those columns fill at least half of the window
     from the first to the last of them, the step updates the window through a view of the array, and otherwise it
     gathers the columns. Two products of residues below 2^31 and an entry fit an unsigned 64-bit sum."""
+    if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1] or not prime < LARGEST_PRIME_BOUND:
+        raise ValueError(f"The matrix must be square and the prime must be below {LARGEST_PRIME_BOUND}.")
+
     size = len(matrix)
 
     if size % 2 == 1:

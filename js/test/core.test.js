@@ -284,14 +284,6 @@ describe('rejections of the library and of a worker that exits', () => {
       ],
       message: 'is not planar',
     },
-    {
-      name: 'any-lattice-cylinder-torus-pfaffian on more cells than its limit',
-      args: [
-        '-e',
-        `require(${JSON.stringify(solver('any-lattice-cylinder-torus-pfaffian.js'))}).calculateTotalTilingCombinations({ rowCount: 41, colCount: 40, lattice: 'square' }).catch(error => { console.error(error.message); process.exit(1); })`,
-      ],
-      message: 'at most 1600 cells',
-    },
   ];
 
   for (const { name, args, message } of [...exitingWorkerCases, ...libraryCases]) {

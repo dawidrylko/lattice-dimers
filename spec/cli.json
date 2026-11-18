@@ -305,9 +305,9 @@
       "algorithm": "any-lattice-cylinder-torus-pfaffian",
       "args": [
         "-r",
-        "41",
+        "1",
         "-c",
-        "40",
+        "1601",
         "--lattice",
         "square"
       ],

@@ -1,4 +1,4 @@
-use crate::modular::pow_mod;
+use crate::modular::{pow_mod, LARGEST_PRIME_BOUND};
 
 fn negate(value: u32, prime: u32) -> u32 {
     if value == 0 { 0 } else { prime - value }
@@ -38,6 +38,7 @@ fn swap_with_next(matrix: &mut [u32], size: usize, k: usize, j: usize, prime: u3
 /// rows, and the whole elimination takes about cells x side^2 updates instead of cells^3 / 6.
 pub fn pfaffian_modulo(matrix: &mut [u32], size: usize, prime: u32) -> u32 {
     assert_eq!(matrix.len(), size * size, "the matrix holds size x size entries");
+    assert!(prime < LARGEST_PRIME_BOUND, "the prime is below 2^31");
 
     if !size.is_multiple_of(2) {
         return 0;
@@ -194,5 +195,11 @@ mod tests {
         }
 
         assert_eq!(pfaffian_modulo(&mut filled, 6, prime), pfaffian_modulo(&mut residues_of(&matrix, prime), 6, prime));
+    }
+
+    #[test]
+    #[should_panic(expected = "the prime is below 2^31")]
+    fn rejects_a_prime_of_32_bits() {
+        pfaffian_modulo(&mut [0, 1, 0, 0], 2, LARGEST_PRIME_BOUND);
     }
 }

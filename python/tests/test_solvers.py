@@ -345,3 +345,18 @@ def test_pfaffian_ignores_the_entries_on_and_below_the_diagonal():
     filled[np.tril_indices(6)] = 12345
 
     assert pfaffian_modulo(filled, prime) == pfaffian_modulo(upper_residues(matrix, prime), prime)
+
+
+def test_pfaffian_rejects_a_prime_of_32_bits_and_a_matrix_that_is_not_square():
+    with pytest.raises(ValueError, match="below 2147483648"):
+        pfaffian_modulo(np.array([[0, 1], [0, 0]], dtype=np.uint64), 2**31)
+
+    with pytest.raises(ValueError, match="must be square"):
+        pfaffian_modulo(np.zeros((2, 4), dtype=np.uint64), list_primes(1)[0])
+
+
+def test_pfaffian_solver_says_that_the_kings_graph_is_not_planar():
+    solver = importlib.import_module(module_of("any-lattice-cylinder-torus-pfaffian"))
+
+    with pytest.raises(ValueError, match="is not planar"):
+        solver.calculate_total_tiling_combinations(4, 4, "king")
