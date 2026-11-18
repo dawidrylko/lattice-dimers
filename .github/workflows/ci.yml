@@ -24,7 +24,7 @@ jobs:
     name: Changes
     runs-on: ubuntu-latest
     outputs:
-      generator-checks: ${{ steps.selection.outputs.generator-checks }}
+      generator-checks: ${{ steps.jobs.outputs.generator-checks }}
       rust: ${{ steps.jobs.outputs.rust }}
       python: ${{ steps.jobs.outputs.python }}
       javascript: ${{ steps.jobs.outputs.javascript }}
@@ -38,35 +38,11 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 2
-      - name: Select the generator checks
-        if: github.event_name == 'pull_request'
-        env:
-          GENERATOR_INPUTS: '^(oeis/A[0-9]{6}/b[0-9]{6}\.(txt|rs|py|js)$|rust/core/|rust/Cargo\.(toml|lock)$|rust/tests/generators\.rs$|python/lattice_dimers/(__init__\.py$|core/)|python/pyproject\.toml$|python/tests/test_generators\.py$|js/package\.json$|js/\.nvmrc$|js/core/|harness/oeis\.test\.js$|spec/limits\.json$|\.github/workflows/ci\.yml$)'
-        run: |
-          if ! git rev-parse --verify -q HEAD^2 > /dev/null; then
-            echo "HEAD has no second parent here, so the files the pull request changes are unknown." >&2
-            exit 1
-          fi
-          changed=$(git -c core.quotePath=false diff --name-only --no-renames HEAD^1 HEAD)
-          status=0
-          grep -qE "$GENERATOR_INPUTS" <<< "$changed" || status=$?
-          if [ "$status" -eq 0 ]; then
-            echo "The pull request changes what the b-file generators depend on, so they run."
-          elif [ "$status" -eq 1 ]; then
-            echo "GENERATOR_CHECKS=skip" >> "$GITHUB_ENV"
-            echo "The pull request changes nothing the b-file generators depend on, so their checks skip."
-          else
-            echo "grep failed with status $status on GENERATOR_INPUTS." >&2
-            exit 1
-          fi
-      - name: Pass on the choice of the generator checks
-        id: selection
-        run: |
-          echo "generator-checks=${GENERATOR_CHECKS:-run}" >> "$GITHUB_OUTPUT"
       - name: Select the jobs
         id: jobs
         env:
           EVENT: ${{ github.event_name }}
+          GENERATOR_INPUTS: '^(oeis/A[0-9]{6}/b[0-9]{6}\.(txt|rs|py|js)$|rust/core/|rust/Cargo\.(toml|lock)$|rust/tests/generators\.rs$|python/lattice_dimers/(__init__\.py$|core/)|python/pyproject\.toml$|python/tests/test_generators\.py$|js/package\.json$|js/\.nvmrc$|js/core/|harness/oeis\.test\.js$|spec/limits\.json$|\.github/workflows/ci\.yml$)'
           SHARED_INPUTS: '^(\.github/workflows/ci\.yml$|spec/|rust/Cargo\.(toml|lock)$|python/pyproject\.toml$|js/(package\.json|pnpm-lock\.yaml|\.nvmrc)$|research/king-entropy/src/requirements\.txt$)'
           REPOSITORY_ONLY: '^(benchmarks|js|python|rust)/README\.md$'
           RUST_INPUTS: '^(rust/|oeis/A[0-9]{6}/b[0-9]{6}\.(rs|txt)$)'
@@ -87,9 +63,10 @@ jobs:
             return "$status"
           }
           every=false
+          generators=run
           if [ "$EVENT" != pull_request ]; then
             every=true
-            echo "Every job runs on $EVENT."
+            echo "Every job and the b-file generators run on $EVENT."
           elif ! git rev-parse --verify -q HEAD^2 > /dev/null; then
             echo "HEAD has no second parent here, so the files the pull request changes are unknown." >&2
             exit 1
@@ -102,6 +79,14 @@ jobs:
               echo "grep failed with status $status on $REPOSITORY_ONLY." >&2
               exit 1
             fi
+            if matches '^"' "$files"; then
+              echo "The pull request changes a file whose name git quotes, so the b-file generators run."
+            elif matches "$GENERATOR_INPUTS" "$files"; then
+              echo "The pull request changes what the b-file generators depend on, so they run."
+            else
+              generators=skip
+              echo "The pull request changes nothing the b-file generators depend on, so their checks skip."
+            fi
             if matches '^D' "$changes"; then
               every=true
               echo "The pull request deletes or moves a file, so every job runs."
@@ -113,6 +98,7 @@ jobs:
               echo "The pull request changes ci.yml, spec/ or a toolchain file, so every job runs."
             fi
           fi
+          echo "generator-checks=$generators" >> "$GITHUB_OUTPUT"
           choose() {
             if [ "$every" = true ] || matches "$2" "$inputs"; then
               echo "$1=run" >> "$GITHUB_OUTPUT"

@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { test } = require('node:test');
-const { GATE_STEP, JOB_STEP, readLines, readStepScript, readStepEnv, readJobs, readGateInputs, readGateScript, runStepInRepository, runGateScript } = require('./workflow');
+const { JOB_STEP, readLines, readStepScript, readStepEnv, readJobs, readGateInputs, runStepInRepository, selectGeneratorChecks } = require('./workflow');
 
 const ROOT = path.join(__dirname, '..');
 const AGGREGATOR = 'check';
@@ -18,7 +18,7 @@ const JAVASCRIPT_ENTRIES = {
   'site-tests': ['site/test'],
   macos: ['js/test/render.test.js'],
 };
-const SELECTION_STEP = 'Pass on the choice of the generator checks';
+const GENERATOR_OUTPUT = 'generator-checks';
 const GENERATOR_JOBS = ['rust', 'python', 'repository'];
 const PYTHON_JOB = 'python';
 const PYTEST = 'python -m pytest python/tests';
@@ -47,11 +47,11 @@ function runAggregator(results, choices) {
 function readChosenJobs(githubOutput) {
   return githubOutput
     .split('\n')
-    .filter(line => line.endsWith('=run'))
+    .filter(line => line.endsWith('=run') && !line.startsWith(`${GENERATOR_OUTPUT}=`))
     .map(line => line.slice(0, -'=run'.length));
 }
 
-function selectJobs(files, event, env = readStepEnv(JOB_STEP)) {
+function selectOutput(files, event, env = readStepEnv(JOB_STEP)) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'ci-jobs-'));
   const output = path.join(directory, 'github-output');
 
@@ -69,10 +69,14 @@ function selectJobs(files, event, env = readStepEnv(JOB_STEP)) {
 
     assert.equal(result.status, 0, result.stderr);
 
-    return readChosenJobs(fs.readFileSync(output, 'utf-8'));
+    return fs.readFileSync(output, 'utf-8');
   } finally {
     fs.rmSync(directory, { recursive: true, force: true });
   }
+}
+
+function selectJobs(files, event, env) {
+  return readChosenJobs(selectOutput(files, event, env));
 }
 
 function listScripts(entry) {
@@ -117,23 +121,6 @@ function listLoadedFiles(entries) {
   return [...loaded].map(file => path.relative(ROOT, file));
 }
 
-function runSelection(generatorChecks) {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'generator-selection-'));
-  const output = path.join(directory, 'github-output');
-
-  try {
-    fs.writeFileSync(output, '');
-
-    const result = runStep(readStepScript(SELECTION_STEP), { GITHUB_OUTPUT: output, GENERATOR_CHECKS: generatorChecks });
-
-    assert.equal(result.status, 0, result.stderr);
-
-    return fs.readFileSync(output, 'utf-8');
-  } finally {
-    fs.rmSync(directory, { recursive: true, force: true });
-  }
-}
-
 test('every job of CI is a need of the Check job, which runs whatever their results', () => {
   const jobs = readJobs();
   const check = jobs.get(AGGREGATOR);
@@ -174,26 +161,23 @@ test('Check passes only when every job succeeded or Changes chose to skip it', (
   }
 });
 
-test('the generator checks run on push, schedule and dispatch, and on a pull request as the generator gate chose', () => {
-  const jobs = readJobs();
-  const script = readGateScript();
-  const inputs = readGateInputs();
+test('the generator checks run on push, schedule and dispatch, and on a pull request that changes what the generators depend on', () => {
+  for (const event of ['push', 'schedule', 'workflow_dispatch']) {
+    assert.match(selectOutput([], event), new RegExp(`^${GENERATOR_OUTPUT}=run$`, 'm'), `The generator checks do not run on ${event}.`);
+  }
 
-  assert.match(jobs.get(GATE_JOB), new RegExp(`^ {6}- name: ${GATE_STEP}\\n {8}if: github\\.event_name == 'pull_request'$`, 'm'));
-  assert.equal(runSelection(undefined), 'generator-checks=run\n', 'With no gate, on push, schedule and dispatch, the generator checks must run.');
+  for (const [changes, choice] of [[['oeis/A309117/b309117.rs'], 'run'], [['rust/core/src/zażółć.rs'], 'run'], [['zz/a"b.txt'], 'run'], [['docs/glossary.md'], 'skip']]) {
+    const selection = selectGeneratorChecks(readGateInputs(), changes);
 
-  for (const [changes, choice] of [[['oeis/A309117/b309117.rs'], 'run'], [['rust/core/src/zażółć.rs'], 'run'], [['docs/glossary.md'], 'skip']]) {
-    const gate = runGateScript(script, inputs, changes);
-
-    assert.equal(gate.status, 0, gate.stderr);
-    assert.equal(runSelection(gate.skip ? 'skip' : undefined), `generator-checks=${choice}\n`, `A pull request that changes ${changes} must ${choice} the generator checks.`);
+    assert.equal(selection.status, 0, selection.stderr);
+    assert.equal(selection.skip ? 'skip' : 'run', choice, `A pull request that changes ${changes} must ${choice} the generator checks.`);
   }
 });
 
-test('the jobs that run the b-file generators take the choice of the generator gate', () => {
+test('the jobs that run the b-file generators take the choice of Changes', () => {
   const jobs = readJobs();
 
-  assert.match(jobs.get(GATE_JOB), /^ {6}generator-checks: \$\{\{ steps\.selection\.outputs\.generator-checks \}\}$/m);
+  assert.match(jobs.get(GATE_JOB), /^ {6}generator-checks: \$\{\{ steps\.jobs\.outputs\.generator-checks \}\}$/m);
 
   for (const id of GENERATOR_JOBS) {
     assert.ok(readNeeds(jobs.get(id)).includes(GATE_JOB), `${id} does not need ${GATE_JOB}.`);
