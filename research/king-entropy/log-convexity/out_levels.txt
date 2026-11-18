@@ -155,7 +155,7 @@ B4. parity splitting Delta_w of the even cylinders (data/lean/*longdouble*) agai
   x=2: w=14: 0.99896, w=16: 1.00045, w=18: 1.00029, w=20: 1.00043; |rho_-|/rho_+ at w = 20: 1.0009
   x=3: w=14: 1.00103, w=16: 1.00666, w=18: 1.00571, w=20: 1.00657; |rho_-|/rho_+ at w = 20: 1.0132
 
-== G. small x: the gaps at the domino point, m_v/x as x -> 0, the crossing of twisted levels near x = 0.45
+== G. small x: the gaps at the domino point, m_v/x for x down to 0.08, the crossing of twisted levels near x = 0.45
 G1. weighted counts at small x against brute force over perfect matchings, plain and twisted
   K x w = 4x4, 5x4, 6x4, 4x5, 3x6, 4x6 at x = 0, 1/20, 1/4, 9/20: largest relative deviation 4.9e-16
 G2. x = 0, the domino cylinder (critical): w gap and w m_v against 2 pi and pi/2
@@ -168,19 +168,30 @@ G2. x = 0, the domino cylinder (critical): w gap and w m_v against 2 pi and pi/2
   w=20: gap 0.311607, m_v 0.078872, w gap - 2 pi = -0.05105, w m_v - pi/2 = +0.00663
   w=22: gap 0.283678, m_v 0.071648, w gap - 2 pi = -0.04228, w m_v - pi/2 = +0.00546
   Richardson in 1/w^2 from w = 20, 22: w gap -> 6.282676 (2 pi = 6.283185), w m_v -> 1.570639 (pi/2 = 1.570796)
-G3. m_v at w = 18, 20, 22, extrapolated with a geometric tail of the last two changes; in-sector gap at w = 22
-    minus twice the extrapolated m_v. Below x = 0.08 the ratio of changes passes 0.7 and the tail is not used.
-  x=0.35: m_v = 0.670988, 0.670987, 0.670987; ratio of changes 0.240; extrapolated 0.670987, m_v/x = 1.9171; gap - 2 m_v = -0.0010
-  x=0.25: m_v = 0.480990, 0.480959, 0.480948; ratio of changes 0.356; extrapolated 0.480942, m_v/x = 1.9238; gap - 2 m_v = +0.0301
-  x=0.18: m_v = 0.349852, 0.349617, 0.349508; ratio of changes 0.464; extrapolated 0.349413, m_v/x = 1.9412; gap - 2 m_v = +0.0484
-  x=0.12: m_v = 0.238331, 0.237135, 0.236441; ratio of changes 0.581; extrapolated 0.235480, m_v/x = 1.9623; gap - 2 m_v = +0.0744
-  x=0.08: m_v = 0.168030, 0.164908, 0.162810; ratio of changes 0.672; extrapolated 0.158511, m_v/x = 1.9814; gap - 2 m_v = +0.1053
+G3. m_v at w = 16, 18, 20, 22 and the ratios of its successive changes (w = 16..20 and 18..22). Where the last
+    ratio is below 0.7 the m_v of w = 22 is extrapolated by a geometric tail of the last two changes; the ratios grow
+    with w, so that tail is too short and the extrapolated m_v too high. Second line: the in-sector gap, which is not
+    converged in w at small x, against twice the extrapolated m_v.
+  x=0.35: m_v = 0.670994, 0.670988, 0.670987, 0.670987; ratios 0.237, 0.240; extrapolated 0.6710, m_v/x = 1.92 (w = 22: 1.917)
+          in-sector gap 1.3407, 1.3408, 1.3409, 2 m_v = 1.3420
+  x=0.25: m_v = 0.481077, 0.480990, 0.480959, 0.480948; ratios 0.352, 0.356; extrapolated 0.4809, m_v/x = 1.92 (w = 22: 1.924)
+          in-sector gap 1.0054, 0.9978, 0.9920, 2 m_v = 0.9619
+  x=0.18: m_v = 0.350364, 0.349852, 0.349617, 0.349508; ratios 0.459, 0.464; extrapolated 0.3494, m_v/x = 1.94 (w = 22: 1.942)
+          in-sector gap 0.7690, 0.7566, 0.7472, 2 m_v = 0.6988
+  x=0.12: m_v = 0.240415, 0.238331, 0.237135, 0.236441; ratios 0.574, 0.581; extrapolated 0.2355, m_v/x = 1.96 (w = 22: 1.970)
+          in-sector gap 0.5777, 0.5594, 0.5453, 2 m_v = 0.4710
+  x=0.08: m_v = 0.172738, 0.168030, 0.164908, 0.162810; ratios 0.663, 0.672; extrapolated 0.1585, m_v/x = 1.98 (w = 22: 2.035)
+          in-sector gap 0.4648, 0.4409, 0.4223, 2 m_v = 0.3170
+  x=0.06: m_v = 0.143540, 0.136914, 0.132215, 0.128830; ratios 0.709, 0.720; tail not used
+  x=0.04: m_v = 0.119936, 0.111227, 0.104677, 0.099658; ratios 0.752, 0.766; tail not used
 G4. m_v at w = 16, 18, 20 around its maximum, and |nu_max|/theta_1 on both sides of x = 0.45 with a line through
     each side (w = 16; w = 18 at 0.448 and 0.452 for the width dependence)
   x=0.40: m_v = 0.769493, 0.769491, 0.769491
   x=0.45: m_v = 0.872247, 0.872247, 0.872247
   x=0.50: m_v = 0.869366, 0.869365, 0.869365
+  m_v at w = 16 between 0.5 and 1 (section B has x = 1, section C x >= 1): 0.6: 0.860835, 0.7: 0.850120, 0.8: 0.837617, 0.9: 0.823772
   |nu_max|/theta_1: w=16 x=0.444: 0.423316, w=16 x=0.446: 0.421545, w=16 x=0.448: 0.419776, w=16 x=0.452: 0.417862, w=16 x=0.454: 0.417914, w=16 x=0.456: 0.417966, w=18 x=0.448: 0.419776, w=18 x=0.452: 0.417863
-  slopes -0.8851 (x < 0.45) and +0.0259 (x > 0.45); lines cross at x = 0.4502, m_v = 0.872714
+  slopes -0.8851 (x < 0.45) and +0.0259 (x > 0.45), largest residual 1.2e-06; lines cross at x = 0.4502, m_v = 0.872714 from the lines, 0.872699 computed there
+  moduli of the eight largest twisted levels at that x (/theta_1, w = 16): 0.417822, 0.417822, 0.417817, 0.417817, 0.417800, 0.417800, 0.417789, 0.417789
 
-total time 2253 s
+total time 2709 s

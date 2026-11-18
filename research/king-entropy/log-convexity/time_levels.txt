@@ -1,2 +1,2 @@
 # cmd: python3 log-convexity/levels.py
-# exit=0 wall=2253.2s user=2221.7s maxrss=2561MiB
+# exit=0 wall=2709.1s user=2660.9s maxrss=2730MiB
