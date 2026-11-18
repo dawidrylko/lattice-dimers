@@ -25,6 +25,14 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       generator-checks: ${{ steps.selection.outputs.generator-checks }}
+      rust: ${{ steps.jobs.outputs.rust }}
+      python: ${{ steps.jobs.outputs.python }}
+      javascript: ${{ steps.jobs.outputs.javascript }}
+      benchmarks: ${{ steps.jobs.outputs.benchmarks }}
+      site-build: ${{ steps.jobs.outputs.site-build }}
+      site-tests: ${{ steps.jobs.outputs.site-tests }}
+      macos: ${{ steps.jobs.outputs.macos }}
+      research: ${{ steps.jobs.outputs.research }}
 
     steps:
       - uses: actions/checkout@v7
@@ -39,7 +47,7 @@ jobs:
             echo "HEAD has no second parent here, so the files the pull request changes are unknown." >&2
             exit 1
           fi
-          changed=$(git diff --name-only --no-renames HEAD^1 HEAD)
+          changed=$(git -c core.quotePath=false diff --name-only --no-renames HEAD^1 HEAD)
           status=0
           grep -qE "$GENERATOR_INPUTS" <<< "$changed" || status=$?
           if [ "$status" -eq 0 ]; then
@@ -55,10 +63,77 @@ jobs:
         id: selection
         run: |
           echo "generator-checks=${GENERATOR_CHECKS:-run}" >> "$GITHUB_OUTPUT"
+      - name: Select the jobs
+        id: jobs
+        env:
+          EVENT: ${{ github.event_name }}
+          SHARED_INPUTS: '^(\.github/workflows/ci\.yml$|spec/|rust/Cargo\.(toml|lock)$|python/pyproject\.toml$|js/(package\.json|pnpm-lock\.yaml|\.nvmrc)$|research/king-entropy/src/requirements\.txt$)'
+          REPOSITORY_ONLY: '^(benchmarks|js|python|rust)/README\.md$'
+          RUST_INPUTS: '^(rust/|oeis/A[0-9]{6}/b[0-9]{6}\.(rs|txt)$)'
+          PYTHON_INPUTS: '^(python/|oeis/A[0-9]{6}/b[0-9]{6}\.(py|txt)$)'
+          JAVASCRIPT_INPUTS: '^(js/|site/|\.github/assets/)'
+          BENCHMARKS_INPUTS: '^(benchmarks/|rust/|python/|js/|site/benchmarkRuns\.js$)'
+          SITE_INPUTS: '^(site/|js/|notes/|benchmarks/results/|research/king-entropy/|oeis/A[0-9]{6}/(A[0-9]{6}\.gp|b[0-9]{6}\.txt)$|\.github/assets/)'
+          MACOS_INPUTS: '^(js/|site/|\.github/assets/|research/king-entropy/)'
+          RESEARCH_INPUTS: '^(research/king-entropy/|oeis/A239264/b239264\.txt$|\.zenodo\.json$)'
+        run: |
+          matches() {
+            local status=0
+            grep -qE "$1" <<< "$2" || status=$?
+            if [ "$status" -gt 1 ]; then
+              echo "grep failed with status $status on $1." >&2
+              exit 1
+            fi
+            return "$status"
+          }
+          every=false
+          if [ "$EVENT" != pull_request ]; then
+            every=true
+            echo "Every job runs on $EVENT."
+          elif ! git rev-parse --verify -q HEAD^2 > /dev/null; then
+            echo "HEAD has no second parent here, so the files the pull request changes are unknown." >&2
+            exit 1
+          else
+            changes=$(git -c core.quotePath=false diff --name-status --no-renames HEAD^1 HEAD)
+            files=$(cut -f2 <<< "$changes")
+            status=0
+            inputs=$(grep -vE "$REPOSITORY_ONLY" <<< "$files") || status=$?
+            if [ "$status" -gt 1 ]; then
+              echo "grep failed with status $status on $REPOSITORY_ONLY." >&2
+              exit 1
+            fi
+            if matches '^D' "$changes"; then
+              every=true
+              echo "The pull request deletes or moves a file, so every job runs."
+            elif matches '^"' "$files"; then
+              every=true
+              echo "The pull request changes a file whose name git quotes, so every job runs."
+            elif matches "$SHARED_INPUTS" "$files"; then
+              every=true
+              echo "The pull request changes ci.yml, spec/ or a toolchain file, so every job runs."
+            fi
+          fi
+          choose() {
+            if [ "$every" = true ] || matches "$2" "$inputs"; then
+              echo "$1=run" >> "$GITHUB_OUTPUT"
+            else
+              echo "$1=skip" >> "$GITHUB_OUTPUT"
+              echo "The pull request changes nothing the job $1 reads, so it skips."
+            fi
+          }
+          choose rust "$RUST_INPUTS"
+          choose python "$PYTHON_INPUTS"
+          choose javascript "$JAVASCRIPT_INPUTS"
+          choose benchmarks "$BENCHMARKS_INPUTS"
+          choose site-build "$SITE_INPUTS"
+          choose site-tests "$SITE_INPUTS"
+          choose macos "$MACOS_INPUTS"
+          choose research "$RESEARCH_INPUTS"
 
   rust:
     name: Rust
     needs: changes
+    if: needs.changes.outputs.rust == 'run'
     runs-on: ubuntu-latest
     env:
       GENERATOR_CHECKS: ${{ needs.changes.outputs.generator-checks }}
@@ -79,6 +154,7 @@ jobs:
   python:
     name: Python
     needs: changes
+    if: needs.changes.outputs.python == 'run'
     runs-on: ubuntu-latest
     env:
       GENERATOR_CHECKS: ${{ needs.changes.outputs.generator-checks }}
@@ -96,6 +172,8 @@ jobs:
 
   javascript:
     name: JavaScript
+    needs: changes
+    if: needs.changes.outputs.javascript == 'run'
     runs-on: ubuntu-latest
 
     steps:
@@ -113,6 +191,8 @@ jobs:
 
   benchmarks:
     name: Benchmarks
+    needs: changes
+    if: needs.changes.outputs.benchmarks == 'run'
     runs-on: ubuntu-latest
 
     steps:
@@ -180,6 +260,8 @@ jobs:
 
   site-build:
     name: Site build
+    needs: changes
+    if: needs.changes.outputs.site-build == 'run'
     runs-on: ubuntu-latest
 
     steps:
@@ -204,7 +286,8 @@ jobs:
 
   site-tests:
     name: Site tests ${{ matrix.shard }} of ${{ strategy.job-total }}
-    needs: site-build
+    needs: [changes, site-build]
+    if: needs.changes.outputs.site-tests == 'run'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -233,6 +316,8 @@ jobs:
 
   macos:
     name: macOS
+    needs: changes
+    if: needs.changes.outputs.macos == 'run'
     runs-on: macos-latest
 
     steps:
@@ -254,6 +339,8 @@ jobs:
 
   research:
     name: Research
+    needs: changes
+    if: needs.changes.outputs.research == 'run'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -291,9 +378,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Require every job to succeed
+      - name: Require every job to succeed unless Changes skipped it
         env:
           NEEDS: ${{ toJSON(needs) }}
         run: |
           jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS"
-          jq -e 'all(.[]; .result == "success")' <<< "$NEEDS" > /dev/null
+          jq -e '.changes.outputs as $chosen | all(to_entries[]; .value.result == "success" or (.value.result == "skipped" and $chosen[.key] == "skip"))' <<< "$NEEDS" > /dev/null
