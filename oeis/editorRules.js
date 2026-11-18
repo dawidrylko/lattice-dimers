@@ -1456,6 +1456,7 @@ function parseDraftPage(html, entry) {
         decodeHtml(
           cell
             .replace(/<del>[\s\S]*?<\/del>/g, '')
+            .replace(/(\s<\/ins>)<ins>\s+<\/ins>/g, '$1')
             .replace(/<a href="\/wiki\/User:[^"]*">([^<]*)<\/a>/g, '_$1_')
             .replace(/<br\s*\/?>/g, '\n')
             .replace(/<[^>]+>/g, ''),
