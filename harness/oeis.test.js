@@ -513,6 +513,7 @@ function checkDraftLinks() {
   return errors;
 }
 
+const LATER_RANGE = [3, 4];
 const REJECTED_RANGES = [[], ['1'], ['3', '2'], ['x', '2'], ['+1', '2'], ['0', '1', '2']];
 const SINGLE_TERMS = [0, 1];
 const GENERATOR_SETUP = [
@@ -714,6 +715,13 @@ function checkGenerator(entry) {
     if (single.status !== 0 || single.stdout !== `${lines[n]}\n`) {
       errors.push(`oeis/${entry}/${generator} ${n} ${n} does not print line ${n} of ${bFile} alone: ${single.stderr.trim()}`);
     }
+  }
+
+  const [first, end] = LATER_RANGE;
+  const later = run([String(first), String(end)]);
+
+  if (later.status !== 0 || later.stdout !== lines.slice(first, end + 1).join('\n') + '\n') {
+    errors.push(`oeis/${entry}/${generator} ${first} ${end} does not print lines ${first} to ${end} of ${bFile}: ${later.stderr.trim()}`);
   }
 
   for (const args of REJECTED_RANGES) {

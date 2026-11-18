@@ -3,6 +3,8 @@ use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
 
+const LATER_RANGE: (usize, usize) = (3, 4);
+
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..")
 }
@@ -40,6 +42,13 @@ fn check(entry: &str, binary: &str) {
         assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
         assert!(String::from_utf8_lossy(&output.stdout) == format!("{line}\n"), "b{} {n} {n} does not print line {n} of its b-file alone", &entry[1..]);
     }
+
+    let (first, end) = LATER_RANGE;
+    let output = Command::new(binary).args([first.to_string(), end.to_string()]).output().unwrap();
+    let expected: String = b_file.lines().skip(first).take(end - first + 1).map(|line| format!("{line}\n")).collect();
+
+    assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+    assert!(String::from_utf8_lossy(&output.stdout) == expected, "b{} {first} {end} does not print lines {first} to {end} of its b-file", &entry[1..]);
 
     for args in [vec![], vec!["1"], vec!["3", "2"], vec!["x", "2"], vec!["+1", "2"], vec!["0", "1", "2"]] {
         let output = Command::new(binary).args(&args).output().unwrap();
