@@ -16,7 +16,7 @@ Approved 11 November 2026, revision #172.
 | file | content |
 | --- | --- |
 | [A004003.txt](A004003.txt) | the `%F`, `%o` and `%Y` lines contributed |
-| [b004003.txt](b004003.txt) | $n = 0, \dots, 44$, printed alike by the generators [`b004003.rs`](b004003.rs), [`b004003.py`](b004003.py) and [`b004003.js`](b004003.js); identical to the published b-file of Alois P. Heinz on 1 November 2026; its terms up to $n = 44$ are checked against [`domino-rectangle-formula.js`](../../js/solvers/domino-rectangle-formula.js) |
+| [b004003.txt](b004003.txt) | $n = 0, \dots, 44$, printed alike by the generators [`b004003.rs`](b004003.rs), [`b004003.py`](b004003.py) and [`b004003.js`](b004003.js); identical to the published b-file of Alois P. Heinz on 1 November 2026, its independent check; `buildBFiles.js --check` also compares it with [`domino-rectangle-formula.js`](../../js/solvers/domino-rectangle-formula.js), which computes the same resultant |
 | [A004003.gp](A004003.gp) | the program of the `%o` line |
 | [b004003.rs](b004003.rs) | the generator of the b-file in Rust |
 | [b004003.py](b004003.py) | the generator of the b-file in Python |
