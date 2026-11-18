@@ -13,6 +13,10 @@ const { svgs, total } = drawTilings({ rowCount: 8, colCount: 8, lattice: 'triang
 figure(svgs, `4 of the ${total} tilings of the triangular lattice on the cylinder of circumference 8 and height 8.`);
 ```
 
+## The Pfaffian solver
+
+[`any-lattice-cylinder-torus-pfaffian.js`](../../js/solvers/any-lattice-cylinder-torus-pfaffian.js) counts in polynomial time: it eliminates a matrix of $wh \times wh$ entries. The cylinder is a planar graph, so by Kasteleyn's theorem [3] a sign on every edge makes the number of tilings the absolute value of the Pfaffian of a skew-symmetric matrix. The solver computes two Pfaffians, one with the edges across the seam as they are and one with their signs flipped. One of the two is the count up to sign. The other is the difference between the tilings with an even and with an odd number of pieces across the seam, so the solver returns the larger absolute value. Inside the board it uses the signs of [`A401988.gp`](../../oeis/A401988/A401988.gp), alternating by rows or, when the number of rows is odd, by columns. It counts modulo primes, below $2^{31}$ in Rust and Python and below $2^{26}$ in JavaScript, where a sum of two products of residues has to stay exact in a double. The Chinese remainder theorem rebuilds the count, and one more prime checks it. A board has at most 1600 cells, because every thread keeps the whole matrix. The same algorithm is in Rust, [`any-lattice-cylinder-torus-pfaffian.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-pfaffian.rs), and in Python, [`any_lattice_cylinder_torus_pfaffian.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_pfaffian.py).
+
 ## The Modular solver
 
 [`any-lattice-cylinder-torus-modular.js`](../../js/solvers/any-lattice-cylinder-torus-modular.js) goes cell by cell, from the empty state to the empty state, with a state of the next $w + 2$ cells. It counts modulo primes below $2^{31}$, the Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`any-lattice-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-modular.rs), and in Python, [`any_lattice_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_modular.py).
@@ -27,23 +31,25 @@ The gallery numbers the tilings of the cylinders up to $10 \times 10$ with the c
 
 ## The counts
 
-Two solvers count the same boards by different methods, and the cell below compares the last column of the table, $h = 8$, with the count of the modular solver.
+Three solvers count the same boards by different methods. The table comes from the `BigInt` solver, and the cell below compares its last column, $h = 8$, with the counts of the modular and the Pfaffian solver.
 
 Circumference 2 has multiple edges, because on a ring of two cells a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate piece, so one row of two cells has 2 tilings. A row of odd circumference has an odd number of cells, so the counts vanish at odd heights.
 
 ```js run
 const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
 const modular = require('./js/solvers/any-lattice-cylinder-torus-modular.js');
+const pfaffian = require('./js/solvers/any-lattice-cylinder-torus-pfaffian.js');
 
 nb.heights = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 nb.widths = [2, 3, 4, 5, 6, 7, 8];
 nb.count = (w, h) => calculateTotalTilingCombinations({ rowCount: h, colCount: w, lattice: 'triangular' });
 
 for (const w of nb.widths) {
-  const check = await modular.calculateTotalTilingCombinations({ rowCount: 8, colCount: w, lattice: 'triangular' });
+  const board = { rowCount: 8, colCount: w, lattice: 'triangular' };
+  const checks = [await modular.calculateTotalTilingCombinations(board), await pfaffian.calculateTotalTilingCombinations(board)];
 
-  if (check !== nb.count(w, 8)) {
-    throw new Error(`the two solvers differ on the cylinder of circumference ${w} and height 8`);
+  if (checks.some(check => check !== nb.count(w, 8))) {
+    throw new Error(`the three solvers differ on the cylinder of circumference ${w} and height 8`);
   }
 }
 
@@ -75,9 +81,10 @@ table(['board', 'OEIS', 'checked at'], [['w = 2', 'A002605', `h = ${nb.heights.j
 
 ## Verification
 
-The `BigInt` solver agrees with A002605 and the modular solver with the `BigInt` one at $h = 8$, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both of them.
+The `BigInt` solver agrees with A002605, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
 
 ## References
 
 1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A002605](https://oeis.org/A002605). [oeis.org](https://oeis.org)
 2. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)
+3. L. Lovász and M. D. Plummer. *Matching Theory*. Annals of Discrete Mathematics 29, North-Holland, Amsterdam, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322.

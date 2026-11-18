@@ -475,6 +475,18 @@ describe('ports', () => {
       ['spec/cases/domicule-rectangle-polynomial-modular.json lacks the board 5|6||false|false of domicule-rectangle-polynomial-bigint.'],
     ],
     [
+      'a copy of the case files where the Pfaffian file lacks a board of its twin on a planar lattice',
+      {
+        ...repository,
+        caseFiles: repository.caseFiles.map(caseFile =>
+          caseFile.algorithm === 'any-lattice-cylinder-torus-pfaffian'
+            ? { ...caseFile, testCases: caseFile.testCases.filter(({ rowCount, colCount, lattice, torus }) => rowCount !== 6 || colCount !== 6 || lattice !== 'triangular' || !torus) }
+            : caseFile,
+        ),
+      },
+      ['spec/cases/any-lattice-cylinder-torus-pfaffian.json lacks the board 6|6|triangular|true|false of any-lattice-cylinder-torus-modular.'],
+    ],
+    [
       'a mutated copy of the case files, where twin algorithms disagree on a count',
       { ...repository, caseFiles: repository.caseFiles.map(mutateFirstTwinCount) },
       [firstTwinDisagreement],
@@ -534,6 +546,7 @@ describe('the shared test data', () => {
     assert.deepEqual(named.filter(id => !ids.includes(id)), []);
     assert.deepEqual(ids.filter(id => !cli.rejections.some(({ algorithm }) => algorithm === id)), []);
     assert.ok(ids.includes(cli.timeSpan.algorithm));
+    assert.deepEqual(Object.keys(cli.timeFlag.moreArgs).filter(id => !ids.includes(id)), []);
   });
 });
 

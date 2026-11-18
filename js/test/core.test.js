@@ -5,6 +5,7 @@ const path = require('node:path');
 const { describe, test } = require('node:test');
 const { parseArgs } = require('../core');
 const { listPrimes, combineCheckedResidues } = require('../core/modular');
+const { pfaffianModulo, LARGEST_PRIME_BOUND } = require('../core/pfaffian');
 const { testCasesOf } = require('../core/cases');
 const cylinderTorusModular = require('../solvers/any-lattice-cylinder-torus-modular.js');
 const { capThreads } = require('../solvers/domicule-rectangle-polynomial-modular.js');
@@ -45,6 +46,104 @@ describe('check primes', () => {
 
   test('a wrong check residue', () => {
     assert.throws(() => combineCheckedResidues(wrong, primes), /check prime/);
+  });
+});
+
+describe('Pfaffian modulo a prime', () => {
+  const prime = listPrimes(1, LARGEST_PRIME_BOUND)[0];
+  const residuesOf = (matrix, modulus = prime) => Float64Array.from(matrix, value => ((value % modulus) + modulus) % modulus);
+  const entryOf = (matrix, size, i, j) => (i < j ? matrix[i * size + j] : -matrix[j * size + i]);
+  const expand = (matrix, size, [first, ...rest]) =>
+    first === undefined
+      ? 1
+      : rest.reduce(
+          (sum, partner, position) =>
+            sum +
+            (position % 2 === 0 ? 1 : -1) *
+              entryOf(matrix, size, first, partner) *
+              expand(
+                matrix,
+                size,
+                rest.filter(vertex => vertex !== partner),
+              ),
+          0,
+        );
+  const drawMatrix = (size, state, zeroEvery) => {
+    const matrix = new Array(size * size).fill(0);
+
+    for (let i = 0; i < size; i++) {
+      for (let j = i + 1; j < size; j++) {
+        state.seed = (Math.imul(state.seed, 1103515245) + 12345) >>> 0;
+
+        const draw = state.seed >>> 8;
+
+        matrix[i * size + j] = draw % zeroEvery === 0 ? 0 : (draw % 19) - 9;
+      }
+    }
+
+    return matrix;
+  };
+
+  test('small matrices', () => {
+    assert.equal(pfaffianModulo(new Float64Array(0), 0, prime), 1);
+    assert.equal(pfaffianModulo(Float64Array.of(0, 7, 0, 0), 2, prime), 7);
+    assert.equal(pfaffianModulo(Float64Array.of(0, prime - 7, 0, 0), 2, prime), prime - 7);
+    assert.equal(pfaffianModulo(residuesOf([0, 1, 2, 3, 0, 0, 4, 5, 0, 0, 0, 6, 0, 0, 0, 0]), 4, prime), 8);
+  });
+
+  test('an odd size and a vertex without a partner give zero', () => {
+    assert.equal(pfaffianModulo(Float64Array.of(0, 1, 1, 0, 0, 1, 0, 0, 0), 3, prime), 0);
+    assert.equal(pfaffianModulo(Float64Array.of(0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0), 4, prime), 0);
+  });
+
+  test('a partner moved next to its vertex flips the sign', () => {
+    const matrix = [0, 0, 0, 5, 0, 0, 3, 2, 0, 0, 0, 7, 0, 0, 0, 0];
+
+    assert.equal(expand(matrix, 4, [0, 1, 2, 3]), 15);
+    assert.equal(pfaffianModulo(residuesOf(matrix), 4, prime), 15);
+  });
+
+  test('the expansion along the first row', () => {
+    const state = { seed: 2026 };
+
+    for (const modulus of [prime, 7, 3]) {
+      for (const [size, zeroEvery] of [
+        [2, 3],
+        [4, 2],
+        [6, 2],
+        [6, 5],
+        [8, 2],
+        [8, 3],
+        [8, 1000],
+        [10, 2],
+      ]) {
+        for (let round = 0; round < 20; round++) {
+          const matrix = drawMatrix(size, state, zeroEvery);
+          const vertices = Array.from({ length: size }, (_, vertex) => vertex);
+          const expected = ((expand(matrix, size, vertices) % modulus) + modulus) % modulus;
+
+          assert.equal(pfaffianModulo(residuesOf(matrix, modulus), size, modulus), expected, `${size} x ${size} modulo ${modulus}: ${matrix}`);
+        }
+      }
+    }
+  });
+
+  test('the entries on and below the diagonal are not read', () => {
+    const matrix = drawMatrix(6, { seed: 7 }, 4);
+    const filled = residuesOf(matrix);
+
+    for (let i = 0; i < 6; i++) {
+      for (let j = 0; j <= i; j++) {
+        filled[i * 6 + j] = 12345;
+      }
+    }
+
+    assert.equal(pfaffianModulo(filled, 6, prime), pfaffianModulo(residuesOf(matrix), 6, prime));
+  });
+
+  test('a prime of 26 bits or more and a matrix of another size are rejected', () => {
+    assert.throws(() => pfaffianModulo(Float64Array.of(0, 1, 0, 0), 2, listPrimes(1)[0]), /below 67108864/);
+    assert.throws(() => pfaffianModulo(Float64Array.of(0, 1, 0), 2, prime), /size x size/);
   });
 });
 
@@ -113,16 +212,17 @@ describe('limits', () => {
 describe('rejections of the library and of a worker that exits', () => {
   const solver = name => path.join(SOLVERS_DIRECTORY, name);
   const exitingWorkerCases = [
-    'domicule-rectangle-modular',
-    'any-lattice-cylinder-torus-modular',
-    'any-lattice-rectangle-modular',
-    'domicule-rectangle-polynomial-modular',
-    'domicule-cylinder-torus-polynomial-modular',
-    'any-lattice-rectangle-polynomial-modular',
-    'any-lattice-cylinder-torus-polynomial-modular',
-  ].map(algorithm => ({
+    ['domicule-rectangle-modular'],
+    ['any-lattice-cylinder-torus-modular'],
+    ['any-lattice-cylinder-torus-pfaffian', '--lattice', 'square'],
+    ['any-lattice-rectangle-modular'],
+    ['domicule-rectangle-polynomial-modular'],
+    ['domicule-cylinder-torus-polynomial-modular'],
+    ['any-lattice-rectangle-polynomial-modular'],
+    ['any-lattice-cylinder-torus-polynomial-modular'],
+  ].map(([algorithm, ...lattice]) => ({
     name: `${algorithm} with a worker that exits before it sends a result`,
-    args: ['--require', EXITING_WORKER, solver(`${algorithm}.js`), '-r', '2', '-c', '2', '-j', '1'],
+    args: ['--require', EXITING_WORKER, solver(`${algorithm}.js`), '-r', '2', '-c', '2', '-j', '1', ...lattice],
     message: 'before it sent a result',
   }));
   const libraryCases = [
@@ -175,6 +275,22 @@ describe('rejections of the library and of a worker that exits', () => {
         `require(${JSON.stringify(solver('any-lattice-cylinder-torus-modular.js'))}).calculateTotalTilingCombinations({ rowCount: 4, colCount: 1 }).catch(error => { console.error(error.message); process.exit(1); })`,
       ],
       message: 'circumference must be at least 2',
+    },
+    {
+      name: 'any-lattice-cylinder-torus-pfaffian on the king\'s graph',
+      args: [
+        '-e',
+        `require(${JSON.stringify(solver('any-lattice-cylinder-torus-pfaffian.js'))}).calculateTotalTilingCombinations({ rowCount: 4, colCount: 4, lattice: 'king' }).catch(error => { console.error(error.message); process.exit(1); })`,
+      ],
+      message: 'is not planar',
+    },
+    {
+      name: 'any-lattice-cylinder-torus-pfaffian on more cells than its limit',
+      args: [
+        '-e',
+        `require(${JSON.stringify(solver('any-lattice-cylinder-torus-pfaffian.js'))}).calculateTotalTilingCombinations({ rowCount: 41, colCount: 40, lattice: 'square' }).catch(error => { console.error(error.message); process.exit(1); })`,
+      ],
+      message: 'at most 1600 cells',
     },
   ];
 
@@ -235,6 +351,7 @@ describe('modules without a worker count', () => {
   const modules = [
     ['domicule-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('domicule-rectangle-modular')],
     ['any-lattice-cylinder-torus-modular.js', 'calculateTotalTilingCombinations', fourByFour('any-lattice-cylinder-torus-bigint')],
+    ['any-lattice-cylinder-torus-pfaffian.js', 'calculateTotalTilingCombinations', fourByFour('any-lattice-cylinder-torus-pfaffian')],
     ['any-lattice-rectangle-modular.js', 'calculateTotalTilingCombinations', fourByFour('any-lattice-rectangle-bigint')],
     ['domicule-rectangle-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('domicule-rectangle-polynomial-bigint')],
     ['domicule-cylinder-torus-polynomial-modular.js', 'calculateDiagonalPolynomial', fourByFour('domicule-cylinder-torus-polynomial-bigint')],

@@ -20,6 +20,7 @@ describe('rejections', () => {
     { args: ['-n', '1', '--domicule', '--lattice', 'square'], message: 'Usage' },
     { args: ['-n', '1', '--lattice', 'square'], message: 'Usage' },
     { args: ['-n', '1', '--torus', '--lattice=square'], message: 'Usage' },
+    { args: ['-n', '1', '--torus', '--only', 'any-lattice-cylinder-torus-pfaffian.js'], message: 'Usage' },
   ];
 
   for (const { args, message } of cases) {
@@ -56,6 +57,10 @@ describe('result files by surface', () => {
       { args: ['--torus', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '0x0-king-torus') },
       { args: ['--torus', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '0x0-square-torus') },
       { args: ['--cylinder', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], file: fileOf(implementation, '0x0-square-cylinder') },
+    ]),
+    ...listImplementations('any-lattice-cylinder-torus-pfaffian').flatMap(implementation => [
+      { args: ['--torus', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-pfaffian.js'], file: fileOf(implementation, '0x0-square-torus') },
+      { args: ['--cylinder', '--lattice', 'triangular', '--only', 'any-lattice-cylinder-torus-pfaffian.js'], file: fileOf(implementation, '0x0-triangular-cylinder') },
     ]),
     ...['domicule-cylinder-torus-polynomial-bigint', 'domicule-cylinder-torus-polynomial-modular'].flatMap(algorithm =>
       listImplementations(algorithm).flatMap(implementation => [

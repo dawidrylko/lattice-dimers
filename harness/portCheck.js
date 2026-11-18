@@ -18,6 +18,7 @@ function listFiles(directory) {
 
 const HOLDS_THE_BOARDS_OF = {
   'any-lattice-cylinder-torus-modular': ['any-lattice-cylinder-torus-bigint'],
+  'any-lattice-cylinder-torus-pfaffian': ['any-lattice-cylinder-torus-modular'],
   'any-lattice-cylinder-torus-polynomial-modular': ['any-lattice-cylinder-torus-polynomial-bigint'],
   'any-lattice-rectangle-modular': ['any-lattice-rectangle-bigint'],
   'any-lattice-rectangle-polynomial-modular': ['any-lattice-rectangle-polynomial-bigint'],
@@ -26,6 +27,10 @@ const HOLDS_THE_BOARDS_OF = {
   'domicule-rectangle-bigint': ['domicule-rectangle-modular'],
   'domicule-rectangle-modular': ['domicule-rectangle-bigint'],
   'domino-rectangle-bigint': ['domino-rectangle-formula', 'domino-rectangle-float'],
+};
+
+const REACHES = {
+  'any-lattice-cylinder-torus-pfaffian': ({ lattice, twisted }) => ['square', 'triangular'].includes(lattice) && !twisted,
 };
 
 function familyOf(algorithm) {
@@ -63,7 +68,8 @@ function listTwinDisagreements(caseFiles) {
 
 /**
  * Lists every board of a twin that the algorithm which is to reach it does not hold, so no solver loses a board
- * its twin is checked on.
+ * its twin is checked on. A Pfaffian counts the two planar lattices and no signed sum, so the Pfaffian solver is to
+ * hold the boards of its twin on the square and the triangular lattice that are not twisted.
  * @param {{algorithm: string, testCases: Object[]}[]} caseFiles The files of spec/cases.
  * @returns {string[]} One message per missing board.
  */
@@ -72,10 +78,11 @@ function listMissingTwinBoards(caseFiles) {
 
   return Object.entries(HOLDS_THE_BOARDS_OF).flatMap(([algorithm, twins]) => {
     const held = new Set(boardsOf(algorithm).map(boardKeyOf));
+    const reaches = REACHES[algorithm] ?? (() => true);
 
     return twins.flatMap(twin =>
       boardsOf(twin)
-        .filter(testCase => !held.has(boardKeyOf(testCase)))
+        .filter(testCase => reaches(testCase) && !held.has(boardKeyOf(testCase)))
         .map(testCase => `spec/cases/${algorithm}.json lacks the board ${boardKeyOf(testCase)} of ${twin}.`),
     );
   });

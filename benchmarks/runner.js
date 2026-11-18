@@ -7,6 +7,7 @@ const exec = require('./executor');
 const { RESULTS_DIRECTORY, describeEnvironment, runDirectoryName } = require('./environment');
 const { listImplementations, algorithmOf, javaScriptFileOf } = require('../js/core/registry');
 const { LATTICES } = require('../js/solvers/any-lattice-cylinder-torus-bigint.js');
+const { LATTICES: PLANAR_LATTICES } = require('../js/solvers/any-lattice-cylinder-torus-pfaffian.js');
 const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 
 const ENVIRONMENT = describeEnvironment();
@@ -21,9 +22,10 @@ const DOMINO_GROUP = {
 };
 const DOMICULE_FILES = ['domicule-rectangle-bigint', 'domicule-rectangle-modular'].map(javaScriptFileOf);
 const CYLINDER_TORUS_FILES = ['any-lattice-cylinder-torus-bigint', 'any-lattice-cylinder-torus-modular'].map(javaScriptFileOf);
+const PFAFFIAN_FILE = javaScriptFileOf('any-lattice-cylinder-torus-pfaffian');
 const DIAGONAL_FILES = ['domicule-rectangle-polynomial-bigint', 'domicule-rectangle-polynomial-modular'].map(javaScriptFileOf);
 const CYLINDER_TORUS_DIAGONAL_FILES = ['domicule-cylinder-torus-polynomial-bigint', 'domicule-cylinder-torus-polynomial-modular'].map(javaScriptFileOf);
-const CYLINDER_TORUS_CASES = testCasesOf('any-lattice-cylinder-torus-modular');
+const CYLINDER_TORUS_CASES = ['any-lattice-cylinder-torus-modular', 'any-lattice-cylinder-torus-pfaffian'].flatMap(testCasesOf);
 const DIAGONAL_CASES = testCasesOf('domicule-rectangle-polynomial-modular');
 const CYLINDER_TORUS_DIAGONAL_CASES = testCasesOf('domicule-cylinder-torus-polynomial-modular');
 const DOMICULE_BOARDS = [...testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare), { rowCount: 20, colCount: 20 }];
@@ -56,11 +58,19 @@ function listSquareBoards(minSide, maxSide, options = {}) {
   }));
 }
 
+/**
+ * Lists the groups of solvers and boards behind each flag of the runner. The Pfaffian solver joins the cylinders
+ * and tori of the two planar lattices only: it rejects the king's graph.
+ * @param {string} lattice The lattice of the cylinders and tori.
+ * @returns {Object} The groups by flag.
+ */
 function listGroups(lattice) {
+  const cylinderTorusFiles = Object.hasOwn(PLANAR_LATTICES, lattice) ? [...CYLINDER_TORUS_FILES, PFAFFIAN_FILE] : CYLINDER_TORUS_FILES;
+
   return {
     '--domicule': [{ files: DOMICULE_FILES, testCases: DOMICULE_BOARDS }],
-    '--torus': [{ files: CYLINDER_TORUS_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice, torus: true }), CYLINDER_TORUS_CASES) }],
-    '--cylinder': [{ files: CYLINDER_TORUS_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice }), CYLINDER_TORUS_CASES) }],
+    '--torus': [{ files: cylinderTorusFiles, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice, torus: true }), CYLINDER_TORUS_CASES) }],
+    '--cylinder': [{ files: cylinderTorusFiles, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice }), CYLINDER_TORUS_CASES) }],
     '--diagonal': [{ files: DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
     '--diagonal-cylinder': [{ files: CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { torus: false }), CYLINDER_TORUS_DIAGONAL_CASES) }],
     '--diagonal-torus': [{ files: CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { torus: true }), CYLINDER_TORUS_DIAGONAL_CASES) }],

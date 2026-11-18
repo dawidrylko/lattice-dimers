@@ -1,8 +1,8 @@
 # Tests
 
-Each language tests itself on the shared data: [`spec/cases/`](../spec/cases/README.md), [`spec/limits.json`](../spec/limits.json) and [`spec/cli.json`](../spec/cli.json). The tests take a short run by default, and `FULL_CASES=1` runs every known term but the counts copied from the OEIS, which no solver here has counted.
+Each language tests itself on the shared data: [`spec/cases/`](../spec/cases/README.md), [`spec/limits.json`](../spec/limits.json) and [`spec/cli.json`](../spec/cli.json). The tests take a short run by default, and `FULL_CASES=1` runs every known term but the counts copied from the OEIS, which the solver of their file has not counted.
 
-A short run stops `domino-rectangle-bigint` and `domicule-rectangle-bigint` at the 16 × 16 square and `any-lattice-cylinder-torus-bigint` at the 8 × 8 torus. `any-lattice-cylinder-torus-modular`, `any-lattice-rectangle-modular`, `any-lattice-cylinder-torus-polynomial-modular`, `any-lattice-rectangle-polynomial-modular`, `domicule-rectangle-polynomial-modular` and `domicule-cylinder-torus-polynomial-modular` run their first seven cases and the boards of their BigInt twins.
+A short run stops `domino-rectangle-bigint` and `domicule-rectangle-bigint` at the 16 × 16 square and `any-lattice-cylinder-torus-bigint` at the 8 × 8 torus. `any-lattice-cylinder-torus-modular`, `any-lattice-rectangle-modular`, `any-lattice-cylinder-torus-polynomial-modular`, `any-lattice-rectangle-polynomial-modular`, `domicule-rectangle-polynomial-modular` and `domicule-cylinder-torus-polynomial-modular` run their first seven cases and the boards of their BigInt twins. `any-lattice-cylinder-torus-pfaffian` runs every board of its file: the largest, of 1600 cells, take about 8 s each in Python and less in Rust and JavaScript.
 
 The commands below run in CI after each merge to master, and on a pull request that changes a file their job reads. The exception is `pnpm -C js test:render`. It is part of `pnpm -C js test` and runs alone only on macOS.
 

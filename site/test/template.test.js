@@ -19,7 +19,39 @@ function loadRandomBelow(draws) {
   return { randomBelow: new Function('Math', `${source}; return randomBelow;`)(math), state };
 }
 
+function readCardRules(query) {
+  const opening = `@media ${query} {\n`;
+  const start = TEMPLATE.indexOf(opening);
+
+  assert.notEqual(start, -1, `site/template.html must keep the card rules under @media ${query}.`);
+
+  const rest = TEMPLATE.slice(start + opening.length);
+
+  return rest
+    .slice(0, rest.indexOf('\n}\n'))
+    .split('\n')
+    .map(rule => rule.trim());
+}
+
 const skip = !runsUnshardedTests(process.env.SITE_TEST_SHARD) && 'runs in shard 1';
+
+test('a benchmark table of three solvers becomes cards by the rules of the other tables', { skip }, () => {
+  const scope = '.bench .table-wrap';
+  const rules = readCardRules('(max-width: 919px)');
+  const widened = readCardRules('(min-width: 920px) and (max-width: 1099px)');
+
+  assert.ok(rules.length > 1, 'the card rules of the benchmark tables are missing.');
+  assert.deepEqual(
+    rules.filter(rule => !rule.startsWith(`${scope} `)),
+    [],
+    `every card rule must start with ${scope}.`,
+  );
+  assert.deepEqual(
+    widened,
+    rules.map(rule => rule.replace(scope, `${scope}.three-solvers`)),
+    'the card rules of the three-solver tables must be the card rules of the other tables under .three-solvers.',
+  );
+});
 
 test('the Random button draws a tiling number with no modulo bias', { skip }, () => {
   const { randomBelow, state } = loadRandomBelow([999999999, 0]);

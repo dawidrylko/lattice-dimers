@@ -44,6 +44,7 @@ const INSTRUCTION_BOARDS = [
   { id: 'domicule-rectangle-bigint', args: ['-r', '8', '-c', '8'] },
   { id: 'domicule-rectangle-polynomial-modular', args: ['-r', '6', '-c', '6', '-j', '1'] },
   { id: 'domicule-rectangle-polynomial-bigint', args: ['-r', '6', '-c', '6'] },
+  { id: 'any-lattice-cylinder-torus-pfaffian', args: ['-r', '8', '-c', '8', '--lattice', 'square', '-j', '1'] },
   { id: 'any-lattice-cylinder-torus-modular', args: ['-r', '8', '-c', '8', '--lattice', 'king', '-j', '1'] },
   { id: 'any-lattice-cylinder-torus-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'king'] },
   { id: 'domicule-cylinder-torus-polynomial-modular', args: ['-r', '8', '-c', '8', '-j', '1'] },
@@ -77,11 +78,11 @@ function listSeries(jobs) {
   const series = [];
   const add = (files, boards, suffix = '') =>
     files.flatMap(fileName => listImplementations(algorithmOf(fileName))).forEach(({ file }) => {
-      const modular = /modular/.test(path.basename(file));
+      const threaded = /modular|pfaffian/.test(path.basename(file));
 
       series.push({
         name: `${path.basename(file)}${suffix}`,
-        boards: boards.map(board => ({ ...board, fileName: file, numberOfExecutions: RUNS, ...(modular ? { jobs } : {}) })),
+        boards: boards.map(board => ({ ...board, fileName: file, numberOfExecutions: RUNS, ...(threaded ? { jobs } : {}) })),
       });
     });
   const numberBoards = [

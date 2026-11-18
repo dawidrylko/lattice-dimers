@@ -35,17 +35,19 @@ const CONTENT_TYPES = {
 };
 const VIEWPORT_HEIGHT = 900;
 const MOBILE_TABLE_WIDTH = 919;
+const THREE_SOLVER_CARD_WIDTH = 1099;
 const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGES = [['Rust', '#icon-rust'], ['Python', '#icon-python'], ['JavaScript', '#icon-javascript']];
 const solverColumns = (solver, languages) => LANGUAGES.filter(([name]) => languages.includes(name)).map(([name, icon]) => ({ name: `${solver}, ${name}`, icon: `${solver} ${icon}` }));
 const MODULAR_AND_BIGINT = [solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])];
+const PFAFFIAN_MODULAR_AND_BIGINT = [solverColumns('Pfaffian', ['Rust', 'Python', 'JavaScript']), ...MODULAR_AND_BIGINT];
 const CYLINDER_TORUS_DIAGONAL_MEASURED = findSeriesRun('domicule-cylinder-torus-polynomial-') !== null;
 const SHOWN_ROWS = id =>
   `document.querySelectorAll('#${id} tr').length > 0 || (${!CYLINDER_TORUS_DIAGONAL_MEASURED} && /^(cylinder|torus)-diagonal-/.test('${id}') && !document.querySelector('.bench-group:not([hidden]) [data-unmeasured]').hidden)`;
 const LANGUAGE_TABLES = [
   ['domino/rectangle', 'domino-benchmark', 'DATA.benchmark', '36', 'FORMULA_AND_BIGINT_LANGUAGES', [solverColumns('Formula', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])]],
-  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoCylinderTorusBenchmark.filter(r => r.surface === 'cylinder')", '121', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
-  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoCylinderTorusBenchmark.filter(r => r.surface === 'torus')", '272', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
+  ['domino/cylinder', 'domino-cylinder-benchmark', "DATA.dominoCylinderTorusBenchmark.filter(r => r.surface === 'cylinder')", '121', 'PFAFFIAN_MODULAR_AND_BIGINT_LANGUAGES', PFAFFIAN_MODULAR_AND_BIGINT],
+  ['domino/torus', 'domino-torus-benchmark', "DATA.dominoCylinderTorusBenchmark.filter(r => r.surface === 'torus')", '272', 'PFAFFIAN_MODULAR_AND_BIGINT_LANGUAGES', PFAFFIAN_MODULAR_AND_BIGINT],
   ['domicule/rectangle', 'domicule-benchmark', 'DATA.domiculeBenchmark', '280', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
   ['domicule/cylinder', 'cylinder-benchmark', "DATA.cylinderTorusBenchmark.filter(r => r.surface === 'cylinder')", '2,649', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
   ['domicule/torus', 'torus-benchmark', "DATA.cylinderTorusBenchmark.filter(r => r.surface === 'torus')", '17,552', 'MODULAR_AND_BIGINT_LANGUAGES', MODULAR_AND_BIGINT],
@@ -108,14 +110,14 @@ const NOTES = [
     cells: 6, figures: 1,
     group: 'Dominoes',
     h1: 'Dominoes: tilings of cylinders (A000129, A004253, A006253, A003729, A028477, A028478, A028479, A402345)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'PARI/GP', 'Verification', 'References'],
+    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'PARI/GP', 'Verification', 'References'],
   },
   {
     slug: 'dominoes/tori',
     cells: 3, figures: 1,
     group: 'Dominoes',
     h1: 'Dominoes: tilings of the 2n × 2n torus (A335586)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
+    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
   },
   {
     slug: 'domicules/rectangles',
@@ -171,14 +173,14 @@ const NOTES = [
     cells: 3, figures: 1,
     group: 'Triangular lattice',
     h1: 'Triangular lattice: tilings of cylinders (A002605)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Verification', 'References'],
+    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Verification', 'References'],
   },
   {
     slug: 'triangular-lattice/tori',
     cells: 2, figures: 1,
     group: 'Triangular lattice',
     h1: 'Triangular lattice: tilings of the 2n × 2n torus (not in the OEIS)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
+    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
   },
   {
     slug: 'triangular-lattice/rectangles-by-diagonal-pieces',
@@ -214,7 +216,7 @@ const OLD_SECTIONS = {
   'triangular-lattice/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus': 'the-counts' },
 };
 const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule |triangular lattice )?tilings of .+ \((A\d{6}( on the [^)]+)?(, A\d{6})*|not in the OEIS)\)$/;
-const NOTEBOOK_SKELETON = ['The problem', 'The Formula solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', '*', 'Running time', 'PARI/GP', 'Verification', 'References'];
+const NOTEBOOK_SKELETON = ['The problem', 'The Formula solver', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', '*', 'Running time', 'PARI/GP', 'Verification', 'References'];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes/rectangles'],
   ['a239273', 'domicules/rectangles'],
@@ -275,6 +277,8 @@ const siteTestCases = [
   { width: 786, check: 'benchmark' },
   { width: 919, check: 'benchmark' },
   { width: 920, check: 'benchmark' },
+  { width: 1099, check: 'benchmark' },
+  { width: 1100, check: 'benchmark' },
   { width: 375, check: 'sheets' },
   { width: 375, check: 'confirmation' },
   { width: 375, check: 'samples' },
@@ -1645,9 +1649,8 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${hash}: ${state.dashes.join(', ')}`);
     }
 
-    const copied = view === 'domino/torus' ? ['The counts of 18\u00a0×\u00a018 and 20\u00a0×\u00a020 are copied from OEIS\u00a0A335586: no solver here has counted these boards.'] : [];
-    if (state.copied.join() !== copied.join()) {
-      problems.push(`#${hash} notes the counts copied from the OEIS as ${JSON.stringify(state.copied)}`);
+    if (state.copied.length) {
+      problems.push(`#${hash} notes counts as copied from the OEIS, ${JSON.stringify(state.copied)}, though a solver here has counted every board`);
     }
 
     if (state.older || state.rule !== 'none') {
@@ -1745,7 +1748,7 @@ async function checkBenchmark(page, baseUrl, width) {
     const cells = await accessibleNames(page, `#${id}-rows tr:first-child td`);
     const solvers = names.slice(2, -1);
     const wrong = columns.labels.filter(row => row !== names.join(' | '));
-    const cards = width <= MOBILE_TABLE_WIDTH;
+    const cards = width <= (groups.length > 2 ? THREE_SOLVER_CARD_WIDTH : MOBILE_TABLE_WIDTH);
     const unnamed = cells.slice(2, -1).filter((name, i) => name !== (cards ? `${solvers[i]} ${columns.values[i]}` : columns.values[i]));
     const cardIcons = cards ? columnIcons : columnIcons.replace(/#icon-\w+/g, 'no icon');
 
@@ -1806,6 +1809,17 @@ async function checkBenchmark(page, baseUrl, width) {
     if (runsTitle !== columnNames.slice(2, -1).join(' / ')) {
       problems.push(`#${id} names the runs of different solvers ${runsTitle}`);
     }
+
+    const copiedNote = await page.evaluate(`(() => {
+      const row = { ...structuredClone(${source}.find(r => r.bigint && r.languages.rs)), copiedFrom: 'A335586' };
+      renderSolverRows('${id}', [row], ${languages});
+      const note = document.getElementById('${id}').closest('.bench-group').querySelector('.note[data-copied]');
+      return note ? note.textContent : 'no note';
+    })()`);
+
+    if (!/^The count of \d+\u00a0×\u00a0\d+ is copied from OEIS\u00a0A335586: no solver here has counted this board\.$/.test(copiedNote)) {
+      problems.push(`#${id} notes a count copied from the OEIS as ${copiedNote}`);
+    }
   }
 
   await loadSite(page, baseUrl, width, 'benchmark');
@@ -1864,6 +1878,7 @@ const READ_CARD_LINKS = `[...document.querySelectorAll('#benchmark table')].filt
         label: table.id + ' ' + th.getAttribute('aria-label'),
         problem: card.getAttribute('href') !== link.getAttribute('href') ? 'links ' + card.getAttribute('href') : card.getAttribute('aria-label') !== th.getAttribute('aria-label') ? 'is named ' + card.getAttribute('aria-label') : '',
         visibleGroup: !!table.closest('.bench-group:not([hidden])'),
+        threeSolvers: table.tHead.rows[0].cells.length > 9,
         display: getComputedStyle(card).display,
         tapped: !!top && (top === card || card.contains(top)),
       }];
@@ -1937,19 +1952,19 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       problems.push(`the ${view} table shows ${[...odd, ...dashes].join(', ')}; a time reads 1.23 ms or 1.23 s, and a missing value -`);
     }
 
-    if (width < 920) {
+    if (width <= THREE_SOLVER_CARD_WIDTH) {
       const beside = await page.evaluate(
-        "[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) table.languages tbody tr')].filter(row => row.cells.length === 9 && Math.round(row.cells[5].getBoundingClientRect().left) !== Math.round(row.cells[2].getBoundingClientRect().left)).map(row => row.cells[0].textContent)",
+        `[...document.querySelectorAll('#benchmark .bench-group:not([hidden]) table.languages tbody tr')].filter(row => (row.cells.length > 9 || ${width <= MOBILE_TABLE_WIDTH}) && [5, 8].some(i => i < row.cells.length - 1 && Math.round(row.cells[i].getBoundingClientRect().left) !== Math.round(row.cells[2].getBoundingClientRect().left))).map(row => row.cells[0].textContent)`,
       );
 
       if (beside.length) {
-        problems.push(`at ${width} px the ${view} cards put the fourth solver of ${beside.join(', ')} beside the first three instead of under the first`);
+        problems.push(`at ${width} px the ${view} cards put the first language of a solver of ${beside.join(', ')} beside the solver before it instead of under the first`);
       }
     }
   }
 
   const headers = await page.evaluate(`(async () => {
-    const solvers = [...document.querySelectorAll('#benchmark table thead th')].filter(th => /^(Formula|Modular|BigInt)/.test(th.textContent.trim()));
+    const solvers = [...document.querySelectorAll('#benchmark table thead th')].filter(th => /^(Formula|Pfaffian|Modular|BigInt)/.test(th.textContent.trim()));
     const pages = {};
     const results = [];
 
@@ -2000,15 +2015,17 @@ async function checkBenchmarkCells(page, baseUrl, width) {
   };
   const wrong = headers.filter(({ label, href, problem }) => problem || href !== expected(label));
 
-  const wrongCards = cardLinks.flat().filter(({ problem, visibleGroup, display, tapped }) => problem || (width < 920 ? visibleGroup && (display === 'none' || !tapped) : display !== 'none'));
+  const wrongCards = cardLinks
+    .flat()
+    .filter(({ problem, visibleGroup, threeSolvers, display, tapped }) => problem || (width <= (threeSolvers ? THREE_SOLVER_CARD_WIDTH : MOBILE_TABLE_WIDTH) ? visibleGroup && (display === 'none' || !tapped) : display !== 'none'));
 
   if (wrongCards.length) {
     problems.push(`at ${width} px the solver links of the benchmark cards are wrong: ${wrongCards.map(({ label, problem, display, tapped }) => `${label} ${problem || `display ${display}, tapped ${tapped}`}`).join('; ')}`);
   }
 
-  if (headers.length !== 90 || wrong.length) {
+  if (headers.length !== 102 || wrong.length) {
     problems.push(
-      `at ${width} px the benchmark tables have ${headers.length} solver headers, 90 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
+      `at ${width} px the benchmark tables have ${headers.length} solver headers, 102 expected, and these link wrong: ${wrong.map(({ label, href, problem }) => `${label} ${problem || `links ${href} instead of ${expected(label)}`}`).join('; ') || 'none'}`,
     );
   }
 
