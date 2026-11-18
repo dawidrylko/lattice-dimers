@@ -255,7 +255,7 @@ const RULES = [
   {
     id: 'line-period',
     field: 'COMMENTS, FORMULA, CROSSREFS',
-    text: 'A comment, formula or cross-reference line ends with a period, before its signature if it has one.',
+    text: 'A comment, formula or cross-reference line ends with a period, before its signature if it has one. A block of lines that opens with ": (Start)" ends its last line with ". (End)" or with "(End)" alone.',
     source: [edit('A309117', 5, 'Michel Marcus', '2019-07-13', 'periods added after the g.f. and the crossrefs')],
     check(info) {
       const lines = info.of('C', 'F', 'Y');
