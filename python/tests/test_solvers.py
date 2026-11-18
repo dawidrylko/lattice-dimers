@@ -354,6 +354,9 @@ def test_pfaffian_rejects_a_prime_of_32_bits_and_a_matrix_that_is_not_square():
     with pytest.raises(ValueError, match="must be square"):
         pfaffian_modulo(np.zeros((2, 4), dtype=np.uint64), list_primes(1)[0])
 
+    with pytest.raises(ValueError, match="must be square"):
+        pfaffian_modulo(np.zeros(4, dtype=np.uint64), list_primes(1)[0])
+
 
 def test_pfaffian_solver_says_that_the_kings_graph_is_not_planar():
     solver = importlib.import_module(module_of("any-lattice-cylinder-torus-pfaffian"))
