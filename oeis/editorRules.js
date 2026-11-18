@@ -53,7 +53,7 @@ const PERSON = /^(?:\p{Lu}[\p{L}'’.-]*\s+){1,3}\p{Lu}[\p{L}'’-]+(?:, (?:Jr\.
 const NON_ASCII_MATH = /[×−–—≤≥≠…→←↔∞·²³√π∑∏∫≈±‘’“” ]/;
 const MISSPELLED =
   /\b(?:behaviour\w*|colour\w*|generalis\w*|(?:nona|deca|hendeca|undeca|dodeca|\w+deca|icosa)gon\w*|labell(?:ed|ing)|neighbour\w*|non-(?:composite|decreasing|empty|increasing|negative|positive|prime|square|squarefree|trivial|unit|zero)|nil-potent|cube-free|square-free|semi-prime|sub-matrix|proven|zeroes|zeroeth|occuring|ocurring|recurence|reccurrence|recuring|reccurring|cancelation|dependant|independant|dissectable|[nmij]th|\d+-(?:th|st|nd|rd))\b/i;
-const SENTENCE_START = /(?:^|(?<!\b(?:e\.g|i\.e|cf|vs|Eq|resp|etc)|\.)\.\)?\s+|\?\)?\s+)$/;
+const SENTENCE_START = /(?:^|(?<!\b(?:e\.g|i\.e|cf|vs|Eq|resp|etc|approx|Thm|Prop|Cor|Fig|ca|al)|\.)\.\)?\s+|\?\)?\s+)$/;
 const AFTER_COLON = /:\s+$/;
 const MISCASED = /\bfibonacci\b|\bg\.c\.d\.|\bG\.C\.D\.|\bh\.c\.f\.|\bH\.C\.F\.|\bhcf\b|\bHCF\b|\bl\.c\.m\.|\bL\.C\.M\./;
 const KNOWN_KEYWORDS = new Set(['allocated', 'base', 'bref', 'changed', 'cofr', 'cons', 'core', 'dead', 'dumb', 'easy', 'eigen', 'fini', 'frac', 'full', 'hard', 'hear', 'less', 'look', 'more', 'mult', 'new', 'nice', 'nonn', 'obsc', 'probation', 'recycled', 'sign', 'tabf', 'tabl', 'uned', 'unkn', 'walk', 'word']);
@@ -67,12 +67,12 @@ const MATH_NOTATION = [
   { pattern: /\bceil\(/, fix: 'write ceiling(x), not ceil(x)' },
   { pattern: /\bGAMMA\(/, fix: 'write Gamma(x), not GAMMA(x)' },
   { pattern: /\bZeta\(/, fix: 'write zeta(s), not Zeta(s)' },
-  { pattern: /\b[Ii]nf\b(?!\s*[({_])/, fix: 'write infinity or oo, not Inf or inf' },
-  { pattern: /\bpi\b(?!\s*\()/, fix: 'write Pi for 3.14159..., not pi' },
+  { pattern: /(?<!\blim\s)\b[Ii]nf\b(?!\s*[({_])/, fix: 'write infinity or oo, not Inf or inf' },
+  { pattern: /(?:[=*/^+(-]\s*|\d\s*)pi\b(?!\s*\(|\*\()|\bpi\s*(?:[/^)+-]|\*(?!\())/, fix: 'write Pi for 3.14159..., not pi' },
   { pattern: /\bgrth\b|\blrth\b|\.NE\./, fix: 'write >, < and != (or <>), not grth, lrth or .NE.' },
   { pattern: /\\(?:le|leq|ge|geq|ne|neq|cdot|times|infty|sum|prod|pi)\b/, fix: 'write <=, >=, !=, *, oo, Sum, Product, Pi, not TeX' },
   { pattern: /\/\([^()]*\)\/\(/, fix: 'write 1/((1-x)(1-x^2)), not 1/(1-x)/(1-x^2)' },
-  { pattern: /\b1\/\d+\s?[a-z]\b/, fix: 'write x/6 or (1/6)x, not 1/6x' },
+  { pattern: /\b1\/\d+[a-z]\b/, fix: 'write x/6 or (1/6)x, not 1/6x' },
 ];
 const FORMULA_NOTATION = [
   { pattern: /\bE\^/, fix: 'write e for 2.71828..., not E' },
@@ -82,7 +82,7 @@ const CAPITALIZED_WORD = /\b(Floor|Ceiling|Binomial|Triangular|Tribonacci|Tetran
 const ENGLISH_MISTAKES = [
   { pattern: /\bcounts the number of\b/i, fix: 'write "counts" or "is the number of", not "counts the number of"' },
   { pattern: /\ballows to\b/i, fix: 'write "allows us to" or "allows one to", not "allows to"' },
-  { pattern: /\bamount of \p{L}+s\b/iu, fix: 'write "number of" for things that are counted, not "amount of"' },
+  { pattern: /\bamount of \p{L}+s\b(?<!ss|sis|us|as|is)/iu, fix: 'write "number of" for things that are counted, not "amount of"' },
   { pattern: /\bbe integer\b(?!-)/i, fix: 'write "be an integer", not "be integer"' },
   { pattern: /\bcouples of\b/i, fix: 'write "pairs of", not "couples of"' },
   { pattern: /\bExcept (?!(?:for|when|if|that|where|in|at|as|by|on|under|with|after|before|possibly|perhaps)\b)/, fix: 'write "Except for", not "Except"' },
@@ -142,8 +142,8 @@ const RULES = [
   {
     id: 'data-format',
     field: 'DATA',
-    text: `DATA holds at least ${MINIMUM_TERMS} terms, separated by commas and spaces, never tabs.`,
-    source: ['SS "Data": "at least 4 terms", "DO NOT USE tabs"', 'SS "How many terms do we need?": "Generally, the minimum number of terms required is 4."'],
+    text: `DATA holds at least ${MINIMUM_TERMS} terms, unless the keyword is bref or the sequence is fini and full, and no tabs.`,
+    source: ['SS "Data": "at least 4 terms", "DO NOT USE tabs"', 'SS "How many terms do we need?": "Generally, the minimum number of terms required is 4."', 'KW: bref, "too short to do any analysis with"; fini and full, a finite sequence given whole'],
     check(info) {
       if (!info.full) {
         return [];
@@ -152,7 +152,9 @@ const RULES = [
       const line = info.of('S')[0];
       const findings = [];
 
-      if (info.data.length < MINIMUM_TERMS) {
+      const short = info.keywords.has('bref') || (info.keywords.has('fini') && info.keywords.has('full'));
+
+      if (info.data.length < MINIMUM_TERMS && !short) {
         findings.push(finding(line, `DATA has ${info.data.length} terms: give at least ${MINIMUM_TERMS}.`));
       }
 
@@ -237,7 +239,7 @@ const RULES = [
     field: 'KEYWORD',
     text: 'Only keywords of the OEIS list; nonn or sign by the signs of the terms, cons for a decimal expansion, tabl or tabf for a triangle or an array read by rows or antidiagonals.',
     source: [
-      'KW (https://oeis.org/eishelp2.html#RK)',
+      'KW (https://oeis.org/eishelp2.html#RK), which lists every keyword but allocated and recycled, set by the server (oeis.org search keyword:recycled, read 2026-11-18)',
       'the live A239264 carries tabl, an array read by antidiagonals (read 2026-11-17)',
       'the live A401673 carries tabf, an irregular triangle (read 2026-11-17)',
     ],
@@ -1116,7 +1118,7 @@ const RULES = [
   {
     id: 'math-notation',
     field: 'NAME, COMMENTS, FORMULA, EXAMPLE',
-    text: 'The notation of the Style Sheet: f(x) not F[x], ^ not **, +- not +/-, a(n) not a[n], Sum_ and Product_ with a capital, ceiling, Gamma, zeta, Pi, oo, no TeX, >, < and != not grth, lrth or .NE., a/(bc) not a/b/c (seen as 1/(...)/(...) and 1/6x); in FORMULA also e not E and mod not %; Floor, Ceiling, Binomial, Triangular, Tribonacci and Tetranacci with a capital only at the start of a sentence.',
+    text: 'The notation of the Style Sheet: f(x) not F[x], ^ not **, +- not +/-, a(n) not a[n], Sum_ and Product_ with a capital, ceiling, Gamma, zeta, Pi, oo, not the TeX forms \\ge, \\le, \\ne nor \\cdot, \\times, \\infty, \\sum, \\prod, \\pi (\\approx is allowed), >, < and != not grth, lrth or .NE., a/(bc) not a/b/c (seen as 1/(...)/(...) and 1/6x); in FORMULA also e not E and mod not %; Floor, Ceiling, Binomial, Triangular, Tribonacci and Tetranacci with a capital only at the start of a sentence.',
     source: ['SS "Spelling and notation"'],
     check(info) {
       return info.of('N', 'C', 'F', 'e').flatMap(line => {

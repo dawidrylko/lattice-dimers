@@ -140,6 +140,7 @@ const STYLE_SHEET_CASES = [
   constructed('limit-notation', 'A401669', 'F', 's = Limit_{n->oo} log(A239273(n))/(4*n^2).', 's = lim_{n->oo} log(A239273(n))/(4*n^2).', 'Spelling and notation', 'lim_'),
   constructed('limit-notation', 'A401669', 'C', 'The limit exists. lim_{w->oo} log(lambda_w)/w = s.', 'The limit exists. Limit_{w->oo} log(lambda_w)/w = s.', 'Spelling and notation'),
   constructed('math-notation', 'A402345', 'F', 'a(n) ~ 2^(1/8) * (Sqrt[2] - 1)^(n - 1/2).', 'a(n) ~ 2^(1/8) * (sqrt(2) - 1)^(n - 1/2).', 'Spelling and notation'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) ~ 2*pi*n.', 'a(n) ~ 2*Pi*n.', 'Spelling and notation', 'Pi'),
   constructed('math-notation', 'A402345', 'F', 'a(n) ~ exp(2*G*n*(2*n+1)/pi).', 'a(n) ~ exp(2*G*n*(2*n+1)/Pi).', 'Spelling and notation', 'Pi'),
   constructed('math-notation', 'A239273', 'F', 'a(n) ~ c * d**(n^2) / f^n.', 'a(n) ~ c * d^(n^2) / f^n.', 'Spelling and notation'),
   constructed('math-notation', 'A239273', 'F', 'a(n) = c * d^(n^2) * (1 +/- 1/n).', 'a(n) = c * d^(n^2) * (1 +- 1/n).', 'Spelling and notation'),
@@ -158,6 +159,13 @@ const STYLE_SHEET_CASES = [
   constructed('math-notation', 'A402163', 'C', 'The board has Floor(n/2) rows of each kind.', 'The board has floor(n/2) rows of each kind.', 'Spelling and notation', 'floor'),
   constructed('math-notation', 'A402163', 'C', 'The counts grow like the Tribonacci numbers.', 'The counts grow like the tribonacci numbers.', 'Spelling and notation'),
   constructed('data-format', 'A239273', 'S', '1, 3, 280', '1, 3, 280, 3037561', 'Data', 'at least 4'),
+  {
+    rule: 'data-format',
+    source: `KW: fini and full give the whole sequence, which may have fewer than 4 terms; ${STYLE_SHEET}`,
+    entry: 'A239273',
+    before: [['S', '1, 3, 280'], ['K', 'nonn']],
+    after: [['S', '1, 3, 280'], ['K', 'nonn,fini,full']],
+  },
   constructed('data-format', 'A239273', 'S', '1,\t3, 280, 3037561', '1, 3, 280, 3037561', 'Data', 'tab'),
   constructed('keyword-consistency', 'A239273', 'K', 'nonn,foo', 'nonn', 'Keywords', 'foo'),
   {
@@ -245,7 +253,7 @@ const CASES = [
   },
   {
     rule: 'capital-x',
-    source: 'SS "Spelling and notation": n X n (not n x n)',
+    source: 'SS "Spelling and notation": n X n (not n x n), constructed',
     entry: 'A402163',
     before: [['N', 'Number of domicule tilings of a 2n x 2n cylindrical grid.']],
     after: [['N', A402163_NAME]],
@@ -449,7 +457,7 @@ const CASES = [
   },
   {
     rule: 'extensions-unneeded',
-    source: 'SS "Extensions": nothing in this field for changes to the sequence one is creating',
+    source: 'SS "Extensions": nothing in this field for changes to the sequence one is creating, constructed',
     entry: 'A402163',
     before: a402163(A402163_DATA, [['E', 'a(10)-a(11) from _Dawid Ryłko_, Nov 14 2026']]),
     after: a402163(A402163_DATA),
@@ -470,7 +478,7 @@ const CASES = [
   },
   {
     rule: 'signature-own-draft',
-    source: 'SS "Programs": code by the sequence author in the original submission is not signed',
+    source: 'SS "Programs": code by the sequence author in the original submission is not signed, constructed',
     entry: 'A402163',
     before: a402163(A402163_DATA, [['o', '(PARI) a(n) = (M(2*n)^(2*n))[1, 1]; \\\\ _Dawid Ryłko_, Nov 14 2026']]),
     after: a402163(A402163_DATA, [['o', '(PARI) a(n) = (M(2*n)^(2*n))[1, 1];']]),
@@ -585,21 +593,21 @@ const CASES = [
   },
   {
     rule: 'non-ascii',
-    source: 'SS "Non-ASCII characters": <= and >= not the Unicode signs',
+    source: 'SS "Non-ASCII characters": <= and >= not the Unicode signs, constructed',
     entry: 'A401669',
     before: [['C', 'Rigorous bounds are 0.545343749727 ≤ s ≤ 0.582767477484 (Ryłko (2026)).']],
     after: [['C', 'Rigorous bounds are 0.545343749727 <= s <= 0.582767477484 (Ryłko (2026)).']],
   },
   {
     rule: 'spelling',
-    source: 'SS "Spelling and notation": neighbor (not neighbour)',
+    source: 'SS "Spelling and notation": neighbor (not neighbour), constructed',
     entry: 'A402163',
     before: [['e', A402163_EXAMPLE.replace('row neighbor', 'row neighbour')]],
     after: [['e', A402163_EXAMPLE]],
   },
   {
     rule: 'common-mistakes',
-    source: 'SS "Common mistakes in English": "counts the number of" is wrong',
+    source: 'SS "Common mistakes in English": "counts the number of" is wrong, constructed',
     entry: 'A402163',
     before: [['C', "a(n) counts the number of perfect matchings of the king's graph on the 2n X 2n cylinder."]],
     after: [['C', "a(n) is the number of perfect matchings of the king's graph on the 2n X 2n cylinder."]],
@@ -691,7 +699,7 @@ const CASES = [
   },
   {
     rule: 'signature-dash',
-    source: 'SS "Comments": ~~~~ writes the name and the date, the dash before it is typed',
+    source: 'SS "Comments": ~~~~ writes the name and the date, the dash before it is typed, constructed',
     entry: 'A239273',
     before: [['F', 'Limit_{n->oo} log(a(n))/(4*n^2) = A401669. ~~~~']],
     after: [['F', 'Limit_{n->oo} log(a(n))/(4*n^2) = A401669. - ~~~~']],
@@ -699,14 +707,14 @@ const CASES = [
   },
   {
     rule: 'signature-dash',
-    source: 'SS "Signing your name when you contribute to an existing sequence": examples too',
+    source: 'SS "Signing your name when you contribute to an existing sequence": examples too, constructed',
     entry: 'A239273',
     before: [['e', 'a(1) = 3: the three tilings drawn below. ~~~~']],
     after: [['e', 'a(1) = 3: the three tilings drawn below. - ~~~~']],
   },
   {
     rule: 'crossrefs-form',
-    source: 'SS "Crossrefs", constructed: an A-number twice',
+    source: 'SS "Cross-references", constructed: an A-number twice',
     entry: 'A309117',
     before: [
       ['Y', 'Cf. A011900, A307349.'],
@@ -717,7 +725,7 @@ const CASES = [
   },
   {
     rule: 'crossrefs-form',
-    source: 'SS "Crossrefs", constructed: the entry itself',
+    source: 'SS "Cross-references", constructed: the entry itself',
     entry: 'A309117',
     before: [['Y', 'Cf. A011900, A309117.']],
     after: [['Y', 'Cf. A011900.']],
@@ -725,7 +733,7 @@ const CASES = [
   },
   {
     rule: 'crossrefs-form',
-    source: 'SS "Crossrefs", constructed: a link',
+    source: 'SS "Cross-references", constructed: a link',
     entry: 'A309117',
     before: [['Y', 'Cf. <a href="/A011900">A011900</a>.']],
     after: [['Y', 'Cf. A011900.']],
@@ -1143,6 +1151,10 @@ const CLEAN = [
     entry: 'A402163',
     rows: [
       ['F', 'a(n) <= pi(n) - pi(n/2), where pi(x) is the number of primes <= x.'],
+      ['C', 'a(n) is the number of permutations pi of [n] with pi(1) < pi(2).'],
+      ['C', 'Here pi is the prime counting function A000720 and pi*(x) its variant.'],
+      ['F', 'lim inf a(n)/n = 1 and lim sup a(n)/n = 2.'],
+      ['C', 'The board is cut 1/2 a row from the top.'],
       ['F', 'inf(S) = 1, where S is the set of ratios a(n+1)/a(n).'],
       ['F', 'About 50% of the tilings are symmetric.'],
       ['C', 'Floor(n/2) rows are of each kind.'],
@@ -1156,6 +1168,7 @@ const CLEAN = [
     rows: [
       ['C', 'Except when n = 0, all terms are odd.'],
       ['C', 'The amount of memory grows as 3^n.'],
+      ['C', 'The amount of progress is small and the amount of analysis large.'],
       ['C', 'Let f be integer-valued.'],
     ],
   },
