@@ -8,7 +8,9 @@ const FORMER_ACCOUNTS = ['Dawid Rylko'];
 const DATA_WIDTH = 290;
 const SHARED_DEFINITION = 60;
 const MONTH = '(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)';
-const SIGNATURE = new RegExp(`\\s+-\\s+_[^_]+_, ${MONTH} \\d{2} \\d{4}$`);
+const TYPED_SIGNATURE = '~~~~';
+const SIGNATURE = new RegExp(`\\s+(?:-\\s+_[^_]+_, ${MONTH} \\d{2} \\d{4}|(?:-\\s+)?${TYPED_SIGNATURE})$`);
+const TYPED_SIGNATURE_LINE_END = new RegExp(`\\s-\\s${TYPED_SIGNATURE}$`);
 const SIGNED_ACCOUNT = `_${ACCOUNT}_, ${MONTH} \\d{2} \\d{4}`;
 const SYSTEM_KEYWORDS = ['new', 'changed', 'allocated', 'recycled'];
 const PROSE = ['N', 'C', 'D', 'H', 'F', 'Y', 'E'];
@@ -253,7 +255,7 @@ const RULES = [
   {
     id: 'line-period',
     field: 'COMMENTS, FORMULA, CROSSREFS',
-    text: 'A comment, formula or cross-reference line ends with a period, before its signature if it has one.',
+    text: 'A comment, formula or cross-reference line ends with a period, before its signature if it has one. A block of lines that opens with ": (Start)" ends its last line with ". (End)" or with "(End)" alone.',
     source: [edit('A309117', 5, 'Michel Marcus', '2019-07-13', 'periods added after the g.f. and the crossrefs')],
     check(info) {
       const lines = info.of('C', 'F', 'Y');
@@ -262,8 +264,10 @@ const RULES = [
         .filter((line, index) => {
           const value = line.value.replace(SIGNATURE, '');
           const continued = value.endsWith(':') && lines[index + 1]?.type === line.type;
+          const opensBlock = /:\s*\(Start\)$/.test(value);
+          const body = value.replace(/\s*\(End\)$/, '');
 
-          return !value.endsWith('.') && !continued;
+          return body !== '' && !body.endsWith('.') && !continued && !opensBlock;
         })
         .map(line => finding(line, 'End the line with a period.'));
     },
@@ -774,6 +778,18 @@ const RULES = [
     },
   },
   {
+    id: 'signature-dash',
+    field: 'COMMENTS, FORMULA, EXAMPLE',
+    text: `A comment, formula or example line signed in the edit form ends with " - ${TYPED_SIGNATURE}": the four tildes write only "_Name_, Mon dd yyyy", so the dash before them is typed. A block of lines opens with "From ${TYPED_SIGNATURE}: (Start)" instead.`,
+    source: ['SS "Signing your name when you contribute to an existing sequence": in comments, examples and formulae the signature is typically preceded by " - ", and a block of several lines opens with "From ~~~~: (Start)"'],
+    check(info) {
+      return info
+        .of('C', 'F', 'e')
+        .filter(line => line.value.includes(TYPED_SIGNATURE) && !TYPED_SIGNATURE_LINE_END.test(line.value) && !line.value.startsWith(`From ${TYPED_SIGNATURE}:`))
+        .map(line => finding(line, `Type " - ${TYPED_SIGNATURE}": the four tildes write the name and the date, not the dash.`));
+    },
+  },
+  {
     id: 'signature-own-draft',
     field: 'COMMENTS, FORMULA, PROG, EXAMPLE',
     text: "Lines of one's own entry are not signed while it is a draft.",
@@ -783,7 +799,7 @@ const RULES = [
         return [];
       }
 
-      const signed = new RegExp(SIGNED_ACCOUNT);
+      const signed = new RegExp(`${SIGNED_ACCOUNT}|${TYPED_SIGNATURE}`);
 
       return info.lines.filter(line => line.type !== 'A' && signed.test(line.value)).map(line => finding(line, "Drop the signature: the whole draft is the author's."));
     },
@@ -1439,6 +1455,7 @@ function parseDraftPage(html, entry) {
       .map(([, cell]) =>
         decodeHtml(
           cell
+            .replace(/(\s<\/ins>)<ins>\s+<\/ins>/g, '$1')
             .replace(/<del>[\s\S]*?<\/del>/g, '')
             .replace(/<a href="\/wiki\/User:[^"]*">([^<]*)<\/a>/g, '_$1_')
             .replace(/<br\s*\/?>/g, '\n')

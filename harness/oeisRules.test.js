@@ -199,6 +199,19 @@ test('the draft page parses into the entry text', () => {
   assert.equal(parseDraftPage('<html></html>', 'A402163'), null);
 });
 
+test('a space that the diff of a changed signature shows twice is read once', () => {
+  const page = cell =>
+    `All edits since published version <div class=sectname>PROG</div> <div class=sectbody><p class="diffs"><tt>${cell}</tt></p></div>`;
+  const a239273 = '(PARI) a(n) = 1; \\\\ T(h, w) defined in A239264. - _Dawid <del>Rylko</del><del>_</del><del>, </del><del> </del><ins>Ryłko</ins><ins>_</ins><ins>, </ins><ins> </ins>Oct 15 2026';
+  const a004003 = '(PARI) a(n) = 1; \\\\ _Dawid <del>Rylko</del><del>_</del><del>,</del><del> </del><ins>Ryłko</ins><ins>_</ins><ins>,</ins><ins> </ins>Oct 15 2026';
+
+  assert.equal(parseDraftPage(page(a239273), 'A239273'), '%o A239273 (PARI) a(n) = 1; \\\\ T(h, w) defined in A239264. - _Dawid Ryłko_, Oct 15 2026\n');
+  assert.equal(parseDraftPage(page(a004003), 'A004003'), '%o A004003 (PARI) a(n) = 1; \\\\ _Dawid Ryłko_, Oct 15 2026\n');
+  assert.equal(parseDraftPage(page('a(n) = 1;  \\\\ two spaces kept'), 'A000001'), '%o A000001 a(n) = 1;  \\\\ two spaces kept\n');
+  assert.equal(parseDraftPage(page('a(n) = 1;<ins> </ins><del>x</del><ins> </ins>b'), 'A000001'), '%o A000001 a(n) = 1;  b\n');
+  assert.equal(parseDraftPage(page('a(n) = 1;<ins> </ins><br><ins> </ins>b'), 'A000001'), '%o A000001 a(n) = 1; \n%o A000001  b\n');
+});
+
 test('a no-break space of the draft page becomes a space', () => {
   assert.equal(decodeHtml('Number&#160;of&#xA0;tilings&nbsp;of a 2n&#160;X&#160;2n grid.'), 'Number of tilings of a 2n X 2n grid.');
   assert.equal(decodeHtml('&#8212;&amp;&lt;'), '\u2014&<');
