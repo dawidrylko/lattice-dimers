@@ -5,7 +5,7 @@ const path = require('path');
 const { test } = require('node:test');
 const { LAST_TERMS } = require('../oeis/buildBFiles');
 const { splitDefinitions } = require('../oeis/editorRules');
-const { GATE_STEP, readGateInputs, readGateScript, runGateScript } = require('./workflow');
+const { JOB_STEP, readGateInputs, readStepScript, selectGeneratorChecks } = require('./workflow');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
 const OEIS_DIRECTORY = path.join(ROOT_DIRECTORY, 'oeis');
@@ -649,10 +649,9 @@ function checkGeneratorGate() {
 
 function checkGateScript() {
   const inputs = readGateInputs();
-  const script = readGateScript();
 
-  if (!inputs || !script) {
-    return [`.github/workflows/ci.yml has no step "${GATE_STEP}" with GENERATOR_INPUTS and a run script.`];
+  if (!inputs || !readStepScript(JOB_STEP)) {
+    return [`.github/workflows/ci.yml has no step "${JOB_STEP}" with GENERATOR_INPUTS and a run script.`];
   }
 
   const others = Array.from({ length: 3000 }, (_, index) => `zz/a-changed-file-that-no-generator-reads-${String(index).padStart(4, '0')}.txt`);
@@ -661,27 +660,30 @@ function checkGateScript() {
     ['a changed entry README', ['oeis/A309117/README.md'], true],
     ['a changed generator among 3000 other changed files', ['oeis/A309117/b309117.rs', ...others], false],
     ['a file of rust/core/ moved out of it', ['rust/core/src/modular.rs -> zz/modular.rs'], false],
+    ['a file whose name git quotes', ['zz/a"b.txt'], false],
+    ['a file of rust/core/ with non-ASCII letters in its name', ['rust/core/src/zażółć.rs'], false],
+    ['a deleted entry README', ['-oeis/A309117/README.md'], true],
   ];
   const errors = cases
     .filter(([, changes, skip]) => {
-      const result = runGateScript(script, inputs, changes);
+      const result = selectGeneratorChecks(inputs, changes);
 
       return result.status !== 0 || result.skip !== skip;
     })
-    .map(([name, , skip]) => `The step "${GATE_STEP}" of .github/workflows/ci.yml does not ${skip ? 'skip' : 'run'} the generators for ${name}.`);
+    .map(([name, , skip]) => `The step "${JOB_STEP}" of .github/workflows/ci.yml does not ${skip ? 'skip' : 'run'} the generators for ${name}.`);
 
-  if (runGateScript(script, inputs, null).status === 0) {
-    errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail on a commit without the parent it compares with.`);
+  if (selectGeneratorChecks(inputs, null).status === 0) {
+    errors.push(`The step "${JOB_STEP}" of .github/workflows/ci.yml does not fail on a commit without the parent it compares with.`);
   }
 
   const failsWith = (result, message) => result.status !== 0 && !result.skip && result.stderr.includes(message);
 
-  if (!failsWith(runGateScript(script, inputs, ['oeis/A309117/README.md'], { merge: false }), 'no second parent')) {
-    errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail on a commit that is not a merge commit.`);
+  if (!failsWith(selectGeneratorChecks(inputs, ['oeis/A309117/README.md'], { merge: false }), 'no second parent')) {
+    errors.push(`The step "${JOB_STEP}" of .github/workflows/ci.yml does not fail on a commit that is not a merge commit.`);
   }
 
-  if (!failsWith(runGateScript(script, '(', ['oeis/A309117/README.md']), 'grep failed with status 2')) {
-    errors.push(`The step "${GATE_STEP}" of .github/workflows/ci.yml does not fail when grep cannot read the GENERATOR_INPUTS pattern.`);
+  if (!failsWith(selectGeneratorChecks('(', ['oeis/A309117/README.md']), 'grep failed with status 2')) {
+    errors.push(`The step "${JOB_STEP}" of .github/workflows/ci.yml does not fail when grep cannot read the GENERATOR_INPUTS pattern.`);
   }
 
   return errors;

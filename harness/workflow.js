@@ -4,7 +4,6 @@ const os = require('os');
 const path = require('path');
 
 const WORKFLOW = path.join(__dirname, '..', '.github', 'workflows', 'ci.yml');
-const GATE_STEP = 'Select the generator checks';
 const JOB_STEP = 'Select the jobs';
 const indent = line => line.length - line.trimStart().length;
 
@@ -85,19 +84,11 @@ function readJobs() {
 }
 
 /**
- * Reads the GENERATOR_INPUTS pattern of the generator gate.
+ * Reads the GENERATOR_INPUTS pattern by which the job selection chooses the generator checks.
  * @returns {string|undefined} The pattern, or undefined when the workflow has none.
  */
 function readGateInputs() {
   return (fs.readFileSync(WORKFLOW, 'utf-8').match(/^ +GENERATOR_INPUTS: '([^']+)'$/m) ?? [])[1];
-}
-
-/**
- * Reads the run script of the generator gate.
- * @returns {string|null} The script, or null when the step is missing.
- */
-function readGateScript() {
-  return readStepScript(GATE_STEP);
 }
 
 /**
@@ -180,17 +171,17 @@ function runStepInRepository(script, env, changes, { merge = true } = {}) {
 }
 
 /**
- * Runs a gate script in a scratch repository whose HEAD merges a branch that makes the given changes.
- * @param {string} script The run script of the gate.
+ * Runs the job selection of a pull request in a scratch repository whose HEAD merges a branch that makes the given changes, and reads its choice of the generator checks.
  * @param {string} inputs The GENERATOR_INPUTS pattern.
  * @param {string[]|null} changes The changed files, as runStepInRepository takes them.
  * @param {{merge?: boolean}} [options] merge false commits the changes on master itself, with no merge commit.
- * @returns {{status: number, stderr: string, skip: boolean}} The exit status, stderr, and whether the script set GENERATOR_CHECKS=skip.
+ * @returns {{status: number, stderr: string, skip: boolean}} The exit status, stderr, and whether the step chose to skip the generator checks.
  */
-function runGateScript(script, inputs, changes, options) {
-  const { status, stderr, githubEnv } = runStepInRepository(script, { GENERATOR_INPUTS: inputs }, changes, options);
+function selectGeneratorChecks(inputs, changes, options) {
+  const env = { ...readStepEnv(JOB_STEP), EVENT: 'pull_request', GENERATOR_INPUTS: inputs };
+  const { status, stderr, githubOutput } = runStepInRepository(readStepScript(JOB_STEP), env, changes, options);
 
-  return { status, stderr, skip: githubEnv.includes('GENERATOR_CHECKS=skip') };
+  return { status, stderr, skip: /^generator-checks=skip$/m.test(githubOutput) };
 }
 
-module.exports = { WORKFLOW, GATE_STEP, JOB_STEP, readLines, readStepScript, readStepEnv, readJobs, readGateInputs, readGateScript, runStepInRepository, runGateScript };
+module.exports = { WORKFLOW, JOB_STEP, readLines, readStepScript, readStepEnv, readJobs, readGateInputs, runStepInRepository, selectGeneratorChecks };
