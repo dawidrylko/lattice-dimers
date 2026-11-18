@@ -52,8 +52,41 @@ const AUTHOR_SUFFIX = /^(?:Jr\.?|Sr\.?|II|III|IV|(?:\p{Lu}\.\s*)+)$/u;
 const PERSON = /^(?:\p{Lu}[\p{L}'’.-]*\s+){1,3}\p{Lu}[\p{L}'’-]+(?:, (?:Jr\.?|Sr\.?|II|III|IV))?$/u;
 const NON_ASCII_MATH = /[×−–—≤≥≠…→←↔∞·²³√π∑∏∫≈±‘’“” ]/;
 const MISSPELLED =
-  /\b(?:behaviour\w*|colour\w*|generalis\w*|labell(?:ed|ing)|neighbour\w*|non-(?:composite|decreasing|empty|increasing|negative|positive|prime|square|squarefree|trivial|unit|zero)|nil-potent|cube-free|square-free|semi-prime|sub-matrix|proven|zeroes|zeroeth|occuring|ocurring|recurence|reccurrence|recuring|reccurring|cancelation|dependant|independant|dissectable|[nmij]th|\d+-(?:th|st|nd|rd))\b/i;
-const ONLINE_ONLY = /https?:\/\/|doi\.org|\barXiv\b|\bZenodo\b|Electronic Journal of Combinatorics|Elec(?:tron)?\. J\. Comb|Journal of Integer Sequences|J\. Integer Seq/i;
+  /\b(?:behaviour\w*|colour\w*|generalis\w*|nonagon\w*|decagon\w*|hendecagon\w*|labell(?:ed|ing)|neighbour\w*|non-(?:composite|decreasing|empty|increasing|negative|positive|prime|square|squarefree|trivial|unit|zero)|nil-potent|cube-free|square-free|semi-prime|sub-matrix|proven|zeroes|zeroeth|occuring|ocurring|recurence|reccurrence|recuring|reccurring|cancelation|dependant|independant|dissectable|[nmij]th|\d+-(?:th|st|nd|rd))\b/i;
+const SENTENCE_START = /(?:^|[.!?]\s+)$/;
+const MATH_NOTATION = [
+  { pattern: /\b(?:Log|Sqrt|Sin|Cos|Tan|Exp|Floor|Ceiling|Binomial|Sum|Product|Gamma|Zeta)\[/, fix: 'write a function as log(x), sqrt(x), sin(x), not Log[x], Sqrt[x], Sin[x]' },
+  { pattern: /\*\*/, fix: 'write a power with ^, not **' },
+  { pattern: /\+\/-/, fix: 'write +-, not +/-' },
+  { pattern: /\ba\[n\]|\ba_n\b|\ba_\{n\}/, fix: 'write a(n), not a[n] or a_n' },
+  { pattern: /\b(?:sum|product|integral)_\{/, fix: 'write Sum_{...}, Product_{...} and Integral_{...} with a capital letter' },
+  { pattern: /\bceil\(/, fix: 'write ceiling(x), not ceil(x)' },
+  { pattern: /\bGAMMA\(/, fix: 'write Gamma(x), not GAMMA(x)' },
+  { pattern: /\bZeta\(/, fix: 'write zeta(s), not Zeta(s)' },
+  { pattern: /\b[Ii]nf\b/, fix: 'write infinity or oo, not Inf or inf' },
+  { pattern: /\bpi\b/, fix: 'write Pi, not pi' },
+  { pattern: /\\(?:le|leq|ge|geq|ne|neq|cdot|times|infty|sum|prod|pi)\b/, fix: 'write <=, >=, !=, *, oo, Sum, Product, Pi, not TeX' },
+  { pattern: /\/\([^()]*\)\/\(/, fix: 'write 1/((1-x)(1-x^2)), not 1/(1-x)/(1-x^2)' },
+  { pattern: /\b1\/\d+\s?[a-z]\b/, fix: 'write x/6 or (1/6)x, not 1/6x' },
+];
+const FORMULA_NOTATION = [
+  { pattern: /\bE\^/, fix: 'write e for 2.71828..., not E' },
+  { pattern: /[\w)]\s*%\s*[\w(]/, fix: 'write mod, not %' },
+];
+const CAPITALIZED_FUNCTION = /\b(Floor|Ceiling|Binomial|Log|Sqrt|Sin|Cos|Exp|Triangular)\(/g;
+const ENGLISH_MISTAKES = [
+  { pattern: /\bcounts the number of\b/i, fix: 'write "counts" or "is the number of", not "counts the number of"' },
+  { pattern: /\ballows to\b/i, fix: 'write "allows us to" or "allows one to", not "allows to"' },
+  { pattern: /\b(?:the|an?|same|total|whole) amount of\b/i, fix: 'write "number of" for things that are counted, not "amount of"' },
+  { pattern: /\bbe integer\b/i, fix: 'write "be an integer", not "be integer"' },
+  { pattern: /\bcouples of\b/i, fix: 'write "pairs of", not "couples of"' },
+  { pattern: /\bExcept (?!for\b)/, fix: 'write "Except for", not "Except"' },
+  { pattern: /\bfulfil(?:l|ls|led|ling|s)?\b/i, fix: 'write "satisfies", not "fulfills"' },
+  { pattern: /\b(?:greater|less|smaller|larger) or equal\b/i, fix: 'write "greater than or equal to" or >=, not "greater or equal"' },
+  { pattern: /\brespectfully\b/i, fix: 'write "respectively", not "respectfully"' },
+  { pattern: /\b(?:triplet|quadruplet|quintuplet)s?\b/i, fix: 'write "triples", "quadruples", not "triplets", "quadruplets"' },
+];
+const ONLINE_ONLY =/https?:\/\/|doi\.org|\barXiv\b|\bZenodo\b|Electronic Journal of Combinatorics|Elec(?:tron)?\. J\. Comb|Journal of Integer Sequences|J\. Integer Seq/i;
 const PROVENANCE =
   /\bagree between\b|\bmodulo primes\b|\bChinese remainder\b|\bexact integers\b|\b(?:computed|checked|verified|recounted) (?:with|against)\b|\bcome from (?:a|the) transfer matrix\b|\bcomputed a\(\d+\)/i;
 const NOT_FUTURE_PROOF =
@@ -996,7 +1029,7 @@ const RULES = [
   {
     id: 'spelling',
     field: 'all but REFERENCES and titles',
-    text: 'The spellings of the Style Sheet: US English (behavior, color, neighbor, labeled), nonnegative and the other non- words closed, proved, zeros, n-th.',
+    text: 'The spellings of the Style Sheet: US English (behavior, color, neighbor, labeled), nonnegative and the other non- words closed, proved, zeros, n-th, 9-gon and 10-gon rather than nonagon and decagon.',
     source: ['SS "Spelling and notation"'],
     check(info) {
       return info
@@ -1007,14 +1040,56 @@ const RULES = [
   },
   {
     id: 'common-mistakes',
-    field: 'NAME, COMMENTS',
-    text: 'No "counts the number of".',
+    field: 'NAME, COMMENTS, FORMULA, EXAMPLE',
+    text: 'None of the mistakes the Style Sheet lists that a pattern can see: "counts the number of", "allows to", "amount of" for a count, "be integer", "couples of", "Except" without "for", "fulfills", "greater or equal", "respectfully", "triplets".',
     source: ['SS "Common mistakes in English"'],
     check(info) {
-      return info
-        .of('N', 'C')
-        .filter(line => /\bcounts the number of\b/i.test(line.value))
-        .map(line => finding(line, '"counts the number of": write "counts" or "is the number of".'));
+      return info.of('N', 'C', 'F', 'e').flatMap(line => {
+        const mistake = ENGLISH_MISTAKES.find(item => item.pattern.test(line.value));
+
+        return mistake ? [finding(line, `Common mistake in English: ${mistake.fix}.`)] : [];
+      });
+    },
+  },
+  {
+    id: 'limit-notation',
+    field: 'NAME, COMMENTS, FORMULA, EXAMPLE',
+    text: 'A limit is written lim_{n->oo}, and Limit_{n->oo} at the start of a sentence, a FORMULA line included.',
+    source: [
+      noted('A239273', 54, 'Alois P. Heinz', '2026-11-18', 'lim_{n->P} for limit (use Limit_{n->P} at start of a sentence)'),
+      edit('A239273', 55, 'Alois P. Heinz', '2026-11-18', '"lim_{n->oo}" at the start of a FORMULA line became "Limit_{n->oo}"'),
+      'SS "Spelling and notation": "lim_{n->P} for limit (use Limit_{n->P} at start of a sentence)"',
+    ],
+    check(info) {
+      return info.of('N', 'C', 'F', 'e').flatMap(line =>
+        [...line.value.matchAll(/\b(lim|Lim|limit|Limit|LIM)_\{/g)].flatMap(match => {
+          const start = SENTENCE_START.test(line.value.slice(0, match.index));
+          const expected = start ? 'Limit' : 'lim';
+
+          return match[1] === expected ? [] : [finding(line, `Write ${expected}_{...}${start ? ' at the start of a sentence' : ' inside a sentence'}, not ${match[1]}_{...}.`)];
+        }),
+      );
+    },
+  },
+  {
+    id: 'math-notation',
+    field: 'NAME, COMMENTS, FORMULA, EXAMPLE',
+    text: 'The notation of the Style Sheet: f(x) not F[x], ^ not **, +- not +/-, a(n) not a[n], Sum_ and Product_ with a capital, ceiling, Gamma, zeta, Pi, oo, no TeX, a/(bc) not a/b/c; in FORMULA also e not E and mod not %; floor, ceiling, binomial and log in lower case inside a sentence.',
+    source: ['SS "Spelling and notation"'],
+    check(info) {
+      return info.of('N', 'C', 'F', 'e').flatMap(line => {
+        const value = line.value.replace(SIGNATURE, '');
+        const rules = line.type === 'F' ? [...MATH_NOTATION, ...FORMULA_NOTATION] : MATH_NOTATION;
+        const notation = rules.find(item => item.pattern.test(value));
+
+        if (notation) {
+          return [finding(line, `Notation of the Style Sheet: ${notation.fix}.`)];
+        }
+
+        const capital = [...value.matchAll(CAPITALIZED_FUNCTION)].find(match => !SENTENCE_START.test(value.slice(0, match.index)));
+
+        return capital ? [finding(line, `Write ${capital[1].toLowerCase()}(...) inside a sentence, not ${capital[1]}(...).`)] : [];
+      });
     },
   },
   {
@@ -1073,6 +1148,18 @@ const ACCEPTED = [
     rule: 'links-notes-canonical',
     match: 'notes/diagonals.html',
     reason: 'the published link names notes/diagonals.html, which redirects to notes/domicules/rectangles-by-diagonal-pieces.html',
+  },
+  {
+    entry: 'A401988',
+    rule: 'limit-notation',
+    match: 'lim_{n->oo} log(a(n))/(4*n^2) = 0.42859453746...',
+    reason: 'the line is still in the live draft (#14); the copy of a draft is synced only after approval',
+  },
+  {
+    entry: 'A402345',
+    rule: 'limit-notation',
+    match: 'lim_{n->oo} log(a(n))/(4*n^2) = A143233.',
+    reason: `${APPROVED_AS_IS} (#12, 2026-11-17), the day before Alois P. Heinz wrote Limit_ on A239273 (#55)`,
   },
   {
     entry: 'A401988',
