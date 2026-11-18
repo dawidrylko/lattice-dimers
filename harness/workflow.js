@@ -97,12 +97,11 @@ function readGateInputs() {
  * @param {Object<string, string>} env The environment of the step, on top of this process's.
  * @param {string[]|null} changes The changed files: a path is written, "from -> to" is a move and "-path" a deletion; null leaves one commit and no merge.
  * @param {{merge?: boolean}} [options] merge false commits the changes on master itself, with no merge commit.
- * @returns {{status: number, stderr: string, githubEnv: string, githubOutput: string}} The exit status, stderr, and what the script wrote to GITHUB_ENV and GITHUB_OUTPUT.
+ * @returns {{status: number, stderr: string, githubOutput: string}} The exit status, stderr, and what the script wrote to GITHUB_OUTPUT.
  */
 function runStepInRepository(script, env, changes, { merge = true } = {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'ci-step-'));
   const repository = path.join(directory, 'repository');
-  const githubEnv = path.join(directory, 'github-env');
   const githubOutput = path.join(directory, 'github-output');
   const environment = { ...process.env, GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1', GIT_AUTHOR_NAME: 'gate', GIT_AUTHOR_EMAIL: 'gate@example.com', GIT_COMMITTER_NAME: 'gate', GIT_COMMITTER_EMAIL: 'gate@example.com' };
   const git = (...args) => {
@@ -155,16 +154,15 @@ function runStepInRepository(script, env, changes, { merge = true } = {}) {
     }
 
     fs.writeFileSync(path.join(directory, 'step.sh'), script);
-    fs.writeFileSync(githubEnv, '');
     fs.writeFileSync(githubOutput, '');
 
     const { status, stderr } = spawnSync('bash', ['--noprofile', '--norc', '-eo', 'pipefail', path.join(directory, 'step.sh')], {
       cwd: repository,
-      env: { ...environment, ...env, GITHUB_ENV: githubEnv, GITHUB_OUTPUT: githubOutput },
+      env: { ...environment, ...env, GITHUB_OUTPUT: githubOutput },
       encoding: 'utf-8',
     });
 
-    return { status, stderr, githubEnv: fs.readFileSync(githubEnv, 'utf-8'), githubOutput: fs.readFileSync(githubOutput, 'utf-8') };
+    return { status, stderr, githubOutput: fs.readFileSync(githubOutput, 'utf-8') };
   } finally {
     fs.rmSync(directory, { recursive: true, force: true });
   }

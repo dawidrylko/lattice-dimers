@@ -174,7 +174,7 @@ test('the generator checks run on push, schedule and dispatch, and on a pull req
   }
 });
 
-test('the jobs that run the b-file generators take the choice of the generator gate', () => {
+test('the jobs that run the b-file generators take the choice of Changes', () => {
   const jobs = readJobs();
 
   assert.match(jobs.get(GATE_JOB), /^ {6}generator-checks: \$\{\{ steps\.jobs\.outputs\.generator-checks \}\}$/m);
