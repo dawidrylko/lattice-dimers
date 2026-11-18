@@ -87,16 +87,16 @@ fn count_tilings(cols: usize, prime: u32, orbits: &[(usize, u64)]) -> u32 {
     total as u32
 }
 
-fn log2_bound(cols: usize, torus: bool) -> f64 {
+fn log2_bound(cols: usize) -> f64 {
     let cells = (cols * cols) as f64;
 
     if cols < 3 {
-        return cells / 2.0 * 5f64.log2() + if torus { cols as f64 } else { 0.0 };
+        return cells / 2.0 * 5f64.log2() + cols as f64;
     }
 
     let share = |degree: usize| (2..=degree).map(|k| (k as f64).log2()).sum::<f64>() / (2 * degree) as f64;
 
-    if torus { cells * share(8) } else { cols as f64 * (2.0 * share(5) + (cols - 2) as f64 * share(8)) }
+    cells * share(8)
 }
 
 fn read_range() -> (usize, usize) {
@@ -143,7 +143,7 @@ fn main() {
     let sides: Vec<usize> = (first.max(1)..=last).map(|n| 2 * n).collect();
     let primes: BTreeMap<usize, Vec<u32>> = sides
         .iter()
-        .map(|&cols| (cols, list_primes(((log2_bound(cols, true) + 1.0) / 30.0).ceil() as usize + 1)))
+        .map(|&cols| (cols, list_primes(((log2_bound(cols) + 1.0) / 30.0).ceil() as usize + 1)))
         .collect();
     let orbits: BTreeMap<usize, Vec<(usize, u64)>> = sides.iter().map(|&cols| (cols, list_orbits(cols))).collect();
     let mut tasks: Vec<(usize, u32, usize, usize)> = Vec::new();

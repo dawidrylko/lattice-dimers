@@ -54,15 +54,15 @@ function countTilings({ cols, rows, prime, starts, weights }) {
   return total;
 }
 
-function log2Bound(cols, torus) {
+function log2Bound(cols) {
   const cells = cols * cols;
-  if (cols < 3) return (cells / 2) * Math.log2(5) + (torus ? cols : 0);
+  if (cols < 3) return (cells / 2) * Math.log2(5) + cols;
   const share = degree => {
     let log2Factorial = 0;
     for (let k = 2; k <= degree; k++) log2Factorial += Math.log2(k);
     return log2Factorial / (2 * degree);
   };
-  return torus ? cells * share(8) : cols * (2 * share(5) + (cols - 2) * share(8));
+  return cells * share(8);
 }
 
 function listOrbits(cols) {
@@ -92,7 +92,7 @@ async function main() {
   const jobs = os.availableParallelism();
   const sides = [];
   for (let n = Math.max(from, 1); n <= to; n++) sides.push(2 * n);
-  const primes = new Map(sides.map(cols => [cols, listPrimes(Math.ceil((log2Bound(cols, true) + 1) / 30) + 1)]));
+  const primes = new Map(sides.map(cols => [cols, listPrimes(Math.ceil((log2Bound(cols) + 1) / 30) + 1)]));
   const tasks = sides.flatMap(cols => {
     const orbits = listOrbits(cols);
     const size = Math.ceil(orbits.length / jobs);

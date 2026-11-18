@@ -63,16 +63,16 @@ def count_tilings(task):
     return total
 
 
-def log2_bound(cols, torus):
+def log2_bound(cols):
     cells = cols * cols
 
     if cols < 3:
-        return cells / 2 * math.log2(5) + (cols if torus else 0)
+        return cells / 2 * math.log2(5) + cols
 
     def share(degree):
         return sum(math.log2(k) for k in range(2, degree + 1)) / (2 * degree)
 
-    return cells * share(8) if torus else cols * (2 * share(5) + (cols - 2) * share(8))
+    return cells * share(8)
 
 
 def list_orbits(cols):
@@ -102,7 +102,7 @@ def main(argv):
     first, last = int(argv[0]), int(argv[1])
     jobs = os.process_cpu_count() or 1
     sides = [2 * n for n in range(max(first, 1), last + 1)]
-    primes = {cols: list_primes(math.ceil((log2_bound(cols, True) + 1) / 30) + 1) for cols in sides}
+    primes = {cols: list_primes(math.ceil((log2_bound(cols) + 1) / 30) + 1) for cols in sides}
     tasks = []
 
     for cols in sides:
