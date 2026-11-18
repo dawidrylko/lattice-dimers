@@ -41,7 +41,7 @@ A3. x = 1, w = 20 against the committed ARPACK run (out/out_crosscheck.txt) and 
  18      -0.3386712852  1.0827253  0.288223 -4e-17+0.268792425i  13.84095  0.114662 0.8090019477 1.2360909672
  20      -0.3386705627  1.0827274  0.288231 -8e-17+0.268793855i  13.84080  0.114661 0.8090018311 1.2360911454
  22      -0.3386706092  1.0827273  0.288230 -6e-17+0.268794172i  13.84077  0.114661 0.8090018253 1.2360911543
-  largest twisted levels at w = 22 (/theta_1): -0.445302, +0.445302, +0.440994, -0.440994
+  largest twisted levels at w = 22 (/theta_1): +0.445302, -0.445302, +0.440994, -0.440994
   |xi_w - xi_{w-2}|, w = 12..22: 1.9e-04, 8.3e-06, 5.4e-06, 2.5e-07, 1.8e-07, 8.9e-09
   RESULT xi = 1/m_v = 1.2360912 (w = 22; change from w = 20: 8.9e-09)
 B2. amplitude C against the free strips: C_k = (g(k) + 2 sigma)/(-r_+)^k for odd k (Table 4, surface.json),
@@ -155,4 +155,32 @@ B4. parity splitting Delta_w of the even cylinders (data/lean/*longdouble*) agai
   x=2: w=14: 0.99896, w=16: 1.00045, w=18: 1.00029, w=20: 1.00043; |rho_-|/rho_+ at w = 20: 1.0009
   x=3: w=14: 1.00103, w=16: 1.00666, w=18: 1.00571, w=20: 1.00657; |rho_-|/rho_+ at w = 20: 1.0132
 
-total time 773 s
+== G. small x: the gaps at the domino point, m_v/x as x -> 0, the crossing of twisted levels near x = 0.45
+G1. weighted counts at small x against brute force over perfect matchings, plain and twisted
+  K x w = 4x4, 5x4, 6x4, 4x5, 3x6, 4x6 at x = 0, 1/20, 1/4, 9/20: largest relative deviation 4.9e-16
+G2. x = 0, the domino cylinder (critical): w gap and w m_v against 2 pi and pi/2
+  w= 8: gap 0.747819, m_v 0.202511, w gap - 2 pi = -0.30063, w m_v - pi/2 = +0.04929
+  w=10: gap 0.608598, m_v 0.160037, w gap - 2 pi = -0.19721, w m_v - pi/2 = +0.02957
+  w=12: gap 0.512026, m_v 0.132534, w gap - 2 pi = -0.13887, w m_v - pi/2 = +0.01961
+  w=14: gap 0.441449, m_v 0.113201, w gap - 2 pi = -0.10290, w m_v - pi/2 = +0.01401
+  w=16: gap 0.387747, m_v 0.098834, w gap - 2 pi = -0.07923, w m_v - pi/2 = +0.01055
+  w=18: gap 0.345574, m_v 0.087725, w gap - 2 pi = -0.06285, w m_v - pi/2 = +0.00825
+  w=20: gap 0.311607, m_v 0.078872, w gap - 2 pi = -0.05105, w m_v - pi/2 = +0.00663
+  w=22: gap 0.283678, m_v 0.071648, w gap - 2 pi = -0.04228, w m_v - pi/2 = +0.00546
+  Richardson in 1/w^2 from w = 20, 22: w gap -> 6.282676 (2 pi = 6.283185), w m_v -> 1.570639 (pi/2 = 1.570796)
+G3. m_v at w = 18, 20, 22, extrapolated with a geometric tail of the last two changes; in-sector gap at w = 22
+    minus twice the extrapolated m_v. Below x = 0.08 the ratio of changes passes 0.7 and the tail is not used.
+  x=0.35: m_v = 0.670988, 0.670987, 0.670987; ratio of changes 0.240; extrapolated 0.670987, m_v/x = 1.9171; gap - 2 m_v = -0.0010
+  x=0.25: m_v = 0.480990, 0.480959, 0.480948; ratio of changes 0.356; extrapolated 0.480942, m_v/x = 1.9238; gap - 2 m_v = +0.0301
+  x=0.18: m_v = 0.349852, 0.349617, 0.349508; ratio of changes 0.464; extrapolated 0.349413, m_v/x = 1.9412; gap - 2 m_v = +0.0484
+  x=0.12: m_v = 0.238331, 0.237135, 0.236441; ratio of changes 0.581; extrapolated 0.235480, m_v/x = 1.9623; gap - 2 m_v = +0.0744
+  x=0.08: m_v = 0.168030, 0.164908, 0.162810; ratio of changes 0.672; extrapolated 0.158511, m_v/x = 1.9814; gap - 2 m_v = +0.1053
+G4. m_v at w = 16, 18, 20 around its maximum, and |nu_max|/theta_1 on both sides of x = 0.45 with a line through
+    each side (w = 16; w = 18 at 0.448 and 0.452 for the width dependence)
+  x=0.40: m_v = 0.769493, 0.769491, 0.769491
+  x=0.45: m_v = 0.872247, 0.872247, 0.872247
+  x=0.50: m_v = 0.869366, 0.869365, 0.869365
+  |nu_max|/theta_1: w=16 x=0.444: 0.423316, w=16 x=0.446: 0.421545, w=16 x=0.448: 0.419776, w=16 x=0.452: 0.417862, w=16 x=0.454: 0.417914, w=16 x=0.456: 0.417966, w=18 x=0.448: 0.419776, w=18 x=0.452: 0.417863
+  slopes -0.8851 (x < 0.45) and +0.0259 (x > 0.45); lines cross at x = 0.4502, m_v = 0.872714
+
+total time 2253 s

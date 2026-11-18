@@ -23,7 +23,9 @@ In the second differences d_q of a_{2q} the rates are rho_+ = r_+^2 and rho_- = 
 crossing x* of the companion note is where r_- = r_+. These identifications are numerical, not proved.
 
 Sections: A controls with known answers; B unit weights; C the scan in x against Table 2 of the note,
-with the gaps; D the crossing x*; E x = 3/2 with the rates fixed; F x = 2 and 3.
+with the gaps; D the crossing x*; E x = 3/2 with the rates fixed; F x = 2 and 3; G small x: the gaps
+closing at the domino point x = 0, m_v/x for x -> 0, and the crossing of two twisted levels near x = 0.45
+where m_v is largest.
 e0-visible levels come from Arnoldi started at e0 (the Krylov space of e0 lies in the e0-visible
 subspace). Rounding leaks larger e0-invisible levels into it (the twisted +-0.445 theta_1 at x = 1), so Ritz
 values whose e0-weight is below 1e-6 of the largest are dropped. Finite-w values oscillate with w mod 4.
@@ -370,4 +372,54 @@ print('\n== F. x = 2 and 3: r_-/r_+ by width (both w mod 4 subsequences)')
 for x in (2.0, 3.0):
     print(f'  x={x:g}: ' + ', '.join(f'w={w}: {CX[x, w][2] / CX[x, w][0]:.5f}' for w in (14, 16, 18, 20)) +
           f'; |rho_-|/rho_+ at w = 20: {(CX[x, 20][2] / CX[x, 20][0]) ** 2:.4f}')
+
+
+def gaps(w, x):
+    """In-sector gap log(theta_1/|theta_2|) of sector 0 of T and m_v = log(theta_1/|nu_max|), all levels."""
+    e0 = top_modulus(w, x, False, sector=0)
+    et = top_modulus(w, x, True)
+    return np.log(abs(e0[0]) / abs(e0[1])), np.log(abs(e0[0]) / abs(et[0]))
+
+
+print('\n== G. small x: the gaps at the domino point, m_v/x as x -> 0, the crossing of twisted levels near x = 0.45')
+print('G1. weighted counts at small x against brute force over perfect matchings, plain and twisted')
+worst = 0.0
+for K, w in ((4, 4), (5, 4), (6, 4), (4, 5), (3, 6), (4, 6)):
+    for x in (Fraction(0), Fraction(1, 20), Fraction(1, 4), Fraction(9, 20)):
+        tot, tw = brute(K, w, x)
+        z, zt = zk(dense(w, float(x)), K), zk(dense(w, float(x), True), K)
+        worst = max(worst, max(abs(z - float(tot)), abs(zt - float(tw))) / float(tot))
+print(f'  K x w = 4x4, 5x4, 6x4, 4x5, 3x6, 4x6 at x = 0, 1/20, 1/4, 9/20: largest relative deviation {worst:.1e}')
+
+print('G2. x = 0, the domino cylinder (critical): w gap and w m_v against 2 pi and pi/2')
+Z0 = {w: gaps(w, 0.0) for w in range(8, 23, 2)}
+for w in range(8, 23, 2):
+    print(f'  w={w:2d}: gap {Z0[w][0]:.6f}, m_v {Z0[w][1]:.6f}, w gap - 2 pi = {w * Z0[w][0] - 2 * np.pi:+.5f}, '
+          f'w m_v - pi/2 = {w * Z0[w][1] - np.pi / 2:+.5f}')
+rich = [(22 ** 3 * Z0[22][k] - 20 ** 3 * Z0[20][k]) / (22 ** 2 - 20 ** 2) for k in (0, 1)]
+print(f'  Richardson in 1/w^2 from w = 20, 22: w gap -> {rich[0]:.6f} (2 pi = {2 * np.pi:.6f}), '
+      f'w m_v -> {rich[1]:.6f} (pi/2 = {np.pi / 2:.6f})')
+
+print('G3. m_v at w = 18, 20, 22, extrapolated with a geometric tail of the last two changes; in-sector gap at w = 22')
+print('    minus twice the extrapolated m_v. Below x = 0.08 the ratio of changes passes 0.7 and the tail is not used.')
+for x in (0.35, 0.25, 0.18, 0.12, 0.08):
+    r = {w: gaps(w, x) for w in (18, 20, 22)}
+    m = [r[w][1] for w in (18, 20, 22)]
+    q = (m[1] - m[2]) / (m[0] - m[1]) if m[0] != m[1] else 0.0
+    mi = m[2] - (m[1] - m[2]) * q / (1 - q) if 0 < q < 1 else m[2]
+    print(f'  x={x:4.2f}: m_v = {m[0]:.6f}, {m[1]:.6f}, {m[2]:.6f}; ratio of changes {q:.3f}; extrapolated {mi:.6f}, '
+          f'm_v/x = {mi / x:.4f}; gap - 2 m_v = {r[22][0] - 2 * mi:+.4f}', flush=True)
+
+print('G4. m_v at w = 16, 18, 20 around its maximum, and |nu_max|/theta_1 on both sides of x = 0.45 with a line through')
+print('    each side (w = 16; w = 18 at 0.448 and 0.452 for the width dependence)')
+for x in (0.40, 0.45, 0.50):
+    print(f'  x={x:.2f}: m_v = ' + ', '.join(f'{gaps(w, x)[1]:.6f}' for w in (16, 18, 20)), flush=True)
+ratio = {(w, x): np.exp(-gaps(w, x)[1]) for w, x in [(16, v) for v in (0.444, 0.446, 0.448, 0.452, 0.454, 0.456)] +
+         [(18, 0.448), (18, 0.452)]}
+print('  |nu_max|/theta_1: ' + ', '.join(f'w={w} x={x}: {v:.6f}' for (w, x), v in ratio.items()))
+left = np.polyfit((0.444, 0.446, 0.448), [ratio[16, x] for x in (0.444, 0.446, 0.448)], 1)
+right = np.polyfit((0.452, 0.454, 0.456), [ratio[16, x] for x in (0.452, 0.454, 0.456)], 1)
+xc = (right[1] - left[1]) / (left[0] - right[0])
+print(f'  slopes {left[0]:+.4f} (x < 0.45) and {right[0]:+.4f} (x > 0.45); lines cross at x = {xc:.4f}, '
+      f'm_v = {-np.log(np.polyval(left, xc)):.6f}')
 print(f'\ntotal time {time.time() - t0:.0f} s')

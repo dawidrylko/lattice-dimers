@@ -211,7 +211,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | 13.3 GiB, 63 min | `logs/time_runweight_3state_w24.txt` (maxrss 13581 MiB incl. the memory-mapped vector, wall 3787.2 s) | `src/timed.py python3 src/runweight.py 3state 24 --disk <dir>` |
 | 1.5 GiB, 52 min | `logs/time_zex_king_free_m24_K24.txt` (maxrss 1562 MiB, wall 3116.4 s) | `src/timed.py python3 src/zexact.py king free 24 24` |
 | 8.0 GiB, 43 min | `logs/time_lcert_m26.txt` (maxrss 8223 MiB, wall 2557.3 s) | `src/timed.py python3 src/lcert.py 26 30` |
-| 2.4 GiB, 13 min (arm64) | `log-convexity/time_levels.txt` (maxrss 2408 MiB, wall 772.9 s) | `src/timed.py python3 log-convexity/levels.py` |
+| 2.5 GiB, 38 min (arm64) | `log-convexity/time_levels.txt` (maxrss 2561 MiB, wall 2253.2 s) | `src/timed.py python3 log-convexity/levels.py` |
 | 0.6 GiB, 5 min (arm64) | `logs/time_ctmrg.txt` (maxrss 647 MiB, wall 276.5 s; rounded up) | `src/timed.py python3 src/ctmrg.py` |
 
 Note on the machines. The runs of the first version used one machine with four cores and 15.7 GiB of
