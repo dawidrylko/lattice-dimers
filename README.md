@@ -92,7 +92,7 @@ The code is [MIT](LICENSE). Text and data are licensed under [CC BY 4.0](LICENSE
   `research/king-entropy/log-convexity/time_*.txt`, the JSON files in `spec/cases/` and the measurements in `benchmarks/results/`.
 
 The entry texts `oeis/*/A*.txt` are copies of OEIS content, which the OEIS Foundation licenses under
-[CC BY-SA 4.0](LICENSES/CC-BY-SA-4.0.txt); they keep that license. The b-files `oeis/*/b*.txt` are built from the counts of this repository and are MIT.
+[CC BY-SA 4.0](LICENSES/CC-BY-SA-4.0.txt); they keep that license. The b-files `oeis/*/b*.txt` are printed by the generators of this repository and are MIT.
 
 Everything else is MIT, in particular all programs and scripts: `rust/`, `python/`, `js/`, the programs in `oeis/`, `site/`, `harness/`, `research/king-entropy/src/`,
 `research/king-entropy/log-convexity/*.py`, `research/king-entropy/rerun/2026-10/release/step0-rerun.sh` and the code in `research/king-entropy/replication/`.

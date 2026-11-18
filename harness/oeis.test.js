@@ -3,6 +3,7 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { test } = require('node:test');
+const { LAST_TERMS } = require('../oeis/buildBFiles');
 const { splitDefinitions } = require('../oeis/editorRules');
 const { GATE_STEP, readGateInputs, readGateScript, runGateScript } = require('./workflow');
 
@@ -512,7 +513,9 @@ function checkDraftLinks() {
   return errors;
 }
 
+const LATER_RANGE = [3, 4];
 const REJECTED_RANGES = [[], ['1'], ['3', '2'], ['x', '2'], ['+1', '2'], ['0', '1', '2']];
+const SINGLE_TERMS = [0, 1];
 const GENERATOR_SETUP = [
   'spec/limits.json',
   'rust/Cargo.toml',
@@ -546,11 +549,19 @@ function checkGeneratorWiring() {
     errors.push(`The generators of spec/limits.json are ${limited.join(', ')} instead of ${entries.join(', ')}.`);
   }
 
+  if (Object.keys(LAST_TERMS).join(',') !== entries.join(',')) {
+    errors.push(`The entries of LAST_TERMS in oeis/buildBFiles.js are ${Object.keys(LAST_TERMS).join(', ')} instead of ${entries.join(', ')}.`);
+  }
+
   for (const entry of entries) {
     const number = entry.slice(1);
     const lastIndex = readBFileLines(entry).length - 1;
     const limits = GENERATOR_LIMITS?.[entry] ?? {};
     const valid = Object.values(limits).every(last => Number.isInteger(last) && last >= 0 && last <= lastIndex);
+
+    if (LAST_TERMS[entry] !== lastIndex) {
+      errors.push(`LAST_TERMS in oeis/buildBFiles.js gives ${entry} the last term ${LAST_TERMS[entry]}, but its b-file ends at ${lastIndex}, so a rebuild would change its length.`);
+    }
 
     if (Object.keys(limits).join(',') !== GENERATOR_LANGUAGES.join(',') || !valid) {
       errors.push(`spec/limits.json must give ${entry} a last term from 0 to ${lastIndex} for each of ${GENERATOR_LANGUAGES.join(', ')}.`);
@@ -698,6 +709,21 @@ function checkGenerator(entry) {
     errors.push(`oeis/${entry}/${generator} 0 ${last} does not print the first ${last + 1} lines of ${bFile}.`);
   }
 
+  for (const n of SINGLE_TERMS) {
+    const single = run([String(n), String(n)]);
+
+    if (single.status !== 0 || single.stdout !== `${lines[n]}\n`) {
+      errors.push(`oeis/${entry}/${generator} ${n} ${n} does not print line ${n} of ${bFile} alone: ${single.stderr.trim()}`);
+    }
+  }
+
+  const [first, end] = LATER_RANGE;
+  const later = run([String(first), String(end)]);
+
+  if (later.status !== 0 || later.stdout !== lines.slice(first, end + 1).join('\n') + '\n') {
+    errors.push(`oeis/${entry}/${generator} ${first} ${end} does not print lines ${first} to ${end} of ${bFile}: ${later.stderr.trim()}`);
+  }
+
   for (const args of REJECTED_RANGES) {
     const rejected = run(args);
 
@@ -712,7 +738,7 @@ function checkGenerator(entry) {
 const checks = [
   ['the layout of oeis/', checkLayout],
   ['the table of oeis/README.md', checkTable],
-  ['the generators in spec/limits.json, rust/Cargo.toml and rust/tests', checkGeneratorWiring],
+  ['the generators in spec/limits.json, oeis/buildBFiles.js, rust/Cargo.toml and rust/tests', checkGeneratorWiring],
   ['the files the generators depend on in the GENERATOR_INPUTS pattern of CI', checkGeneratorGate],
   ['the step of CI that selects the generator checks, on merge commits', checkGateScript],
   ...listEntries().flatMap(entry => {

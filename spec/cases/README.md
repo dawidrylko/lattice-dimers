@@ -26,4 +26,4 @@ There is one file per algorithm, `<id>.json` with the id of [`algorithms.json`](
 
 Twin algorithms, whose ids differ only in the method, repeat the boards they share. `pnpm -C js test:spec` fails when twins hold different counts for a board ([`harness/portCheck.js`](../../harness/portCheck.js)). The OEIS programs and the research scripts read one file each: the modular file for tori and diagonal pieces, `domicule-rectangle-bigint.json` for domicules.
 
-A count that only the modular solvers reach was checked with one prime more than the Chinese remainder theorem needs. The b-files of the domicule entries in [`oeis/`](../../oeis/README.md) are rebuilt from these files and from the strip counts in [`research/king-entropy/data/zex`](../../research/king-entropy/data/zex).
+A count that only the modular solvers reach was checked with one prime more than the Chinese remainder theorem needs. The b-files of the domicule entries in [`oeis/`](../../oeis/README.md) are checked against these files and against the strip counts in [`research/king-entropy/data/zex`](../../research/king-entropy/data/zex).

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 const { calculateTotalTilingCombinations } = require('../js/solvers/domino-rectangle-formula');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..');
@@ -16,10 +17,16 @@ const TRIANGULAR_FILE = 'spec/cases/any-lattice-rectangle-modular.json';
 const LAST_TRIANGULAR_SQUARE = 11;
 const LAST_DOMINO_CYLINDER = 10;
 const TRIANGULAR_STRIP = 4;
-const GENERATORS = {
-  'A309117/b309117.txt': 'node oeis/A309117/b309117.js 0 1000',
-  'A401988/b401988.txt': 'node oeis/A401988/b401988.js 0 37',
-  'A402345/b402345.txt': 'node oeis/A402345/b402345.js 0 44',
+const LAST_TERMS = {
+  A004003: 44,
+  A239264: 1127,
+  A239273: 12,
+  A309117: 1000,
+  A401670: 8,
+  A401673: 395,
+  A401988: 37,
+  A402163: 11,
+  A402345: 44,
 };
 const SOURCES = {
   'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
@@ -209,7 +216,7 @@ function formatBFile(terms) {
   return terms.map((term, index) => `${index} ${term}\n`).join('');
 }
 
-function buildBFiles() {
+function readCheckedTerms() {
   const strips = readStrips('king');
   const array = [];
 
@@ -220,11 +227,7 @@ function buildBFiles() {
   }
 
   const squares = Array.from({ length: LAST_SQUARE + 1 }, (_, n) => countTilings(strips, 2 * n, 2 * n));
-
-  const dominoes = Array.from({ length: LAST_DOMINO_SQUARE + 1 }, (_, n) =>
-    String(calculateTotalTilingCombinations({ rowCount: 2 * n })),
-  );
-  const triangle = readDiagonalRows().flat();
+  const dominoes = Array.from({ length: LAST_DOMINO_SQUARE + 1 }, (_, n) => String(calculateTotalTilingCombinations({ rowCount: 2 * n })));
 
   return {
     'A004003/b004003.txt': formatBFile(dominoes),
@@ -232,45 +235,74 @@ function buildBFiles() {
     'A239273/b239273.txt': formatBFile(squares),
     'A309117/b309117.txt': formatBFile(readStrips('tri').get(TRIANGULAR_STRIP)),
     'A401670/b401670.txt': formatBFile(readTori()),
-    'A401673/b401673.txt': formatBFile(triangle),
+    'A401673/b401673.txt': formatBFile(readDiagonalRows().flat()),
     'A401988/b401988.txt': formatBFile(readTriangularSquares()),
     'A402163/b402163.txt': formatBFile(readCylinders()),
     'A402345/b402345.txt': formatBFile(readDominoCylinders()),
   };
 }
 
-function main() {
-  const check = process.argv.includes('--check');
+function generatorCommand(entry) {
+  return `node oeis/${entry}/b${entry.slice(1)}.js 0 ${LAST_TERMS[entry]}`;
+}
+
+function check() {
   let passed = true;
 
-  for (const [name, content] of Object.entries(buildBFiles())) {
+  for (const [name, content] of Object.entries(readCheckedTerms())) {
     const file = path.join(__dirname, name);
     const terms = content.split('\n').length - 1;
+    const stored = fs.existsSync(file) ? fs.readFileSync(file, 'utf-8') : '';
+    const total = stored.split('\n').length - 1;
 
-    if (!check && GENERATORS[name]) {
-      console.log(`Skipped ${name}: ${GENERATORS[name]} > oeis/${name} rebuilds it in full.`);
-      continue;
-    }
+    process.stdout.write(`Checking ${name}: terms 0..${terms - 1} of ${total} against ${SOURCES[name]}... `);
 
-    if (!check) {
-      fs.writeFileSync(file, content);
-      console.log(`Wrote ${name}: ${terms} terms.`);
-      continue;
-    }
-
-    process.stdout.write(`Checking ${name} (${terms} terms) against ${SOURCES[name]}... `);
-
-    const stored = fs.existsSync(file) ? fs.readFileSync(file, 'utf-8') : null;
-
-    if (stored !== null && (GENERATORS[name] ? stored.startsWith(content) : stored === content)) {
+    if (stored.startsWith(content)) {
       console.log('Passed!');
     } else {
-      console.error(`Failed! Run ${GENERATORS[name] ?? 'node oeis/buildBFiles.js'} to rebuild ${name}.`);
+      console.error(`Failed! Run ${generatorCommand(name.split('/')[0])} > oeis/${name} and compare it with ${SOURCES[name]}.`);
       passed = false;
     }
   }
 
-  process.exit(passed ? 0 : 1);
+  return passed;
 }
 
-main();
+function build(entries) {
+  for (const entry of entries) {
+    const name = `${entry}/b${entry.slice(1)}.txt`;
+    const { status, stdout, stderr } = spawnSync('node', [path.join(__dirname, name.replace('.txt', '.js')), '0', String(LAST_TERMS[entry])], {
+      encoding: 'utf-8',
+      maxBuffer: 1 << 28,
+    });
+
+    if (status !== 0) {
+      console.error(`Failed! ${generatorCommand(entry)} stopped: ${stderr.trim()}`);
+      return false;
+    }
+
+    fs.writeFileSync(path.join(__dirname, name), stdout);
+    console.log(`Wrote ${name}: ${LAST_TERMS[entry] + 1} terms from ${generatorCommand(entry)}.`);
+  }
+
+  return true;
+}
+
+function main() {
+  const args = process.argv.slice(2);
+  const entries = args.filter(arg => arg !== '--check');
+  const unknown = entries.filter(entry => !(entry in LAST_TERMS));
+
+  if (unknown.length > 0 || (args.includes('--check') && entries.length > 0)) {
+    console.error(`Usage: node oeis/buildBFiles.js --check | node oeis/buildBFiles.js [${Object.keys(LAST_TERMS).join('|')} ...]`);
+    process.exit(2);
+  }
+
+  process.exit((args.includes('--check') ? check() : build(entries.length > 0 ? entries : Object.keys(LAST_TERMS))) ? 0 : 1);
+}
+
+if (require.main === module) {
+  main();
+}
+
+module.exports = { LAST_TERMS };

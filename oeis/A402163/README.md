@@ -15,10 +15,17 @@ Proposed 14 November 2026, revision #7 of the draft.
 | file | content |
 | --- | --- |
 | [A402163.txt](A402163.txt) | the full entry text, reconstructed from the draft page |
-| [b402163.txt](b402163.txt) | $n = 0, \dots, 11$, from [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json) up to $n = 10$ and from [`zex_king_cyl_m22_K22.json`](../../research/king-entropy/data/zex/zex_king_cyl_m22_K22.json) for $n = 11$; identical to the file uploaded with the draft |
+| [b402163.txt](b402163.txt) | $n = 0, \dots, 11$, printed alike by the generators [`b402163.rs`](b402163.rs), [`b402163.py`](b402163.py) and [`b402163.js`](b402163.js); identical to the file uploaded with the draft; its terms up to $n = 10$ are checked against [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json) and $n = 11$ against [`zex_king_cyl_m22_K22.json`](../../research/king-entropy/data/zex/zex_king_cyl_m22_K22.json) |
 | [A402163.gp](A402163.gp) | the program of the `%o` lines, with `T(h, w)` for the $h \times w$ cylinder |
+| [b402163.rs](b402163.rs) | the generator of the b-file in Rust |
+| [b402163.py](b402163.py) | the generator of the b-file in Python |
+| [b402163.js](b402163.js) | the generator of the b-file in JavaScript |
 
 ## Notes
+
+The three generators run the same method in Rust, Python and JavaScript, each in its own code. They count the cylinder cell by cell modulo primes, which is the entry of the power of the row transfer matrix of [`A402163.gp`](A402163.gp) from the empty row to the empty row taken one cell at a time, with the pieces across the seam. On the $2 \times 2$ cylinder those pieces are separate edges, as the entry counts them. They take as many primes below $2^{31}$ as the Kahn-Lovasz bound needs, $a(n) \le \prod_v (d_v!)^{1/(2 d_v)}$ with $d_v = 8$ inside and $5$ on the two free rows, and for $n = 1$, where the graph has multiple edges, $5^{2n^2}$; one more prime checks each term.
+
+`rust/target/release/b402163 0 11` (after `cargo build --release` in `rust/`) prints the whole b-file in 49 s, `python3 -I oeis/A402163/b402163.py 0 11` (after `python3 -m pip install -e python`) in 256 s and `node oeis/A402163/b402163.js 0 11` in 171 s, all three on the 10 cores of an Apple M4 on 17 November 2026. So CI runs all three up to $n = 9$. These last terms are in [`spec/limits.json`](../../spec/limits.json), and `FULL_CASES=1` runs every term in all three.
 
 The program is the one of [A401670](../A401670/A401670.gp) with one change: the cylinder count is the entry of the power of the row transfer matrix from the empty row to the empty row, where the torus count is its trace.
 
