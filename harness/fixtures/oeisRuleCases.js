@@ -108,6 +108,99 @@ const A239273_LIVE = [
 ];
 const PACHTER_TITLE = 'Combinatorial Approaches and Conjectures for 2-Divisibility Problems Concerning Domino Tilings of Polyominoes';
 
+const STYLE_SHEET = 'constructed: the pair is written for the test';
+
+function constructed(rule, entry, type, before, after, section, expect) {
+  return { rule, source: `SS "${section}"; ${STYLE_SHEET}`, entry, before: [[type, before]], after: [[type, after]], ...(expect ? { expect } : {}) };
+}
+
+const STYLE_SHEET_CASES = [
+  constructed('common-mistakes', 'A401669', 'C', 'The bound holds for every width greater or equal to 2.', 'The bound holds for every width greater than or equal to 2.', 'Common mistakes in English', 'greater than or equal to'),
+  constructed('common-mistakes', 'A401669', 'C', 'The bound holds for every width less or equal to 20.', 'The bound holds for every width less than or equal to 20.', 'Common mistakes in English', 'less than or equal to'),
+  constructed('common-mistakes', 'A401669', 'C', 'The transfer matrix allows to compute s to 12 digits.', 'The transfer matrix allows one to compute s to 12 digits.', 'Common mistakes in English'),
+  constructed('common-mistakes', 'A402163', 'C', 'The amount of tilings grows like 9.6^(n^2).', 'The number of tilings grows like 9.6^(n^2).', 'Common mistakes in English'),
+  constructed('common-mistakes', 'A402163', 'C', 'Let k be integer.', 'Let k be an integer.', 'Common mistakes in English'),
+  constructed('common-mistakes', 'A402163', 'C', 'The tiles come in couples of cells.', 'The tiles come in pairs of cells.', 'Common mistakes in English'),
+  constructed('common-mistakes', 'A402163', 'C', 'Except a(0) = 1, all terms are odd.', 'Except for a(0) = 1, all terms are odd.', 'Common mistakes in English'),
+  constructed('common-mistakes', 'A402163', 'C', 'Every tiling fulfills the parity rule.', 'Every tiling satisfies the parity rule.', 'Common mistakes in English'),
+  constructed('common-mistakes', 'A402163', 'C', 'The rows and columns are respectfully given by A239264 and A004003.', 'The rows and columns are respectively given by A239264 and A004003.', 'Common mistakes in English'),
+  constructed('common-mistakes', 'A402163', 'C', 'The tiles meet in triplets of cells.', 'The tiles meet in triples of cells.', 'Common mistakes in English'),
+  constructed('spelling', 'A402163', 'C', 'The same count holds on a decagon.', 'The same count holds on a 10-gon.', 'Spelling and notation'),
+  constructed('spelling', 'A402163', 'C', 'The same count holds on a dodecagon.', 'The same count holds on a 12-gon.', 'Spelling and notation'),
+  constructed('spelling', 'A402163', 'C', 'The terms grow like fibonacci numbers.', 'The terms grow like Fibonacci numbers.', 'Spelling and notation'),
+  constructed('spelling', 'A402163', 'F', 'g.c.d.(a(n), a(n+1)) = 1.', 'gcd(a(n), a(n+1)) = 1.', 'Spelling and notation'),
+  {
+    rule: 'limit-notation',
+    source: 'A239273 #54 -> #55, Alois P. Heinz, 2026-11-18',
+    entry: 'A239273',
+    before: [['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669. - _Dawid Ryłko_, Nov 18 2026']],
+    after: [['F', 'Limit_{n->oo} log(a(n))/(4*n^2) = A401669. - _Dawid Ryłko_, Nov 18 2026']],
+    expect: 'Limit_',
+  },
+  constructed('limit-notation', 'A401669', 'F', 's = Limit_{n->oo} log(A239273(n))/(4*n^2).', 's = lim_{n->oo} log(A239273(n))/(4*n^2).', 'Spelling and notation', 'lim_'),
+  constructed('limit-notation', 'A401669', 'C', 'The limit exists. lim_{w->oo} log(lambda_w)/w = s.', 'The limit exists. Limit_{w->oo} log(lambda_w)/w = s.', 'Spelling and notation'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) ~ 2^(1/8) * (Sqrt[2] - 1)^(n - 1/2).', 'a(n) ~ 2^(1/8) * (sqrt(2) - 1)^(n - 1/2).', 'Spelling and notation'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) ~ 2*pi*n.', 'a(n) ~ 2*Pi*n.', 'Spelling and notation', 'Pi'),
+  constructed('math-notation', 'A402345', 'F', 'Sum_{n>=1} 1/n^2 = pi^2/6.', 'Sum_{n>=1} 1/n^2 = Pi^2/6.', 'Spelling and notation', 'Pi'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) ~ c^n, where pi = 3.14159...', 'a(n) ~ c^n, where Pi = 3.14159...', 'Spelling and notation', 'Pi'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) ~ exp(2*G*n*(2*n+1)/pi).', 'a(n) ~ exp(2*G*n*(2*n+1)/Pi).', 'Spelling and notation', 'Pi'),
+  constructed('math-notation', 'A239273', 'F', 'a(n) ~ c * d**(n^2) / f^n.', 'a(n) ~ c * d^(n^2) / f^n.', 'Spelling and notation'),
+  constructed('math-notation', 'A239273', 'F', 'a(n) = c * d^(n^2) * (1 +/- 1/n).', 'a(n) = c * d^(n^2) * (1 +- 1/n).', 'Spelling and notation'),
+  constructed('math-notation', 'A239273', 'C', 'Each a[n] is odd for n > 0.', 'Each a(n) is odd for n > 0.', 'Spelling and notation'),
+  constructed('math-notation', 'A401673', 'F', 'sum_{k=0..n^2} T(n,k) = A239273(n).', 'Sum_{k=0..n^2} T(n,k) = A239273(n).', 'Spelling and notation'),
+  constructed('math-notation', 'A401673', 'F', 'T(n,k) = 0 for k > ceil(n^2/2).', 'T(n,k) = 0 for k > ceiling(n^2/2).', 'Spelling and notation'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) ~ GAMMA(1/4) * c^n.', 'a(n) ~ Gamma(1/4) * c^n.', 'Spelling and notation'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) ~ Zeta(3) * c^n.', 'a(n) ~ zeta(3) * c^n.', 'Spelling and notation'),
+  constructed('math-notation', 'A402345', 'F', 'a(n)^(1/n) tends to Inf.', 'a(n)^(1/n) tends to infinity.', 'Spelling and notation'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) \\le 9^(n^2).', 'a(n) <= 9^(n^2).', 'Spelling and notation'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) grth 0.', 'a(n) > 0.', 'Spelling and notation'),
+  constructed('math-notation', 'A309117', 'F', 'G.f.: 1/(1-z)/(1-z^2).', 'G.f.: 1/((1-z)*(1-z^2)).', 'Spelling and notation'),
+  constructed('math-notation', 'A309117', 'F', 'a(n) = 1/6n^3 + O(n^2).', 'a(n) = n^3/6 + O(n^2).', 'Spelling and notation'),
+  constructed('math-notation', 'A402345', 'F', 'a(n) ~ E^(c*n^2).', 'a(n) ~ e^(c*n^2).', 'Spelling and notation'),
+  constructed('math-notation', 'A402163', 'F', 'a(n) % 8 = 1 for n > 0.', 'a(n) mod 8 = 1 for n > 0.', 'Spelling and notation'),
+  constructed('math-notation', 'A402163', 'C', 'The board has Floor(n/2) rows of each kind.', 'The board has floor(n/2) rows of each kind.', 'Spelling and notation', 'floor'),
+  constructed('math-notation', 'A402163', 'C', 'The counts grow like the Tribonacci numbers.', 'The counts grow like the tribonacci numbers.', 'Spelling and notation'),
+  constructed('data-format', 'A239273', 'S', '1, 3, 280', '1, 3, 280, 3037561', 'Data', 'at least 4'),
+  {
+    rule: 'data-format',
+    source: `KW: bref marks a sequence too short for analysis; ${STYLE_SHEET}`,
+    entry: 'A239273',
+    before: [['S', '1, 3, 280'], ['K', 'nonn']],
+    after: [['S', '1, 3, 280'], ['K', 'nonn,bref']],
+  },
+  {
+    rule: 'data-format',
+    source: `KW: fini and full give the whole sequence, which may have fewer than 4 terms; ${STYLE_SHEET}`,
+    entry: 'A239273',
+    before: [['S', '1, 3, 280'], ['K', 'nonn']],
+    after: [['S', '1, 3, 280'], ['K', 'nonn,fini,full']],
+  },
+  constructed('data-format', 'A239273', 'S', '1,\t3, 280, 3037561', '1, 3, 280, 3037561', 'Data', 'tab'),
+  constructed('keyword-consistency', 'A239273', 'K', 'nonn,foo', 'nonn', 'Keywords', 'foo'),
+  {
+    rule: 'links-order',
+    source: `SS "Links": index entries are placed at the end; ${STYLE_SHEET}`,
+    entry: 'A239273',
+    before: [
+      ['S', '1, 3, 280, 3037561'],
+      ['H', '<a href="/wiki/Index_to_OEIS:_Section_Ki">Index entries for sequences related to the king\'s graph</a>.'],
+      ['H', 'Wikipedia, <a href="https://en.wikipedia.org/wiki/King%27s_graph">King\'s graph</a>.'],
+    ],
+    after: [
+      ['S', '1, 3, 280, 3037561'],
+      ['H', 'Wikipedia, <a href="https://en.wikipedia.org/wiki/King%27s_graph">King\'s graph</a>.'],
+      ['H', '<a href="/wiki/Index_to_OEIS:_Section_Ki">Index entries for sequences related to the king\'s graph</a>.'],
+    ],
+  },
+  {
+    rule: 'extensions-unneeded',
+    source: `SS "Extensions": comments are signed in place, so "Added a comment" is not needed; ${STYLE_SHEET}`,
+    entry: 'A239264',
+    before: [['C', 'A comment. - _Someone Else_, Nov 18 2026'], ['E', 'Added a comment. - _Someone Else_, Nov 18 2026']],
+    after: [['C', 'A comment. - _Someone Else_, Nov 18 2026']],
+  },
+];
+
 const CASES = [
   {
     rule: 'data-fill',
@@ -169,7 +262,7 @@ const CASES = [
   },
   {
     rule: 'capital-x',
-    source: 'SS "Spelling and notation": n X n (not n x n)',
+    source: 'SS "Spelling and notation": n X n (not n x n), constructed',
     entry: 'A402163',
     before: [['N', 'Number of domicule tilings of a 2n x 2n cylindrical grid.']],
     after: [['N', A402163_NAME]],
@@ -373,7 +466,7 @@ const CASES = [
   },
   {
     rule: 'extensions-unneeded',
-    source: 'SS "Extensions": nothing in this field for changes to the sequence one is creating',
+    source: 'SS "Extensions": nothing in this field for changes to the sequence one is creating, constructed',
     entry: 'A402163',
     before: a402163(A402163_DATA, [['E', 'a(10)-a(11) from _Dawid Ryłko_, Nov 14 2026']]),
     after: a402163(A402163_DATA),
@@ -394,7 +487,7 @@ const CASES = [
   },
   {
     rule: 'signature-own-draft',
-    source: 'SS "Programs": code by the sequence author in the original submission is not signed',
+    source: 'SS "Programs": code by the sequence author in the original submission is not signed, constructed',
     entry: 'A402163',
     before: a402163(A402163_DATA, [['o', '(PARI) a(n) = (M(2*n)^(2*n))[1, 1]; \\\\ _Dawid Ryłko_, Nov 14 2026']]),
     after: a402163(A402163_DATA, [['o', '(PARI) a(n) = (M(2*n)^(2*n))[1, 1];']]),
@@ -509,25 +602,26 @@ const CASES = [
   },
   {
     rule: 'non-ascii',
-    source: 'SS "Non-ASCII characters": <= and >= not the Unicode signs',
+    source: 'SS "Non-ASCII characters": <= and >= not the Unicode signs, constructed',
     entry: 'A401669',
     before: [['C', 'Rigorous bounds are 0.545343749727 ≤ s ≤ 0.582767477484 (Ryłko (2026)).']],
     after: [['C', 'Rigorous bounds are 0.545343749727 <= s <= 0.582767477484 (Ryłko (2026)).']],
   },
   {
     rule: 'spelling',
-    source: 'SS "Spelling and notation": neighbor (not neighbour)',
+    source: 'SS "Spelling and notation": neighbor (not neighbour), constructed',
     entry: 'A402163',
     before: [['e', A402163_EXAMPLE.replace('row neighbor', 'row neighbour')]],
     after: [['e', A402163_EXAMPLE]],
   },
   {
     rule: 'common-mistakes',
-    source: 'SS "Common mistakes in English": "counts the number of" is wrong',
+    source: 'SS "Common mistakes in English": "counts the number of" is wrong, constructed',
     entry: 'A402163',
     before: [['C', "a(n) counts the number of perfect matchings of the king's graph on the 2n X 2n cylinder."]],
     after: [['C', "a(n) is the number of perfect matchings of the king's graph on the 2n X 2n cylinder."]],
   },
+  ...STYLE_SHEET_CASES,
   {
     rule: 'references-online',
     source: 'A004003 #72 -> #73, Michel Marcus',
@@ -606,30 +700,30 @@ const CASES = [
     rule: 'line-period',
     source: 'constructed: the edit form signs a line typed with " - ~~~~" at its end, so the period goes before it',
     entry: 'A239273',
-    before: [['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669 - ~~~~']],
+    before: [['F', 'Limit_{n->oo} log(a(n))/(4*n^2) = A401669 - ~~~~']],
     after: [
-      ['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669. - ~~~~'],
+      ['F', 'Limit_{n->oo} log(a(n))/(4*n^2) = A401669. - ~~~~'],
       ['F', 'a(n) ~ c * d^(n^2) / f^n, where c = 1.43791803..., d = exp(4*A401669) = 9.6027320273133..., f = 6.93196613224... (conjectured). - ~~~~'],
     ],
   },
   {
     rule: 'signature-dash',
-    source: 'SS "Comments": ~~~~ writes the name and the date, the dash before it is typed',
+    source: 'SS "Comments": ~~~~ writes the name and the date, the dash before it is typed, constructed',
     entry: 'A239273',
-    before: [['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669. ~~~~']],
-    after: [['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669. - ~~~~']],
+    before: [['F', 'Limit_{n->oo} log(a(n))/(4*n^2) = A401669. ~~~~']],
+    after: [['F', 'Limit_{n->oo} log(a(n))/(4*n^2) = A401669. - ~~~~']],
     expect: ' - ~~~~',
   },
   {
     rule: 'signature-dash',
-    source: 'SS "Signing your name when you contribute to an existing sequence": examples too',
+    source: 'SS "Signing your name when you contribute to an existing sequence": examples too, constructed',
     entry: 'A239273',
     before: [['e', 'a(1) = 3: the three tilings drawn below. ~~~~']],
     after: [['e', 'a(1) = 3: the three tilings drawn below. - ~~~~']],
   },
   {
     rule: 'crossrefs-form',
-    source: 'SS "Crossrefs", constructed: an A-number twice',
+    source: 'SS "Cross-references", constructed: an A-number twice',
     entry: 'A309117',
     before: [
       ['Y', 'Cf. A011900, A307349.'],
@@ -640,7 +734,7 @@ const CASES = [
   },
   {
     rule: 'crossrefs-form',
-    source: 'SS "Crossrefs", constructed: the entry itself',
+    source: 'SS "Cross-references", constructed: the entry itself',
     entry: 'A309117',
     before: [['Y', 'Cf. A011900, A309117.']],
     after: [['Y', 'Cf. A011900.']],
@@ -648,7 +742,7 @@ const CASES = [
   },
   {
     rule: 'crossrefs-form',
-    source: 'SS "Crossrefs", constructed: a link',
+    source: 'SS "Cross-references", constructed: a link',
     entry: 'A309117',
     before: [['Y', 'Cf. <a href="/A011900">A011900</a>.']],
     after: [['Y', 'Cf. A011900.']],
@@ -846,7 +940,7 @@ const CLEAN = [
     rule: 'line-period',
     source: 'constructed: ~~~~ typed without the dash is left to signature-dash',
     entry: 'A239273',
-    rows: [['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669. ~~~~']],
+    rows: [['F', 'Limit_{n->oo} log(a(n))/(4*n^2) = A401669. ~~~~']],
   },
   {
     rule: 'line-period',
@@ -1017,6 +1111,88 @@ const CLEAN = [
     entry: 'A401673',
     rows: [['Y', 'Column k=0, T(n, 0) of A401673, gives A004003.']],
     options: { mode: 'draft', others: [{ entry: 'A004003', live: true, rows: [['Y', 'Column k=0 of A401673.']] }] },
+  },
+  {
+    rule: 'limit-notation',
+    source: 'the published A401669: lim_ inside the sentence "s = lim_..." is the Style Sheet form',
+    entry: 'A401669',
+    rows: [['F', 's = lim_{h,w->oo} log(A239264(h,w))/(h*w) = lim_{n->oo} log(A239273(n))/(4*n^2).']],
+  },
+  {
+    rule: 'limit-notation',
+    source: 'the live draft of A239273 (#56, read 2026-11-18): Limit_ at the start of the FORMULA line',
+    entry: 'A239273',
+    rows: [['F', 'Limit_{n->oo} log(a(n))/(4*n^2) = A401669. - _Dawid Ryłko_, Nov 18 2026']],
+  },
+  {
+    rule: 'limit-notation',
+    source: 'constructed: "e.g." and "i.e." do not end a sentence, and after a colon either form passes',
+    entry: 'A401669',
+    rows: [
+      ['C', 'The limit is reached slowly, e.g. lim_{w->oo} log(lambda_w)/w = s.'],
+      ['F', 'Conjecture: lim_{n->oo} a(n+1)/a(n)^2 = 1.'],
+      ['F', 'Conjecture: Limit_{n->oo} a(n+1)/a(n)^2 = 1.'],
+    ],
+  },
+  {
+    rule: 'math-notation',
+    source: 'the live A402345 (#12) and the live draft of A239273 (#56): asymptotics with ^, sqrt, exp, Pi and the tilde',
+    entry: 'A402345',
+    rows: [
+      ['F', 'a(n) ~ 2^(1/8) * (sqrt(2) - 1)^(n - 1/2) * exp(2*G*n*(2*n+1)/Pi), where G is the Catalan constant A006752. - _Vaclav Kotesovec_, Nov 17 2026'],
+      ['F', 'a(n) = A239264(2n,2n).'],
+      ['F', 'a(n) ~ c * d^(n^2) / f^n, where c = 1.43791803..., d = exp(4*A401669) = 9.6027320273133..., f = 6.93196613224... (conjectured). - _Dawid Ryłko_, Nov 18 2026'],
+    ],
+  },
+  {
+    rule: 'math-notation',
+    source: 'the EXAMPLE drawings of the live draft of A239273 (#56): o-o, X, / and \\ are tiles, not notation',
+    entry: 'A239273',
+    rows: [
+      ['e', '  |o o o-o| |o o o-o| |o-o o-o| |o o o o| |o o-o o|'],
+      ['e', '  | X     | | X     | |       | | X  | || | \\   / |'],
+      ['e', '  |   /  || |   / / | ||  X  || |       | ||     ||'],
+    ],
+  },
+  {
+    rule: 'math-notation',
+    source: 'constructed: pi(x) for the prime counting function, inf(S), a percentage, Floor at a sentence start and ** in a drawing are not the mistakes of the Style Sheet',
+    entry: 'A402163',
+    rows: [
+      ['F', 'a(n) <= pi(n) - pi(n/2), where pi(x) is the number of primes <= x.'],
+      ['C', 'a(n) is the number of permutations pi of [n] with pi(1) < pi(2).'],
+      ['C', 'Here pi is the prime counting function A000720 and pi*(x) its variant.'],
+      ['F', 'lim inf a(n)/n = 1 and lim sup a(n)/n = 2.'],
+      ['C', 'Here s(pi) is the sign of pi, LIS(pi)*LDS(pi) >= n and sigma <= pi in the Bruhat order.'],
+      ['C', 'The statistic maj pi^(-1) - maj pi is even, and pi - p0 is a cycle.'],
+      ['C', 'The board is cut 1/2 a row from the top.'],
+      ['F', 'inf(S) = 1, where S is the set of ratios a(n+1)/a(n).'],
+      ['F', 'About 50% of the tilings are symmetric.'],
+      ['C', 'Floor(n/2) rows are of each kind.'],
+      ['e', '  |**|  **  |**|'],
+    ],
+  },
+  {
+    rule: 'common-mistakes',
+    source: 'constructed: "Except when", "amount of" for what is not counted and "integer-valued" are correct English',
+    entry: 'A402163',
+    rows: [
+      ['C', 'Except when n = 0, all terms are odd.'],
+      ['C', 'The amount of memory grows as 3^n.'],
+      ['C', 'The amount of progress is small and the amount of analysis large.'],
+      ['C', 'Let f be integer-valued.'],
+    ],
+  },
+  {
+    rule: 'links-order',
+    source: 'SS "Links": index entries may live under /wiki/Index; constructed lines',
+    entry: 'A239273',
+    rows: [
+      ['S', '1, 3, 280, 3037561'],
+      ['H', 'Eric Weisstein\'s World of Mathematics, <a href="https://mathworld.wolfram.com/KingGraph.html">King Graph</a>.'],
+      ['H', 'Wikipedia, <a href="https://en.wikipedia.org/wiki/King%27s_graph">King\'s graph</a>.'],
+      ['H', '<a href="/wiki/Index_to_OEIS:_Section_Ki">Index entries for sequences related to the king\'s graph</a>.'],
+    ],
   },
 ];
 

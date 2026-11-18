@@ -52,7 +52,46 @@ const AUTHOR_SUFFIX = /^(?:Jr\.?|Sr\.?|II|III|IV|(?:\p{Lu}\.\s*)+)$/u;
 const PERSON = /^(?:\p{Lu}[\p{L}'’.-]*\s+){1,3}\p{Lu}[\p{L}'’-]+(?:, (?:Jr\.?|Sr\.?|II|III|IV))?$/u;
 const NON_ASCII_MATH = /[×−–—≤≥≠…→←↔∞·²³√π∑∏∫≈±‘’“” ]/;
 const MISSPELLED =
-  /\b(?:behaviour\w*|colour\w*|generalis\w*|labell(?:ed|ing)|neighbour\w*|non-(?:composite|decreasing|empty|increasing|negative|positive|prime|square|squarefree|trivial|unit|zero)|nil-potent|cube-free|square-free|semi-prime|sub-matrix|proven|zeroes|zeroeth|occuring|ocurring|recurence|reccurrence|recuring|reccurring|cancelation|dependant|independant|dissectable|[nmij]th|\d+-(?:th|st|nd|rd))\b/i;
+  /\b(?:behaviour\w*|colour\w*|generalis\w*|(?:nona|deca|hendeca|undeca|dodeca|\w+deca|icosa)gon\w*|labell(?:ed|ing)|neighbour\w*|non-(?:composite|decreasing|empty|increasing|negative|positive|prime|square|squarefree|trivial|unit|zero)|nil-potent|cube-free|square-free|semi-prime|sub-matrix|proven|zeroes|zeroeth|occuring|ocurring|recurence|reccurrence|recuring|reccurring|cancelation|dependant|independant|dissectable|[nmij]th|\d+-(?:th|st|nd|rd))\b/i;
+const SENTENCE_START = /(?:^|(?<!\b(?:e\.g|i\.e|cf|vs|Eq|resp|etc|approx|Thm|Prop|Cor|Fig|ca|al)|\.)\.\)?\s+|\?\)?\s+)$/;
+const AFTER_COLON = /:\s+$/;
+const MISCASED = /\bfibonacci\b|\bg\.c\.d\.|\bG\.C\.D\.|\bh\.c\.f\.|\bH\.C\.F\.|\bhcf\b|\bHCF\b|\bl\.c\.m\.|\bL\.C\.M\./;
+const KNOWN_KEYWORDS = new Set(['allocated', 'base', 'bref', 'changed', 'cofr', 'cons', 'core', 'dead', 'dumb', 'easy', 'eigen', 'fini', 'frac', 'full', 'hard', 'hear', 'less', 'look', 'more', 'mult', 'new', 'nice', 'nonn', 'obsc', 'probation', 'recycled', 'sign', 'tabf', 'tabl', 'uned', 'unkn', 'walk', 'word']);
+const MINIMUM_TERMS = 4;
+const MATH_NOTATION = [
+  { pattern: /\b(?:Log|Sqrt|Sin|Cos|Tan|Exp|Floor|Ceiling|Binomial|Sum|Product|Gamma|Zeta)\[/, fix: 'write a function as log(x), sqrt(x), sin(x), not Log[x], Sqrt[x], Sin[x]' },
+  { pattern: /[\w)]\s*\*\*\s*[\w(]/, fix: 'write a power with ^, not **' },
+  { pattern: /\+\/-/, fix: 'write +-, not +/-' },
+  { pattern: /\ba\[n\]|\ba_n\b|\ba_\{n\}/, fix: 'write a(n), not a[n] or a_n' },
+  { pattern: /\b(?:sum|product|integral)_\{/, fix: 'write Sum_{...}, Product_{...} and Integral_{...} with a capital letter' },
+  { pattern: /\bceil\(/, fix: 'write ceiling(x), not ceil(x)' },
+  { pattern: /\bGAMMA\(/, fix: 'write Gamma(x), not GAMMA(x)' },
+  { pattern: /\bZeta\(/, fix: 'write zeta(s), not Zeta(s)' },
+  { pattern: /(?<!\b[Ll]im(?:it)?\s+)\b[Ii]nf\b(?!\s*[({_])/, fix: 'write infinity or oo, not Inf or inf' },
+  { pattern: /\d\s*\*?\s*pi\b(?!\s*\()|\/\s*pi\b(?!\s*\()|\bpi\s*\/|\bpi\s*\*\s*\d|\bpi\^\d+\s*\/|\bpi\s*=\s*3\.14/, fix: 'write Pi for 3.14159..., not pi' },
+  { pattern: /\bgrth\b|\blrth\b|\.NE\./, fix: 'write >, < and != (or <>), not grth, lrth or .NE.' },
+  { pattern: /\\(?:le|leq|ge|geq|ne|neq|cdot|times|infty|sum|prod|pi)\b/, fix: 'write <=, >=, !=, *, oo, Sum, Product, Pi, not TeX' },
+  { pattern: /\/\([^()]*\)\/\(/, fix: 'write 1/((1-x)(1-x^2)), not 1/(1-x)/(1-x^2)' },
+  { pattern: /\b1\/\d+[a-z]\b/, fix: 'write x/6 or (1/6)x, not 1/6x' },
+];
+const FORMULA_NOTATION = [
+  { pattern: /\bE\^/, fix: 'write e for 2.71828..., not E' },
+  { pattern: /[a-z)]\s*%\s*[\w(]/i, fix: 'write mod, not %' },
+];
+const CAPITALIZED_WORD = /\b(Floor|Ceiling|Binomial|Triangular|Tribonacci|Tetranacci)\b/g;
+const ENGLISH_MISTAKES = [
+  { pattern: /\bcounts the number of\b/i, fix: 'write "counts" or "is the number of", not "counts the number of"' },
+  { pattern: /\ballows to\b/i, fix: 'write "allows us to" or "allows one to", not "allows to"' },
+  { pattern: /\bamount of \p{L}+s\b(?<!ss|sis|us|as|is)/iu, fix: 'write "number of" for things that are counted, not "amount of"' },
+  { pattern: /\bbe integer\b(?!-)/i, fix: 'write "be an integer", not "be integer"' },
+  { pattern: /\bcouples of\b/i, fix: 'write "pairs of", not "couples of"' },
+  { pattern: /\bExcept (?!(?:for|when|if|that|where|in|at|as|by|on|under|with|after|before|possibly|perhaps)\b)/, fix: 'write "Except for", not "Except"' },
+  { pattern: /\bfulfil(?:l|ls|led|ling|s)?\b/i, fix: 'write "satisfies", not "fulfills"' },
+  { pattern: /\b(?:greater|larger) or equal\b/i, fix: 'write "greater than or equal to" or >=, not "greater or equal"' },
+  { pattern: /\b(?:less|smaller) or equal\b/i, fix: 'write "less than or equal to" or <=, not "less or equal"' },
+  { pattern: /\brespectfully\b/i, fix: 'write "respectively", not "respectfully"' },
+  { pattern: /\b(?:triplet|quadruplet|quintuplet)s?\b/i, fix: 'write "triples", "quadruples", not "triplets", "quadruplets"' },
+];
 const ONLINE_ONLY = /https?:\/\/|doi\.org|\barXiv\b|\bZenodo\b|Electronic Journal of Combinatorics|Elec(?:tron)?\. J\. Comb|Journal of Integer Sequences|J\. Integer Seq/i;
 const PROVENANCE =
   /\bagree between\b|\bmodulo primes\b|\bChinese remainder\b|\bexact integers\b|\b(?:computed|checked|verified|recounted) (?:with|against)\b|\bcome from (?:a|the) transfer matrix\b|\bcomputed a\(\d+\)/i;
@@ -98,6 +137,32 @@ const RULES = [
       return wider <= DATA_WIDTH
         ? [finding(info.of('S')[0], `DATA is ${displayWidth(info.data)} characters wide and a(${info.offset + info.data.length}) still fits (${wider}): add it.`)]
         : [];
+    },
+  },
+  {
+    id: 'data-format',
+    field: 'DATA',
+    text: `DATA holds at least ${MINIMUM_TERMS} terms, unless the keyword is bref or the sequence is fini and full, and no tabs.`,
+    source: ['SS "Data": "at least 4 terms", "DO NOT USE tabs"', 'SS "How many terms do we need?": "Generally, the minimum number of terms required is 4."', 'KW: bref, "too short to do any analysis with"; fini and full, a finite sequence given whole'],
+    check(info) {
+      if (!info.full) {
+        return [];
+      }
+
+      const line = info.of('S')[0];
+      const findings = [];
+
+      const short = info.keywords.has('bref') || (info.keywords.has('fini') && info.keywords.has('full'));
+
+      if (info.data.length < MINIMUM_TERMS && !short) {
+        findings.push(finding(line, `DATA has ${info.data.length} terms: give at least ${MINIMUM_TERMS}.`));
+      }
+
+      if (info.of('S', 'T', 'U').some(row => row.value.includes('\t'))) {
+        findings.push(finding(line, 'A tab in DATA: separate the terms with a comma and a space.'));
+      }
+
+      return findings;
     },
   },
   {
@@ -172,20 +237,22 @@ const RULES = [
   {
     id: 'keyword-consistency',
     field: 'KEYWORD',
-    text: 'nonn or sign by the signs of the terms, cons for a decimal expansion, tabl or tabf for a triangle or an array read by rows or antidiagonals.',
+    text: 'Only keywords of the OEIS list; nonn or sign by the signs of the terms, cons for a decimal expansion, tabl or tabf for a triangle or an array read by rows or antidiagonals.',
     source: [
-      'KW (https://oeis.org/eishelp2.html#RK)',
+      'KW (https://oeis.org/eishelp2.html#RK), which lists every keyword but allocated and recycled, set by the server (oeis.org search keyword:recycled, read 2026-11-18)',
       'the live A239264 carries tabl, an array read by antidiagonals (read 2026-11-17)',
       'the live A401673 carries tabf, an irregular triangle (read 2026-11-17)',
     ],
     check(info) {
+      const line = info.of('K')[0];
+      const unknown = [...info.keywords].filter(keyword => !KNOWN_KEYWORDS.has(keyword));
+      const findings = unknown.length > 0 ? [finding(line, `Not a keyword of the OEIS: ${unknown.join(', ')}.`)] : [];
+
       if (!info.full) {
-        return [];
+        return findings;
       }
 
-      const line = info.of('K')[0];
       const negative = knownTerms(info).some(term => term.startsWith('-'));
-      const findings = [];
 
       if (negative && info.keywords.has('nonn')) {
         findings.push(finding(line, 'A negative term with keyword nonn: use sign.'));
@@ -240,7 +307,7 @@ const RULES = [
     id: 'capital-x',
     field: 'NAME, COMMENTS, FORMULA, EXAMPLE, CROSSREFS',
     text: 'Board sizes are written n X n, with a capital X between spaces, not n x n, nXn, n by n or n-by-n.',
-    source: ['SS "Style for the name of a sequence"', 'A239264, "k X n grid"'],
+    source: ['SS "Spelling and notation": "n X n (not n x n, not nXn, not n by n, not n-by-n)"', 'A239264, "k X n grid"'],
     check(info) {
       return info
         .of('N', 'C', 'F', 'e', 'Y')
@@ -276,7 +343,7 @@ const RULES = [
     id: 'crossrefs-form',
     field: 'CROSSREFS',
     text: 'CROSSREFS names A-numbers only: "Cf. A000001, A000002 (what it is)." or a sentence such as "Row sums give A000003."; no link, no repetition, not the entry itself.',
-    source: [edit('A309117', 5, 'Michel Marcus', '2019-07-13', '"A011900" became "Cf. A011900."'), 'SS "Crossrefs"'],
+    source: [edit('A309117', 5, 'Michel Marcus', '2019-07-13', '"A011900" became "Cf. A011900."'), 'SS "Cross-references"'],
     check(info) {
       const findings = [];
       const seen = new Set();
@@ -450,7 +517,7 @@ const RULES = [
   {
     id: 'links-order',
     field: 'LINKS',
-    text: "LINKS starts with the b-file, then goes alphabetically by the first author's last name, and ends with the index entries.",
+    text: "LINKS starts with the b-file, then goes alphabetically by the first author's last name, and ends with the index entries, whose path starts with /index/ or /wiki/Index.",
     source: [noted('A401988', 6, 'Michel Marcus', '2026-11-11', '3rd link should be 2nd position'), 'SS "Links"'],
     check(info) {
       if (!info.full) {
@@ -465,7 +532,7 @@ const RULES = [
       }
 
       const ranked = lines.filter(line => line !== info.bFileLink);
-      const isIndex = line => /href="\/index\//.test(line.value);
+      const isIndex = line => /href="\/(?:index\/|wiki\/Index)/.test(line.value);
       const firstIndex = ranked.findIndex(isIndex);
 
       if (firstIndex !== -1 && ranked.slice(firstIndex).some(line => !isIndex(line))) {
@@ -731,7 +798,7 @@ const RULES = [
   {
     id: 'extensions-unneeded',
     field: 'EXTENSIONS',
-    text: "No EXTENSIONS line for terms that are only in the b-file, nor anywhere in one's own new entry.",
+    text: "No EXTENSIONS line for terms that are only in the b-file, nor anywhere in one's own new entry, nor one that acknowledges a comment, formula, program, link, reference, cross-reference or example, which are signed in place or not at all.",
     source: [said('A239273', 35, 'Stefano Spezia', '2026-10-15', 'No extension when adding or updating a bfile'), 'SS "Extensions"'],
     check(info) {
       const findings = [];
@@ -744,6 +811,8 @@ const RULES = [
           findings.push(finding(line, "One's own new entry has no EXTENSIONS."));
         } else if (last !== null && (!info.full || last > info.offset + info.data.length - 1) && /\bfrom\b/.test(line.value)) {
           findings.push(finding(line, `a(${last}) is not in DATA: terms only in the b-file need no EXTENSIONS.`));
+        } else if (/\bAdded (?:an? |the |some )?(?:comments?|formulas?|formulae|programs?|links?|references?|cross-?references?|crossrefs?|examples?)\b/i.test(line.value)) {
+          findings.push(finding(line, 'EXTENSIONS does not acknowledge a comment, formula, program, link, reference, cross-reference or example: those are signed in place or not at all.'));
         }
       }
 
@@ -996,25 +1065,75 @@ const RULES = [
   {
     id: 'spelling',
     field: 'all but REFERENCES and titles',
-    text: 'The spellings of the Style Sheet: US English (behavior, color, neighbor, labeled), nonnegative and the other non- words closed, proved, zeros, n-th.',
+    text: 'The spellings of the Style Sheet: US English (behavior, color, neighbor, labeled), nonnegative and the other non- words closed, proved, zeros, n-th, 9-gon and 10-gon rather than nonagon and decagon, Fibonacci with a capital, GCD or gcd and LCM or lcm.',
     source: ['SS "Spelling and notation"'],
     check(info) {
-      return info
-        .of('N', 'C', 'H', 'F', 'e', 'Y', 'E')
-        .filter(line => MISSPELLED.test(withoutTitles(line)))
-        .map(line => finding(line, `Spelling of the Style Sheet: ${withoutTitles(line).match(MISSPELLED)[0]}`));
+      return info.of('N', 'C', 'H', 'F', 'e', 'Y', 'E').flatMap(line => {
+        const text = withoutTitles(line);
+        const word = text.match(MISSPELLED) ?? text.match(MISCASED);
+
+        return word ? [finding(line, `Spelling of the Style Sheet: ${word[0]}`)] : [];
+      });
     },
   },
   {
     id: 'common-mistakes',
-    field: 'NAME, COMMENTS',
-    text: 'No "counts the number of".',
+    field: 'NAME, COMMENTS, FORMULA, EXAMPLE',
+    text: 'None of the mistakes the Style Sheet lists that a pattern can see: "counts the number of", "allows to", "amount of" for a count, "be integer", "couples of", "Except" without "for", "fulfills", "greater or equal", "respectfully", "triplets".',
     source: ['SS "Common mistakes in English"'],
     check(info) {
-      return info
-        .of('N', 'C')
-        .filter(line => /\bcounts the number of\b/i.test(line.value))
-        .map(line => finding(line, '"counts the number of": write "counts" or "is the number of".'));
+      return info.of('N', 'C', 'F', 'e').flatMap(line => {
+        const mistake = ENGLISH_MISTAKES.find(item => item.pattern.test(line.value));
+
+        return mistake ? [finding(line, `Common mistake in English: ${mistake.fix}.`)] : [];
+      });
+    },
+  },
+  {
+    id: 'limit-notation',
+    field: 'NAME, COMMENTS, FORMULA, EXAMPLE',
+    text: 'A limit is written lim_{n->oo}, and Limit_{n->oo} at the start of a sentence, a FORMULA line included. After a colon, as in "Conjecture: ", either form passes, since the Style Sheet does not say.',
+    source: [
+      noted('A239273', 54, 'Alois P. Heinz', '2026-11-18', 'lim_{n->P} for limit (use Limit_{n->P} at start of a sentence)'),
+      edit('A239273', 55, 'Alois P. Heinz', '2026-11-18', '"lim_{n->oo}" at the start of a FORMULA line became "Limit_{n->oo}"'),
+      'SS "Spelling and notation": "lim_{n->P} for limit (use Limit_{n->P} at start of a sentence)"',
+    ],
+    check(info) {
+      return info.of('N', 'C', 'F', 'e').flatMap(line =>
+        [...line.value.matchAll(/\b(lim|Lim|limit|Limit|LIM)_\{/g)].flatMap(match => {
+          const before = line.value.slice(0, match.index);
+
+          if (AFTER_COLON.test(before)) {
+            return [];
+          }
+
+          const start = SENTENCE_START.test(before);
+          const expected = start ? 'Limit' : 'lim';
+
+          return match[1] === expected ? [] : [finding(line, `Write ${expected}_{...}${start ? ' at the start of a sentence' : ' inside a sentence'}, not ${match[1]}_{...}.`)];
+        }),
+      );
+    },
+  },
+  {
+    id: 'math-notation',
+    field: 'NAME, COMMENTS, FORMULA, EXAMPLE',
+    text: 'The notation of the Style Sheet: f(x) not F[x], ^ not **, +- not +/-, a(n) not a[n], Sum_ and Product_ with a capital, ceiling, Gamma, zeta, Pi, oo, not the TeX forms \\ge, \\le, \\ne nor \\cdot, \\times, \\infty, \\sum, \\prod, \\pi (\\approx is allowed), >, < and != not grth, lrth or .NE., a/(bc) not a/b/c (seen as 1/(...)/(...) and 1/6x); in FORMULA also e not E and mod not %; Floor, Ceiling, Binomial, Triangular, Tribonacci and Tetranacci with a capital only at the start of a sentence.',
+    source: ['SS "Spelling and notation"'],
+    check(info) {
+      return info.of('N', 'C', 'F', 'e').flatMap(line => {
+        const value = line.value.replace(SIGNATURE, '');
+        const rules = line.type === 'F' ? [...MATH_NOTATION, ...FORMULA_NOTATION] : MATH_NOTATION;
+        const notation = rules.find(item => item.pattern.test(value));
+
+        if (notation) {
+          return [finding(line, `Notation of the Style Sheet: ${notation.fix}.`)];
+        }
+
+        const capital = [...value.matchAll(CAPITALIZED_WORD)].find(match => !SENTENCE_START.test(value.slice(0, match.index)));
+
+        return capital ? [finding(line, `Write ${capital[1].toLowerCase()} inside a sentence, not ${capital[1]}.`)] : [];
+      });
     },
   },
   {
@@ -1076,9 +1195,21 @@ const ACCEPTED = [
   },
   {
     entry: 'A401988',
+    rule: 'limit-notation',
+    match: 'lim_{n->oo} log(a(n))/(4*n^2) = 0.42859453746...',
+    reason: 'the line is still in the live draft (#14); the copy of a draft is synced only after approval',
+  },
+  {
+    entry: 'A402345',
+    rule: 'limit-notation',
+    match: 'lim_{n->oo} log(a(n))/(4*n^2) = A143233.',
+    reason: `${APPROVED_AS_IS} (#12, 2026-11-17), the day before Alois P. Heinz wrote Limit_ on A239273 (#55)`,
+  },
+  {
+    entry: 'A401988',
     rule: 'comment-provenance',
     match: 'A transfer matrix in exact integers gives the same terms.',
-    reason: `the sentence is still in the live draft (#12); ${SYNCED_AFTER_APPROVAL}`,
+    reason: `the sentence is still in the live draft (#14); ${SYNCED_AFTER_APPROVAL}`,
   },
   {
     entry: 'A402163',
