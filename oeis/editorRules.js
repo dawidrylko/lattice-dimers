@@ -8,7 +8,9 @@ const FORMER_ACCOUNTS = ['Dawid Rylko'];
 const DATA_WIDTH = 290;
 const SHARED_DEFINITION = 60;
 const MONTH = '(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)';
-const SIGNATURE = new RegExp(`\\s+-\\s+_[^_]+_, ${MONTH} \\d{2} \\d{4}$`);
+const TYPED_SIGNATURE = '~~~~';
+const SIGNATURE = new RegExp(`\\s+(?:-\\s+_[^_]+_, ${MONTH} \\d{2} \\d{4}|(?:-\\s+)?${TYPED_SIGNATURE})$`);
+const TYPED_SIGNATURE_LINE_END = new RegExp(`\\s-\\s${TYPED_SIGNATURE}$`);
 const SIGNED_ACCOUNT = `_${ACCOUNT}_, ${MONTH} \\d{2} \\d{4}`;
 const SYSTEM_KEYWORDS = ['new', 'changed', 'allocated', 'recycled'];
 const PROSE = ['N', 'C', 'D', 'H', 'F', 'Y', 'E'];
@@ -774,6 +776,18 @@ const RULES = [
     },
   },
   {
+    id: 'signature-dash',
+    field: 'COMMENTS, FORMULA, CROSSREFS',
+    text: `A line signed in the edit form ends with " - ${TYPED_SIGNATURE}": the four tildes write only "_Name_, Mon dd yyyy", so the dash before them is typed.`,
+    source: ['SS "Comments": a signature is a space, a dash, a space, then the name, a comma and the date, and ~~~~ writes the name, the comma and the date'],
+    check(info) {
+      return info
+        .of('C', 'F', 'Y')
+        .filter(line => line.value.includes(TYPED_SIGNATURE) && !TYPED_SIGNATURE_LINE_END.test(line.value))
+        .map(line => finding(line, `Type " - ${TYPED_SIGNATURE}": the four tildes write the name and the date, not the dash.`));
+    },
+  },
+  {
     id: 'signature-own-draft',
     field: 'COMMENTS, FORMULA, PROG, EXAMPLE',
     text: "Lines of one's own entry are not signed while it is a draft.",
@@ -783,7 +797,7 @@ const RULES = [
         return [];
       }
 
-      const signed = new RegExp(SIGNED_ACCOUNT);
+      const signed = new RegExp(`${SIGNED_ACCOUNT}|${TYPED_SIGNATURE}`);
 
       return info.lines.filter(line => line.type !== 'A' && signed.test(line.value)).map(line => finding(line, "Drop the signature: the whole draft is the author's."));
     },

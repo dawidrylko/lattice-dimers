@@ -401,6 +401,14 @@ const CASES = [
     options: { status: 'Proposed' },
   },
   {
+    rule: 'signature-own-draft',
+    source: 'constructed: ~~~~ typed into the edit form writes the same signature',
+    entry: 'A402163',
+    before: a402163(A402163_DATA, [['o', '(PARI) a(n) = (M(2*n)^(2*n))[1, 1]; ~~~~']]),
+    after: a402163(A402163_DATA, [['o', '(PARI) a(n) = (M(2*n)^(2*n))[1, 1];']]),
+    options: { status: 'Proposed' },
+  },
+  {
     rule: 'double-space',
     source: 'A004003 #164 -> #165, Jason Yuen: LINKS',
     entry: 'A004003',
@@ -593,6 +601,24 @@ const CASES = [
       ['C', 'The first rows are:'],
       ['C', '1; 2, 1.'],
     ],
+  },
+  {
+    rule: 'line-period',
+    source: 'constructed: the edit form signs a line typed with " - ~~~~" at its end, so the period goes before it',
+    entry: 'A239273',
+    before: [['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669 - ~~~~']],
+    after: [
+      ['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669. - ~~~~'],
+      ['F', 'a(n) ~ c * d^(n^2) / f^n, where c = 1.43791803..., d = exp(4*A401669) = 9.6027320273133..., f = 6.93196613224... (conjectured). - ~~~~'],
+    ],
+  },
+  {
+    rule: 'signature-dash',
+    source: 'SS "Comments": ~~~~ writes the name and the date, the dash before it is typed',
+    entry: 'A239273',
+    before: [['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669. ~~~~']],
+    after: [['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669. - ~~~~']],
+    expect: ' - ~~~~',
   },
   {
     rule: 'crossrefs-form',
@@ -788,6 +814,12 @@ const CASES = [
 ];
 
 const CLEAN = [
+  {
+    rule: 'signature-dash',
+    source: 'SS "Programs": a program is signed inside its comment, "\\\\ ~~~~", with no dash',
+    entry: 'A239273',
+    rows: [['o', '(PARI) a(n) = T(2*n, 2*n); \\\\ ~~~~']],
+  },
   {
     rule: 'comment-provenance',
     source: 'narrowed after review: "agree with" and "checked by" describe the mathematics',
