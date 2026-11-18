@@ -211,7 +211,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | 13.3 GiB, 63 min | `logs/time_runweight_3state_w24.txt` (maxrss 13581 MiB incl. the memory-mapped vector, wall 3787.2 s) | `src/timed.py python3 src/runweight.py 3state 24 --disk <dir>` |
 | 1.5 GiB, 52 min | `logs/time_zex_king_free_m24_K24.txt` (maxrss 1562 MiB, wall 3116.4 s) | `src/timed.py python3 src/zexact.py king free 24 24` |
 | 8.0 GiB, 43 min | `logs/time_lcert_m26.txt` (maxrss 8223 MiB, wall 2557.3 s) | `src/timed.py python3 src/lcert.py 26 30` |
-| 2.4 GiB, 13 min (arm64) | `log-convexity/time_levels.txt` (maxrss 2408 MiB, wall 772.9 s) | `src/timed.py python3 log-convexity/levels.py` |
+| 2.7 GiB, 45 min (arm64) | `log-convexity/time_levels.txt` (maxrss 2730 MiB, wall 2709.1 s) | `src/timed.py python3 log-convexity/levels.py` |
 | 0.6 GiB, 5 min (arm64) | `logs/time_ctmrg.txt` (maxrss 647 MiB, wall 276.5 s; rounded up) | `src/timed.py python3 src/ctmrg.py` |
 
 Note on the machines. The runs of the first version used one machine with four cores and 15.7 GiB of
@@ -221,8 +221,8 @@ memory. The runs added in this version (`data/lean/*longdouble*` of the cylinder
 cores and 15.7 GiB; the `lean.py` outputs record `machine` and `nmant` = 63. From the
 measured memory of `src/cylw.py` (`out/out_estimate.txt`, cost table: 8.4 GiB at w = 25, about doubling
 per width), the cylinder w = 26 needs about 17 GiB, more than the machine has, so `src/` stops at
-w = 25. `log-convexity/levels.py`, `src/ctmrg.py` (both float64 only) and the brick check appended to `out/out_pfaff.txt` ran in October 2026 on an
-arm64 Mac (Python 3.14, the pinned numpy, scipy and mpmath); the earlier lines of `out/out_pfaff.txt` are unchanged. The independent code of `replication/` needs less memory and ran w = 26, 27 and 28 (12.0 GiB at
+w = 25. `src/ctmrg.py` (float64 only) and the brick check appended to `out/out_pfaff.txt` ran in October 2026 and
+`log-convexity/levels.py` (float64 only) last ran in November 2026, all on an arm64 Mac (Python 3.14, the pinned numpy, scipy and mpmath); the earlier lines of `out/out_pfaff.txt` are unchanged. The independent code of `replication/` needs less memory and ran w = 26, 27 and 28 (12.0 GiB at
 w = 27 and 28, `replication/REPORT.md`); those widths enter only the check of Section 3, not the estimate. `/usr/bin/time` was not available; `src/timed.py` records wall time and peak RSS instead.
 
 ## Companion note `paper/king-entropy-log-convexity.tex`

@@ -23,7 +23,9 @@ In the second differences d_q of a_{2q} the rates are rho_+ = r_+^2 and rho_- = 
 crossing x* of the companion note is where r_- = r_+. These identifications are numerical, not proved.
 
 Sections: A controls with known answers; B unit weights; C the scan in x against Table 2 of the note,
-with the gaps; D the crossing x*; E x = 3/2 with the rates fixed; F x = 2 and 3.
+with the gaps; D the crossing x*; E x = 3/2 with the rates fixed; F x = 2 and 3; G small x: the gaps
+closing at the domino point x = 0, m_v/x for x down to 0.08, and the crossing of two branches of twisted
+levels near x = 0.45, where m_v is largest among the x this file prints (0 to 3).
 e0-visible levels come from Arnoldi started at e0 (the Krylov space of e0 lies in the e0-visible
 subspace). Rounding leaks larger e0-invisible levels into it (the twisted +-0.445 theta_1 at x = 1), so Ritz
 values whose e0-weight is below 1e-6 of the largest are dropped. Finite-w values oscillate with w mod 4.
@@ -139,7 +141,8 @@ def levels(w, x, m=36):
 
 
 def top_modulus(w, x, twist, sector=None, k=6):
-    """Largest-modulus eigenvalues of T (or T~), optionally restricted to the parity sector of |A|."""
+    """Largest-modulus eigenvalues of T (or T~), optionally restricted to the parity sector of |A|; levels of equal
+    modulus (to 1e-10 relative) come in a fixed order, larger real part first, since ARPACK starts from a random vector."""
     N = 1 << w
     mask = None
     if sector is not None:
@@ -152,7 +155,8 @@ def top_modulus(w, x, twist, sector=None, k=6):
         u = row(v, w, x, twist)[0]
         return u * mask if mask is not None else u
     ev = eigs(LinearOperator((N, N), matvec=mv), k=k, which='LM', return_eigenvectors=False, tol=1e-13)
-    return ev[np.argsort(-np.abs(ev))]
+    mod = np.round(np.abs(ev) / np.abs(ev).max(), 10)
+    return ev[np.lexsort((-ev.imag, -ev.real, -mod))]
 
 
 def brute(K, w, x):
@@ -370,4 +374,70 @@ print('\n== F. x = 2 and 3: r_-/r_+ by width (both w mod 4 subsequences)')
 for x in (2.0, 3.0):
     print(f'  x={x:g}: ' + ', '.join(f'w={w}: {CX[x, w][2] / CX[x, w][0]:.5f}' for w in (14, 16, 18, 20)) +
           f'; |rho_-|/rho_+ at w = 20: {(CX[x, 20][2] / CX[x, 20][0]) ** 2:.4f}')
+
+
+def gaps(w, x):
+    """In-sector gap log(theta_1/|theta_2|) of sector 0 of T and m_v = log(theta_1/|nu_max|), all levels."""
+    e0 = top_modulus(w, x, False, sector=0)
+    et = top_modulus(w, x, True)
+    return np.log(abs(e0[0]) / abs(e0[1])), np.log(abs(e0[0]) / abs(et[0]))
+
+
+print('\n== G. small x: the gaps at the domino point, m_v/x for x down to 0.08, the crossing of twisted levels near x = 0.45')
+print('G1. weighted counts at small x against brute force over perfect matchings, plain and twisted')
+worst = 0.0
+for K, w in ((4, 4), (5, 4), (6, 4), (4, 5), (3, 6), (4, 6)):
+    for x in (Fraction(0), Fraction(1, 20), Fraction(1, 4), Fraction(9, 20)):
+        tot, tw = brute(K, w, x)
+        z, zt = zk(dense(w, float(x)), K), zk(dense(w, float(x), True), K)
+        worst = max(worst, max(abs(z - float(tot)), abs(zt - float(tw))) / float(tot))
+print(f'  K x w = 4x4, 5x4, 6x4, 4x5, 3x6, 4x6 at x = 0, 1/20, 1/4, 9/20: largest relative deviation {worst:.1e}')
+assert worst < 1e-13
+
+print('G2. x = 0, the domino cylinder (critical): w gap and w m_v against 2 pi and pi/2')
+Z0 = {w: gaps(w, 0.0) for w in range(8, 23, 2)}
+for w in range(8, 23, 2):
+    print(f'  w={w:2d}: gap {Z0[w][0]:.6f}, m_v {Z0[w][1]:.6f}, w gap - 2 pi = {w * Z0[w][0] - 2 * np.pi:+.5f}, '
+          f'w m_v - pi/2 = {w * Z0[w][1] - np.pi / 2:+.5f}')
+rich = [(22 ** 3 * Z0[22][k] - 20 ** 3 * Z0[20][k]) / (22 ** 2 - 20 ** 2) for k in (0, 1)]
+print(f'  Richardson in 1/w^2 from w = 20, 22: w gap -> {rich[0]:.6f} (2 pi = {2 * np.pi:.6f}), '
+      f'w m_v -> {rich[1]:.6f} (pi/2 = {np.pi / 2:.6f})')
+
+print('G3. m_v at w = 16, 18, 20, 22 and the ratios of its successive changes (w = 16..20 and 18..22). Where the last')
+print('    ratio is below 0.7 the m_v of w = 22 is extrapolated by a geometric tail of the last two changes; the ratios grow')
+print('    with w, so that tail is too short and the extrapolated m_v too high. Second line: the in-sector gap, which is not')
+print('    converged in w at small x, against twice the extrapolated m_v.')
+for x in (0.35, 0.25, 0.18, 0.12, 0.08, 0.06, 0.04):
+    r = {w: gaps(w, x) for w in (16, 18, 20, 22)}
+    m = [r[w][1] for w in (16, 18, 20, 22)]
+    d = [m[i] - m[i + 1] for i in range(3)]
+    q0, q = (d[1] / d[0] if d[0] else 0.0), (d[2] / d[1] if d[1] else 0.0)
+    line = f'  x={x:4.2f}: m_v = ' + ', '.join(f'{v:.6f}' for v in m) + f'; ratios {q0:.3f}, {q:.3f}'
+    if 0 < q < 0.7:
+        mi = m[3] - d[2] * q / (1 - q)
+        line += f'; extrapolated {mi:.4f}, m_v/x = {mi / x:.2f} (w = 22: {m[3] / x:.3f})'
+        line += '\n          in-sector gap ' + ', '.join(f'{r[w][0]:.4f}' for w in (18, 20, 22)) + f', 2 m_v = {2 * mi:.4f}'
+    else:
+        line += '; tail not used'
+    print(line, flush=True)
+
+print('G4. m_v at w = 16, 18, 20 around its maximum, and |nu_max|/theta_1 on both sides of x = 0.45 with a line through')
+print('    each side (w = 16; w = 18 at 0.448 and 0.452 for the width dependence)')
+for x in (0.40, 0.45, 0.50):
+    print(f'  x={x:.2f}: m_v = ' + ', '.join(f'{gaps(w, x)[1]:.6f}' for w in (16, 18, 20)), flush=True)
+print('  m_v at w = 16 between 0.5 and 1 (section B has x = 1, section C x >= 1): ' +
+      ', '.join(f'{x}: {gaps(16, x)[1]:.6f}' for x in (0.6, 0.7, 0.8, 0.9)), flush=True)
+ratio = {(w, x): np.exp(-gaps(w, x)[1]) for w, x in [(16, v) for v in (0.444, 0.446, 0.448, 0.452, 0.454, 0.456)] +
+         [(18, 0.448), (18, 0.452)]}
+print('  |nu_max|/theta_1: ' + ', '.join(f'w={w} x={x}: {v:.6f}' for (w, x), v in ratio.items()))
+left = np.polyfit((0.444, 0.446, 0.448), [ratio[16, x] for x in (0.444, 0.446, 0.448)], 1)
+right = np.polyfit((0.452, 0.454, 0.456), [ratio[16, x] for x in (0.452, 0.454, 0.456)], 1)
+xc = (right[1] - left[1]) / (left[0] - right[0])
+res = max(abs(np.polyval(f, x) - ratio[16, x]) for f, xs in ((left, (0.444, 0.446, 0.448)), (right, (0.452, 0.454, 0.456)))
+          for x in xs)
+print(f'  slopes {left[0]:+.4f} (x < 0.45) and {right[0]:+.4f} (x > 0.45), largest residual {res:.1e}; lines cross at '
+      f'x = {xc:.4f}, m_v = {-np.log(np.polyval(left, xc)):.6f} from the lines, {gaps(16, xc)[1]:.6f} computed there')
+t1 = abs(top_modulus(16, xc, False, sector=0)[0])
+print('  moduli of the eight largest twisted levels at that x (/theta_1, w = 16): ' +
+      ', '.join(f'{abs(z) / t1:.6f}' for z in top_modulus(16, xc, True, k=8)))
 print(f'\ntotal time {time.time() - t0:.0f} s')
