@@ -621,6 +621,13 @@ const CASES = [
     expect: ' - ~~~~',
   },
   {
+    rule: 'signature-dash',
+    source: 'SS "Signing your name when you contribute to an existing sequence": examples too',
+    entry: 'A239273',
+    before: [['e', 'a(1) = 3: the three tilings drawn below. ~~~~']],
+    after: [['e', 'a(1) = 3: the three tilings drawn below. - ~~~~']],
+  },
+  {
     rule: 'crossrefs-form',
     source: 'SS "Crossrefs", constructed: an A-number twice',
     entry: 'A309117',
@@ -819,6 +826,40 @@ const CLEAN = [
     source: 'SS "Programs": a program is signed inside its comment, "\\\\ ~~~~", with no dash',
     entry: 'A239273',
     rows: [['o', '(PARI) a(n) = T(2*n, 2*n); \\\\ ~~~~']],
+  },
+  {
+    rule: 'signature-dash',
+    source: 'SS "Signing your name when you contribute to an existing sequence": a block opens with "From ~~~~: (Start)"',
+    entry: 'A239273',
+    rows: [
+      ['C', 'From ~~~~: (Start)'],
+      ['C', 'The first rows are 1 and 2, 1. (End)'],
+    ],
+  },
+  {
+    rule: 'signature-dash',
+    source: 'constructed: the tilde of an asymptotic formula is not a signature',
+    entry: 'A239273',
+    rows: [['F', 'a(n) ~ c * d^n. - ~~~~']],
+  },
+  {
+    rule: 'line-period',
+    source: 'constructed: ~~~~ typed without the dash is left to signature-dash',
+    entry: 'A239273',
+    rows: [['F', 'lim_{n->oo} log(a(n))/(4*n^2) = A401669. ~~~~']],
+  },
+  {
+    rule: 'line-period',
+    source: 'SS "Signing your name when you contribute to an existing sequence": "From ~~~~: (Start)" opens a block that "(End)" closes',
+    entry: 'A239273',
+    rows: [
+      ['C', 'From _Dawid Ryłko_, Nov 18 2026: (Start)'],
+      ['C', 'The first rows are 1 and 2, 1.'],
+      ['C', 'Each row sums to a term of A239273. (End)'],
+      ['F', 'From ~~~~: (Start)'],
+      ['F', 'a(0) = 1.'],
+      ['F', '(End)'],
+    ],
   },
   {
     rule: 'comment-provenance',

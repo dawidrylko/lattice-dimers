@@ -264,8 +264,10 @@ const RULES = [
         .filter((line, index) => {
           const value = line.value.replace(SIGNATURE, '');
           const continued = value.endsWith(':') && lines[index + 1]?.type === line.type;
+          const opensBlock = /:\s*\(Start\)$/.test(value);
+          const body = value.replace(/\s*\(End\)$/, '');
 
-          return !value.endsWith('.') && !continued;
+          return body !== '' && !body.endsWith('.') && !continued && !opensBlock;
         })
         .map(line => finding(line, 'End the line with a period.'));
     },
@@ -777,13 +779,13 @@ const RULES = [
   },
   {
     id: 'signature-dash',
-    field: 'COMMENTS, FORMULA, CROSSREFS',
-    text: `A line signed in the edit form ends with " - ${TYPED_SIGNATURE}": the four tildes write only "_Name_, Mon dd yyyy", so the dash before them is typed.`,
-    source: ['SS "Comments": a signature is a space, a dash, a space, then the name, a comma and the date, and ~~~~ writes the name, the comma and the date'],
+    field: 'COMMENTS, FORMULA, EXAMPLE',
+    text: `A comment, formula or example line signed in the edit form ends with " - ${TYPED_SIGNATURE}": the four tildes write only "_Name_, Mon dd yyyy", so the dash before them is typed. A block of lines opens with "From ${TYPED_SIGNATURE}: (Start)" instead.`,
+    source: ['SS "Signing your name when you contribute to an existing sequence": in comments, examples and formulae the signature is typically preceded by " - ", and a block of several lines opens with "From ~~~~: (Start)"'],
     check(info) {
       return info
-        .of('C', 'F', 'Y')
-        .filter(line => line.value.includes(TYPED_SIGNATURE) && !TYPED_SIGNATURE_LINE_END.test(line.value))
+        .of('C', 'F', 'e')
+        .filter(line => line.value.includes(TYPED_SIGNATURE) && !TYPED_SIGNATURE_LINE_END.test(line.value) && !line.value.startsWith(`From ${TYPED_SIGNATURE}:`))
         .map(line => finding(line, `Type " - ${TYPED_SIGNATURE}": the four tildes write the name and the date, not the dash.`));
     },
   },
