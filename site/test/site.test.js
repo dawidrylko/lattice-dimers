@@ -284,6 +284,7 @@ const siteTestCases = [
   { width: 375, check: 'confirmation' },
   { width: 375, check: 'samples' },
   { width: 375, check: 'benchmark' },
+  { width: 320, check: 'benchmark' },
   { width: 375, check: 'pieces' },
   { width: 375, check: 'landing' },
   { width: 375, check: 'notes' },
@@ -1790,18 +1791,43 @@ async function checkBenchmark(page, baseUrl, width) {
       problems.push(`#${id} wraps a time onto a second line in ${columns.wrapped} rows`);
     }
 
-    const wideOverflow = await page.evaluate(`(async () => {
+    const wide = await page.evaluate(`(async () => {
       const style = document.head.appendChild(document.createElement('style'));
       style.textContent = '.bench { font-family: ${WIDE_FONT}; }';
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       const wrap = document.getElementById('${id}').closest('.table-wrap');
-      const overflow = wrap.scrollWidth - wrap.clientWidth;
+      const icon = cell => cell.querySelector(':scope > a > svg.lang');
+      const name = (row, cell) => row.cells[0].textContent + ' ' + cell.dataset.label;
+      const end = cell => {
+        const range = document.createRange();
+        range.selectNodeContents(cell);
+        return Math.max(icon(cell).getBoundingClientRect().right, ...[...range.getClientRects()].map(rect => rect.right));
+      };
+      const reached = (row, cell) => {
+        const box = cell.getBoundingClientRect();
+        const lefts = [...row.cells].map(next => next.getBoundingClientRect()).filter(next => Math.abs(next.top - box.top) < 1 && next.left > box.left).map(next => next.left);
+        return lefts.length > 0 && Math.min(...lefts) - end(cell) < 1;
+      };
+      const cards = [...document.querySelectorAll('#${id}-rows tr')].flatMap(row => [...row.cells].slice(2, -1).filter(cell => icon(cell) && icon(cell).getClientRects().length).map(cell => ({ row, cell })));
+      const state = {
+        overflow: wrap.scrollWidth - wrap.clientWidth,
+        squeezed: cards.filter(({ cell }) => Math.round(icon(cell).getBoundingClientRect().width * 10) < 160).map(({ row, cell }) => name(row, cell)),
+        touching: cards.filter(({ row, cell }) => reached(row, cell)).map(({ row, cell }) => name(row, cell)),
+      };
       style.remove();
-      return overflow;
+      return state;
     })()`);
 
-    if (wideOverflow > 0) {
-      problems.push(`#${id} scrolls ${wideOverflow} px sideways in ${WIDE_FONT}`);
+    if (wide.overflow > 0) {
+      problems.push(`#${id} scrolls ${wide.overflow} px sideways in ${WIDE_FONT}`);
+    }
+
+    if (wide.squeezed.length) {
+      problems.push(`#${id} squeezes the card icon of ${wide.squeezed.length} cells below 16 px at ${width} px in ${WIDE_FONT}, the first ${wide.squeezed[0]}`);
+    }
+
+    if (wide.touching.length) {
+      problems.push(`#${id} lets ${wide.touching.length} card cells reach the cell beside them at ${width} px in ${WIDE_FONT}, the first ${wide.touching[0]}`);
     }
 
     const runsTitle = await page.evaluate(`(() => {
