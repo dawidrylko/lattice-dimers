@@ -63,9 +63,12 @@ def count_modulo(board):
     next table it lands on. The sums are reduced a slice at a time through a scratch array of SCRATCH_COUNTS counts.
     A worker thread thus holds the two tables and that array.
 
-    A torus runs one start per rotation class, as in JavaScript, but a batch of starts at once. Each table has one
-    column per start. A batch takes as many starts as fit in BATCH_COUNTS counts, and at least one. The interpreter's
-    work per cell is shared by the whole batch."""
+    A torus runs one start per class of rotations and, where the lattice has a mirror image, of mirror images, as in
+    JavaScript, but a batch of starts at once. Each table has one column per start. A batch takes as many starts as fit
+    in BATCH_COUNTS counts, and at least one. The interpreter's work per cell is shared by the whole batch.
+
+    JavaScript and Rust keep only the half of a table that the parity of the set bits leaves live. Here the whole
+    tables stay: picking the live half entry by entry was slower in NumPy than adding these whole views."""
     rows, cols, prime = board["rows"], board["cols"], board["prime"]
     torus, twisted = board["torus"], board["twisted"]
     lattice = LATTICES[board["lattice"]]
@@ -137,14 +140,18 @@ def count_modulo(board):
     def rotate(subset):
         return ((subset << 1) | (subset >> (cols - 1))) & ((1 << cols) - 1)
 
-    reduce = not twisted or rows % 2 == 0
+    def mirror(subset):
+        return int(format(subset, f"0{cols}b")[::-1], 2)
+
+    rotates = not twisted or rows % 2 == 0
+    mirrors = lattice["down_left"] == lattice["down_right"]
     starts = []
     weights = []
 
     for start in range(1 << cols):
         weight = 1
 
-        if reduce:
+        if rotates:
             rotation = rotate(start)
 
             while rotation != start and rotation > start:
@@ -153,6 +160,21 @@ def count_modulo(board):
 
             if rotation != start:
                 continue
+
+        if mirrors:
+            mirrored = mirror(start)
+            least = mirrored
+            rotation = rotate(mirrored)
+
+            while rotates and rotation != mirrored:
+                least = min(least, rotation)
+                rotation = rotate(rotation)
+
+            if least < start:
+                continue
+
+            if least > start:
+                weight *= 2
 
         starts.append(start)
         weights.append(weight)
@@ -232,8 +254,8 @@ def main(argv):
 
     if min(col_count, row_count if torus and not twisted else math.inf) > MAX_CIRCUMFERENCE:
         print(
-            f"The circumference can be at most {MAX_CIRCUMFERENCE}, because every worker thread keeps two tables of "
-            "2^(circumference + 3) states.",
+            f"The circumference can be at most {MAX_CIRCUMFERENCE}, because every worker thread keeps two tables "
+            "whose size doubles with every unit of the circumference.",
             file=sys.stderr,
         )
         return 1

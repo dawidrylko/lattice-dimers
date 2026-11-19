@@ -10,6 +10,8 @@ const { testCasesOf } = require('../core/cases');
 const cylinderTorusModular = require('../solvers/any-lattice-cylinder-torus-modular.js');
 const cylinderTorusBigInt = require('../solvers/any-lattice-cylinder-torus-bigint.js');
 const cylinderTorusPfaffian = require('../solvers/any-lattice-cylinder-torus-pfaffian.js');
+const domiculeModular = require('../solvers/domicule-rectangle-modular.js');
+const domiculeBigInt = require('../solvers/domicule-rectangle-bigint.js');
 const { capThreads } = require('../solvers/domicule-rectangle-polynomial-modular.js');
 const { capThreads: cylinderTorusThreads } = require('../solvers/domicule-cylinder-torus-polynomial-modular.js');
 const { capThreads: anyLatticeCylinderTorusThreads } = require('../solvers/any-lattice-cylinder-torus-polynomial-modular.js');
@@ -362,15 +364,19 @@ describe('modules without a worker count', () => {
   }
 });
 
-describe('the Pfaffian solver against the BigInt solver', () => {
-  const outcomeOf = async count => {
-    try {
-      return String(await count());
-    } catch (error) {
-      return /circumference must be at least 2/.test(error.message) ? 'rejected' : `failed with ${error.message}`;
+const outcomeOf = async count => {
+  try {
+    return String(await count());
+  } catch (error) {
+    if (!/circumference must be at least 2/.test(error.message)) {
+      throw error;
     }
-  };
 
+    return 'rejected';
+  }
+};
+
+describe('the Pfaffian solver against the BigInt solver', () => {
   for (const lattice of ['square', 'triangular']) {
     for (const torus of [false, true]) {
       test(`${lattice} ${torus ? 'tori' : 'cylinders'} from 0x0 to 8x8`, async () => {
@@ -390,6 +396,61 @@ describe('the Pfaffian solver against the BigInt solver', () => {
 
         assert.deepEqual(differences, []);
       });
+    }
+  }
+});
+
+test('a torus with an odd number of cells counts zero modulo a prime', () => {
+  const [prime] = listPrimes(1);
+
+  for (const lattice of ['square', 'triangular', 'king']) {
+    for (const [rows, cols] of [[3, 3], [5, 3], [3, 5]]) {
+      for (const twisted of [false, true]) {
+        assert.equal(cylinderTorusModular.countModulo({ rows, cols, lattice, torus: true, twisted, prime }), 0, `${rows}x${cols} ${lattice}${twisted ? ' twisted' : ''}`);
+      }
+    }
+  }
+});
+
+describe('the modular solver against the BigInt solver', () => {
+  test('rectangles from 0x0 to 9x9', async () => {
+    const differences = [];
+
+    for (let rowCount = 0; rowCount <= 9; rowCount++) {
+      for (let colCount = 0; colCount <= 9; colCount++) {
+        const expected = String(domiculeBigInt.calculateTotalTilingCombinations({ rowCount, colCount }));
+        const actual = String(await domiculeModular.calculateTotalTilingCombinations({ rowCount, colCount, jobs: 1 }));
+
+        if (actual !== expected) {
+          differences.push(`${rowCount}x${colCount}: ${actual} instead of ${expected}`);
+        }
+      }
+    }
+
+    assert.deepEqual(differences, []);
+  });
+
+  for (const lattice of ['square', 'triangular', 'king']) {
+    for (const torus of [false, true]) {
+      for (const twisted of [false, true]) {
+        test(`${lattice} ${torus ? 'tori' : 'cylinders'} from 0x0 to 7x7${twisted ? ' with the seam sign' : ''}`, async () => {
+          const differences = [];
+
+          for (let rowCount = 0; rowCount <= 7; rowCount++) {
+            for (let colCount = 0; colCount <= 7; colCount++) {
+              const board = { rowCount, colCount, lattice, torus, twisted };
+              const expected = await outcomeOf(() => cylinderTorusBigInt.calculateTotalTilingCombinations(board));
+              const actual = await outcomeOf(() => cylinderTorusModular.calculateTotalTilingCombinations({ ...board, jobs: 1 }));
+
+              if (actual !== expected) {
+                differences.push(`${rowCount}x${colCount}: ${actual} instead of ${expected}`);
+              }
+            }
+          }
+
+          assert.deepEqual(differences, []);
+        });
+      }
     }
   }
 });

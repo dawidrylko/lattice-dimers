@@ -43,7 +43,10 @@ def count_modulo(task):
     current table onto the lower half of the next. A free cell that covers bit j moves the count of 2k to
     k + 2^(j - 1) when bit j - 1 of k is clear: the current table reshaped so that one axis is bit 0 and one is bit j,
     onto the next one reshaped so that one axis is bit j - 1. The sums are reduced a slice at a time through a
-    scratch array of SCRATCH_COUNTS counts, so a worker thread holds the two tables and that array."""
+    scratch array of SCRATCH_COUNTS counts, so a worker thread holds the two tables and that array.
+
+    JavaScript and Rust keep only the half of a table that the parity of the set bits leaves live. Here the whole
+    tables stay: picking the live half entry by entry was slower in NumPy than adding these whole views."""
     rows, cols, prime = task["rows"], task["cols"], task["prime"]
     evens = 1 << cols
     modulus = np.uint32(prime)

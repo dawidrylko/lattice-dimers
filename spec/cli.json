@@ -2492,9 +2492,9 @@
     "algorithm": "any-lattice-cylinder-torus-modular",
     "args": [
       "-r",
-      "10",
+      "12",
       "-c",
-      "10",
+      "12",
       "--torus"
     ]
   },
