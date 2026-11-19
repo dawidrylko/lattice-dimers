@@ -2,7 +2,7 @@ const os = require('os');
 const { isMainThread, parentPort, workerData } = require('worker_threads');
 const { parseArgs, startTimer } = require('../core');
 const { listPrimes, combineCheckedResidues, runWorkers } = require('../core/modular');
-const { pfaffianModulo, LARGEST_PRIME_BOUND } = require('../core/pfaffian');
+const { pfaffianModulo, PFAFFIAN_PRIME_BOUND } = require('../core/pfaffian');
 
 const MAX_CELLS = 1600;
 const PRIME_BITS = 25;
@@ -156,7 +156,7 @@ async function calculateTotalTilingCombinations({ rowCount, colCount, lattice, t
 
   const board = { rows: rowCount, cols: colCount, lattice, torus };
   const primeCount = Math.ceil((calculateLog2Bound(board) + 2) / PRIME_BITS) + 1;
-  const primes = listPrimes(primeCount, LARGEST_PRIME_BOUND);
+  const primes = listPrimes(primeCount, PFAFFIAN_PRIME_BOUND);
   const threads = Math.min(jobs, primes.length);
   const shares = Array.from({ length: threads }, (_, thread) => primes.filter((_, index) => index % threads === thread));
   const results = await runWorkers(__filename, shares.map(share => ({ ...board, primes: share })), threads);

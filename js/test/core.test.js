@@ -5,7 +5,7 @@ const path = require('node:path');
 const { describe, test } = require('node:test');
 const { parseArgs } = require('../core');
 const { listPrimes, combineCheckedResidues } = require('../core/modular');
-const { pfaffianModulo, LARGEST_PRIME_BOUND } = require('../core/pfaffian');
+const { pfaffianModulo, PFAFFIAN_PRIME_BOUND } = require('../core/pfaffian');
 const { testCasesOf } = require('../core/cases');
 const cylinderTorusModular = require('../solvers/any-lattice-cylinder-torus-modular.js');
 const { capThreads } = require('../solvers/domicule-rectangle-polynomial-modular.js');
@@ -50,7 +50,7 @@ describe('check primes', () => {
 });
 
 describe('Pfaffian modulo a prime', () => {
-  const prime = listPrimes(1, LARGEST_PRIME_BOUND)[0];
+  const prime = listPrimes(1, PFAFFIAN_PRIME_BOUND)[0];
   const residuesOf = (matrix, modulus = prime) => Float64Array.from(matrix, value => ((value % modulus) + modulus) % modulus);
   const entryOf = (matrix, size, i, j) => (i < j ? matrix[i * size + j] : -matrix[j * size + i]);
   const expand = (matrix, size, [first, ...rest]) =>

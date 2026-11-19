@@ -1,4 +1,4 @@
-const LARGEST_PRIME_BOUND = 2 ** 26;
+const PFAFFIAN_PRIME_BOUND = 2 ** 26;
 
 function negate(value, prime) {
   return value === 0 ? 0 : prime - value;
@@ -76,8 +76,8 @@ function swapWithNext(matrix, size, k, j, prime) {
  * @returns {number} The Pfaffian modulo the prime.
  */
 function pfaffianModulo(matrix, size, prime) {
-  if (matrix.length !== size * size || !(prime < LARGEST_PRIME_BOUND)) {
-    throw new Error(`The matrix must hold size x size entries and the prime must be below ${LARGEST_PRIME_BOUND}.`);
+  if (matrix.length !== size * size || !(prime < PFAFFIAN_PRIME_BOUND)) {
+    throw new Error(`The matrix must hold size x size entries and the prime must be below ${PFAFFIAN_PRIME_BOUND}.`);
   }
 
   if (size % 2 === 1) {
@@ -141,4 +141,4 @@ function pfaffianModulo(matrix, size, prime) {
   return pfaffian;
 }
 
-module.exports = { pfaffianModulo, LARGEST_PRIME_BOUND };
+module.exports = { pfaffianModulo, PFAFFIAN_PRIME_BOUND };
