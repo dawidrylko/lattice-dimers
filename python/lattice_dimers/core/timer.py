@@ -1,12 +1,14 @@
 import sys
 import time
 
+TIME_FLAG = "--time"
+
 
 def start_timer(argv):
     """Starts timing a count, like startTimer of js/core/timer.js: the returned function writes
     "time <milliseconds> ms" to standard error when the arguments include --time."""
     start = time.perf_counter()
-    enabled = "--time" in argv
+    enabled = TIME_FLAG in argv
 
     def stop():
         if enabled:

@@ -118,6 +118,53 @@
       "message": "Usage"
     },
     {
+      "algorithm": "any-lattice-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--twisted",
+        "--lattice",
+        "triangular",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--twisted",
+        "--lattice",
+        "triangular",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--twisted",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
       "algorithm": "any-lattice-cylinder-torus-modular",
       "args": [
         "-r",
@@ -263,6 +310,41 @@
         "4",
         "-j",
         "x"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--twisted",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--twisted",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1",
+        "torus"
       ],
       "message": "Usage"
     },
@@ -487,6 +569,55 @@
       "message": "Usage"
     },
     {
+      "algorithm": "any-lattice-cylinder-torus-pfaffian",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--torus",
+        "-j",
+        "1",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-pfaffian",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--torus",
+        "-j",
+        "1",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-pfaffian",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--torus",
+        "-j",
+        "1",
+        "--twisted"
+      ],
+      "message": "Usage"
+    },
+    {
       "algorithm": "any-lattice-rectangle-bigint",
       "args": [
         "-r",
@@ -678,6 +809,73 @@
       "message": "Usage"
     },
     {
+      "algorithm": "any-lattice-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--twisted"
+      ],
+      "message": "Usage"
+    },
+    {
       "algorithm": "any-lattice-rectangle-modular",
       "args": [
         "-r",
@@ -697,6 +895,67 @@
         "-c",
         "4",
         "--lattice"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--lattice",
+        "triangular",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--lattice",
+        "triangular",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--lattice",
+        "triangular",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--lattice",
+        "triangular",
+        "--twisted"
       ],
       "message": "Usage"
     },
@@ -749,6 +1008,75 @@
       "message": "Usage"
     },
     {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--twisted"
+      ],
+      "message": "Usage"
+    },
+    {
       "algorithm": "domino-rectangle-float",
       "args": [
         "-r",
@@ -807,6 +1135,75 @@
       "message": "Usage"
     },
     {
+      "algorithm": "domino-rectangle-float",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-float",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-float",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-float",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-float",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-float",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--twisted"
+      ],
+      "message": "Usage"
+    },
+    {
       "algorithm": "domino-rectangle-bigint",
       "args": [
         "-r",
@@ -861,6 +1258,75 @@
       "args": [
         "-c",
         "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--twisted"
       ],
       "message": "Usage"
     },
@@ -957,6 +1423,73 @@
       "message": "Invalid array length"
     },
     {
+      "algorithm": "domicule-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--lattice",
+        "triangular"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--twisted"
+      ],
+      "message": "Usage"
+    },
+    {
       "algorithm": "domicule-rectangle-polynomial-bigint",
       "args": [
         "-r",
@@ -1015,6 +1548,75 @@
       "message": "Usage"
     },
     {
+      "algorithm": "domicule-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--twisted"
+      ],
+      "message": "Usage"
+    },
+    {
       "algorithm": "domicule-rectangle-bigint",
       "args": [
         "-r",
@@ -1069,6 +1671,75 @@
       "args": [
         "-c",
         "2"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--twisted"
       ],
       "message": "Usage"
     },
@@ -1155,6 +1826,73 @@
       "message": "Usage"
     },
     {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--lattice",
+        "triangular"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--twisted"
+      ],
+      "message": "Usage"
+    },
+    {
       "algorithm": "domicule-cylinder-torus-polynomial-bigint",
       "args": [
         "-r",
@@ -1233,6 +1971,69 @@
         "3"
       ],
       "message": "Invalid array length"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--twisted"
+      ],
+      "message": "Usage"
     },
     {
       "algorithm": "domicule-cylinder-torus-polynomial-modular",
@@ -1339,6 +2140,64 @@
       "message": "Invalid array length"
     },
     {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "-j",
+        "1",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "-j",
+        "1",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "-j",
+        "1",
+        "--lattice",
+        "triangular"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "-j",
+        "1",
+        "--twisted"
+      ],
+      "message": "Usage"
+    },
+    {
       "algorithm": "any-lattice-rectangle-polynomial-bigint",
       "args": [
         "-r",
@@ -1428,6 +2287,73 @@
         "-c",
         "4",
         "--lattice"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--twisted"
       ],
       "message": "Usage"
     },
@@ -1561,6 +2487,67 @@
         "-c",
         "4",
         "--lattice"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1",
+        "--torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1",
+        "--twisted"
       ],
       "message": "Usage"
     },
@@ -1680,6 +2667,64 @@
         "-c",
         "4",
         "--lattice"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular",
+        "--twisted"
       ],
       "message": "Usage"
     },
@@ -1829,6 +2874,280 @@
         "--lattice"
       ],
       "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1",
+        "--surface",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1",
+        "torus"
+      ],
+      "message": "Usage"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1",
+        "--twisted"
+      ],
+      "message": "Usage"
+    }
+  ],
+  "allFlags": [
+    {
+      "algorithm": "any-lattice-cylinder-torus-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--twisted",
+        "--lattice",
+        "triangular"
+      ],
+      "expectedResult": "128"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--twisted",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1"
+      ],
+      "expectedResult": "128"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-pfaffian",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "--torus",
+        "-j",
+        "1"
+      ],
+      "expectedResult": "1920"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular"
+      ],
+      "expectedResult": "272,0,896,0,608,0,128,0,16"
+    },
+    {
+      "algorithm": "any-lattice-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1"
+      ],
+      "expectedResult": "272,0,896,0,608,0,128,0,16"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular"
+      ],
+      "expectedResult": "56"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1",
+        "--lattice",
+        "triangular"
+      ],
+      "expectedResult": "56"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular"
+      ],
+      "expectedResult": "36,0,16,0,4,0,0,0,0"
+    },
+    {
+      "algorithm": "any-lattice-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--lattice",
+        "triangular",
+        "-j",
+        "1"
+      ],
+      "expectedResult": "36,0,16,0,4,0,0,0,0"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus"
+      ],
+      "expectedResult": "272,0,3712,0,8384,0,4608,0,576"
+    },
+    {
+      "algorithm": "domicule-cylinder-torus-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "--torus",
+        "-j",
+        "1"
+      ],
+      "expectedResult": "272,0,3712,0,8384,0,4608,0,576"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4"
+      ],
+      "expectedResult": "36,0,126,0,105,0,12,0,1"
+    },
+    {
+      "algorithm": "domicule-rectangle-polynomial-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1"
+      ],
+      "expectedResult": "36,0,126,0,105,0,12,0,1"
+    },
+    {
+      "algorithm": "domicule-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4"
+      ],
+      "expectedResult": "280"
+    },
+    {
+      "algorithm": "domicule-rectangle-modular",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4",
+        "-j",
+        "1"
+      ],
+      "expectedResult": "280"
+    },
+    {
+      "algorithm": "domino-rectangle-bigint",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4"
+      ],
+      "expectedResult": "36"
+    },
+    {
+      "algorithm": "domino-rectangle-formula",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4"
+      ],
+      "expectedResult": "36"
+    },
+    {
+      "algorithm": "domino-rectangle-float",
+      "args": [
+        "-r",
+        "4",
+        "-c",
+        "4"
+      ],
+      "expectedResult": "36"
     }
   ],
   "parity": [

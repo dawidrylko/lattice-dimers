@@ -1,6 +1,8 @@
 import math
 import re
 
+from .timer import TIME_FLAG
+
 MAX_SAFE_INTEGER = 2**53 - 1
 DIGITS = re.compile(r"[0-9]+")
 
@@ -22,3 +24,20 @@ def parse_args(args, schema):
         i += 1
 
     return options
+
+
+def has_unknown_argument(args, value_flags, plain_flags=()):
+    """Tells whether the arguments hold one that a solver does not take, like hasUnknownArgument of
+    js/core/commandLineArgsParser.js: a flag of value_flags takes the next argument as its value, whatever it is,
+    and a flag of plain_flags stands alone, as --time does for every solver."""
+    i = 0
+
+    while i < len(args):
+        if args[i] in value_flags:
+            i += 1
+        elif args[i] not in plain_flags and args[i] != TIME_FLAG:
+            return True
+
+        i += 1
+
+    return False

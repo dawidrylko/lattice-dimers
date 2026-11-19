@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lattice_dimers.core import combine_checked_residues, list_primes, pfaffian_modulo
+from lattice_dimers.core import combine_checked_residues, has_unknown_argument, list_primes, pfaffian_modulo
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = ROOT / "spec"
@@ -356,6 +356,38 @@ def test_pfaffian_rejects_a_prime_of_32_bits_and_a_matrix_that_is_not_square():
 
     with pytest.raises(ValueError, match="must be square"):
         pfaffian_modulo(np.zeros(4, dtype=np.uint64), list_primes(1)[0])
+
+
+@pytest.mark.parametrize(
+    "args, expected",
+    [
+        (["-r", "4", "-c", "4", "--lattice", "square", "--torus", "--time"], False),
+        ([], False),
+        (["-r", "--surface", "--lattice"], False),
+        (["-r", "4", "--surface", "torus"], True),
+        (["-r", "4", "torus"], True),
+        (["4", "-r", "4"], True),
+        (["-r", "4", "--twisted"], True),
+        (["-r", "4", "-j", "1"], True),
+        (["-r", "4", "--torus=1"], True),
+        (["-r", "4", ""], True),
+    ],
+)
+def test_an_argument_that_is_no_flag_of_the_solver_and_no_value_of_one(args, expected):
+    assert has_unknown_argument(args, ("-r", "-c", "--lattice"), ("--torus",)) is expected
+
+
+def test_a_solver_without_plain_flags_takes_the_time_flag_and_no_other():
+    assert has_unknown_argument(["-r", "4", "--time"], ("-r",)) is False
+    assert has_unknown_argument(["-r", "4", "--torus"], ("-r",)) is True
+
+
+@pytest.mark.parametrize("board", [(4, 1, "king", False), (1, 4, "king", True), (4, 4, "hexagonal", False), (4.5, 4, "king", False)])
+def test_bigint_cylinder_solver_rejects_the_boards_its_javascript_function_rejects(board):
+    solver = importlib.import_module(module_of("any-lattice-cylinder-torus-bigint"))
+
+    with pytest.raises(ValueError, match="circumference must be at least 2"):
+        solver.calculate_total_tiling_combinations(*board)
 
 
 def test_pfaffian_solver_says_that_the_kings_graph_is_not_planar():

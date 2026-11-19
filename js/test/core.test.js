@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { describe, test } = require('node:test');
-const { parseArgs } = require('../core');
+const { parseArgs, hasUnknownArgument } = require('../core');
 const { listPrimes, combineCheckedResidues } = require('../core/modular');
 const { pfaffianModulo, PFAFFIAN_PRIME_BOUND } = require('../core/pfaffian');
 const { testCasesOf } = require('../core/cases');
@@ -173,6 +173,28 @@ describe('parser', () => {
       assert.equal(size, expectedResult);
     });
   }
+
+  test('an argument that is no flag of the solver and no value of one', () => {
+    const cases = [
+      { args: ['-r', '4', '-c', '4', '--lattice', 'square', '--torus', '--time'], expectedResult: false },
+      { args: [], expectedResult: false },
+      { args: ['-r', '--surface', '--lattice'], expectedResult: false },
+      { args: ['-r', '4', '--surface', 'torus'], expectedResult: true },
+      { args: ['-r', '4', 'torus'], expectedResult: true },
+      { args: ['4', '-r', '4'], expectedResult: true },
+      { args: ['-r', '4', '--twisted'], expectedResult: true },
+      { args: ['-r', '4', '-j', '1'], expectedResult: true },
+      { args: ['-r', '4', '--torus=1'], expectedResult: true },
+      { args: ['-r', '4', ''], expectedResult: true },
+    ];
+
+    for (const { args, expectedResult } of cases) {
+      assert.equal(hasUnknownArgument(args, ['-r', '-c', '--lattice'], ['--torus']), expectedResult, args.join(' '));
+    }
+
+    assert.equal(hasUnknownArgument(['-r', '4', '--time'], ['-r']), false);
+    assert.equal(hasUnknownArgument(['-r', '4', '--torus'], ['-r']), true);
+  });
 });
 
 describe('limits', () => {

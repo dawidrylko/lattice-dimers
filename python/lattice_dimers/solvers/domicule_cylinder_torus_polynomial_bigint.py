@@ -1,7 +1,7 @@
 import sys
 from collections import Counter
 
-from lattice_dimers.core import parse_args, start_timer
+from lattice_dimers.core import has_unknown_argument, parse_args, start_timer
 
 MAX_CIRCUMFERENCE = 20
 SHIFTS = (-1, 0, 1)
@@ -138,7 +138,7 @@ def main(argv):
     row_count = options.get("rowCount")
     col_count = options.get("colCount")
 
-    if not is_valid_board(row_count, col_count, torus):
+    if not is_valid_board(row_count, col_count, torus) or has_unknown_argument(argv, ("-r", "-c"), ("--torus",)):
         print(USAGE, file=sys.stderr)
         return 1
 

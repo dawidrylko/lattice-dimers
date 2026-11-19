@@ -250,6 +250,17 @@ fn rejections() {
 }
 
 #[test]
+fn all_flags() {
+    let entries = spec("cli.json")["allFlags"].as_array().unwrap().clone();
+    let failures = failures_of(&entries, |entry| {
+        let (id, args, expected) = (entry["algorithm"].as_str().unwrap(), texts(&entry["args"]), text_of(&entry["expectedResult"]));
+        let result = run(id, &args, SHORT);
+        (result.code != 0 || result.stdout.trim() != expected).then(|| format!("{} (expected {expected})", describe(id, &args, &result)))
+    });
+    assert_no_failures("all flags", entries.len(), failures);
+}
+
+#[test]
 fn parity() {
     let entries = spec("cli.json")["parity"].as_array().unwrap().clone();
     let failures = failures_of(&entries, |entry| {

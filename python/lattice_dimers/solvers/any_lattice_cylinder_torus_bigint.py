@@ -1,6 +1,6 @@
 import sys
 
-from lattice_dimers.core import parse_args, start_timer
+from lattice_dimers.core import has_unknown_argument, parse_args, start_timer
 
 MAX_CIRCUMFERENCE = 20
 LATTICES = {
@@ -53,6 +53,11 @@ def list_row_transitions(cols, lattice):
 
 
 def calculate_total_tiling_combinations(row_count, col_count, lattice="king", torus=False, twisted=False):
+    if not is_valid_board(row_count, col_count, torus) or lattice not in LATTICES:
+        raise ValueError(
+            "The circumference must be at least 2, a torus needs at least 2 rows unless the board has no cells, and the lattice is square, triangular or king."
+        )
+
     if row_count * col_count == 0:
         return 1
 
@@ -104,7 +109,11 @@ def main(argv):
     row_count = options.get("rowCount")
     col_count = options.get("colCount")
 
-    if not is_valid_board(row_count, col_count, torus) or lattice not in LATTICES:
+    if (
+        not is_valid_board(row_count, col_count, torus)
+        or lattice not in LATTICES
+        or has_unknown_argument(argv, ("-r", "-c", "--lattice"), ("--torus", "--twisted"))
+    ):
         print(USAGE, file=sys.stderr)
         return 1
 

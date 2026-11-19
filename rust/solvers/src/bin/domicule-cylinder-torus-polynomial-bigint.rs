@@ -1,6 +1,6 @@
 use std::process::ExitCode;
 
-use lattice_dimers_core::{BigInt, Timer, parse_args};
+use lattice_dimers_core::{BigInt, Timer, has_unknown_argument, parse_args};
 
 const MAX_CIRCUMFERENCE: u64 = 20;
 const USAGE: &str = "Usage: domicule-cylinder-torus-polynomial-bigint -r <rowCount> -c <circumference> [--torus]\nThe circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.";
@@ -159,7 +159,7 @@ fn main() -> ExitCode {
         .filter(|&(rows, cols)| rows == 0 || cols == 0 || (cols >= 2 && (!torus || rows >= 2)))
         .unzip();
 
-    let (Some(row_count), Some(col_count)) = (row_count, col_count) else {
+    let (Some(row_count), Some(col_count), false) = (row_count, col_count, has_unknown_argument(&argv, &["-r", "-c"], &["--torus"])) else {
         eprintln!("{USAGE}");
         return ExitCode::FAILURE;
     };

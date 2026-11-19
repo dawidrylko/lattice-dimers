@@ -1,4 +1,4 @@
-const { parseArgs, startTimer } = require('../core');
+const { parseArgs, hasUnknownArgument, startTimer } = require('../core');
 const { LATTICES } = require('./any-lattice-cylinder-torus-bigint.js');
 
 const MAX_CIRCUMFERENCE = 20;
@@ -165,7 +165,7 @@ function __main__() {
   const latticeIndex = argv.indexOf('--lattice');
   const lattice = latticeIndex === -1 ? 'king' : argv[latticeIndex + 1];
 
-  if (!isValidBoard(options, torus) || !Object.hasOwn(LATTICES, lattice)) {
+  if (!isValidBoard(options, torus) || !Object.hasOwn(LATTICES, lattice) || hasUnknownArgument(argv, ['-r', '-c', '--lattice'], ['--torus'])) {
     console.error(
       'Usage: node js/solvers/any-lattice-cylinder-torus-polynomial-bigint.js -r <rowCount> -c <circumference> [--torus] [--lattice king|triangular|square]\n' +
         'The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.',

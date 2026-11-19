@@ -1,6 +1,6 @@
 use std::process::ExitCode;
 
-use lattice_dimers_core::{BigInt, Timer, parse_args};
+use lattice_dimers_core::{BigInt, Timer, has_unknown_argument, parse_args};
 
 const MAX_SHORTER_SIDE: u64 = 20;
 const USAGE: &str =
@@ -108,7 +108,7 @@ fn main() -> ExitCode {
     let row_count = options.get("rowCount").copied().flatten();
     let col_count = options.get("colCount").copied().flatten();
 
-    let (Some(row_count), Some(col_count), Some(lattice)) = (row_count, col_count, read_lattice(&argv)) else {
+    let (Some(row_count), Some(col_count), Some(lattice), false) = (row_count, col_count, read_lattice(&argv), has_unknown_argument(&argv, &["-r", "-c", "--lattice"], &[])) else {
         eprintln!("{USAGE}");
         return ExitCode::FAILURE;
     };

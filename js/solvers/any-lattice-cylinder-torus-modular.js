@@ -1,6 +1,6 @@
 const os = require('os');
 const { isMainThread, parentPort, workerData } = require('worker_threads');
-const { parseArgs, startTimer } = require('../core');
+const { parseArgs, hasUnknownArgument, startTimer } = require('../core');
 const { listPrimes, combineCheckedResidues, runWorkers } = require('../core/modular');
 
 const MAX_CIRCUMFERENCE = 24;
@@ -421,7 +421,7 @@ async function __main__() {
   const twisted = argv.includes('--twisted');
   const jobs = options.jobs ?? os.availableParallelism();
 
-  if (!isValidBoard(options, torus) || !Object.hasOwn(LATTICES, lattice) || !(jobs > 0)) {
+  if (!isValidBoard(options, torus) || !Object.hasOwn(LATTICES, lattice) || !(jobs > 0) || hasUnknownArgument(argv, ['-r', '-c', '-j', '--lattice'], ['--torus', '--twisted'])) {
     console.error(
       'Usage: node js/solvers/any-lattice-cylinder-torus-modular.js -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\n' +
         'The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.',

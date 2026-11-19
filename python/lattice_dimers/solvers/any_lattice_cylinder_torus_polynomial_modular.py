@@ -4,7 +4,7 @@ import sys
 
 import numpy as np
 
-from lattice_dimers.core import combine_checked_residues, list_primes, parse_args, run_workers, start_timer
+from lattice_dimers.core import combine_checked_residues, has_unknown_argument, list_primes, parse_args, run_workers, start_timer
 from lattice_dimers.solvers.any_lattice_cylinder_torus_modular import LATTICES
 from lattice_dimers.solvers.any_lattice_rectangle_bigint import read_lattice
 
@@ -235,7 +235,12 @@ def main(argv):
     row_count = options.get("rowCount")
     col_count = options.get("colCount")
 
-    if not is_valid_board(row_count, col_count, torus) or not jobs > 0 or lattice not in LATTICES:
+    if (
+        not is_valid_board(row_count, col_count, torus)
+        or not jobs > 0
+        or lattice not in LATTICES
+        or has_unknown_argument(argv, ("-r", "-c", "-j", "--lattice"), ("--torus",))
+    ):
         print(USAGE, file=sys.stderr)
         return 1
 

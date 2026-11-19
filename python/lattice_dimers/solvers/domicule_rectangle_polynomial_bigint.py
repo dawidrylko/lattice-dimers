@@ -1,6 +1,6 @@
 import sys
 
-from lattice_dimers.core import parse_args, start_timer
+from lattice_dimers.core import has_unknown_argument, parse_args, start_timer
 
 MAX_SHORTER_SIDE = 20
 USAGE = "Usage: python3 -m lattice_dimers.solvers.domicule_rectangle_polynomial_bigint -r <rowCount> -c <colCount>"
@@ -85,7 +85,7 @@ def main(argv):
     row_count = options.get("rowCount")
     col_count = options.get("colCount")
 
-    if not is_valid_size(row_count) or not is_valid_size(col_count):
+    if not is_valid_size(row_count) or not is_valid_size(col_count) or has_unknown_argument(argv, ("-r", "-c")):
         print(USAGE, file=sys.stderr)
         return 1
 

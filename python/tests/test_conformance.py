@@ -168,6 +168,21 @@ def test_rejection(rejection):
 @pytest.mark.parametrize(
     "case",
     [
+        pytest.param(case, id=f"{case['algorithm']}-{' '.join(case['args'])}")
+        for case in CLI["allFlags"]
+        if "py" in ALGORITHMS[case["algorithm"]]
+    ],
+)
+def test_every_flag_an_algorithm_takes(case):
+    result = run(case["algorithm"], case["args"], timeout=REJECTION_TIMEOUT)
+
+    assert result.returncode == 0, result.stderr.strip()
+    assert result.stdout.strip() == case["expectedResult"]
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
         pytest.param(case, id=f"{case['algorithm']}-{case['rowCount']}x{case['colCount']}")
         for case in CLI["parity"]
         if "py" in ALGORITHMS[case["algorithm"]]

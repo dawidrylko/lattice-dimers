@@ -4,7 +4,7 @@ import sys
 
 import numpy as np
 
-from lattice_dimers.core import combine_checked_residues, list_primes, parse_args, pfaffian_modulo, run_workers, start_timer
+from lattice_dimers.core import combine_checked_residues, has_unknown_argument, list_primes, parse_args, pfaffian_modulo, run_workers, start_timer
 
 MAX_CELLS = 1600
 LATTICES = {"square": ((1, 0), (0, 1)), "triangular": ((1, 0), (0, 1), (1, 1))}
@@ -149,7 +149,12 @@ def main(argv):
     row_count = options.get("rowCount")
     col_count = options.get("colCount")
 
-    if not is_valid_board(row_count, col_count, torus) or lattice not in (*LATTICES, "king") or not jobs > 0 or "--twisted" in argv:
+    if (
+        not is_valid_board(row_count, col_count, torus)
+        or lattice not in (*LATTICES, "king")
+        or not jobs > 0
+        or has_unknown_argument(argv, ("-r", "-c", "-j", "--lattice"), ("--torus",))
+    ):
         print(USAGE, file=sys.stderr)
         return 1
 
