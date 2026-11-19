@@ -41,7 +41,7 @@ A board is the h × w grid of cells a tiling covers, on any surface; the gallery
 
 ## Signs
 
-A signed count weighs each tiling with a sign instead of counting it once. This repository uses two. The seam sign comes from the column seam, and the word twisted marks it in the code and the research notes. The crossing sign comes from the unit squares in which two diagonal pieces cross, and no flag or solver carries it.
+A signed count weighs each tiling with a sign instead of counting it once. This repository uses two. The seam sign comes from the column seam, and the word twisted marks it in the code and the research notes. The crossing sign comes from the unit squares in which two diagonal pieces cross. No flag sets it and no solver prints it.
 
 | term | meaning | where it is used | avoid |
 | --- | --- | --- | --- |
