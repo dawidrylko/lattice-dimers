@@ -125,7 +125,7 @@
         "-c",
         "25"
       ],
-      "message": "at most 24"
+      "message": "because every worker thread keeps two tables whose size doubles with every unit of the circumference"
     },
     {
       "algorithm": "any-lattice-cylinder-torus-modular",

@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lattice_dimers.core import list_primes, pfaffian_modulo
+from lattice_dimers.core import combine_checked_residues, list_primes, pfaffian_modulo
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = ROOT / "spec"
@@ -433,3 +433,51 @@ def test_modular_solver_agrees_with_the_bigint_solver_on_rectangles_from_0x0_to_
     differences = [f"{rows}x{cols}: {actual} instead of {expected}" for rows, cols, actual, expected in outcomes if actual != expected]
 
     assert differences == []
+
+
+def king_pfaffian_modulo(rows, cols, prime):
+    matrix = np.zeros((rows * cols, rows * cols), dtype=np.uint64)
+
+    for x in range(rows):
+        for y in range(cols):
+            straight = prime - 1 if x % 2 == 0 else 1
+
+            for u, v, entry in ((x + 1, y, straight), (x, y + 1, straight), (x + 1, y + 1, 1), (x + 1, y - 1, 1)):
+                if u < rows and 0 <= v < cols:
+                    matrix[x * cols + y, u * cols + v] = entry
+
+    return pfaffian_modulo(matrix, prime)
+
+
+@pytest.mark.parametrize(
+    ("rows", "cols", "expected"),
+    [
+        (2, 2, 1),
+        (5, 2, 1),
+        (4, 3, 15),
+        (4, 4, 92),
+        (5, 4, 427),
+        (6, 6, 223775),
+        (8, 7, 1554683369),
+        (8, 8, 57770908609),
+        (10, 10, 609997767152613273),
+        (12, 12, 426367341321684015743692783),
+    ],
+)
+def test_crossing_sign_sum_of_the_rectangle_kernel_is_plus_or_minus_the_pfaffian_of_the_king_board(rows, cols, expected):
+    modular = importlib.import_module(module_of("domicule-rectangle-modular"))
+    primes = list_primes(5)
+    sums = [modular.count_modulo({"rows": rows, "cols": cols, "prime": prime, "crossing_sign": True}) for prime in primes]
+    pfaffians = [king_pfaffian_modulo(rows, cols, prime) for prime in primes]
+
+    assert combine_checked_residues(sums, primes, signed=True) == expected
+    assert abs(combine_checked_residues(pfaffians, primes, signed=True)) == expected
+
+
+@pytest.mark.parametrize(("rows", "cols", "expected"), [(5, 2, 1), (4, 3, 15), (6, 6, 223775)])
+def test_crossing_sign_sum_with_a_scratch_array_of_one_count(monkeypatch, rows, cols, expected):
+    modular = importlib.import_module(module_of("domicule-rectangle-modular"))
+    monkeypatch.setattr(modular, "SCRATCH_COUNTS", 1)
+    prime = list_primes(1)[0]
+
+    assert modular.count_modulo({"rows": rows, "cols": cols, "prime": prime, "crossing_sign": True}) == expected % prime

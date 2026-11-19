@@ -148,7 +148,9 @@ function parityOf(entry) {
  * Fills one block of the next table. Entry e stands for the state 2e + bit, where bit makes
  * the number of set bits of the state odd or even as the step requires (parity), and a term
  * with the shift s reads the current entry 2e + bit - s. Two neighbouring entries have
- * opposite bits, so a block of at least two entries is filled a pair at a time.
+ * opposite bits, so a block of at least two entries is filled a pair at a time. The pair
+ * loop holds four plain terms and one odd term, the most a block of two or more entries has;
+ * a block with more would take the entry loop, which takes any number.
  * @param {Uint32Array} next The next table.
  * @param {Uint32Array} current The current table.
  * @param {number} from The first entry of the block.

@@ -455,3 +455,46 @@ describe('the modular solver against the BigInt solver', () => {
   }
 });
 
+function kingPfaffianModulo(rows, cols, prime) {
+  const size = rows * cols;
+  const matrix = new Float64Array(size * size);
+
+  for (let x = 0; x < rows; x++) {
+    for (let y = 0; y < cols; y++) {
+      const straight = x % 2 === 0 ? prime - 1 : 1;
+      const steps = [[x + 1, y, straight], [x, y + 1, straight], [x + 1, y + 1, 1], [x + 1, y - 1, 1]];
+
+      for (const [u, v, entry] of steps) {
+        if (u < rows && v >= 0 && v < cols) {
+          matrix[(x * cols + y) * size + u * cols + v] = entry;
+        }
+      }
+    }
+  }
+
+  return pfaffianModulo(matrix, size, prime);
+}
+
+test('the crossing sign sum of the rectangle kernel is plus or minus the Pfaffian of the king board', () => {
+  const primes = listPrimes(5, PFAFFIAN_PRIME_BOUND);
+  const boards = [
+    [2, 2, '1'],
+    [5, 2, '1'],
+    [4, 3, '15'],
+    [4, 4, '92'],
+    [5, 4, '427'],
+    [6, 6, '223775'],
+    [8, 7, '1554683369'],
+    [8, 8, '57770908609'],
+    [10, 10, '609997767152613273'],
+    [12, 12, '426367341321684015743692783'],
+  ];
+
+  for (const [rows, cols, expected] of boards) {
+    const sums = primes.map(prime => domiculeModular.countModulo(rows, cols, prime, true));
+    const pfaffians = primes.map(prime => kingPfaffianModulo(rows, cols, prime));
+
+    assert.equal(String(combineCheckedResidues(sums, primes, true)), expected, `${rows}x${cols}`);
+    assert.equal(String(combineCheckedResidues(pfaffians, primes, true)).replace('-', ''), expected, `the Pfaffian of ${rows}x${cols}`);
+  }
+});

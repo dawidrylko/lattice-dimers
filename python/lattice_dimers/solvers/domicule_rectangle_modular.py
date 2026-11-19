@@ -46,13 +46,21 @@ def count_modulo(task):
     scratch array of SCRATCH_COUNTS counts, so a worker thread holds the two tables and that array.
 
     JavaScript and Rust keep only the half of a table that the parity of the set bits leaves live. Here the whole
-    tables stay: picking the live half entry by entry was slower in NumPy than adding these whole views."""
+    tables stay: picking the live half entry by entry was slower in NumPy than adding these whole views.
+
+    With the task key crossing_sign a tiling counts with its crossing sign, (-1)^k for the k unit squares in which
+    two diagonal pieces cross. The down-left move closes such a square when the cell below the one that moves is
+    covered already, bit cols of the state, which only the down-right move of the cell to its left does; that half
+    of its view is subtracted. Under a suitable orientation the Pfaffian of the board is plus or minus that sum
+    (Wildeboer and Seidel, cited in research/king-entropy/paper/king-entropy.tex), which
+    python/tests/test_solvers.py checks with the orientation that docs/glossary.md names. No solver prints the sum."""
     rows, cols, prime = task["rows"], task["cols"], task["prime"]
+    crossing_sign = task.get("crossing_sign", False)
     evens = 1 << cols
     modulus = np.uint32(prime)
     scratch = np.empty(SCRATCH_COUNTS, dtype=np.uint32)
 
-    def accumulate(target, source):
+    def accumulate(target, source, change=np.add, restore=np.subtract):
         axis = int(np.argmax(target.shape))
         span = max(1, SCRATCH_COUNTS * target.shape[axis] // target.size)
 
@@ -60,8 +68,8 @@ def count_modulo(task):
             part = (slice(None),) * axis + (slice(low, low + span),)
             into = target[part]
             spare = scratch[: into.size].reshape(into.shape) if into.size <= SCRATCH_COUNTS else np.empty_like(into)
-            np.add(into, source[part], out=into)
-            np.subtract(into, modulus, out=spare)
+            change(into, source[part], out=into)
+            restore(into, modulus, out=spare)
             np.minimum(into, spare, out=into)
 
     def step(current, following, c, has_below):
@@ -76,7 +84,13 @@ def count_modulo(task):
             block = 1 << (bit - 1)
             groups = evens // (2 * block)
             free = current.reshape(groups, 2, block, 2)[:, 0, :, 0]
-            accumulate(following.reshape(2, groups, 2, block)[0, :, 1], free)
+            target = following.reshape(2, groups, 2, block)[0, :, 1]
+
+            if crossing_sign and c > 0 and bit == cols - 1:
+                accumulate(target[0], free[0])
+                accumulate(target[1], free[1], change=np.subtract, restore=np.add)
+            else:
+                accumulate(target, free)
 
     current = np.zeros(2 * evens, dtype=np.uint32)
     following = np.zeros_like(current)
