@@ -263,6 +263,23 @@ fn parity() {
 }
 
 #[test]
+fn pfaffian_against_bigint() {
+    let (twin, id) = ("any-lattice-cylinder-torus-bigint", "any-lattice-cylinder-torus-pfaffian");
+    let boards: Vec<Value> = ["square", "triangular"]
+        .into_iter()
+        .flat_map(|lattice| [false, true].into_iter().map(move |torus| (lattice, torus)))
+        .flat_map(|(lattice, torus)| (0..=8).flat_map(move |rows| (0..=8).map(move |cols| serde_json::json!({ "rowCount": rows, "colCount": cols, "lattice": lattice, "torus": torus }))))
+        .collect();
+    let failures = failures_of(&boards, |board| {
+        let args = board_args(board);
+        let (expected, result) = (run(twin, &args, SHORT), run(id, &args, SHORT));
+        (result.code != expected.code || result.stdout != expected.stdout || ![0, 1].contains(&result.code))
+            .then(|| format!("{} (expected as {})", describe(id, &args, &result), describe(twin, &args, &expected)))
+    });
+    assert_no_failures("pfaffian against bigint", boards.len(), failures);
+}
+
+#[test]
 fn precision() {
     let entries = spec("cli.json")["precision"].as_array().unwrap().clone();
     let failures = failures_of(&entries, |entry| {

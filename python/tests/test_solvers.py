@@ -363,3 +363,31 @@ def test_pfaffian_solver_says_that_the_kings_graph_is_not_planar():
 
     with pytest.raises(ValueError, match="is not planar"):
         solver.calculate_total_tiling_combinations(4, 4, "king")
+
+
+@pytest.mark.parametrize("lattice", ["square", "triangular"])
+@pytest.mark.parametrize("torus", [False, True])
+def test_pfaffian_solver_agrees_with_the_bigint_solver_from_0x0_to_8x8(lattice, torus):
+    pfaffian = importlib.import_module(module_of("any-lattice-cylinder-torus-pfaffian"))
+    bigint = importlib.import_module(module_of("any-lattice-cylinder-torus-bigint"))
+
+    def expected_of(rows, cols):
+        if not bigint.is_valid_board(rows, cols, torus):
+            return "rejected"
+
+        return bigint.calculate_total_tiling_combinations(rows, cols, lattice, torus)
+
+    def actual_of(rows, cols):
+        try:
+            return pfaffian.calculate_total_tiling_combinations(rows, cols, lattice, torus, jobs=1)
+        except ValueError as error:
+            return "rejected" if "circumference must be at least 2" in str(error) else f"failed with {error}"
+
+    boards = [(rows, cols) for rows in range(9) for cols in range(9)]
+    differences = [
+        f"{rows}x{cols}: {actual_of(rows, cols)} instead of {expected_of(rows, cols)}"
+        for rows, cols in boards
+        if actual_of(rows, cols) != expected_of(rows, cols)
+    ]
+
+    assert differences == []
