@@ -251,11 +251,21 @@ fn rejections() {
 
 #[test]
 fn all_flags() {
-    let entries = spec("cli.json")["allFlags"].as_array().unwrap().clone();
-    let failures = failures_of(&entries, |entry| {
-        let (id, args, expected) = (entry["algorithm"].as_str().unwrap(), texts(&entry["args"]), text_of(&entry["expectedResult"]));
-        let result = run(id, &args, SHORT);
-        (result.code != 0 || result.stdout.trim() != expected).then(|| format!("{} (expected {expected})", describe(id, &args, &result)))
+    let entries: Vec<(Value, Vec<String>)> = spec("cli.json")["allFlags"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|entry| {
+            let args = texts(&entry["args"]);
+            let plain = args.iter().enumerate().filter(|(i, token)| token.starts_with('-') && args.get(i + 1).is_none_or(|next| next.starts_with('-')));
+            let repeats = plain.map(|(_, flag)| vec![flag.clone()]).chain([Vec::new(), vec!["--time".to_string(); 2]]);
+            repeats.map(|more| (entry.clone(), [args.clone(), more].concat())).collect::<Vec<_>>()
+        })
+        .collect();
+    let failures = failures_of(&entries, |(entry, args)| {
+        let (id, expected) = (entry["algorithm"].as_str().unwrap(), text_of(&entry["expectedResult"]));
+        let result = run(id, args, SHORT);
+        (result.code != 0 || result.stdout.trim() != expected).then(|| format!("{} (expected {expected})", describe(id, args, &result)))
     });
     assert_no_failures("all flags", entries.len(), failures);
 }
