@@ -173,7 +173,7 @@ def test_rejection(rejection):
         if "py" in ALGORITHMS[case["algorithm"]]
     ],
 )
-def test_every_flag_an_algorithm_takes(case):
+def test_every_flag_an_algorithm_takes_besides_time(case):
     result = run(case["algorithm"], case["args"], timeout=REJECTION_TIMEOUT)
 
     assert result.returncode == 0, result.stderr.strip()

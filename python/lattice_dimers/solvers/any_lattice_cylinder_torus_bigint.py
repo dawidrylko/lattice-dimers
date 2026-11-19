@@ -1,6 +1,6 @@
 import sys
 
-from lattice_dimers.core import has_unknown_argument, parse_args, start_timer
+from lattice_dimers.core import has_unusable_argument, parse_args, start_timer
 
 MAX_CIRCUMFERENCE = 20
 LATTICES = {
@@ -112,7 +112,7 @@ def main(argv):
     if (
         not is_valid_board(row_count, col_count, torus)
         or lattice not in LATTICES
-        or has_unknown_argument(argv, ("-r", "-c", "--lattice"), ("--torus", "--twisted"))
+        or has_unusable_argument(argv, ("-r", "-c", "--lattice"), ("--torus", "--twisted"))
     ):
         print(USAGE, file=sys.stderr)
         return 1

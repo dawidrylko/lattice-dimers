@@ -26,14 +26,19 @@ def parse_args(args, schema):
     return options
 
 
-def has_unknown_argument(args, value_flags, plain_flags=()):
-    """Tells whether the arguments hold one that a solver does not take, like hasUnknownArgument of
+def has_unusable_argument(args, value_flags, plain_flags=()):
+    """Tells whether the arguments hold one that a solver cannot use, like hasUnusableArgument of
     js/core/commandLineArgsParser.js: a flag of value_flags takes the next argument as its value, whatever it is,
-    and a flag of plain_flags stands alone, as --time does for every solver."""
+    and may come once, and a flag of plain_flags stands alone and may repeat, as --time does for every solver."""
+    seen = set()
     i = 0
 
     while i < len(args):
         if args[i] in value_flags:
+            if args[i] in seen:
+                return True
+
+            seen.add(args[i])
             i += 1
         elif args[i] not in plain_flags and args[i] != TIME_FLAG:
             return True

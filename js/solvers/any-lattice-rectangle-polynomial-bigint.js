@@ -1,4 +1,4 @@
-const { parseArgs, hasUnknownArgument, startTimer } = require('../core');
+const { parseArgs, hasUnusableArgument, startTimer } = require('../core');
 const { LATTICES } = require('./any-lattice-rectangle-bigint.js');
 
 const MAX_SHORTER_SIDE = 20;
@@ -98,7 +98,7 @@ function __main__() {
   const latticeIndex = argv.indexOf('--lattice');
   const lattice = latticeIndex === -1 ? 'king' : argv[latticeIndex + 1];
 
-  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !Object.hasOwn(LATTICES, lattice) || hasUnknownArgument(argv, ['-r', '-c', '--lattice'])) {
+  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !Object.hasOwn(LATTICES, lattice) || hasUnusableArgument(argv, ['-r', '-c', '--lattice'])) {
     console.error(
       'Usage: node js/solvers/any-lattice-rectangle-polynomial-bigint.js -r <rowCount> -c <colCount> [--lattice king|triangular|square]',
     );

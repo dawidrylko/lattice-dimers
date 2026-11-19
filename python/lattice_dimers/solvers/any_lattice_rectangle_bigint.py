@@ -1,6 +1,6 @@
 import sys
 
-from lattice_dimers.core import has_unknown_argument, parse_args, start_timer
+from lattice_dimers.core import has_unusable_argument, parse_args, start_timer
 
 MAX_SHORTER_SIDE = 30
 USAGE = (
@@ -99,7 +99,7 @@ def main(argv):
         not is_valid_size(row_count)
         or not is_valid_size(col_count)
         or lattice not in LATTICES
-        or has_unknown_argument(argv, ("-r", "-c", "--lattice"))
+        or has_unusable_argument(argv, ("-r", "-c", "--lattice"))
     ):
         print(USAGE, file=sys.stderr)
         return 1

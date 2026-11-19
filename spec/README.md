@@ -8,4 +8,4 @@ What the solvers count, apart from the language that counts it. Every implementa
 | [`algorithms.json`](algorithms.json) | the registry: every algorithm by id, with the file of each implementation it has |
 | [`cases/`](cases/README.md) | the known counts every implementation and program is checked against |
 | [`limits.json`](limits.json) | which boards a short test run takes, and up to which term it runs each b-file generator, in every language |
-| [`cli.json`](cli.json) | the arguments every implementation rejects, one run of every algorithm with every flag it takes, and the outputs it prints outside the known counts |
+| [`cli.json`](cli.json) | the arguments every implementation rejects, one run of every algorithm with every flag it takes besides `--time`, and the outputs it prints outside the known counts |

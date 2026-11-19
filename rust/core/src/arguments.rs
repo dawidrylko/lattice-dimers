@@ -33,16 +33,22 @@ pub fn parse_args<'a>(args: &[String], schema: &[(&str, &'a str)]) -> HashMap<&'
     options
 }
 
-/// Tells whether the arguments hold one that a solver does not take, like hasUnknownArgument of
+/// Tells whether the arguments hold one that a solver cannot use, like hasUnusableArgument of
 /// js/core/commandLineArgsParser.js: a flag of `value_flags` takes the next argument as its value, whatever it is,
-/// and a flag of `plain_flags` stands alone, as --time does for every solver.
-pub fn has_unknown_argument(args: &[String], value_flags: &[&str], plain_flags: &[&str]) -> bool {
+/// and may come once, and a flag of `plain_flags` stands alone and may repeat, as --time does for every solver.
+pub fn has_unusable_argument(args: &[String], value_flags: &[&str], plain_flags: &[&str]) -> bool {
+    let mut seen: Vec<&str> = Vec::new();
     let mut i = 0;
 
     while i < args.len() {
         let arg = args[i].as_str();
 
         if value_flags.contains(&arg) {
+            if seen.contains(&arg) {
+                return true;
+            }
+
+            seen.push(arg);
             i += 1;
         } else if !plain_flags.contains(&arg) && arg != TIME_FLAG {
             return true;
@@ -106,13 +112,31 @@ mod tests {
         for (args, expected) in cases {
             let args: Vec<String> = args.iter().map(|arg| arg.to_string()).collect();
 
-            assert_eq!(has_unknown_argument(&args, &["-r", "-c", "--lattice"], &["--torus"]), expected, "{args:?}");
+            assert_eq!(has_unusable_argument(&args, &["-r", "-c", "--lattice"], &["--torus"]), expected, "{args:?}");
         }
 
         let timed: Vec<String> = ["-r", "4", "--time"].map(String::from).to_vec();
         let torus: Vec<String> = ["-r", "4", "--torus"].map(String::from).to_vec();
 
-        assert!(!has_unknown_argument(&timed, &["-r"], &[]));
-        assert!(has_unknown_argument(&torus, &["-r"], &[]));
+        assert!(!has_unusable_argument(&timed, &["-r"], &[]));
+        assert!(has_unusable_argument(&torus, &["-r"], &[]));
+    }
+
+    #[test]
+    fn finds_a_flag_with_a_value_given_a_second_time() {
+        let cases: [(&[&str], bool); 6] = [
+            (&["-r", "4", "-r", "6", "-c", "4"], true),
+            (&["-r", "4", "-c", "4", "-c", "4"], true),
+            (&["--lattice", "square", "--lattice", "king"], true),
+            (&["-r", "4", "--torus", "--torus"], false),
+            (&["-r", "4", "--time", "--time"], false),
+            (&["-c", "-r", "-r", "4"], false),
+        ];
+
+        for (args, expected) in cases {
+            let args: Vec<String> = args.iter().map(|arg| arg.to_string()).collect();
+
+            assert_eq!(has_unusable_argument(&args, &["-r", "-c", "--lattice"], &["--torus"]), expected, "{args:?}");
+        }
     }
 }

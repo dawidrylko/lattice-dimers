@@ -1,4 +1,4 @@
-const { parseArgs, hasUnknownArgument, startTimer } = require('../core');
+const { parseArgs, hasUnusableArgument, startTimer } = require('../core');
 
 const MAX_CIRCUMFERENCE = 20;
 const SHIFTS = [-1, 0, 1];
@@ -156,7 +156,7 @@ function __main__() {
   const options = parseArgs(argv, { '-r': 'rowCount', '-c': 'colCount' });
   const torus = argv.includes('--torus');
 
-  if (!isValidBoard(options, torus) || hasUnknownArgument(argv, ['-r', '-c'], ['--torus'])) {
+  if (!isValidBoard(options, torus) || hasUnusableArgument(argv, ['-r', '-c'], ['--torus'])) {
     console.error(
       'Usage: node js/solvers/domicule-cylinder-torus-polynomial-bigint.js -r <rowCount> -c <circumference> [--torus]\n' +
         'The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.',

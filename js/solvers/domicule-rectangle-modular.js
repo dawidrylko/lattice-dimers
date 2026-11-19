@@ -1,6 +1,6 @@
 const os = require('os');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
-const { parseArgs, hasUnknownArgument, startTimer } = require('../core');
+const { parseArgs, hasUnusableArgument, startTimer } = require('../core');
 const { listPrimes, calculateLog2Bound, combineResidues } = require('../core/modular');
 
 const MAX_SHORTER_SIDE = 30;
@@ -345,7 +345,7 @@ async function __main__() {
   const options = parseArgs(process.argv.slice(2), argsSchema);
   const jobs = options.jobs ?? os.availableParallelism();
 
-  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !(jobs > 0) || hasUnknownArgument(process.argv.slice(2), ['-r', '-c', '-j'])) {
+  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !(jobs > 0) || hasUnusableArgument(process.argv.slice(2), ['-r', '-c', '-j'])) {
     console.error(
       'Usage: node js/solvers/domicule-rectangle-modular.js -r <rowCount> -c <colCount> [-j <jobs>]',
     );

@@ -4,7 +4,7 @@ import sys
 
 import numpy as np
 
-from lattice_dimers.core import combine_checked_residues, has_unknown_argument, list_primes, parse_args, run_workers, start_timer
+from lattice_dimers.core import combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers, start_timer
 
 MAX_CIRCUMFERENCE = 24
 BATCH_COUNTS = 1 << 20
@@ -252,7 +252,7 @@ def main(argv):
         not is_valid_board(row_count, col_count, torus)
         or lattice not in LATTICES
         or not jobs > 0
-        or has_unknown_argument(argv, ("-r", "-c", "-j", "--lattice"), ("--torus", "--twisted"))
+        or has_unusable_argument(argv, ("-r", "-c", "-j", "--lattice"), ("--torus", "--twisted"))
     ):
         print(USAGE, file=sys.stderr)
         return 1

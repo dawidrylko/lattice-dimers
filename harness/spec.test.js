@@ -549,8 +549,9 @@ describe('the shared test data', () => {
     assert.deepEqual(Object.keys(cli.timeFlag.moreArgs).filter(id => !ids.includes(id)), []);
   });
 
-  test('every algorithm has one run with every flag it takes, and a rejection of each argument it does not take', () => {
-    const flags = { '-j': ['1'], '--lattice': ['triangular'], '--torus': [], '--twisted': [] };
+  test('every algorithm has one run with every flag it takes besides --time, and a rejection of each argument it cannot use', () => {
+    const flagsOf = args => args.flatMap((token, i) => (token.startsWith('-') ? [[token, ...(args[i + 1]?.startsWith('-') === false ? [args[i + 1]] : [])]] : []));
+    const flags = new Map(cli.allFlags.flatMap(({ args }) => flagsOf(args)).map(flag => [flag[0], flag]));
     const missing = [];
 
     for (const id of ids) {
@@ -559,9 +560,10 @@ describe('the shared test data', () => {
       assert.equal(runs.length, 1, id);
 
       const [{ args }] = runs;
-      const others = Object.entries(flags).filter(([flag]) => !args.includes(flag));
+      const others = [...flags.values()].filter(([flag]) => !args.includes(flag));
+      const repeats = flagsOf(args).filter(flag => flag.length === 2);
 
-      for (const more of [['--surface', 'torus'], ['torus'], ...others.map(([flag, value]) => [flag, ...value])]) {
+      for (const more of [['--surface', 'torus'], ['torus'], ...others, ...repeats]) {
         const rejected = JSON.stringify([...args, ...more]);
 
         if (!cli.rejections.some(entry => entry.algorithm === id && entry.message === 'Usage' && JSON.stringify(entry.args) === rejected)) {

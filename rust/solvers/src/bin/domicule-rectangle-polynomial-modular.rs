@@ -3,7 +3,7 @@ use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{Timer, calculate_log2_bound, combine_checked_residues, has_unknown_argument, list_primes, parse_args, run_workers};
+use lattice_dimers_core::{Timer, calculate_log2_bound, combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers};
 
 const MAX_SHORTER_SIDE: u64 = 20;
 const UNREACHED: u8 = 2;
@@ -193,7 +193,7 @@ fn main() -> ExitCode {
     let row_count = options.get("rowCount").copied().flatten();
     let col_count = options.get("colCount").copied().flatten();
 
-    let (Some(row_count), Some(col_count), Some(jobs), false) = (row_count, col_count, jobs.filter(|jobs| *jobs > 0), has_unknown_argument(&argv, &["-r", "-c", "-j"], &[])) else {
+    let (Some(row_count), Some(col_count), Some(jobs), false) = (row_count, col_count, jobs.filter(|jobs| *jobs > 0), has_unusable_argument(&argv, &["-r", "-c", "-j"], &[])) else {
         eprintln!("{USAGE}");
         return ExitCode::FAILURE;
     };

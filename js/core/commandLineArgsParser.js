@@ -26,16 +26,24 @@ function parseCommandLineArguments(args, schema) {
 }
 
 /**
- * Tells whether the arguments hold one that a solver does not take, so that the solver answers with its usage
+ * Tells whether the arguments hold one that a solver cannot use, so that the solver answers with its usage
  * line and not with the count of another board.
  * @param {string[]} args The command line arguments.
  * @param {string[]} valueFlags The flags that take the next argument as their value, whatever it is.
- * @param {string[]} [plainFlags] The flags that stand alone. Every solver takes --time as well.
- * @returns {boolean} Whether an argument is neither one of these flags nor the value of one.
+ * @param {string[]} [plainFlags] The flags that stand alone, and may repeat. Every solver takes --time as well.
+ * @returns {boolean} Whether an argument is neither one of these flags nor the value of one, or a flag with a
+ * value comes a second time.
  */
-function hasUnknownArgument(args, valueFlags, plainFlags = []) {
+function hasUnusableArgument(args, valueFlags, plainFlags = []) {
+  const seen = new Set();
+
   for (let i = 0; i < args.length; i++) {
     if (valueFlags.includes(args[i])) {
+      if (seen.has(args[i])) {
+        return true;
+      }
+
+      seen.add(args[i]);
       i++;
     } else if (!plainFlags.includes(args[i]) && args[i] !== TIME_FLAG) {
       return true;
@@ -45,4 +53,4 @@ function hasUnknownArgument(args, valueFlags, plainFlags = []) {
   return false;
 }
 
-module.exports = { parseCommandLineArguments, hasUnknownArgument };
+module.exports = { parseCommandLineArguments, hasUnusableArgument };

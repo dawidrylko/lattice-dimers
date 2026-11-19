@@ -3,7 +3,7 @@ use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{BigInt, Timer, combine_checked_residues, has_unknown_argument, list_primes, parse_args, pfaffian_modulo, run_workers};
+use lattice_dimers_core::{BigInt, Timer, combine_checked_residues, has_unusable_argument, list_primes, parse_args, pfaffian_modulo, run_workers};
 
 const MAX_CELLS: u64 = 1600;
 const STEPS: [(usize, usize); 3] = [(1, 0), (0, 1), (1, 1)];
@@ -146,7 +146,7 @@ fn main() -> ExitCode {
         .filter(|&(rows, cols)| rows == 0 || cols == 0 || (cols >= 2 && (!torus || rows >= 2)))
         .unzip();
 
-    let (Some(row_count), Some(col_count), Some(lattice), Some(jobs), false) = (row_count, col_count, lattice, jobs.filter(|jobs| *jobs > 0), has_unknown_argument(&argv, &["-r", "-c", "-j", "--lattice"], &["--torus"]))
+    let (Some(row_count), Some(col_count), Some(lattice), Some(jobs), false) = (row_count, col_count, lattice, jobs.filter(|jobs| *jobs > 0), has_unusable_argument(&argv, &["-r", "-c", "-j", "--lattice"], &["--torus"]))
     else {
         eprintln!("{USAGE}");
         return ExitCode::FAILURE;

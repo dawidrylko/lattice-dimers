@@ -1,6 +1,6 @@
 const os = require('os');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
-const { parseArgs, hasUnknownArgument, startTimer } = require('../core');
+const { parseArgs, hasUnusableArgument, startTimer } = require('../core');
 const { listPrimes, calculateLog2Bound, combineResidues } = require('../core/modular');
 const { listOffsets, LATTICES } = require('./any-lattice-rectangle-bigint.js');
 
@@ -129,7 +129,7 @@ async function __main__() {
   const latticeIndex = argv.indexOf('--lattice');
   const lattice = latticeIndex === -1 ? 'king' : argv[latticeIndex + 1];
 
-  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !(jobs > 0) || !Object.hasOwn(LATTICES, lattice) || hasUnknownArgument(argv, ['-r', '-c', '-j', '--lattice'])) {
+  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !(jobs > 0) || !Object.hasOwn(LATTICES, lattice) || hasUnusableArgument(argv, ['-r', '-c', '-j', '--lattice'])) {
     console.error(
       'Usage: node js/solvers/any-lattice-rectangle-modular.js -r <rowCount> -c <colCount> [-j <jobs>] [--lattice king|triangular|square]',
     );

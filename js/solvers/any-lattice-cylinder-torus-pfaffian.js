@@ -1,6 +1,6 @@
 const os = require('os');
 const { isMainThread, parentPort, workerData } = require('worker_threads');
-const { parseArgs, hasUnknownArgument, startTimer } = require('../core');
+const { parseArgs, hasUnusableArgument, startTimer } = require('../core');
 const { listPrimes, combineCheckedResidues, runWorkers } = require('../core/modular');
 const { pfaffianModulo, PFAFFIAN_PRIME_BOUND } = require('../core/pfaffian');
 
@@ -182,7 +182,7 @@ async function __main__() {
   const torus = argv.includes('--torus');
   const jobs = options.jobs ?? os.availableParallelism();
 
-  if (!isValidBoard(options, torus) || !(lattice === 'king' || Object.hasOwn(LATTICES, lattice)) || !(jobs > 0) || hasUnknownArgument(argv, ['-r', '-c', '-j', '--lattice'], ['--torus'])) {
+  if (!isValidBoard(options, torus) || !(lattice === 'king' || Object.hasOwn(LATTICES, lattice)) || !(jobs > 0) || hasUnusableArgument(argv, ['-r', '-c', '-j', '--lattice'], ['--torus'])) {
     console.error(
       'Usage: node js/solvers/any-lattice-cylinder-torus-pfaffian.js -r <rowCount> -c <circumference> --lattice square|triangular [--torus] [-j <jobs>]\n' +
         'The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.',

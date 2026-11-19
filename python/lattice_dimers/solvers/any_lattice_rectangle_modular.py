@@ -4,7 +4,7 @@ import sys
 
 import numpy as np
 
-from lattice_dimers.core import calculate_log2_bound, combine_checked_residues, has_unknown_argument, list_primes, parse_args, run_workers, start_timer
+from lattice_dimers.core import calculate_log2_bound, combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers, start_timer
 
 MAX_SHORTER_SIDE = 30
 SCRATCH_COUNTS = 1 << 19
@@ -144,7 +144,7 @@ def main(argv):
         or not is_valid_size(col_count)
         or not jobs > 0
         or lattice not in LATTICES
-        or has_unknown_argument(argv, ("-r", "-c", "-j", "--lattice"))
+        or has_unusable_argument(argv, ("-r", "-c", "-j", "--lattice"))
     ):
         print(USAGE, file=sys.stderr)
         return 1

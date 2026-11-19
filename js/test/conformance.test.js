@@ -53,7 +53,7 @@ describe('rejections', () => {
   }
 });
 
-describe('every flag an algorithm takes', () => {
+describe('every flag an algorithm takes besides --time', () => {
   for (const { algorithm, args, expectedResult } of cli.allFlags.filter(hasJavaScript)) {
     test(`${algorithm} ${args.join(' ')}`, () => {
       const { status, stdout, stderr } = runNode([solverPathOf(algorithm), ...args], { timeout: REJECTION_TIMEOUT });

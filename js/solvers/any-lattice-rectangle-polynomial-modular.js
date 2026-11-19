@@ -1,6 +1,6 @@
 const os = require('os');
 const { isMainThread, parentPort, workerData } = require('worker_threads');
-const { parseArgs, hasUnknownArgument, startTimer } = require('../core');
+const { parseArgs, hasUnusableArgument, startTimer } = require('../core');
 const { listPrimes, calculateLog2Bound, combineCheckedResidues, runWorkers } = require('../core/modular');
 const { LATTICES } = require('./any-lattice-rectangle-bigint.js');
 const { listMoves } = require('./any-lattice-rectangle-polynomial-bigint.js');
@@ -156,7 +156,7 @@ async function __main__() {
   const lattice = latticeIndex === -1 ? 'king' : argv[latticeIndex + 1];
   const jobs = options.jobs ?? os.availableParallelism();
 
-  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !(jobs > 0) || !Object.hasOwn(LATTICES, lattice) || hasUnknownArgument(argv, ['-r', '-c', '-j', '--lattice'])) {
+  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || !(jobs > 0) || !Object.hasOwn(LATTICES, lattice) || hasUnusableArgument(argv, ['-r', '-c', '-j', '--lattice'])) {
     console.error(
       'Usage: node js/solvers/any-lattice-rectangle-polynomial-modular.js -r <rowCount> -c <colCount> [--lattice king|triangular|square] [-j <jobs>]',
     );

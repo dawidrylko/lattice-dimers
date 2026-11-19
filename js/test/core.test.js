@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { describe, test } = require('node:test');
-const { parseArgs, hasUnknownArgument } = require('../core');
+const { parseArgs, hasUnusableArgument } = require('../core');
 const { listPrimes, combineCheckedResidues } = require('../core/modular');
 const { pfaffianModulo, PFAFFIAN_PRIME_BOUND } = require('../core/pfaffian');
 const { testCasesOf } = require('../core/cases');
@@ -189,11 +189,26 @@ describe('parser', () => {
     ];
 
     for (const { args, expectedResult } of cases) {
-      assert.equal(hasUnknownArgument(args, ['-r', '-c', '--lattice'], ['--torus']), expectedResult, args.join(' '));
+      assert.equal(hasUnusableArgument(args, ['-r', '-c', '--lattice'], ['--torus']), expectedResult, args.join(' '));
     }
 
-    assert.equal(hasUnknownArgument(['-r', '4', '--time'], ['-r']), false);
-    assert.equal(hasUnknownArgument(['-r', '4', '--torus'], ['-r']), true);
+    assert.equal(hasUnusableArgument(['-r', '4', '--time'], ['-r']), false);
+    assert.equal(hasUnusableArgument(['-r', '4', '--torus'], ['-r']), true);
+  });
+
+  test('a flag with a value given a second time', () => {
+    const cases = [
+      { args: ['-r', '4', '-r', '6', '-c', '4'], expectedResult: true },
+      { args: ['-r', '4', '-c', '4', '-c', '4'], expectedResult: true },
+      { args: ['--lattice', 'square', '--lattice', 'king'], expectedResult: true },
+      { args: ['-r', '4', '--torus', '--torus'], expectedResult: false },
+      { args: ['-r', '4', '--time', '--time'], expectedResult: false },
+      { args: ['-c', '-r', '-r', '4'], expectedResult: false },
+    ];
+
+    for (const { args, expectedResult } of cases) {
+      assert.equal(hasUnusableArgument(args, ['-r', '-c', '--lattice'], ['--torus']), expectedResult, args.join(' '));
+    }
   });
 });
 

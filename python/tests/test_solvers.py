@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lattice_dimers.core import combine_checked_residues, has_unknown_argument, list_primes, pfaffian_modulo
+from lattice_dimers.core import combine_checked_residues, has_unusable_argument, list_primes, pfaffian_modulo
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = ROOT / "spec"
@@ -374,12 +374,27 @@ def test_pfaffian_rejects_a_prime_of_32_bits_and_a_matrix_that_is_not_square():
     ],
 )
 def test_an_argument_that_is_no_flag_of_the_solver_and_no_value_of_one(args, expected):
-    assert has_unknown_argument(args, ("-r", "-c", "--lattice"), ("--torus",)) is expected
+    assert has_unusable_argument(args, ("-r", "-c", "--lattice"), ("--torus",)) is expected
 
 
 def test_a_solver_without_plain_flags_takes_the_time_flag_and_no_other():
-    assert has_unknown_argument(["-r", "4", "--time"], ("-r",)) is False
-    assert has_unknown_argument(["-r", "4", "--torus"], ("-r",)) is True
+    assert has_unusable_argument(["-r", "4", "--time"], ("-r",)) is False
+    assert has_unusable_argument(["-r", "4", "--torus"], ("-r",)) is True
+
+
+@pytest.mark.parametrize(
+    "args, expected",
+    [
+        (["-r", "4", "-r", "6", "-c", "4"], True),
+        (["-r", "4", "-c", "4", "-c", "4"], True),
+        (["--lattice", "square", "--lattice", "king"], True),
+        (["-r", "4", "--torus", "--torus"], False),
+        (["-r", "4", "--time", "--time"], False),
+        (["-c", "-r", "-r", "4"], False),
+    ],
+)
+def test_a_flag_with_a_value_given_a_second_time(args, expected):
+    assert has_unusable_argument(args, ("-r", "-c", "--lattice"), ("--torus",)) is expected
 
 
 @pytest.mark.parametrize("board", [(4, 1, "king", False), (1, 4, "king", True), (4, 4, "hexagonal", False), (4.5, 4, "king", False)])
