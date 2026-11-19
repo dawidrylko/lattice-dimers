@@ -381,7 +381,10 @@ def test_pfaffian_solver_agrees_with_the_bigint_solver_from_0x0_to_8x8(lattice, 
         try:
             return pfaffian.calculate_total_tiling_combinations(rows, cols, lattice, torus, jobs=1)
         except ValueError as error:
-            return "rejected" if "circumference must be at least 2" in str(error) else f"failed with {error}"
+            if "circumference must be at least 2" not in str(error):
+                raise
+
+            return "rejected"
 
     boards = [(rows, cols) for rows in range(9) for cols in range(9)]
     outcomes = [(rows, cols, actual_of(rows, cols), expected_of(rows, cols)) for rows, cols in boards]

@@ -36,6 +36,7 @@ const CONTENT_TYPES = {
 const VIEWPORT_HEIGHT = 900;
 const MOBILE_TABLE_WIDTH = 919;
 const THREE_SOLVER_CARD_WIDTH = 1099;
+const NARROW_CARD_WIDTH = 359;
 const NOTE_COLUMN_WIDTH = 1100;
 const WIDE_FONT = 'Verdana, "DejaVu Sans", sans-serif';
 const LANGUAGES = [['Rust', '#icon-rust'], ['Python', '#icon-python'], ['JavaScript', '#icon-javascript']];
@@ -285,6 +286,8 @@ const siteTestCases = [
   { width: 375, check: 'samples' },
   { width: 375, check: 'benchmark' },
   { width: 320, check: 'benchmark' },
+  { width: 359, check: 'benchmark' },
+  { width: 360, check: 'benchmark' },
   { width: 375, check: 'pieces' },
   { width: 375, check: 'landing' },
   { width: 375, check: 'notes' },
@@ -1809,7 +1812,9 @@ async function checkBenchmark(page, baseUrl, width) {
         return lefts.length > 0 && Math.min(...lefts) - end(cell) < 1;
       };
       const cards = [...document.querySelectorAll('#${id}-rows tr')].flatMap(row => [...row.cells].slice(2, -1).filter(cell => icon(cell) && icon(cell).getClientRects().length).map(cell => ({ row, cell })));
+      const gap = parseFloat(getComputedStyle(document.getElementById('${id}-rows')).columnGap) || 0;
       const state = {
+        parts: [...new Set(cards.map(({ row, cell }) => Math.round((row.getBoundingClientRect().width + gap) / (cell.getBoundingClientRect().width + gap))))],
         overflow: wrap.scrollWidth - wrap.clientWidth,
         squeezed: cards.filter(({ cell }) => Math.round(icon(cell).getBoundingClientRect().width * 10) < 160).map(({ row, cell }) => name(row, cell)),
         touching: cards.filter(({ row, cell }) => reached(row, cell)).map(({ row, cell }) => name(row, cell)),
@@ -1828,6 +1833,10 @@ async function checkBenchmark(page, baseUrl, width) {
 
     if (wide.touching.length) {
       problems.push(`#${id} lets ${wide.touching.length} card cells reach the cell beside them at ${width} px in ${WIDE_FONT}, the first ${wide.touching[0]}`);
+    }
+
+    if (wide.parts.some(parts => parts !== (width <= NARROW_CARD_WIDTH ? 3 : 4))) {
+      problems.push(`#${id} gives a time one part in ${wide.parts.join(' and ')} of its card at ${width} px instead of one in ${width <= NARROW_CARD_WIDTH ? 3 : 4}`);
     }
 
     const runsTitle = await page.evaluate(`(() => {

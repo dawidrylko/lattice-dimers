@@ -367,7 +367,11 @@ describe('the Pfaffian solver against the BigInt solver', () => {
     try {
       return String(await count());
     } catch (error) {
-      return /circumference must be at least 2/.test(error.message) ? 'rejected' : `failed with ${error.message}`;
+      if (!/circumference must be at least 2/.test(error.message)) {
+        throw error;
+      }
+
+      return 'rejected';
     }
   };
 
