@@ -31,13 +31,18 @@ function listOffsets(cols, c, hasBelow) {
  * count it needs lies a fixed number of entries, the shift of the term, below the next state
  * in the current table. A move onto the next cell sets bit 0 of the next state, so it has only
  * odd next states (odd). The top three bits of an entry decide which terms it has, so the
- * table is at most eight blocks of entries with the same terms.
+ * table is at most eight blocks of entries with the same terms. With crossingSign the
+ * down-left move is negative where bit cols - 2 of the entry is set: the cell below the one
+ * that moves is then covered already, which only the down-right move of the cell to its left
+ * does, so the two diagonal pieces cross.
  * @param {number} cols The number of columns.
  * @param {number} c The column.
  * @param {boolean} hasBelow Whether the cell has a next row.
- * @returns {Array<{ plain: number[], odd: number[] }>} The shifts of the terms of every block.
+ * @param {boolean} crossingSign Whether the tilings count with their crossing sign.
+ * @returns {Array<{ plain: Object[], odd: Object[] }>} The terms of every block, each with its
+ * shift and whether it is subtracted.
  */
-function listBlocks(cols, c, hasBelow) {
+function listBlocks(cols, c, hasBelow, crossingSign) {
   const offsets = listOffsets(cols, c, hasBelow);
   const blockBits = Math.min(cols, 3);
 
@@ -45,13 +50,15 @@ function listBlocks(cols, c, hasBelow) {
     const entry = block << (cols - blockBits);
     const isSet = bit => ((entry >>> bit) & 1) === 1;
     const top = isSet(cols - 1);
-    const terms = { plain: top ? [] : [0], odd: [] };
+    const terms = { plain: top ? [] : [{ shift: 0, negative: false }], odd: [] };
 
     for (const offset of offsets) {
+      const negative = crossingSign && c > 0 && offset === cols - 1 && isSet(cols - 2);
+
       if (offset === 1 && !top) {
-        terms.odd.push(1);
+        terms.odd.push({ shift: 1, negative });
       } else if (offset > 1 && isSet(offset - 2) && (offset === cols + 1 || !top)) {
-        terms.plain.push(1 << (offset - 1));
+        terms.plain.push({ shift: 1 << (offset - 1), negative });
       }
     }
 
@@ -68,6 +75,19 @@ function listBlocks(cols, c, hasBelow) {
  */
 function addModulo(sum, count, prime) {
   const total = sum + (count - prime);
+
+  return total < 0 ? total + prime : total;
+}
+
+/**
+ * Subtracts a count from a sum modulo the prime.
+ * @param {number} sum The sum.
+ * @param {number} count The count.
+ * @param {number} prime The modulus.
+ * @returns {number} The difference modulo the prime.
+ */
+function subtractModulo(sum, count, prime) {
+  const total = sum - count;
 
   return total < 0 ? total + prime : total;
 }
@@ -91,12 +111,13 @@ function parityOf(entry) {
  * with the shift s reads the current entry 2e + bit - s. Two neighbouring entries have
  * opposite bits, so a block of at least two entries is filled a pair at a time. The pair
  * loop holds three plain terms and one odd term, the most a block has on any board; a block
- * with more would take the entry loop, which takes any number.
+ * with more would take the entry loop, which takes any number. A block with a subtracted
+ * term takes the entry loop as well, so the pair loop only adds.
  * @param {Uint32Array} next The next table.
  * @param {Uint32Array} current The current table.
  * @param {number} from The first entry of the block.
  * @param {number} size The number of entries of the block.
- * @param {{ plain: number[], odd: number[] }} terms The shifts of the terms of the block.
+ * @param {{ plain: Object[], odd: Object[] }} terms The terms of the block.
  * @param {number} parity The parity of the number of set bits of every state of the next table.
  * @param {number} prime The modulus.
  */
@@ -106,17 +127,19 @@ function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
     return;
   }
 
-  if (size < 2 || plain.length > 3 || odd.length > 1) {
+  const subtracts = [...plain, ...odd].some(term => term.negative);
+
+  if (size < 2 || subtracts || plain.length > 3 || odd.length > 1) {
     for (let entry = from; entry < from + size; entry++) {
       const bit = parityOf(entry) ^ parity;
       let sum = 0;
 
-      for (const shift of plain) {
-        sum = addModulo(sum, current[2 * entry + bit - shift], prime);
+      for (const { shift, negative } of plain) {
+        sum = (negative ? subtractModulo : addModulo)(sum, current[2 * entry + bit - shift], prime);
       }
 
-      for (const shift of bit === 1 ? odd : []) {
-        sum = addModulo(sum, current[2 * entry + 1 - shift], prime);
+      for (const { shift, negative } of bit === 1 ? odd : []) {
+        sum = (negative ? subtractModulo : addModulo)(sum, current[2 * entry + 1 - shift], prime);
       }
 
       next[entry] = sum;
@@ -127,10 +150,10 @@ function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
 
   const plains = plain.length;
   const odds = odd.length;
-  const first = 2 * from - (plain[0] ?? 0);
-  const second = 2 * from - (plain[1] ?? 0);
-  const third = 2 * from - (plain[2] ?? 0);
-  const onto = 2 * from - (odd[0] ?? 0);
+  const first = 2 * from - (plain[0]?.shift ?? 0);
+  const second = 2 * from - (plain[1]?.shift ?? 0);
+  const third = 2 * from - (plain[2]?.shift ?? 0);
+  const onto = 2 * from - (odd[0]?.shift ?? 0);
 
   for (let place = 0; place < size; place += 2) {
     const bit = parityOf(from + place) ^ parity;
@@ -178,16 +201,22 @@ function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
  * every value of bits 1 to cols, 2^cols counts instead of 2^(cols + 1). A step fills every
  * next entry from the entries that lead to it (listBlocks), so it neither clears a table nor
  * tests a count. Only additions are needed, so the counts are kept in Uint32Array tables.
+ *
+ * With crossingSign a tiling counts with its crossing sign, (-1)^k for the k unit squares in
+ * which two diagonal pieces cross. The sum is plus or minus the Pfaffian of the board
+ * (Wildeboer and Seidel, cited in research/king-entropy/paper/king-entropy.tex), which
+ * js/test/core.test.js checks. No solver prints it.
  * @param {number} rows The number of rows (the longer side).
  * @param {number} cols The number of columns (the shorter side).
  * @param {number} prime The modulus.
- * @returns {number} The number of tilings modulo the prime.
+ * @param {boolean} [crossingSign] Whether the tilings count with their crossing sign.
+ * @returns {number} The number of tilings modulo the prime, or their sum with that sign.
  */
-function countModulo(rows, cols, prime) {
+function countModulo(rows, cols, prime, crossingSign = false) {
   const stateCount = 2 ** cols;
   const blockSize = stateCount / 2 ** Math.min(cols, 3);
-  const blocksBelow = Array.from({ length: cols }, (_, c) => listBlocks(cols, c, true));
-  const blocksLast = Array.from({ length: cols }, (_, c) => listBlocks(cols, c, false));
+  const blocksBelow = Array.from({ length: cols }, (_, c) => listBlocks(cols, c, true, crossingSign));
+  const blocksLast = Array.from({ length: cols }, (_, c) => listBlocks(cols, c, false, crossingSign));
   let current = new Uint32Array(stateCount);
   let next = new Uint32Array(stateCount);
   current[0] = 1 % prime;

@@ -10,11 +10,13 @@ const USAGE: &str = "Usage: domicule-rectangle-modular -r <rowCount> -c <colCoun
 
 /// One way into a next state, like a term of listBlocks in js/solvers/domicule-rectangle-modular.js: the count of
 /// the state that leads to it lies `shift` entries below the next state in the current table. A move onto the next
-/// cell sets bit 0 of the next state, so it has only odd next states (`odd_only`).
+/// cell sets bit 0 of the next state, so it has only odd next states (`odd_only`). A term that closes a crossing is
+/// subtracted when the tilings count with their crossing sign (`negative`).
 #[derive(Clone, Copy)]
 struct Term {
     shift: usize,
     odd_only: bool,
+    negative: bool,
 }
 
 /// A term over one block of next entries. The entry at place p reads `counts[2 * p + bit]`, where bit is bit 0
@@ -23,6 +25,7 @@ struct Term {
 struct Source<'a> {
     counts: &'a [u32],
     odd_only: bool,
+    negative: bool,
 }
 
 /// Lists the offsets of the cells a free cell in column c can cover with its partner, like listOffsets of
@@ -52,8 +55,10 @@ fn list_offsets(cols: usize, c: usize, has_below: bool) -> Vec<usize> {
 
 /// Lists the terms of the cell step of column c for every block of the next table, like listBlocks of
 /// js/solvers/domicule-rectangle-modular.js. The top three bits of an entry decide its terms, so the table is at
-/// most eight blocks of entries with the same terms.
-fn list_blocks(cols: usize, c: usize, has_below: bool) -> Vec<Vec<Term>> {
+/// most eight blocks of entries with the same terms. With `crossing_sign` the down-left move is negative where
+/// bit cols - 2 of the entry is set: the cell below the one that moves is then covered already, which only the
+/// down-right move of the cell to the left does, so the two diagonal pieces cross.
+fn list_blocks(cols: usize, c: usize, has_below: bool, crossing_sign: bool) -> Vec<Vec<Term>> {
     let offsets = list_offsets(cols, c, has_below);
     let block_bits = cols.min(3);
 
@@ -65,14 +70,16 @@ fn list_blocks(cols: usize, c: usize, has_below: bool) -> Vec<Vec<Term>> {
             let mut terms = Vec::new();
 
             if !top {
-                terms.push(Term { shift: 0, odd_only: false });
+                terms.push(Term { shift: 0, odd_only: false, negative: false });
             }
 
             for &offset in &offsets {
+                let negative = crossing_sign && c > 0 && offset == cols - 1 && is_set(cols - 2);
+
                 if offset == 1 && !top {
-                    terms.push(Term { shift: 1, odd_only: true });
+                    terms.push(Term { shift: 1, odd_only: true, negative });
                 } else if offset > 1 && is_set(offset - 2) && (offset == cols + 1 || !top) {
-                    terms.push(Term { shift: 1 << (offset - 1), odd_only: false });
+                    terms.push(Term { shift: 1 << (offset - 1), odd_only: false, negative });
                 }
             }
 
@@ -87,15 +94,16 @@ fn add(sum: u32, count: u32, prime: u32) -> u32 {
     if sum >= prime { sum - prime } else { sum }
 }
 
-/// Sums the terms of one next entry: `place` is its place in the block and `bit` is bit 0 of its state.
+/// Sums the terms of one next entry: `place` is its place in the block and `bit` is bit 0 of its state. Only a
+/// SIGNED sum looks at the sign of a term, so the plain count pays nothing for it.
 #[inline(always)]
-fn sum_sources<const N: usize>(sources: &[Source; N], place: usize, bit: usize, prime: u32) -> u32 {
+fn sum_sources<const N: usize, const SIGNED: bool>(sources: &[Source; N], place: usize, bit: usize, prime: u32) -> u32 {
     let mut sum = 0;
 
     for source in sources {
         let count = if source.odd_only { source.counts[2 * place] & (bit as u32).wrapping_neg() } else { source.counts[2 * place + bit] };
 
-        sum = add(sum, count, prime);
+        sum = add(sum, if SIGNED && source.negative { prime - count } else { count }, prime);
     }
 
     sum
@@ -103,25 +111,25 @@ fn sum_sources<const N: usize>(sources: &[Source; N], place: usize, bit: usize, 
 
 /// Fills one block of the next table, which starts at the entry `from`. Two neighbouring entries have opposite
 /// bits 0, so the number of set bits is counted once per pair.
-fn fill_block<const N: usize>(block: &mut [u32], current: &[u32], from: usize, terms: &[Term], parity: u32, prime: u32) {
+fn fill_block<const N: usize, const SIGNED: bool>(block: &mut [u32], current: &[u32], from: usize, terms: &[Term], parity: u32, prime: u32) {
     let sources: [Source; N] = array::from_fn(|at| {
-        let Term { shift, odd_only } = terms[at];
+        let Term { shift, odd_only, negative } = terms[at];
         let start = 2 * from + usize::from(odd_only) - shift;
 
-        Source { counts: &current[start..start + 2 * block.len()], odd_only }
+        Source { counts: &current[start..start + 2 * block.len()], odd_only, negative }
     });
     let bit_of = |place: usize| ((parity + (from + place).count_ones()) & 1) as usize;
 
     if let [slot] = block {
-        *slot = sum_sources(&sources, 0, bit_of(0), prime);
+        *slot = sum_sources::<N, SIGNED>(&sources, 0, bit_of(0), prime);
         return;
     }
 
     for (pair, slots) in block.as_chunks_mut::<2>().0.iter_mut().enumerate() {
         let bit = bit_of(2 * pair);
 
-        slots[0] = sum_sources(&sources, 2 * pair, bit, prime);
-        slots[1] = sum_sources(&sources, 2 * pair + 1, 1 - bit, prime);
+        slots[0] = sum_sources::<N, SIGNED>(&sources, 2 * pair, bit, prime);
+        slots[1] = sum_sources::<N, SIGNED>(&sources, 2 * pair + 1, 1 - bit, prime);
     }
 }
 
@@ -131,11 +139,15 @@ fn fill_block<const N: usize>(block: &mut [u32], current: &[u32], from: usize, t
 /// state has k set bits modulo 2, so its bit 0 follows from the others and the tables hold 2^cols counts of u32,
 /// one per value of bits 1 to cols. A step fills every next entry from the entries that lead to it, so it neither
 /// clears a table nor tests a count.
-fn count_modulo(rows: usize, cols: usize, prime: u32) -> u32 {
+///
+/// With CROSSING_SIGN a tiling counts with its crossing sign, (-1)^k for the k unit squares in which two diagonal
+/// pieces cross. The sum is plus or minus the Pfaffian of the board (Wildeboer and Seidel, cited in
+/// research/king-entropy/paper/king-entropy.tex), which the test below checks. No solver prints it.
+fn count_modulo<const CROSSING_SIGN: bool>(rows: usize, cols: usize, prime: u32) -> u32 {
     let state_count = 1usize << cols;
     let block_size = state_count >> cols.min(3);
-    let blocks_below: Vec<_> = (0..cols).map(|c| list_blocks(cols, c, true)).collect();
-    let blocks_last: Vec<_> = (0..cols).map(|c| list_blocks(cols, c, false)).collect();
+    let blocks_below: Vec<_> = (0..cols).map(|c| list_blocks(cols, c, true, CROSSING_SIGN)).collect();
+    let blocks_last: Vec<_> = (0..cols).map(|c| list_blocks(cols, c, false, CROSSING_SIGN)).collect();
     let mut current = vec![0u32; state_count];
     let mut next = vec![0u32; state_count];
     current[0] = 1 % prime;
@@ -149,10 +161,10 @@ fn count_modulo(rows: usize, cols: usize, prime: u32) -> u32 {
 
             match terms.len() {
                 0 => slots.fill(0),
-                1 => fill_block::<1>(slots, &current, from, terms, parity, prime),
-                2 => fill_block::<2>(slots, &current, from, terms, parity, prime),
-                3 => fill_block::<3>(slots, &current, from, terms, parity, prime),
-                4 => fill_block::<4>(slots, &current, from, terms, parity, prime),
+                1 => fill_block::<1, CROSSING_SIGN>(slots, &current, from, terms, parity, prime),
+                2 => fill_block::<2, CROSSING_SIGN>(slots, &current, from, terms, parity, prime),
+                3 => fill_block::<3, CROSSING_SIGN>(slots, &current, from, terms, parity, prime),
+                4 => fill_block::<4, CROSSING_SIGN>(slots, &current, from, terms, parity, prime),
                 count => unreachable!("a block has at most four terms, not {count}"),
             }
         }
@@ -175,7 +187,7 @@ fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, jobs:
 
     let prime_count = ((calculate_log2_bound(rows, cols) + 1.0) / 30.0).ceil() as usize + 1;
     let primes = list_primes(prime_count);
-    let residues = run_workers(&primes, jobs, |prime| count_modulo(rows, cols, *prime));
+    let residues = run_workers(&primes, jobs, |prime| count_modulo::<false>(rows, cols, *prime));
 
     combine_checked_residues(&residues, &primes, false)
 }
@@ -212,6 +224,60 @@ fn main() -> ExitCode {
         Err(message) => {
             eprintln!("{message}");
             ExitCode::FAILURE
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use lattice_dimers_core::pfaffian_modulo;
+
+    use super::*;
+
+    fn king_pfaffian_modulo(rows: usize, cols: usize, prime: u32) -> u32 {
+        let size = rows * cols;
+        let mut matrix = vec![0; size * size];
+
+        for x in 0..rows {
+            for y in 0..cols {
+                let straight = if x % 2 == 0 { prime - 1 } else { 1 };
+                let steps = [(x + 1, Some(y), straight), (x, Some(y + 1), straight), (x + 1, Some(y + 1), 1), (x + 1, y.checked_sub(1), 1)];
+
+                for (u, v, entry) in steps {
+                    if let Some(v) = v.filter(|v| u < rows && *v < cols) {
+                        matrix[(x * cols + y) * size + u * cols + v] = entry;
+                    }
+                }
+            }
+        }
+
+        pfaffian_modulo(&mut matrix, size, prime)
+    }
+
+    #[test]
+    fn crossing_sign_sum_is_plus_or_minus_the_pfaffian_of_the_king_board() {
+        let primes = list_primes(5);
+        let boards = [
+            (2, 2, "1"),
+            (5, 2, "1"),
+            (4, 3, "15"),
+            (4, 4, "92"),
+            (5, 4, "427"),
+            (6, 6, "223775"),
+            (8, 7, "1554683369"),
+            (8, 8, "57770908609"),
+            (10, 10, "609997767152613273"),
+            (12, 12, "426367341321684015743692783"),
+        ];
+
+        for (rows, cols, expected) in boards {
+            let sums: Vec<u32> = primes.iter().map(|prime| count_modulo::<true>(rows, cols, *prime)).collect();
+            let pfaffians: Vec<u32> = primes.iter().map(|prime| king_pfaffian_modulo(rows, cols, *prime)).collect();
+            let sum = combine_checked_residues(&sums, &primes, true).unwrap().to_string();
+            let pfaffian = combine_checked_residues(&pfaffians, &primes, true).unwrap().to_string();
+
+            assert_eq!(sum, expected, "{rows}x{cols}");
+            assert_eq!(pfaffian.trim_start_matches('-'), expected, "the Pfaffian of {rows}x{cols}");
         }
     }
 }
