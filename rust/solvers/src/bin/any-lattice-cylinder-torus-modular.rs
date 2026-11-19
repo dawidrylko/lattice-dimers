@@ -1,3 +1,4 @@
+use std::array;
 use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
@@ -25,6 +26,25 @@ struct Board {
 struct Move {
     bit: u32,
     crossing: bool,
+}
+
+/// One way into a next state, like a term of listBlocks in js/solvers/any-lattice-cylinder-torus-modular.js: the
+/// count of the state that leads to it lies `shift` entries below the next state in the current table. A move onto
+/// the next cell sets bit 0 of the next state, so it has only odd next states (`odd_only`), and a piece across the
+/// seam of a twisted board is subtracted (`negative`).
+#[derive(Clone, Copy)]
+struct Term {
+    shift: usize,
+    odd_only: bool,
+    negative: bool,
+}
+
+/// A term over one block of next entries: the two current counts each of them reads one of, by its bit 0.
+#[derive(Clone, Copy)]
+struct Source<'a> {
+    counts: &'a [u32],
+    odd_only: bool,
+    negative: bool,
 }
 
 fn lattice_of(name: &str) -> Option<Lattice> {
@@ -72,72 +92,143 @@ fn list_moves(cols: usize, c: usize, has_below: bool, lattice: Lattice, wrap_bit
     moves
 }
 
-fn add(next: &mut [u32], target: u32, count: u32, negative: bool, prime: u32) {
-    let value = if negative && count != 0 { prime - count } else { count };
-    let sum = next[target as usize] + value;
-    next[target as usize] = if sum >= prime { sum - prime } else { sum };
+/// Lists the terms of the cell step of column c for every block of the next table, like listBlocks of
+/// js/solvers/any-lattice-cylinder-torus-modular.js. The top bits of an entry decide its terms, so the table is at
+/// most sixteen blocks of entries with the same terms.
+fn list_blocks(cols: usize, c: usize, moves: &[Move], twisted: bool, uses_wrap_bit: bool) -> Vec<Vec<Term>> {
+    let entry_bits = cols + usize::from(uses_wrap_bit);
+    let block_bits = entry_bits.min(3 + usize::from(uses_wrap_bit));
+    let joins = uses_wrap_bit && c == cols - 2;
+
+    (0..1usize << block_bits)
+        .map(|block| {
+            let entry = block << (entry_bits - block_bits);
+            let is_set = |bit: usize| entry >> bit & 1 == 1;
+            let held = uses_wrap_bit && is_set(cols);
+            let open = joins || !is_set(cols - 1);
+            let base = if held { 1 << cols } else { 0 };
+            let mut terms = Vec::new();
+
+            if joins && held {
+                return terms;
+            }
+
+            if open {
+                terms.push(Term { shift: base, odd_only: false, negative: false });
+            }
+
+            for &Move { bit, crossing } in moves {
+                let offset = bit.trailing_zeros() as usize;
+                let negative = twisted && crossing;
+
+                if offset == cols + 2 && held && open {
+                    terms.push(Term { shift: 2 << cols, odd_only: false, negative });
+                } else if offset == 1 && open {
+                    terms.push(Term { shift: base + 1, odd_only: true, negative });
+                } else if offset > 1 && offset < cols + 2 && is_set(offset - 2) && (offset == cols + 1 || open) {
+                    terms.push(Term { shift: base + (1 << (offset - 1)), odd_only: false, negative });
+                }
+            }
+
+            terms
+        })
+        .collect()
+}
+
+fn add(sum: u32, count: u32, prime: u32) -> u32 {
+    let sum = sum + count;
+
+    if sum >= prime { sum - prime } else { sum }
+}
+
+/// Sums the terms of one next entry: `place` is its place in the block and `bit` is bit 0 of its state.
+#[inline(always)]
+fn sum_sources<const N: usize>(sources: &[Source; N], place: usize, bit: usize, prime: u32) -> u32 {
+    let mut sum = 0;
+
+    for source in sources {
+        let count = if source.odd_only { source.counts[2 * place] & (bit as u32).wrapping_neg() } else { source.counts[2 * place + bit] };
+
+        sum = add(sum, if source.negative { prime - count } else { count }, prime);
+    }
+
+    sum
+}
+
+/// Fills one block of the next table, which starts at the entry `from`. Two neighbouring entries have opposite
+/// bits 0, so the number of set bits is counted once per pair.
+fn fill_block<const N: usize>(block: &mut [u32], current: &[u32], from: usize, terms: &[Term], parity: u32, prime: u32) {
+    let sources: [Source; N] = array::from_fn(|at| {
+        let Term { shift, odd_only, negative } = terms[at];
+        let start = 2 * from + usize::from(odd_only) - shift;
+
+        Source { counts: &current[start..start + 2 * block.len()], odd_only, negative }
+    });
+    let bit_of = |place: usize| ((parity + (from + place).count_ones()) & 1) as usize;
+
+    if let [slot] = block {
+        *slot = sum_sources(&sources, 0, bit_of(0), prime);
+        return;
+    }
+
+    for (pair, slots) in block.as_chunks_mut::<2>().0.iter_mut().enumerate() {
+        let bit = bit_of(2 * pair);
+
+        slots[0] = sum_sources(&sources, 2 * pair, bit, prime);
+        slots[1] = sum_sources(&sources, 2 * pair + 1, 1 - bit, prime);
+    }
 }
 
 /// Counts the tilings of a cylinder or a torus modulo a prime, cell by cell, like countModulo of
-/// js/solvers/any-lattice-cylinder-torus-modular.js.
+/// js/solvers/any-lattice-cylinder-torus-modular.js: the tables hold one count of u32 per value of the window bits
+/// 1 to cols and, on the king's graph with cols >= 3, of the one bit that stands for the extra bit and the top
+/// window bit. A board with an odd number of cells counts 0 without a run. A torus runs one start per class of
+/// rotations and, on the square lattice and the king's graph, of mirror images.
 fn count_modulo(board: &Board, prime: u32) -> u32 {
     let Board { rows, cols, lattice, torus, twisted } = *board;
-    let window_bits = cols + 2;
-    let window_mask: u32 = (1 << window_bits) - 1;
-    let wrap_bit: u32 = 1 << window_bits;
+
+    if !(rows * cols).is_multiple_of(2) {
+        return 0;
+    }
+
+    let wrap_bit: u32 = 1 << (cols + 2);
     let uses_wrap_bit = lattice.down_left && cols >= 3;
-    let state_count: usize = 1 << (window_bits + usize::from(uses_wrap_bit));
-    let top_bit: u32 = 1 << (window_bits - 1);
-    let moves_below: Vec<Vec<Move>> = (0..cols).map(|c| list_moves(cols, c, true, lattice, wrap_bit)).collect();
-    let moves_last: Vec<Vec<Move>> = (0..cols).map(|c| list_moves(cols, c, torus, lattice, wrap_bit)).collect();
-    let mut current = vec![0u32; state_count];
-    let mut next = vec![0u32; state_count];
-
-    let shift = |state: u32, c: usize| -> u32 {
-        let window = (state & window_mask) >> 1;
-
-        if !uses_wrap_bit {
-            window
-        } else if c == cols - 3 {
-            window | if state & wrap_bit != 0 { top_bit } else { 0 }
-        } else {
-            window | (state & wrap_bit)
-        }
+    let entry_bits = cols + usize::from(uses_wrap_bit);
+    let block_size = (1usize << entry_bits) >> entry_bits.min(3 + usize::from(uses_wrap_bit));
+    let list = |has_below: bool| -> Vec<Vec<Vec<Term>>> {
+        (0..cols).map(|c| list_blocks(cols, c, &list_moves(cols, c, has_below, lattice, wrap_bit), twisted, uses_wrap_bit)).collect()
     };
+    let blocks_below = list(true);
+    let blocks_last = list(torus);
+    let mut current = vec![0u32; 1 << entry_bits];
+    let mut next = vec![0u32; 1 << entry_bits];
 
     let mut run = |start: usize| -> u32 {
         current.fill(0);
-        current[start] = 1 % prime;
+        current[start >> 1] = 1 % prime;
 
         for cell in 0..rows * cols {
-            let c = cell % cols;
-            let moves = if cell < (rows - 1) * cols { &moves_below[c] } else { &moves_last[c] };
+            let blocks = if cell < (rows - 1) * cols { &blocks_below[cell % cols] } else { &blocks_last[cell % cols] };
+            let parity = (cell as u32 + 1 + start.count_ones()) & 1;
 
-            next.fill(0);
+            for (block, (slots, terms)) in next.chunks_exact_mut(block_size).zip(blocks).enumerate() {
+                let from = block * block_size;
 
-            for (state, &count) in current.iter().enumerate() {
-                if count == 0 {
-                    continue;
-                }
-
-                let state = state as u32;
-
-                if state & 1 != 0 {
-                    add(&mut next, shift(state, c), count, false, prime);
-                    continue;
-                }
-
-                for Move { bit, crossing } in moves {
-                    if state & bit == 0 {
-                        add(&mut next, shift(state + bit, c), count, twisted && *crossing, prime);
-                    }
+                match terms.len() {
+                    0 => slots.fill(0),
+                    1 => fill_block::<1>(slots, &current, from, terms, parity, prime),
+                    2 => fill_block::<2>(slots, &current, from, terms, parity, prime),
+                    3 => fill_block::<3>(slots, &current, from, terms, parity, prime),
+                    4 => fill_block::<4>(slots, &current, from, terms, parity, prime),
+                    5 => fill_block::<5>(slots, &current, from, terms, parity, prime),
+                    count => unreachable!("a block has at most five terms, not {count}"),
                 }
             }
 
             std::mem::swap(&mut current, &mut next);
         }
 
-        current[start]
+        current[start >> 1]
     };
 
     if !torus {
@@ -145,13 +236,14 @@ fn count_modulo(board: &Board, prime: u32) -> u32 {
     }
 
     let rotate = |set: usize| ((set << 1) | (set >> (cols - 1))) & ((1 << cols) - 1);
-    let reduce = !twisted || rows.is_multiple_of(2);
+    let rotates = !twisted || rows.is_multiple_of(2);
+    let mirrors = lattice.down_left == lattice.down_right;
     let mut total: u64 = 0;
 
     for start in 0..1usize << cols {
         let mut weight: u64 = 1;
 
-        if reduce {
+        if rotates {
             let mut rotation = rotate(start);
 
             while rotation > start {
@@ -161,6 +253,25 @@ fn count_modulo(board: &Board, prime: u32) -> u32 {
 
             if rotation != start {
                 continue;
+            }
+        }
+
+        if mirrors {
+            let mirrored = start.reverse_bits() >> (usize::BITS as usize - cols);
+            let mut least = mirrored;
+            let mut rotation = rotate(mirrored);
+
+            while rotates && rotation != mirrored {
+                least = least.min(rotation);
+                rotation = rotate(rotation);
+            }
+
+            if least < start {
+                continue;
+            }
+
+            if least > start {
+                weight *= 2;
             }
         }
 
@@ -239,7 +350,7 @@ fn main() -> ExitCode {
 
     if col_count.min(if torus && !twisted { row_count } else { u64::MAX }) > MAX_CIRCUMFERENCE {
         eprintln!(
-            "The circumference can be at most {MAX_CIRCUMFERENCE}, because every worker thread keeps two tables of 2^(circumference + 3) states."
+            "The circumference can be at most {MAX_CIRCUMFERENCE}, because every worker thread keeps two tables of up to 2^(circumference + 1) counts."
         );
         return ExitCode::FAILURE;
     }
@@ -256,6 +367,26 @@ fn main() -> ExitCode {
         Err(message) => {
             eprintln!("{message}");
             ExitCode::FAILURE
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn counts_zero_on_a_torus_with_an_odd_number_of_cells() {
+        let prime = list_primes(1)[0];
+
+        for name in ["square", "triangular", "king"] {
+            let lattice = lattice_of(name).unwrap();
+
+            for (rows, cols) in [(3, 3), (5, 3), (3, 5)] {
+                for twisted in [false, true] {
+                    assert_eq!(count_modulo(&Board { rows, cols, lattice, torus: true, twisted }, prime), 0, "{rows}x{cols} {name} twisted={twisted}");
+                }
+            }
         }
     }
 }

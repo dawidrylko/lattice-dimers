@@ -6,58 +6,201 @@ const { listPrimes, calculateLog2Bound, combineResidues } = require('../core/mod
 const MAX_SHORTER_SIDE = 30;
 
 /**
- * Counts the domicule tilings modulo a prime with the same broken-profile dynamic
- * programming as domicule-rectangle-bigint.js. Bit i of a state tells whether the cell
- * i places ahead of the current one is already covered. A state has cols + 2 bits, but
- * the top one is clear before every cell step, since a step shifts the state right after
- * setting at most that bit, so the tables hold the 2^(cols + 1) states below it.
- * Only additions are needed, so the counts are kept in Uint32Array tables.
+ * Lists the offsets of the cells a free cell in column c can cover with its partner: right,
+ * down-left, down and down-right.
+ * @param {number} cols The number of columns.
+ * @param {number} c The column.
+ * @param {boolean} hasBelow Whether the cell has a next row.
+ * @returns {number[]} The offsets.
+ */
+function listOffsets(cols, c, hasBelow) {
+  const hasRight = c + 1 < cols;
+
+  return [
+    ...(hasRight ? [1] : []),
+    ...(hasBelow && c > 0 ? [cols - 1] : []),
+    ...(hasBelow ? [cols] : []),
+    ...(hasBelow && hasRight ? [cols + 1] : []),
+  ];
+}
+
+/**
+ * Lists the terms of the cell step of column c for every block of the next table. A next state
+ * comes from the state shifted left with bit 0 set, the covered cell, or from the state
+ * shifted left without the bit of a move, the free cell that made the move. Either way the
+ * count it needs lies a fixed number of entries, the shift of the term, below the next state
+ * in the current table. A move onto the next cell sets bit 0 of the next state, so it has only
+ * odd next states (odd). The top three bits of an entry decide which terms it has, so the
+ * table is at most eight blocks of entries with the same terms.
+ * @param {number} cols The number of columns.
+ * @param {number} c The column.
+ * @param {boolean} hasBelow Whether the cell has a next row.
+ * @returns {Array<{ plain: number[], odd: number[] }>} The shifts of the terms of every block.
+ */
+function listBlocks(cols, c, hasBelow) {
+  const offsets = listOffsets(cols, c, hasBelow);
+  const blockBits = Math.min(cols, 3);
+
+  return Array.from({ length: 1 << blockBits }, (_, block) => {
+    const entry = block << (cols - blockBits);
+    const isSet = bit => ((entry >>> bit) & 1) === 1;
+    const top = isSet(cols - 1);
+    const terms = { plain: top ? [] : [0], odd: [] };
+
+    for (const offset of offsets) {
+      if (offset === 1 && !top) {
+        terms.odd.push(1);
+      } else if (offset > 1 && isSet(offset - 2) && (offset === cols + 1 || !top)) {
+        terms.plain.push(1 << (offset - 1));
+      }
+    }
+
+    return terms;
+  });
+}
+
+/**
+ * Adds two counts modulo the prime, inside 32-bit integers.
+ * @param {number} sum The first count.
+ * @param {number} count The second count.
+ * @param {number} prime The modulus.
+ * @returns {number} The sum modulo the prime.
+ */
+function addModulo(sum, count, prime) {
+  const total = sum + (count - prime);
+
+  return total < 0 ? total + prime : total;
+}
+
+/**
+ * Tells whether an entry has an odd number of set bits.
+ * @param {number} entry The entry.
+ * @returns {number} 1 when the number is odd, otherwise 0.
+ */
+function parityOf(entry) {
+  let folded = entry ^ (entry >>> 16);
+  folded ^= folded >>> 8;
+  folded ^= folded >>> 4;
+
+  return (0x6996 >>> (folded & 15)) & 1;
+}
+
+/**
+ * Fills one block of the next table. Entry e stands for the state 2e + bit, where bit makes
+ * the number of set bits of the state odd or even as the step requires (parity), and a term
+ * with the shift s reads the current entry 2e + bit - s. Two neighbouring entries have
+ * opposite bits, so a block of at least two entries is filled a pair at a time.
+ * @param {Uint32Array} next The next table.
+ * @param {Uint32Array} current The current table.
+ * @param {number} from The first entry of the block.
+ * @param {number} size The number of entries of the block.
+ * @param {{ plain: number[], odd: number[] }} terms The shifts of the terms of the block.
+ * @param {number} parity The parity of the entries whose bit is 1.
+ * @param {number} prime The modulus.
+ */
+function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
+  if (plain.length + odd.length === 0) {
+    next.fill(0, from, from + size);
+    return;
+  }
+
+  if (size < 2 || plain.length > 4 || odd.length > 1) {
+    for (let entry = from; entry < from + size; entry++) {
+      const bit = parityOf(entry) ^ parity;
+      let sum = 0;
+
+      for (const shift of plain) {
+        sum = addModulo(sum, current[2 * entry + bit - shift], prime);
+      }
+
+      for (const shift of bit === 1 ? odd : []) {
+        sum = addModulo(sum, current[2 * entry + 1 - shift], prime);
+      }
+
+      next[entry] = sum;
+    }
+
+    return;
+  }
+
+  const plains = plain.length;
+  const odds = odd.length;
+  const first = 2 * from - (plain[0] ?? 0);
+  const second = 2 * from - (plain[1] ?? 0);
+  const third = 2 * from - (plain[2] ?? 0);
+  const fourth = 2 * from - (plain[3] ?? 0);
+  const onto = 2 * from - (odd[0] ?? 0);
+
+  for (let place = 0; place < size; place += 2) {
+    const bit = parityOf(from + place) ^ parity;
+    const lowState = 2 * place + bit;
+    const highState = 2 * place + 3 - bit;
+    let low = 0;
+    let high = 0;
+
+    if (plains > 0) {
+      low = current[first + lowState];
+      high = current[first + highState];
+
+      if (plains > 1) {
+        low = addModulo(low, current[second + lowState], prime);
+        high = addModulo(high, current[second + highState], prime);
+
+        if (plains > 2) {
+          low = addModulo(low, current[third + lowState], prime);
+          high = addModulo(high, current[third + highState], prime);
+
+          if (plains > 3) {
+            low = addModulo(low, current[fourth + lowState], prime);
+            high = addModulo(high, current[fourth + highState], prime);
+          }
+        }
+      }
+    }
+
+    if (odds > 0) {
+      if (bit === 1) {
+        low = addModulo(low, current[onto + lowState], prime);
+      } else {
+        high = addModulo(high, current[onto + highState], prime);
+      }
+    }
+
+    next[from + place] = low;
+    next[from + place + 1] = high;
+  }
+}
+
+/**
+ * Counts the domicule tilings modulo a prime with the same broken-profile dynamic programming
+ * as domicule-rectangle-bigint.js. Bit i of a state tells whether the cell i places ahead of
+ * the current one is already covered. A state has cols + 2 bits, but the top one is clear
+ * before every cell step, since a step shifts the state right after setting at most that bit.
+ * After k cells the number of set bits of a live state has the parity of k: a piece inside the
+ * processed cells covers two of them, and a piece that sticks out covers one and sets one bit.
+ * So bit 0 of a live state follows from its other bits, and the tables hold one count for
+ * every value of bits 1 to cols, 2^cols counts instead of 2^(cols + 1). A step fills every
+ * next entry from the entries that lead to it (listBlocks), so it neither clears a table nor
+ * tests a count. Only additions are needed, so the counts are kept in Uint32Array tables.
  * @param {number} rows The number of rows (the longer side).
  * @param {number} cols The number of columns (the shorter side).
  * @param {number} prime The modulus.
  * @returns {number} The number of tilings modulo the prime.
  */
 function countModulo(rows, cols, prime) {
-  const stateCount = 2 ** (cols + 1);
+  const stateCount = 2 ** cols;
+  const blockSize = stateCount / 2 ** Math.min(cols, 3);
+  const blocksBelow = Array.from({ length: cols }, (_, c) => listBlocks(cols, c, true));
+  const blocksLast = Array.from({ length: cols }, (_, c) => listBlocks(cols, c, false));
   let current = new Uint32Array(stateCount);
   let next = new Uint32Array(stateCount);
   current[0] = 1 % prime;
 
   for (let cell = 0; cell < rows * cols; cell++) {
-    const rowIndex = Math.floor(cell / cols);
-    const colIndex = cell % cols;
-    const hasRight = colIndex + 1 < cols;
-    const hasBelow = rowIndex + 1 < rows;
-    const offsets = [
-      ...(hasRight ? [1] : []),
-      ...(hasBelow && colIndex > 0 ? [cols - 1] : []),
-      ...(hasBelow ? [cols] : []),
-      ...(hasBelow && hasRight ? [cols + 1] : []),
-    ].map(offset => 2 ** offset);
+    const blocks = (Math.floor(cell / cols) + 1 < rows ? blocksBelow : blocksLast)[cell % cols];
 
-    next.fill(0);
-
-    for (let state = 0; state < stateCount; state++) {
-      const count = current[state];
-
-      if (count === 0) {
-        continue;
-      }
-
-      if (state & 1) {
-        const target = state >>> 1;
-        const sum = next[target] + count;
-        next[target] = sum >= prime ? sum - prime : sum;
-        continue;
-      }
-
-      for (let i = 0; i < offsets.length; i++) {
-        if (!(state & offsets[i])) {
-          const target = (state + offsets[i]) >>> 1;
-          const sum = next[target] + count;
-          next[target] = sum >= prime ? sum - prime : sum;
-        }
-      }
+    for (let block = 0; block < blocks.length; block++) {
+      fillBlock(next, current, block * blockSize, blockSize, blocks[block], (cell + 1) % 2, prime);
     }
 
     [current, next] = [next, current];

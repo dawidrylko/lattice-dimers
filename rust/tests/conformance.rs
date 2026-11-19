@@ -262,21 +262,39 @@ fn parity() {
     assert_no_failures("parity", entries.len(), failures);
 }
 
-#[test]
-fn pfaffian_against_bigint() {
-    let (twin, id) = ("any-lattice-cylinder-torus-bigint", "any-lattice-cylinder-torus-pfaffian");
-    let boards: Vec<Value> = ["square", "triangular"]
-        .into_iter()
-        .flat_map(|lattice| [false, true].into_iter().map(move |torus| (lattice, torus)))
-        .flat_map(|(lattice, torus)| (0..=8).flat_map(move |rows| (0..=8).map(move |cols| serde_json::json!({ "rowCount": rows, "colCount": cols, "lattice": lattice, "torus": torus }))))
-        .collect();
-    let failures = failures_of(&boards, |board| {
+fn assert_same_as_twin(label: &str, twin: &str, id: &str, boards: &[Value]) {
+    let failures = failures_of(boards, |board| {
         let args = board_args(board);
         let (expected, result) = (run(twin, &args, SHORT), run(id, &args, SHORT));
         (result.code != expected.code || result.stdout != expected.stdout || ![0, 1].contains(&result.code))
             .then(|| format!("{} (expected as {})", describe(id, &args, &result), describe(twin, &args, &expected)))
     });
-    assert_no_failures("pfaffian against bigint", boards.len(), failures);
+    assert_no_failures(label, boards.len(), failures);
+}
+
+#[test]
+fn pfaffian_against_bigint() {
+    let boards: Vec<Value> = ["square", "triangular"]
+        .into_iter()
+        .flat_map(|lattice| [false, true].into_iter().map(move |torus| (lattice, torus)))
+        .flat_map(|(lattice, torus)| (0..=8).flat_map(move |rows| (0..=8).map(move |cols| serde_json::json!({ "rowCount": rows, "colCount": cols, "lattice": lattice, "torus": torus }))))
+        .collect();
+    assert_same_as_twin("pfaffian against bigint", "any-lattice-cylinder-torus-bigint", "any-lattice-cylinder-torus-pfaffian", &boards);
+}
+
+#[test]
+fn modular_against_bigint() {
+    let surfaces = [(false, false), (false, true), (true, false), (true, true)];
+    let boards: Vec<Value> = ["square", "triangular", "king"]
+        .into_iter()
+        .flat_map(|lattice| surfaces.into_iter().map(move |(torus, twisted)| (lattice, torus, twisted)))
+        .flat_map(|(lattice, torus, twisted)| {
+            (0..=7).flat_map(move |rows| (0..=7).map(move |cols| serde_json::json!({ "rowCount": rows, "colCount": cols, "lattice": lattice, "torus": torus, "twisted": twisted })))
+        })
+        .collect();
+    assert_same_as_twin("modular against bigint", "any-lattice-cylinder-torus-bigint", "any-lattice-cylinder-torus-modular", &boards);
+    let rectangles: Vec<Value> = (0..=9).flat_map(|rows| (0..=9).map(move |cols| serde_json::json!({ "rowCount": rows, "colCount": cols }))).collect();
+    assert_same_as_twin("modular against bigint on rectangles", "domicule-rectangle-bigint", "domicule-rectangle-modular", &rectangles);
 }
 
 #[test]

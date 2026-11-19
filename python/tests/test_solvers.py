@@ -391,3 +391,45 @@ def test_pfaffian_solver_agrees_with_the_bigint_solver_from_0x0_to_8x8(lattice, 
     differences = [f"{rows}x{cols}: {actual} instead of {expected}" for rows, cols, actual, expected in outcomes if actual != expected]
 
     assert differences == []
+
+
+@pytest.mark.parametrize("lattice", ["square", "triangular", "king"])
+@pytest.mark.parametrize("torus", [False, True])
+@pytest.mark.parametrize("twisted", [False, True])
+def test_modular_solver_agrees_with_the_bigint_solver_from_0x0_to_7x7(lattice, torus, twisted):
+    modular = importlib.import_module(module_of("any-lattice-cylinder-torus-modular"))
+    bigint = importlib.import_module(module_of("any-lattice-cylinder-torus-bigint"))
+
+    def expected_of(rows, cols):
+        if not bigint.is_valid_board(rows, cols, torus):
+            return "rejected"
+
+        return bigint.calculate_total_tiling_combinations(rows, cols, lattice, torus, twisted)
+
+    def actual_of(rows, cols):
+        try:
+            return modular.calculate_total_tiling_combinations(rows, cols, lattice, torus, twisted, jobs=1)
+        except ValueError as error:
+            if "circumference must be at least 2" not in str(error):
+                raise
+
+            return "rejected"
+
+    boards = [(rows, cols) for rows in range(8) for cols in range(8)]
+    outcomes = [(rows, cols, actual_of(rows, cols), expected_of(rows, cols)) for rows, cols in boards]
+    differences = [f"{rows}x{cols}: {actual} instead of {expected}" for rows, cols, actual, expected in outcomes if actual != expected]
+
+    assert differences == []
+
+
+def test_modular_solver_agrees_with_the_bigint_solver_on_rectangles_from_0x0_to_9x9():
+    modular = importlib.import_module(module_of("domicule-rectangle-modular"))
+    bigint = importlib.import_module(module_of("domicule-rectangle-bigint"))
+    boards = [(rows, cols) for rows in range(10) for cols in range(10)]
+    outcomes = [
+        (rows, cols, modular.calculate_total_tiling_combinations(rows, cols, jobs=1), bigint.calculate_total_tiling_combinations(rows, cols))
+        for rows, cols in boards
+    ]
+    differences = [f"{rows}x{cols}: {actual} instead of {expected}" for rows, cols, actual, expected in outcomes if actual != expected]
+
+    assert differences == []

@@ -1,3 +1,4 @@
+use std::array;
 use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
@@ -7,7 +8,23 @@ use lattice_dimers_core::{BigInt, Timer, calculate_log2_bound, combine_checked_r
 const MAX_SHORTER_SIDE: u64 = 30;
 const USAGE: &str = "Usage: domicule-rectangle-modular -r <rowCount> -c <colCount> [-j <jobs>]";
 
-/// Lists the bits a free cell in column c can cover with its partner, like the offsets in countModulo of
+/// One way into a next state, like a term of listBlocks in js/solvers/domicule-rectangle-modular.js: the count of
+/// the state that leads to it lies `shift` entries below the next state in the current table. A move onto the next
+/// cell sets bit 0 of the next state, so it has only odd next states (`odd_only`).
+#[derive(Clone, Copy)]
+struct Term {
+    shift: usize,
+    odd_only: bool,
+}
+
+/// A term over one block of next entries: the two current counts each of them reads one of, by its bit 0.
+#[derive(Clone, Copy)]
+struct Source<'a> {
+    counts: &'a [u32],
+    odd_only: bool,
+}
+
+/// Lists the offsets of the cells a free cell in column c can cover with its partner, like listOffsets of
 /// js/solvers/domicule-rectangle-modular.js: right, down-left, down and down-right.
 fn list_offsets(cols: usize, c: usize, has_below: bool) -> Vec<usize> {
     let has_right = c + 1 < cols;
@@ -29,44 +46,113 @@ fn list_offsets(cols: usize, c: usize, has_below: bool) -> Vec<usize> {
         offsets.push(cols + 1);
     }
 
-    offsets.into_iter().map(|offset| 1 << offset).collect()
+    offsets
 }
 
-fn add(next: &mut [u32], target: usize, count: u32, prime: u32) {
-    let sum = next[target] + count;
-    next[target] = if sum >= prime { sum - prime } else { sum };
+/// Lists the terms of the cell step of column c for every block of the next table, like listBlocks of
+/// js/solvers/domicule-rectangle-modular.js. The top three bits of an entry decide its terms, so the table is at
+/// most eight blocks of entries with the same terms.
+fn list_blocks(cols: usize, c: usize, has_below: bool) -> Vec<Vec<Term>> {
+    let offsets = list_offsets(cols, c, has_below);
+    let block_bits = cols.min(3);
+
+    (0..1usize << block_bits)
+        .map(|block| {
+            let entry = block << (cols - block_bits);
+            let is_set = |bit: usize| entry >> bit & 1 == 1;
+            let top = is_set(cols - 1);
+            let mut terms = Vec::new();
+
+            if !top {
+                terms.push(Term { shift: 0, odd_only: false });
+            }
+
+            for &offset in &offsets {
+                if offset == 1 && !top {
+                    terms.push(Term { shift: 1, odd_only: true });
+                } else if offset > 1 && is_set(offset - 2) && (offset == cols + 1 || !top) {
+                    terms.push(Term { shift: 1 << (offset - 1), odd_only: false });
+                }
+            }
+
+            terms
+        })
+        .collect()
+}
+
+fn add(sum: u32, count: u32, prime: u32) -> u32 {
+    let sum = sum + count;
+
+    if sum >= prime { sum - prime } else { sum }
+}
+
+/// Sums the terms of one next entry: `place` is its place in the block and `bit` is bit 0 of its state.
+#[inline(always)]
+fn sum_sources<const N: usize>(sources: &[Source; N], place: usize, bit: usize, prime: u32) -> u32 {
+    let mut sum = 0;
+
+    for source in sources {
+        let count = if source.odd_only { source.counts[2 * place] & (bit as u32).wrapping_neg() } else { source.counts[2 * place + bit] };
+
+        sum = add(sum, count, prime);
+    }
+
+    sum
+}
+
+/// Fills one block of the next table, which starts at the entry `from`. Two neighbouring entries have opposite
+/// bits 0, so the number of set bits is counted once per pair.
+fn fill_block<const N: usize>(block: &mut [u32], current: &[u32], from: usize, terms: &[Term], parity: u32, prime: u32) {
+    let sources: [Source; N] = array::from_fn(|at| {
+        let Term { shift, odd_only } = terms[at];
+        let start = 2 * from + usize::from(odd_only) - shift;
+
+        Source { counts: &current[start..start + 2 * block.len()], odd_only }
+    });
+    let bit_of = |place: usize| ((parity + (from + place).count_ones()) & 1) as usize;
+
+    if let [slot] = block {
+        *slot = sum_sources(&sources, 0, bit_of(0), prime);
+        return;
+    }
+
+    for (pair, slots) in block.as_chunks_mut::<2>().0.iter_mut().enumerate() {
+        let bit = bit_of(2 * pair);
+
+        slots[0] = sum_sources(&sources, 2 * pair, bit, prime);
+        slots[1] = sum_sources(&sources, 2 * pair + 1, 1 - bit, prime);
+    }
 }
 
 /// Counts the domicule tilings modulo a prime with the broken-profile dynamic programming of countModulo in
 /// js/solvers/domicule-rectangle-modular.js. Bit i of a state tells whether the cell i places ahead of the current
-/// one is already covered. A state has cols + 2 bits, but the top one is clear before every cell step, since a step
-/// shifts the state right after setting at most that bit, so the tables hold the 2^(cols + 1) states below it, in
-/// counts of u32.
+/// one is already covered, and the top bit of its cols + 2 is clear before every cell step. After k cells a live
+/// state has k set bits modulo 2, so its bit 0 follows from the others and the tables hold 2^cols counts of u32,
+/// one per value of bits 1 to cols. A step fills every next entry from the entries that lead to it, so it neither
+/// clears a table nor tests a count.
 fn count_modulo(rows: usize, cols: usize, prime: u32) -> u32 {
-    let state_count = 1usize << (cols + 1);
+    let state_count = 1usize << cols;
+    let block_size = state_count >> cols.min(3);
+    let blocks_below: Vec<_> = (0..cols).map(|c| list_blocks(cols, c, true)).collect();
+    let blocks_last: Vec<_> = (0..cols).map(|c| list_blocks(cols, c, false)).collect();
     let mut current = vec![0u32; state_count];
     let mut next = vec![0u32; state_count];
     current[0] = 1 % prime;
 
     for cell in 0..rows * cols {
-        let offsets = list_offsets(cols, cell % cols, cell / cols + 1 < rows);
+        let blocks = if cell / cols + 1 < rows { &blocks_below[cell % cols] } else { &blocks_last[cell % cols] };
+        let parity = (cell as u32 + 1) & 1;
 
-        next.fill(0);
+        for (block, (slots, terms)) in next.chunks_exact_mut(block_size).zip(blocks).enumerate() {
+            let from = block * block_size;
 
-        for (state, &count) in current.iter().enumerate() {
-            if count == 0 {
-                continue;
-            }
-
-            if state & 1 != 0 {
-                add(&mut next, state >> 1, count, prime);
-                continue;
-            }
-
-            for &offset in &offsets {
-                if state & offset == 0 {
-                    add(&mut next, (state + offset) >> 1, count, prime);
-                }
+            match terms.len() {
+                0 => slots.fill(0),
+                1 => fill_block::<1>(slots, &current, from, terms, parity, prime),
+                2 => fill_block::<2>(slots, &current, from, terms, parity, prime),
+                3 => fill_block::<3>(slots, &current, from, terms, parity, prime),
+                4 => fill_block::<4>(slots, &current, from, terms, parity, prime),
+                count => unreachable!("a block has at most four terms, not {count}"),
             }
         }
 
