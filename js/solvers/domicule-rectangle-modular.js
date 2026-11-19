@@ -32,15 +32,15 @@ function listOffsets(cols, c, hasBelow) {
  * in the current table. A move onto the next cell sets bit 0 of the next state, so it has only
  * odd next states (odd). The top three bits of an entry decide which terms it has, so the
  * table is at most eight blocks of entries with the same terms. With crossingSign the
- * down-left move is negative where bit cols - 2 of the entry is set: the cell below the one
+ * down-left move is subtracted where bit cols - 2 of the entry is set: the cell below the one
  * that moves is then covered already, which only the down-right move of the cell to its left
  * does, so the two diagonal pieces cross.
  * @param {number} cols The number of columns.
  * @param {number} c The column.
  * @param {boolean} hasBelow Whether the cell has a next row.
  * @param {boolean} crossingSign Whether the tilings count with their crossing sign.
- * @returns {Array<{ plain: Object[], odd: Object[] }>} The terms of every block, each with its
- * shift and whether it is subtracted.
+ * @returns {Array<{ plain: number[], odd: number[], subtracted: { plain: number[], odd: number[] } }>}
+ * The shifts of the terms of every block, the subtracted ones apart.
  */
 function listBlocks(cols, c, hasBelow, crossingSign) {
   const offsets = listOffsets(cols, c, hasBelow);
@@ -50,15 +50,16 @@ function listBlocks(cols, c, hasBelow, crossingSign) {
     const entry = block << (cols - blockBits);
     const isSet = bit => ((entry >>> bit) & 1) === 1;
     const top = isSet(cols - 1);
-    const terms = { plain: top ? [] : [{ shift: 0, negative: false }], odd: [] };
+    const terms = { plain: top ? [] : [0], odd: [], subtracted: { plain: [], odd: [] } };
 
     for (const offset of offsets) {
       const negative = crossingSign && c > 0 && offset === cols - 1 && isSet(cols - 2);
+      const { plain, odd } = negative ? terms.subtracted : terms;
 
       if (offset === 1 && !top) {
-        terms.odd.push({ shift: 1, negative });
+        odd.push(1);
       } else if (offset > 1 && isSet(offset - 2) && (offset === cols + 1 || !top)) {
-        terms.plain.push({ shift: 1 << (offset - 1), negative });
+        plain.push(1 << (offset - 1));
       }
     }
 
@@ -106,40 +107,83 @@ function parityOf(entry) {
 }
 
 /**
+ * Fills one block that has a subtracted term, an entry at a time like the entry loop of
+ * fillBlock. Only a count with the crossing sign has such a block.
+ * @param {Uint32Array} next The next table.
+ * @param {Uint32Array} current The current table.
+ * @param {number} from The first entry of the block.
+ * @param {number} size The number of entries of the block.
+ * @param {{ plain: number[], odd: number[], subtracted: { plain: number[], odd: number[] } }} terms
+ * The shifts of the terms of the block.
+ * @param {number} parity The parity of the number of set bits of every state of the next table.
+ * @param {number} prime The modulus.
+ */
+function fillSignedBlock(next, current, from, size, { plain, odd, subtracted }, parity, prime) {
+  for (let entry = from; entry < from + size; entry++) {
+    const bit = parityOf(entry) ^ parity;
+    let sum = 0;
+
+    for (const shift of plain) {
+      sum = addModulo(sum, current[2 * entry + bit - shift], prime);
+    }
+
+    for (const shift of bit === 1 ? odd : []) {
+      sum = addModulo(sum, current[2 * entry + 1 - shift], prime);
+    }
+
+    for (const shift of subtracted.plain) {
+      sum = subtractModulo(sum, current[2 * entry + bit - shift], prime);
+    }
+
+    for (const shift of bit === 1 ? subtracted.odd : []) {
+      sum = subtractModulo(sum, current[2 * entry + 1 - shift], prime);
+    }
+
+    next[entry] = sum;
+  }
+}
+
+/**
  * Fills one block of the next table. Entry e stands for the state 2e + bit, where bit makes
  * the number of set bits of the state odd or even as the step requires (parity), and a term
  * with the shift s reads the current entry 2e + bit - s. Two neighbouring entries have
  * opposite bits, so a block of at least two entries is filled a pair at a time. The pair
  * loop holds three plain terms and one odd term, the most a block has on any board; a block
  * with more would take the entry loop, which takes any number. A block with a subtracted
- * term takes the entry loop as well, so the pair loop only adds.
+ * term goes to fillSignedBlock, so this function only adds.
  * @param {Uint32Array} next The next table.
  * @param {Uint32Array} current The current table.
  * @param {number} from The first entry of the block.
  * @param {number} size The number of entries of the block.
- * @param {{ plain: Object[], odd: Object[] }} terms The terms of the block.
+ * @param {{ plain: number[], odd: number[], subtracted: { plain: number[], odd: number[] } }} terms
+ * The shifts of the terms of the block.
  * @param {number} parity The parity of the number of set bits of every state of the next table.
  * @param {number} prime The modulus.
  */
-function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
+function fillBlock(next, current, from, size, terms, parity, prime) {
+  const { plain, odd, subtracted } = terms;
+
+  if (subtracted.plain.length + subtracted.odd.length > 0) {
+    fillSignedBlock(next, current, from, size, terms, parity, prime);
+    return;
+  }
+
   if (plain.length + odd.length === 0) {
     next.fill(0, from, from + size);
     return;
   }
 
-  const subtracts = [...plain, ...odd].some(term => term.negative);
-
-  if (size < 2 || subtracts || plain.length > 3 || odd.length > 1) {
+  if (size < 2 || plain.length > 3 || odd.length > 1) {
     for (let entry = from; entry < from + size; entry++) {
       const bit = parityOf(entry) ^ parity;
       let sum = 0;
 
-      for (const { shift, negative } of plain) {
-        sum = (negative ? subtractModulo : addModulo)(sum, current[2 * entry + bit - shift], prime);
+      for (const shift of plain) {
+        sum = addModulo(sum, current[2 * entry + bit - shift], prime);
       }
 
-      for (const { shift, negative } of bit === 1 ? odd : []) {
-        sum = (negative ? subtractModulo : addModulo)(sum, current[2 * entry + 1 - shift], prime);
+      for (const shift of bit === 1 ? odd : []) {
+        sum = addModulo(sum, current[2 * entry + 1 - shift], prime);
       }
 
       next[entry] = sum;
@@ -150,10 +194,10 @@ function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
 
   const plains = plain.length;
   const odds = odd.length;
-  const first = 2 * from - (plain[0]?.shift ?? 0);
-  const second = 2 * from - (plain[1]?.shift ?? 0);
-  const third = 2 * from - (plain[2]?.shift ?? 0);
-  const onto = 2 * from - (odd[0]?.shift ?? 0);
+  const first = 2 * from - (plain[0] ?? 0);
+  const second = 2 * from - (plain[1] ?? 0);
+  const third = 2 * from - (plain[2] ?? 0);
+  const onto = 2 * from - (odd[0] ?? 0);
 
   for (let place = 0; place < size; place += 2) {
     const bit = parityOf(from + place) ^ parity;
@@ -203,9 +247,10 @@ function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
  * tests a count. Only additions are needed, so the counts are kept in Uint32Array tables.
  *
  * With crossingSign a tiling counts with its crossing sign, (-1)^k for the k unit squares in
- * which two diagonal pieces cross. The sum is plus or minus the Pfaffian of the board
- * (Wildeboer and Seidel, cited in research/king-entropy/paper/king-entropy.tex), which
- * js/test/core.test.js checks. No solver prints it.
+ * which two diagonal pieces cross. Under a suitable orientation the Pfaffian of the board is
+ * plus or minus that sum (Wildeboer and Seidel, cited in
+ * research/king-entropy/paper/king-entropy.tex), which js/test/core.test.js checks with the
+ * orientation that docs/glossary.md names. No solver prints the sum.
  * @param {number} rows The number of rows (the longer side).
  * @param {number} cols The number of columns (the shorter side).
  * @param {number} prime The modulus.

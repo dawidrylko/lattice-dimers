@@ -472,3 +472,12 @@ def test_crossing_sign_sum_of_the_rectangle_kernel_is_plus_or_minus_the_pfaffian
 
     assert combine_checked_residues(sums, primes, signed=True) == expected
     assert abs(combine_checked_residues(pfaffians, primes, signed=True)) == expected
+
+
+@pytest.mark.parametrize(("rows", "cols", "expected"), [(5, 2, 1), (4, 3, 15), (6, 6, 223775)])
+def test_crossing_sign_sum_with_a_scratch_array_of_one_count(monkeypatch, rows, cols, expected):
+    modular = importlib.import_module(module_of("domicule-rectangle-modular"))
+    monkeypatch.setattr(modular, "SCRATCH_COUNTS", 1)
+    prime = list_primes(1)[0]
+
+    assert modular.count_modulo({"rows": rows, "cols": cols, "prime": prime, "crossing_sign": True}) == expected % prime

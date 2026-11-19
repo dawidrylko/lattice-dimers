@@ -141,8 +141,9 @@ fn fill_block<const N: usize, const SIGNED: bool>(block: &mut [u32], current: &[
 /// clears a table nor tests a count.
 ///
 /// With CROSSING_SIGN a tiling counts with its crossing sign, (-1)^k for the k unit squares in which two diagonal
-/// pieces cross. The sum is plus or minus the Pfaffian of the board (Wildeboer and Seidel, cited in
-/// research/king-entropy/paper/king-entropy.tex), which the test below checks. No solver prints it.
+/// pieces cross. Under a suitable orientation the Pfaffian of the board is plus or minus that sum (Wildeboer and
+/// Seidel, cited in research/king-entropy/paper/king-entropy.tex), which the test below checks with the orientation
+/// that docs/glossary.md names. No solver prints the sum.
 fn count_modulo<const CROSSING_SIGN: bool>(rows: usize, cols: usize, prime: u32) -> u32 {
     let state_count = 1usize << cols;
     let block_size = state_count >> cols.min(3);

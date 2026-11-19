@@ -51,18 +51,18 @@ def count_modulo(task):
     With the task key crossing_sign a tiling counts with its crossing sign, (-1)^k for the k unit squares in which
     two diagonal pieces cross. The down-left move closes such a square when the cell below the one that moves is
     covered already, bit cols of the state, which only the down-right move of the cell to its left does; that half
-    of its view is subtracted. The sum is plus or minus the Pfaffian of the board (Wildeboer and Seidel, cited in
-    research/king-entropy/paper/king-entropy.tex), which python/tests/test_solvers.py checks. No solver prints it."""
+    of its view is subtracted. Under a suitable orientation the Pfaffian of the board is plus or minus that sum
+    (Wildeboer and Seidel, cited in research/king-entropy/paper/king-entropy.tex), which
+    python/tests/test_solvers.py checks with the orientation that docs/glossary.md names. No solver prints the sum."""
     rows, cols, prime = task["rows"], task["cols"], task["prime"]
     crossing_sign = task.get("crossing_sign", False)
     evens = 1 << cols
     modulus = np.uint32(prime)
     scratch = np.empty(SCRATCH_COUNTS, dtype=np.uint32)
 
-    def accumulate(target, source, negative=False):
+    def accumulate(target, source, change=np.add, restore=np.subtract):
         axis = int(np.argmax(target.shape))
         span = max(1, SCRATCH_COUNTS * target.shape[axis] // target.size)
-        change, restore = (np.subtract, np.add) if negative else (np.add, np.subtract)
 
         for low in range(0, target.shape[axis], span):
             part = (slice(None),) * axis + (slice(low, low + span),)
@@ -88,7 +88,7 @@ def count_modulo(task):
 
             if crossing_sign and c > 0 and bit == cols - 1:
                 accumulate(target[0], free[0])
-                accumulate(target[1], free[1], negative=True)
+                accumulate(target[1], free[1], change=np.subtract, restore=np.add)
             else:
                 accumulate(target, free)
 
