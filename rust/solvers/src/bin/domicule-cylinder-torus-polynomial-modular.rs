@@ -3,7 +3,7 @@ use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{Timer, combine_checked_residues, list_primes, parse_args, run_workers};
+use lattice_dimers_core::{Timer, combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers};
 
 const MAX_CIRCUMFERENCE: u64 = 20;
 const USAGE: &str = "Usage: domicule-cylinder-torus-polynomial-modular -r <rowCount> -c <circumference> [--torus] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.";
@@ -271,7 +271,7 @@ fn main() -> ExitCode {
         .filter(|&(rows, cols)| rows == 0 || cols == 0 || (cols >= 2 && (!torus || rows >= 2)))
         .unzip();
 
-    let (Some(row_count), Some(col_count), Some(jobs)) = (row_count, col_count, jobs.filter(|jobs| *jobs > 0)) else {
+    let (Some(row_count), Some(col_count), Some(jobs), false) = (row_count, col_count, jobs.filter(|jobs| *jobs > 0), has_unusable_argument(&argv, &["-r", "-c", "-j"], &["--torus"])) else {
         eprintln!("{USAGE}");
         return ExitCode::FAILURE;
     };

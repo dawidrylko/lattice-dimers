@@ -1,6 +1,6 @@
 const os = require('os');
 const { isMainThread, parentPort, workerData } = require('worker_threads');
-const { parseArgs, startTimer } = require('../core');
+const { parseArgs, hasUnusableArgument, startTimer } = require('../core');
 const { listPrimes, combineCheckedResidues, runWorkers } = require('../core/modular');
 
 const MAX_CIRCUMFERENCE = 20;
@@ -263,7 +263,7 @@ async function __main__() {
   const lattice = latticeIndex === -1 ? 'king' : argv[latticeIndex + 1];
   const jobs = options.jobs ?? os.availableParallelism();
 
-  if (!isValidBoard(options, torus) || !(jobs > 0) || !Object.hasOwn(LATTICES, lattice)) {
+  if (!isValidBoard(options, torus) || !(jobs > 0) || !Object.hasOwn(LATTICES, lattice) || hasUnusableArgument(argv, ['-r', '-c', '-j', '--lattice'], ['--torus'])) {
     console.error(
       'Usage: node js/solvers/any-lattice-cylinder-torus-polynomial-modular.js -r <rowCount> -c <circumference> [--torus] [--lattice king|triangular|square] [-j <jobs>]\n' +
         'The circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.',

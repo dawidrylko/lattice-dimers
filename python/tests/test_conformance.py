@@ -165,6 +165,28 @@ def test_rejection(rejection):
     assert rejection["message"] in result.stderr, result.stderr.strip()[-300:]
 
 
+def repeats_of(args):
+    plain = [token for i, token in enumerate(args) if token.startswith("-") and (i + 1 == len(args) or args[i + 1].startswith("-"))]
+
+    return [[], *([flag] for flag in plain), ["--time", "--time"]]
+
+
+@pytest.mark.parametrize(
+    "case, more",
+    [
+        pytest.param(case, more, id=f"{case['algorithm']}-{' '.join(case['args'] + more)}")
+        for case in CLI["allFlags"]
+        if "py" in ALGORITHMS[case["algorithm"]]
+        for more in repeats_of(case["args"])
+    ],
+)
+def test_every_flag_an_algorithm_takes_besides_time_and_each_flag_without_a_value_a_second_time(case, more):
+    result = run(case["algorithm"], case["args"] + more, timeout=REJECTION_TIMEOUT)
+
+    assert result.returncode == 0, result.stderr.strip()
+    assert result.stdout.strip() == case["expectedResult"]
+
+
 @pytest.mark.parametrize(
     "case",
     [

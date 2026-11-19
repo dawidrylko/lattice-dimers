@@ -4,7 +4,7 @@ import sys
 
 import numpy as np
 
-from lattice_dimers.core import calculate_log2_bound, combine_checked_residues, list_primes, parse_args, run_workers, start_timer
+from lattice_dimers.core import calculate_log2_bound, combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers, start_timer
 from lattice_dimers.solvers.any_lattice_rectangle_polynomial_bigint import list_moves
 from lattice_dimers.solvers.any_lattice_rectangle_bigint import LATTICES, read_lattice
 
@@ -149,7 +149,13 @@ def main(argv):
     col_count = options.get("colCount")
     lattice = read_lattice(argv)
 
-    if not is_valid_size(row_count) or not is_valid_size(col_count) or not jobs > 0 or lattice not in LATTICES:
+    if (
+        not is_valid_size(row_count)
+        or not is_valid_size(col_count)
+        or not jobs > 0
+        or lattice not in LATTICES
+        or has_unusable_argument(argv, ("-r", "-c", "-j", "--lattice"))
+    ):
         print(USAGE, file=sys.stderr)
         return 1
 

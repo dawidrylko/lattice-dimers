@@ -1,5 +1,7 @@
 use std::time::Instant;
 
+pub const TIME_FLAG: &str = "--time";
+
 /// Times a count, like startTimer of js/core/timer.js: stop writes "time <milliseconds> ms" to standard error
 /// when the arguments include --time.
 pub struct Timer {
@@ -9,7 +11,7 @@ pub struct Timer {
 
 impl Timer {
     pub fn start(args: &[String]) -> Self {
-        Self { start: Instant::now(), enabled: args.iter().any(|arg| arg == "--time") }
+        Self { start: Instant::now(), enabled: args.iter().any(|arg| arg == TIME_FLAG) }
     }
 
     pub fn stop(&self) {

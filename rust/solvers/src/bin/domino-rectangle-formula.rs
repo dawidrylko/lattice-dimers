@@ -1,6 +1,6 @@
 use std::process::ExitCode;
 
-use lattice_dimers_core::{BigInt, Timer, parse_args};
+use lattice_dimers_core::{BigInt, Timer, has_unusable_argument, parse_args};
 
 const USAGE: &str = "Usage: domino-rectangle-formula -r <rowCount> -c <colCount>";
 const SQUARE_BOARDS_ONLY: &str =
@@ -116,7 +116,7 @@ fn main() -> ExitCode {
     let row_count = options.get("rowCount").copied().flatten();
     let col_count = options.get("colCount").copied().flatten();
 
-    let (Some(row_count), Some(col_count)) = (row_count, col_count) else {
+    let (Some(row_count), Some(col_count), false) = (row_count, col_count, has_unusable_argument(&argv, &["-r", "-c"], &[])) else {
         eprintln!("{USAGE}");
         return ExitCode::FAILURE;
     };

@@ -1,4 +1,4 @@
-const { parseArgs, startTimer } = require('../core');
+const { parseArgs, hasUnusableArgument, startTimer } = require('../core');
 
 const MAX_SHORTER_SIDE = 20;
 
@@ -72,7 +72,7 @@ function __main__() {
   const argsSchema = { '-r': 'rowCount', '-c': 'colCount' };
   const options = parseArgs(process.argv.slice(2), argsSchema);
 
-  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount)) {
+  if (!isValidSize(options.rowCount) || !isValidSize(options.colCount) || hasUnusableArgument(process.argv.slice(2), ['-r', '-c'])) {
     console.error('Usage: node js/solvers/domicule-rectangle-polynomial-bigint.js -r <rowCount> -c <colCount>');
     process.exit(1);
   }

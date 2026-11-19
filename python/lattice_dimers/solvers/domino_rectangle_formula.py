@@ -1,6 +1,6 @@
 import sys
 
-from lattice_dimers.core import parse_args, start_timer
+from lattice_dimers.core import has_unusable_argument, parse_args, start_timer
 
 USAGE = "Usage: python3 -m lattice_dimers.solvers.domino_rectangle_formula -r <rowCount> -c <colCount>"
 SQUARE_BOARDS_ONLY = (
@@ -104,7 +104,7 @@ def main(argv):
     row_count = options.get("rowCount")
     col_count = options.get("colCount")
 
-    if not is_valid_size(row_count) or not is_valid_size(col_count):
+    if not is_valid_size(row_count) or not is_valid_size(col_count) or has_unusable_argument(argv, ("-r", "-c")):
         print(USAGE, file=sys.stderr)
         return 1
 

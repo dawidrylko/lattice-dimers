@@ -541,12 +541,38 @@ describe('the shared test data', () => {
   });
 
   test('every entry of spec/cli.json names a known algorithm, and every algorithm has rejections', () => {
-    const named = ['rejections', 'parity', 'memory', 'longCounts'].flatMap(group => cli[group].map(({ algorithm }) => algorithm));
+    const named = ['rejections', 'allFlags', 'parity', 'memory', 'longCounts'].flatMap(group => cli[group].map(({ algorithm }) => algorithm));
 
     assert.deepEqual(named.filter(id => !ids.includes(id)), []);
     assert.deepEqual(ids.filter(id => !cli.rejections.some(({ algorithm }) => algorithm === id)), []);
     assert.ok(ids.includes(cli.timeSpan.algorithm));
     assert.deepEqual(Object.keys(cli.timeFlag.moreArgs).filter(id => !ids.includes(id)), []);
+  });
+
+  test('every algorithm has one run with every flag it takes besides --time, and a rejection of each argument it cannot use', () => {
+    const flagsOf = args => args.flatMap((token, i) => (token.startsWith('-') ? [[token, ...(args[i + 1]?.startsWith('-') === false ? [args[i + 1]] : [])]] : []));
+    const flags = new Map(cli.allFlags.flatMap(({ args }) => flagsOf(args)).map(flag => [flag[0], flag]));
+    const missing = [];
+
+    for (const id of ids) {
+      const runs = cli.allFlags.filter(({ algorithm }) => algorithm === id);
+
+      assert.equal(runs.length, 1, id);
+
+      const [{ args }] = runs;
+      const others = [...flags.values()].filter(([flag]) => !args.includes(flag));
+      const repeats = flagsOf(args).filter(flag => flag.length === 2);
+
+      for (const more of [['--surface', 'torus'], ['torus'], ...others, ...repeats]) {
+        const rejected = JSON.stringify([...args, ...more]);
+
+        if (!cli.rejections.some(entry => entry.algorithm === id && entry.message === 'Usage' && JSON.stringify(entry.args) === rejected)) {
+          missing.push(`${id} ${more.join(' ')}`);
+        }
+      }
+    }
+
+    assert.deepEqual(missing, []);
   });
 });
 

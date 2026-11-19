@@ -53,6 +53,21 @@ describe('rejections', () => {
   }
 });
 
+describe('every flag an algorithm takes besides --time, and each flag without a value a second time', () => {
+  for (const { algorithm, args, expectedResult } of cli.allFlags.filter(hasJavaScript)) {
+    const plain = args.filter((token, i) => token.startsWith('-') && args[i + 1]?.startsWith('-') !== false);
+
+    for (const more of [[], ...plain.map(flag => [flag]), ['--time', '--time']]) {
+      test(`${algorithm} ${[...args, ...more].join(' ')}`, () => {
+        const { status, stdout, stderr } = runNode([solverPathOf(algorithm), ...args, ...more], { timeout: REJECTION_TIMEOUT });
+
+        assert.equal(status, 0, `Exit code ${status}: ${stderr.trim()}`);
+        assert.equal(stdout.trim(), expectedResult);
+      });
+    }
+  }
+});
+
 describe('parity', () => {
   for (const { algorithm, rowCount, colCount, expectedResult } of cli.parity.filter(hasJavaScript)) {
     test(`${algorithm} on ${rowCount} x ${colCount}`, () => {

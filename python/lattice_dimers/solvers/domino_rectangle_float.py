@@ -2,7 +2,7 @@ import math
 import sys
 from decimal import Decimal
 
-from lattice_dimers.core import parse_args, start_timer
+from lattice_dimers.core import has_unusable_argument, parse_args, start_timer
 
 MAX_SHORTER_SIDE = 30
 MAX_EXACT_COUNT = 2**53 - 1
@@ -72,7 +72,7 @@ def main(argv):
     row_count = options.get("rowCount")
     col_count = options.get("colCount")
 
-    if not is_valid_size(row_count) or not is_valid_size(col_count):
+    if not is_valid_size(row_count) or not is_valid_size(col_count) or has_unusable_argument(argv, ("-r", "-c")):
         print(USAGE, file=sys.stderr)
         return 1
 

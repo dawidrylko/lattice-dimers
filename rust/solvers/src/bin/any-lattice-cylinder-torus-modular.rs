@@ -3,7 +3,7 @@ use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{BigInt, Timer, combine_checked_residues, list_primes, parse_args, run_workers};
+use lattice_dimers_core::{BigInt, Timer, combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers};
 
 const MAX_CIRCUMFERENCE: u64 = 24;
 const USAGE: &str = "Usage: any-lattice-cylinder-torus-modular -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.";
@@ -343,7 +343,7 @@ fn main() -> ExitCode {
         .filter(|&(rows, cols)| rows == 0 || cols == 0 || (cols >= 2 && (!torus || rows >= 2)))
         .unzip();
 
-    let (Some(row_count), Some(col_count), Some(lattice), Some(jobs)) = (row_count, col_count, lattice, jobs.filter(|jobs| *jobs > 0))
+    let (Some(row_count), Some(col_count), Some(lattice), Some(jobs), false) = (row_count, col_count, lattice, jobs.filter(|jobs| *jobs > 0), has_unusable_argument(&argv, &["-r", "-c", "-j", "--lattice"], &["--torus", "--twisted"]))
     else {
         eprintln!("{USAGE}");
         return ExitCode::FAILURE;
