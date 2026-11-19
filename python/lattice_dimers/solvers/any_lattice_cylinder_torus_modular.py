@@ -254,8 +254,8 @@ def main(argv):
 
     if min(col_count, row_count if torus and not twisted else math.inf) > MAX_CIRCUMFERENCE:
         print(
-            f"The circumference can be at most {MAX_CIRCUMFERENCE}, because every worker thread keeps two tables of "
-            "2^(circumference + 3) states.",
+            f"The circumference can be at most {MAX_CIRCUMFERENCE}, because every worker thread keeps two tables "
+            "whose size doubles with every unit of the circumference.",
             file=sys.stderr,
         )
         return 1

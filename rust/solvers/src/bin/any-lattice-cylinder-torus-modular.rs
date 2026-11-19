@@ -39,7 +39,8 @@ struct Term {
     negative: bool,
 }
 
-/// A term over one block of next entries: the two current counts each of them reads one of, by its bit 0.
+/// A term over one block of next entries. The entry at place p reads `counts[2 * p + bit]`, where bit is bit 0
+/// of its state; an odd-only term reads `counts[2 * p]`, and only when that bit is 1.
 #[derive(Clone, Copy)]
 struct Source<'a> {
     counts: &'a [u32],
@@ -350,7 +351,7 @@ fn main() -> ExitCode {
 
     if col_count.min(if torus && !twisted { row_count } else { u64::MAX }) > MAX_CIRCUMFERENCE {
         eprintln!(
-            "The circumference can be at most {MAX_CIRCUMFERENCE}, because every worker thread keeps two tables of up to 2^(circumference + 1) counts."
+            "The circumference can be at most {MAX_CIRCUMFERENCE}, because every worker thread keeps two tables whose size doubles with every unit of the circumference."
         );
         return ExitCode::FAILURE;
     }

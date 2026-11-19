@@ -154,7 +154,7 @@ function parityOf(entry) {
  * @param {number} from The first entry of the block.
  * @param {number} size The number of entries of the block.
  * @param {{ plain: Object[], odd: Object[] }} terms The terms of the block.
- * @param {number} parity The parity of the entries whose bit is 1.
+ * @param {number} parity The parity of the number of set bits of every state of the next table.
  * @param {number} prime The modulus.
  */
 function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
@@ -428,7 +428,7 @@ async function __main__() {
   }
 
   if (Math.min(options.colCount, torus && !twisted ? options.rowCount : Infinity) > MAX_CIRCUMFERENCE) {
-    console.error(`The circumference can be at most ${MAX_CIRCUMFERENCE}, because every worker thread keeps two tables of up to 2^(circumference + 1) counts.`);
+    console.error(`The circumference can be at most ${MAX_CIRCUMFERENCE}, because every worker thread keeps two tables whose size doubles with every unit of the circumference.`);
     process.exit(1);
   }
 

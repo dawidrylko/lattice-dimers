@@ -95,7 +95,7 @@ function parityOf(entry) {
  * @param {number} from The first entry of the block.
  * @param {number} size The number of entries of the block.
  * @param {{ plain: number[], odd: number[] }} terms The shifts of the terms of the block.
- * @param {number} parity The parity of the entries whose bit is 1.
+ * @param {number} parity The parity of the number of set bits of every state of the next table.
  * @param {number} prime The modulus.
  */
 function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
@@ -104,7 +104,7 @@ function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
     return;
   }
 
-  if (size < 2 || plain.length > 4 || odd.length > 1) {
+  if (size < 2 || plain.length > 3 || odd.length > 1) {
     for (let entry = from; entry < from + size; entry++) {
       const bit = parityOf(entry) ^ parity;
       let sum = 0;
@@ -128,7 +128,6 @@ function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
   const first = 2 * from - (plain[0] ?? 0);
   const second = 2 * from - (plain[1] ?? 0);
   const third = 2 * from - (plain[2] ?? 0);
-  const fourth = 2 * from - (plain[3] ?? 0);
   const onto = 2 * from - (odd[0] ?? 0);
 
   for (let place = 0; place < size; place += 2) {
@@ -149,11 +148,6 @@ function fillBlock(next, current, from, size, { plain, odd }, parity, prime) {
         if (plains > 2) {
           low = addModulo(low, current[third + lowState], prime);
           high = addModulo(high, current[third + highState], prime);
-
-          if (plains > 3) {
-            low = addModulo(low, current[fourth + lowState], prime);
-            high = addModulo(high, current[fourth + highState], prime);
-          }
         }
       }
     }

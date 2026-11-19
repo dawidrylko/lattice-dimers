@@ -17,7 +17,8 @@ struct Term {
     odd_only: bool,
 }
 
-/// A term over one block of next entries: the two current counts each of them reads one of, by its bit 0.
+/// A term over one block of next entries. The entry at place p reads `counts[2 * p + bit]`, where bit is bit 0
+/// of its state; an odd-only term reads `counts[2 * p]`, and only when that bit is 1.
 #[derive(Clone, Copy)]
 struct Source<'a> {
     counts: &'a [u32],
