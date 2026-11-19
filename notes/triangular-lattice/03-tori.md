@@ -13,6 +13,16 @@ const { svgs, total } = drawTilings({ rowCount: 8, colCount: 8, lattice: 'triang
 figure(svgs, `4 of the ${total} tilings of the triangular lattice on the 8 × 8 torus.`);
 ```
 
+## The Pfaffian solver
+
+[`any-lattice-cylinder-torus-pfaffian.js`](../../js/solvers/any-lattice-cylinder-torus-pfaffian.js) counts in polynomial time: it eliminates matrices of $wh \times wh$ entries. A torus is not planar, so Kasteleyn's theorem gives no single Pfaffian. Fendley, Moessner and Sondhi [1] count the triangular lattice on a torus with four, one per pair of signs on the edges across the two seams: the count is half of the sum of three of them minus the fourth.
+
+Which one is subtracted depends on the choice of the signs, so the solver forms all four such combinations. Each adds the numbers of tilings in four classes, by the parities of the pieces across the two seams, with a sign per class. In one combination the four signs agree, so the solver returns the largest absolute value.
+
+Inside the board it uses the signs of [`A401988.gp`](../../oeis/A401988/A401988.gp), alternating by rows or, when the number of rows is odd, by columns. The solver counts modulo primes. They are below $2^{31}$ in Rust and Python and below $2^{26}$ in JavaScript, where a sum of two products of residues has to stay exact in a double. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
+
+A board has at most 1600 cells. That is a limit of memory, because every thread keeps a whole matrix. The same algorithm is in Rust, [`any-lattice-cylinder-torus-pfaffian.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-pfaffian.rs), and in Python, [`any_lattice_cylinder_torus_pfaffian.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_pfaffian.py).
+
 ## The Modular solver
 
 [`any-lattice-cylinder-torus-modular.js`](../../js/solvers/any-lattice-cylinder-torus-modular.js) goes cell by cell with a state of the next $w + 2$ cells. A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`any-lattice-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-modular.rs), and in Python, [`any_lattice_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_modular.py).
@@ -27,33 +37,40 @@ The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-b
 
 ## The counts
 
-For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate piece. Boards up to $8 \times 8$ go through both solvers, $10 \times 10$ and $12 \times 12$ through the modular one, and every count that `spec/cases/` stores is compared with it. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the $2n \times 2n$ tori.
+For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate piece. Boards up to $8 \times 8$ go through all three solvers, $10 \times 10$ and $12 \times 12$ through the modular and the Pfaffian one, and $14 \times 14$ to $20 \times 20$ through the Pfaffian one alone. Every count is compared with the one `spec/cases/` stores: the modular solver counted the stored tori up to $16 \times 16$, and the tori $18 \times 18$ and $20 \times 20$ have no count here but the Pfaffian one. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the $2n \times 2n$ tori.
 
 ```js run
 const reference = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
 const modular = require('./js/solvers/any-lattice-cylinder-torus-modular.js');
+const pfaffian = require('./js/solvers/any-lattice-cylinder-torus-pfaffian.js');
 const { testCasesOf } = require('./js/core/cases');
 const stored = side =>
-  testCasesOf('any-lattice-cylinder-torus-modular').find(
-    t => t.lattice === 'triangular' && t.torus && !t.twisted && t.rowCount === side && t.colCount === side,
-  );
+  ['any-lattice-cylinder-torus-modular', 'any-lattice-cylinder-torus-pfaffian']
+    .flatMap(testCasesOf)
+    .find(t => t.lattice === 'triangular' && t.torus && !t.twisted && t.rowCount === side && t.colCount === side);
 const rows = [];
 
-for (let n = 1; n <= 6; n++) {
+for (let n = 1; n <= 10; n++) {
   const side = 2 * n;
   const board = { rowCount: side, colCount: side, lattice: 'triangular', torus: true };
-  const count = await modular.calculateTotalTilingCombinations(board);
+  const count = await pfaffian.calculateTotalTilingCombinations(board);
   const expected = stored(side);
 
-  if (n <= 4 && reference.calculateTotalTilingCombinations(board) !== count) {
-    throw new Error(`the two solvers differ on the ${side}×${side} torus`);
+  if (n <= 6 && (await modular.calculateTotalTilingCombinations(board)) !== count) {
+    throw new Error(`the modular and the Pfaffian solver differ on the ${side}×${side} torus`);
   }
 
-  if (expected && expected.expectedResult !== String(count)) {
+  if (n <= 4 && reference.calculateTotalTilingCombinations(board) !== count) {
+    throw new Error(`the BigInt and the Pfaffian solver differ on the ${side}×${side} torus`);
+  }
+
+  if (!expected || expected.expectedResult !== String(count)) {
     throw new Error(`the ${side}×${side} torus differs from spec/cases/`);
   }
 
-  rows.push([n, `${side}×${side}`, String(count), String(count).length, n <= 4 ? 'BigInt and modular' : 'modular', expected ? 'matches spec/cases/' : '']);
+  const solvers = n <= 4 ? 'BigInt, modular and Pfaffian' : n <= 6 ? 'modular and Pfaffian' : 'Pfaffian';
+
+  rows.push([n, `${side}×${side}`, String(count), String(count).length, solvers, 'matches spec/cases/']);
 }
 
 table(['n', 'board', 'count', 'digits', 'solver', 'status'], rows);
@@ -61,7 +78,7 @@ table(['n', 'board', 'count', 'digits', 'solver', 'status'], rows);
 
 ## Verification
 
-The two cylinder and torus solvers agree with each other up to $8 \times 8$, and the modular solver checks every result against an extra prime. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular tori of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both solvers and those of `spec/cases/any-lattice-cylinder-torus-modular.json` through the modular one.
+The three cylinder and torus solvers agree with each other up to $8 \times 8$, the modular and the Pfaffian one up to $16 \times 16$, and both check every result against an extra prime. The Pfaffian solver also agrees with the eleven tori in Table I of Fendley, Moessner and Sondhi [1], boards of $L_x \times 2L_y$ cells with $L_x$ from 3 to 6 and $2L_y$ from 4 to 12, which [`spec/cases/any-lattice-cylinder-torus-pfaffian.json`](../../spec/cases/any-lattice-cylinder-torus-pfaffian.json) holds. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular tori of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three solvers, those of `spec/cases/any-lattice-cylinder-torus-modular.json` through the modular and the Pfaffian one, and those of the Pfaffian file, up to the $40 \times 40$ torus, through the Pfaffian one.
 
 ## References
 

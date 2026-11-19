@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { describe, test, before, after } = require('node:test');
+const { listImplementations } = require('../../js/core/registry');
 const { runDirectoryName } = require('../environment');
 const { estimateBoard, parseInstructionCount, compareRuns, listSeries, GROWTH_FLOORS } = require('../full');
 const { compareSeries } = require('../measureVariance');
@@ -39,6 +40,17 @@ describe('the plan of a full run', () => {
     const names = listSeries(4).map(({ name }) => name);
 
     assert.deepEqual(GROWTH_FLOORS.map(([pattern]) => pattern).filter(pattern => !names.some(name => pattern.test(name))), []);
+  });
+
+  test('the Pfaffian solver is measured on the square lattice only, with the threads of the run', () => {
+    const series = listSeries(4).filter(({ name }) => /pfaffian/.test(name));
+    const files = listImplementations('any-lattice-cylinder-torus-pfaffian').map(({ file }) => path.basename(file));
+
+    assert.deepEqual(
+      series.map(({ name }) => name),
+      ['torus', 'cylinder'].flatMap(surface => files.map(file => `${file}-square-${surface}`)),
+    );
+    assert.ok(series.every(({ boards }) => boards.every(({ jobs, lattice }) => jobs === 4 && lattice === 'square')));
   });
 
   test('the name of a solver does not make a cylinder a torus', () => {

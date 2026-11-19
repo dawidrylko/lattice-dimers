@@ -3,12 +3,13 @@ const { Worker } = require('worker_threads');
 const LARGEST_PRIME_BOUND = 2 ** 31;
 
 /**
- * Lists the given number of primes, starting from the largest one below 2^31.
- * The sum of two residues then stays below 2^32 and fits a Uint32Array cell.
+ * Lists the given number of primes, starting from the largest one below a bound, 2^31 unless
+ * another is given. The sum of two residues then stays below 2^32 and fits a Uint32Array cell.
  * @param {number} count The number of primes.
+ * @param {number} [bound] The even bound the primes stay below.
  * @returns {number[]} The primes in decreasing order.
  */
-function listPrimes(count) {
+function listPrimes(count, bound = LARGEST_PRIME_BOUND) {
   const isPrime = n => {
     for (let d = 3; d * d <= n; d += 2) {
       if (n % d === 0) {
@@ -20,7 +21,7 @@ function listPrimes(count) {
   };
   const primes = [];
 
-  for (let n = LARGEST_PRIME_BOUND - 1; primes.length < count; n -= 2) {
+  for (let n = bound - 1; primes.length < count; n -= 2) {
     if (isPrime(n)) {
       primes.push(n);
     }

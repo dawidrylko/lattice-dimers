@@ -26,6 +26,7 @@ Each solver is a command-line program that prints the number of tilings of one b
 | [`domino-rectangle-formula.js`](solvers/domino-rectangle-formula.js) | domino tilings of the 2n × 2n square | the product formula as a resultant |
 | [`any-lattice-cylinder-torus-bigint.js`](solvers/any-lattice-cylinder-torus-bigint.js) | cylinders and tori on the square lattice, the triangular lattice and the king's graph | transfer by rows, `BigInt` (reference) |
 | [`any-lattice-cylinder-torus-modular.js`](solvers/any-lattice-cylinder-torus-modular.js) | the same | transfer by cells modulo primes |
+| [`any-lattice-cylinder-torus-pfaffian.js`](solvers/any-lattice-cylinder-torus-pfaffian.js) | cylinders and tori on the square and the triangular lattice | Pfaffians modulo primes, in polynomial time, worker threads, Chinese remainder theorem |
 | [`any-lattice-rectangle-bigint.js`](solvers/any-lattice-rectangle-bigint.js) | rectangles on the square lattice, the triangular lattice and the king's graph | transfer by cells, `BigInt` (reference) |
 | [`any-lattice-rectangle-modular.js`](solvers/any-lattice-rectangle-modular.js) | the same | transfer by cells modulo primes, worker threads, Chinese remainder theorem |
 | [`domicule-rectangle-bigint.js`](solvers/domicule-rectangle-bigint.js) | domicule tilings | transfer by cells, `BigInt` (reference) |
@@ -43,6 +44,7 @@ Each solver is a command-line program that prints the number of tilings of one b
 node js/solvers/domino-rectangle-formula.js -r 20 -c 20
 node js/solvers/any-lattice-cylinder-torus-modular.js -r 12 -c 12 --torus                # the king's graph on the 12 × 12 torus
 node js/solvers/any-lattice-cylinder-torus-modular.js -r 8 -c 6 --lattice triangular     # a triangular cylinder of circumference 6
+node js/solvers/any-lattice-cylinder-torus-pfaffian.js -r 40 -c 40 --lattice square --torus  # dominoes on the 40 × 40 torus, by Pfaffians
 node js/solvers/any-lattice-rectangle-modular.js -r 20 -c 20 --lattice triangular        # the triangular lattice on the 20 × 20 rectangle
 node js/solvers/domicule-rectangle-modular.js -r 20 -c 20 -j 8                            # -j sets the number of worker threads
 node js/solvers/domicule-rectangle-polynomial-modular.js -r 16 -c 16                      # 20 × 20 needs 1.7 GB per thread

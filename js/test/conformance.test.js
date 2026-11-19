@@ -107,7 +107,7 @@ describe('time', () => {
 
   for (const algorithm of listJavaScriptAlgorithms()) {
     test(`${algorithm} keeps the output with --time`, () => {
-      const args = [solverPathOf(algorithm), '-r', '2', '-c', '2'];
+      const args = [solverPathOf(algorithm), ...cli.timeFlag.args, ...(cli.timeFlag.moreArgs[algorithm] ?? [])];
       const plain = runNode(args);
       const timed = runNode([...args, '--time']);
 

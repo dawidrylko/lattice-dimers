@@ -21,6 +21,7 @@ macro_rules! binaries {
 binaries!(
     "any-lattice-cylinder-torus-bigint",
     "any-lattice-cylinder-torus-modular",
+    "any-lattice-cylinder-torus-pfaffian",
     "any-lattice-cylinder-torus-polynomial-bigint",
     "any-lattice-cylinder-torus-polynomial-modular",
     "any-lattice-rectangle-bigint",
@@ -315,8 +316,9 @@ fn time_span() {
 #[test]
 fn time_flag() {
     let ids = rust_algorithms();
+    let entry = &spec("cli.json")["timeFlag"];
     let failures = failures_of(&ids, |id| {
-        let plain: Vec<String> = ["-r", "2", "-c", "2"].map(String::from).to_vec();
+        let plain = [texts(&entry["args"]), entry["moreArgs"].get(id).map(texts).unwrap_or_default()].concat();
         let timed = [plain.clone(), vec!["--time".to_string()]].concat();
         let (without, with) = (run(id, &plain, SHORT), run(id, &timed, SHORT));
         (with.code != 0 || without.code != 0 || with.stdout != without.stdout || reported_ms(&with.stderr).is_none())

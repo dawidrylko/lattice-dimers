@@ -5,7 +5,8 @@ const { testCasesOf, isEvenSquare } = require('../js/core/cases');
 
 const testCasesDomino = testCasesOf('domino-rectangle-formula');
 const testCasesDomicule = testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare);
-const testCasesCylinderTorus = testCasesOf('any-lattice-cylinder-torus-modular');
+const PFAFFIAN = 'any-lattice-cylinder-torus-pfaffian';
+const testCasesCylinderTorus = [PFAFFIAN, 'any-lattice-cylinder-torus-modular'].flatMap(testCasesOf);
 const testCasesDiagonal = {
   king: testCasesOf('domicule-rectangle-polynomial-modular'),
   triangular: testCasesOf('any-lattice-rectangle-polynomial-modular').filter(t => t.lattice === 'triangular'),
@@ -31,6 +32,7 @@ const RESULT_FILE = /_(\d+)x(\d+)\.txt$/;
 const CYLINDER_TORUS_RESULT_FILE = /_(\d+)x(\d+)-(\w+)-(torus|cylinder)\.txt$/;
 const { latest: BENCHMARK_RUN } = readBenchmarkRuns();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
+const PFAFFIAN_MEASURED = listJavaScriptResults(BENCHMARK_DIRECTORY, PFAFFIAN).length > 0;
 const CYLINDER_TORUS_DIAGONAL_PREFIX = 'domicule-cylinder-torus-polynomial-';
 const CYLINDER_TORUS_DIAGONAL_RESULT_FILE = /_(\d+)x(\d+)-(torus|cylinder)\.txt$/;
 const CYLINDER_TORUS_DIAGONAL_RUN = findSeriesRun(CYLINDER_TORUS_DIAGONAL_PREFIX, path.join(ROOT_DIRECTORY, BENCHMARK_ROOT));
@@ -104,6 +106,7 @@ const CYLINDER_TORUS_PIECES = [
 ];
 const BENCHMARK_SIDES = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
 const NOT_REACHED = 'not measured: the run did not reach this board';
+const PFAFFIAN_UNMEASURED = 'not measured: the Pfaffian solver has no benchmark run yet';
 const EMPTY_BOARD_UNMEASURED = 'not measured: the run predates the 0 × 0 board';
 const DIAGONAL_FILTER_MAX_SIDE = 10;
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
@@ -169,7 +172,8 @@ function findTriangularCount({ rowCount, colCount }) {
 const cylinderTorusCounts = new Map();
 
 /**
- * Finds the stored count of a cylinder or torus that is not twisted.
+ * Finds the stored count of a cylinder or torus that is not twisted, in the file of the Pfaffian solver and then in
+ * the file of the modular one, so a count a solver here has checked wins over one copied from the OEIS.
  * @param {Object} board The board, as for countCylinderTorusTilings.
  * @returns {Object|undefined} The case of spec/cases/, if there is one.
  */
@@ -191,7 +195,7 @@ function readStoredCylinderTorusCount(board) {
   if (!known) {
     const { rowCount, colCount, lattice, torus } = board;
     throw new Error(
-      `No count of the ${rowCount}x${colCount} ${lattice} ${torus ? 'torus' : 'cylinder'} in spec/cases/any-lattice-cylinder-torus-modular.json, which the benchmark table needs.`,
+      `No count of the ${rowCount}x${colCount} ${lattice} ${torus ? 'torus' : 'cylinder'} in spec/cases/${PFAFFIAN}.json or spec/cases/any-lattice-cylinder-torus-modular.json, which the benchmark table needs.`,
     );
   }
 
@@ -401,7 +405,27 @@ function buildDomiculeBenchmark(totals) {
 }
 
 /**
- * Reads the times of the cylinder and torus solvers on one lattice.
+ * Reads the times of the Pfaffian solver on one cylinder or torus of the square lattice. Before a run has measured
+ * the solver, every time is missing for that one reason.
+ * @param {Object} board The board.
+ * @param {string} suffix The end of its result file names.
+ * @param {string} seriesSuffix The end of its series names in plan.json.
+ * @returns {Object} The time in JavaScript, the times in the other languages and the reasons of the missing ones.
+ */
+function readPfaffianTimes(board, suffix, seriesSuffix) {
+  const reasons = PFAFFIAN_MEASURED
+    ? readMissingReasons(PFAFFIAN, board, seriesSuffix)
+    : Object.fromEntries(listImplementations(PFAFFIAN).map(({ language }) => [language, PFAFFIAN_UNMEASURED]));
+
+  return {
+    pfaffian: readAverageTime(BENCHMARK_DIRECTORY, `${PFAFFIAN}.js${suffix}`),
+    pfaffianLanguages: readLanguages(PFAFFIAN, suffix),
+    reasons,
+  };
+}
+
+/**
+ * Reads the times of the cylinder and torus solvers on one lattice. The square lattice has the Pfaffian solver too.
  * @param {string} lattice The lattice of the result files: king for the domicules, square for the dominoes.
  * @returns {Promise<Object[]>} One row per board, the tori first.
  */
@@ -417,17 +441,20 @@ async function buildCylinderTorusBenchmark(lattice) {
     const seriesSuffix = `-${lattice}-${surface}`;
     const isMeasured = measured.some(other => other.surface === surface && other.rowCount === rowCount && other.colCount === colCount);
     const known = isMeasured ? null : findCylinderTorusCase(board);
+    const { reasons, ...pfaffianTimes } = lattice === 'square' ? readPfaffianTimes(board, suffix, seriesSuffix) : {};
     return {
       rowCount,
       colCount,
       surface,
       tilings: isMeasured ? readStoredCylinderTorusCount(board) : known?.expectedResult ?? null,
       copiedFrom: known?.source === 'oeis' ? known.oeis : null,
+      ...pfaffianTimes,
       bigint: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}bigint.js${suffix}`),
       modular: readAverageTime(BENCHMARK_DIRECTORY, `${prefix}modular.js${suffix}`),
       languages: readLanguages('any-lattice-cylinder-torus-modular', suffix),
       bigintLanguages: readLanguages('any-lattice-cylinder-torus-bigint', suffix),
       missing: {
+        ...(reasons && { pfaffian: reasons }),
         modular: readMissingReasons('any-lattice-cylinder-torus-modular', board, seriesSuffix),
         bigint: readMissingReasons('any-lattice-cylinder-torus-bigint', board, seriesSuffix),
       },
@@ -551,7 +578,15 @@ function readMissingReasons(algorithm, { rowCount, colCount }, seriesSuffix, dir
  */
 function listMeasuredRows(rows) {
   return rows.filter(row =>
-    [row.formula, row.modular, row.bigint, ...Object.values(row.languages ?? {}), ...Object.values(row.bigintLanguages ?? {})].some(
+    [
+      row.formula,
+      row.pfaffian,
+      row.modular,
+      row.bigint,
+      ...Object.values(row.pfaffianLanguages ?? {}),
+      ...Object.values(row.languages ?? {}),
+      ...Object.values(row.bigintLanguages ?? {}),
+    ].some(
       result => result && result.average !== null,
     ),
   );
@@ -880,6 +915,7 @@ async function __main__() {
     domiculeBenchmark: buildDomiculeBenchmark(domiculeTotals),
     cylinderTorusBenchmark: await buildCylinderTorusBenchmark('king'),
     dominoCylinderTorusBenchmark: await buildCylinderTorusBenchmark('square'),
+    pfaffianMeasured: PFAFFIAN_MEASURED,
     triangularBenchmark: await buildTriangularBenchmark(),
     diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
     cylinderTorusDiagonalBenchmark: buildCylinderTorusDiagonalBenchmark(),

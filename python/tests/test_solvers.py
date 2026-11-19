@@ -5,7 +5,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+import numpy as np
 import pytest
+
+from lattice_dimers.core import list_primes, pfaffian_modulo
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = ROOT / "spec"
@@ -234,3 +237,129 @@ def test_lattice_cylinder_torus_cap_threads(jobs, cols, degree, lattice, memory,
     cap_threads = importlib.import_module(MODULAR_LATTICE_CYLINDER_TORUS_DIAGONAL).cap_threads
 
     assert cap_threads(jobs, cols, degree, lattice, memory) == expected
+
+
+def expand_pfaffian(matrix, vertices):
+    if not vertices:
+        return 1
+
+    first, rest = vertices[0], vertices[1:]
+
+    return sum(
+        (1 if position % 2 == 0 else -1) * matrix[first][partner] * expand_pfaffian(matrix, [vertex for vertex in rest if vertex != partner])
+        for position, partner in enumerate(rest)
+    )
+
+
+def draw_skew_matrix(size, draws, zero_every):
+    matrix = [[0] * size for _ in range(size)]
+
+    for i in range(size):
+        for j in range(i + 1, size):
+            draw = next(draws)
+            matrix[i][j] = 0 if draw % zero_every == 0 else draw % 19 - 9
+            matrix[j][i] = -matrix[i][j]
+
+    return matrix
+
+
+def list_draws(seed):
+    while True:
+        seed = (seed * 1103515245 + 12345) % 2**32
+        yield seed >> 8
+
+
+def upper_residues(matrix, prime):
+    return np.triu(np.array(matrix, dtype=np.int64) % prime, k=1).astype(np.uint64)
+
+
+def determinant_modulo(matrix, prime):
+    rows = [[value % prime for value in row] for row in matrix]
+    determinant = 1
+
+    for column in range(len(rows)):
+        pivot = next((row for row in range(column, len(rows)) if rows[row][column]), None)
+
+        if pivot is None:
+            return 0
+
+        if pivot != column:
+            rows[column], rows[pivot] = rows[pivot], rows[column]
+            determinant = -determinant
+
+        determinant = determinant * rows[column][column] % prime
+        inverse = pow(rows[column][column], -1, prime)
+
+        for row in range(column + 1, len(rows)):
+            factor = rows[row][column] * inverse % prime
+            rows[row] = [(value - factor * above) % prime for value, above in zip(rows[row], rows[column])]
+
+    return determinant % prime
+
+
+def test_pfaffian_of_small_matrices():
+    prime = list_primes(1)[0]
+
+    assert pfaffian_modulo(np.zeros((0, 0), dtype=np.uint64), prime) == 1
+    assert pfaffian_modulo(np.array([[0, 7], [0, 0]], dtype=np.uint64), prime) == 7
+    assert pfaffian_modulo(np.array([[0, prime - 7], [0, 0]], dtype=np.uint64), prime) == prime - 7
+    assert pfaffian_modulo(np.array([[0, 1, 2, 3], [0, 0, 4, 5], [0, 0, 0, 6], [0, 0, 0, 0]], dtype=np.uint64), prime) == 8
+
+
+def test_pfaffian_of_an_odd_size_and_of_a_vertex_without_a_partner():
+    prime = list_primes(1)[0]
+
+    assert pfaffian_modulo(np.array([[0, 1, 1], [0, 0, 1], [0, 0, 0]], dtype=np.uint64), prime) == 0
+    assert pfaffian_modulo(np.array([[0, 0, 0, 0], [0, 0, 1, 1], [0, 0, 0, 1], [0, 0, 0, 0]], dtype=np.uint64), prime) == 0
+
+
+def test_pfaffian_with_a_partner_moved_next_to_its_vertex():
+    prime = list_primes(1)[0]
+    matrix = [[0, 0, 0, 5], [0, 0, 3, 2], [0, -3, 0, 7], [-5, -2, -7, 0]]
+
+    assert expand_pfaffian(matrix, [0, 1, 2, 3]) == 15
+    assert pfaffian_modulo(upper_residues(matrix, prime), prime) == 15
+
+
+@pytest.mark.parametrize("prime", [None, 7, 3])
+def test_pfaffian_against_the_expansion_along_the_first_row(prime):
+    prime = prime or list_primes(2)[1]
+    draws = list_draws(2026 + prime)
+
+    for size, zero_every in [(2, 3), (4, 2), (6, 2), (6, 5), (8, 2), (8, 3), (8, 1000), (10, 2), (24, 6)]:
+        for _ in range(20 if size <= 10 else 1):
+            matrix = draw_skew_matrix(size, draws, zero_every)
+
+            if size <= 10:
+                expected = expand_pfaffian(matrix, list(range(size))) % prime
+                assert pfaffian_modulo(upper_residues(matrix, prime), prime) == expected, f"{size} x {size} modulo {prime}: {matrix}"
+            else:
+                squared = pfaffian_modulo(upper_residues(matrix, prime), prime) ** 2 % prime
+                assert squared == determinant_modulo(matrix, prime), f"{size} x {size} modulo {prime}: {matrix}"
+
+
+def test_pfaffian_ignores_the_entries_on_and_below_the_diagonal():
+    prime = list_primes(1)[0]
+    matrix = draw_skew_matrix(6, list_draws(7), 4)
+    filled = upper_residues(matrix, prime)
+    filled[np.tril_indices(6)] = 12345
+
+    assert pfaffian_modulo(filled, prime) == pfaffian_modulo(upper_residues(matrix, prime), prime)
+
+
+def test_pfaffian_rejects_a_prime_of_32_bits_and_a_matrix_that_is_not_square():
+    with pytest.raises(ValueError, match="below 2147483648"):
+        pfaffian_modulo(np.array([[0, 1], [0, 0]], dtype=np.uint64), 2**31)
+
+    with pytest.raises(ValueError, match="must be square"):
+        pfaffian_modulo(np.zeros((2, 4), dtype=np.uint64), list_primes(1)[0])
+
+    with pytest.raises(ValueError, match="must be square"):
+        pfaffian_modulo(np.zeros(4, dtype=np.uint64), list_primes(1)[0])
+
+
+def test_pfaffian_solver_says_that_the_kings_graph_is_not_planar():
+    solver = importlib.import_module(module_of("any-lattice-cylinder-torus-pfaffian"))
+
+    with pytest.raises(ValueError, match="is not planar"):
+        solver.calculate_total_tiling_combinations(4, 4, "king")

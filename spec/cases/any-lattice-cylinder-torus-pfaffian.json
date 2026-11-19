@@ -1,0 +1,885 @@
+{
+  "algorithm": "any-lattice-cylinder-torus-pfaffian",
+  "testCases": [
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "11203604497408",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "5054",
+      "oeis": "A281679"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "537636",
+      "oeis": "A281679"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "2540032",
+      "oeis": "A281679"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "114557000",
+      "oeis": "A281679"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "8215891991390871552"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "triangular",
+      "expectedResult": "10118752662999654154224064"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "4161957566985310208",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "15954943354032349049274368",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1920"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "272",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "8",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "90176",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "311853312",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "1",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "2",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "9",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "32",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "121",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "450",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 4,
+      "lattice": "square",
+      "expectedResult": "1681",
+      "oeis": "A006253"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "1058",
+      "oeis": "A253678"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "39952",
+      "oeis": "A253678"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "155682",
+      "oeis": "A253678"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "3113860",
+      "oeis": "A253678"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "12"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "10045824"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1635885514752"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 4,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "344"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 3,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "344"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "2"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "14"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "72"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "412"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "2312"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 4,
+      "lattice": "triangular",
+      "expectedResult": "13064"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "8"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "100"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "0"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 3,
+      "lattice": "triangular",
+      "expectedResult": "1304"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 2,
+      "lattice": "square",
+      "expectedResult": "5",
+      "oeis": "A000129"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 6,
+      "lattice": "square",
+      "expectedResult": "28561",
+      "oeis": "A028477"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 8,
+      "lattice": "square",
+      "expectedResult": "71385601",
+      "oeis": "A028479"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 10,
+      "lattice": "square",
+      "expectedResult": "1872712598261"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "square",
+      "expectedResult": "510925709066955625"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "square",
+      "expectedResult": "1443134633691436850272225"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "square",
+      "expectedResult": "42112012462508110293785705054209"
+    },
+    {
+      "rowCount": 18,
+      "colCount": 18,
+      "lattice": "square",
+      "expectedResult": "12682456809311721350817701357733298515749"
+    },
+    {
+      "rowCount": 20,
+      "colCount": 20,
+      "lattice": "square",
+      "expectedResult": "39396218792467346390886562920071491558570190350809"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "630665326543010382995142219988992",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 0,
+      "lattice": "square",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 0,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "1",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 0,
+      "lattice": "triangular",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 0,
+      "colCount": 0,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 0,
+      "lattice": "square",
+      "expectedResult": "1"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "triangular",
+      "expectedResult": "21595276379487753000398580864311424"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "triangular",
+      "expectedResult": "1421121792899322405620972418566478159370813696"
+    },
+    {
+      "rowCount": 18,
+      "colCount": 18,
+      "lattice": "triangular",
+      "expectedResult": "2883938119001938782548896645897475887755130321743262156288"
+    },
+    {
+      "rowCount": 20,
+      "colCount": 20,
+      "lattice": "triangular",
+      "expectedResult": "180480518263582684213855432207250604892829163870401601814682825443744768"
+    },
+    {
+      "rowCount": 12,
+      "colCount": 12,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1272474085699328787087360000"
+    },
+    {
+      "rowCount": 14,
+      "colCount": 14,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "6077620026393211843170739995972993024"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 16,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "895175319572867600647189566491699922102072115200"
+    },
+    {
+      "rowCount": 18,
+      "colCount": 18,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "256955886436135671144699761794930161483776",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 20,
+      "colCount": 20,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "1078954848193193029138563587057364813268127147098112",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 8,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "1156"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 2,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "1156"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 5,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "155682"
+    },
+    {
+      "rowCount": 7,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "1034315998"
+    },
+    {
+      "rowCount": 9,
+      "colCount": 10,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "400448833106"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 9,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "400448833106"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 2,
+      "lattice": "square",
+      "expectedResult": "985"
+    },
+    {
+      "rowCount": 9,
+      "colCount": 10,
+      "lattice": "square",
+      "expectedResult": "95464562688"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 9,
+      "lattice": "square",
+      "expectedResult": "66750320449"
+    },
+    {
+      "rowCount": 100,
+      "colCount": 16,
+      "lattice": "square",
+      "expectedResult": "102329830675164539509484577912947028248679235847302068784655449101689465042660002889357227385070405039234787133770984314605686299595392416159463629800482819346475061544513115820460011135632292617282048929"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 8,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "3360"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 2,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "3360"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 8,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "55801792"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 5,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "55801792"
+    },
+    {
+      "rowCount": 7,
+      "colCount": 10,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "21407605956864"
+    },
+    {
+      "rowCount": 9,
+      "colCount": 10,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "113055522914908672"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 9,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "113055522914908672"
+    },
+    {
+      "rowCount": 8,
+      "colCount": 2,
+      "lattice": "triangular",
+      "expectedResult": "2448"
+    },
+    {
+      "rowCount": 9,
+      "colCount": 10,
+      "lattice": "triangular",
+      "expectedResult": "2011483609366528"
+    },
+    {
+      "rowCount": 10,
+      "colCount": 9,
+      "lattice": "triangular",
+      "expectedResult": "3011672402684576"
+    },
+    {
+      "rowCount": 100,
+      "colCount": 16,
+      "lattice": "triangular",
+      "expectedResult": "20881006438867532213611243142191739471825829510019276169820867438608410277800557662790089806955766179066057862669799660604996329043811892946067419603310238602191657872244126672833511086063928471211656105756279964523798321015778244101379283527070110873798932943497224338589386754278367806531567616"
+    },
+    {
+      "rowCount": 18,
+      "colCount": 18,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "4066048891345305408120794028659207710083821084839402323050496"
+    },
+    {
+      "rowCount": 20,
+      "colCount": 20,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "569543675539131906384415388548203953941636114706233629002574582463667896320"
+    },
+    {
+      "rowCount": 24,
+      "colCount": 24,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "327722100930462301521223206689001463862947684403246462732927628974667051248357452813140317424886575267840000"
+    },
+    {
+      "rowCount": 32,
+      "colCount": 32,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "80267994612325159338564953191221887311183104166897738519247810133254041254601409470740843471266810759925243616216819884077299152398848782539031354238241105240498700241662573955063103839272960"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 40,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "13152797915913114453868480925280708389348038080496315819022536184278935595419675193149163498000103793930637208836253532216243640255091371642383139490404403402083437780465709028024368729591566749187131949124171618500602580084175504131110662163086096021047526986179410753490600798209390566083974397952"
+    },
+    {
+      "rowCount": 15,
+      "colCount": 16,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "941300346261406218082202062536855395321806848"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 15,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "941300346261406218082202062536855395321806848"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 100,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "136773801375751256025692645793374639699832031166924324864"
+    },
+    {
+      "rowCount": 100,
+      "colCount": 4,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1543010152922195416994752210754845809259323953754995314951465925301239808000"
+    },
+    {
+      "rowCount": 24,
+      "colCount": 24,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "20816904853369381215089194084886097491340161341926052362890486130520621056",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 32,
+      "colCount": 32,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "11101288622310813362075305840908775305317426171721466746734792671057075957064552335474321023865676293008174502768714459951380037632",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 40,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "95557179593995058307119469878533686167537919519401083639716055464351787684295658276445119217044482914704991298589622753660152864842536834344163215619082758070595486227158452334909096556452155931662221312",
+      "oeis": "A335586"
+    },
+    {
+      "rowCount": 15,
+      "colCount": 16,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "4001215836806010384390623471618"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 15,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "4001215836806010384390623471618"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 100,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "21068961960629017389748817662531250"
+    },
+    {
+      "rowCount": 100,
+      "colCount": 4,
+      "lattice": "square",
+      "torus": true,
+      "expectedResult": "1565866573483779088160320605958421631705240805609550991632"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 100,
+      "lattice": "square",
+      "expectedResult": "2187926571348491856942377440160972560944495376"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 100,
+      "lattice": "square",
+      "expectedResult": "28574365969856493106581299026917952299641172335579976477474814685570611820133079629944705840216491510167181124484670749325874099813173896344238610080030849237664246326900213761092684002107301103201"
+    },
+    {
+      "rowCount": 39,
+      "colCount": 40,
+      "lattice": "square",
+      "expectedResult": "1471749865470237330968063626879005600963979445058084779543241192641727176676250006505157264050805586148727573688833049489205427763390000370247092340026607383800222008919345964687177635340451053568"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 39,
+      "lattice": "square",
+      "expectedResult": "1091627820461425416247111288013770373734318803374242536809549422049703179296749891317940779838250043494254248470922485592579456128411386044793120856723581205049346319054434439660470674818640176057"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 40,
+      "lattice": "square",
+      "expectedResult": "174384142547553837190565787892880170871566508404459180903144537298358950435669205549808110311788148538821633069418521454463724408800853648411824975822325104110901102548345866303508994537696330569701889"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 800,
+      "lattice": "square",
+      "expectedResult": "154921680739089322371554184726687695792487375219674962757016178621593399786770159822206781850469471181492177174619662343437578721382665041833981956174410729499935528129"
+    },
+    {
+      "rowCount": 800,
+      "colCount": 2,
+      "lattice": "square",
+      "expectedResult": "1418335464067085950761511645477261730195911945400961179350165751576181734700434022675999988952298932340498582297109813139280110698344822985814849832844780820044263922985388458606884417322111572777594422321347555520022042775710817604038688028217826757010312572622667569619811705750372366038457216544995277665"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 1600,
+      "lattice": "square",
+      "expectedResult": "2"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 100,
+      "lattice": "triangular",
+      "expectedResult": "2007705900673317547410498162609162171376498717461803759632"
+    },
+    {
+      "rowCount": 16,
+      "colCount": 100,
+      "lattice": "triangular",
+      "expectedResult": "42027550975022135310085826258839379799704740312008339657650732362675248580323718735294068188736682952177085734051633402497824309392445091192399881146066929567874761458581337760193728324834390214218356433483073929456067911354441636278609725038038946379079511666953269367965148905728"
+    },
+    {
+      "rowCount": 39,
+      "colCount": 40,
+      "lattice": "triangular",
+      "expectedResult": "47355978758538977265069884862530336362729601912796376810436955460853085408529113059889292156383835914984981597231756905696951961011912161332752530019485538104462783163755784031335195314324374322214916244823666629982625933453362360669822600707569330400378155178630776347907734762422272"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 39,
+      "lattice": "triangular",
+      "expectedResult": "70848336527311908786673138082007551833753908323853873053591583883963460880113903998004502290648567418535080739966205564487949012475726050858391329859918347773693837510284679433766704883988971482626476292745659145197473086640252124755101891706345394521568396730887854777650539979079680"
+    },
+    {
+      "rowCount": 40,
+      "colCount": 40,
+      "lattice": "triangular",
+      "expectedResult": "1320761865130423683100286199949535742120328139298797603795116598458679980097685420103578934668046705826842546112476382453408052824819670372791821547996237408640863740697232991312870773599682897267543846537978051918095344992389731541899397816729608730250617909879014920098129668736206408515584"
+    },
+    {
+      "rowCount": 2,
+      "colCount": 800,
+      "lattice": "triangular",
+      "expectedResult": "309843361478178644743108369453375391584974750439349925514032357243186799573540319644413563700938942362984354349239324686875157442765330083667963912348821458999871056254"
+    },
+    {
+      "rowCount": 800,
+      "colCount": 2,
+      "lattice": "triangular",
+      "expectedResult": "12243777464164894989108239382262106017881307844415660740608636183690484153774103115032670529292977768082556199220169833397776087277039554790360517041324422449248289372953478151583952035151221049482870277509010733081107949023210983567292486018446552980358624288840896712877808485939197460494621471260122933901049380861480300819390697387990956562710528"
+    },
+    {
+      "rowCount": 1,
+      "colCount": 1600,
+      "lattice": "triangular",
+      "expectedResult": "2"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 4,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "10608"
+    },
+    {
+      "rowCount": 6,
+      "colCount": 4,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "59040"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 6,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "4480"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 6,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "59040"
+    },
+    {
+      "rowCount": 5,
+      "colCount": 6,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "767776"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 8,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "58592"
+    },
+    {
+      "rowCount": 4,
+      "colCount": 8,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "1826944"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 10,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "766528"
+    },
+    {
+      "rowCount": 3,
+      "colCount": 12,
+      "lattice": "triangular",
+      "torus": true,
+      "expectedResult": "10028288"
+    }
+  ]
+}

@@ -223,8 +223,9 @@ def test_time_span():
 
 @pytest.mark.parametrize("algorithm", PYTHON_IDS)
 def test_time_flag(algorithm):
-    plain = run(algorithm, ["-r", 2, "-c", 2])
-    timed = run(algorithm, ["-r", 2, "-c", 2, "--time"])
+    args = [*CLI["timeFlag"]["args"], *CLI["timeFlag"]["moreArgs"].get(algorithm, [])]
+    plain = run(algorithm, args)
+    timed = run(algorithm, [*args, "--time"])
 
     assert plain.returncode == 0, plain.stderr.strip()
     assert timed.returncode == 0, timed.stderr.strip()
