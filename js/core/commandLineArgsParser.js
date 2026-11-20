@@ -53,4 +53,17 @@ function hasUnusableArgument(args, valueFlags, plainFlags = []) {
   return false;
 }
 
-module.exports = { parseCommandLineArguments, hasUnusableArgument };
+/**
+ * Tells whether the arguments hold one that a script which is no solver does not know, so that the script answers
+ * with its usage line and does not run something other than what was asked. Such a script has no --time.
+ * @param {string[]} args The command line arguments.
+ * @param {string[]} valueFlags The flags that take the next argument as their value and may come once.
+ * @param {string[]} [plainFlags] The flags that stand alone, and may repeat.
+ * @returns {boolean} Whether a solver with these flags could not use an argument, --time is among the arguments,
+ * or the last argument is a flag with a value, which then has none.
+ */
+function hasUnknownArgument(args, valueFlags, plainFlags = []) {
+  return hasUnusableArgument(args, valueFlags, plainFlags) || args.includes(TIME_FLAG) || valueFlags.includes(args.at(-1));
+}
+
+module.exports = { parseCommandLineArguments, hasUnusableArgument, hasUnknownArgument };

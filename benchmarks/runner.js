@@ -2,7 +2,7 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { parseArgs } = require('../js/core');
+const { parseArgs, hasUnknownArgument } = require('../js/core');
 const exec = require('./executor');
 const { RESULTS_DIRECTORY, describeEnvironment, runDirectoryName } = require('./environment');
 const { listImplementations, algorithmOf, javaScriptFileOf } = require('../js/core/registry');
@@ -318,7 +318,7 @@ function __main__() {
       (maxSize !== undefined && !(maxSize > 0)) ||
       !(offset >= 0) ||
       (only !== null && !groups.some(({ files }) => files.includes(only))) ||
-      argv.some(arg => arg.startsWith('--lattice=')) ||
+      hasUnknownArgument(argv, ['-n', '-m', '-o', '--only', '--lattice'], [...Object.keys(allGroups), '--force']) ||
       (lattice !== null &&
         !(Object.hasOwn(LATTICES, lattice) && (lattice === OWN_SOLVER_LATTICE ? LATTICE_GROUPS : EVERY_LATTICE_GROUPS).includes(flags[0])))
     ) {
