@@ -2,7 +2,7 @@ use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{BigInt, Timer, calculate_log2_bound, combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers};
+use lattice_dimers_core::{BigInt, Prime, Residue, Timer, calculate_log2_bound, combine_planned_residues, count_modulo_primes, has_unusable_argument, parse_args, physical_memory};
 
 const MAX_SHORTER_SIDE: u64 = 30;
 const USAGE: &str = "Usage: any-lattice-rectangle-modular -r <rowCount> -c <colCount> [-j <jobs>] [--lattice king|triangular|square]";
@@ -52,29 +52,29 @@ fn read_lattice(argv: &[String]) -> Option<(bool, bool)> {
     }
 }
 
-fn add(next: &mut [u32], target: usize, count: u32, prime: u32) {
-    let sum = next[target] + count;
-    next[target] = if sum >= prime { sum - prime } else { sum };
+#[inline(always)]
+fn add<R: Residue>(next: &mut [R], target: usize, count: R, prime: R) {
+    next[target] = R::finish(R::add_term(next[target], count, prime), 2, prime);
 }
 
 /// Counts the tilings modulo a prime with the broken-profile dynamic programming of countModulo in
 /// js/solvers/any-lattice-rectangle-modular.js. Bit i of a state tells whether the cell i places ahead of the
 /// current one is already covered. A state has cols + 2 bits, but the top one is clear before every cell step,
 /// since a step shifts the state right after setting at most that bit, so the tables hold the 2^(cols + 1) states
-/// below it, in counts of u32.
-fn count_modulo(rows: usize, cols: usize, prime: u32, lattice: (bool, bool)) -> u32 {
+/// below it, in counts of u32 below a prime of list_primes or of u64 below a wide prime.
+fn count_modulo<R: Residue>(rows: usize, cols: usize, prime: R, lattice: (bool, bool)) -> R {
     let state_count = 1usize << (cols + 1);
-    let mut current = vec![0u32; state_count];
-    let mut next = vec![0u32; state_count];
-    current[0] = 1 % prime;
+    let mut current = vec![R::default(); state_count];
+    let mut next = vec![R::default(); state_count];
+    current[0] = R::from_u64(1 % prime.to_u64());
 
     for cell in 0..rows * cols {
         let offsets = list_offsets(cols, cell % cols, cell / cols + 1 < rows, lattice);
 
-        next.fill(0);
+        next.fill(R::default());
 
         for (state, &count) in current.iter().enumerate() {
-            if count == 0 {
+            if count == R::default() {
                 continue;
             }
 
@@ -98,7 +98,8 @@ fn count_modulo(rows: usize, cols: usize, prime: u32, lattice: (bool, bool)) -> 
 
 /// Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/any-lattice-rectangle-modular.js:
 /// enough primes for the Kahn-Lovasz bound of the king's graph, which also bounds the triangular and the square
-/// lattice, plus one more prime that the result is checked against.
+/// lattice, plus one more prime that the result is checked against. The primes are those of
+/// count_modulo_primes, so some runs count modulo a wide prime.
 fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, lattice: (bool, bool), jobs: usize) -> Result<BigInt, String> {
     let rows = row_count.max(col_count);
     let cols = row_count.min(col_count);
@@ -107,11 +108,12 @@ fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, latti
         return Ok(BigInt::zero());
     }
 
-    let prime_count = ((calculate_log2_bound(rows, cols) + 1.0) / 30.0).ceil() as usize + 1;
-    let primes = list_primes(prime_count);
-    let residues = run_workers(&primes, jobs, |prime| count_modulo(rows, cols, *prime, lattice));
+    let (primes, residues) = count_modulo_primes(calculate_log2_bound(rows, cols) + 1.0, jobs, 1 << (cols + 1), physical_memory(), |prime| match prime {
+        Prime::Narrow(prime) => u64::from(count_modulo(rows, cols, prime, lattice)),
+        Prime::Wide(prime) => count_modulo(rows, cols, prime, lattice),
+    });
 
-    combine_checked_residues(&residues, &primes, false)
+    combine_planned_residues(&residues, &primes, false)
 }
 
 fn main() -> ExitCode {
@@ -146,6 +148,35 @@ fn main() -> ExitCode {
         Err(message) => {
             eprintln!("{message}");
             ExitCode::FAILURE
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use lattice_dimers_core::{list_primes, list_wide_primes};
+
+    use super::*;
+
+    #[test]
+    fn counts_alike_in_both_residue_sizes() {
+        let prime = list_primes(1)[0];
+        let wide_prime = list_wide_primes(2)[1];
+        let boards = [("square", 2, 2, 2), ("square", 8, 8, 12_988_816u64), ("king", 4, 3, 43), ("king", 8, 8, 3_263_262_629_905), ("king", 9, 8, 185_175_369_431_551), ("triangular", 2, 2, 2), ("triangular", 6, 5, 6475)];
+
+        for (name, rows, cols, expected) in boards {
+            let lattice = diagonals_of(name).unwrap();
+
+            assert_eq!(count_modulo(rows, cols, wide_prime, lattice), expected, "{rows}x{cols} {name} modulo a wide prime");
+            assert_eq!(u64::from(count_modulo(rows, cols, prime, lattice)), expected % u64::from(prime), "{rows}x{cols} {name}");
+        }
+
+        for name in ["square", "triangular", "king"] {
+            let lattice = diagonals_of(name).unwrap();
+
+            for (rows, cols) in [(1, 2), (3, 2), (5, 4), (6, 5), (7, 6), (30, 3), (12, 9), (11, 10), (5, 3)] {
+                assert_eq!(u64::from(count_modulo(rows, cols, prime, lattice)), count_modulo(rows, cols, u64::from(prime), lattice), "{rows}x{cols} {name}");
+            }
         }
     }
 }

@@ -194,6 +194,13 @@ impl BigInt {
 
         if self.negative && remainder != 0 { modulus - remainder } else { remainder }
     }
+
+    /// The least non-negative residue modulo a positive modulus of up to 64 bits.
+    pub fn rem_euclid_wide(&self, modulus: u64) -> u64 {
+        let remainder = self.limbs.iter().rev().fold(0u128, |remainder, limb| ((remainder << 32) | u128::from(*limb)) % u128::from(modulus)) as u64;
+
+        if self.negative && remainder != 0 { modulus - remainder } else { remainder }
+    }
 }
 
 fn shift_left(limbs: &[u32], shift: u32, length: usize) -> Vec<u32> {
@@ -476,5 +483,16 @@ mod tests {
     fn reduces_negative_values() {
         assert_eq!(BigInt::from_u64(12_345).negated().rem_euclid_small(7), 3);
         assert_eq!(BigInt::from_u64(14).negated().rem_euclid_small(7), 0);
+    }
+
+    #[test]
+    fn reduces_modulo_a_modulus_of_61_bits() {
+        let modulus = (1u64 << 61) - 1;
+        let value = &(&BigInt::from_u64(modulus) * &BigInt::from_u64(u64::MAX)) + &BigInt::from_u64(12_345);
+
+        assert_eq!(value.rem_euclid_wide(modulus), 12_345);
+        assert_eq!(value.negated().rem_euclid_wide(modulus), modulus - 12_345);
+        assert_eq!(BigInt::from_u64(modulus).negated().rem_euclid_wide(modulus), 0);
+        assert_eq!(BigInt::from_u64(12_345).rem_euclid_wide(7), BigInt::from_u64(12_345).rem_euclid_small(7).into());
     }
 }

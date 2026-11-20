@@ -1,6 +1,6 @@
 # Solver contract
 
-Every algorithm is to be kept in three languages, Rust first, Python second and JavaScript third. A change to an algorithm lands in Rust, and the Python and JavaScript implementations follow it in the same pull request. Today every algorithm has all three; [`algorithms.json`](algorithms.json) names the file of each. The BigInt solvers stay the reference of their Modular twins in every language; "reference" never names the Rust implementation.
+Every algorithm is to be kept in three languages, Rust first, Python second and JavaScript third. A change to an algorithm lands in Rust, and the Python and JavaScript implementations follow it in the same pull request. One difference is kept on purpose: the Rust Modular solvers also count modulo wide primes, the primes below 2^61, while the Python and JavaScript ones keep the primes below 2^31; the counts agree, and the Rust tests run those solvers on the boards of [`cases`](cases/README.md) with one and two worker threads, where runs are wide. Today every algorithm has all three; [`algorithms.json`](algorithms.json) names the file of each. The BigInt solvers stay the reference of their Modular twins in every language; "reference" never names the Rust implementation.
 
 ## Layout
 
