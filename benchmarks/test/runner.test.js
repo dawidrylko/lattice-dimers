@@ -31,11 +31,24 @@ describe('rejections', () => {
     { args: ['-n', '1', '--diagonal-torus', '--lattice', 'square'], message: 'Usage' },
     { args: ['-n', '1', '--domicule', '--lattice', 'triangular'], message: 'Usage' },
     { args: ['-n', '1', '--diagonal', '--lattice', 'triangular', '--only', 'domicule-rectangle-polynomial-bigint.js'], message: 'Usage' },
+    ...[
+      ['--latice', 'king'],
+      ['--torsu'],
+      ['torus'],
+      ['--time'],
+      ['--force=1'],
+      ['-n', '2'],
+      ['-m', '2'],
+      ['--only', 'domino-rectangle-formula.js'],
+      ['-o'],
+    ].map(more => ({ args: ['-n', '1', '-m', '1', '--only', 'domino-rectangle-formula.js', ...more], message: 'Usage' })),
+    { args: ['1', '-n', '1', '-m', '1', '--only', 'domino-rectangle-formula.js'], message: 'Usage' },
+    { args: ['-n', '1', '-m', '1', '--torus', '--lattice', 'square', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], message: 'Usage' },
   ];
 
   for (const { args, message } of cases) {
-    test(args.join(' '), () => {
-      const { status, stderr, error } = runNode([RUNNER, ...args]);
+    test(args.join(' '), t => {
+      const { status, stderr, error } = runRunner(makeTemporaryDirectory(t, 'domino-benchmark-'), args);
 
       assert.ifError(error);
       assert.notEqual(status, 0, 'The runner accepted the arguments.');

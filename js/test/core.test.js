@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { describe, test } = require('node:test');
-const { parseArgs, hasUnusableArgument } = require('../core');
+const { parseArgs, hasUnusableArgument, hasUnknownArgument } = require('../core');
 const { listPrimes, combineCheckedResidues } = require('../core/modular');
 const { pfaffianModulo, PFAFFIAN_PRIME_BOUND } = require('../core/pfaffian');
 const { testCasesOf } = require('../core/cases');
@@ -208,6 +208,26 @@ describe('parser', () => {
 
     for (const { args, expectedResult } of cases) {
       assert.equal(hasUnusableArgument(args, ['-r', '-c', '--lattice'], ['--torus']), expectedResult, args.join(' '));
+    }
+  });
+});
+
+describe('an argument that a script without --time does not know', () => {
+  test('--time, a flag with a value that has none, and what a solver rejects', () => {
+    const cases = [
+      { args: [], expectedResult: false },
+      { args: ['-n', '1', '--force', '--force'], expectedResult: false },
+      { args: ['-n', '1', '--time'], expectedResult: true },
+      { args: ['--only', '--time'], expectedResult: true },
+      { args: ['--force', '-n'], expectedResult: true },
+      { args: ['--only', '-n'], expectedResult: true },
+      { args: ['-n', '1', '--forse'], expectedResult: true },
+      { args: ['-n', '1', 'force'], expectedResult: true },
+      { args: ['-n', '1', '-n', '1'], expectedResult: true },
+    ];
+
+    for (const { args, expectedResult } of cases) {
+      assert.equal(hasUnknownArgument(args, ['-n', '--only'], ['--force']), expectedResult, args.join(' '));
     }
   });
 });

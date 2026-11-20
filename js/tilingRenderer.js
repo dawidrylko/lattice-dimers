@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const path = require('path');
-const { parseArgs } = require('./core');
+const { parseArgs, hasUnknownArgument } = require('./core');
 const {
   enumerateTilings,
   renderAscii,
@@ -202,7 +202,8 @@ function __main__() {
 
     if (
       ![rowCount, colCount].every(size => Number.isInteger(size) && size >= 0) ||
-      (options.limit !== undefined && !(options.limit > 0))
+      (options.limit !== undefined && !(options.limit > 0)) ||
+      hasUnknownArgument(argv, ['-r', '-c', '-l', '-o', '-i'], ['--random', '--all', '--ascii', '--domicule'])
     ) {
       throw new Error(USAGE);
     }
