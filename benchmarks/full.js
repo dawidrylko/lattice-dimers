@@ -24,14 +24,14 @@ const USAGE = 'Usage: node benchmarks/full.js [<solver id>] [--board-budget-hour
 const STATE_GROWTH = 4.4;
 const TORUS_GROWTH = 16;
 const GROWTH_FLOORS = [
-  [/^any[-_]lattice[-_]rectangle[-_]bigint/, 7.1],
-  [/^any[-_]lattice[-_]rectangle[-_]modular/, 12],
-  [/^any[-_]lattice[-_]rectangle[-_]polynomial[-_]bigint/, 12],
-  [/^any[-_]lattice[-_]rectangle[-_]polynomial[-_]modular/, 16.3],
-  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]bigint.*torus$/, 61],
-  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]bigint.*cylinder$/, 17.4],
-  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]modular.*torus$/, 50],
-  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]modular.*cylinder$/, 29.3],
+  [/^any[-_]lattice[-_]rectangle[-_]bigint.*triangular-rectangle$/, 7.1],
+  [/^any[-_]lattice[-_]rectangle[-_]modular.*triangular-rectangle$/, 12],
+  [/^any[-_]lattice[-_]rectangle[-_]polynomial[-_]bigint.*triangular-rectangle$/, 12],
+  [/^any[-_]lattice[-_]rectangle[-_]polynomial[-_]modular.*triangular-rectangle$/, 16.3],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]bigint.*triangular-torus$/, 61],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]bigint.*triangular-cylinder$/, 17.4],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]modular.*triangular-torus$/, 50],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]modular.*triangular-cylinder$/, 29.3],
   [/^any[-_]lattice[-_]cylinder[-_]torus[-_]bigint.*triangular-torus$/, 73],
   [/^any[-_]lattice[-_]cylinder[-_]torus[-_]bigint.*triangular-cylinder$/, 12],
   [/^any[-_]lattice[-_]cylinder[-_]torus[-_]modular.*triangular-torus$/, 27],

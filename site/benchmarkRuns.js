@@ -170,7 +170,7 @@ function readMissingReasons(algorithm, { rowCount, colCount }, seriesSuffix, dir
 }
 
 /**
- * Tells whether a run measured the triangular lattice, which joined the full run after the run of 2026-11-16.
+ * Tells whether a run measured the triangular lattice, which no run up to that of 2026-11-16 did.
  * @param {string} directory The directory of one run.
  * @returns {boolean} Whether the run holds a result file of the triangular lattice.
  */

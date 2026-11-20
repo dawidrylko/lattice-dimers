@@ -1974,7 +1974,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       const links = [...section.querySelectorAll('a[href*="benchmarks/results/"]')].filter(link => link.checkVisibility()).map(link => (new URL(link.href).pathname.endsWith('/' + link.textContent) ? link.textContent : 'a link to another run than ' + link.textContent));
       return { runs: section.innerText.split('Run on ').length - 1, links, cylinderTorus: DATA.cylinderTorusDiagonalRun?.directory ?? null };
     })()`);
-    const ownRun = surface !== 'rectangle' && count === 'diagonal';
+    const ownRun = p !== 'triangular' && surface !== 'rectangle' && count === 'diagonal';
     const unmeasured = p === 'triangular' && !TRIANGULAR_MEASURED;
     const wanted = unmeasured ? 0 : ownRun ? (run.cylinderTorus ? 1 : 0) : 1;
     const linked = run.links.length === wanted && run.links.every(link => !ownRun || link === run.cylinderTorus);

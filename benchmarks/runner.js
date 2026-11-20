@@ -36,6 +36,7 @@ const RECTANGLE_CASES = testCasesOf('any-lattice-rectangle-modular');
 const LATTICE_DIAGONAL_CASES = testCasesOf('any-lattice-rectangle-polynomial-modular');
 const LATTICE_CYLINDER_TORUS_DIAGONAL_CASES = testCasesOf('any-lattice-cylinder-torus-polynomial-modular');
 const LATTICE_GROUPS = ['--torus', '--cylinder', '--rectangle', '--diagonal', '--diagonal-cylinder', '--diagonal-torus'];
+const EVERY_LATTICE_GROUPS = ['--torus', '--cylinder'];
 const OWN_SOLVER_LATTICE = 'triangular';
 const USAGE =
   'Usage: node benchmarks/runner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --rectangle | --torus | --cylinder | --diagonal | --diagonal-cylinder | --diagonal-torus] [--lattice king|triangular|square] [--force]';
@@ -113,8 +114,7 @@ function listGroups(lattice) {
   return {
     '--domicule': [{ files: DOMICULE_FILES, testCases: DOMICULE_BOARDS }],
     '--rectangle': [],
-    '--torus': [{ files: cylinderTorusFiles, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice, torus: true }), CYLINDER_TORUS_CASES) }],
-    '--cylinder': [{ files: cylinderTorusFiles, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice }), CYLINDER_TORUS_CASES) }],
+    ...cylinderTorus,
     '--diagonal': [{ files: DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
     '--diagonal-cylinder': [{ files: CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { torus: false }), CYLINDER_TORUS_DIAGONAL_CASES) }],
     '--diagonal-torus': [{ files: CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { torus: true }), CYLINDER_TORUS_DIAGONAL_CASES) }],
@@ -319,8 +319,8 @@ function __main__() {
       !(offset >= 0) ||
       (only !== null && !groups.some(({ files }) => files.includes(only))) ||
       argv.some(arg => arg.startsWith('--lattice=')) ||
-      (flags.length === 1 && !groups.length) ||
-      (lattice !== null && !(LATTICE_GROUPS.includes(flags[0]) && Object.hasOwn(LATTICES, lattice)))
+      (lattice !== null &&
+        !(Object.hasOwn(LATTICES, lattice) && (lattice === OWN_SOLVER_LATTICE ? LATTICE_GROUPS : EVERY_LATTICE_GROUPS).includes(flags[0])))
     ) {
       throw new Error(USAGE);
     }

@@ -1,6 +1,6 @@
 # Benchmarks
 
-One command measures every solver on the square lattice, the triangular lattice and the king's graph, in one container with pinned Node.js, Python and Rust ([`Dockerfile`](Dockerfile)). The triangular lattice joined the full run after the run of 2026-11-16, so that run has no time of it.
+One command measures every solver on the square lattice, the triangular lattice and the king's graph, in one container with pinned Node.js, Python and Rust ([`Dockerfile`](Dockerfile)). The triangular lattice joined the full run after the run of 2026-11-16, so that run and every earlier one have no time of it.
 
 ```sh
 pnpm -C js benchmark                           # every solver
@@ -34,9 +34,9 @@ Wall times compare only on the same machine. Measured on an Apple M4 on 2026-11-
 
 ## The triangular lattice in the full run
 
-The full run has 42 series of the triangular lattice, 14 per language: the rectangles with `any-lattice-rectangle-*`, the cylinders and the tori with `any-lattice-cylinder-torus-*`, the Pfaffian solver included, and the three surfaces by diagonal pieces with the `polynomial` solvers. No run has measured them yet, so the six tables of the triangular lattice on the site show dashes until one does.
+The full run has 42 series of the triangular lattice, 14 per language: the rectangles with `any-lattice-rectangle-*`, the cylinders and the tori with `any-lattice-cylinder-torus-*`, the Pfaffian solver included, and the three surfaces by diagonal pieces with the `polynomial` solvers. The six tables of the triangular lattice on the site show dashes until a complete run has measured them; as of 2026-11-20 none has.
 
-On 2026-11-20 each series was run once per board on an Apple M4, outside the container and with other programs open, with 4 threads for the Modular and Pfaffian solvers, up to the first board above 6 seconds. From these times and the estimates of `full.js`, a run with `--board-budget-hours 2` measures about 400 of the 462 new boards and takes 14 to 18 hours longer. The lower figure prices a board that was not timed at the last growth seen in its series, but at least 4.4 times the board before; the higher prices it at the growth floor of its series and splits into about 6 hours in Rust, 5 in Python and 7 in JavaScript. The same times gave the growth floors of the triangular lattice in `full.js`.
+On 2026-11-20 each series was run once per board on an Apple M4, outside the container and with other programs open, with 4 threads for the Modular and Pfaffian solvers, up to the first board above 6 seconds. From these times and the estimates of `full.js`, a run with `--board-budget-hours 2` measures about 400 of the 462 new boards and takes 14 to 18 hours longer. The lower figure prices a board that was not timed at the last growth seen in its series, but at least 4.4 times the board before; the higher prices it at the growth floor of its series and splits into about 6 hours in Rust, 5 in Python and 7 in JavaScript. The same times gave the growth floors of the triangular lattice in `full.js`; the Pfaffian series keep the general floors, 16 on tori and 4.4 on cylinders. The estimate is of 2026-11-20 and gives way to the measured duration of the first run that has these series.
 
 ## Preparing a Mac
 

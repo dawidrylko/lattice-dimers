@@ -25,6 +25,9 @@ describe('rejections', () => {
     { args: ['-n', '1', '--rectangle', '--lattice', 'king'], message: 'Usage' },
     { args: ['-n', '1', '--rectangle', '--lattice', 'square'], message: 'Usage' },
     { args: ['-n', '1', '--diagonal', '--lattice', 'square'], message: 'Usage' },
+    { args: ['-n', '1', '--diagonal', '--lattice', 'king'], message: 'Usage' },
+    { args: ['-n', '1', '--diagonal-cylinder', '--lattice', 'king'], message: 'Usage' },
+    { args: ['-n', '1', '--diagonal-torus', '--lattice', 'king'], message: 'Usage' },
     { args: ['-n', '1', '--diagonal-torus', '--lattice', 'square'], message: 'Usage' },
     { args: ['-n', '1', '--domicule', '--lattice', 'triangular'], message: 'Usage' },
     { args: ['-n', '1', '--diagonal', '--lattice', 'triangular', '--only', 'domicule-rectangle-polynomial-bigint.js'], message: 'Usage' },
@@ -88,10 +91,6 @@ describe('result files by surface', () => {
         file: fileOf(implementation, `0x0-triangular-${surface}`),
       })),
     ),
-    ...listImplementations('domicule-rectangle-polynomial-bigint').map(implementation => ({
-      args: ['--diagonal', '--lattice', 'king', '--only', 'domicule-rectangle-polynomial-bigint.js'],
-      file: fileOf(implementation, '0x0'),
-    })),
     ...[
       ['domino-rectangle-formula', []],
       ['domino-rectangle-float', []],
