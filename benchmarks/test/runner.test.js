@@ -21,6 +21,16 @@ describe('rejections', () => {
     { args: ['-n', '1', '--lattice', 'square'], message: 'Usage' },
     { args: ['-n', '1', '--torus', '--lattice=square'], message: 'Usage' },
     { args: ['-n', '1', '--torus', '--only', 'any-lattice-cylinder-torus-pfaffian.js'], message: 'Usage' },
+    { args: ['-n', '1', '--rectangle'], message: 'Usage' },
+    { args: ['-n', '1', '--rectangle', '--lattice', 'king'], message: 'Usage' },
+    { args: ['-n', '1', '--rectangle', '--lattice', 'square'], message: 'Usage' },
+    { args: ['-n', '1', '--diagonal', '--lattice', 'square'], message: 'Usage' },
+    { args: ['-n', '1', '--diagonal', '--lattice', 'king'], message: 'Usage' },
+    { args: ['-n', '1', '--diagonal-cylinder', '--lattice', 'king'], message: 'Usage' },
+    { args: ['-n', '1', '--diagonal-torus', '--lattice', 'king'], message: 'Usage' },
+    { args: ['-n', '1', '--diagonal-torus', '--lattice', 'square'], message: 'Usage' },
+    { args: ['-n', '1', '--domicule', '--lattice', 'triangular'], message: 'Usage' },
+    { args: ['-n', '1', '--diagonal', '--lattice', 'triangular', '--only', 'domicule-rectangle-polynomial-bigint.js'], message: 'Usage' },
   ];
 
   for (const { args, message } of cases) {
@@ -67,6 +77,19 @@ describe('result files by surface', () => {
         { args: ['--diagonal-cylinder', '--only', `${algorithm}.js`], file: fileOf(implementation, '0x0-cylinder') },
         { args: ['--diagonal-torus', '--only', `${algorithm}.js`], file: fileOf(implementation, '0x0-torus') },
       ]),
+    ),
+    ...[
+      ['any-lattice-rectangle-bigint', ['--rectangle'], 'rectangle'],
+      ['any-lattice-rectangle-modular', ['--rectangle'], 'rectangle'],
+      ['any-lattice-rectangle-polynomial-bigint', ['--diagonal'], 'rectangle'],
+      ['any-lattice-rectangle-polynomial-modular', ['--diagonal'], 'rectangle'],
+      ['any-lattice-cylinder-torus-polynomial-bigint', ['--diagonal-cylinder'], 'cylinder'],
+      ['any-lattice-cylinder-torus-polynomial-modular', ['--diagonal-torus'], 'torus'],
+    ].flatMap(([algorithm, flags, surface]) =>
+      listImplementations(algorithm).map(implementation => ({
+        args: [...flags, '--lattice', 'triangular', '--only', `${algorithm}.js`],
+        file: fileOf(implementation, `0x0-triangular-${surface}`),
+      })),
     ),
     ...[
       ['domino-rectangle-formula', []],

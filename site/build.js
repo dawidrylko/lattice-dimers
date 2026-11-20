@@ -20,7 +20,8 @@ const { listImplementations } = require('../js/core/registry');
 const { countCylinderTorusDiagonals } = require('../js/renderer/cylinderTorus');
 const { renderNote, listNotes, formatTime, logCount, NOTES_DIRECTORY } = require('./notes');
 const { THEME_CSS, CHROME_CSS, renderHeader, renderFooter, NOTE_REDIRECTS, SECTION_ALIASES, resolveRedirect } = require('./chrome');
-const { readBenchmarkRuns, findSeriesRun, listJavaScriptResults, describeMissing } = require('./benchmarkRuns');
+const benchmarkRuns = require('./benchmarkRuns');
+const { readBenchmarkRuns, findSeriesRun, listJavaScriptResults, readAverageTime, hasTriangularResults, readTriangularTimes } = benchmarkRuns;
 const { DEFAULT_BOARD } = require('./defaultBoard');
 
 const SITE_URL = 'https://dawidrylko.github.io/lattice-dimers/';
@@ -33,6 +34,7 @@ const CYLINDER_TORUS_RESULT_FILE = /_(\d+)x(\d+)-(\w+)-(torus|cylinder)\.txt$/;
 const { latest: BENCHMARK_RUN } = readBenchmarkRuns();
 const BENCHMARK_DIRECTORY = path.join(ROOT_DIRECTORY, BENCHMARK_ROOT, BENCHMARK_RUN);
 const PFAFFIAN_MEASURED = listJavaScriptResults(BENCHMARK_DIRECTORY, PFAFFIAN).length > 0;
+const TRIANGULAR_MEASURED = hasTriangularResults(BENCHMARK_DIRECTORY);
 const CYLINDER_TORUS_DIAGONAL_PREFIX = 'domicule-cylinder-torus-polynomial-';
 const CYLINDER_TORUS_DIAGONAL_RESULT_FILE = /_(\d+)x(\d+)-(torus|cylinder)\.txt$/;
 const CYLINDER_TORUS_DIAGONAL_RUN = findSeriesRun(CYLINDER_TORUS_DIAGONAL_PREFIX, path.join(ROOT_DIRECTORY, BENCHMARK_ROOT));
@@ -105,9 +107,7 @@ const CYLINDER_TORUS_PIECES = [
   { pieces: 'triangular', lattice: 'triangular', suffix: '-triangular' },
 ];
 const BENCHMARK_SIDES = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
-const NOT_REACHED = 'not measured: the run did not reach this board';
 const PFAFFIAN_UNMEASURED = 'not measured: the Pfaffian solver has no benchmark run yet';
-const EMPTY_BOARD_UNMEASURED = 'not measured: the run predates the 0 × 0 board';
 const DIAGONAL_FILTER_MAX_SIDE = 10;
 const REPOSITORY_BLOB_URL = 'https://github.com/dawidrylko/lattice-dimers/blob/master';
 const COMPUTED = 'every output on this page was produced during that build from the files of this repository';
@@ -313,24 +313,6 @@ function escapeHtml(text) {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function readAverageTime(directory, fileName) {
-  const file = path.join(directory, fileName);
-
-  if (!fs.existsSync(file)) {
-    return null;
-  }
-
-  const lines = fs.readFileSync(file, 'utf-8').split('\n');
-  const match = lines[0].match(/Average Execution Time: ([\d.]+) ms/);
-  const processTime = lines.find(line => line.startsWith('Average Process Time:'))?.match(/([\d.]+) ms/);
-
-  return {
-    average: match ? Number(match[1]) : null,
-    process: processTime ? Number(processTime[1]) : null,
-    runs: lines.filter(line => /^\d+\. Execution Time/.test(line)).length,
-  };
-}
-
 /**
  * Lists the boards of a benchmark table: every even square from 0 × 0 to 20 × 20 on each surface,
  * and any other board the run measured, so a board the run did not reach shows a row of dashes.
@@ -465,7 +447,8 @@ async function buildCylinderTorusBenchmark(lattice) {
 /**
  * Lists the boards of the triangular lattice tables of the Benchmarks tab, every even square from
  * 0 × 0 to 20 × 20, with the count stored in spec/cases/ or counted for the gallery when there is
- * one. No run has measured these solvers yet, so the rows have no times.
+ * one, the times of the solvers that count every tiling and, under diagonal, the times of the ones
+ * that count by diagonal pieces. A run that predates the triangular lattice gives no times.
  * @returns {Promise<Object[]>} One row per board, with its surface.
  */
 async function buildTriangularBenchmark() {
@@ -479,7 +462,9 @@ async function buildTriangularBenchmark() {
           ? findTriangularCount(board)
           : findCylinderTorusCase(board)?.expectedResult ?? (CYLINDER_TORUS_SIDES.includes(side) ? await countCylinderTorusTilings(board) : null);
 
-      rows.push({ rowCount: side, colCount: side, surface, tilings });
+      const row = { rowCount: side, colCount: side, surface };
+
+      rows.push({ ...row, tilings, ...readTriangularTimes(BENCHMARK_DIRECTORY, row, 'all'), diagonal: readTriangularTimes(BENCHMARK_DIRECTORY, row, 'diagonal') });
     }
   }
 
@@ -548,26 +533,8 @@ function buildCylinderTorusDiagonalBenchmark() {
   });
 }
 
-/**
- * Says why each implementation of a solver has no time on a board: the reason plan.json records,
- * or, for a board it does not list, that the run predates the empty board or did not reach it.
- * A reason is shown only where the time is missing.
- * @returns {Object} The reason per language.
- */
-function readMissingReasons(algorithm, { rowCount, colCount }, seriesSuffix, directory = BENCHMARK_DIRECTORY) {
-  const plan = path.join(directory, 'plan.json');
-  const { budgetHours, notMeasured } = fs.existsSync(plan) ? JSON.parse(fs.readFileSync(plan, 'utf-8')) : { budgetHours: null, notMeasured: [] };
-  const board = `${rowCount}x${colCount}`;
-  const fallback = rowCount * colCount === 0 ? EMPTY_BOARD_UNMEASURED : NOT_REACHED;
-
-  return Object.fromEntries(
-    listImplementations(algorithm).map(({ language, file }) => {
-      const name = `${path.basename(file)}${seriesSuffix}`;
-      const entry = notMeasured.find(({ series, board: other }) => series === name && other === board);
-
-      return [language, entry ? describeMissing(entry, budgetHours) : fallback];
-    }),
-  );
+function readMissingReasons(algorithm, board, seriesSuffix, directory = BENCHMARK_DIRECTORY) {
+  return benchmarkRuns.readMissingReasons(algorithm, board, seriesSuffix, directory);
 }
 
 /**
@@ -593,11 +560,7 @@ function listMeasuredRows(rows) {
 }
 
 function readLanguages(algorithm, suffix, directory = BENCHMARK_DIRECTORY) {
-  return Object.fromEntries(
-    listImplementations(algorithm)
-      .filter(({ language }) => language !== 'js')
-      .map(({ language, file }) => [language, readAverageTime(directory, `${path.basename(file)}${suffix}`)]),
-  );
+  return benchmarkRuns.readLanguages(algorithm, suffix, directory);
 }
 
 function readEnvironment(directory) {
@@ -917,6 +880,7 @@ async function __main__() {
     dominoCylinderTorusBenchmark: await buildCylinderTorusBenchmark('square'),
     pfaffianMeasured: PFAFFIAN_MEASURED,
     triangularBenchmark: await buildTriangularBenchmark(),
+    triangularMeasured: TRIANGULAR_MEASURED,
     diagonalBenchmark: buildDiagonalBenchmark(domiculeTotals),
     cylinderTorusDiagonalBenchmark: buildCylinderTorusDiagonalBenchmark(),
     environment: readEnvironment(BENCHMARK_DIRECTORY),
@@ -957,6 +921,7 @@ async function __main__() {
     .replaceAll('__RESEARCH_UPPER__', research.upper)
     .replaceAll('__CHESSBOARD_DOMINOES__', chessboard(testCasesDomino))
     .replaceAll('__CHESSBOARD_DOMICULES__', chessboard(testCasesDomicule))
+    .replace('__TRIANGULAR_TIMES__', TRIANGULAR_MEASURED ? '' : '; the triangular lattice has counts only, as no benchmark run has measured it yet')
     .replace('__SCRIPTS__', () => scripts)
     .replace('__DATA__', () => JSON.stringify(data))
     .replace('__WORKER__', () => JSON.stringify(workerSource).replace(/</g, '\\u003c'))

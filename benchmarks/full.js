@@ -24,6 +24,18 @@ const USAGE = 'Usage: node benchmarks/full.js [<solver id>] [--board-budget-hour
 const STATE_GROWTH = 4.4;
 const TORUS_GROWTH = 16;
 const GROWTH_FLOORS = [
+  [/^any[-_]lattice[-_]rectangle[-_]bigint.*triangular-rectangle$/, 7.1],
+  [/^any[-_]lattice[-_]rectangle[-_]modular.*triangular-rectangle$/, 12],
+  [/^any[-_]lattice[-_]rectangle[-_]polynomial[-_]bigint.*triangular-rectangle$/, 12],
+  [/^any[-_]lattice[-_]rectangle[-_]polynomial[-_]modular.*triangular-rectangle$/, 16.3],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]bigint.*triangular-torus$/, 61],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]bigint.*triangular-cylinder$/, 17.4],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]modular.*triangular-torus$/, 50],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]polynomial[-_]modular.*triangular-cylinder$/, 29.3],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]bigint.*triangular-torus$/, 73],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]bigint.*triangular-cylinder$/, 12],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]modular.*triangular-torus$/, 27],
+  [/^any[-_]lattice[-_]cylinder[-_]torus[-_]modular.*triangular-cylinder$/, 9],
   [/^any[-_]lattice.*bigint.*king-torus/, 51],
   [/^any[-_]lattice.*bigint.*square-torus/, 23],
   [/^any[-_]lattice.*bigint.*king-cylinder/, 12.87],
@@ -49,6 +61,12 @@ const INSTRUCTION_BOARDS = [
   { id: 'any-lattice-cylinder-torus-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'king'] },
   { id: 'domicule-cylinder-torus-polynomial-modular', args: ['-r', '8', '-c', '8', '-j', '1'] },
   { id: 'domicule-cylinder-torus-polynomial-bigint', args: ['-r', '6', '-c', '6'] },
+  { id: 'any-lattice-rectangle-modular', args: ['-r', '8', '-c', '8', '--lattice', 'triangular', '-j', '1'] },
+  { id: 'any-lattice-rectangle-bigint', args: ['-r', '8', '-c', '8', '--lattice', 'triangular'] },
+  { id: 'any-lattice-rectangle-polynomial-modular', args: ['-r', '6', '-c', '6', '--lattice', 'triangular', '-j', '1'] },
+  { id: 'any-lattice-rectangle-polynomial-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'triangular'] },
+  { id: 'any-lattice-cylinder-torus-polynomial-modular', args: ['-r', '8', '-c', '8', '--lattice', 'triangular', '-j', '1'] },
+  { id: 'any-lattice-cylinder-torus-polynomial-bigint', args: ['-r', '6', '-c', '6', '--lattice', 'triangular'] },
 ];
 const INSTRUCTION_RUNS = 3;
 const MIN_RUN_TIMEOUT_SECONDS = 60;
@@ -95,6 +113,7 @@ function listSeries(jobs) {
 
   const king = listGroups('king');
   const square = listGroups('square');
+  const triangular = listGroups('triangular');
 
   king['--domicule'].forEach(({ files, testCases }) => add(files, testCases));
   king['--diagonal'].forEach(({ files, testCases }) => add(files, testCases));
@@ -103,6 +122,12 @@ function listSeries(jobs) {
     ['king', 'cylinder', king['--cylinder']],
     ['square', 'torus', square['--torus']],
     ['square', 'cylinder', square['--cylinder']],
+    ['triangular', 'rectangle', triangular['--rectangle']],
+    ['triangular', 'torus', triangular['--torus']],
+    ['triangular', 'cylinder', triangular['--cylinder']],
+    ['triangular', 'rectangle', triangular['--diagonal']],
+    ['triangular', 'torus', triangular['--diagonal-torus']],
+    ['triangular', 'cylinder', triangular['--diagonal-cylinder']],
   ].forEach(([lattice, surface, groups]) =>
     groups.forEach(({ files, testCases }) => add(files, testCases, `-${lattice}-${surface}`)),
   );
@@ -340,4 +365,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { estimateBoard, parseInstructionCount, compareRuns, listSeries, growthFloor, GROWTH_FLOORS };
+module.exports = { estimateBoard, parseInstructionCount, compareRuns, listSeries, growthFloor, solverOf, GROWTH_FLOORS, INSTRUCTION_BOARDS };
