@@ -5,7 +5,8 @@ const path = require('node:path');
 const { describe, test, before, after } = require('node:test');
 const { listImplementations } = require('../../js/core/registry');
 const { runDirectoryName } = require('../environment');
-const { estimateBoard, parseInstructionCount, compareRuns, listSeries, GROWTH_FLOORS } = require('../full');
+const { estimateBoard, parseInstructionCount, compareRuns, listSeries, solverOf, GROWTH_FLOORS, INSTRUCTION_BOARDS } = require('../full');
+const { generateFileName } = require('../runner');
 const { compareSeries } = require('../measureVariance');
 const { readBenchmarkRuns } = require('../../site/benchmarkRuns.js');
 const { WRONG_COUNT, makeTemporaryDirectory, runNode } = require('./support');
@@ -42,15 +43,69 @@ describe('the plan of a full run', () => {
     assert.deepEqual(GROWTH_FLOORS.map(([pattern]) => pattern).filter(pattern => !names.some(name => pattern.test(name))), []);
   });
 
-  test('the Pfaffian solver is measured on the square lattice only, with the threads of the run', () => {
+  test('the Pfaffian solver is measured on the two planar lattices only, with the threads of the run', () => {
     const series = listSeries(4).filter(({ name }) => /pfaffian/.test(name));
     const files = listImplementations('any-lattice-cylinder-torus-pfaffian').map(({ file }) => path.basename(file));
 
     assert.deepEqual(
       series.map(({ name }) => name),
-      ['torus', 'cylinder'].flatMap(surface => files.map(file => `${file}-square-${surface}`)),
+      ['square', 'triangular'].flatMap(lattice => ['torus', 'cylinder'].flatMap(surface => files.map(file => `${file}-${lattice}-${surface}`))),
     );
-    assert.ok(series.every(({ boards }) => boards.every(({ jobs, lattice }) => jobs === 4 && lattice === 'square')));
+    assert.ok(series.every(({ name, boards }) => boards.every(({ jobs, lattice }) => jobs === 4 && name.includes(`-${lattice}-`))));
+  });
+
+  test('the triangular lattice is measured on every surface, for all tilings and by diagonal pieces', () => {
+    const solvers = {
+      rectangle: ['any-lattice-rectangle-bigint', 'any-lattice-rectangle-modular', 'any-lattice-rectangle-polynomial-bigint', 'any-lattice-rectangle-polynomial-modular'],
+      torus: ['bigint', 'modular', 'pfaffian', 'polynomial-bigint', 'polynomial-modular'].map(method => `any-lattice-cylinder-torus-${method}`),
+    };
+    const wanted = ['rectangle', 'torus', 'cylinder'].flatMap(surface =>
+      (solvers[surface] ?? solvers.torus).flatMap(id => listImplementations(id).map(({ file }) => `${path.basename(file)}-triangular-${surface}`)),
+    );
+    const series = listSeries(4).filter(({ name }) => /-triangular-/.test(name));
+
+    assert.deepEqual(series.map(({ name }) => name).sort(), wanted.sort());
+
+    for (const { name, boards } of series) {
+      assert.deepEqual(boards.map(({ rowCount, colCount }) => `${rowCount}x${colCount}`), Array.from({ length: 11 }, (_, i) => `${2 * i}x${2 * i}`), name);
+      assert.ok(boards.every(({ lattice }) => lattice === 'triangular'), name);
+      assert.ok([boards[0], boards[2]].every(({ expectedResult }) => expectedResult !== undefined), `${name} has no stored count for 0x0 or 4x4`);
+    }
+  });
+
+  test('the triangular lattice keeps its own growth floors', () => {
+    const floors = {
+      'any-lattice-rectangle-bigint.rs-triangular-rectangle': 7.1,
+      'any_lattice_rectangle_modular.py-triangular-rectangle': 12,
+      'any-lattice-rectangle-polynomial-bigint.js-triangular-rectangle': 12,
+      'any_lattice_rectangle_polynomial_modular.py-triangular-rectangle': 16.3,
+      'any-lattice-cylinder-torus-polynomial-bigint.rs-triangular-torus': 61,
+      'any_lattice_cylinder_torus_polynomial_bigint.py-triangular-cylinder': 17.4,
+      'any-lattice-cylinder-torus-polynomial-modular.js-triangular-torus': 50,
+      'any-lattice-cylinder-torus-polynomial-modular.rs-triangular-cylinder': 29.3,
+      'any-lattice-cylinder-torus-bigint.rs-triangular-torus': 73,
+      'any_lattice_cylinder_torus_bigint.py-triangular-cylinder': 12,
+      'any-lattice-cylinder-torus-modular.js-triangular-torus': 27,
+      'any-lattice-cylinder-torus-modular.rs-triangular-cylinder': 9,
+      'any-lattice-cylinder-torus-pfaffian.rs-triangular-torus': 16,
+      'any-lattice-cylinder-torus-pfaffian.rs-triangular-cylinder': 4.4,
+    };
+
+    for (const [seriesName, floor] of Object.entries(floors)) {
+      assert.equal(estimateBoard({ seriesName, previousSeconds: 1, earlierSeconds: 0 }), floor, seriesName);
+    }
+  });
+
+  test('no two boards of the full run share a result file', () => {
+    const files = listSeries(4).flatMap(({ boards }) => boards.map(board => generateFileName({ directory: '', ...board })));
+
+    assert.equal(new Set(files).size, files.length);
+  });
+
+  test('every solver of the full run has a board for its instruction count', () => {
+    const counted = new Set(INSTRUCTION_BOARDS.map(({ id }) => id));
+
+    assert.deepEqual([...new Set(listSeries(4).map(({ name }) => solverOf(name)))].filter(id => !counted.has(id)), []);
   });
 
   test('the name of a solver does not make a cylinder a torus', () => {

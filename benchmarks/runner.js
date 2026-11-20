@@ -29,9 +29,16 @@ const CYLINDER_TORUS_CASES = ['any-lattice-cylinder-torus-modular', 'any-lattice
 const DIAGONAL_CASES = testCasesOf('domicule-rectangle-polynomial-modular');
 const CYLINDER_TORUS_DIAGONAL_CASES = testCasesOf('domicule-cylinder-torus-polynomial-modular');
 const DOMICULE_BOARDS = [...testCasesOf('domicule-rectangle-bigint').filter(isEvenSquare), { rowCount: 20, colCount: 20 }];
-const CYLINDER_TORUS_GROUPS = ['--torus', '--cylinder'];
+const RECTANGLE_FILES = ['any-lattice-rectangle-bigint', 'any-lattice-rectangle-modular'].map(javaScriptFileOf);
+const LATTICE_DIAGONAL_FILES = ['any-lattice-rectangle-polynomial-bigint', 'any-lattice-rectangle-polynomial-modular'].map(javaScriptFileOf);
+const LATTICE_CYLINDER_TORUS_DIAGONAL_FILES = ['any-lattice-cylinder-torus-polynomial-bigint', 'any-lattice-cylinder-torus-polynomial-modular'].map(javaScriptFileOf);
+const RECTANGLE_CASES = testCasesOf('any-lattice-rectangle-modular');
+const LATTICE_DIAGONAL_CASES = testCasesOf('any-lattice-rectangle-polynomial-modular');
+const LATTICE_CYLINDER_TORUS_DIAGONAL_CASES = testCasesOf('any-lattice-cylinder-torus-polynomial-modular');
+const LATTICE_GROUPS = ['--torus', '--cylinder', '--rectangle', '--diagonal', '--diagonal-cylinder', '--diagonal-torus'];
+const OWN_SOLVER_LATTICE = 'triangular';
 const USAGE =
-  'Usage: node benchmarks/runner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --torus | --cylinder | --diagonal | --diagonal-cylinder | --diagonal-torus] [--lattice king|triangular|square] [--force]';
+  'Usage: node benchmarks/runner.js -n <numberOfExecutions> [-m <maxSize>] [-o <offset>] [--only <solver file>] [--domicule | --rectangle | --torus | --cylinder | --diagonal | --diagonal-cylinder | --diagonal-torus] [--lattice king|triangular|square] [--force]';
 
 function displayPath(file) {
   const relative = path.relative(path.join(__dirname, '..'), file);
@@ -59,16 +66,53 @@ function listSquareBoards(minSide, maxSide, options = {}) {
 }
 
 /**
+ * Lists the groups of solvers and boards of the triangular lattice that the king's graph and the square lattice
+ * measure with solvers of their own: the rectangles, and every surface by diagonal pieces. Their boards carry the
+ * lattice, and a rectangle its surface, which name their result files.
+ * @returns {Object} The groups by flag.
+ */
+function listOwnSolverGroups() {
+  const lattice = OWN_SOLVER_LATTICE;
+  const rectangles = listSquareBoards(0, 20, { lattice, surface: 'rectangle' });
+
+  return {
+    '--rectangle': [{ files: RECTANGLE_FILES, testCases: withKnownCounts(rectangles, RECTANGLE_CASES) }],
+    '--diagonal': [{ files: LATTICE_DIAGONAL_FILES, testCases: withKnownCounts(rectangles, LATTICE_DIAGONAL_CASES) }],
+    '--diagonal-cylinder': [
+      { files: LATTICE_CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice, torus: false }), LATTICE_CYLINDER_TORUS_DIAGONAL_CASES) },
+    ],
+    '--diagonal-torus': [
+      { files: LATTICE_CYLINDER_TORUS_DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice, torus: true }), LATTICE_CYLINDER_TORUS_DIAGONAL_CASES) },
+    ],
+  };
+}
+
+/**
  * Lists the groups of solvers and boards behind each flag of the runner. The Pfaffian solver joins the cylinders
- * and tori of the two planar lattices only: it rejects the king's graph.
+ * and tori of the two planar lattices only: it rejects the king's graph. The rectangles of the triangular lattice
+ * and its counts by diagonal pieces have solvers that take the lattice; on the king's graph these flags keep the
+ * domicule solvers, and on the square lattice they have no group.
  * @param {string} lattice The lattice of the cylinders and tori.
  * @returns {Object} The groups by flag.
  */
 function listGroups(lattice) {
   const cylinderTorusFiles = Object.hasOwn(PLANAR_LATTICES, lattice) ? [...CYLINDER_TORUS_FILES, PFAFFIAN_FILE] : CYLINDER_TORUS_FILES;
+  const cylinderTorus = {
+    '--torus': [{ files: cylinderTorusFiles, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice, torus: true }), CYLINDER_TORUS_CASES) }],
+    '--cylinder': [{ files: cylinderTorusFiles, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice }), CYLINDER_TORUS_CASES) }],
+  };
+
+  if (lattice === OWN_SOLVER_LATTICE) {
+    return { '--domicule': [], ...cylinderTorus, ...listOwnSolverGroups() };
+  }
+
+  if (lattice !== 'king') {
+    return { '--domicule': [], '--rectangle': [], ...cylinderTorus, '--diagonal': [], '--diagonal-cylinder': [], '--diagonal-torus': [] };
+  }
 
   return {
     '--domicule': [{ files: DOMICULE_FILES, testCases: DOMICULE_BOARDS }],
+    '--rectangle': [],
     '--torus': [{ files: cylinderTorusFiles, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice, torus: true }), CYLINDER_TORUS_CASES) }],
     '--cylinder': [{ files: cylinderTorusFiles, testCases: withKnownCounts(listSquareBoards(0, 20, { lattice }), CYLINDER_TORUS_CASES) }],
     '--diagonal': [{ files: DIAGONAL_FILES, testCases: withKnownCounts(listSquareBoards(0, 20), DIAGONAL_CASES) }],
@@ -118,8 +162,8 @@ function ensureDirectoryExists(directory) {
 }
 
 function generateFileName(options) {
-  const { directory, fileName, rowCount, colCount, lattice, torus } = options;
-  const surfaceName = torus ? 'torus' : 'cylinder';
+  const { directory, fileName, rowCount, colCount, lattice, torus, surface: named } = options;
+  const surfaceName = named ?? (torus ? 'torus' : 'cylinder');
   const surface = lattice ? `-${lattice}-${surfaceName}` : typeof torus === 'boolean' ? `-${surfaceName}` : '';
 
   return path.join(directory, `${path.basename(fileName)}_${rowCount}x${colCount}${surface}.txt`);
@@ -275,7 +319,8 @@ function __main__() {
       !(offset >= 0) ||
       (only !== null && !groups.some(({ files }) => files.includes(only))) ||
       argv.some(arg => arg.startsWith('--lattice=')) ||
-      (lattice !== null && !(CYLINDER_TORUS_GROUPS.includes(flags[0]) && Object.hasOwn(LATTICES, lattice)))
+      (flags.length === 1 && !groups.length) ||
+      (lattice !== null && !(LATTICE_GROUPS.includes(flags[0]) && Object.hasOwn(LATTICES, lattice)))
     ) {
       throw new Error(USAGE);
     }

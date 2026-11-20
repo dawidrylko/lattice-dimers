@@ -6,7 +6,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const { after, before, describe, test } = require('node:test');
 const { DOMICULE_SWEEPS } = require('../../js/renderer');
-const { findSeriesRun } = require('../benchmarkRuns');
+const { findSeriesRun, readBenchmarkRuns, hasTriangularResults } = require('../benchmarkRuns');
 const { selectShard, runsUnshardedTests } = require('./shard');
 
 const ROOT_DIRECTORY = path.join(__dirname, '..', '..');
@@ -44,6 +44,7 @@ const solverColumns = (solver, languages) => LANGUAGES.filter(([name]) => langua
 const MODULAR_AND_BIGINT = [solverColumns('Modular', ['Rust', 'Python', 'JavaScript']), solverColumns('BigInt', ['Rust', 'Python', 'JavaScript'])];
 const PFAFFIAN_MODULAR_AND_BIGINT = [solverColumns('Pfaffian', ['Rust', 'Python', 'JavaScript']), ...MODULAR_AND_BIGINT];
 const CYLINDER_TORUS_DIAGONAL_MEASURED = findSeriesRun('domicule-cylinder-torus-polynomial-') !== null;
+const TRIANGULAR_MEASURED = hasTriangularResults(path.join(ROOT_DIRECTORY, 'benchmarks', 'results', readBenchmarkRuns().latest));
 const SHOWN_ROWS = id =>
   `document.querySelectorAll('#${id} tr').length > 0 || (${!CYLINDER_TORUS_DIAGONAL_MEASURED} && /^(cylinder|torus)-diagonal-/.test('${id}') && !document.querySelector('.bench-group:not([hidden]) [data-unmeasured]').hidden)`;
 const LANGUAGE_TABLES = [
@@ -1974,7 +1975,7 @@ async function checkBenchmarkCells(page, baseUrl, width) {
       return { runs: section.innerText.split('Run on ').length - 1, links, cylinderTorus: DATA.cylinderTorusDiagonalRun?.directory ?? null };
     })()`);
     const ownRun = surface !== 'rectangle' && count === 'diagonal';
-    const unmeasured = p === 'triangular';
+    const unmeasured = p === 'triangular' && !TRIANGULAR_MEASURED;
     const wanted = unmeasured ? 0 : ownRun ? (run.cylinderTorus ? 1 : 0) : 1;
     const linked = run.links.length === wanted && run.links.every(link => !ownRun || link === run.cylinderTorus);
 

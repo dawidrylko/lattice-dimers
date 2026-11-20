@@ -2,7 +2,9 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { test } = require('node:test');
-const { listJavaScriptResults, describeMissing, findSeriesRun } = require('../../site/benchmarkRuns.js');
+const { listJavaScriptResults, describeMissing, findSeriesRun, hasTriangularResults, readTriangularTimes } = require('../../site/benchmarkRuns.js');
+const { listSeries } = require('../full');
+const { generateFileName } = require('../runner');
 const { makeTemporaryDirectory } = require('./support');
 
 test('a benchmark table reads the JavaScript results only', t => {
@@ -53,4 +55,55 @@ test('a dash gives the reason plan.json records', () => {
 
 test('an entry of plan.json with a budget of its own names that budget', () => {
   assert.equal(describeMissing({ reason: 'over budget', budgetHours: 0.25 }, 2), 'not measured: 10 runs would exceed the budget of 0.25 h per board');
+});
+
+test('the site reads every triangular board of the full run from the file the run writes', t => {
+  const directory = makeTemporaryDirectory(t, 'triangular-benchmark-');
+  const series = listSeries(4).filter(({ name }) => /-triangular-/.test(name));
+  const content = ['Average Execution Time: 2 ms', 'Average Process Time: 3 ms', 'Load Average Before: 0', '---', '1. Execution Time: 2 ms, Process Time: 3 ms'].join('\n');
+
+  assert.equal(hasTriangularResults(directory), false);
+  series.forEach(({ boards }) => boards.forEach(board => fs.writeFileSync(generateFileName({ directory, ...board }), content)));
+  assert.equal(hasTriangularResults(directory), true);
+
+  const read = [];
+
+  for (const surface of ['rectangle', 'cylinder', 'torus']) {
+    for (const count of ['all', 'diagonal']) {
+      for (let side = 0; side <= 20; side += 2) {
+        const { missing, ...times } = readTriangularTimes(directory, { rowCount: side, colCount: side, surface }, count);
+        const solvers = Object.keys(missing);
+
+        assert.deepEqual(solvers, count === 'all' && surface !== 'rectangle' ? ['pfaffian', 'modular', 'bigint'] : ['modular', 'bigint'], `${surface} ${count}`);
+
+        for (const result of solvers.flatMap(solver => [times[solver], ...Object.values(times[{ pfaffian: 'pfaffianLanguages', modular: 'languages', bigint: 'bigintLanguages' }[solver]])])) {
+          assert.deepEqual(result, { average: 2, process: 3, runs: 1 }, `${side}x${side} ${surface} ${count}`);
+          read.push(result);
+        }
+      }
+    }
+  }
+
+  assert.equal(read.length, series.reduce((sum, { boards }) => sum + boards.length, 0));
+});
+
+test('a run that predates the triangular lattice gives that reason, a later one the reason of its plan', t => {
+  const directory = makeTemporaryDirectory(t, 'triangular-benchmark-');
+  const board = { rowCount: 20, colCount: 20, surface: 'torus' };
+  const before = readTriangularTimes(directory, board, 'all');
+
+  assert.equal(before.bigint, null);
+  assert.deepEqual(Object.values(before.missing).flatMap(Object.values), Array(9).fill('not measured: no benchmark run has measured the triangular lattice yet'));
+
+  fs.writeFileSync(path.join(directory, 'any-lattice-cylinder-torus-bigint.js_0x0-triangular-torus.txt'), '');
+  fs.writeFileSync(
+    path.join(directory, 'plan.json'),
+    JSON.stringify({ budgetHours: 2, notMeasured: [{ series: 'any-lattice-cylinder-torus-bigint.rs-triangular-torus', board: '20x20', reason: 'over budget' }] }),
+  );
+
+  const after = readTriangularTimes(directory, board, 'all');
+
+  assert.equal(after.missing.bigint.rs, 'not measured: 10 runs would exceed the budget of 2 h per board');
+  assert.equal(after.missing.bigint.py, 'not measured: the run did not reach this board');
+  assert.equal(readTriangularTimes(directory, board, 'diagonal').missing.modular.js, 'not measured: the run did not reach this board');
 });
