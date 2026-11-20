@@ -24,7 +24,7 @@ def is_prime(n):
     d, s = n - 1, 0
     while d % 2 == 0:
         d, s = d // 2, s + 1
-    for a in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37):   # deterministic below 3.3e24
+    for a in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37):   # deterministic below 3.18e23 (OEIS A014233)
         x = pow(a, d, n)
         if x in (1, n - 1):
             continue
