@@ -245,7 +245,9 @@ fn wide_primes() {
         .filter(|id| id.ends_with("-modular") && !id.contains("polynomial"))
         .flat_map(|id| cases_to_run(id).into_iter().flat_map(move |case| ["1", "2"].map(|threads| (id.clone(), case.clone(), threads))))
         .collect();
-    assert!(jobs.iter().any(|(id, _, _)| id == "any-lattice-cylinder-torus-modular"));
+    let mut ids: Vec<&str> = jobs.iter().map(|(id, _, _)| id.as_str()).collect();
+    ids.dedup();
+    assert_eq!(ids, ["any-lattice-cylinder-torus-modular", "any-lattice-rectangle-modular", "domicule-rectangle-modular"]);
     let failures = failures_of(&jobs, |(id, case, threads)| {
         let args = [board_args(case), vec!["-j".to_string(), threads.to_string()]].concat();
         let result = run(id, &args, LONG);

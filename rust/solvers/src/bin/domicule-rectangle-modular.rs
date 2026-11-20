@@ -256,7 +256,7 @@ mod tests {
         let prime = list_primes(1)[0];
         let wide_prime = list_wide_primes(2)[1];
 
-        for (rows, cols, expected) in [(2, 2, 3), (4, 3, 43), (8, 8, 3_263_262_629_905u64), (9, 8, 185_175_369_431_551), (40, 3, 0), (7, 5, 0)] {
+        for (rows, cols, expected) in [(2, 2, Some(3)), (4, 3, Some(43)), (8, 8, Some(3_263_262_629_905u64)), (9, 8, Some(185_175_369_431_551)), (40, 3, None), (7, 5, Some(0))] {
             for crossing_sign in [false, true] {
                 let (narrow, wide) = if crossing_sign {
                     (count_modulo::<u32, true>(rows, cols, prime), count_modulo::<u64, true>(rows, cols, u64::from(prime)))
@@ -267,7 +267,7 @@ mod tests {
                 assert_eq!(u64::from(narrow), wide, "{rows}x{cols} crossing sign {crossing_sign}");
             }
 
-            if expected > 0 {
+            if let Some(expected) = expected {
                 assert_eq!(count_modulo::<u64, false>(rows, cols, wide_prime), expected, "{rows}x{cols} modulo a wide prime");
                 assert_eq!(u64::from(count_modulo::<u32, false>(rows, cols, prime)), expected % u64::from(prime), "{rows}x{cols}");
             }

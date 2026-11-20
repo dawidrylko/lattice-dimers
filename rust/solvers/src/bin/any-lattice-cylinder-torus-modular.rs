@@ -407,8 +407,8 @@ mod tests {
 
     #[test]
     fn counts_zero_on_a_torus_with_an_odd_number_of_cells() {
-        let prime = lattice_dimers_core::list_primes(1)[0];
-        let wide_prime = lattice_dimers_core::list_wide_primes(1)[0];
+        let prime = list_primes(1)[0];
+        let wide_prime = list_wide_primes(1)[0];
 
         for name in ["square", "triangular", "king"] {
             let lattice = lattice_of(name).unwrap();

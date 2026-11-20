@@ -153,9 +153,9 @@ fn reduce_wide_sum(mut sum: u64, terms: usize, prime: u64) -> u64 {
 }
 
 /// A count modulo a prime in a table of a solver: a u32 below a prime of list_primes or a u64 below a wide prime.
-/// A step of a solver sums at most seven counts with `add_term` and ends the sum with `finish`, also a sum of
-/// one count. A u32 sum is reduced after every term, since two residues fill 32 bits; a u64 sum is reduced once,
-/// at the end.
+/// A step of a solver sums at most seven counts with `add_term` and ends every sum with `finish`. A u32 sum is
+/// reduced after every term, since the sum of two residues is the most that 32 bits hold; a u64 sum is reduced
+/// once, at the end. `negated` of a u32 zero is the prime itself, which only `add_term` takes.
 pub trait Residue: Copy + Default + PartialEq + Send + Sync {
     fn from_u64(value: u64) -> Self;
     fn to_u64(self) -> u64;

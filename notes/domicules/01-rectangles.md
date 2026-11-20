@@ -25,11 +25,11 @@ Every prime contributes at least 30 bits, so $\lceil (\log_2 B + 1)/30 \rceil$ p
 
 ### Wide primes
 
-The Rust implementation also counts modulo wide primes, the primes below $2^{61}$, in tables of `u64`. Seven residues below $2^{61}$ sum to less than $2^{64}$, and no cell of the three Modular solvers adds more than five counts. A step can therefore add its counts first and reduce the sum once.
+The Rust implementation also counts modulo wide primes, the primes below $2^{61}$, in tables of `u64`. Seven residues below $2^{61}$ sum to less than $2^{64}$, and no cell of the three Modular solvers adds more than five counts. A step that sums the counts of one entry can therefore add them first and reduce the sum once.
 
 A wide prime contributes at least 60 bits, so one wide run stands for two runs modulo primes below $2^{31}$. Its tables are twice the size, and a long run on one thread can hold up the others. A worker thread therefore takes a wide run only while every other thread still has a run modulo a prime below $2^{31}$ left to take. With one thread nearly every run is wide. With as many threads as primes, none is.
 
-The check prime is always below $2^{31}$. No run is wide when the tables of wide runs on every thread would exceed half the memory of the machine. The Python and JavaScript implementations keep the primes below $2^{31}$. The three print the same count.
+The check prime is always below $2^{31}$. No run is wide when the tables of wide runs on every thread would exceed half the memory of the machine. The Python and JavaScript implementations keep the primes below $2^{31}$. All three implementations print the same count.
 
 ### How many primes the modular solver needs
 
