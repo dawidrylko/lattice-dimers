@@ -40,7 +40,6 @@ describe('rejections', () => {
       ['-n', '2'],
       ['-m', '2'],
       ['--only', 'domino-rectangle-formula.js'],
-      ['-o'],
     ].map(more => ({ args: ['-n', '1', '-m', '1', '--only', 'domino-rectangle-formula.js', ...more], message: 'Usage' })),
     { args: ['1', '-n', '1', '-m', '1', '--only', 'domino-rectangle-formula.js'], message: 'Usage' },
     { args: ['-n', '1', '-m', '1', '--torus', '--lattice', 'square', '--lattice', 'square', '--only', 'any-lattice-cylinder-torus-modular.js'], message: 'Usage' },

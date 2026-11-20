@@ -289,6 +289,7 @@ const cliTestCases = [
   { rowCount: 2, colCount: 2, args: ['--ascii', '-o', '1', '-o', '0'], status: 1, output: 'Usage' },
   { rowCount: 2, colCount: 2, args: ['--ascii', '-r', '4'], status: 1, output: 'Usage' },
   { rowCount: 2, colCount: 2, args: ['--ascii', '--ascii', '--all', '--all'], status: 0, output: 'Rendered tilings 1-2.' },
+  { rowCount: 20, colCount: 20, args: ['--random', '--ascii', '-o', 'abc'], status: 1, output: '-o expects' },
   { rowCount: 30, colCount: 2, args: ['-i', '1', '--ascii'], status: 0, output: 'Rendered tilings 1-1.' },
   { rowCount: 2, colCount: 30, args: ['-i', '1', '--ascii'], status: 1, output: 'use -r 30 -c 2 instead' },
   { rowCount: 2, colCount: 20000, args: ['-l', '1', '--ascii'], status: 0, output: 'Rendered tilings 1-1.' },

@@ -208,6 +208,8 @@ function __main__() {
       throw new Error(USAGE);
     }
 
+    readBigIntArg(argv, '-o');
+
     if (argv.includes('--random') && readBigIntArg(argv, '-i') !== null) {
       throw new Error('-i and --random cannot be combined.');
     }
