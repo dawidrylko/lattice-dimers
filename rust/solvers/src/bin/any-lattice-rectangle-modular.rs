@@ -2,7 +2,7 @@ use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{BigInt, Prime, Residue, Timer, calculate_log2_bound, combine_planned_residues, count_modulo_primes, has_unusable_argument, parse_args, physical_memory};
+use lattice_dimers_core::{BigInt, Prime, Timer, calculate_log2_bound, combine_planned_residues, count_modulo_primes, has_unusable_argument, parse_args, physical_memory};
 
 const MAX_SHORTER_SIDE: u64 = 30;
 const USAGE: &str = "Usage: any-lattice-rectangle-modular -r <rowCount> -c <colCount> [-j <jobs>] [--lattice king|triangular|square]";
@@ -52,29 +52,29 @@ fn read_lattice(argv: &[String]) -> Option<(bool, bool)> {
     }
 }
 
-#[inline(always)]
-fn add<R: Residue>(next: &mut [R], target: usize, count: R, prime: R) {
-    next[target] = R::finish(R::add_term(next[target], count, prime), 2, prime);
+fn add(next: &mut [u32], target: usize, count: u32, prime: u32) {
+    let sum = next[target] + count;
+    next[target] = if sum >= prime { sum - prime } else { sum };
 }
 
 /// Counts the tilings modulo a prime with the broken-profile dynamic programming of countModulo in
 /// js/solvers/any-lattice-rectangle-modular.js. Bit i of a state tells whether the cell i places ahead of the
 /// current one is already covered. A state has cols + 2 bits, but the top one is clear before every cell step,
 /// since a step shifts the state right after setting at most that bit, so the tables hold the 2^(cols + 1) states
-/// below it, in counts of u32 below a prime of list_primes or of u64 below a wide prime.
-fn count_modulo<R: Residue>(rows: usize, cols: usize, prime: R, lattice: (bool, bool)) -> R {
+/// below it, in counts of u32.
+fn count_modulo(rows: usize, cols: usize, prime: u32, lattice: (bool, bool)) -> u32 {
     let state_count = 1usize << (cols + 1);
-    let mut current = vec![R::default(); state_count];
-    let mut next = vec![R::default(); state_count];
-    current[0] = R::from_u64(1 % prime.to_u64());
+    let mut current = vec![0u32; state_count];
+    let mut next = vec![0u32; state_count];
+    current[0] = 1 % prime;
 
     for cell in 0..rows * cols {
         let offsets = list_offsets(cols, cell % cols, cell / cols + 1 < rows, lattice);
 
-        next.fill(R::default());
+        next.fill(0);
 
         for (state, &count) in current.iter().enumerate() {
-            if count == R::default() {
+            if count == 0 {
                 continue;
             }
 
@@ -86,6 +86,72 @@ fn count_modulo<R: Residue>(rows: usize, cols: usize, prime: R, lattice: (bool, 
             for &offset in &offsets {
                 if state & offset == 0 {
                     add(&mut next, (state + offset) >> 1, count, prime);
+                }
+            }
+        }
+
+        std::mem::swap(&mut current, &mut next);
+    }
+
+    current[0]
+}
+
+/// Lists the same bits as list_offsets, for count_modulo_wide. It is a copy, because with one function for both
+/// the compiler no longer builds it into count_modulo, which then takes 2.5% longer on the 18 x 18 board.
+fn list_offsets_wide(cols: usize, c: usize, has_below: bool, (down_left, down_right): (bool, bool)) -> Vec<usize> {
+    let has_right = c + 1 < cols;
+    let mut offsets = Vec::new();
+
+    if has_right {
+        offsets.push(1);
+    }
+
+    if down_left && has_below && c > 0 {
+        offsets.push(cols - 1);
+    }
+
+    if has_below {
+        offsets.push(cols);
+    }
+
+    if down_right && has_below && has_right {
+        offsets.push(cols + 1);
+    }
+
+    offsets.into_iter().map(|offset| 1 << offset).collect()
+}
+
+fn add_wide(next: &mut [u64], target: usize, count: u64, prime: u64) {
+    let sum = next[target] + count;
+    next[target] = if sum >= prime { sum - prime } else { sum };
+}
+
+/// Counts the tilings modulo a wide prime, like count_modulo, in counts of u64. The two are kept apart, each in
+/// its own type: one function over both sizes made the u32 one 13% slower on the 18 x 18 and 20 x 20 boards.
+fn count_modulo_wide(rows: usize, cols: usize, prime: u64, lattice: (bool, bool)) -> u64 {
+    let state_count = 1usize << (cols + 1);
+    let mut current = vec![0u64; state_count];
+    let mut next = vec![0u64; state_count];
+    current[0] = 1 % prime;
+
+    for cell in 0..rows * cols {
+        let offsets = list_offsets_wide(cols, cell % cols, cell / cols + 1 < rows, lattice);
+
+        next.fill(0);
+
+        for (state, &count) in current.iter().enumerate() {
+            if count == 0 {
+                continue;
+            }
+
+            if state & 1 != 0 {
+                add_wide(&mut next, state >> 1, count, prime);
+                continue;
+            }
+
+            for &offset in &offsets {
+                if state & offset == 0 {
+                    add_wide(&mut next, (state + offset) >> 1, count, prime);
                 }
             }
         }
@@ -110,7 +176,7 @@ fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, latti
 
     let (primes, residues) = count_modulo_primes(calculate_log2_bound(rows, cols) + 1.0, jobs, 1 << (cols + 1), physical_memory(), |prime| match prime {
         Prime::Narrow(prime) => u64::from(count_modulo(rows, cols, prime, lattice)),
-        Prime::Wide(prime) => count_modulo(rows, cols, prime, lattice),
+        Prime::Wide(prime) => count_modulo_wide(rows, cols, prime, lattice),
     });
 
     combine_planned_residues(&residues, &primes, false)
@@ -167,7 +233,7 @@ mod tests {
         for (name, rows, cols, expected) in boards {
             let lattice = diagonals_of(name).unwrap();
 
-            assert_eq!(count_modulo(rows, cols, wide_prime, lattice), expected, "{rows}x{cols} {name} modulo a wide prime");
+            assert_eq!(count_modulo_wide(rows, cols, wide_prime, lattice), expected, "{rows}x{cols} {name} modulo a wide prime");
             assert_eq!(u64::from(count_modulo(rows, cols, prime, lattice)), expected % u64::from(prime), "{rows}x{cols} {name}");
         }
 
@@ -175,7 +241,7 @@ mod tests {
             let lattice = diagonals_of(name).unwrap();
 
             for (rows, cols) in [(1, 2), (3, 2), (5, 4), (6, 5), (7, 6), (30, 3), (12, 9), (11, 10), (5, 3)] {
-                assert_eq!(u64::from(count_modulo(rows, cols, prime, lattice)), count_modulo(rows, cols, u64::from(prime), lattice), "{rows}x{cols} {name}");
+                assert_eq!(u64::from(count_modulo(rows, cols, prime, lattice)), count_modulo_wide(rows, cols, u64::from(prime), lattice), "{rows}x{cols} {name}");
             }
         }
     }
