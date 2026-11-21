@@ -165,7 +165,9 @@ fn count_modulo_wide(rows: usize, cols: usize, prime: u64, lattice: (bool, bool)
 /// Counts the tilings exactly, like calculateTotalTilingCombinations of js/solvers/any-lattice-rectangle-modular.js:
 /// enough primes for the Kahn-Lovasz bound of the king's graph, which also bounds the triangular and the square
 /// lattice, plus one more prime that the result is checked against. The primes are those of
-/// count_modulo_primes, so some runs count modulo a wide prime.
+/// count_modulo_primes, so some runs count modulo a wide prime, but only where the runs then end sooner: on the
+/// other boards the wide runs of this solver saved nothing, and cost 3% on the 20 x 20 board of the square lattice
+/// with 8 threads.
 fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, lattice: (bool, bool), jobs: usize) -> Result<BigInt, String> {
     let rows = row_count.max(col_count);
     let cols = row_count.min(col_count);
@@ -174,7 +176,7 @@ fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, latti
         return Ok(BigInt::zero());
     }
 
-    let (primes, residues) = count_modulo_primes(calculate_log2_bound(rows, cols) + 1.0, jobs, 1 << (cols + 1), physical_memory(), |prime| match prime {
+    let (primes, residues) = count_modulo_primes(calculate_log2_bound(rows, cols) + 1.0, jobs, 1 << (cols + 1), physical_memory(), true, |prime| match prime {
         Prime::Narrow(prime) => u64::from(count_modulo(rows, cols, prime, lattice)),
         Prime::Wide(prime) => count_modulo_wide(rows, cols, prime, lattice),
     });

@@ -181,7 +181,7 @@ fn calculate_total_tiling_combinations(row_count: usize, col_count: usize, jobs:
         return Ok(BigInt::zero());
     }
 
-    let (primes, residues) = count_modulo_primes(calculate_log2_bound(rows, cols) + 1.0, jobs, 1 << cols, physical_memory(), |prime| match prime {
+    let (primes, residues) = count_modulo_primes(calculate_log2_bound(rows, cols) + 1.0, jobs, 1 << cols, physical_memory(), false, |prime| match prime {
         Prime::Narrow(prime) => u64::from(count_modulo::<u32, false>(rows, cols, prime)),
         Prime::Wide(prime) => count_modulo::<u64, false>(rows, cols, prime),
     });

@@ -282,6 +282,37 @@ impl Plan {
     }
 }
 
+/// How long a run takes in the plan of wide_runs_end_sooner: a wide run almost as long as two of the others.
+const RUN_TICKS: (u64, u64) = (10, 19);
+
+/// Tells whether the runs of count_modulo_primes end sooner with wide runs than without. It plays the plan of
+/// Plan::take on `threads` threads, where a run modulo a prime of list_primes takes 10 ticks and a wide run 19
+/// (RUN_TICKS). Where the last run ends at the same tick either way, a wide run that takes more than two of the
+/// others holds up the count: any-lattice-rectangle-modular took 3% longer on the 20 x 20 board of the square
+/// lattice with 8 threads. The two other solvers of wide primes were up to 15% faster on such boards, so only
+/// that one asks.
+fn wide_runs_end_sooner(units: usize, threads: usize, narrow: &[u32]) -> bool {
+    let end_of = |wide_fits: bool| {
+        let mut plan = Plan { remaining: units, below: LARGEST_WIDE_PRIME_BOUND, narrow_taken: 0, check_taken: false };
+        let mut free_at = vec![0u64; threads];
+        let mut end = 0;
+
+        loop {
+            let thread = (0..threads).min_by_key(|thread| free_at[*thread]).expect("there is a thread");
+            let Some((prime, _)) = plan.take(threads, wide_fits, narrow) else {
+                break;
+            };
+
+            free_at[thread] += if matches!(prime, Prime::Wide(_)) { RUN_TICKS.1 } else { RUN_TICKS.0 };
+            end = end.max(free_at[thread]);
+        }
+
+        end
+    };
+
+    end_of(true) < end_of(false)
+}
+
 /// Counts modulo primes on worker threads until their product covers a count of at most `bits` bits, and modulo
 /// one more prime, the check. Returns the primes with the result of `work` for each, the check last.
 ///
@@ -292,17 +323,19 @@ impl Plan {
 /// a wide run takes less than two of the others, the count is ready sooner.
 ///
 /// A run keeps two tables of `counts` counts, and no run is wide unless the tables of wide runs on every thread
-/// fit in half of `memory` (wide_tables_fit). The runs of the other kind take the primes of list_primes from the
-/// largest one, and the check is the next of them, so without wide runs the primes are those of list_primes.
-pub fn count_modulo_primes<T, F>(bits: f64, threads: usize, counts: u128, memory: u64, work: F) -> (Vec<Prime>, Vec<T>)
+/// fit in half of `memory` (wide_tables_fit). A caller whose wide runs can take longer than two of the others
+/// sets `sooner_only`: then no run is wide either unless the runs end sooner with wide runs than without
+/// (wide_runs_end_sooner). The runs of the other kind take the primes of list_primes from the largest one, and
+/// the check is the next of them, so without wide runs the primes are those of list_primes.
+pub fn count_modulo_primes<T, F>(bits: f64, threads: usize, counts: u128, memory: u64, sooner_only: bool, work: F) -> (Vec<Prime>, Vec<T>)
 where
     T: Send,
     F: Fn(Prime) -> T + Sync,
 {
     let units = (bits / 30.0).ceil() as usize;
     let threads = threads.clamp(1, units + 1);
-    let wide_fits = wide_tables_fit(counts, threads, memory);
     let narrow = list_primes(units + 1);
+    let wide_fits = wide_tables_fit(counts, threads, memory) && (!sooner_only || wide_runs_end_sooner(units, threads, &narrow));
     let plan = Mutex::new(Plan { remaining: units, below: LARGEST_WIDE_PRIME_BOUND, narrow_taken: 0, check_taken: false });
     let results: Mutex<Vec<(Prime, bool, T)>> = Mutex::new(Vec::new());
 
@@ -549,7 +582,7 @@ mod tests {
         for threads in [1, 2, 3, 4, 8, 12] {
             for units in 1..=24usize {
                 for memory in [0, u64::MAX] {
-                    let (primes, results) = count_modulo_primes(30.0 * units as f64, threads, 1, memory, |prime| prime.value());
+                    let (primes, results) = count_modulo_primes(30.0 * units as f64, threads, 1, memory, units % 2 == 0, |prime| prime.value());
                     let (check, counted) = primes.split_last().unwrap();
                     let wide: Vec<u64> = counted.iter().filter_map(|prime| if let Prime::Wide(prime) = prime { Some(*prime) } else { None }).collect();
                     let narrow: Vec<u32> = primes.iter().filter_map(|prime| if let Prime::Narrow(prime) = prime { Some(*prime) } else { None }).collect();
@@ -568,15 +601,14 @@ mod tests {
             }
         }
 
-        let wide_of = |units: usize, threads: usize| count_modulo_primes(30.0 * units as f64, threads, 1, u64::MAX, |_| ()).0.iter().filter(|prime| matches!(prime, Prime::Wide(_))).count();
+        let wide_in = |units: usize, threads: usize, sooner_only: bool| count_modulo_primes(30.0 * units as f64, threads, 1, u64::MAX, sooner_only, |_| ()).0.iter().filter(|prime| matches!(prime, Prime::Wide(_))).count();
 
-        assert_eq!(wide_of(18, 1), 9);
-        assert_eq!(wide_of(19, 1), 9);
-        assert_eq!(wide_of(3, 2), 1);
-        assert_eq!(wide_of(2, 2), 0);
-        assert_eq!(wide_of(14, 8), 3);
-        assert_eq!(wide_of(14, usize::MAX), 0);
-        assert_eq!(count_modulo_primes(0.0, 4, 1, u64::MAX, |_| ()).0, [Prime::Narrow(list_primes(1)[0])]);
+        for (units, threads, wide, wide_when_sooner) in [(18, 1, 9, 9), (19, 1, 9, 9), (4, 2, 1, 1), (3, 2, 1, 0), (2, 2, 0, 0), (13, 4, 5, 5), (13, 8, 3, 0), (14, 8, 3, 0), (15, 10, 3, 0), (49, 8, 21, 21), (14, usize::MAX, 0, 0)] {
+            assert_eq!(wide_in(units, threads, false), wide, "{units} units on {threads} threads");
+            assert_eq!(wide_in(units, threads, true), wide_when_sooner, "{units} units on {threads} threads, sooner only");
+        }
+
+        assert_eq!(count_modulo_primes(0.0, 4, 1, u64::MAX, false, |_| ()).0, [Prime::Narrow(list_primes(1)[0])]);
     }
 
     #[test]
@@ -586,7 +618,7 @@ mod tests {
         for threads in [1, 2, 3, 5] {
             for memory in [0, u64::MAX] {
                 for (signed, value) in [(false, value), (true, value), (true, -value), (false, 0), (true, -1)] {
-                    let (primes, residues) = count_modulo_primes(125.0, threads, 1, memory, |prime| value.rem_euclid(i128::from(prime.value())) as u64);
+                    let (primes, residues) = count_modulo_primes(125.0, threads, 1, memory, threads % 2 == 0, |prime| value.rem_euclid(i128::from(prime.value())) as u64);
                     let case = format!("{value} on {threads} threads, memory {memory}");
 
                     assert_eq!(combine_planned_residues(&residues, &primes, signed).map(|n| n.to_string()), Ok(value.to_string()), "{case}");

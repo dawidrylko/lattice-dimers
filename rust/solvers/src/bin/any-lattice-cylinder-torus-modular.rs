@@ -318,7 +318,7 @@ fn calculate_total_tiling_combinations(
 
     let board = Board { rows, cols, lattice, torus, twisted };
     let counts = 1 << (cols + usize::from(uses_wrap_bit(lattice, cols)));
-    let (primes, residues) = count_modulo_primes(calculate_log2_bound(&board) + 2.0, jobs, counts, physical_memory(), |prime| match prime {
+    let (primes, residues) = count_modulo_primes(calculate_log2_bound(&board) + 2.0, jobs, counts, physical_memory(), false, |prime| match prime {
         Prime::Narrow(prime) => u64::from(count_modulo(&board, prime)),
         Prime::Wide(prime) => count_modulo(&board, prime),
     });
