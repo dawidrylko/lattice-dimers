@@ -282,15 +282,19 @@ impl Plan {
     }
 }
 
-/// How long a run takes in the plan of wide_runs_end_sooner: a wide run almost as long as two of the others.
-const RUN_TICKS: (u64, u64) = (10, 19);
+/// How long a run modulo a prime of list_primes takes in the plan of wide_runs_end_sooner.
+const NARROW_TICKS: u64 = 10;
+
+/// How long a wide run takes in that plan: almost as long as two of the others, so that a plan counts as ending
+/// sooner only where wide runs spare a whole run.
+const WIDE_TICKS: u64 = 19;
 
 /// Tells whether the runs of count_modulo_primes end sooner with wide runs than without. It plays the plan of
-/// Plan::take on `threads` threads, where a run modulo a prime of list_primes takes 10 ticks and a wide run 19
-/// (RUN_TICKS). Where the last run ends at the same tick either way, a wide run that takes more than two of the
-/// others holds up the count: any-lattice-rectangle-modular took 3% longer on the 20 x 20 board of the square
-/// lattice with 8 threads. The two other solvers of wide primes were up to 15% faster on such boards, so only
-/// that one asks.
+/// Plan::take on `threads` threads, where a run modulo a prime of list_primes takes NARROW_TICKS and a wide run
+/// WIDE_TICKS. Where the last run ends at the same tick either way, wide runs spare no run, and one that in fact
+/// takes more than two of the others holds up the count: any-lattice-rectangle-modular took 3% longer on the
+/// 20 x 20 board of the square lattice with 8 threads. The two other solvers of wide primes were 8% to 16% faster
+/// on such boards, so only that one asks.
 fn wide_runs_end_sooner(units: usize, threads: usize, narrow: &[u32]) -> bool {
     let end_of = |wide_fits: bool| {
         let mut plan = Plan { remaining: units, below: LARGEST_WIDE_PRIME_BOUND, narrow_taken: 0, check_taken: false };
@@ -303,7 +307,7 @@ fn wide_runs_end_sooner(units: usize, threads: usize, narrow: &[u32]) -> bool {
                 break;
             };
 
-            free_at[thread] += if matches!(prime, Prime::Wide(_)) { RUN_TICKS.1 } else { RUN_TICKS.0 };
+            free_at[thread] += if matches!(prime, Prime::Wide(_)) { WIDE_TICKS } else { NARROW_TICKS };
             end = end.max(free_at[thread]);
         }
 
