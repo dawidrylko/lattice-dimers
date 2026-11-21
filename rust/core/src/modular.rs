@@ -116,8 +116,9 @@ fn next_wide_prime(below: u64) -> u64 {
 
 /// Lists the given number of wide primes, the primes below 2^61, starting from the largest one, 2^61 - 1, in
 /// decreasing order. The sum of seven residues then stays below 2^64 and fits a u64, so a step of a solver adds
-/// the counts that lead to a state and reduces the sum once (Residue). Only the Rust solvers count modulo wide
-/// primes; the Python and JavaScript ones keep the primes below 2^31 of list_primes.
+/// the counts that lead to a state and reduces the sum once (Residue); any-lattice-rectangle-modular adds one count at
+/// a time and reduces each sum. Only the Rust solvers count modulo wide primes; the Python and JavaScript ones keep
+/// the primes below 2^31 of list_primes.
 pub fn list_wide_primes(count: usize) -> Vec<u64> {
     let mut primes = Vec::with_capacity(count);
     let mut below = LARGEST_WIDE_PRIME_BOUND;
