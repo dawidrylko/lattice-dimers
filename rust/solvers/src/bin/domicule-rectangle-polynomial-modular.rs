@@ -1,35 +1,12 @@
-use std::ffi::{c_int, c_long};
 use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{Timer, calculate_log2_bound, combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers};
+use lattice_dimers_core::{Timer, calculate_log2_bound, combine_checked_residues, has_unusable_argument, list_primes, parse_args, physical_memory, run_workers};
 
 const MAX_SHORTER_SIDE: u64 = 20;
 const UNREACHED: u8 = 2;
 const USAGE: &str = "Usage: domicule-rectangle-polynomial-modular -r <rowCount> -c <colCount> [-j <jobs>]";
-
-#[cfg(target_os = "macos")]
-const SYSCONF_NAMES: Option<(c_int, c_int)> = Some((200, 29));
-#[cfg(target_os = "linux")]
-const SYSCONF_NAMES: Option<(c_int, c_int)> = Some((85, 30));
-#[cfg(not(any(target_os = "macos", target_os = "linux")))]
-const SYSCONF_NAMES: Option<(c_int, c_int)> = None;
-
-unsafe extern "C" {
-    fn sysconf(name: c_int) -> c_long;
-}
-
-/// Reads the memory of the machine in bytes, or 0 when it is not known, which leaves one worker thread.
-fn physical_memory() -> u64 {
-    let Some((pages, page_size)) = SYSCONF_NAMES else {
-        return 0;
-    };
-    // SAFETY: sysconf takes an integer and only reads a system setting.
-    let (pages, page_size) = unsafe { (sysconf(pages), sysconf(page_size)) };
-
-    u64::try_from(pages).unwrap_or(0).saturating_mul(u64::try_from(page_size).unwrap_or(0))
-}
 
 /// Lists the bit and the diagonal flag of every partner a free cell in column c can cover, like the moves in
 /// countModulo of js/solvers/domicule-rectangle-polynomial-modular.js: right, down-left, down and down-right.
@@ -239,20 +216,5 @@ mod tests {
         assert_eq!(cap_threads(4, 6, 18, 16 * GIGABYTES), 4);
         assert_eq!(cap_threads(3, 20, 200, GIGABYTES), 1);
         assert_eq!(cap_threads(3, 20, 200, 0), 1);
-    }
-
-    #[test]
-    fn reads_the_memory_of_the_machine() {
-        assert!(physical_memory() > 0);
-    }
-
-    #[cfg(target_os = "linux")]
-    #[test]
-    fn reads_the_memory_the_kernel_reports() {
-        let meminfo = std::fs::read_to_string("/proc/meminfo").unwrap();
-        let line = meminfo.lines().find(|line| line.starts_with("MemTotal:")).unwrap();
-        let kilobytes: u64 = line.split_whitespace().nth(1).unwrap().parse().unwrap();
-
-        assert_eq!(physical_memory() / 1024 / 1024, kilobytes / 1024);
     }
 }
