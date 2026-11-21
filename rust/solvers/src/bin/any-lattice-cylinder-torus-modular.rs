@@ -3,7 +3,7 @@ use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{BigInt, Timer, combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers};
+use lattice_dimers_core::{BigInt, Prime, Residue, Timer, combine_planned_residues, count_modulo_primes, has_unusable_argument, parse_args, physical_memory};
 
 const MAX_CIRCUMFERENCE: u64 = 24;
 const USAGE: &str = "Usage: any-lattice-cylinder-torus-modular -r <rowCount> -c <circumference> [--torus] [--twisted] [--lattice king|triangular|square] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.";
@@ -42,8 +42,8 @@ struct Term {
 /// A term over one block of next entries. The entry at place p reads `counts[2 * p + bit]`, where bit is bit 0
 /// of its state; an odd-only term reads `counts[2 * p]`, and only when that bit is 1.
 #[derive(Clone, Copy)]
-struct Source<'a> {
-    counts: &'a [u32],
+struct Source<'a, R> {
+    counts: &'a [R],
     odd_only: bool,
     negative: bool,
 }
@@ -93,6 +93,12 @@ fn list_moves(cols: usize, c: usize, has_below: bool, lattice: Lattice, wrap_bit
     moves
 }
 
+/// Tells whether an entry keeps one more bit than the window, for the piece that wraps down-left from the first
+/// column.
+fn uses_wrap_bit(lattice: Lattice, cols: usize) -> bool {
+    lattice.down_left && cols >= 3
+}
+
 /// Lists the terms of the cell step of column c for every block of the next table, like listBlocks of
 /// js/solvers/any-lattice-cylinder-torus-modular.js. The top bits of an entry decide its terms, so the table is at
 /// most sixteen blocks of entries with the same terms.
@@ -136,30 +142,24 @@ fn list_blocks(cols: usize, c: usize, moves: &[Move], twisted: bool, uses_wrap_b
         .collect()
 }
 
-fn add(sum: u32, count: u32, prime: u32) -> u32 {
-    let sum = sum + count;
-
-    if sum >= prime { sum - prime } else { sum }
-}
-
 /// Sums the terms of one next entry: `place` is its place in the block and `bit` is bit 0 of its state.
 #[inline(always)]
-fn sum_sources<const N: usize>(sources: &[Source; N], place: usize, bit: usize, prime: u32) -> u32 {
-    let mut sum = 0;
+fn sum_sources<R: Residue, const N: usize>(sources: &[Source<R>; N], place: usize, bit: usize, prime: R) -> R {
+    let mut sum = R::default();
 
     for source in sources {
-        let count = if source.odd_only { source.counts[2 * place] & (bit as u32).wrapping_neg() } else { source.counts[2 * place + bit] };
+        let count = if source.odd_only { source.counts[2 * place].keep_if(bit) } else { source.counts[2 * place + bit] };
 
-        sum = add(sum, if source.negative { prime - count } else { count }, prime);
+        sum = R::add_term(sum, if source.negative { count.negated(prime) } else { count }, prime);
     }
 
-    sum
+    R::finish(sum, N, prime)
 }
 
 /// Fills one block of the next table, which starts at the entry `from`. Two neighbouring entries have opposite
 /// bits 0, so the number of set bits is counted once per pair.
-fn fill_block<const N: usize>(block: &mut [u32], current: &[u32], from: usize, terms: &[Term], parity: u32, prime: u32) {
-    let sources: [Source; N] = array::from_fn(|at| {
+fn fill_block<R: Residue, const N: usize>(block: &mut [R], current: &[R], from: usize, terms: &[Term], parity: u32, prime: R) {
+    let sources: [Source<R>; N] = array::from_fn(|at| {
         let Term { shift, odd_only, negative } = terms[at];
         let start = 2 * from + usize::from(odd_only) - shift;
 
@@ -168,32 +168,33 @@ fn fill_block<const N: usize>(block: &mut [u32], current: &[u32], from: usize, t
     let bit_of = |place: usize| ((parity + (from + place).count_ones()) & 1) as usize;
 
     if let [slot] = block {
-        *slot = sum_sources(&sources, 0, bit_of(0), prime);
+        *slot = sum_sources::<R, N>(&sources, 0, bit_of(0), prime);
         return;
     }
 
     for (pair, slots) in block.as_chunks_mut::<2>().0.iter_mut().enumerate() {
         let bit = bit_of(2 * pair);
 
-        slots[0] = sum_sources(&sources, 2 * pair, bit, prime);
-        slots[1] = sum_sources(&sources, 2 * pair + 1, 1 - bit, prime);
+        slots[0] = sum_sources::<R, N>(&sources, 2 * pair, bit, prime);
+        slots[1] = sum_sources::<R, N>(&sources, 2 * pair + 1, 1 - bit, prime);
     }
 }
 
 /// Counts the tilings of a cylinder or a torus modulo a prime, cell by cell, like countModulo of
-/// js/solvers/any-lattice-cylinder-torus-modular.js: the tables hold one count of u32 per value of the window bits
+/// js/solvers/any-lattice-cylinder-torus-modular.js: the tables hold one count, a u32 below a prime of
+/// list_primes or a u64 below a wide prime, per value of the window bits
 /// 1 to cols and, on the king's graph with cols >= 3, of the one bit that stands for the extra bit and the top
 /// window bit. A board with an odd number of cells counts 0 without a run. A torus runs one start per class of
 /// rotations and, on the square lattice and the king's graph, of mirror images.
-fn count_modulo(board: &Board, prime: u32) -> u32 {
+fn count_modulo<R: Residue>(board: &Board, prime: R) -> R {
     let Board { rows, cols, lattice, torus, twisted } = *board;
 
     if !(rows * cols).is_multiple_of(2) {
-        return 0;
+        return R::default();
     }
 
     let wrap_bit: u32 = 1 << (cols + 2);
-    let uses_wrap_bit = lattice.down_left && cols >= 3;
+    let uses_wrap_bit = uses_wrap_bit(lattice, cols);
     let entry_bits = cols + usize::from(uses_wrap_bit);
     let block_size = (1usize << entry_bits) >> entry_bits.min(3 + usize::from(uses_wrap_bit));
     let list = |has_below: bool| -> Vec<Vec<Vec<Term>>> {
@@ -201,12 +202,13 @@ fn count_modulo(board: &Board, prime: u32) -> u32 {
     };
     let blocks_below = list(true);
     let blocks_last = list(torus);
-    let mut current = vec![0u32; 1 << entry_bits];
-    let mut next = vec![0u32; 1 << entry_bits];
+    let mut current = vec![R::default(); 1 << entry_bits];
+    let mut next = vec![R::default(); 1 << entry_bits];
+    let one = R::from_u64(1 % prime.to_u64());
 
-    let mut run = |start: usize| -> u32 {
-        current.fill(0);
-        current[start >> 1] = 1 % prime;
+    let mut run = |start: usize| -> R {
+        current.fill(R::default());
+        current[start >> 1] = one;
 
         for cell in 0..rows * cols {
             let blocks = if cell < (rows - 1) * cols { &blocks_below[cell % cols] } else { &blocks_last[cell % cols] };
@@ -216,12 +218,12 @@ fn count_modulo(board: &Board, prime: u32) -> u32 {
                 let from = block * block_size;
 
                 match terms.len() {
-                    0 => slots.fill(0),
-                    1 => fill_block::<1>(slots, &current, from, terms, parity, prime),
-                    2 => fill_block::<2>(slots, &current, from, terms, parity, prime),
-                    3 => fill_block::<3>(slots, &current, from, terms, parity, prime),
-                    4 => fill_block::<4>(slots, &current, from, terms, parity, prime),
-                    5 => fill_block::<5>(slots, &current, from, terms, parity, prime),
+                    0 => slots.fill(R::default()),
+                    1 => fill_block::<R, 1>(slots, &current, from, terms, parity, prime),
+                    2 => fill_block::<R, 2>(slots, &current, from, terms, parity, prime),
+                    3 => fill_block::<R, 3>(slots, &current, from, terms, parity, prime),
+                    4 => fill_block::<R, 4>(slots, &current, from, terms, parity, prime),
+                    5 => fill_block::<R, 5>(slots, &current, from, terms, parity, prime),
                     count => unreachable!("a block has at most five terms, not {count}"),
                 }
             }
@@ -233,16 +235,16 @@ fn count_modulo(board: &Board, prime: u32) -> u32 {
     };
 
     if !torus {
-        return if rows == 0 { 1 % prime } else { run(0) };
+        return if rows == 0 { one } else { run(0) };
     }
 
     let rotate = |set: usize| ((set << 1) | (set >> (cols - 1))) & ((1 << cols) - 1);
     let rotates = !twisted || rows.is_multiple_of(2);
     let mirrors = lattice.down_left == lattice.down_right;
-    let mut total: u64 = 0;
+    let mut total: u128 = 0;
 
     for start in 0..1usize << cols {
-        let mut weight: u64 = 1;
+        let mut weight: u128 = 1;
 
         if rotates {
             let mut rotation = rotate(start);
@@ -276,10 +278,10 @@ fn count_modulo(board: &Board, prime: u32) -> u32 {
             }
         }
 
-        total = (total + weight * u64::from(run(start))) % u64::from(prime);
+        total = (total + weight * u128::from(run(start).to_u64())) % u128::from(prime.to_u64());
     }
 
-    total as u32
+    R::from_u64(total as u64)
 }
 
 /// Bounds log2 of the number of tilings, like calculateLog2Bound of js/solvers/any-lattice-cylinder-torus-modular.js.
@@ -315,11 +317,13 @@ fn calculate_total_tiling_combinations(
     }
 
     let board = Board { rows, cols, lattice, torus, twisted };
-    let prime_count = ((calculate_log2_bound(&board) + 2.0) / 30.0).ceil() as usize + 1;
-    let primes = list_primes(prime_count);
-    let residues = run_workers(&primes, jobs, |prime| count_modulo(&board, *prime));
+    let counts = 1 << (cols + usize::from(uses_wrap_bit(lattice, cols)));
+    let (primes, residues) = count_modulo_primes(calculate_log2_bound(&board) + 2.0, jobs, counts, physical_memory(), false, |prime| match prime {
+        Prime::Narrow(prime) => u64::from(count_modulo(&board, prime)),
+        Prime::Wide(prime) => count_modulo(&board, prime),
+    });
 
-    combine_checked_residues(&residues, &primes, twisted)
+    combine_planned_residues(&residues, &primes, twisted)
 }
 
 fn main() -> ExitCode {
@@ -374,11 +378,37 @@ fn main() -> ExitCode {
 
 #[cfg(test)]
 mod tests {
+    use lattice_dimers_core::{list_primes, list_wide_primes};
+
     use super::*;
+
+    #[test]
+    fn counts_alike_in_both_residue_sizes() {
+        let prime = list_primes(1)[0];
+        let wide_prime = list_wide_primes(2)[1];
+        let square = lattice_of("square").unwrap();
+
+        assert_eq!(count_modulo(&Board { rows: 8, cols: 8, lattice: square, torus: true, twisted: false }, wide_prime), 311_853_312);
+        assert_eq!(count_modulo(&Board { rows: 4, cols: 4, lattice: square, torus: true, twisted: false }, wide_prime), 272);
+        assert_eq!(count_modulo(&Board { rows: 4, cols: 4, lattice: square, torus: false, twisted: false }, wide_prime), 121);
+
+        for name in ["square", "triangular", "king"] {
+            let lattice = lattice_of(name).unwrap();
+
+            for (rows, cols) in [(2, 2), (4, 2), (3, 4), (4, 4), (5, 4), (6, 5), (4, 7), (6, 8), (40, 3)] {
+                for (torus, twisted) in [(false, false), (true, false), (true, true)] {
+                    let board = Board { rows, cols, lattice, torus, twisted };
+
+                    assert_eq!(u64::from(count_modulo(&board, prime)), count_modulo(&board, u64::from(prime)), "{rows}x{cols} {name} torus={torus} twisted={twisted}");
+                }
+            }
+        }
+    }
 
     #[test]
     fn counts_zero_on_a_torus_with_an_odd_number_of_cells() {
         let prime = list_primes(1)[0];
+        let wide_prime = list_wide_primes(1)[0];
 
         for name in ["square", "triangular", "king"] {
             let lattice = lattice_of(name).unwrap();
@@ -386,6 +416,7 @@ mod tests {
             for (rows, cols) in [(3, 3), (5, 3), (3, 5)] {
                 for twisted in [false, true] {
                     assert_eq!(count_modulo(&Board { rows, cols, lattice, torus: true, twisted }, prime), 0, "{rows}x{cols} {name} twisted={twisted}");
+                    assert_eq!(count_modulo(&Board { rows, cols, lattice, torus: true, twisted }, wide_prime), 0, "{rows}x{cols} {name} twisted={twisted} modulo a wide prime");
                 }
             }
         }

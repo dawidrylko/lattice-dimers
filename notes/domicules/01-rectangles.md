@@ -15,13 +15,21 @@ figure(svgs, `4 of the ${total} domicule tilings of the 8 × 8 board.`);
 
 ## The Modular solver
 
-The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domicule-rectangle-modular.js`](../../js/solvers/domicule-rectangle-modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. Its Rust and Python implementations, [`domicule-rectangle-modular.rs`](../../rust/solvers/src/bin/domicule-rectangle-modular.rs) and [`domicule_rectangle_modular.py`](../../python/lattice_dimers/solvers/domicule_rectangle_modular.py), do the same. It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [1], bounds the number of perfect matchings of a graph with degrees $d(v)$:
+The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domicule-rectangle-modular.js`](../../js/solvers/domicule-rectangle-modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. Its Rust and Python implementations, [`domicule-rectangle-modular.rs`](../../rust/solvers/src/bin/domicule-rectangle-modular.rs) and [`domicule_rectangle_modular.py`](../../python/lattice_dimers/solvers/domicule_rectangle_modular.py), do the same, and the Rust one adds [wide primes](#wide-primes). It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [1], bounds the number of perfect matchings of a graph with degrees $d(v)$:
 
 ```math
 \#\text{perfect matchings} \le \prod_{v} \bigl(d(v)!\bigr)^{1/(2d(v))}
 ```
 
 Every prime contributes at least 30 bits, so $\lceil (\log_2 B + 1)/30 \rceil$ primes suffice for a bound $B$. One more prime checks the result: the rebuilt count must agree with the residue modulo that prime, and a mismatch stops the solver.
+
+### Wide primes
+
+The Rust implementation also counts modulo wide primes, the primes below $2^{61}$, in tables of `u64`. Seven residues below $2^{61}$ sum to less than $2^{64}$, and no cell of the three Modular solvers adds more than five counts. A step that sums the counts of one entry can therefore add them first and reduce the sum once. `any-lattice-rectangle-modular` adds one count at a time and reduces each sum.
+
+A wide prime contributes at least 60 bits, so one wide run stands for two runs modulo primes below $2^{31}$. Its tables are twice the size, and a long run on one thread can hold up the others. A worker thread therefore takes a wide run only while every other thread still has a run modulo a prime below $2^{31}$ left to take. `any-lattice-rectangle-modular` also takes none on a board where the last run would end at the same time either way, because there its wide runs spare no run and can hold up the count. With one thread nearly every run is wide. With as many threads as primes, none is.
+
+The check prime is always below $2^{31}$. No run is wide when the tables of wide runs on every thread would exceed half the memory of the machine. The Python and JavaScript implementations keep the primes below $2^{31}$. All three implementations print the same count.
 
 ### How many primes the modular solver needs
 

@@ -1,34 +1,11 @@
-use std::ffi::{c_int, c_long};
 use std::num::NonZero;
 use std::process::ExitCode;
 use std::thread;
 
-use lattice_dimers_core::{Timer, combine_checked_residues, has_unusable_argument, list_primes, parse_args, run_workers};
+use lattice_dimers_core::{Timer, combine_checked_residues, has_unusable_argument, list_primes, parse_args, physical_memory, run_workers};
 
 const MAX_CIRCUMFERENCE: u64 = 20;
 const USAGE: &str = "Usage: any-lattice-cylinder-torus-polynomial-modular -r <rowCount> -c <circumference> [--torus] [--lattice king|triangular|square] [-j <jobs>]\nThe circumference is at least 2, and a torus has at least 2 rows, unless the board has no cells.";
-
-#[cfg(target_os = "macos")]
-const SYSCONF_NAMES: Option<(c_int, c_int)> = Some((200, 29));
-#[cfg(target_os = "linux")]
-const SYSCONF_NAMES: Option<(c_int, c_int)> = Some((85, 30));
-#[cfg(not(any(target_os = "macos", target_os = "linux")))]
-const SYSCONF_NAMES: Option<(c_int, c_int)> = None;
-
-unsafe extern "C" {
-    fn sysconf(name: c_int) -> c_long;
-}
-
-/// Reads the memory of the machine in bytes, or 0 when it is not known, which leaves one worker thread.
-fn physical_memory() -> u64 {
-    let Some((pages, page_size)) = SYSCONF_NAMES else {
-        return 0;
-    };
-    // SAFETY: sysconf takes an integer and only reads a system setting.
-    let (pages, page_size) = unsafe { (sysconf(pages), sysconf(page_size)) };
-
-    u64::try_from(pages).unwrap_or(0).saturating_mul(u64::try_from(page_size).unwrap_or(0))
-}
 
 #[derive(Clone, Copy)]
 struct Board {
@@ -344,10 +321,5 @@ mod tests {
         assert_eq!(cap_threads(4, 6, 18, king, 16 * GIGABYTES), 4);
         assert_eq!(cap_threads(3, 20, 200, king, GIGABYTES), 1);
         assert_eq!(cap_threads(3, 20, 200, king, 0), 1);
-    }
-
-    #[test]
-    fn reads_the_memory_of_the_machine() {
-        assert!(physical_memory() > 0);
     }
 }
