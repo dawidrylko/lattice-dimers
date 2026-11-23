@@ -59,7 +59,7 @@ table(
 
 The OEIS has the cylinders of circumference 2, [OEIS A002532](https://oeis.org/A002532), and those of height 2, [OEIS A062510](https://oeis.org/A062510), each shifted by one [1]. The cell checks both against the table, with the terms of the entries as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
 
-The $2n \times 2n$ cylinders are the draft entry [OEIS A402163](https://oeis.org/draft/A402163) [1], submitted on 14 November 2026 with a b-file of $n = 0, \dots, 11$, [`oeis/A402163/b402163.txt`](../../oeis/A402163/b402163.txt). The cell checks the square boards of the table, $2 \times 2$ to $8 \times 8$, against that b-file.
+The $2n \times 2n$ cylinders are the entry [OEIS A402163](https://oeis.org/A402163) [1], with a b-file of $n = 0, \dots, 11$, [`oeis/A402163/b402163.txt`](../../oeis/A402163/b402163.txt). The cell checks the square boards of the table, $2 \times 2$ to $8 \times 8$, against that b-file.
 
 ```js run
 const terms = [0n, 1n];
@@ -135,5 +135,5 @@ The `BigInt` solver agrees with the OEIS entries above and the modular solver wi
 
 ## References
 
-1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A002532](https://oeis.org/A002532) and [OEIS A062510](https://oeis.org/A062510) and draft entry [OEIS A402163](https://oeis.org/draft/A402163). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A002532](https://oeis.org/A002532), [OEIS A062510](https://oeis.org/A062510) and [OEIS A402163](https://oeis.org/A402163). [oeis.org](https://oeis.org)
 2. D. Ryłko. The dimer entropy of the king's graph. Preprint, October 2026. [doi:10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056)

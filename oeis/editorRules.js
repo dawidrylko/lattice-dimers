@@ -1211,18 +1211,6 @@ const ACCEPTED = [
     match: 'A transfer matrix in exact integers gives the same terms.',
     reason: `the sentence is still in the live draft (#14); ${SYNCED_AFTER_APPROVAL}`,
   },
-  {
-    entry: 'A402163',
-    rule: 'comment-provenance',
-    match: 'agree between two transfer-matrix programs',
-    reason: `Andrew Howroyd removed the comment from the live draft (#8); ${SYNCED_AFTER_APPROVAL}`,
-  },
-  {
-    entry: 'A402163',
-    rule: 'formula-program',
-    match: '(M_{2n}^(2n))[0,0]',
-    reason: `Andrew Howroyd removed the formula from the live draft (#8); ${SYNCED_AFTER_APPROVAL}`,
-  },
 ];
 
 function leadingPeople(authors) {
