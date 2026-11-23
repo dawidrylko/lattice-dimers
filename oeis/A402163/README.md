@@ -1,6 +1,6 @@
 # A402163
 
-[OEIS A402163](https://oeis.org/draft/A402163): number of domicule tilings of the $2n \times 2n$ cylinder.
+[OEIS A402163](https://oeis.org/A402163): number of domicule tilings of the $2n \times 2n$ cylinder.
 
 ## Contribution
 
@@ -8,14 +8,14 @@
 
 ## Status
 
-Proposed 14 November 2026, revision #7 of the draft.
+Approved 22 November 2026, revision #11.
 
 ## Files
 
 | file | content |
 | --- | --- |
-| [A402163.txt](A402163.txt) | the full entry text, reconstructed from the draft page |
-| [b402163.txt](b402163.txt) | $n = 0, \dots, 11$, printed alike by the generators [`b402163.rs`](b402163.rs), [`b402163.py`](b402163.py) and [`b402163.js`](b402163.js); identical to the file uploaded with the draft; its terms up to $n = 10$ are checked against [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json) and $n = 11$ against [`zex_king_cyl_m22_K22.json`](../../research/king-entropy/data/zex/zex_king_cyl_m22_K22.json) |
+| [A402163.txt](A402163.txt) | the full entry text as published, with the data on one `%S` line and without the keyword `new` |
+| [b402163.txt](b402163.txt) | $n = 0, \dots, 11$, printed alike by the generators [`b402163.rs`](b402163.rs), [`b402163.py`](b402163.py) and [`b402163.js`](b402163.js); identical to the b-file the OEIS installed on 22 November 2026; its terms up to $n = 10$ are checked against [`spec/cases/any-lattice-cylinder-torus-modular.json`](../../spec/cases/any-lattice-cylinder-torus-modular.json) and $n = 11$ against [`zex_king_cyl_m22_K22.json`](../../research/king-entropy/data/zex/zex_king_cyl_m22_K22.json) |
 | [A402163.gp](A402163.gp) | the program of the `%o` lines, with `T(h, w)` for the $h \times w$ cylinder |
 | [b402163.rs](b402163.rs) | the generator of the b-file in Rust |
 | [b402163.py](b402163.py) | the generator of the b-file in Python |
@@ -31,4 +31,4 @@ The program is the one of [A401670](../A401670/A401670.gp) with one change: the 
 
 $a(0), \dots, a(7)$ come also from the row transfer in exact integers, `node js/solvers/any-lattice-cylinder-torus-bigint.js -r 14 -c 14 --lattice king` for $a(7)$ in 20 s on 14 November 2026; the $16 \times 16$ cylinder ran out of the 4 GB heap of Node.js. $a(2), \dots, a(11)$ agree between the modular solver of the site and `research/king-entropy/src/zexact.py`, two programs that go cell by cell modulo primes. For $a(11)$, `node js/solvers/any-lattice-cylinder-torus-modular.js -r 22 -c 22 --lattice king -j 4` took 290 s and printed the count of `zex_king_cyl_m22_K22.json`.
 
-The b-file was uploaded as `b402163_1.txt`. An editor then added $a(9)$ to the data, for which there was room, and dropped the keyword `more`, which an entry with a b-file does not take (revisions #5 to #7).
+The b-file was uploaded as `b402163_1.txt` and installed as `b402163.txt` on approval (revision #11). An editor added $a(9)$ to the data, for which there was room, and dropped the keyword `more`, which an entry with a b-file does not take (revisions #5 to #7). Another removed the comment on how the terms were checked and the formula that pointed to the PARI program (revision #8). The entry was approved at revision #10.
