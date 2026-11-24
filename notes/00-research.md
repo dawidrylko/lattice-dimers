@@ -137,6 +137,10 @@ The directory `replication/` recomputes the counts, the spectra and the certific
 
 Every number of the paper is mapped to the committed file it is read from and the script and arguments that wrote it in [paper/NUMBERS.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/paper/NUMBERS.md). The scripts, the layout of `research/king-entropy/` and the commands are described in its [README](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/README.md). The proofs of the bounds are written out in [proofs/lower-bound.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/proofs/lower-bound.md) and [proofs/upper-bound.md](https://github.com/dawidrylko/lattice-dimers/blob/master/research/king-entropy/proofs/upper-bound.md).
 
+## The crossing polynomial
+
+A separate note, not part of the paper, counts the tilings of any induced subgraph of the king's graph by the number $x$ of unit squares in which two diagonal pieces cross. It proves that this crossing polynomial $Z(t) = \sum t^x$ has nonnegative integer coefficients in powers of $1 + t$, on rectangles and on cylinders and tori whose periods are even and at least 4, so the sum of the tilings with the crossing sign $(-1)^x$ is never negative. The proof is a bijection that trades each crossing pair of diagonal pieces for a pair of straight pieces chosen by a checkerboard rule; the note, its brute-force check and the outputs are in [research/crossing-polynomial/](https://github.com/dawidrylko/lattice-dimers/blob/master/research/crossing-polynomial/README.md).
+
 ## How to cite
 
 Cite the paper by its DOI:

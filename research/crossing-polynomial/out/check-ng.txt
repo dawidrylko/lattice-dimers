@@ -1,0 +1,11 @@
+Odd circumference, impossibility lemma: check NG
+W3: assignments 64, with stacked h or side-by-side v 64
+W5: assignments 1024, with stacked h or side-by-side v 1024
+W7: assignments 16384, with stacked h or side-by-side v 16384
+W3 witness stacked h: Z(t) coefficients [3, 2, 0], A(1+t) coefficients [3, 2, 1], differ True
+W3 witness side-by-side v: Z(t) coefficients [12, 3, 0], A(1+t) coefficients [12, 2, 1], differ True
+W5 witness stacked h: Z(t) coefficients [3, 2, 0], A(1+t) coefficients [3, 2, 1], differ True
+W5 witness side-by-side v: Z(t) coefficients [3, 2, 0], A(1+t) coefficients [3, 2, 1], differ True
+W7 witness stacked h: Z(t) coefficients [3, 2, 0], A(1+t) coefficients [3, 2, 1], differ True
+W7 witness side-by-side v: Z(t) coefficients [3, 2, 0], A(1+t) coefficients [3, 2, 1], differ True
+TOTAL failures 0
