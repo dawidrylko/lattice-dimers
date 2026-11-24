@@ -1,6 +1,6 @@
 # A401988
 
-[OEIS A401988](https://oeis.org/draft/A401988): number of tilings of the $2n \times 2n$ board on the triangular lattice.
+[OEIS A401988](https://oeis.org/A401988): number of tilings of the $2n \times 2n$ board on the triangular lattice.
 
 ## Contribution
 
@@ -8,14 +8,14 @@
 
 ## Status
 
-Proposed 11 November 2026, revision #9 of the draft.
+Approved 23 November 2026, revision #16.
 
 ## Files
 
 | file | content |
 | --- | --- |
-| [A401988.txt](A401988.txt) | the full entry text, reconstructed from the draft page |
-| [b401988.txt](b401988.txt) | $n = 0, \dots, 37$, printed alike by the generators [`b401988.rs`](b401988.rs), [`b401988.py`](b401988.py) and [`b401988.js`](b401988.js); identical to the file uploaded with the draft; its terms up to $n = 11$ are checked against [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json) |
+| [A401988.txt](A401988.txt) | the full entry text as published, with the data on one `%S` line and without the keyword `new` |
+| [b401988.txt](b401988.txt) | $n = 0, \dots, 37$, printed alike by the generators [`b401988.rs`](b401988.rs), [`b401988.py`](b401988.py) and [`b401988.js`](b401988.js); identical to the b-file the OEIS installed on 23 November 2026; its terms up to $n = 11$ are checked against [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json) |
 | [A401988.gp](A401988.gp) | the program of the `%o` lines |
 | [b401988.rs](b401988.rs) | the generator of the b-file in Rust |
 | [b401988.py](b401988.py) | the generator of the b-file in Python |
@@ -31,4 +31,4 @@ The primes differ. `b401988.js` takes enough primes below $2^{26}$ for their pro
 
 `buildBFiles.js` checks the terms that `spec/cases/` holds, up to the $22 \times 22$ board. The terms up to $n = 11$ also agree with a dense determinant and with a transfer matrix in exact integers. $a(37)$, the last term, has 994 digits; $a(38)$ has 1049, more than the 1000 digits a b-file line may hold.
 
-The b-file of $n = 0, \dots, 36$ was uploaded as `b401988_1.txt` and replaced by the one of $n = 0, \dots, 37$, uploaded as `b401988_2.txt`.
+The b-file of $n = 0, \dots, 36$ was uploaded as `b401988_1.txt` and replaced by the one of $n = 0, \dots, 37$, uploaded as `b401988_2.txt`, and installed as `b401988.txt` on approval (revision #16). Editors added the MathWorld link and the cross-references to A220546 and A401671 (revisions #10 and #11) and the arXiv version of the article of Fendley, Moessner and Sondhi beside its DOI (revision #13). The entry was approved at revision #15.

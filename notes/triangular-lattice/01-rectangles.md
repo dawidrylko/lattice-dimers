@@ -31,7 +31,7 @@ From $16 \times 16$ to $20 \times 20$ the gallery runs the Markov chain of the [
 
 ## The counts
 
-The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are proposed as [OEIS A401988](https://oeis.org/draft/A401988) [3], a draft that the editors have not yet approved; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.
+The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are the entry [OEIS A401988](https://oeis.org/A401988) [3], approved on 23 November 2026; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.
 
 ```js run
 const reference = require('./js/solvers/any-lattice-rectangle-bigint.js');
@@ -147,4 +147,4 @@ The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`pyt
 
 1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)
 2. L. Lovász and M. D. Plummer. *Matching Theory*. Annals of Discrete Mathematics 29, North-Holland, Amsterdam, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322.
-3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A309117](https://oeis.org/A309117) and [OEIS A011900](https://oeis.org/A011900) and draft entry [OEIS A401988](https://oeis.org/draft/A401988). [oeis.org](https://oeis.org)
+3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A309117](https://oeis.org/A309117), [OEIS A011900](https://oeis.org/A011900) and [OEIS A401988](https://oeis.org/A401988). [oeis.org](https://oeis.org)
