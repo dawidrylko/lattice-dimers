@@ -1,4 +1,4 @@
-"""Smoke test of the file layout: tm2, cylw, lean and zexact (the sweep scripts that write one JSON per
+"""Smoke test of the file layout: tm2, cylw, power and zexact (the sweep scripts that write one JSON per
 run), on the smallest inputs, run from a foreign working directory in a temporary git copy, must write
 their file where src/paths.py says, with the commit recorded where the script records one.
 
@@ -10,7 +10,7 @@ from paths import ROOT, P
 RUNS = [
     ('tm2.py king cyl 3 4', 'sec_king_cyl_3_4.json', False),
     ('cylw.py king cyl 4 0', 'eig_king_cyl_w4_p0.json', True),
-    ('lean.py king free 4 - float64', 'lean_king_free_w4_p-_float64.json', True),
+    ('power.py king free 4 - float64', 'power_king_free_w4_p-_float64.json', True),
     ('zexact.py king free 2 4', 'zex_king_free_m2_K4.json', True),
 ]
 

@@ -5,7 +5,7 @@ usage: python3 src/errbar.py > out/out_errbar.txt      (writes errbar.json)
 
 Inputs: sector values of log(lambda) from tm2.py (sec_king_cyl_*.json, w <= 19) and cylw.py
 (eig_king_cyl_w*_p*.json, w = 20..25), all float64, and the x87 extended-precision reruns
-lean_king_cyl_w*_p*_longdouble.json (lean.py) of every cylinder w = 4..25 that the models use.
+power_king_cyl_w*_p*_longdouble.json (power.py) of every cylinder w = 4..25 that the models use.
 The budget is computed on the extended-precision values; float64 enters only as the rounding term.
 
 Odd widths: f_w = log(lambda_w)/w increases to s; d_w = f_w - f_(w-2), r_w = d_(w-2)/d_w.
@@ -59,7 +59,7 @@ def load():
             x = lam.get((w, 1), lam.get((w, 0)))
             lam[w, 0] = lam[w, 1] = x
     ld = {}
-    for fn in G('lean_king_cyl_w*_p*_longdouble.json'):
+    for fn in G('power_king_cyl_w*_p*_longdouble.json'):
         d = json.load(open(P(fn)))
         if d['converged']:
             ld[d['w'], d['parity']] = mpf(d['log_lambda'])

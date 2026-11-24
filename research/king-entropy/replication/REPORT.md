@@ -32,7 +32,7 @@ None of substance. Minor, last digits only:
 
 - **Table 1, row w = 25 (and r_23)** is computed from float64 eigenvalues and carries their rounding
   noise: the paper prints d_25 = 5.994e-14, r_25 = 9.992, s_25 = 0.5655119110413253; the long double
-  values (own, and the repository's own `data/lean/*longdouble*`, which agree with the own ones to
+  values (own, and the repository's own `data/power/*longdouble*`, which agree with the own ones to
   7.8e-20 per site) give d_25 = 5.991e-14, r_25 = 9.9976, s_25 = 0.56551191104132523 (the paper's own
   Table 2 has G = 0.56551191104132523), and r_23 = 10.1354 (printed 10.136). The text's "r_w drifts
   from 13.4 to 9.99" should end at 10.0. In the same way the 16th decimal of f_13, f_15, f_19 in Table 1
@@ -75,7 +75,7 @@ format, see the note at the end).
 | in-sector gap m per row (median over the power-iteration convergence ratios, w = 16..27) | 1.082724 | 1.082727 | 3e-6 |
 | even-w brackets w = 18..24, midpoint w = 24 | as printed, except the last digit of both w = 20 values (float64 noise, see Contradictions) | Section 3.1 | <= 8e-17 |
 | f^(1)_w < s < f^(0)_w, all even w = 4..28 | holds | holds (w <= 24) | - |
-| own log lambda vs `data/lean` (extended; cylinders and free strips), per site | max 7.8e-20 | - | - |
+| own log lambda vs `data/power` (extended; cylinders and free strips), per site | max 7.8e-20 | - | - |
 | own log lambda vs `data/sec`, `data/eig` (float64, exact binary values), per site | max 6.2e-17, 3.9e-17 | 6.2e-17 quoted | 0 |
 
 Beyond the paper, w = 26 (both sectors, long double, 6.1 GiB, 13 min each): bracket

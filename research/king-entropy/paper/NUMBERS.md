@@ -15,7 +15,7 @@ SHAs of the tag `king-entropy-v1.0.0`.
 | --- | --- |
 | `data/sec/sec_king_cyl_3_13.json`, `data/sec/sec_king_cyl_14_19.json`, `data/sec/sec_king_free_1_18.json`, `data/sec/sec_tri_cyl_3_18.json` | `python3 src/tm2.py <lat> <bc> <w0> <w1>` |
 | `data/eig/eig_king_cyl_w<w>_p<p>.json`, `logs/log_eig_*.txt` | `python3 src/cylw.py king cyl <w> <p>` |
-| `data/lean/lean_*.json`, `logs/log_lean_*.txt` | `python3 src/lean.py <lat> <bc> <w> <p\|-> <float64\|longdouble> [cw]` |
+| `data/power/power_*.json`, `logs/log_power_*.txt` | `python3 src/power.py <lat> <bc> <w> <p\|-> <float64\|longdouble> [cw]` |
 | `out/out_errbar.txt`, `data/errbar.json` | `python3 src/errbar.py` (run before `estimate.py`, which reads `errbar.json`) |
 | `out/out_estimate.txt`, `data/z2.json` | `python3 src/estimate.py` |
 | `out/out_bounds.txt`, `data/bounds.json` | `python3 src/bounds.py 24` |
@@ -91,8 +91,8 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | r_w 13.4 at w = 9 → 10.0 at w = 25 | `out/out_estimate.txt` (odd widths, float64, r = 13.382 at w = 9 ... 9.992 at w = 25); the end value 10.0 from extended precision, next rows | `src/estimate.py` |
 | even-w sector brackets w = 18...24, midpoint 0.5655119110413465 | `out/out_estimate.txt` | `src/estimate.py` |
 | Table 1 (all entries) | `out/out_estimate.txt` (odd widths; s₁₉ is printed there by Python's shortest repr as 0.56551191104116, which is 0.5655119110411600 to the 16 decimals of the other rows) | `src/estimate.py` |
-| Table 1 caption: 5.991·10⁻¹⁴, 9.998, 0.56551191104132523 (w = 25, extended precision); r_w drifts to 10.0 | `replication/out/analyze_eig.txt` (section 2), from `data/lean/*longdouble*` | `replication/analyze_eig.py` |
-| extended-precision inputs: odd w = 5...25, even w = 4...24 | `out/out_errbar.txt` (first line); `data/lean/lean_king_cyl_w*_p*_longdouble.json` | `src/errbar.py`, `src/lean.py` |
+| Table 1 caption: 5.991·10⁻¹⁴, 9.998, 0.56551191104132523 (w = 25, extended precision); r_w drifts to 10.0 | `replication/out/analyze_eig.txt` (section 2), from `data/power/*longdouble*` | `replication/analyze_eig.py` |
+| extended-precision inputs: odd w = 5...25, even w = 4...24 | `out/out_errbar.txt` (first line); `data/power/power_king_cyl_w*_p*_longdouble.json` | `src/errbar.py`, `src/power.py` |
 | m = 1.082727; same gap at w = 20...25 | `out/out_crosscheck.txt` (in-sector gap); `out/out_errbar.txt` (gap block, 1.0827 ... 1.082701) | `src/crosscheck.py`, `src/errbar.py` |
 | Table 2 (all entries) | `out/out_errbar.txt` (rows W = 25 odd, W = 24 midpoints; backtest change = difference from the row W − 2); also `data/errbar.json` | `src/errbar.py` |
 | 1 % of \|d_W\|: 6.0·10⁻¹⁶, 1.9·10⁻¹⁵; G dropped | `out/out_errbar.txt` (predictive backtest: \|d_W\| = 5.99e-14, 1.89e-13; kept/dropped) | `src/errbar.py` |
@@ -105,11 +105,11 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | 6.2·10⁻¹⁷ per site over 33 cylinders | `out/out_errbar.txt` (rounding block) | `src/errbar.py` |
 | 0.5655119110413253 ± 6·10⁻¹⁶, centre 0.5655119110413253176 | `out/out_errbar.txt` (RECOMMENDATION; `data/errbar.json` `recommended.s`) | `src/errbar.py` |
 | further digits: 2.13 widths, 4.4 times the memory per digit | `out/out_derived.txt` (widths per decimal digit 2.127, memory factor 4.37; rounded), with m = 1.082727 | `src/derived.py` |
-| rounding term 1.5·10⁻¹⁶ of 2.7·10⁻¹⁶; 7.8·10⁻²⁰ per site, about 19 digits | as in the error budget above; `replication/out/compare_eig.txt` (lean longdouble); `out/out_derived.txt` (19.1 digits) | `src/errbar.py`, `replication/compare_eig.py`, `src/derived.py` |
+| rounding term 1.5·10⁻¹⁶ of 2.7·10⁻¹⁶; 7.8·10⁻²⁰ per site, about 19 digits | as in the error budget above; `replication/out/compare_eig.txt` (power longdouble); `out/out_derived.txt` (19.1 digits) | `src/errbar.py`, `replication/compare_eig.py`, `src/derived.py` |
 | 4.3 GiB at w = 24, 8.4 GiB at w = 25; time about the same factor | `out/out_estimate.txt` (cost table: peak RSS 4353 and 8642 MiB, wall 660.2 and 1351.3 s) | `src/cylw.py king cyl <w> <p>` |
 | 4.1·10⁻¹⁶ | `out/out_crosscheck.txt` section A (max diff 4.06e-16; rounded) | `src/crosscheck.py` |
 | 1.8·10⁻¹⁵ | `out/out_crosscheck.txt` section B (−1.78e-15; rounded) | `src/crosscheck.py` |
-| independent code: 7.8·10⁻²⁰ (extended), 6.2·10⁻¹⁷ (float64) per site | `replication/out/compare_eig.txt` (max \|diff\| per site by source: lean longdouble 7.8e-20; sec float64 6.2e-17, eig float64 3.9e-17, lean float64 3.1e-17) | `replication/compare_eig.py` |
+| independent code: 7.8·10⁻²⁰ (extended), 6.2·10⁻¹⁷ (float64) per site | `replication/out/compare_eig.txt` (max \|diff\| per site by source: power longdouble 7.8e-20; sec float64 6.2e-17, eig float64 3.9e-17, power float64 3.1e-17) | `replication/compare_eig.py` |
 | w = 26 (both sectors) and 27 extended, w = 28 (both sectors) float64; 1.9·10⁻⁴, 1.5·10⁻⁴, 5.4·10⁻⁴ | `replication/out/analyze_eig.txt` (section 6: ratios 1.00019, 1.00015, 1.00054 of measured to predicted d_w) | `replication/analyze_eig.py` |
 | d₂₈ resolved to about 6·10⁻³ | `out/out_derived.txt` (resolution of d_28: 0.0057), from `replication/out/analyze_eig.txt` (section 8: float64 vs long double ≤ 1.11e-17 per site) and \|d₂₈\| = 1.93518e-15 | `src/derived.py` |
 | CTMRG: χ = 32, 6·10⁻¹⁷ | `out/out_ctmrg.txt` section 2 (king chi = 32: s − ref = −6.3e-17; rounded) | `src/ctmrg.py` |
@@ -156,7 +156,7 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | --- | --- | --- |
 | Table 5; ξ = 1.1931, rms 1.5·10⁻²; ξ = 1.2323, b = −0.433, rms 9.3·10⁻⁴; ξ_∞ = 1.2351, b = −0.467; ξ = 1.2387, rms 2.6·10⁻³ (b = −1/2) | `out/out_estimate.txt` (Z2 block) | `src/estimate.py` |
 | m_v = 0.8090018253 (L = 22); changes of ξ_L 1.8·10⁻⁷ (L = 18 → 20), 8.9·10⁻⁹ (20 → 22); ξ = 1.236091 ± 10⁻⁶ | `log-convexity/out_levels.txt` (section B: table column m_v, line \|xi_w − xi_{w−2}\|, RESULT) | `log-convexity/levels.py` |
-| b_w = −0.478, −0.481, −0.482 at w = 20, 22, 24; −0.495 | `log-convexity/out_levels.txt` (section B4: b_w −0.4780, −0.4809, −0.4821; b_inf −0.4947; Δ_w from `data/lean/lean_king_cyl_w*_p*_longdouble.json`) | `log-convexity/levels.py` |
+| b_w = −0.478, −0.481, −0.482 at w = 20, 22, 24; −0.495 | `log-convexity/out_levels.txt` (section B4: b_w −0.4780, −0.4809, −0.4821; b_inf −0.4947; Δ_w from `data/power/power_king_cyl_w*_p*_longdouble.json`) | `log-convexity/levels.py` |
 | drift of b_w by about δw | arithmetic: an error δ in the rate changes the numerator by 2δ and log(w/(w−2)) ≈ 2/w | - |
 | ξ error covers only the convergence in L; b_w confirms the rate to a few units of 10⁻⁴ | arithmetic: b_w moves by 0.004 from w = 20 to 24 (section B4), and a rate error δ moves it by about 4δ there, so δ of a few 10⁻⁴ is not excluded beyond the 1/w trend | - |
 | 0.13 % (hidden mode, Section 3) | arithmetic: x = e^(−2/ξ), relative change 2(1.236091 − 1.2351)/1.2351² = 1.3·10⁻³ | - |
@@ -215,10 +215,10 @@ computation from the listed values, done in `src/derived.py` unless stated other
 | 0.6 GiB, 5 min (arm64) | `logs/time_ctmrg.txt` (maxrss 647 MiB, wall 276.5 s; rounded up) | `src/timed.py python3 src/ctmrg.py` |
 
 Note on the machines. The runs of the first version used one machine with four cores and 15.7 GiB of
-memory. The runs added in this version (`data/lean/*longdouble*` of the cylinders, `runweight.py`,
+memory. The runs added in this version (`data/power/*longdouble*` of the cylinders, `runweight.py`,
 `zexact.py` 24 × 24, `pfaff_rigor.py`, `corner.py`, `log-convexity/modes.py`, the re-runs of `bounds.py`,
 `audit_bounds.py`, `errbar.py`, `estimate.py` and `cw.py`) used a second x86-64 machine with four
-cores and 15.7 GiB; the `lean.py` outputs record `machine` and `nmant` = 63. From the
+cores and 15.7 GiB; the `power.py` outputs record `machine` and `nmant` = 63. From the
 measured memory of `src/cylw.py` (`out/out_estimate.txt`, cost table: 8.4 GiB at w = 25, about doubling
 per width), the cylinder w = 26 needs about 17 GiB, more than the machine has, so `src/` stops at
 w = 25. `src/ctmrg.py` (float64 only) and the brick check appended to `out/out_pfaff.txt` ran in October 2026 and

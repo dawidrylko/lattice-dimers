@@ -122,7 +122,7 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      Rerun the stale outputs, commit each round on the `d/*` branch and repeat the check, because a
      rerun file that another script reads makes that script's outputs stale in turn. A rerun that
      leaves an output byte-identical leaves nothing to commit; count that output as fresh and leave it
-     out of the next round. Stop when nothing is listed for the outputs that remain. The `data/lean/`
+     out of the next round. Stop when nothing is listed for the outputs that remain. The `data/power/`
      files written before 6ef3190 have no `machine` and `nmant` fields, and their rerun records both.
    - The rerun may also sit alongside the originals instead of replacing them. Its files then go to
      the same relative paths under `rerun/<year>-<month>/`, with a `COMPARISON.md` against the

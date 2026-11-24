@@ -300,10 +300,10 @@ for k in range(10, 19, 2):
     pr = 4 * Ct * np.cos(np.pi * k / 2) * q ** k
     print(f'  D({k}) = {D:+.6e}, 4 C~ cos(pi k/2) r_-^k = {pr:+.6e}, ratio {D / pr:.5f}')
 
-print('B4. parity splitting Delta_w of the even cylinders (data/lean/*longdouble*) against m_v of w = 22:')
+print('B4. parity splitting Delta_w of the even cylinders (data/power/*longdouble*) against m_v of w = 22:')
 print('    local prefactor exponent b_w = [log(Delta_w/Delta_{w-2}) + 2 m_v] / log(w/(w-2))')
 lam = {}
-for f in G('lean_king_cyl_w*_p*_longdouble.json'):
+for f in G('power_king_cyl_w*_p*_longdouble.json'):
     w, p = map(int, re.search(r'_w(\d+)_p(\d)_', f).groups())
     lam[w, p] = float(json.load(open(P(f)))['log_lambda'])
 Dw = {w: lam[w, 0] - lam[w, 1] for w in range(4, 26, 2) if (w, 1) in lam}
