@@ -102,13 +102,12 @@ def analyse(R, C, prow, pcol, live):
     sq = [s for s in squares if s["cells"] <= live]
     Z = {}
     crossing_free = []
-    withx = []
     for T in matchings(live, edges):
         xs = [s for s in sq if s["x"][0] in T and s["x"][1] in T]
         Z[len(xs)] = Z.get(len(xs), 0) + 1
         if not xs:
             crossing_free.append(T)
-    return sq, Z, crossing_free, withx
+    return sq, Z, crossing_free
 
 
 def check_even(args):
@@ -163,7 +162,7 @@ def check_even(args):
 
 def check_odd(args):
     R, C, prow, pcol, live, kind = args
-    sq, Z, cf, withx = analyse(R, C, prow, pcol, live)
+    sq, Z, cf = analyse(R, C, prow, pcol, live)
     deg = max(list(Z) + [0])
     zt = [Z.get(k, 0) for k in range(deg + 1)]
     poly = [0] * (len(sq) + 1)

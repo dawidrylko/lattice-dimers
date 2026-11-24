@@ -67,7 +67,7 @@ The king's graph is not planar, and its boards with both sides at least 3 and an
 | directory | contents |
 | --- | --- |
 | [`research/king-entropy`](research/king-entropy/README.md) | scripts, data, outputs, proofs and papers on the entropy of the king's graph |
-| [`research/crossing-polynomial`](research/crossing-polynomial/README.md) | a proof that the crossing polynomial of the king's graph has nonnegative coefficients in powers of 1 + t, with its brute-force check |
+| [`research/crossing-polynomial`](research/crossing-polynomial/README.md) | a proof that the crossing polynomial of the king's graph has nonnegative coefficients in powers of 1 + t on rectangles and on cylinders and tori whose periods are even and at least 4, with its brute-force check |
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
 | [`notes`](notes/README.md) | notebooks on dominoes, the triangular lattice and domicules on rectangles, cylinders and tori, on diagonal pieces, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
 | [`spec`](spec/README.md) | the solver contract, the registry of algorithms and the known counts every implementation and program is checked against |

@@ -2,7 +2,7 @@
 
 This note proves that the crossing polynomial of every induced subgraph of the king's graph, on a rectangle and on a cylinder or torus whose periods are even and at least 4, has nonnegative integer coefficients in powers of $1 + t$. In particular its value at $t = -1$, the sum of the tilings with the crossing sign, is never negative. The proof is a bijection that replaces the two crossing diagonal pieces of a unit square by a pair of straight pieces chosen by a checkerboard rule.
 
-Status: a theorem with a proof, unpublished. Two adversarial reviews checked the proof before this note, and [`check.py`](check.py) tests it by brute force on small boards (section Computer checks).
+Status: a theorem with a proof, unpublished. [`check.py`](check.py) tests it by brute force on small boards (section Computer checks).
 
 ## Literature
 
@@ -87,7 +87,7 @@ Z_H(t) = \sum_d N_d (1 + t)^d,
 
 so $Z_H$ has nonnegative integer coefficients in $u = 1 + t$, and the sum with the crossing sign is $Z_H(-1) = N_0 \ge 0$. If $H$ has a tiling, $A_H$ is a nonzero polynomial with nonnegative coefficients and $Z_H(t) > 0$ for every real $t > -1$. Without a tiling, for instance with an odd number of cells, $Z_H$ is identically 0.
 
-On a rectangle the sum with the crossing sign of the whole board is, up to sign, the Pfaffian of the orientation of Wildeboer and Seidel [1] (see crossing sign in the [glossary](../../docs/glossary.md#signs)). The test in `js/test/core.test.js` computes that sum and that Pfaffian on ten boards from 2 × 2 to 12 × 12, and the sum is positive on each of them. The theorem explains why: the sum is $N_0$, the number of crossing-free tilings with no designated square, so it is never negative on any board.
+On a rectangle the sum with the crossing sign of the whole board is, up to sign, the Pfaffian of the orientation of Wildeboer and Seidel [1] (see crossing sign in the [glossary](../../docs/glossary.md#signs)). The test in `js/test/core.test.js` computes that sum and that Pfaffian on ten boards from 2 × 2 to 12 × 12, and the sum is positive on each of them. By the theorem the sum is $N_0 \ge 0$, the number of crossing-free tilings with no designated square, on every rectangle and on every cylinder and torus whose periods are even and at least 4.
 
 The coefficients $N_d$ also give lower bounds: for every $t \ge -1$ and every $k$, $\sum_{d \le k} N_d (1 + t)^d \le Z_H(t)$.
 
@@ -101,18 +101,22 @@ A period of 2 is excluded because the squares $(r, 0)$ and $(r, 1)$ of a cylinde
 
 ## Odd periods
 
-On a cylinder of odd circumference $W \ge 3$ and length at least 3 the checkerboard fails at the column seam, and no assignment of $h$ and $v$ to the squares works: two rows of squares always contain two stacked squares of type $h$ or two side-by-side squares of type $v$, and a six-cell block on them breaks the identity. Cylinders of length 2, with a single row of squares, are covered for every circumference $W \ge 3$ by the assignment $f \equiv h$, since two horizontal pairs share a cell only when their squares are stacked; the rest of the proof goes through unchanged. Cylinders of odd circumference and length at least 3, and tori with an odd period, are open. On them `check.py` finds no negative value of $Z_H(-1)$ on the induced subgraphs of section `odd`, where it also confirms, without a proof here, that with the checkerboard rule two designated squares conflict across the seam at most in pairs and $Z_H(t) = \sum_{T_0} (1 + t)^{a(T_0)} (1 + 2t)^{b(T_0)}$, with $a$ the designated squares in no conflict and $b$ the conflicting pairs. An earlier run, whose scripts are not in this repository, found no negative coefficient of $Z_H$ in $u$ on 141,120 induced subgraphs of such cylinders and 4,000 of such tori, nor on the full cylinders of circumference 3, 5 and 7 up to length 80.
+On a cylinder of odd circumference $W \ge 3$ and height at least 3 the checkerboard rule fails at the column seam, and so does every other assignment of $h$ and $v$ to the squares. Take two rows of squares with no two stacked squares of type $h$ and no two side-by-side squares of type $v$. A row of $W$ squares around the cylinder with no two neighbours of type $v$ has at most $(W - 1)/2$ of them, so at least $(W + 1)/2$ of type $h$; the two rows then have more than $W$ squares of type $h$ in $W$ columns, and two of them are stacked. On a block of six cells around such a pair, three rows by two columns for two stacked $h$ and two rows by three columns for two side-by-side $v$, the identity fails (section `ng` of `check.py` for $W = 3$, 5 and 7; for $W \ge 5$ the block is the same graph whatever $W$ is).
+
+Cylinders of height 2, with a single row of squares, are covered for every circumference $W \ge 3$ by the assignment $f \equiv h$: a horizontal edge lies in the horizontal pairs of two squares only when they are stacked, and a single row has no stacked squares, so Lemma 2 holds and the rest of the proof goes through unchanged.
+
+Cylinders of odd circumference and height at least 3, and tori with an odd period, are open. On the induced subgraphs of section `odd`, `check.py` finds no negative value of $Z_H(-1)$. It also confirms there, without a proof here, that with the checkerboard rule designated squares conflict across the seam at most in pairs and $Z_H(t) = \sum_{T_0} (1 + t)^{a(T_0)} (1 + 2t)^{b(T_0)}$, with $a(T_0)$ the designated squares in no conflict and $b(T_0)$ the conflicting pairs. Since $1 + 2t = 2u - 1$, this formula alone does not give nonnegative coefficients in $u$.
 
 ## Computer checks
 
-[`check.py`](check.py) needs only the Python standard library and shares no code with the solvers. It enumerates the tilings of each induced subgraph by brute force and checks Lemma 1, Lemma 2, that $\Phi$ lands in the right pairs and that $\Psi$ inverts it, that the number of tilings equals $\sum_{T_0} 2^{D(T_0)}$, and that $Z_H(t)$ and $A_H(1 + t)$ agree coefficient by coefficient. Every output in [`out/`](out) ends with `TOTAL failures 0`.
+[`check.py`](check.py) needs only the Python standard library and shares no code with the solvers. It enumerates the tilings of each induced subgraph by brute force and checks Lemma 1, Lemma 2 on every crossing-free tiling, that $\Phi$ lands in the right pairs and that $\Psi$ inverts it, that the number of tilings equals $\sum_{T_0} 2^{D(T_0)}$, and that $Z_H(t)$ and $A_H(1 + t)$ agree coefficient by coefficient. Every output in [`out/`](out) ends with `TOTAL failures 0`.
 
 | section | what it covers | output |
 | --- | --- | --- |
-| `even-a` | all induced subgraphs of the rectangles 3 × 4 and 4 × 4, the cylinders of circumference 4 and length 3 and 4 and the 4 × 4 torus, and random ones of the rectangles 4 × 5 and 5 × 6 and of the cylinders of circumference 6: 109,600 subgraphs | [`out/check-even-a.txt`](out/check-even-a.txt) |
-| `even-b` | 500 random induced subgraphs of the tori 4 × 6, 6 × 4 and 6 × 6 with 40 to 50 % of the cells removed | [`out/check-even-b.txt`](out/check-even-b.txt) |
+| `even-a` | all induced subgraphs with an even number of cells of the rectangles 3 × 4 and 4 × 4, the cylinders of circumference 4 and height 3 and 4 and the 4 × 4 torus, and random ones of the rectangles 4 × 5 and 5 × 6 and of the cylinders of circumference 6: 109,600 subgraphs | [`out/check-even-a.txt`](out/check-even-a.txt) |
+| `even-b` | 500 random induced subgraphs of the tori 4 × 6, 6 × 4 and 6 × 6 with each cell removed with probability 0.4 or 0.5 | [`out/check-even-b.txt`](out/check-even-b.txt) |
 | `full` | 15 full boards: rectangles up to 4 × 6 and 2 × 16, cylinders of circumference 4, 6 and 8, the 4 × 4 torus | [`out/check-full.txt`](out/check-full.txt) |
-| `odd` | cylinders of odd circumference: length 2 with $f \equiv h$, and the pair formula above at lengths 3 and 4 | [`out/check-odd.txt`](out/check-odd.txt) |
+| `odd` | cylinders of odd circumference: height 2 with $f \equiv h$, and the pair formula above at heights 3 and 4 | [`out/check-odd.txt`](out/check-odd.txt) |
 | `ng` | every assignment of $h$ and $v$ to two rows of squares of circumference 3, 5 and 7 has two stacked $h$ or two side-by-side $v$, and the six-cell blocks where the identity fails | [`out/check-ng.txt`](out/check-ng.txt) |
 
 Each section runs in about a minute or less with two worker processes and little memory:
@@ -121,7 +125,7 @@ Each section runs in about a minute or less with two worker processes and little
 python3 check.py even-a 2 > out/check-even-a.txt
 ```
 
-and the same for `even-b`, `full`, `odd` and `ng`. The full boards also agree with the solvers: the rectangles 3 × 4 and 4 × 4 give the sums 15 and 92 with the crossing sign that `js/test/core.test.js` expects.
+and the same for `even-b`, `full`, `odd` and `ng`. The Research job of the continuous integration reruns `full`, `ng`, `odd` and `even-b` and compares them with the outputs here. The full boards also agree with the solvers: the rectangles 3 × 4 and 4 × 4 give the sums 15 and 92 with the crossing sign that `js/test/core.test.js` expects.
 
 ## References
 
