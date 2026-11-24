@@ -1,0 +1,11 @@
+Even periods and open boards: checks S, D, B, P
+open 3x4 all: 2048 subgraphs, failures 0, negative Z(-1) 0
+open 4x4 all: 32768 subgraphs, failures 0, negative Z(-1) 0
+open 4x5 random: 3000 subgraphs, failures 0, negative Z(-1) 0
+open 5x6 random: 600 subgraphs, failures 0, negative Z(-1) 0
+cylinder W4xL3 all: 2048 subgraphs, failures 0, negative Z(-1) 0
+cylinder W4xL4 all: 32768 subgraphs, failures 0, negative Z(-1) 0
+cylinder W6xL3 random: 3000 subgraphs, failures 0, negative Z(-1) 0
+cylinder W6xL4 random: 600 subgraphs, failures 0, negative Z(-1) 0
+torus 4x4 all: 32768 subgraphs, failures 0, negative Z(-1) 0
+TOTAL failures 0

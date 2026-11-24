@@ -51,7 +51,7 @@ jobs:
           BENCHMARKS_INPUTS: '^(benchmarks/|rust/|python/|js/|site/benchmarkRuns\.js$)'
           SITE_INPUTS: '^(site/|js/|notes/|benchmarks/results/|research/king-entropy/|oeis/A[0-9]{6}/(A[0-9]{6}\.gp|b[0-9]{6}\.txt)$|\.github/assets/)'
           MACOS_INPUTS: '^(js/|site/|\.github/assets/|research/king-entropy/)'
-          RESEARCH_INPUTS: '^(research/king-entropy/|oeis/A239264/b239264\.txt$|\.zenodo\.json$)'
+          RESEARCH_INPUTS: '^(research/king-entropy/|research/crossing-polynomial/|oeis/A239264/b239264\.txt$|\.zenodo\.json$)'
         run: |
           matches() {
             local status=0
@@ -355,6 +355,12 @@ jobs:
             diff -u "out/$script.txt" "$RUNNER_TEMP/$script.txt"
           done
         working-directory: research/king-entropy/replication
+      - run: |
+          for section in full ng odd even-b; do
+            python check.py "$section" 2 > "$RUNNER_TEMP/check-$section.txt"
+            diff -u "out/check-$section.txt" "$RUNNER_TEMP/check-$section.txt"
+          done
+        working-directory: research/crossing-polynomial
       - run: python -m json.tool ../../.zenodo.json > /dev/null
 
   check:

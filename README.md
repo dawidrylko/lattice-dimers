@@ -67,6 +67,7 @@ The king's graph is not planar, and its boards with both sides at least 3 and an
 | directory | contents |
 | --- | --- |
 | [`research/king-entropy`](research/king-entropy/README.md) | scripts, data, outputs, proofs and papers on the entropy of the king's graph |
+| [`research/crossing-polynomial`](research/crossing-polynomial/README.md) | a proof that the crossing polynomial of the king's graph has nonnegative coefficients in powers of 1 + t on rectangles and on cylinders and tori whose periods are even and at least 4, with its brute-force check |
 | [`oeis`](oeis/README.md) | the OEIS entries this repository contributed to, with their b-files and PARI/GP programs |
 | [`notes`](notes/README.md) | notebooks on dominoes, the triangular lattice and domicules on rectangles, cylinders and tori, on diagonal pieces, and on the research, built into the [site](https://dawidrylko.github.io/lattice-dimers/) |
 | [`spec`](spec/README.md) | the solver contract, the registry of algorithms and the known counts every implementation and program is checked against |
@@ -87,16 +88,16 @@ The king's graph is not planar, and its boards with both sides at least 3 and an
 The code is [MIT](LICENSE). Text and data are licensed under [CC BY 4.0](LICENSES/CC-BY-4.0.txt). CC BY 4.0 covers exactly these paths:
 
 - text: `research/king-entropy/paper/`, `research/king-entropy/proofs/`, `research/king-entropy/notes/`,
-  `research/king-entropy/release/`, `research/king-entropy/replication/REPORT.md` and `notes/`;
+  `research/king-entropy/release/`, `research/king-entropy/replication/REPORT.md`, `research/crossing-polynomial/README.md` and `notes/`;
 - data: `research/king-entropy/data/`, `research/king-entropy/out/`, `research/king-entropy/logs/`,
   `research/king-entropy/rerun/`, `research/king-entropy/replication/out/`, the outputs `research/king-entropy/log-convexity/out_*.txt` and
-  `research/king-entropy/log-convexity/time_*.txt`, the JSON files in `spec/cases/` and the measurements in `benchmarks/results/`.
+  `research/king-entropy/log-convexity/time_*.txt`, `research/crossing-polynomial/out/`, the JSON files in `spec/cases/` and the measurements in `benchmarks/results/`.
 
 The entry texts `oeis/*/A*.txt` are copies of OEIS content, which the OEIS Foundation licenses under
 [CC BY-SA 4.0](LICENSES/CC-BY-SA-4.0.txt); they keep that license. The b-files `oeis/*/b*.txt` are printed by the generators of this repository and are MIT.
 
 Everything else is MIT, in particular all programs and scripts: `rust/`, `python/`, `js/`, the programs in `oeis/`, `site/`, `harness/`, `research/king-entropy/src/`,
-`research/king-entropy/log-convexity/*.py`, `research/king-entropy/rerun/2026-10/release/step0-rerun.sh` and the code in `research/king-entropy/replication/`.
+`research/king-entropy/log-convexity/*.py`, `research/king-entropy/rerun/2026-10/release/step0-rerun.sh`, the code in `research/king-entropy/replication/` and `research/crossing-polynomial/check.py`.
 
 ## Author
 

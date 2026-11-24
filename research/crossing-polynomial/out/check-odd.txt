@@ -1,0 +1,13 @@
+Odd circumference, length 2 (always h): check L2
+full cylinder W3xL2: ok, Z(-1) = 9
+cylinder W3xL2 all: 32 subgraphs, failures 0, negative Z(-1) 0
+full cylinder W5xL2: ok, Z(-1) = 33
+cylinder W5xL2 all: 512 subgraphs, failures 0, negative Z(-1) 0
+full cylinder W7xL2: ok, Z(-1) = 129
+cylinder W7xL2 all: 8192 subgraphs, failures 0, negative Z(-1) 0
+Odd circumference, checkerboard with seam conflicts: check P7
+cylinder W3xL4 all: 2048 subgraphs, failures 0, negative Z(-1) 0
+cylinder W5xL3 all: 16384 subgraphs, failures 0, negative Z(-1) 0
+cylinder W5xL4 random: 600 subgraphs, failures 0, negative Z(-1) 0
+cylinder W7xL3 random: 600 subgraphs, failures 0, negative Z(-1) 0
+TOTAL failures 0

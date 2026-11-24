@@ -1,0 +1,17 @@
+Full boards: checks S, D, B, P
+full open rows 2 cols 2: ok, tilings 3, Z(-1) 1
+full open rows 2 cols 4: ok, tilings 11, Z(-1) 1
+full open rows 2 cols 8: ok, tilings 171, Z(-1) 1
+full open rows 3 cols 4: ok, tilings 43, Z(-1) 15
+full open rows 3 cols 6: ok, tilings 451, Z(-1) 111
+full open rows 4 cols 4: ok, tilings 280, Z(-1) 92
+full open rows 4 cols 6: ok, tilings 9415, Z(-1) 2047
+full open rows 2 cols 16: ok, tilings 43691, Z(-1) 1
+full cylinder rows 2 cols 4: ok, tilings 33, Z(-1) 17
+full cylinder rows 6 cols 4: ok, tilings 249097, Z(-1) 62497
+full cylinder rows 2 cols 6: ok, tilings 129, Z(-1) 65
+full cylinder rows 4 cols 6: ok, tilings 88997, Z(-1) 20561
+full cylinder rows 2 cols 8: ok, tilings 513, Z(-1) 257
+full cylinder rows 3 cols 8: ok, tilings 30184, Z(-1) 7688
+full torus rows 4 cols 4: ok, tilings 17552, Z(-1) 6672
+TOTAL failures 0

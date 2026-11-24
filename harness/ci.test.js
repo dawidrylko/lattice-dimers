@@ -253,6 +253,7 @@ test('Changes runs every job on push, schedule and dispatch, and on a pull reque
     [['benchmarks/results/run.json'], ['benchmarks', ...site]],
     [['research/king-entropy/src/lspec.py'], [...site, 'macos', 'research']],
     [['.zenodo.json'], ['research']],
+    [['research/crossing-polynomial/check.py'], ['research']],
     [['.github/assets/dimer.svg'], ['javascript', ...site, 'macos']],
     [['docs/glossary.md', 'notes/dominoes/01-rectangles.md', '.zenodo.json'], [...site, 'research']],
   ];

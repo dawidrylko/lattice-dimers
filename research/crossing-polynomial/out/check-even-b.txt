@@ -1,0 +1,5 @@
+Even periods, tori with more cells, 40 to 50% of cells removed: checks S, D, B, P
+torus W4xL6 random: 200 subgraphs, failures 0, negative Z(-1) 0
+torus W6xL4 random: 200 subgraphs, failures 0, negative Z(-1) 0
+torus 6x6 random: 100 subgraphs, failures 0, negative Z(-1) 0
+TOTAL failures 0
