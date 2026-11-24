@@ -3,7 +3,7 @@
 usage: python3 src/surface.py > out/out_surface.txt      (writes surface.json)
 
 lambda_k = growth rate of the free strip of width k (bounds.json, float64, k <= 24; replaced
-by lean.py reruns lean_king_free_w<k>_p-_<dtype>.json where present: longdouble k <= 24,
+by power.py reruns power_king_free_w<k>_p-_<dtype>.json where present: longdouble k <= 24,
 float64 k = 25, 26). s and its error bar from the cylinder analysis (errbar.py).
 
 Even and odd k approach the limit from opposite sides (`estimate.py`: even f decreases, odd f
@@ -22,7 +22,7 @@ DS = mpf('6e-16')                       # its error bar
 
 b = json.load(open(P('bounds.json')))
 lam = {int(k): (mpf(x), 'bounds.json float64', 0) for k, x in b['log_lambda_free'].items()}
-for fn in sorted(G('lean_king_free_w*_p-_*.json')):          # priority: longdouble > lean float64 > bounds.json
+for fn in sorted(G('power_king_free_w*_p-_*.json')):          # priority: longdouble > power float64 > bounds.json
     d = json.load(open(P(fn)))
     rank = 2 if d['dtype'] == 'longdouble' else 1
     if d['converged'] and rank > lam.get(d['w'], (0, '', -1))[2]:

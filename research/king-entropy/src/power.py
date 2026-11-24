@@ -1,7 +1,7 @@
 """Memory-lean power iteration on T^2 (cell steps ping-pong between two buffers),
 in float64 or x87 extended precision (np.longdouble, 64-bit mantissa).
 
-usage: python3 src/lean.py <lat> <bc> <w> <parity|-> <float64|longdouble> [cw]
+usage: python3 src/power.py <lat> <bc> <w> <parity|-> <float64|longdouble> [cw]
 
 Same transfer (tmfast.step) and same start vector as cylw.sector_eig (parity sector p,
 seed 7) for 'cyl'; e0 (empty boundary) for 'free' (parity '-'), as in bounds.certify.
@@ -10,7 +10,7 @@ tol = 2 eps * 0.6 w (about 2 ulp of log lambda) for three consecutive iterations
 With 'cw', one extra pass keeps v and reports the Collatz-Wielandt bracket
 min/max (T^2 v)_i / v_i (a third buffer). Peak memory: 2 (3 with cw) vectors.
 
-Writes lean_<lat>_<bc>_w<w>_p<p>_<dtype>.json (log lambda as a decimal string).
+Writes power_<lat>_<bc>_w<w>_p<p>_<dtype>.json (log lambda as a decimal string).
 """
 import json, platform, resource, subprocess, sys, time
 from paths import P, ROOT
@@ -81,9 +81,9 @@ def main():
     lat, bc, w, p, dtype = sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4], sys.argv[5]
     p = int(p) if p != '-' else '-'
     out = run(lat, bc, w, p, dtype, cw='cw' in sys.argv[6:])
-    out['cmd'] = 'python3 src/lean.py ' + ' '.join(sys.argv[1:])
+    out['cmd'] = 'python3 src/power.py ' + ' '.join(sys.argv[1:])
     print(json.dumps({k: v for k, v in out.items() if k != 'history'}), flush=True)
-    json.dump(out, open(P(f'lean_{lat}_{bc}_w{w}_p{p}_{dtype}.json'), 'w'), indent=1)
+    json.dump(out, open(P(f'power_{lat}_{bc}_w{w}_p{p}_{dtype}.json'), 'w'), indent=1)
 
 
 if __name__ == '__main__':

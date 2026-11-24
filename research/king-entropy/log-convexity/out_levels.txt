@@ -73,7 +73,7 @@ B3. two-level formula g(k) + 2 sigma = C (-r_+)^k + 2 C~ cos(pi k/2) r_-^k, all 
   D(14) = -4.712930e-09, 4 C~ cos(pi k/2) r_-^k = -4.713601e-09, ratio 0.99986
   D(16) = +3.405720e-10, 4 C~ cos(pi k/2) r_-^k = +3.405591e-10, ratio 1.00004
   D(18) = -2.460432e-11, 4 C~ cos(pi k/2) r_-^k = -2.460550e-11, ratio 0.99995
-B4. parity splitting Delta_w of the even cylinders (data/lean/*longdouble*) against m_v of w = 22:
+B4. parity splitting Delta_w of the even cylinders (data/power/*longdouble*) against m_v of w = 22:
     local prefactor exponent b_w = [log(Delta_w/Delta_{w-2}) + 2 m_v] / log(w/(w-2))
   w=12: Delta = 2.782917e-05, b_w = -0.4416
   w=14: Delta = 5.124578e-06, b_w = -0.4803

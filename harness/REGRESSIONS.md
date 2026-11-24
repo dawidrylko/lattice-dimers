@@ -135,7 +135,7 @@ A row that names `test` was shown against `harness/testRunner.js`, which is gone
 | defect | fixed in | check that fails | undone as |
 | --- | --- | --- | --- |
 | certified bounds lost their trailing zeros | `214b4b6` | `src/test_regressions.py` (new) | `mp.nstr` in `down` and `up` |
-| `lean.py` ran with a 52-bit `np.longdouble` | `6ef3190` | `src/test_regressions.py` (new); also `lcert.py` | the assert of `lean.py` removed; the same for `lcert.py` |
+| `power.py` ran with a 52-bit `np.longdouble` | `6ef3190` | `src/test_regressions.py` (new); also `lcert.py` | the assert of `power.py` removed; the same for `lcert.py` |
 | `bfile_check.py` assumed 1035 terms | `7b728c5` (#67) | `src/test_regressions.py` (new), which reads the expected length from the b-file | 45 antidiagonals instead of the length of the file |
 | a local `P` shadowed `paths.P` in `zexact.py` | `9ddb2fb` (#33) | `src/test_paths.py` | `Z, P = zexact(...)` |
 | `zexact.py` read the commit from the working directory | `9ddb2fb` (#33) | `src/test_paths.py` | `cwd=ROOT` removed |
