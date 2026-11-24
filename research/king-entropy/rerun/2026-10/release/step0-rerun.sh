@@ -76,16 +76,16 @@ done
 
 # x87 extended precision, written before 6ef3190
 for w in 15 17 19 21; do
-  job "power_cyl_w${w}_p1" "$T python3 src/power.py king cyl $w 1 longdouble cw > logs/log_power_king_cyl_w${w}_p1_longdouble.txt 2> logs/time_power_king_cyl_w${w}_p1_longdouble.txt"
+  job "lean_cyl_w${w}_p1" "$T python3 src/power.py king cyl $w 1 longdouble cw > logs/log_power_king_cyl_w${w}_p1_longdouble.txt 2> logs/time_power_king_cyl_w${w}_p1_longdouble.txt"
 done
 for w in 23 25; do
-  job "power_cyl_w${w}_p1" "$T python3 src/power.py king cyl $w 1 longdouble > logs/log_power_king_cyl_w${w}_p1_longdouble.txt 2> logs/time_power_king_cyl_w${w}_p1_longdouble.txt"
+  job "lean_cyl_w${w}_p1" "$T python3 src/power.py king cyl $w 1 longdouble > logs/log_power_king_cyl_w${w}_p1_longdouble.txt 2> logs/time_power_king_cyl_w${w}_p1_longdouble.txt"
 done
 for w in 14 15 16 17 18 19 20 21 22 23 24; do
-  job "power_free_w${w}" "$T python3 src/power.py king free $w - longdouble > logs/log_power_king_free_w${w}_longdouble.txt 2> logs/time_power_king_free_w${w}_longdouble.txt"
+  job "lean_free_w${w}" "$T python3 src/power.py king free $w - longdouble > logs/log_power_king_free_w${w}_longdouble.txt 2> logs/time_power_king_free_w${w}_longdouble.txt"
 done
 for w in 25 26; do
-  job "power_free_w${w}" "$T python3 src/power.py king free $w - float64 cw > logs/log_power_king_free_w${w}_float64.txt 2> logs/time_power_king_free_w${w}_float64.txt"
+  job "lean_free_w${w}" "$T python3 src/power.py king free $w - float64 cw > logs/log_power_king_free_w${w}_float64.txt 2> logs/time_power_king_free_w${w}_float64.txt"
 done
 
 # exact counts by CRT (every file but zex_king_free_m24_K24.json, which is current)
