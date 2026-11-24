@@ -33,6 +33,7 @@ jobs:
       site-tests: ${{ steps.jobs.outputs.site-tests }}
       macos: ${{ steps.jobs.outputs.macos }}
       research: ${{ steps.jobs.outputs.research }}
+      lean: ${{ steps.jobs.outputs.lean }}
 
     steps:
       - uses: actions/checkout@v7
@@ -52,6 +53,7 @@ jobs:
           SITE_INPUTS: '^(site/|js/|notes/|benchmarks/results/|research/king-entropy/|oeis/A[0-9]{6}/(A[0-9]{6}\.gp|b[0-9]{6}\.txt)$|\.github/assets/)'
           MACOS_INPUTS: '^(js/|site/|\.github/assets/|research/king-entropy/)'
           RESEARCH_INPUTS: '^(research/king-entropy/|research/crossing-polynomial/|oeis/A239264/b239264\.txt$|\.zenodo\.json$)'
+          LEAN_INPUTS: '^research/king-entropy/formal/'
         run: |
           matches() {
             local status=0
@@ -115,6 +117,7 @@ jobs:
           choose site-tests "$SITE_INPUTS"
           choose macos "$MACOS_INPUTS"
           choose research "$RESEARCH_INPUTS"
+          choose lean "$LEAN_INPUTS"
 
   rust:
     name: Rust
@@ -363,10 +366,35 @@ jobs:
         working-directory: research/crossing-polynomial
       - run: python -m json.tool ../../.zenodo.json > /dev/null
 
+  lean:
+    name: Lean
+    needs: changes
+    if: needs.changes.outputs.lean == 'run'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: research/king-entropy/formal
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: research/king-entropy/formal
+          use-mathlib-cache: true
+          build: true
+          test: false
+          lint: false
+      - run: lake env lean Axioms.lean | tee "$RUNNER_TEMP/axioms.txt"
+      - run: |
+          if grep -E 'sorryAx|ofReduceBool' "$RUNNER_TEMP/axioms.txt"; then
+            echo "A theorem depends on sorry or on native_decide." >&2
+            exit 1
+          fi
+
   check:
     name: Check
     if: always()
-    needs: [changes, rust, python, javascript, benchmarks, repository, site-build, site-tests, macos, research]
+    needs: [changes, rust, python, javascript, benchmarks, repository, site-build, site-tests, macos, research, lean]
     runs-on: ubuntu-latest
 
     steps:
