@@ -20,7 +20,7 @@ Give every diagonal piece the weight $x$. The weighted count of the $h \times w$
 P_{h,w}(x) = \sum_k T(h, w, k)\, x^k,
 ```
 
-where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the count of the triangular lattice ([OEIS A401988](https://oeis.org/draft/A401988)). This is the dimer model of Fendley, Moessner and Sondhi [1] with the diagonal dimers given the fugacity $x$.
+where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the count of the triangular lattice ([OEIS A401988](https://oeis.org/A401988)). This is the dimer model of Fendley, Moessner and Sondhi [1] with the diagonal dimers given the fugacity $x$.
 
 ## The Modular solver
 
@@ -185,4 +185,4 @@ The two solvers agree with each other in Rust, Python and JavaScript, with A0040
 ## References
 
 1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)
-2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A004003](https://oeis.org/A004003) and draft entry [OEIS A401988](https://oeis.org/draft/A401988). [oeis.org](https://oeis.org)
+2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A004003](https://oeis.org/A004003) and [OEIS A401988](https://oeis.org/A401988). [oeis.org](https://oeis.org)

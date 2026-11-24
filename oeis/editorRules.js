@@ -1155,7 +1155,6 @@ const RULES = [
 ];
 
 const APPROVED_AS_IS = 'approved with it, and the copy keeps the published text';
-const SYNCED_AFTER_APPROVAL = 'the copy of a draft is synced only after approval';
 const ACCEPTED = [
   {
     entry: 'A239273',
@@ -1197,7 +1196,7 @@ const ACCEPTED = [
     entry: 'A401988',
     rule: 'limit-notation',
     match: 'lim_{n->oo} log(a(n))/(4*n^2) = 0.42859453746...',
-    reason: 'the line is still in the live draft (#14); the copy of a draft is synced only after approval',
+    reason: `${APPROVED_AS_IS} (#15, Sean A. Irvine, 2026-11-23), after Alois P. Heinz wrote Limit_ on A239273 (#55)`,
   },
   {
     entry: 'A402345',
@@ -1209,7 +1208,7 @@ const ACCEPTED = [
     entry: 'A401988',
     rule: 'comment-provenance',
     match: 'A transfer matrix in exact integers gives the same terms.',
-    reason: `the sentence is still in the live draft (#14); ${SYNCED_AFTER_APPROVAL}`,
+    reason: `${APPROVED_AS_IS} (#15, Sean A. Irvine, 2026-11-23), after Andrew Howroyd removed the same comment from A402163`,
   },
 ];
 
