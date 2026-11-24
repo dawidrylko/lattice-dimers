@@ -8,7 +8,7 @@ G(pattern) lists the matching file names (without directory), sorted.
 import glob, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GROUPS = ('eig', 'sec', 'zex', 'lean')
+GROUPS = ('eig', 'sec', 'zex', 'power')
 
 
 def where(name):

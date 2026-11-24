@@ -1,5 +1,5 @@
 """Claim 2, part 2: own eigenvalues against the committed ones of the repository
-(data/lean/*longdouble*.json and *float64*.json, data/eig/*.json, data/sec/*.json).
+(data/power/*longdouble*.json and *float64*.json, data/eig/*.json, data/sec/*.json).
 float64 values are compared through their exact binary value, not their decimal repr.
 
 Run (after analyze_eig.py): python3 compare_eig.py > out/compare_eig.txt
@@ -22,14 +22,14 @@ DATA = os.path.join(HERE, "..", "data")
 def main():
     runs = load()
     rows = []
-    for fn in sorted(glob.glob(os.path.join(DATA, "lean", "lean_king_*.json"))):
+    for fn in sorted(glob.glob(os.path.join(DATA, "power", "power_king_*.json"))):
         d = json.load(open(fn))
         bc, w, p, dtype = d["bc"], int(d["w"]), str(d["parity"]), d["dtype"]
         start = "e0" if bc == "free" else (p if (bc, w, p, "ld") in runs else "0")
         mine = runs.get((bc, w, start, "ld"))
         if mine is None:
             continue
-        rows.append((f"lean {dtype}", bc, w, start if bc == "free" else p, mpmath.mpf(d["log_lambda"]), mine["loglam"]))
+        rows.append((f"power {dtype}", bc, w, start if bc == "free" else p, mpmath.mpf(d["log_lambda"]), mine["loglam"]))
     for fn in sorted(glob.glob(os.path.join(DATA, "eig", "eig_king_cyl_*.json"))):
         d = json.load(open(fn))
         w, p = int(d["w"]), str(d["parity"])

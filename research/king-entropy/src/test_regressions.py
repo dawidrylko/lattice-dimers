@@ -1,5 +1,5 @@
 """Checks for fixed defects of the scripts that no rerun of a committed output covers: the bound
-strings of bounds.py keep 12 decimals (214b4b6), lean.py and lcert.py refuse an np.longdouble that
+strings of bounds.py keep 12 decimals (214b4b6), power.py and lcert.py refuse an np.longdouble that
 is not x87 extended precision (6ef3190), and replication/bfile_check.py reads the number of
 antidiagonals from the A239264 b-file kept in oeis/ (7b728c5). The scripts run unchanged: bounds.py
 contributes only its formatting functions, and the precision guard runs in a temporary copy.
@@ -67,7 +67,7 @@ def bfile_check():
 
 
 fail = 0
-for ok, name in (bound_strings(), precision_guard('lean.py', ['king', 'free', '4', '-', 'longdouble']),
+for ok, name in (bound_strings(), precision_guard('power.py', ['king', 'free', '4', '-', 'longdouble']),
                  precision_guard('lcert.py', ['2', '4']), bfile_check()):
     fail += not ok
     print(f'[{"PASS" if ok else "FAIL"}] {name}')

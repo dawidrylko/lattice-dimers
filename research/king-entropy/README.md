@@ -7,6 +7,8 @@ Scripts, data, outputs, proofs and papers behind the estimate and the rigorous b
 - Proofs of the bounds: [`proofs/lower-bound.md`](proofs/lower-bound.md) and [`proofs/upper-bound.md`](proofs/upper-bound.md).
 - Release on Zenodo: [`release/ZENODO.md`](release/ZENODO.md).
 
+The power iteration `src/power.py` and its files `data/power/power_*.json`, `logs/log_power_*.txt` and `logs/time_power_*.txt` were named `src/lean.py`, `data/lean/lean_*.json` and `logs/*_lean_*.txt` until November 2026, so the paper and the `cmd` field and `# cmd` line of the runs made before then still give the old names.
+
 All commands below run from this directory with Python 3.13, and paths in the notes and in `paper/NUMBERS.md` are relative to it. The license of each part is in the [root README](../../README.md#license).
 
 ## Layout
@@ -14,7 +16,7 @@ All commands below run from this directory with Python 3.13, and paths in the no
 | directory | contents |
 | --- | --- |
 | [`src/`](src) | the scripts and `src/requirements.txt`; `src/paths.py` maps every file name to its directory |
-| [`data/`](data) | JSON results: `data/eig/`, `data/sec/`, `data/zex/` and `data/lean/` by file prefix, the rest at the top |
+| [`data/`](data) | JSON results: `data/eig/`, `data/sec/`, `data/zex/` and `data/power/` by file prefix, the rest at the top |
 | [`out/`](out) | `out/out_*.txt`, the printed output of each script |
 | [`logs/`](logs) | `logs/log_*.txt` progress logs and `logs/time_*.txt` wall time and peak RSS |
 | [`proofs/`](proofs) | the proofs of the rigorous bounds |
@@ -48,10 +50,10 @@ python3 -m pip install -r src/requirements.txt
 | `src/estimate.py` | first-pass estimate of s from all cylinders, the final value read from `data/errbar.json`, Z2 splitting table and decay length; writes `data/z2.json` |
 | `src/timed.py` | runs a command and appends wall time and peak RSS (MiB on Linux and macOS) to stderr; `src/test_timed.py` checks the unit |
 | `src/paths.py` | the directory of each file by its name, so the scripts read and write the right place from any working directory |
-| `src/test_paths.py` | smoke test: `src/tm2.py`, `src/cylw.py`, `src/lean.py`, `src/zexact.py` on tiny inputs from another directory write where `src/paths.py` says and record the commit |
-| `src/test_regressions.py` | checks for fixed defects that no rerun of an output covers: 12-decimal bound strings of `src/bounds.py`, the x87 guard of `src/lean.py` and `src/lcert.py`, and `replication/bfile_check.py` on the b-file in `oeis/A239264/` |
+| `src/test_paths.py` | smoke test: `src/tm2.py`, `src/cylw.py`, `src/power.py`, `src/zexact.py` on tiny inputs from another directory write where `src/paths.py` says and record the commit |
+| `src/test_regressions.py` | checks for fixed defects that no rerun of an output covers: 12-decimal bound strings of `src/bounds.py`, the x87 guard of `src/power.py` and `src/lcert.py`, and `replication/bfile_check.py` on the b-file in `oeis/A239264/` |
 | `src/zexact.py` | exact Z(k, m), k <= K, by CRT over 60-bit primes; writes `data/zex/zex_*.json` |
-| `src/lean.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/lean/lean_*.json` |
+| `src/power.py` | power iteration with two buffers, float64 or x87 extended precision; writes `data/power/power_*.json` |
 | `src/audit_bounds.py` | exact audit of both strip bounds and of the float certificates (`proofs/*-bound.md`) |
 | `src/errbar.py` | error budget of s on the extended-precision cylinders: Luscher main model, other models, predictive backtests, hidden-mode, gap and rounding terms; writes `data/errbar.json` |
 | `src/hidden_oos.py` | out-of-sample check of the hidden mode against w = 27 from the independent code in `replication/` (not part of the budget) |
@@ -98,7 +100,7 @@ python3 src/timed.py python3 src/crosscheck.py > out/out_crosscheck.txt 2> logs/
 python3 src/timed.py python3 src/bounds.py 24  > out/out_bounds.txt     2> logs/time_bounds.txt
 python3 src/timed.py python3 src/runweight.py 3state $(seq 2 23) > out/out_runweight_3state.txt 2> logs/time_runweight_3state.txt
 python3 src/timed.py python3 src/runweight.py 3state 24 --disk /tmp 2> logs/time_runweight_3state_w24.txt | tail -1 >> out/out_runweight_3state.txt
-python3 src/errbar.py > out/out_errbar.txt       # needs data/lean/lean_king_cyl_w*_p*_longdouble.json
+python3 src/errbar.py > out/out_errbar.txt       # needs data/power/power_king_cyl_w*_p*_longdouble.json
 python3 src/hidden_oos.py > out/out_hidden_oos.txt   # needs the same and replication/out/eig_summary.json
 python3 src/estimate.py > out/out_estimate.txt   # needs data/errbar.json
 python3 src/timed.py python3 src/cw.py > out/out_cw.txt 2> logs/time_cw.txt   # needs data/bounds.json and data/z2.json
@@ -107,7 +109,7 @@ python3 src/timed.py python3 src/cw.py > out/out_cw.txt 2> logs/time_cw.txt   # 
 Peak memory: about 1.1 GiB at w = 22, 2.2 GiB at w = 23, 4.3 GiB at w = 24
 and 8.4 GiB at w = 25 per `src/cylw.py` process (`out/out_estimate.txt`, cost table).
 
-Audit, error bar and (L) (each writes `out/out_<name>.txt`; `src/zexact.py`/`src/lean.py` runs as listed in `paper/NUMBERS.md`):
+Audit, error bar and (L) (each writes `out/out_<name>.txt`; `src/zexact.py`/`src/power.py` runs as listed in `paper/NUMBERS.md`):
 
 ```sh
 python3 src/audit_bounds.py > out/out_audit_bounds.txt
