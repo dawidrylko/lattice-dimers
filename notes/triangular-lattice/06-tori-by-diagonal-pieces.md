@@ -1,4 +1,4 @@
-# Diagonal pieces: triangular lattice tilings of tori by their count (not in the OEIS)
+# Diagonal pieces: triangular lattice tilings of the 2n × 2n torus by their count (not in the OEIS)
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori-by-diagonal-pieces.html) has the results. It sorts the tilings of the triangular lattice on tori by the number of diagonal pieces, as the [rectangles notebook](04-rectangles-by-diagonal-pieces.md) does on the board with no glued edge. The tilings themselves are counted in the [tori notebook](03-tori.md).
 

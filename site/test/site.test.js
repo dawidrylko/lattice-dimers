@@ -161,7 +161,7 @@ const NOTES = [
     slug: 'domicules/tori-by-diagonal-pieces',
     cells: 3, figures: 1,
     group: 'Domicules',
-    h1: 'Diagonal pieces: domicule tilings of tori by their count (not in the OEIS)',
+    h1: 'Diagonal pieces: domicule tilings of the 2n × 2n torus by their count (not in the OEIS)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
   },
   {
@@ -203,7 +203,7 @@ const NOTES = [
     slug: 'triangular-lattice/tori-by-diagonal-pieces',
     cells: 2, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Diagonal pieces: triangular lattice tilings of tori by their count (not in the OEIS)',
+    h1: 'Diagonal pieces: triangular lattice tilings of the 2n × 2n torus by their count (not in the OEIS)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
   },
 ];
