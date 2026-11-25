@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
-const { checkConsistency, checkFile, checkSnapshot, listReferenceFiles, readSnapshot } = require('./references');
+const { checkAdjacent, checkConsistency, checkFile, checkSnapshot, listReferenceFiles, readSnapshot } = require('./references');
 
 const files = listReferenceFiles();
 const snapshot = readSnapshot();
@@ -12,6 +12,11 @@ test(`${files.length} References sections match their DOI records and are number
   );
 });
 
+test('two citations side by side are one citation [n, m]', () => {
+  assert.deepEqual(checkAdjacent('note.md', 'Fisher [1, 2], Kasteleyn [2] and `[1], [2]` in code.'), []);
+  assert.equal(checkAdjacent('note.md', 'Fisher [1], [2], Kasteleyn [1] [2], Fisher [1]; [2] and Kasteleyn [1],\n[2].').length, 4);
+});
+
 test('a work cited by several notes reads the same in each', () => {
   assert.deepEqual(checkConsistency(files), []);
 });
@@ -20,7 +25,7 @@ test('harness/references.json keeps only the DOIs the notes cite', () => {
   assert.deepEqual(checkSnapshot(files, snapshot), []);
 });
 
-test('the site links each citation to its item in References', async () => {
+test('the site sets each citation as a superscript linked to its item in References', async () => {
   const { renderNote } = require('../site/notes');
   const markdown = [
     '# Note',
@@ -42,10 +47,10 @@ test('the site links each citation to its item in References', async () => {
   ].join('\n');
   const { html } = await renderNote(markdown, { resolveLink: href => href, context: {} });
 
-  assert.match(html, /Kasteleyn \[<a href="#reference-2">2<\/a>\] and Fisher \[<a href="#reference-1">1<\/a>, <a href="#reference-2">2<\/a>\]/);
-  assert.match(html, /<td>table \[<a href="#reference-1">1<\/a>\]<\/td>/);
-  assert.match(html, /<blockquote>quoted \[<a href="#reference-2">2<\/a>\]<\/blockquote>/);
-  assert.match(html, /<li>listed \[<a href="#reference-1">1<\/a>\]<\/li>/);
+  assert.match(html, /Kasteleyn<sup class="citation">\[<a href="#reference-2">2<\/a>\]<\/sup> and Fisher<sup class="citation">\[<a href="#reference-1">1<\/a>, <a href="#reference-2">2<\/a>\]<\/sup> count/);
+  assert.match(html, /<td>table<sup class="citation">\[<a href="#reference-1">1<\/a>\]<\/sup><\/td>/);
+  assert.match(html, /<blockquote>quoted<sup class="citation">\[<a href="#reference-2">2<\/a>\]<\/sup><\/blockquote>/);
+  assert.match(html, /<li>listed<sup class="citation">\[<a href="#reference-1">1<\/a>\]<\/sup><\/li>/);
   assert.match(html, /<code>\[3\]<\/code>/);
   assert.match(html, /data-tex="\[1\]"/);
   assert.match(html, /and \[3\] is no reference/);

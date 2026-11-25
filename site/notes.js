@@ -37,11 +37,11 @@ function renderInline(text, resolveLink, tokens = null, referenceCount = 0) {
     text
       .replace(/`([^`]+)`/g, (_, code) => keep(`<code>${escapeHtml(code)}</code>`))
       .replace(/\$([^$\s](?:[^$\n]*?[^$\s])?)\$(?!\d)/g, (_, tex) => keep(`<span class="math" data-tex="${escapeHtml(tex)}">${escapeHtml(tex)}</span>`))
-      .replace(/\[(\d+(?:, \d+)*)\](?![(\[])/g, (citation, numbers) => {
+      .replace(/ ?\[(\d+(?:, \d+)*)\](?![(\[])/g, (citation, numbers) => {
         const cited = numbers.split(', ').map(Number);
 
         return cited.every(number => number >= 1 && number <= referenceCount)
-          ? keep(`[${cited.map(number => `<a href="#reference-${number}">${number}</a>`).join(', ')}]`)
+          ? keep(`<sup class="citation">[${cited.map(number => `<a href="#reference-${number}">${number}</a>`).join(', ')}]</sup>`)
           : citation;
       })
       .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, label, href) =>
