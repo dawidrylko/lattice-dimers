@@ -5,6 +5,7 @@ Scripts, data, outputs, proofs and papers behind the estimate and the rigorous b
 - Paper: [`paper/king-entropy.pdf`](paper/king-entropy.pdf), source [`paper/king-entropy.tex`](paper/king-entropy.tex); companion note [`paper/king-entropy-log-convexity.pdf`](paper/king-entropy-log-convexity.pdf).
 - [`paper/NUMBERS.md`](paper/NUMBERS.md) maps every number of both papers to the output file and the script that wrote it.
 - Proofs of the bounds: [`proofs/lower-bound.md`](proofs/lower-bound.md) and [`proofs/upper-bound.md`](proofs/upper-bound.md).
+- Lean proofs of part of the lower bound, for width 6: [`formal/`](formal/README.md).
 - Release on Zenodo: [`release/ZENODO.md`](release/ZENODO.md).
 
 The power iteration `src/power.py` and its files `data/power/power_*.json`, `logs/log_power_*.txt` and `logs/time_power_*.txt` were named `src/lean.py`, `data/lean/lean_*.json` and `logs/*_lean_*.txt` until November 2026, so the paper and the `cmd` field and `# cmd` line of the runs made before then still give the old names.
