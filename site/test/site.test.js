@@ -175,7 +175,7 @@ const NOTES = [
     slug: 'triangular-lattice/cylinders',
     cells: 3, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Triangular lattice: tilings of cylinders and of the 2n × 2n cylinder (A002605)',
+    h1: 'Triangular lattice: tilings of cylinders and of the 2n × 2n cylinder (A002605 on the cylinder of circumference 2)',
     sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Verification', 'References'],
   },
   {
