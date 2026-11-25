@@ -112,7 +112,7 @@ const NOTES = [
     slug: 'dominoes/cylinders',
     cells: 6, figures: 1,
     group: 'Dominoes',
-    h1: 'Dominoes: tilings of cylinders (A000129, A004253, A006253, A003729, A028477, A028478, A028479, A402345)',
+    h1: 'Dominoes: tilings of cylinders and of the 2n × 2n cylinder (A000129, A004253, A006253, A003729, A028477, A028478, A028479, A402345)',
     sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'PARI/GP', 'Verification', 'References'],
   },
   {
@@ -133,7 +133,7 @@ const NOTES = [
     slug: 'domicules/cylinders',
     cells: 5, figures: 1,
     group: 'Domicules',
-    h1: 'Domicules: tilings of cylinders (A002532, A062510, A402163)',
+    h1: 'Domicules: tilings of cylinders and of the 2n × 2n cylinder (A002532, A062510, A402163)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'PARI/GP', 'Verification', 'References'],
   },
   {
@@ -161,7 +161,7 @@ const NOTES = [
     slug: 'domicules/tori-by-diagonal-pieces',
     cells: 3, figures: 1,
     group: 'Domicules',
-    h1: 'Diagonal pieces: domicule tilings of tori by their count (not in the OEIS)',
+    h1: 'Diagonal pieces: domicule tilings of the 2n × 2n torus by their count (not in the OEIS)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
   },
   {
@@ -175,7 +175,7 @@ const NOTES = [
     slug: 'triangular-lattice/cylinders',
     cells: 3, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Triangular lattice: tilings of cylinders (A002605)',
+    h1: 'Triangular lattice: tilings of cylinders and of the 2n × 2n cylinder (A002605 on the cylinder of circumference 2)',
     sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Verification', 'References'],
   },
   {
@@ -203,7 +203,7 @@ const NOTES = [
     slug: 'triangular-lattice/tori-by-diagonal-pieces',
     cells: 2, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Diagonal pieces: triangular lattice tilings of tori by their count (not in the OEIS)',
+    h1: 'Diagonal pieces: triangular lattice tilings of the 2n × 2n torus by their count (not in the OEIS)',
     sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
   },
 ];

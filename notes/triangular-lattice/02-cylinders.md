@@ -1,4 +1,4 @@
-# Triangular lattice: tilings of cylinders (A002605)
+# Triangular lattice: tilings of cylinders and of the 2n × 2n cylinder (A002605 on the cylinder of circumference 2)
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html) has the results. It counts the perfect matchings of the triangular lattice on cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom. The project counts this lattice for comparison with [dominoes](../dominoes/02-cylinders.md) and [domicules](../domicules/02-cylinders.md) on the same boards. The [rectangles notebook](01-rectangles.md) counts it on boards with no glued edge, and the [tori notebook](03-tori.md) glues both pairs of edges.
 
@@ -65,7 +65,7 @@ table(
 
 ## What the OEIS has
 
-The OEIS has the cylinders of circumference 2, [OEIS A002605](https://oeis.org/A002605), shifted by one [1]. The cell checks it against the table, with the terms of the entry as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 and 4.
+The OEIS has the cylinders of circumference 2, [OEIS A002605](https://oeis.org/A002605), shifted by one [1]. The cell checks it against the table, with the terms of the entry as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 and 4, and a search by the terms 6, 412, 905608, 65144171024 on 25 November 2026 found none for the $2n \times 2n$ cylinders, the square boards of the table.
 
 ```js run
 const terms = [0n, 1n];
