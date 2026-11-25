@@ -1,4 +1,4 @@
-# Triangular lattice: tilings of the 2n × 2n board (A401988)
+# Triangular lattice: tilings of the 2n × 2n board
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html) has the results. It counts the perfect matchings of the triangular lattice on the $2n \times 2n$ board and on $h \times w$ rectangles, boards with no glued edges. The project counts this lattice for comparison with [dominoes](../dominoes/01-rectangles.md) and [domicules](../domicules/01-rectangles.md) on the same boards. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) glue the edges.
 
@@ -142,6 +142,12 @@ Every count on this page is checked in more than one independent way:
 - the modular solver checks every result against an extra prime.
 
 The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests).
+
+## The OEIS entries
+
+- [OEIS A401988](https://oeis.org/A401988): the tilings of the $2n \times 2n$ board, the counts of this notebook.
+- [OEIS A309117](https://oeis.org/A309117): the row $h = 4$ of the table.
+- [OEIS A011900](https://oeis.org/A011900): the row $h = 3$ at even $w$.
 
 ## References
 1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)

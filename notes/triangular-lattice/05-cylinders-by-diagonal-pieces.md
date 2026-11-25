@@ -1,4 +1,4 @@
-# Diagonal pieces: triangular lattice tilings of cylinders by their count (not in the OEIS)
+# Diagonal pieces: triangular lattice tilings of cylinders by their count
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders-by-diagonal-pieces.html) has the results. It sorts the tilings of the triangular lattice on cylinders by the number of diagonal pieces, as the [rectangles notebook](04-rectangles-by-diagonal-pieces.md) does on the board with no glued edge. The tilings themselves are counted in the [cylinders notebook](02-cylinders.md).
 
@@ -77,6 +77,10 @@ print(`The 4 × 4 cylinder, k = 0, 1, 2, ...: ${stored.find(({ side }) => side =
 ## Verification
 
 The two solvers agree with each other in Rust, Python and JavaScript, with the domino count of `any-lattice-cylinder-torus-bigint` at $k = 0$ and with its triangular count summed over $k$, on the cylinders of up to 20 cells with every tiling listed one by one, and on the king's graph with the domicule polynomial. The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
+
+## The OEIS entries
+
+The OEIS has no entry for these counts.
 
 ## References
 

@@ -1,4 +1,4 @@
-# Dominoes: tilings of cylinders and of the 2n × 2n cylinder (A000129, A004253, A006253, A003729, A028477, A028478, A028479, A402345)
+# Dominoes: tilings of cylinders and of the 2n × 2n cylinder
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html) has the results. It counts the domino tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom. The same boards are counted on the [triangular lattice](../triangular-lattice/02-cylinders.md) and with [domicules](../domicules/02-cylinders.md); the [rectangles notebook](01-rectangles.md) counts dominoes on boards with no glued edge.
 
@@ -63,74 +63,6 @@ table(
 );
 ```
 
-## What the OEIS has
-
-Every row of the table is in the OEIS: the Pell numbers [OEIS A000129](https://oeis.org/A000129), shifted by one, for circumference 2, and the domino tilings of $C_w \times P_h$ for the others, [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478) and [OEIS A028479](https://oeis.org/A028479) for $w = 3$ to $8$ [2]; the entries of odd circumference list only the even heights. The cell checks every one of these against the table, with the terms of the entries as they stood on 1 November 2026.
-
-```js run
-const pell = [0n, 1n];
-
-while (pell.length <= nb.heights.length) {
-  pell.push(2n * pell.at(-1) + pell.at(-2));
-}
-
-const fromHeight = (terms, step = 1, first = 0) => new Map(terms.map((term, i) => [first + step * i, term]));
-const entries = [
-  [2, 'A000129', fromHeight(pell.slice(1))],
-  [3, 'A004253', fromHeight([1n, 4n, 19n, 91n, 436n], 2)],
-  [4, 'A006253', fromHeight([1n, 2n, 9n, 32n, 121n, 450n, 1681n, 6272n, 23409n])],
-  [5, 'A003729', fromHeight([11n, 176n, 2911n, 48301n], 2, 2)],
-  [6, 'A028477', fromHeight([1n, 2n, 20n, 108n, 725n, 4480n, 28561n, 179928n, 1138660n])],
-  [7, 'A028478', fromHeight([1n, 29n, 1471n, 79808n, 4375897n], 2)],
-  [8, 'A028479', fromHeight([1n, 2n, 49n, 392n, 5041n, 51842n, 591361n, 6422528n, 71385601n])],
-];
-const rows = [];
-
-for (const [w, entry, terms] of entries) {
-  const differs = [...terms].filter(([h, term]) => nb.count(w, h) !== term);
-
-  if (differs.length) {
-    throw new Error(`the cylinders of circumference ${w} differ from ${entry} at h = ${differs.map(([h]) => h).join(', ')}`);
-  }
-
-  rows.push([`w = ${w}`, entry, `h = ${[...terms.keys()].join(', ')}`]);
-}
-
-table(['board', 'OEIS', 'checked at'], rows);
-```
-
-The $2n \times 2n$ cylinders are the entry [OEIS A402345](https://oeis.org/A402345) [2], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the rows above hold $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $14 \times 14$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ and $40 \times 40$ with the Pfaffian one.
-
-```js run
-const bFile = require('fs')
-  .readFileSync(require('path').join(nb.context.root, 'oeis/A402345/b402345.txt'), 'utf-8')
-  .trim()
-  .split('\n')
-  .map(line => BigInt(line.split(' ')[1]));
-const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-cylinder-torus-pfaffian.js');
-const sides = [2, 4, 6, 8, 10, 12, 14];
-const pfaffianSides = [...sides, 16, 18, 20, 40];
-const diagonal = sides.filter(w => nb.count(w, w) !== bFile[w / 2]);
-
-for (const w of pfaffianSides) {
-  if ((await calculateTotalTilingCombinations({ rowCount: w, colCount: w, lattice: 'square' })) !== bFile[w / 2]) {
-    diagonal.push(w);
-  }
-}
-
-if (diagonal.length) {
-  throw new Error(`the 2n × 2n cylinders differ from A402345 at 2n = ${diagonal.join(', ')}`);
-}
-
-table(
-  ['board', 'OEIS', 'solver', 'checked at'],
-  [
-    ['w = h = 2n', 'A402345', 'BigInt', `2n = ${sides.join(', ')}`],
-    ['w = h = 2n', 'A402345', 'Pfaffian', `2n = ${pfaffianSides.join(', ')}`],
-  ],
-);
-```
-
 ## Running time
 
 Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../../benchmarks/results).
@@ -166,7 +98,84 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 
 ## Verification
 
-The `BigInt` solver agrees with every OEIS entry above, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. The Pfaffian solver also agrees with A402345 up to $20 \times 20$ and at $40 \times 40$, the largest board it takes. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
+The `BigInt` solver agrees with every OEIS entry below, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. The Pfaffian solver also agrees with A402345 up to $20 \times 20$ and at $40 \times 40$, the largest board it takes. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
+
+## The OEIS entries
+
+- [OEIS A000129](https://oeis.org/A000129): the Pell numbers, shifted by one: the cylinders of circumference 2.
+- [OEIS A004253](https://oeis.org/A004253): the cylinders $C_3 \times P_h$, at even heights.
+- [OEIS A006253](https://oeis.org/A006253): the cylinders $C_4 \times P_h$.
+- [OEIS A003729](https://oeis.org/A003729): the cylinders $C_5 \times P_h$, at even heights.
+- [OEIS A028477](https://oeis.org/A028477): the cylinders $C_6 \times P_h$.
+- [OEIS A028478](https://oeis.org/A028478): the cylinders $C_7 \times P_h$, at even heights.
+- [OEIS A028479](https://oeis.org/A028479): the cylinders $C_8 \times P_h$.
+- [OEIS A402345](https://oeis.org/A402345): the $2n \times 2n$ cylinders.
+
+Every row of the table is in the OEIS [2]. The cell checks each row against its entry, with the terms as they stood on 1 November 2026.
+
+```js run
+const pell = [0n, 1n];
+
+while (pell.length <= nb.heights.length) {
+  pell.push(2n * pell.at(-1) + pell.at(-2));
+}
+
+const fromHeight = (terms, step = 1, first = 0) => new Map(terms.map((term, i) => [first + step * i, term]));
+const entries = [
+  [2, 'A000129', fromHeight(pell.slice(1))],
+  [3, 'A004253', fromHeight([1n, 4n, 19n, 91n, 436n], 2)],
+  [4, 'A006253', fromHeight([1n, 2n, 9n, 32n, 121n, 450n, 1681n, 6272n, 23409n])],
+  [5, 'A003729', fromHeight([11n, 176n, 2911n, 48301n], 2, 2)],
+  [6, 'A028477', fromHeight([1n, 2n, 20n, 108n, 725n, 4480n, 28561n, 179928n, 1138660n])],
+  [7, 'A028478', fromHeight([1n, 29n, 1471n, 79808n, 4375897n], 2)],
+  [8, 'A028479', fromHeight([1n, 2n, 49n, 392n, 5041n, 51842n, 591361n, 6422528n, 71385601n])],
+];
+const rows = [];
+
+for (const [w, entry, terms] of entries) {
+  const differs = [...terms].filter(([h, term]) => nb.count(w, h) !== term);
+
+  if (differs.length) {
+    throw new Error(`the cylinders of circumference ${w} differ from ${entry} at h = ${differs.map(([h]) => h).join(', ')}`);
+  }
+
+  rows.push([`w = ${w}`, entry, `h = ${[...terms.keys()].join(', ')}`]);
+}
+
+table(['board', 'OEIS', 'checked at'], rows);
+```
+
+The $2n \times 2n$ cylinders are the entry [OEIS A402345](https://oeis.org/A402345) [2], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the table of The counts holds $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $14 \times 14$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ and $40 \times 40$ with the Pfaffian one.
+
+```js run
+const bFile = require('fs')
+  .readFileSync(require('path').join(nb.context.root, 'oeis/A402345/b402345.txt'), 'utf-8')
+  .trim()
+  .split('\n')
+  .map(line => BigInt(line.split(' ')[1]));
+const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-cylinder-torus-pfaffian.js');
+const sides = [2, 4, 6, 8, 10, 12, 14];
+const pfaffianSides = [...sides, 16, 18, 20, 40];
+const diagonal = sides.filter(w => nb.count(w, w) !== bFile[w / 2]);
+
+for (const w of pfaffianSides) {
+  if ((await calculateTotalTilingCombinations({ rowCount: w, colCount: w, lattice: 'square' })) !== bFile[w / 2]) {
+    diagonal.push(w);
+  }
+}
+
+if (diagonal.length) {
+  throw new Error(`the 2n × 2n cylinders differ from A402345 at 2n = ${diagonal.join(', ')}`);
+}
+
+table(
+  ['board', 'OEIS', 'solver', 'checked at'],
+  [
+    ['w = h = 2n', 'A402345', 'BigInt', `2n = ${sides.join(', ')}`],
+    ['w = h = 2n', 'A402345', 'Pfaffian', `2n = ${pfaffianSides.join(', ')}`],
+  ],
+);
+```
 
 ## References
 1. L. Lovász and M. D. Plummer. Determinants and matchings. Chapter 8 of *Matching Theory*, North-Holland Mathematics Studies 121 and Annals of Discrete Mathematics 29, North-Holland, Amsterdam, pp. 307-355, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322. [doi:10.1016/S0304-0208(08)73644-2](https://doi.org/10.1016/S0304-0208%2808%2973644-2)

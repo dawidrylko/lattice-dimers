@@ -1,4 +1,4 @@
-# Triangular lattice: tilings of cylinders and of the 2n × 2n cylinder (A002605 on the cylinder of circumference 2, A402693)
+# Triangular lattice: tilings of cylinders and of the 2n × 2n cylinder
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html) has the results. It counts the perfect matchings of the triangular lattice on cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom. The project counts this lattice for comparison with [dominoes](../dominoes/02-cylinders.md) and [domicules](../domicules/02-cylinders.md) on the same boards. The [rectangles notebook](01-rectangles.md) counts it on boards with no glued edge, and the [tori notebook](03-tori.md) glues both pairs of edges.
 
@@ -63,9 +63,24 @@ table(
 );
 ```
 
-## What the OEIS has
+## PARI/GP
 
-The OEIS has the cylinders of circumference 2, [OEIS A002605](https://oeis.org/A002605), shifted by one [3]. The cell checks it against the table, with the terms of the entry as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 and 4, and a search by the terms 6, 412, 905608, 65144171024 on 25 November 2026 found none for the $2n \times 2n$ cylinders, the square boards of the table. They became the draft [OEIS A402693](https://oeis.org/draft/A402693) the same day.
+[`oeis/A402693/A402693.gp`](../../oeis/A402693/A402693.gp) counts the $2n \times 2n$ cylinder as the larger of the two Kasteleyn determinants, with and without the sign on the seam. CI checks it against the square triangular cylinders of the test data up to $16 \times 16$.
+
+```js run
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402693/A402693.gp'), 'utf-8').trim());
+```
+
+## Verification
+
+The `BigInt` solver agrees with A002605, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. The Pfaffian solver also agrees with A402693 up to $20 \times 20$ and at $40 \times 40$, the largest board it takes. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
+
+## The OEIS entries
+
+- [OEIS A002605](https://oeis.org/A002605): the cylinders of circumference 2, shifted by one.
+- [OEIS A402693](https://oeis.org/draft/A402693): the $2n \times 2n$ cylinders, a draft.
+
+The first is in the OEIS [3] as a row of the table. The cell checks it against the table, with the terms of the entry as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 and 4, and a search by the terms 6, 412, 905608, 65144171024 on 25 November 2026 found none for the $2n \times 2n$ cylinders, the square boards of the table. They became the draft A402693 the same day.
 
 ```js run
 const terms = [0n, 1n];
@@ -114,18 +129,6 @@ table(
   ],
 );
 ```
-
-## PARI/GP
-
-[`oeis/A402693/A402693.gp`](../../oeis/A402693/A402693.gp) counts the $2n \times 2n$ cylinder as the larger of the two Kasteleyn determinants, with and without the sign on the seam. CI checks it against the square triangular cylinders of the test data up to $16 \times 16$.
-
-```js run
-print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402693/A402693.gp'), 'utf-8').trim());
-```
-
-## Verification
-
-The `BigInt` solver agrees with A002605, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. The Pfaffian solver also agrees with A402693 up to $20 \times 20$ and at $40 \times 40$, the largest board it takes. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
 
 ## References
 1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)

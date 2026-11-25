@@ -1,4 +1,4 @@
-# Diagonal pieces: triangular lattice tilings of the 2n × 2n board by their count (not in the OEIS)
+# Diagonal pieces: triangular lattice tilings of the 2n × 2n board by their count
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles-by-diagonal-pieces.html) has the results. It sorts the tilings of the triangular lattice on the $2n \times 2n$ board by the number of diagonal pieces, as the [domicule notebook](../domicules/04-rectangles-by-diagonal-pieces.md) sorts the domicule tilings. The tilings themselves are counted in the [rectangles notebook](01-rectangles.md). The [cylinders](05-cylinders-by-diagonal-pieces.md) and [tori](06-tori-by-diagonal-pieces.md) are sorted the same way in notebooks of their own.
 
@@ -181,6 +181,13 @@ chart({
 ## Verification
 
 The two solvers agree with each other in Rust, Python and JavaScript, with A004003 at $k = 0$ and with A401988 summed over $k$, on the rectangles of up to 20 cells with every tiling listed one by one, and on the king's graph and the square lattice with the domicule polynomial and the domino count. The numbering by diagonal pieces is checked against these counts up to $6 \times 6$, its first and last tiling of every $k$ for coverage, for the number of diagonal pieces and for the missing down-left diagonal, and on the $4 \times 4$ board for the order of the full numbering. The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
+
+## The OEIS entries
+
+The triangle of these counts is not in the OEIS. Its column $k = 0$ and its row sums are:
+
+- [OEIS A004003](https://oeis.org/A004003): its column $k = 0$, $P(0)$.
+- [OEIS A401988](https://oeis.org/A401988): its row sums, $P(1)$.
 
 ## References
 1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A004003](https://oeis.org/A004003) and [OEIS A401988](https://oeis.org/A401988). [oeis.org](https://oeis.org)

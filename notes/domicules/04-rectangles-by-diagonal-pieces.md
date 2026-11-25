@@ -1,4 +1,4 @@
-# Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)
+# Diagonal pieces: domicule tilings of the 2n × 2n board by their count
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles-by-diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/A401673) [1]. The [cylinders](05-cylinders-by-diagonal-pieces.md) and [tori](06-tori-by-diagonal-pieces.md) are sorted the same way in notebooks of their own.
 
@@ -195,6 +195,13 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 ## Verification
 
 The two solvers agree with each other, with A004003 at $k = 0$ and with A239273 summed over $k$. The PARI/GP program runs in CI against the same data. The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
+
+## The OEIS entries
+
+- [OEIS A401673](https://oeis.org/A401673): the triangle of the counts of this notebook.
+- [OEIS A239273](https://oeis.org/A239273): its row sums, $P(1)$.
+- [OEIS A004003](https://oeis.org/A004003): its column $k = 0$, $P(0)$.
+- [OEIS A011379](https://oeis.org/A011379): the counts $T(n, n^2 - 1)$.
 
 ## References
 1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A401673](https://oeis.org/A401673), [OEIS A004003](https://oeis.org/A004003), [OEIS A239273](https://oeis.org/A239273) and [OEIS A011379](https://oeis.org/A011379). [oeis.org](https://oeis.org)

@@ -1,4 +1,4 @@
-# Domicules: tilings of the 2n × 2n board (A239273)
+# Domicules: tilings of the 2n × 2n board
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html) has the results. It counts the domicule tilings of the $2n \times 2n$ board, [OEIS A239273](https://oeis.org/A239273), and of the $h \times w$ rectangles, [OEIS A239264](https://oeis.org/A239264) [1]. It also says how the gallery numbers and samples these tilings, and how every number is checked. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) count domicules on boards with glued edges, the same boards are counted on the [triangular lattice](../triangular-lattice/01-rectangles.md), and [Rectangles by diagonal pieces](04-rectangles-by-diagonal-pieces.md) sorts the tilings by their diagonal pieces.
 
@@ -205,6 +205,11 @@ Every count on this page is checked in more than one independent way:
 - the modular solver checks every result against an extra prime.
 
 The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
+
+## The OEIS entries
+
+- [OEIS A239273](https://oeis.org/A239273): the domicule tilings of the $2n \times 2n$ board, the counts of this notebook.
+- [OEIS A239264](https://oeis.org/A239264): the domicule tilings of the $h \times w$ rectangles.
 
 ## References
 1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A239264](https://oeis.org/A239264) and [OEIS A239273](https://oeis.org/A239273). [oeis.org](https://oeis.org)
