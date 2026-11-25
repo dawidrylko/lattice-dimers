@@ -20,7 +20,7 @@ test('harness/references.json keeps only the DOIs the notes cite', () => {
   assert.deepEqual(checkSnapshot(files, snapshot), []);
 });
 
-test('the site links each citation to its item in References', async () => {
+test('the site sets each citation as a superscript linked to its item in References', async () => {
   const { renderNote } = require('../site/notes');
   const markdown = [
     '# Note',
@@ -42,10 +42,10 @@ test('the site links each citation to its item in References', async () => {
   ].join('\n');
   const { html } = await renderNote(markdown, { resolveLink: href => href, context: {} });
 
-  assert.match(html, /Kasteleyn \[<a href="#reference-2">2<\/a>\] and Fisher \[<a href="#reference-1">1<\/a>, <a href="#reference-2">2<\/a>\]/);
-  assert.match(html, /<td>table \[<a href="#reference-1">1<\/a>\]<\/td>/);
-  assert.match(html, /<blockquote>quoted \[<a href="#reference-2">2<\/a>\]<\/blockquote>/);
-  assert.match(html, /<li>listed \[<a href="#reference-1">1<\/a>\]<\/li>/);
+  assert.match(html, /Kasteleyn<sup class="citation">\[<a href="#reference-2">2<\/a>\]<\/sup> and Fisher<sup class="citation">\[<a href="#reference-1">1<\/a>, <a href="#reference-2">2<\/a>\]<\/sup> count/);
+  assert.match(html, /<td>table<sup class="citation">\[<a href="#reference-1">1<\/a>\]<\/sup><\/td>/);
+  assert.match(html, /<blockquote>quoted<sup class="citation">\[<a href="#reference-2">2<\/a>\]<\/sup><\/blockquote>/);
+  assert.match(html, /<li>listed<sup class="citation">\[<a href="#reference-1">1<\/a>\]<\/sup><\/li>/);
   assert.match(html, /<code>\[3\]<\/code>/);
   assert.match(html, /data-tex="\[1\]"/);
   assert.match(html, /and \[3\] is no reference/);
