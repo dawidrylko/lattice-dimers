@@ -198,6 +198,12 @@ function checkItem(where, item, snapshot) {
   return checkDoiItem(where, match.groups, snapshot);
 }
 
+function checkAdjacent(file, body) {
+  return [...stripCode(body).matchAll(/\[\d+(?:, \d+)*\][,;]?\s+\[\d+(?:, \d+)*\](?![(\[])/g)].map(
+    ([pair]) => `${file} cites "${pair}"; one citation lists its numbers as [n, m], since the site sets each citation as a superscript.`,
+  );
+}
+
 function checkFile(file, snapshot) {
   const { body, lines } = splitNote(readFile(file));
   const { items, errors } = parseItems(file, lines);
@@ -212,6 +218,7 @@ function checkFile(file, snapshot) {
   return [
     ...errors,
     ...headings,
+    ...checkAdjacent(file, body),
     ...items.flatMap((item, index) => checkItem(`${file} reference ${index + 1}`, item, snapshot)),
     ...order.filter(number => number < 1 || number > items.length).map(number => `${file} cites [${number}], which is not in its References.`),
     ...numbers.filter(number => !order.includes(number)).map(number => `${file} never cites reference ${number}.`),
@@ -293,7 +300,7 @@ function updateSnapshot() {
   console.log(`harness/references.json: ${dois.length} DOI records from doi.org`);
 }
 
-module.exports = { CITATION, checkConsistency, checkFile, checkSnapshot, listReferenceFiles, readSnapshot, splitNote, stripCode };
+module.exports = { CITATION, checkAdjacent, checkConsistency, checkFile, checkSnapshot, listReferenceFiles, readSnapshot, splitNote, stripCode };
 
 if (require.main === module) {
   if (process.argv[2] !== '--update') {
