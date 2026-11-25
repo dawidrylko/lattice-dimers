@@ -79,7 +79,11 @@ const PROGRAMS = [
     testCases: testCasesOf('any-lattice-cylinder-torus-modular')
       .filter(({ lattice, torus, twisted, rowCount, colCount }) => lattice === 'triangular' && !torus && !twisted && rowCount === colCount && rowCount % 2 === 0 && rowCount <= MAX_TRIANGULAR_SIDE)
       .map(({ rowCount, expectedResult }) => ({ call: `a(${rowCount / 2})`, expectedResult }))
-      .concat({ call: 'a(1)', expectedResult: '6' }),
+      .concat(
+        testCasesOf('any-lattice-cylinder-torus-polynomial-modular')
+          .filter(({ lattice, torus, twisted, rowCount, colCount }) => lattice === 'triangular' && !torus && !twisted && rowCount === 2 && colCount === 2)
+          .map(({ expectedResult }) => ({ call: 'a(1)', expectedResult: String(expectedResult.split(',').reduce((total, part) => total + BigInt(part), 0n)) })),
+      ),
   },
 ];
 const ENTRY_PROGRAMS = {

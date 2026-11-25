@@ -65,7 +65,7 @@ table(
 
 ## What the OEIS has
 
-The OEIS has the cylinders of circumference 2, [OEIS A002605](https://oeis.org/A002605), shifted by one [1]. The cell checks it against the table, with the terms of the entry as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 and 4. A search by the terms 6, 412, 905608, 65144171024 on 25 November 2026 found none for the $2n \times 2n$ cylinders, the square boards of the table, which became the draft [OEIS A402693](https://oeis.org/draft/A402693) the same day.
+The OEIS has the cylinders of circumference 2, [OEIS A002605](https://oeis.org/A002605), shifted by one [1]. The cell checks it against the table, with the terms of the entry as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 and 4. A search by the terms 6, 412, 905608, 65144171024 on 25 November 2026 found none for the $2n \times 2n$ cylinders, the square boards of the table. They became the draft [OEIS A402693](https://oeis.org/draft/A402693) the same day.
 
 ```js run
 const terms = [0n, 1n];
@@ -83,7 +83,7 @@ if (differs.length) {
 table(['board', 'OEIS', 'checked at'], [['w = 2', 'A002605', `h = ${nb.heights.join(', ')}`]]);
 ```
 
-The draft A402693 has a b-file of $n = 0, \dots, 36$, [`oeis/A402693/b402693.txt`](../../oeis/A402693/b402693.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the table holds $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $8 \times 8$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ and $40 \times 40$ with the Pfaffian one.
+The b-file for the draft A402693, $n = 0, \dots, 36$, is [`oeis/A402693/b402693.txt`](../../oeis/A402693/b402693.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the table holds $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $8 \times 8$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ and $40 \times 40$ with the Pfaffian one.
 
 ```js run
 const bFile = require('fs')
@@ -113,6 +113,14 @@ table(
     ['w = h = 2n', 'A402693', 'Pfaffian', `2n = ${pfaffianSides.join(', ')}`],
   ],
 );
+```
+
+## PARI/GP
+
+The $2n \times 2n$ cylinder as the larger of the two Kasteleyn determinants, with and without the sign on the seam, in [`oeis/A402693/A402693.gp`](../../oeis/A402693/A402693.gp), checked in CI against the square triangular cylinders of the test data up to $16 \times 16$.
+
+```js run
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402693/A402693.gp'), 'utf-8').trim());
 ```
 
 ## Verification
