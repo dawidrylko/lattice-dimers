@@ -36,6 +36,7 @@ keywords:
   - OEIS A239264
   - OEIS A239273
   - OEIS A309117
+  - OEIS A399633
   - OEIS A401669
   - OEIS A401670
   - OEIS A401673
@@ -43,7 +44,6 @@ keywords:
   - OEIS A402163
   - OEIS A402345
   - OEIS A402693
-  - OEIS A399633
 references:
   - type: article
     authors:

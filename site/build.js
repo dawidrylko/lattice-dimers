@@ -635,7 +635,7 @@ function buildJsonLd() {
         programmingLanguage: ['Rust', 'Python', 'JavaScript'],
         runtimePlatform: 'Node.js',
         license: 'https://opensource.org/licenses/MIT',
-        keywords: "dimer model, king's graph, entropy per site, transfer matrix, domino tiling, domicule tiling, perfect matchings, OEIS A004003, OEIS A239264, OEIS A239273, OEIS A309117, OEIS A401669, OEIS A401670, OEIS A401673, OEIS A401988, OEIS A402163, OEIS A402345, OEIS A402693, OEIS A399633, combinatorics",
+        keywords: "dimer model, king's graph, entropy per site, transfer matrix, domino tiling, domicule tiling, perfect matchings, OEIS A004003, OEIS A239264, OEIS A239273, OEIS A309117, OEIS A399633, OEIS A401669, OEIS A401670, OEIS A401673, OEIS A401988, OEIS A402163, OEIS A402345, OEIS A402693, combinatorics",
         author: AUTHOR,
         isBasedOn: 'https://oeis.org/A004003',
         subjectOf: {

@@ -199,7 +199,7 @@ fn count(n: usize, jobs: usize) -> BigInt {
     let side = 2 * n;
     let bits = (side * side) as f64 * 720f64.log2() / 12.0 + 8.0;
     let primes = list_primes_one_modulo(2 * side as u64, (bits / 30.0) as usize + 2);
-    let mut total = BigInt::zero();
+    let mut values = Vec::new();
 
     for seam_x in [false, true] {
         for seam_y in [0, 1] {
@@ -208,11 +208,22 @@ fn count(n: usize, jobs: usize) -> BigInt {
                 eprintln!("The Pfaffian of n = {n} failed: {error}");
                 process::exit(1);
             });
-            total = &total + &(if value.is_negative() { value.negated() } else { value });
+            values.push(value);
         }
     }
 
-    &total / &BigInt::from_u64(2)
+    let total = values.iter().fold(BigInt::zero(), |sum, value| &sum + value);
+    let two = BigInt::from_u64(2);
+    let best = values
+        .iter()
+        .map(|value| {
+            let combination = &total - &(&two * value);
+            if combination.is_negative() { combination.negated() } else { combination }
+        })
+        .max_by(|a, b| a.cmp_magnitude(b))
+        .unwrap();
+
+    &best / &two
 }
 
 fn read_range() -> (usize, usize) {

@@ -149,14 +149,15 @@ def count(n, jobs):
     side = 2 * n
     bits = side * side * math.log2(720) / 12 + 8
     primes = list_primes_one_modulo(2 * side, int(bits / 30) + 2)
-    total = 0
+    values = []
 
     for seam_x in (0, 1):
         for seam_y in (0, 1):
             residues = run_workers(lambda prime: pfaffian(side, seam_x, seam_y, prime), primes, jobs)
-            total += abs(combine_checked_residues(residues, primes, signed=True))
+            values.append(combine_checked_residues(residues, primes, signed=True))
 
-    return total // 2
+    total = sum(values)
+    return max(abs(total - 2 * value) for value in values) // 2
 
 
 def main(argv):

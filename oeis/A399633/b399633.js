@@ -111,14 +111,16 @@ function count(n) {
   const L = 2 * n, bits = L * L * Math.log2(720) / 12 + 8;
   const primes = primesOneModulo(2 * L, Math.ceil(bits / 25) + 2);
   const check = primes.pop();
-  let sum = 0n;
+  const values = [];
   for (const s of [0, 1]) for (const t of [0, 1]) {
     const residues = [...primes, check].map(p => pfaffianModulo(L, s, t, p, powmod(primitiveRoot(p), (p - 1) / (2 * L), p)));
     const value = combineSigned(residues.slice(0, -1), primes);
     if (((value % BigInt(check)) + BigInt(check)) % BigInt(check) !== BigInt(residues.at(-1))) throw new Error(`check prime failed at n=${n}`);
-    sum += value < 0n ? -value : value;
+    values.push(value);
   }
-  return sum / 2n;
+  const sum = values.reduce((a, b) => a + b, 0n);
+  const abs = x => (x < 0n ? -x : x);
+  return values.map(value => abs(sum - 2n * value) / 2n).reduce((a, b) => (b > a ? b : a));
 }
 
 const range = process.argv.slice(2);
