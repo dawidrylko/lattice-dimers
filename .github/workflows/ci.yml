@@ -382,6 +382,9 @@ jobs:
           test: false
           lint: false
           axiom-audit: true
+      - name: Print the axioms of every theorem
+        working-directory: research/king-entropy/formal
+        run: lake env lean Axioms.lean
 
   check:
     name: Check
