@@ -117,7 +117,7 @@ table(
 
 ## PARI/GP
 
-The $2n \times 2n$ cylinder as the larger of the two Kasteleyn determinants, with and without the sign on the seam, in [`oeis/A402693/A402693.gp`](../../oeis/A402693/A402693.gp), checked in CI against the square triangular cylinders of the test data up to $16 \times 16$.
+[`oeis/A402693/A402693.gp`](../../oeis/A402693/A402693.gp) counts the $2n \times 2n$ cylinder as the larger of the two Kasteleyn determinants, with and without the sign on the seam. CI checks it against the square triangular cylinders of the test data up to $16 \times 16$.
 
 ```js run
 print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402693/A402693.gp'), 'utf-8').trim());
