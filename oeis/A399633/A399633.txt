@@ -1,4 +1,4 @@
-%I A399633 #124 Nov 25 2026 13:56:54
+%I A399633 #126 Nov 25 2026 14:15:03
 %S A399633 1,12,1920,10045824,1635885514752,8215891991390871552,1272474085699328787087360000,6077620026393211843170739995972993024,895175319572867600647189566491699922102072115200,4066048891345305408120794028659207710083821084839402323050496
 %N A399633 Number of perfect matchings in the 2n X 2n toroidal grid graph C_2n X C_2n with the diagonal edges from (i,j) to (i+1 mod 2n, j+1 mod 2n) added, i.e., on a 2n X 2n torus of the triangular lattice.
 %C A399633 For n >= 2 the graph is simple. For n = 1 every two adjacent vertices are joined by two edges, and each of them counts as a separate domino, as in A401670 and A402693.

@@ -8,7 +8,7 @@
 
 ## Status
 
-Proposed 25 November 2026, revision #124 of the draft.
+Proposed 25 November 2026, revision #126 of the draft.
 
 ## Files
 
@@ -23,7 +23,7 @@ Proposed 25 November 2026, revision #124 of the draft.
 
 ## Notes
 
-A399633 was a recycled number. Revision #119 allocated it for this entry, so the history of the draft counts on from the sequence it held before, revision #120 is the first save of this entry, and revision #124 submits it.
+A399633 was a recycled number. Revision #119 allocated it for this entry, so the history of the draft counts on from the sequence it held before, revision #120 is the first save of this entry, revision #124 submits it, and revision #126 submits it again with the comment of the program corrected.
 
 The Kasteleyn matrix is that of [A402693](../A402693/README.md), closed into a torus. Its four Pfaffians $\mathrm{Pf}_{ab}$ keep or negate the edges across each of the two seams. Half of a sum of the four with exactly one of them negated counts every tiling once, with a sign of $+1$ or $-1$, so each such half sum is at most $a(n)$ in absolute value, and by Kasteleyn's theorem for the torus one of the four equals $\pm a(n)$. The generators therefore return the largest of the four in absolute value, as the Pfaffian solver [`any-lattice-cylinder-torus-pfaffian.js`](../../js/solvers/any-lattice-cylinder-torus-pfaffian.js) does.
 
