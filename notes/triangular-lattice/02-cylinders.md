@@ -78,9 +78,9 @@ The `BigInt` solver agrees with A002605, and the modular and the Pfaffian solver
 ## The OEIS entries
 
 - [OEIS A002605](https://oeis.org/A002605): the cylinders of circumference 2, shifted by one.
-- [OEIS A402693](https://oeis.org/draft/A402693): the $2n \times 2n$ cylinders, a draft under review.
+- [OEIS A402693](https://oeis.org/draft/A402693): the $2n \times 2n$ cylinders, a draft.
 
-The OEIS has the cylinders of circumference 2, [OEIS A002605](https://oeis.org/A002605), shifted by one [3]. The cell checks it against the table, with the terms of the entry as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 and 4, and a search by the terms 6, 412, 905608, 65144171024 on 25 November 2026 found none for the $2n \times 2n$ cylinders, the square boards of the table. They became the draft [OEIS A402693](https://oeis.org/draft/A402693) the same day.
+The first is in the OEIS [3] as a row of the table. The cell checks it against the table, with the terms of the entry as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 and 4, and a search by the terms 6, 412, 905608, 65144171024 on 25 November 2026 found none for the $2n \times 2n$ cylinders, the square boards of the table. They became the draft A402693 the same day.
 
 ```js run
 const terms = [0n, 1n];

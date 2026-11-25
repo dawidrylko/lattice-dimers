@@ -102,11 +102,16 @@ The `BigInt` solver agrees with every OEIS entry below, and the modular and the 
 
 ## The OEIS entries
 
-- [OEIS A000129](https://oeis.org/A000129): the Pell numbers, shifted by one, the cylinders of circumference 2.
-- [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478), [OEIS A028479](https://oeis.org/A028479): the cylinders of circumference 3 to 8.
+- [OEIS A000129](https://oeis.org/A000129): the Pell numbers, shifted by one: the cylinders of circumference 2.
+- [OEIS A004253](https://oeis.org/A004253): the cylinders $C_3 \times P_h$, at even heights.
+- [OEIS A006253](https://oeis.org/A006253): the cylinders $C_4 \times P_h$.
+- [OEIS A003729](https://oeis.org/A003729): the cylinders $C_5 \times P_h$, at even heights.
+- [OEIS A028477](https://oeis.org/A028477): the cylinders $C_6 \times P_h$.
+- [OEIS A028478](https://oeis.org/A028478): the cylinders $C_7 \times P_h$, at even heights.
+- [OEIS A028479](https://oeis.org/A028479): the cylinders $C_8 \times P_h$.
 - [OEIS A402345](https://oeis.org/A402345): the $2n \times 2n$ cylinders.
 
-Every row of the table is in the OEIS: the Pell numbers [OEIS A000129](https://oeis.org/A000129), shifted by one, for circumference 2, and the domino tilings of $C_w \times P_h$ for the others, [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478) and [OEIS A028479](https://oeis.org/A028479) for $w = 3$ to $8$ [2]; the entries of odd circumference list only the even heights. The cell checks every one of these against the table, with the terms of the entries as they stood on 1 November 2026.
+Every row of the table is in the OEIS [2]. The cell checks each row against its entry, with the terms as they stood on 1 November 2026.
 
 ```js run
 const pell = [0n, 1n];
@@ -140,7 +145,7 @@ for (const [w, entry, terms] of entries) {
 table(['board', 'OEIS', 'checked at'], rows);
 ```
 
-The $2n \times 2n$ cylinders are the entry [OEIS A402345](https://oeis.org/A402345) [2], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the rows above hold $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $14 \times 14$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ and $40 \times 40$ with the Pfaffian one.
+The $2n \times 2n$ cylinders are the entry [OEIS A402345](https://oeis.org/A402345) [2], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the table of The counts holds $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $14 \times 14$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ and $40 \times 40$ with the Pfaffian one.
 
 ```js run
 const bFile = require('fs')

@@ -78,7 +78,7 @@
     "test:spec": "cd .. && node --test harness/spec.test.js",
     "test:pari": "cd .. && node --test harness/pari.test.js",
     "test:oeis": "cd .. && node oeis/buildBFiles.js --check && node --test harness/oeis.test.js harness/oeisRules.test.js",
-    "test:markdown": "cd .. && node --test harness/markdown.test.js harness/references.test.js",
+    "test:markdown": "cd .. && node --test harness/markdown.test.js harness/references.test.js harness/oeisEntries.test.js",
     "test:numbers": "cd .. && node --test harness/numbers.test.js",
     "test:metadata": "cd .. && node --test harness/metadata.test.js",
     "test:ci": "cd .. && node --test harness/ci.test.js",

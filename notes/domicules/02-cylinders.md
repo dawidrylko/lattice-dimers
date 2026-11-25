@@ -92,7 +92,7 @@ The `BigInt` solver agrees with the OEIS entries below and the modular solver wi
 - [OEIS A062510](https://oeis.org/A062510): the cylinders of height 2, shifted by one.
 - [OEIS A402163](https://oeis.org/A402163): the $2n \times 2n$ cylinders.
 
-The OEIS has the cylinders of circumference 2, [OEIS A002532](https://oeis.org/A002532), and those of height 2, [OEIS A062510](https://oeis.org/A062510), each shifted by one [2]. The cell checks both against the table, with the terms of the entries as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
+The first two are in the OEIS [2] as rows of the table. The cell checks both against the table, with the terms of the entries as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
 
 The $2n \times 2n$ cylinders are the entry [OEIS A402163](https://oeis.org/A402163) [2], with a b-file of $n = 0, \dots, 11$, [`oeis/A402163/b402163.txt`](../../oeis/A402163/b402163.txt). The cell checks the square boards of the table, $2 \times 2$ to $8 \times 8$, against that b-file.
 

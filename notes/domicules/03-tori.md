@@ -229,7 +229,7 @@ The two cylinder and torus solvers agree with each other up to $8 \times 8$, the
 ## The OEIS entries
 
 - [OEIS A401670](https://oeis.org/A401670): the domicule tilings of the $2n \times 2n$ torus, the counts of this notebook.
-- [OEIS A335586](https://oeis.org/A335586): the domino tilings of the same tori, which count the edges of the $2 \times 2$ torus the same way.
+- [OEIS A335586](https://oeis.org/A335586): the domino tilings of the same tori, which treat the multiple edges of the $2 \times 2$ torus as this notebook does.
 - [OEIS A143233](https://oeis.org/A143233): $G/\pi$, the entropy per site of the square lattice in the comparison of three lattices.
 
 ## References

@@ -184,7 +184,7 @@ The two solvers agree with each other in Rust, Python and JavaScript, with A0040
 
 ## The OEIS entries
 
-The triangle of these counts is not in the OEIS. Two of its sums are:
+The triangle of these counts is not in the OEIS. Its column $k = 0$ and its row sums are:
 
 - [OEIS A004003](https://oeis.org/A004003): its column $k = 0$, $P(0)$.
 - [OEIS A401988](https://oeis.org/A401988): its row sums, $P(1)$.
