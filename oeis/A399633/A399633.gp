@@ -2,7 +2,8 @@
 \\ edges (x, y) - (x+1 mod 2n, y+1 mod 2n); for n = 1 parallel edges count as separate pieces. K is the Kasteleyn matrix of
 \\ A402693.gp on the torus, with the edges across the first seam negated when f is odd and across the second when f >= 2.
 \\ Half of a sum of the four Pfaffians with one of them negated counts each tiling once with a sign, and by Kasteleyn's
-\\ theorem for the torus one of the four is a(n), so a(n) is the largest. pf(A) is the Pfaffian, eliminating two rows at a time.
+\\ theorem for the torus one of the four is +-a(n), so a(n) is the largest in absolute value. pf(A) is the Pfaffian,
+\\ eliminating two rows at a time.
 pf(A) = {
   my(n = #A, r = 1, j, a, x, y, p);
   forstep (i = 1, n, 2,

@@ -78,7 +78,7 @@ table(['n', 'board', 'count', 'digits', 'solver', 'status'], rows);
 
 ## PARI/GP
 
-[`oeis/A399633/A399633.gp`](../../oeis/A399633/A399633.gp) counts the $2n \times 2n$ torus from the four Pfaffians of $K$, with and without the sign on each seam. Half of a sum of the four with one of them negated counts every tiling with a sign, and by Kasteleyn's theorem for the torus the largest of the four half sums is the count. CI checks the program against the square triangular tori of the test data up to $16 \times 16$.
+[`oeis/A399633/A399633.gp`](../../oeis/A399633/A399633.gp) counts the $2n \times 2n$ torus from the four Pfaffians of $K$, with and without the sign on each seam. Half of a sum of the four with one of them negated counts every tiling with a sign, and by Kasteleyn's theorem for the torus one of the four half sums is plus or minus the count, so the count is the largest of them in absolute value. CI checks the program against the square triangular tori of the test data up to $16 \times 16$.
 
 ```js run
 print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A399633/A399633.gp'), 'utf-8').trim());
