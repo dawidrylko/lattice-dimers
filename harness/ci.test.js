@@ -254,6 +254,8 @@ test('Changes runs every job on push, schedule and dispatch, and on a pull reque
     [['research/king-entropy/src/lspec.py'], [...site, 'macos', 'research']],
     [['.zenodo.json'], ['research']],
     [['research/crossing-polynomial/check.py'], ['research']],
+    [['research/king-entropy/formal/KingEntropy/Entropy.lean'], [...site, 'macos', 'research', 'lean']],
+    [['research/king-entropy/proofs/lower-bound.md'], [...site, 'macos', 'research']],
     [['.github/assets/dimer.svg'], ['javascript', ...site, 'macos']],
     [['docs/glossary.md', 'notes/dominoes/01-rectangles.md', '.zenodo.json'], [...site, 'research']],
   ];
