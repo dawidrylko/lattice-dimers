@@ -1,4 +1,4 @@
-%I A402693 #2 Nov 25 2026 03:00:41
+%I A402693 #4 Nov 25 2026 05:06:29
 %S A402693 1,6,412,905608,65144171024,146164510245561952,10118752662999654154224064,21595276379487753000398580864311424,1421121792899322405620972418566478159370813696,2883938119001938782548896645897475887755130321743262156288
 %N A402693 Number of perfect matchings in the 2n X 2n cylindrical grid graph P_2n X C_2n with the diagonal edges from (i,j) to (i+1,j+1 mod 2n) added, i.e., on a 2n X 2n cylinder of the triangular lattice.
 %C A402693 For n >= 2 the graph is simple. For n = 1 the cycle C_2 has two edges between its two vertices, and each of them counts as a separate domino, as in A402163 and A402345.

@@ -8,7 +8,7 @@
 
 ## Status
 
-Proposed 25 November 2026, revision #2 of the draft.
+Proposed 25 November 2026, revision #4 of the draft.
 
 ## Files
 
@@ -23,7 +23,7 @@ Proposed 25 November 2026, revision #2 of the draft.
 
 ## Notes
 
-The status above is written ahead. Revision #2 is the saved draft before its b-file and links. On submission the copy is rebuilt from the draft page with the revision it goes in at.
+Revision #2 is the saved draft before its b-file and links, revision #3 adds them, and revision #4 submits it unchanged.
 
 The three generators are those of [A401988](../A401988/README.md), moved to the cylinder. They compute $\det K$ of the Kasteleyn matrix of the [PARI program](A402693.gp) modulo primes by banded elimination. They do it twice: once with the edges across the seam as they are, once with their signs flipped. The Chinese remainder theorem rebuilds both, and the larger one must be an exact square. The cylinder is planar, so one of the two Pfaffians is the number of tilings up to sign. The other is the difference between the tilings with an even and with an odd number of pieces across the seam.
 

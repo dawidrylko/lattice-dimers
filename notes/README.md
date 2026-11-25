@@ -6,6 +6,16 @@ The renderer in `site/notes.js` covers a subset of Markdown: headings, paragraph
 
 The notebooks are grouped as the site menu groups them: the notes of each kind of piece or lattice sit in their own directory, and a note `notes/<group>/<nn>-<name>.md` is published as `notes/<group>/<name>.html`. The notebooks of the groups share one layout, the notebook skeleton of the [glossary](../docs/glossary.md#site): a title with the OEIS entries they count, The problem, one section per solver, Numbering, The counts, their own sections, Running time, PARI/GP, Verification and References; the rectangles notebooks also say how the gallery samples the tilings. A section that took over an older one keeps its old address as a section alias, listed in `SECTION_ALIASES` of `site/chrome.js`.
 
+The References section follows one form, which `pnpm -C js test:markdown` checks:
+
+- It is a numbered list without blank lines between its items, in the order of first citation. The text cites an item as `[n]` or `[n, m]`, never in a heading, and on the site each number links to its item. A bracketed range of numbers in the prose would read as a citation, so a range goes into math, `$[0, 1]$`.
+- An article reads `Authors. Title. *Journal* volume(issue):pages, year.` and a chapter `Authors. Chapter title. Chapter n of *Book*, Series, Publisher, City, pp. pages, year.` Then comes the place it is cited for, such as `Lemma 8.3.3, p. 321.`, and the item ends in `[doi:<DOI>](https://doi.org/<DOI>)`, optionally followed by `, [arXiv:<id>](https://arxiv.org/abs/<id>)`. A `(` or `)` of the DOI is written as `%28` or `%29` in the address, since a Markdown link ends at the first `)`.
+- The OEIS is the one reference without a DOI: `OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A004003](https://oeis.org/A004003). [oeis.org](https://oeis.org)`, with `entries` before several links.
+- Every item is checked against the record of its DOI kept in `harness/references.json`: the authors with their initials, the title, the journal, volume, issue, pages and year. A chapter record names neither the authors nor the book, so a chapter is checked by its title, number, series, pages and year.
+- A work cited by several notes reads the same in each.
+
+A new DOI goes into `harness/references.json` with `node harness/references.js --update`, which reads the records from doi.org.
+
 - [Research](00-research.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/research.html)): the king's graph paper in brief, with its results read from `research/king-entropy/data/` and the asymptotics of A239273 checked against the exact terms.
 - Dominoes:
   - [Rectangles](dominoes/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/rectangles.html)): domino tilings of the 2n × 2n board, A004003, by three methods, the resultant, numbering, sampling by coupling from the past and the running time.

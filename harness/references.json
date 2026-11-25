@@ -1,0 +1,206 @@
+{
+  "10.1002/(sici)1098-2418(199608/09)9:1/2<223::aid-rsa14>3.0.co;2-o": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "James Gary",
+        "family": "Propp"
+      },
+      {
+        "given": "David Bruce",
+        "family": "Wilson"
+      }
+    ],
+    "title": "Exact sampling with coupled Markov chains and applications to statistical mechanics",
+    "container": "Random Structures and Algorithms",
+    "volume": "9",
+    "issue": "1-2",
+    "page": "223-252",
+    "year": 1996
+  },
+  "10.1006/jctb.1999.1941": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "Glenn",
+        "family": "Tesler"
+      }
+    ],
+    "title": "Matchings in Graphs on Non-orientable Surfaces",
+    "container": "Journal of Combinatorial Theory, Series B",
+    "volume": "78",
+    "issue": "2",
+    "page": "198-231",
+    "year": 2000
+  },
+  "10.1007/s00493-008-2150-2": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "Serguei",
+        "family": "Norine"
+      }
+    ],
+    "title": "Pfaffian graphs, T-joins and crossing numbers",
+    "container": "Combinatorica",
+    "volume": "28",
+    "issue": "1",
+    "page": "89-98",
+    "year": 2008
+  },
+  "10.1016/0031-8914(61)90063-5": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "P.W.",
+        "family": "Kasteleyn"
+      }
+    ],
+    "title": "The statistics of dimers on a lattice",
+    "container": "Physica",
+    "volume": "27",
+    "issue": "12",
+    "page": "1209-1225",
+    "year": 1961
+  },
+  "10.1016/s0304-0208(08)73644-2": {
+    "type": "book-chapter",
+    "authors": [],
+    "title": "8 Determinants and Matchings",
+    "container": "North-Holland Mathematics Studies",
+    "page": "307-355",
+    "year": 1986
+  },
+  "10.1090/s0025-5718-1968-0226829-0": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "Erwin H.",
+        "family": "Bareiss"
+      }
+    ],
+    "title": "Sylvester’s identity and multistep integer-preserving Gaussian elimination",
+    "container": "Mathematics of Computation",
+    "volume": "22",
+    "issue": "103",
+    "page": "565-578",
+    "year": 1968
+  },
+  "10.1103/physrev.124.1664": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "Michael E.",
+        "family": "Fisher"
+      }
+    ],
+    "title": "Statistical Mechanics of Dimers on a Plane Lattice",
+    "container": "Physical Review",
+    "volume": "124",
+    "issue": "6",
+    "page": "1664-1672",
+    "year": 1961
+  },
+  "10.1103/physrevb.101.224406": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "Julia",
+        "family": "Wildeboer"
+      },
+      {
+        "given": "Alexander",
+        "family": "Seidel"
+      }
+    ],
+    "title": "Entanglement studies of resonating valence bonds on the frustrated square lattice",
+    "container": "Physical Review B",
+    "volume": "101",
+    "issue": "22",
+    "number": "224406",
+    "year": 2020
+  },
+  "10.1103/physrevb.66.214513": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "P.",
+        "family": "Fendley"
+      },
+      {
+        "given": "R.",
+        "family": "Moessner"
+      },
+      {
+        "given": "S. L.",
+        "family": "Sondhi"
+      }
+    ],
+    "title": "Classical dimers on the triangular lattice",
+    "container": "Physical Review B",
+    "volume": "66",
+    "issue": "21",
+    "number": "214513",
+    "year": 2002
+  },
+  "10.1103/physrevb.73.144504": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "Anders W.",
+        "family": "Sandvik"
+      },
+      {
+        "given": "R.",
+        "family": "Moessner"
+      }
+    ],
+    "title": "Correlations and confinement in nonplanar two-dimensional dimer models",
+    "container": "Physical Review B",
+    "volume": "73",
+    "issue": "14",
+    "number": "144504",
+    "year": 2006
+  },
+  "10.37236/888": {
+    "type": "journal-article",
+    "authors": [
+      {
+        "given": "Noga",
+        "family": "Alon"
+      },
+      {
+        "given": "Shmuel",
+        "family": "Friedland"
+      }
+    ],
+    "title": "The Maximum Number of Perfect Matchings in Graphs with a Given Degree Sequence",
+    "container": "The Electronic Journal of Combinatorics",
+    "volume": "15",
+    "issue": "1",
+    "number": "N13",
+    "year": 2008
+  },
+  "10.5281/zenodo.23686056": {
+    "type": "article",
+    "authors": [
+      {
+        "given": "Dawid",
+        "family": "Ryłko"
+      }
+    ],
+    "title": "The dimer entropy of the king's graph",
+    "year": 2026
+  },
+  "10.5281/zenodo.23686087": {
+    "type": "article",
+    "authors": [
+      {
+        "given": "Dawid",
+        "family": "Ryłko"
+      }
+    ],
+    "title": "Log-convexity of strip dimer counts on the king's graph",
+    "year": 2026
+  }
+}
