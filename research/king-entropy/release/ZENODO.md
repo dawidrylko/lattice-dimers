@@ -118,7 +118,9 @@ the `.tex`, `.bib` and OEIS files wrap them as shown in step 7.
      stale; the `grep` keeps them from serving as the anchor of `out/out_hidden_oos.txt` and
      `out/out_derived.txt`, whose labels they edited. The rename commit 68f65d9 (PR #175) moved
      `src/lean.py` to `src/power.py` and its `lean_*` data and log files to `power_*`, renamed the
-     group in `src/paths.py` and edited the printed labels of `replication/out/compare_eig.txt`,
+     group in `src/paths.py`, the globs and docstrings of `src/errbar.py`, `src/surface.py`,
+     `log-convexity/levels.py` and `replication/compare_eig.py`, the command string printed by
+     `src/power.py` and the tests that name them, and edited the printed labels of `replication/out/compare_eig.txt`,
      `log-convexity/out_levels.txt`, `out/out_surface.txt`, `out/out_derived.txt` and
      `data/surface.json`, so it makes no output stale either. Every other commit listed means stale, including
      one that changes only a comment or a docstring, and including 9ddb2fb, which moved the files and

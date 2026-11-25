@@ -33,4 +33,10 @@ theorem transfer_eq_pmCount_w4 : ∀ K : Fin 6,
 theorem superadditive_small : ∀ K : Fin 5, ∀ k : Fin 3,
     pmCount K 2 ^ (k : ℕ) ≤ pmCount K (k * 2) := by decide +kernel
 
+theorem transfer_eq_pmCount_w6 : ∀ K : Fin 4,
+    (transfer 6 ^ (K : ℕ)) ⟨0, by decide⟩ ⟨0, by decide⟩ = pmCount K 6 := by decide +kernel
+
+theorem superadditive_w6 : ∀ K : Fin 3, ∀ k : Fin 3,
+    pmCount K 6 ^ (k : ℕ) ≤ pmCount K (k * 6) := by decide +kernel
+
 end KingEntropy

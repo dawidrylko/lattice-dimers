@@ -371,9 +371,6 @@ jobs:
     needs: changes
     if: needs.changes.outputs.lean == 'run'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: research/king-entropy/formal
 
     steps:
       - uses: actions/checkout@v7
@@ -384,12 +381,7 @@ jobs:
           build: true
           test: false
           lint: false
-      - run: lake env lean Axioms.lean | tee "$RUNNER_TEMP/axioms.txt"
-      - run: |
-          if grep -E 'sorryAx|ofReduceBool' "$RUNNER_TEMP/axioms.txt"; then
-            echo "A theorem depends on sorry or on native_decide." >&2
-            exit 1
-          fi
+          axiom-audit: true
 
   check:
     name: Check
