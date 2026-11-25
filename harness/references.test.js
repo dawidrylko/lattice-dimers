@@ -14,7 +14,7 @@ test(`${files.length} References sections match their DOI records and are number
 
 test('two citations side by side are one citation [n, m]', () => {
   assert.deepEqual(checkAdjacent('note.md', 'Fisher [1, 2], Kasteleyn [2] and `[1], [2]` in code.'), []);
-  assert.equal(checkAdjacent('note.md', 'Fisher [1], [2] and Kasteleyn [1] [2].').length, 2);
+  assert.equal(checkAdjacent('note.md', 'Fisher [1], [2], Kasteleyn [1] [2], Fisher [1]; [2] and Kasteleyn [1],\n[2].').length, 4);
 });
 
 test('a work cited by several notes reads the same in each', () => {

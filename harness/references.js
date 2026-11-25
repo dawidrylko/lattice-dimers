@@ -199,7 +199,7 @@ function checkItem(where, item, snapshot) {
 }
 
 function checkAdjacent(file, body) {
-  return [...stripCode(body).matchAll(/\[\d+(?:, \d+)*\],? \[\d+(?:, \d+)*\](?![(\[])/g)].map(
+  return [...stripCode(body).matchAll(/\[\d+(?:, \d+)*\][,;]?\s+\[\d+(?:, \d+)*\](?![(\[])/g)].map(
     ([pair]) => `${file} cites "${pair}"; one citation lists its numbers as [n, m], since the site sets each citation as a superscript.`,
   );
 }
