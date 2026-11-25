@@ -37,7 +37,7 @@ The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-b
 
 ## The counts
 
-For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate piece. Boards up to $8 \times 8$ go through all three solvers, $10 \times 10$ and $12 \times 12$ through the modular and the Pfaffian one, and $14 \times 14$ to $20 \times 20$ through the Pfaffian one alone. Every count is compared with the one `spec/cases/` stores: the modular solver counted the stored tori up to $16 \times 16$, and the tori $18 \times 18$ and $20 \times 20$ have no count here but the Pfaffian one. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the $2n \times 2n$ tori.
+For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate piece. Boards up to $8 \times 8$ go through all three solvers, $10 \times 10$ and $12 \times 12$ through the modular and the Pfaffian one, and $14 \times 14$ to $20 \times 20$ through the Pfaffian one alone. Every count is compared with the one `spec/cases/` stores: the modular solver counted the stored tori up to $16 \times 16$, and the tori $18 \times 18$ and $20 \times 20$ have no count here but the Pfaffian one. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. A search by the terms 1, 12, 1920, 10045824 on 25 November 2026 still found no entry for the $2n \times 2n$ tori, and the same day these counts became the draft A399633.
 
 ```js run
 const reference = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
@@ -76,13 +76,46 @@ for (let n = 1; n <= 10; n++) {
 table(['n', 'board', 'count', 'digits', 'solver', 'status'], rows);
 ```
 
+## PARI/GP
+
+[`oeis/A399633/A399633.gp`](../../oeis/A399633/A399633.gp) counts the $2n \times 2n$ torus from the four Pfaffians of $K$, with and without the sign on each seam. Half of a sum of the four with one of them negated counts every tiling with a sign, and by Kasteleyn's theorem for the torus one of the four half sums is plus or minus the count, so the count is the largest of them in absolute value. CI checks the program against the square triangular tori of the test data up to $16 \times 16$.
+
+```js run
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A399633/A399633.gp'), 'utf-8').trim());
+```
+
 ## Verification
 
 The three cylinder and torus solvers agree with each other up to $8 \times 8$, the modular and the Pfaffian one up to $16 \times 16$, and both check every result against an extra prime. The Pfaffian solver also agrees with the eleven tori in Table I of Fendley, Moessner and Sondhi [1], boards of $L_x \times 2L_y$ cells with $L_x$ from 3 to 6 and $2L_y$ from 4 to 12, which [`spec/cases/any-lattice-cylinder-torus-pfaffian.json`](../../spec/cases/any-lattice-cylinder-torus-pfaffian.json) holds. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the triangular tori of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three solvers, those of `spec/cases/any-lattice-cylinder-torus-modular.json` through the modular and the Pfaffian one, and those of the Pfaffian file, up to the $40 \times 40$ torus, through the Pfaffian one.
 
 ## The OEIS entries
 
-The OEIS has no entry for these counts.
+- [OEIS A399633](https://oeis.org/draft/A399633): the $2n \times 2n$ tori, a draft.
+
+The b-file for the draft, $n = 0, \dots, 36$, is [`oeis/A399633/b399633.txt`](../../oeis/A399633/b399633.txt). The cell checks it against the Pfaffian solver from $2 \times 2$ to $20 \times 20$ and at $40 \times 40$.
+
+```js run
+const bFile = require('fs')
+  .readFileSync(require('path').join(nb.context.root, 'oeis/A399633/b399633.txt'), 'utf-8')
+  .trim()
+  .split('\n')
+  .map(line => BigInt(line.split(' ')[1]));
+const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-cylinder-torus-pfaffian.js');
+const sides = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 40];
+const differs = [];
+
+for (const side of sides) {
+  if ((await calculateTotalTilingCombinations({ rowCount: side, colCount: side, lattice: 'triangular', torus: true })) !== bFile[side / 2]) {
+    differs.push(side);
+  }
+}
+
+if (differs.length) {
+  throw new Error(`the 2n × 2n tori differ from A399633 at 2n = ${differs.join(', ')}`);
+}
+
+table(['board', 'OEIS', 'solver', 'checked at'], [['2n × 2n torus', 'A399633', 'Pfaffian', `2n = ${sides.join(', ')}`]]);
+```
 
 ## References
 

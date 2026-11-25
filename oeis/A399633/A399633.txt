@@ -1,0 +1,18 @@
+%I A399633 #126 Nov 25 2026 14:15:03
+%S A399633 1,12,1920,10045824,1635885514752,8215891991390871552,1272474085699328787087360000,6077620026393211843170739995972993024,895175319572867600647189566491699922102072115200,4066048891345305408120794028659207710083821084839402323050496
+%N A399633 Number of perfect matchings in the 2n X 2n toroidal grid graph C_2n X C_2n with the diagonal edges from (i,j) to (i+1 mod 2n, j+1 mod 2n) added, i.e., on a 2n X 2n torus of the triangular lattice.
+%C A399633 For n >= 2 the graph is simple. For n = 1 every two adjacent vertices are joined by two edges, and each of them counts as a separate domino, as in A401670 and A402693.
+%C A399633 Equivalently, the number of tilings of the 2n X 2n torus by dominoes and by diagonal pieces that join two cells sharing a corner, where all diagonal pieces run in the same direction. Compare A402693, the same board with one seam only.
+%H A399633 Dawid Ryłko, <a href="/A399633/b399633_1.txt">Table of n, a(n) for n = 0..36</a>
+%H A399633 Dawid Ryłko, <a href="https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori.html">Triangular lattice: tilings of tori</a>.
+%H A399633 Eric Weisstein's World of Mathematics, <a href="https://mathworld.wolfram.com/PerfectMatching.html">Perfect Matching</a>.
+%F A399633 Limit_{n->oo} log(a(n))/(4*n^2) = log(A247548)/2.
+%F A399633 Conjecture: a(n) ~ 2*A247548^(2*n^2).
+%e A399633 a(1) = 12: on the 2 X 2 torus each cell is joined to its row neighbor, to its column neighbor and to its diagonal neighbor by 2 edges each, so each of the 3 ways to pair the 4 cells gives 2*2 = 4 matchings, and a(1) = 3*4 = 12.
+%o A399633 (PARI) \\ pf(A): Pfaffian of A. K: Kasteleyn matrix of the torus, with the edges across the first seam negated when f is odd and across the second when f >= 2; by Kasteleyn's theorem for the torus, a(n) is the largest in absolute value of the four half sums of the Pfaffians with one of them negated.
+%o A399633 pf(A) = {my(n = #A, r = 1, j, a, x, y, p); forstep(i = 1, n, 2, j = i+1; while(j <= n && !A[i, j], j++); if(j > n, return(0)); if(j > i+1, p = vector(n, k, k); p[i+1] = j; p[j] = i+1; A = vecextract(A, p, p); r = -r); a = A[i, i+1]; r *= a; x = vector(n, k, if(k > i+1, A[i, k]/a)); y = vector(n, k, if(k > i+1, A[i+1, k])); for(k = i+2, n, for(l = i+2, n, A[k, l] -= x[k]*y[l] - y[k]*x[l]))); r};
+%o A399633 a(n) = {my(L = 2*n, P = vector(4), S, D = [1, 0; 0, 1; 1, 1]); if(n == 0, return(1)); for(f = 0, 3, my(K = matrix(L^2, L^2)); for(x = 0, L-1, for(y = 0, L-1, for(k = 1, 3, my(x2 = x + D[k, 1], y2 = y + D[k, 2], s); s = if(k < 3 && x%2 == 0, -1, 1) * if(f%2 && x2 == L, -1, 1) * if(f >= 2 && y2 == L, -1, 1); x2 %= L; y2 %= L; K[x*L+y+1, x2*L+y2+1] += s; K[x2*L+y2+1, x*L+y+1] -= s))); P[f+1] = pf(K)); S = vecsum(P); vecmax(vector(4, i, abs(S - 2*P[i])))/2};
+%Y A399633 Cf. A247548, A335586 (square lattice), A401670 (king's graph), A401988 (2n X 2n rhombus), A402693 (2n X 2n cylinder).
+%K A399633 nonn
+%O A399633 0,2
+%A A399633 _Dawid Ryłko_, Nov 25 2026
