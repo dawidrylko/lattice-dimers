@@ -23,7 +23,7 @@ A new DOI goes into `harness/references.json` with `node harness/references.js -
   - [Tori](dominoes/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/tori.html)): domino tilings of tori and A335586.
 - Triangular lattice:
   - [Rectangles](triangular-lattice/01-rectangles.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles.html)): the triangular lattice on the 2n × 2n board (A401988) and on rectangles, for comparison, with the Kasteleyn determinant in PARI/GP.
-  - [Cylinders](triangular-lattice/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html)): the triangular lattice on cylinders, for comparison.
+  - [Cylinders](triangular-lattice/02-cylinders.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/cylinders.html)): the triangular lattice on cylinders, for comparison, and the 2n × 2n cylinders, A402693.
   - [Tori](triangular-lattice/03-tori.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/tori.html)): the triangular lattice on 2n × 2n tori, for comparison.
   - By diagonal pieces:
     - [Rectangles](triangular-lattice/04-rectangles-by-diagonal-pieces.md) ([page](https://dawidrylko.github.io/lattice-dimers/notes/triangular-lattice/rectangles-by-diagonal-pieces.html)): tilings of the triangular lattice on the 2n × 2n board by the number of diagonal pieces, their bound of 2n² − 2n and the tilings that reach it, and their weighted counts.

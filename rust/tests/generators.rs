@@ -103,3 +103,8 @@ fn b402163_prints_its_b_file() {
 fn b402345_prints_its_b_file() {
     check("A402345", env!("CARGO_BIN_EXE_b402345"));
 }
+
+#[test]
+fn b402693_prints_its_b_file() {
+    check("A402693", env!("CARGO_BIN_EXE_b402693"));
+}
