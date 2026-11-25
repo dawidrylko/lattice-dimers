@@ -31,7 +31,7 @@ A board has at most 1600 cells. That is a limit of memory, because every thread 
 
 ## The Modular solver
 
-[`any-lattice-cylinder-torus-modular.js`](../../js/solvers/any-lattice-cylinder-torus-modular.js) goes cell by cell with a state of the next $w + 2$ cells. A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. Mirroring the columns does the same on the square lattice and the king's graph, so there one run also stands for a class and its mirror image, while the triangular lattice, whose diagonals a mirror image turns the other way, keeps the rotations only. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
+[`any-lattice-cylinder-torus-modular.js`](../../js/solvers/any-lattice-cylinder-torus-modular.js) goes cell by cell with a state of the next $w + 2$ cells. A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. Mirroring the columns does the same on the square lattice and the king's graph, so there one run also stands for a class and its mirror image. The triangular lattice keeps the rotations only. A mirror image would turn its diagonals the other way. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
 ```math
 \begin{aligned}
@@ -60,7 +60,7 @@ The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-b
 
 Domino tilings of the $2n \times 2n$ torus are [OEIS A335586](https://oeis.org/A335586) [2]. For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate domino, as in A335586. Boards up to $8 \times 8$ go through all three solvers, $10 \times 10$ and $12 \times 12$ through the modular and the Pfaffian one, and $14 \times 14$ to $20 \times 20$ through the Pfaffian one alone. Every count is compared with the terms of A335586 stored in `spec/cases/`, and the column `checked against` adds the solvers that counted the row too.
 
-The chart draws the entropy per cell, $\ln a(n) / (2n)^2$, against the side. The dashed line is the limit of the square lattice, $G/\pi \approx 0.29156$ ([OEIS A143233](https://oeis.org/A143233), $G$ is Catalan's constant). A torus has no boundary, so no term of the edges lowers the entropy per cell, and the points lie above the line and fall towards it.
+The chart draws the entropy per cell, $\ln a(n) / (2n)^2$, against the side. The dashed line is the limit of the square lattice, $G/\pi \approx 0.29156$ ([OEIS A143233](https://oeis.org/A143233) [2], $G$ is Catalan's constant). A torus has no boundary, so no term of the edges lowers the entropy per cell, and the points lie above the line and fall towards it.
 
 ```js run
 const reference = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
@@ -93,7 +93,7 @@ for (let n = 1; n <= 10; n++) {
     throw new Error(`the ${side}×${side} torus differs from A335586`);
   }
 
-  const checks = ['stored case', n <= 6 && 'modular solver', n <= 4 && 'BigInt solver'].filter(Boolean);
+  const checks = ['spec/cases/', n <= 6 && 'modular solver', n <= 4 && 'BigInt solver'].filter(Boolean);
 
   points.push([side, logCount(count) / side ** 2]);
   rows.push([n, `${side}×${side}`, String(count), String(count).length, 'Pfaffian', checks.join(', ')]);
@@ -147,7 +147,8 @@ The three cylinder and torus solvers agree with each other and with [OEIS A33558
 - [OEIS A335586](https://oeis.org/A335586): the domino tilings of the $2n \times 2n$ torus, the counts of this notebook.
 - [OEIS A253678](https://oeis.org/A253678): the tori $C_8 \times C_n$.
 - [OEIS A281679](https://oeis.org/A281679): the tori $C_{10} \times C_n$.
+- [OEIS A143233](https://oeis.org/A143233): $G/\pi$, the entropy per cell of the square lattice, the dashed line of the chart.
 
 ## References
 1. P. W. Kasteleyn. The statistics of dimers on a lattice. *Physica* 27(12):1209-1225, 1961. Equation (23), p. 1219. [doi:10.1016/0031-8914(61)90063-5](https://doi.org/10.1016/0031-8914%2861%2990063-5)
-2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A335586](https://oeis.org/A335586), [OEIS A253678](https://oeis.org/A253678) and [OEIS A281679](https://oeis.org/A281679). [oeis.org](https://oeis.org)
+2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A335586](https://oeis.org/A335586), [OEIS A253678](https://oeis.org/A253678), [OEIS A281679](https://oeis.org/A281679) and [OEIS A143233](https://oeis.org/A143233). [oeis.org](https://oeis.org)

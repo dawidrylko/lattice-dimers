@@ -36,10 +36,10 @@ T(h, w, k) \equiv [x^k]\, f^{(p_i)}_{hw}(0) \pmod{p_i} \quad (i = 1, \dots, m), 
 
 [`domicule-rectangle-polynomial-bigint.js`](../../js/solvers/domicule-rectangle-polynomial-bigint.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, and keeps its coefficients as `BigInt`, and so do its Rust and Python implementations, [`domicule-rectangle-polynomial-bigint.rs`](../../rust/solvers/src/bin/domicule-rectangle-polynomial-bigint.rs) and [`domicule_rectangle_polynomial_bigint.py`](../../python/lattice_dimers/solvers/domicule_rectangle_polynomial_bigint.py).
 
-Let $w$ be the shorter side, $f_t(s)$ the polynomial of the partial tilings of the first $t$ cells in the state $s$, with bit $j$ of $s$ set when the cell $j$ places ahead of the next one is covered, and $D_t$ the offsets among $1, w - 1, w, w + 1$ that lead from the cell $t$ to a cell of the board. A move at the offset $w - 1$ or $w + 1$ places a diagonal piece and multiplies by $x$, so $\delta_d$ is 1 for these two offsets and 0 for the others. This is the recurrence of the [domicules notebook](01-rectangles.md#the-bigint-solver) with the weight $x^{\delta_d}$ on every move:
+Let $w$ be the shorter side, $f_t(s)$ the polynomial of the partial tilings of the first $t$ cells in the state $s$, with bit $j$ of $s$ set when the cell $j$ places ahead of the next one is covered, and $D_t$ the moves of the free cell $t$ that the [domicules notebook](01-rectangles.md#the-bigint-solver) defines, each with its offset $d_m$. Only the moves down-left and down-right place a diagonal piece and multiply by $x$, so $\delta_m$ is 1 for these two moves and 0 for the others. The weight belongs to the move, not to its offset: on a board two cells wide the move right and the move down-left both have the offset 1. This is the recurrence of that notebook with the weight $x^{\delta_m}$ on every move:
 
 ```math
-f_0(s) = [s = 0], \qquad f_{t+1}(s') = f_t(2s' + 1) + \sum_{d \in D_t,\ s'_{d-1} = 1} x^{\delta_d} f_t(2s' - 2^d), \qquad P_{h,w}(x) = f_{hw}(0)
+f_0(s) = [s = 0], \qquad f_{t+1}(s') = f_t(2s' + 1) + \sum_{m \in D_t,\ s'_{d_m - 1} = 1} x^{\delta_m} f_t(2s' - 2^{d_m}), \qquad P_{h,w}(x) = f_{hw}(0)
 ```
 
 ## Numbering

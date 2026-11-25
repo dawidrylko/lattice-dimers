@@ -55,7 +55,7 @@ The gallery numbers the tilings of the cylinders up to $10 \times 10$ with the c
 
 Three solvers count the same boards by different methods. The table comes from the `BigInt` solver, and the cell below compares its last column, $h = 8$, with the counts of the modular and the Pfaffian solver. It also compares the row $w = 2$ with the recurrence of [OEIS A002605](https://oeis.org/A002605), and the square boards $w = h$ with the b-file [`oeis/A402693/b402693.txt`](../../oeis/A402693/b402693.txt) of the draft [OEIS A402693](https://oeis.org/draft/A402693). The last column names, row by row, what the counts of the row were compared with.
 
-The chart draws the entropy per cell, $\ln a / (2n)^2$, of the $2n \times 2n$ cylinder against its side, from $2 \times 2$ to $20 \times 20$ with the Pfaffian solver, each count compared with the b-file. The dashed line is the entropy per site $s$ of the triangular lattice [1], read from `research/king-entropy/out/out_validate.txt`. The $2 \times 2$ cylinder lies above $s$, and from $4 \times 4$ on the ratio rises towards $s$ from below on these boards.
+The second table lists the $2n \times 2n$ cylinders, the draft A402693, from $2 \times 2$ to $20 \times 20$ with the Pfaffian solver, each count compared with the b-file and up to $8 \times 8$ with the `BigInt` solver. The chart draws their entropy per cell, $\ln a / (2n)^2$, against the side. The dashed line is the entropy per site $s$ of the triangular lattice [1], read from `research/king-entropy/out/out_validate.txt`. The $2 \times 2$ cylinder lies above $s$, and from $4 \times 4$ on the ratio rises towards $s$ from below on these boards.
 
 Circumference 2 has multiple edges, because on a ring of two cells a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate piece, so one row of two cells has 2 tilings. A row of odd circumference has an odd number of cells, so the counts vanish at odd heights.
 
@@ -112,16 +112,22 @@ table(
 const validate = require('fs').readFileSync(require('path').join(root, 'research/king-entropy/out/out_validate.txt'), 'utf-8');
 const s = Number(validate.match(/Kasteleyn Bloch average, 64x64 grid: s_tri = ([0-9.]+)/)[1]);
 const squares = [];
+const rows = [];
 
 for (let side = 2; side <= 20; side += 2) {
   const count = await pfaffian.calculateTotalTilingCombinations({ rowCount: side, colCount: side, lattice: 'triangular' });
+  const checks = [['A402693 b-file', bFile[side / 2]], ...(side <= 8 ? [['BigInt solver', nb.count(side, side)]] : [])];
+  const differs = checks.filter(([, value]) => value !== count).map(([name]) => name);
 
-  if (count !== bFile[side / 2]) {
-    throw new Error(`the ${side}×${side} cylinder of the Pfaffian solver differs from the b-file of A402693`);
+  if (differs.length) {
+    throw new Error(`the ${side}×${side} cylinder of the Pfaffian solver differs from ${differs.join(' and ')}`);
   }
 
+  rows.push([side / 2, `${side}×${side}`, String(count), String(count).length, 'Pfaffian', checks.map(([name]) => name).join(', ')]);
   squares.push([side, nb.context.logCount(count) / side ** 2]);
 }
+
+table(['n', 'board', 'a(n)', 'digits', 'solver', 'checked against'], rows);
 
 chart({
   title: 'The entropy per cell of the 2n × 2n cylinder against its side',

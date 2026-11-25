@@ -31,7 +31,7 @@ A board has at most 1600 cells. That is a limit of memory, because every thread 
 
 ## The Modular solver
 
-[`any-lattice-cylinder-torus-modular.js`](../../js/solvers/any-lattice-cylinder-torus-modular.js) goes cell by cell with a state of the next $w + 2$ cells. A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. Mirroring the columns does the same on the square lattice and the king's graph, so there one run also stands for a class and its mirror image, while the triangular lattice, whose diagonals a mirror image turns the other way, keeps the rotations only. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`any-lattice-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-modular.rs), and in Python, [`any_lattice_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_modular.py). The Rust implementation also counts modulo [wide primes](../domicules/01-rectangles.md#wide-primes), the primes below $2^{61}$.
+[`any-lattice-cylinder-torus-modular.js`](../../js/solvers/any-lattice-cylinder-torus-modular.js) goes cell by cell with a state of the next $w + 2$ cells. A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. Mirroring the columns does the same on the square lattice and the king's graph, so there one run also stands for a class and its mirror image. The triangular lattice keeps the rotations only. A mirror image would turn its diagonals the other way. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`any-lattice-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-modular.rs), and in Python, [`any_lattice_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_modular.py). The Rust implementation also counts modulo [wide primes](../domicules/01-rectangles.md#wide-primes), the primes below $2^{61}$.
 
 ```math
 r_i \equiv \sum_{S} \bigl(T_{hw-1} \cdots T_1 T_0\bigr)_{S,S} \pmod{p_i}, \qquad a = \sum_{i=1}^{m} r_i\, M_i \bigl(M_i^{-1} \bmod p_i\bigr) \bmod M, \qquad M_i = \frac{M}{p_i}, \quad M = p_1 \cdots p_m
@@ -64,7 +64,7 @@ const pfaffian = require('./js/solvers/any-lattice-cylinder-torus-pfaffian.js');
 const { testCasesOf } = require('./js/core/cases');
 const stored = side =>
   ['any-lattice-cylinder-torus-modular', 'any-lattice-cylinder-torus-pfaffian']
-    .flatMap(testCasesOf)
+    .flatMap(algorithm => testCasesOf(algorithm).map(t => ({ ...t, algorithm })))
     .find(t => t.lattice === 'triangular' && t.torus && !t.twisted && t.rowCount === side && t.colCount === side);
 const rows = [];
 const entropies = [];
@@ -93,7 +93,13 @@ for (let n = 1; n <= 10; n++) {
     String(count),
     String(count).length,
     'Pfaffian solver',
-    [n <= 4 && 'BigInt solver', n <= 6 && 'Modular solver', 'spec/cases/'].filter(Boolean).join(', '),
+    [
+      n <= 4 && 'BigInt solver',
+      n <= 6 && 'modular solver',
+      expected.algorithm.endsWith('modular') ? 'spec/cases/ (modular)' : 'spec/cases/ (stored Pfaffian count)',
+    ]
+      .filter(Boolean)
+      .join(', '),
   ]);
   entropies.push([side, nb.context.logCount(count) / side ** 2]);
 }

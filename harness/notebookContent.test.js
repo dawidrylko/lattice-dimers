@@ -20,7 +20,7 @@ const cell = code => [`${fence}js run`, ...code, fence].join('\n');
 const note = ({ solver = ['$$', `${fence}math`, 'a = b', fence], counts }) =>
   ['# Note', '', '## The Modular solver', '', ...solver, '', '## The counts', '', cell(counts), '', '## Verification', '', 'Checked.'].join('\n');
 const grid = header => `table(['${header}', 'checked against'], rows);`;
-const complete = ["table(['n', 'a(n)', 'checked against'], rows);", "chart({ title: 'entropy' });"];
+const complete = ["table(['n', 'a(n)', 'digits', 'checked against'], rows);", "chart({ title: 'entropy' });"];
 
 test('a notebook that follows the rules passes, per kind of surface', () => {
   assert.deepEqual(checkContent('notes/x/03-tori.md', note({ counts: complete })), []);
@@ -32,7 +32,7 @@ test('a notebook that follows the rules passes, per kind of surface', () => {
 test('a solver without a math block, The counts without a chart and a table without the column fail', () => {
   assert.deepEqual(checkContent('n.md', note({ solver: ['Text with $a = b$ inline.'], counts: complete })), ['n.md: The Modular solver sets no formula of its solver as a math block.']);
   assert.deepEqual(checkContent('n.md', note({ counts: [complete[0]] })), ['n.md: The counts draws no chart.']);
-  assert.deepEqual(checkContent('n.md', note({ counts: ["table(['n', 'a(n)', 'status'], rows);", complete[1]] })), [
+  assert.deepEqual(checkContent('n.md', note({ counts: ["table(['n', 'a(n)', 'digits', 'status'], rows);", complete[1]] })), [
     "n.md: The counts has 1 tables and 0 columns 'checked against'.",
   ]);
 });
@@ -42,6 +42,18 @@ test('a rectangles notebook without its h × w table and a diagonal one without 
   assert.deepEqual(checkContent('notes/x/02-cylinders.md', note({ counts: complete })), ['notes/x/02-cylinders.md: The counts has no w × h table of the cylinders.']);
   assert.deepEqual(checkContent('notes/x/04-rectangles-by-diagonal-pieces.md', note({ counts: complete })), [
     'notes/x/04-rectangles-by-diagonal-pieces.md: The counts prints no full rows of the first boards.',
+  ]);
+});
+
+test('a comment does not satisfy the rules, double quotes do, and a surface notebook needs its table of digits', () => {
+  assert.deepEqual(checkContent('n.md', note({ counts: ["// chart({ and 'checked against' and 'digits'", 'table([1]);'] })), [
+    'n.md: The counts draws no chart.',
+    "n.md: The counts has 1 tables and 0 columns 'checked against'.",
+    'n.md: The counts has no table of one row per board with the digits of its count.',
+  ]);
+  assert.deepEqual(checkContent('n.md', note({ counts: ['table(["n", "a(n)", "digits", "checked against"], rows);', complete[1]] })), []);
+  assert.deepEqual(checkContent('notes/x/03-tori.md', note({ counts: ["table(['n', 'a(n)', 'checked against'], rows);", complete[1]] })), [
+    'notes/x/03-tori.md: The counts has no table of one row per board with the digits of its count.',
   ]);
 });
 

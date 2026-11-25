@@ -2,7 +2,9 @@ const path = require('path');
 
 const COUNTS = 'The counts';
 const SOLVER_SECTION = /^The \w+ solver$/;
-const CHECKED_AGAINST = "'checked against'";
+const CHECKED_AGAINST = /(['"`])checked against\1/g;
+const TABLE_CALL = /\btable\(\s*\[/g;
+const DIGITS = /(['"`])digits\1/;
 
 function readSections(text) {
   const sections = [];
@@ -18,8 +20,8 @@ function readSections(text) {
   return sections;
 }
 
-function count(text, needle) {
-  return text.split(needle).length - 1;
+function count(text, pattern) {
+  return (text.match(pattern) || []).length;
 }
 
 function checkContent(file, text) {
@@ -39,25 +41,36 @@ function checkContent(file, text) {
     return [...problems, `${file} has no section ${COUNTS}.`];
   }
 
-  const cells = [...counts.body.matchAll(/^```js run\n([\s\S]*?)^```$/gm)].map(([, code]) => code).join('\n');
+  const cells = [...counts.body.matchAll(/^```js run\n([\s\S]*?)^```$/gm)]
+    .map(([, code]) => code)
+    .join('\n')
+    .replace(/^\s*\/\/.*$/gm, '');
 
-  if (!/\bchart\(/.test(cells)) {
+  if (!/\bchart\(\{/.test(cells)) {
     problems.push(`${file}: ${COUNTS} draws no chart.`);
   }
 
-  const tables = count(cells, 'table(');
+  const tables = count(cells, TABLE_CALL);
 
   if (!tables) {
     problems.push(`${file}: ${COUNTS} has no result table.`);
   } else if (count(cells, CHECKED_AGAINST) < tables) {
-    problems.push(`${file}: ${COUNTS} has ${tables} tables and ${count(cells, CHECKED_AGAINST)} columns ${CHECKED_AGAINST}.`);
+    problems.push(`${file}: ${COUNTS} has ${tables} tables and ${count(cells, CHECKED_AGAINST)} columns 'checked against'.`);
   }
 
   if (/-by-diagonal-pieces\.md$/.test(name)) {
     if (!cells.includes('The first rows')) {
       problems.push(`${file}: ${COUNTS} prints no full rows of the first boards.`);
     }
-  } else if (/-rectangles\.md$/.test(name) && !cells.includes("'h \\\\ w'")) {
+
+    return problems;
+  }
+
+  if (!DIGITS.test(cells)) {
+    problems.push(`${file}: ${COUNTS} has no table of one row per board with the digits of its count.`);
+  }
+
+  if (/-rectangles\.md$/.test(name) && !cells.includes("'h \\\\ w'")) {
     problems.push(`${file}: ${COUNTS} has no h × w table of the rectangles.`);
   } else if (/-cylinders\.md$/.test(name) && !cells.includes("'w \\\\ h'")) {
     problems.push(`${file}: ${COUNTS} has no w × h table of the cylinders.`);

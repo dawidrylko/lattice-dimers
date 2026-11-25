@@ -62,7 +62,7 @@ Three solvers count the same boards by different methods. The table comes from t
 
 Circumference 2 has multiple edges, because on a ring of two cells a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate domino, so one row of two cells has 2 tilings. A row of odd circumference has an odd number of cells, so the counts vanish at odd heights.
 
-The chart draws the entropy per cell, $\ln a / (2n)^2$, of the $2n \times 2n$ cylinders, counted by the Pfaffian solver, against the side. The dashed line is the limit of the square lattice, $G/\pi \approx 0.29156$ ([OEIS A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The $2 \times 2$ and $4 \times 4$ cylinders lie above it. From $6 \times 6$ on the points lie below the line, lowest near $8 \times 8$ and $10 \times 10$, and rise towards it, since the open edges at the top and the bottom cost a term proportional to the side.
+The second table lists the $2n \times 2n$ cylinders, A402345, counted by the Pfaffian solver and checked against the b-file of the entry, up to $8 \times 8$ also against the `BigInt` solver. The chart draws their entropy per cell, $\ln a / (2n)^2$, against the side. The dashed line is the limit of the square lattice, $G/\pi \approx 0.29156$ ([OEIS A143233](https://oeis.org/A143233) [2], $G$ is Catalan's constant). The $2 \times 2$ and $4 \times 4$ cylinders lie above it. From $6 \times 6$ on the points lie below the line, lowest near $8 \times 8$ and $10 \times 10$, and rise towards it, since the open edges at the top and the bottom cost a term proportional to the side.
 
 ```js run
 const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
@@ -114,14 +114,29 @@ for (const [w, entry, terms] of entries) {
 
 table(['w \\ h', ...nb.heights.map(String), 'checked against'], rows);
 
+const bFile = require('fs')
+  .readFileSync(require('path').join(nb.context.root, 'oeis/A402345/b402345.txt'), 'utf-8')
+  .trim()
+  .split('\n')
+  .map(line => BigInt(line.split(' ')[1]));
 const sides = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
 const points = [];
+const squares = [];
 
 for (const side of sides) {
   const count = await pfaffian.calculateTotalTilingCombinations({ rowCount: side, colCount: side, lattice: 'square' });
+  const checks = [['A402345 b-file', bFile[side / 2]], ...(side <= 8 ? [['BigInt solver', nb.count(side, side)]] : [])];
+  const differs = checks.filter(([, value]) => value !== count).map(([name]) => name);
 
+  if (differs.length) {
+    throw new Error(`the ${side}×${side} cylinder of the Pfaffian solver differs from ${differs.join(' and ')}`);
+  }
+
+  squares.push([side / 2, `${side}×${side}`, String(count), String(count).length, 'Pfaffian', checks.map(([name]) => name).join(', ')]);
   points.push([side, logCount(count) / side ** 2]);
 }
+
+table(['n', 'board', 'a(n)', 'digits', 'solver', 'checked against'], squares);
 
 chart({
   title: 'Entropy per cell of the 2n × 2n cylinder against its side',
@@ -180,6 +195,7 @@ The `BigInt` solver agrees with every OEIS entry below, and the modular and the 
 - [OEIS A028478](https://oeis.org/A028478): the cylinders $C_7 \times P_h$, at even heights.
 - [OEIS A028479](https://oeis.org/A028479): the cylinders $C_8 \times P_h$.
 - [OEIS A402345](https://oeis.org/A402345): the $2n \times 2n$ cylinders.
+- [OEIS A143233](https://oeis.org/A143233): $G/\pi$, the entropy per cell of the square lattice, the dashed line of the chart.
 
 Every row of the table in The counts is in the OEIS [2]. The cell there checks each row against its entry, with the terms as they stood on 1 November 2026, and the table below lists the heights it checked.
 
@@ -221,4 +237,4 @@ table(
 
 ## References
 1. L. Lovász and M. D. Plummer. Determinants and matchings. Chapter 8 of *Matching Theory*, North-Holland Mathematics Studies 121 and Annals of Discrete Mathematics 29, North-Holland, Amsterdam, pp. 307-355, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322. [doi:10.1016/S0304-0208(08)73644-2](https://doi.org/10.1016/S0304-0208%2808%2973644-2)
-2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A000129](https://oeis.org/A000129), [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478), [OEIS A028479](https://oeis.org/A028479) and [OEIS A402345](https://oeis.org/A402345). [oeis.org](https://oeis.org)
+2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A000129](https://oeis.org/A000129), [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478), [OEIS A028479](https://oeis.org/A028479), [OEIS A402345](https://oeis.org/A402345) and [OEIS A143233](https://oeis.org/A143233). [oeis.org](https://oeis.org)

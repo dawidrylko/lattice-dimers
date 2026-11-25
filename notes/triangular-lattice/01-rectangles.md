@@ -84,7 +84,7 @@ for (let n = 0; n <= 11; n++) {
     `${side}×${side}`,
     String(count),
     String(count).length,
-    n <= 9 ? 'Modular solver' : 'spec/cases/',
+    n <= 9 ? 'modular solver' : 'spec/cases/',
     [n <= 6 && 'BigInt solver', n <= 9 && 'spec/cases/', 'A401988 b-file'].filter(Boolean).join(', '),
   ]);
 }
@@ -123,7 +123,7 @@ const count = (h, w) => calculateTotalTilingCombinations({ rowCount: h, colCount
 const stored = require('./js/core/cases')
   .testCasesOf('any-lattice-rectangle-bigint')
   .filter(({ lattice, rowCount, colCount }) => lattice === 'triangular' && sides.includes(rowCount) && sides.includes(colCount));
-const checked = Object.fromEntries(sides.map(h => [h, ['Modular solver']]));
+const checked = Object.fromEntries(sides.map(h => [h, ['modular solver']]));
 
 for (const h of sides) {
   for (const w of sides) {

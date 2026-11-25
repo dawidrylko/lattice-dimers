@@ -120,9 +120,9 @@ The number of a sampled tiling needs no table either. A scan from the last cell 
 
 ## The counts
 
-The formula solver evaluates the resultant, the two transfer solvers scan the board. The float solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer in JavaScript needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$. Every value of the formula solver is compared with the b-file of A004003 [1], [`oeis/A004003/b004003.txt`](../../oeis/A004003/b004003.txt), and with the stored case of `spec/cases/`, and the column `checked against` names what each row was compared with besides.
+The formula solver evaluates the resultant, the two transfer solvers scan the board. The float solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer in JavaScript needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$. Every value of the formula solver is compared with the b-file of A004003 [1], [`oeis/A004003/b004003.txt`](../../oeis/A004003/b004003.txt), and with the stored case of `spec/cases/`, and the column `checked against` names every source a row was compared with.
 
-The chart draws the entropy per cell, $\ln a(n) / (2n)^2$, against the side of the board. The dashed line is its limit on the square lattice, $G/\pi \approx 0.29156$ ([OEIS A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The free edges cost a term proportional to the side, so the points stay below the line and rise towards it.
+The chart draws the entropy per cell, $\ln a(n) / (2n)^2$, against the side of the board. The dashed line is its limit on the square lattice, $G/\pi \approx 0.29156$ ([OEIS A143233](https://oeis.org/A143233) [1], $G$ is Catalan's constant). The free edges cost a term proportional to the side, so the points stay below the line and rise towards it.
 
 ```js run
 const formula = require('./js/solvers/domino-rectangle-formula.js');
@@ -146,7 +146,7 @@ for (let n = 0; n <= 10; n++) {
   const viaTransfer = n <= 7 ? transfer.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
   const viaNumber = n <= 5 ? number.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
   const expected = known.find(t => t.rowCount === side && t.colCount === side).expectedResult;
-  const checks = ['b-file', 'stored case', viaTransfer !== null && 'BigInt solver', viaNumber !== null && 'float solver'].filter(Boolean);
+  const checks = ['A004003 b-file', 'spec/cases/', viaTransfer !== null && 'BigInt solver', viaNumber !== null && 'float solver'].filter(Boolean);
   const agree =
     viaFormula === nb.bFile[n] &&
     String(viaFormula) === expected &&
@@ -204,7 +204,7 @@ for (const h of sides) {
         throw new Error(`the ${h}×${w} board differs from spec/cases/`);
       }
 
-      checks.includes('stored case') || checks.push('stored case');
+      checks.includes('spec/cases/') || checks.push('spec/cases/');
     }
 
     if (h === w && h % 2 === 0) {
@@ -263,9 +263,10 @@ The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`pyt
 ## The OEIS entries
 
 - [OEIS A004003](https://oeis.org/A004003): the domino tilings of the $2n \times 2n$ board, the counts of this notebook.
+- [OEIS A143233](https://oeis.org/A143233): $G/\pi$, the entropy per cell of the square lattice, the dashed line of the chart.
 
 ## References
-1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A004003](https://oeis.org/A004003). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A004003](https://oeis.org/A004003) and [OEIS A143233](https://oeis.org/A143233). [oeis.org](https://oeis.org)
 2. P. W. Kasteleyn. The statistics of dimers on a lattice. *Physica* 27(12):1209-1225, 1961. [doi:10.1016/0031-8914(61)90063-5](https://doi.org/10.1016/0031-8914%2861%2990063-5)
 3. M. E. Fisher. Statistical mechanics of dimers on a plane lattice. *Physical Review* 124(6):1664-1672, 1961. [doi:10.1103/PhysRev.124.1664](https://doi.org/10.1103/PhysRev.124.1664)
 4. E. H. Bareiss. Sylvester's identity and multistep integer-preserving Gaussian elimination. *Mathematics of Computation* 22(103):565-578, 1968. [doi:10.1090/S0025-5718-1968-0226829-0](https://doi.org/10.1090/S0025-5718-1968-0226829-0)

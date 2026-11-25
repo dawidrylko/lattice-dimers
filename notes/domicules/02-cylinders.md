@@ -47,7 +47,7 @@ For fixed $w$ the counts grow like $\lambda_w^h$, with $\lambda_w$ the leading e
 
 The column `checked against` names what the cell compared the counts of each row with, and the cell stops the build on a mismatch. Every row is compared at $h = 8$ with the modular solver and at $h = 2$ with [OEIS A062510](https://oeis.org/A062510) [2]. The row $w = 2$ is compared at every height with [OEIS A002532](https://oeis.org/A002532), and the square boards, $w = h = 2$ to $8$, with the b-file of [OEIS A402163](https://oeis.org/A402163), kept in [`oeis/A402163/b402163.txt`](../../oeis/A402163/b402163.txt). The terms of the first two entries are those of 1 November 2026.
 
-The chart draws the entropy per cell, $\ln a(n) / (2n)^2$, of the $2n \times 2n$ cylinders against the side $2n$, from the whole b-file. The dashed line is the entropy per site $s = 0.5655\ldots$ of the king's graph, read from `research/king-entropy/data/errbar.json`. The two open edges keep every point below it, and the points rise towards it from $4 \times 4$ on.
+The second table lists the $2n \times 2n$ cylinders, A402163, as the modular solver stored them in `spec/cases/` up to $20 \times 20$, each compared with the b-file of the entry and up to $8 \times 8$ with the `BigInt` solver. The chart draws their entropy per cell, $\ln a(n) / (2n)^2$, against the side $2n$, from the whole b-file. The dashed line is the entropy per site $s = 0.5655\ldots$ of the king's graph, read from `research/king-entropy/data/errbar.json`. The two open edges keep every point below it, and the points rise towards it from $4 \times 4$ on.
 
 ```js run
 const fs = require('fs');
@@ -114,6 +114,25 @@ table(
   nb.widths.map(w => [String(w), ...nb.heights.map(h => String(nb.count(w, h))), checks[w].join(', ')]),
 );
 
+const stored = require('./js/core/cases')
+  .testCasesOf('any-lattice-cylinder-torus-modular')
+  .filter(t => (t.lattice || 'king') === 'king' && !t.torus && t.rowCount === t.colCount && t.rowCount >= 2 && t.rowCount % 2 === 0)
+  .sort((a, b) => a.rowCount - b.rowCount);
+
+table(
+  ['n', 'board', 'a(n)', 'digits', 'solver', 'checked against'],
+  stored.map(({ rowCount: side, expectedResult }) => {
+    const sources = [['A402163 b-file', bFile[side / 2]], ...(side <= 8 ? [['BigInt solver', nb.count(side, side)]] : [])];
+    const differs = sources.filter(([, value]) => String(value) !== expectedResult).map(([name]) => name);
+
+    if (differs.length) {
+      throw new Error(`the stored ${side}×${side} cylinder differs from ${differs.join(' and ')}`);
+    }
+
+    return [side / 2, `${side}×${side}`, expectedResult, expectedResult.length, 'modular, spec/cases/', sources.map(([name]) => name).join(', ')];
+  }),
+);
+
 const king = Number(JSON.parse(fs.readFileSync(path.join(root, 'research/king-entropy/data/errbar.json'), 'utf-8')).recommended.s);
 
 chart({
@@ -169,7 +188,7 @@ The `BigInt` solver agrees with the OEIS entries below and the modular solver wi
 - [OEIS A062510](https://oeis.org/A062510): the cylinders of height 2, shifted by one.
 - [OEIS A402163](https://oeis.org/A402163): the $2n \times 2n$ cylinders.
 
-The first two are in the OEIS [2], the first as a row of the table and the second as a column of it. The cell of The counts checks both against the table, with the terms of the entries as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
+The first two are in the OEIS [2], the first as a row of the table and the second as a column of it. The cell of The counts checks both against the table through closed forms: the recurrence $a(h) = 2a(h-1) + 5a(h-2)$ for the row and $2^{w+1} + (-1)^w$ for the column. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
 
 The $2n \times 2n$ cylinders are the entry [OEIS A402163](https://oeis.org/A402163) [2], with a b-file of $n = 0, \dots, 11$, [`oeis/A402163/b402163.txt`](../../oeis/A402163/b402163.txt). The cell of The counts checks the square boards of the table, $2 \times 2$ to $8 \times 8$, against that b-file, and the table below sums up what it checked.
 
