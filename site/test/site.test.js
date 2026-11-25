@@ -180,10 +180,10 @@ const NOTES = [
   },
   {
     slug: 'triangular-lattice/tori',
-    cells: 2, figures: 1,
+    cells: 4, figures: 1,
     group: 'Triangular lattice',
     h1: 'Triangular lattice: tilings of the 2n × 2n torus',
-    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'The OEIS entries', 'References'],
+    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'triangular-lattice/rectangles-by-diagonal-pieces',

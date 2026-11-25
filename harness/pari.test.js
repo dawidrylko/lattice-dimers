@@ -85,11 +85,18 @@ const PROGRAMS = [
           .map(({ expectedResult }) => ({ call: 'a(1)', expectedResult: String(expectedResult.split(',').reduce((total, part) => total + BigInt(part), 0n)) })),
       ),
   },
+  {
+    files: ['oeis/A399633/A399633.gp'],
+    testCases: testCasesOf('any-lattice-cylinder-torus-modular')
+      .filter(({ lattice, torus, twisted, rowCount, colCount }) => lattice === 'triangular' && torus && !twisted && rowCount === colCount && rowCount % 2 === 0 && rowCount <= MAX_TRIANGULAR_SIDE)
+      .map(({ rowCount, expectedResult }) => ({ call: `a(${rowCount / 2})`, expectedResult })),
+  },
 ];
 const ENTRY_PROGRAMS = {
   A004003: 'vector(11, n, a(n-1))',
   A239264: 'concat(vector(11, d, vector(d, n, T(n-1, d-n))))',
   A239273: 'vector(5, n, a(n-1))',
+  A399633: 'vector(6, n, a(n-1))',
   A401670: 'vector(5, n, a(n-1))',
   A401673: 'concat(vector(4, n, row(n-1)))',
   A401988: 'vector(6, n, a(n-1))',

@@ -137,6 +137,10 @@ path = "../oeis/A402345/b402345.rs"
 name = "b402693"
 path = "../oeis/A402693/b402693.rs"
 
+[[bin]]
+name = "b399633"
+path = "../oeis/A399633/b399633.rs"
+
 [[test]]
 name = "conformance"
 path = "tests/conformance.rs"
