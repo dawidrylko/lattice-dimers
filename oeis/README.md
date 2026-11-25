@@ -14,6 +14,7 @@ Entries of the [OEIS](https://oeis.org/) this repository has contributed to. Eac
 | [OEIS A401988](https://oeis.org/A401988) | [tilings of the 2n × 2n board on the triangular lattice](A401988/) | [A401988.txt](A401988/A401988.txt) | [b401988.txt](A401988/b401988.txt) | [A401988.gp](A401988/A401988.gp) |
 | [OEIS A402163](https://oeis.org/A402163) | [domicule tilings of the 2n × 2n cylinder](A402163/) | [A402163.txt](A402163/A402163.txt) | [b402163.txt](A402163/b402163.txt) | [A402163.gp](A402163/A402163.gp) |
 | [OEIS A402345](https://oeis.org/A402345) | [domino tilings of the 2n × 2n cylinder](A402345/) | [A402345.txt](A402345/A402345.txt) | [b402345.txt](A402345/b402345.txt) | [A402345.gp](A402345/A402345.gp) |
+| [OEIS A402693](https://oeis.org/draft/A402693) | [tilings of the 2n × 2n cylinder on the triangular lattice](A402693/) | [A402693.txt](A402693/A402693.txt) | [b402693.txt](A402693/b402693.txt) | [A402693.gp](A402693/A402693.gp) |
 
 ## Files
 

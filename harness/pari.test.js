@@ -74,6 +74,13 @@ const PROGRAMS = [
       .filter(({ lattice, rowCount, colCount }) => lattice === 'triangular' && rowCount === colCount && rowCount % 2 === 0 && rowCount <= MAX_TRIANGULAR_SIDE)
       .map(({ rowCount, expectedResult }) => ({ call: `a(${rowCount / 2})`, expectedResult })),
   },
+  {
+    files: ['oeis/A402693/A402693.gp'],
+    testCases: testCasesOf('any-lattice-cylinder-torus-modular')
+      .filter(({ lattice, torus, twisted, rowCount, colCount }) => lattice === 'triangular' && !torus && !twisted && rowCount === colCount && rowCount % 2 === 0 && rowCount <= MAX_TRIANGULAR_SIDE)
+      .map(({ rowCount, expectedResult }) => ({ call: `a(${rowCount / 2})`, expectedResult }))
+      .concat({ call: 'a(1)', expectedResult: '6' }),
+  },
 ];
 const ENTRY_PROGRAMS = {
   A004003: 'vector(11, n, a(n-1))',
@@ -84,6 +91,7 @@ const ENTRY_PROGRAMS = {
   A401988: 'vector(6, n, a(n-1))',
   A402163: 'vector(5, n, a(n-1))',
   A402345: 'vector(12, n, a(n-1))',
+  A402693: 'vector(6, n, a(n-1))',
 };
 
 function runGp(programs, calls) {

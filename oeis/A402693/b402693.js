@@ -1,0 +1,92 @@
+const O = [[[-1, -1], [1, 1]], [[-1, -1], [1, 1]], [[1, 1], [1, 1]]];
+const TRI = [[1, 0], [0, 1], [1, 1]];
+
+function edges(L, flip) {
+  const out = [];
+  for (let x = 0; x + 1 < L; x++) for (let y = 0; y < L; y++) TRI.forEach(([dx, dy], k) => {
+    const y2 = y + dy, s = O[k][x % 2][y % 2] * (flip && y2 >= L ? -1 : 1);
+    out.push([x * L + y, (x + dx) * L + (y2 % L), s]);
+  });
+  for (let y = 0; y < L; y++) {
+    const s = O[1][(L - 1) % 2][y % 2] * (flip && y + 1 >= L ? -1 : 1);
+    out.push([(L - 1) * L + y, (L - 1) * L + ((y + 1) % L), s]);
+  }
+  return out;
+}
+
+const mulmod = (a, b, p) => Number((BigInt(a) * BigInt(b)) % BigInt(p));
+function powmod(a, e, p) { let r = 1; a %= p; while (e > 0) { if (e & 1) r = mulmod(r, a, p); a = mulmod(a, a, p); e = Math.floor(e / 2); } return r; }
+
+function detBand(L, E, p) {
+  const n = L * L, bl = L + 1, W = 3 * bl + 2;
+  const A = Array.from({ length: n }, () => new Float64Array(W));
+  const off = r => r - bl;
+  const add = (r, c, v) => { A[r][c - off(r)] = (A[r][c - off(r)] + v + p) % p; };
+  for (const [u, v, s] of E) { add(u, v, s); add(v, u, -s); }
+  let d = 1;
+  for (let i = 0; i < n; i++) {
+    const last = Math.min(n - 1, i + bl);
+    let piv = -1;
+    for (let r = i; r <= last; r++) if (A[r][i - off(r)]) { piv = r; break; }
+    if (piv < 0) return 0;
+    const cmax = Math.min(n - 1, i + 2 * bl + 1);
+    if (piv !== i) {
+      const a = A[piv], b = A[i], tmp = new Float64Array(W);
+      for (let c = i; c <= cmax; c++) { const ia = c - off(piv), ib = c - off(i); tmp[ib] = ia < W ? a[ia] : 0; }
+      for (let c = i; c <= cmax; c++) { const ia = c - off(piv), ib = c - off(i); if (ia < W) a[ia] = ib < W ? b[ib] : 0; }
+      for (let c = i; c <= cmax; c++) { const ib = c - off(i); b[ib] = tmp[ib]; }
+      d = p - d;
+    }
+    const Ri = A[i], piv0 = Ri[i - off(i)];
+    d = mulmod(d, piv0, p);
+    const inv = powmod(piv0, p - 2, p);
+    for (let r = i + 1; r <= last; r++) {
+      const Rr = A[r], ir = i - off(r);
+      if (!Rr[ir]) continue;
+      const f = (Rr[ir] * inv) % p;
+      for (let c = i; c <= cmax; c++) {
+        const x = Ri[c - off(i)];
+        if (x) { const j = c - off(r); Rr[j] = (Rr[j] - (f * x) % p + p) % p; }
+      }
+    }
+  }
+  return d % p;
+}
+
+function primesBelow(start, count) {
+  const out = [];
+  for (let q = start - 1; out.length < count; q--) {
+    let ok = q > 1;
+    for (let r = 2; r * r <= q; r++) if (q % r === 0) { ok = false; break; }
+    if (ok) out.push(q);
+  }
+  return out;
+}
+function isqrt(n) { if (n < 2n) return n; let x = 1n << BigInt(Math.ceil(n.toString(2).length / 2) + 1); for (;;) { const y = (x + n / x) / 2n; if (y >= x) return x; x = y; } }
+
+const range = process.argv.slice(2);
+if (range.length !== 2 || !range.every(arg => /^[0-9]+$/.test(arg)) || Number(range[0]) > Number(range[1])) {
+  console.error('Usage: b402693.js <first n> <last n>');
+  process.exit(2);
+}
+const [from, to] = range.map(Number);
+for (let n = from; n <= to; n++) {
+  const L = 2 * n;
+  if (L === 0) { console.log(n, '1'); continue; }
+  const bits = L * L * Math.log2(3) + 8;
+  const ps = primesBelow(2 ** 26, Math.ceil(bits / 25) + 2);
+  let best = 0n;
+  for (const flip of [false, true]) {
+    const E = edges(L, flip);
+    let r = 0n, m = 1n;
+    for (const p of ps) {
+      const x = BigInt(detBand(L, E, p)), P = BigInt(p);
+      const t = (((x - r) % P + P) % P * BigInt(powmod(Number(m % P), p - 2, p))) % P;
+      r += m * t; m *= P;
+    }
+    if (r > best) best = r;
+  }
+  const s = isqrt(best);
+  if (s * s !== best) throw new Error(`det not a square at n=${n}`);
+  console.log(n, s.toString());
+}

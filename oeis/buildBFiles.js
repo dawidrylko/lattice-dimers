@@ -16,6 +16,8 @@ const DIAGONAL_FILE = 'spec/cases/domicule-rectangle-polynomial-modular.json';
 const TRIANGULAR_FILE = 'spec/cases/any-lattice-rectangle-modular.json';
 const LAST_TRIANGULAR_SQUARE = 11;
 const LAST_DOMINO_CYLINDER = 10;
+const LAST_TRIANGULAR_CYLINDER = 10;
+const TRIANGULAR_POLYNOMIAL_FILE = 'spec/cases/any-lattice-cylinder-torus-polynomial-modular.json';
 const TRIANGULAR_STRIP = 4;
 const LAST_TERMS = {
   A004003: 44,
@@ -27,6 +29,7 @@ const LAST_TERMS = {
   A401988: 37,
   A402163: 11,
   A402345: 44,
+  A402693: 36,
 };
 const SOURCES = {
   'A004003/b004003.txt': 'js/solvers/domino-rectangle-formula.js',
@@ -38,6 +41,7 @@ const SOURCES = {
   'A401988/b401988.txt': TRIANGULAR_FILE,
   'A402163/b402163.txt': `${TORUS_FILE} and ${path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY)}`,
   'A402345/b402345.txt': TORUS_FILE,
+  'A402693/b402693.txt': `${TORUS_FILE} and ${TRIANGULAR_POLYNOMIAL_FILE}`,
 };
 
 function readStrips(lattice, boundary = 'free') {
@@ -212,6 +216,33 @@ function readDominoCylinders() {
   });
 }
 
+function readTriangularCylinders() {
+  const squares = new Map([[0, '1']]);
+
+  for (const file of [TORUS_FILE, TRIANGULAR_POLYNOMIAL_FILE]) {
+    for (const { rowCount, colCount, lattice, torus, twisted, expectedResult } of readTestCases(file)) {
+      if (lattice === 'triangular' && !torus && !twisted && rowCount === colCount && rowCount % 2 === 0) {
+        const count = String(expectedResult.split(',').reduce((total, part) => total + BigInt(part), 0n));
+        const known = squares.get(rowCount / 2);
+
+        if (known !== undefined && known !== count) {
+          throw new Error(`The ${rowCount} X ${rowCount} triangular cylinder has two counts in ${TORUS_FILE} and ${TRIANGULAR_POLYNOMIAL_FILE}.`);
+        }
+
+        squares.set(rowCount / 2, count);
+      }
+    }
+  }
+
+  return Array.from({ length: LAST_TRIANGULAR_CYLINDER + 1 }, (_, n) => {
+    if (!squares.has(n)) {
+      throw new Error(`No count for the ${2 * n} X ${2 * n} triangular cylinder in ${TORUS_FILE} or ${TRIANGULAR_POLYNOMIAL_FILE}.`);
+    }
+
+    return squares.get(n);
+  });
+}
+
 function formatBFile(terms) {
   return terms.map((term, index) => `${index} ${term}\n`).join('');
 }
@@ -239,6 +270,7 @@ function readCheckedTerms() {
     'A401988/b401988.txt': formatBFile(readTriangularSquares()),
     'A402163/b402163.txt': formatBFile(readCylinders()),
     'A402345/b402345.txt': formatBFile(readDominoCylinders()),
+    'A402693/b402693.txt': formatBFile(readTriangularCylinders()),
   };
 }
 
