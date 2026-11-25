@@ -1,4 +1,4 @@
-# Dominoes: tilings of the 2n × 2n torus (A335586)
+# Dominoes: tilings of the 2n × 2n torus
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/tori.html) has the results. It counts the domino tilings of tori, boards whose opposite edges are glued in both directions. The same boards are counted on the [triangular lattice](../triangular-lattice/03-tori.md) and with [domicules](../domicules/03-tori.md), where the torus count of the three lattices is compared with their entropy; the [cylinders notebook](02-cylinders.md) glues only the left and right edges.
 
@@ -106,6 +106,12 @@ if (!rows.some(r => pfaffian(r).some(Boolean))) {
 ## Verification
 
 The three cylinder and torus solvers agree with each other and with [OEIS A335586](https://oeis.org/A335586) and [OEIS A253678](https://oeis.org/A253678), and the modular and the Pfaffian solver also with [OEIS A281679](https://oeis.org/A281679). `FULL_CASES=1 node --test js/test/conformance.test.js` runs the tori of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three solvers and those of `spec/cases/any-lattice-cylinder-torus-modular.json` through the modular one, all but the 18 × 18 and 20 × 20 tori, whose counts that file copies from A335586. The Pfaffian solver counts these two as well: [`spec/cases/any-lattice-cylinder-torus-pfaffian.json`](../../spec/cases/any-lattice-cylinder-torus-pfaffian.json) holds terms of A335586 up to the 40 × 40 torus, and they agree with the b-file of the entry as it stood on 18 November 2026.
+
+## The OEIS entries
+
+- [OEIS A335586](https://oeis.org/A335586): the domino tilings of the $2n \times 2n$ torus, the counts of this notebook.
+- [OEIS A253678](https://oeis.org/A253678): the tori $C_8 \times C_n$.
+- [OEIS A281679](https://oeis.org/A281679): the tori $C_{10} \times C_n$.
 
 ## References
 1. P. W. Kasteleyn. The statistics of dimers on a lattice. *Physica* 27(12):1209-1225, 1961. Equation (23), p. 1219. [doi:10.1016/0031-8914(61)90063-5](https://doi.org/10.1016/0031-8914%2861%2990063-5)

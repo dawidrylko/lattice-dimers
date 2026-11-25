@@ -105,121 +105,121 @@ const NOTES = [
     slug: 'dominoes/rectangles',
     cells: 7, figures: 1,
     group: 'Dominoes',
-    h1: 'Dominoes: tilings of the 2n × 2n board (A004003)',
-    sections: ['The problem', 'The Formula solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Dominoes: tilings of the 2n × 2n board',
+    sections: ['The problem', 'The Formula solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'dominoes/cylinders',
     cells: 6, figures: 1,
     group: 'Dominoes',
-    h1: 'Dominoes: tilings of cylinders and of the 2n × 2n cylinder (A000129, A004253, A006253, A003729, A028477, A028478, A028479, A402345)',
-    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Dominoes: tilings of cylinders and of the 2n × 2n cylinder',
+    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'dominoes/tori',
     cells: 3, figures: 1,
     group: 'Dominoes',
-    h1: 'Dominoes: tilings of the 2n × 2n torus (A335586)',
-    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
+    h1: 'Dominoes: tilings of the 2n × 2n torus',
+    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'domicules/rectangles',
     cells: 9, figures: 1,
     group: 'Domicules',
-    h1: 'Domicules: tilings of the 2n × 2n board (A239273)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Domicules: tilings of the 2n × 2n board',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'domicules/cylinders',
     cells: 5, figures: 1,
     group: 'Domicules',
-    h1: 'Domicules: tilings of cylinders and of the 2n × 2n cylinder (A002532, A062510, A402163)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'Running time', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Domicules: tilings of cylinders and of the 2n × 2n cylinder',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'domicules/tori',
     cells: 7, figures: 1,
     group: 'Domicules',
-    h1: 'Domicules: tilings of the 2n × 2n torus (A401670)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Three lattices on the torus', 'The seam sign', 'Running time', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Domicules: tilings of the 2n × 2n torus',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Three lattices on the torus', 'The seam sign', 'Running time', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'domicules/rectangles-by-diagonal-pieces',
     cells: 6, figures: 1,
     group: 'Domicules',
-    h1: 'Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Running time', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Diagonal pieces: domicule tilings of the 2n × 2n board by their count',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Running time', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'domicules/cylinders-by-diagonal-pieces',
     cells: 3, figures: 1,
     group: 'Domicules',
-    h1: 'Diagonal pieces: domicule tilings of cylinders by their count (not in the OEIS)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
+    h1: 'Diagonal pieces: domicule tilings of cylinders by their count',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'domicules/tori-by-diagonal-pieces',
     cells: 3, figures: 1,
     group: 'Domicules',
-    h1: 'Diagonal pieces: domicule tilings of the 2n × 2n torus by their count (not in the OEIS)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'References'],
+    h1: 'Diagonal pieces: domicule tilings of the 2n × 2n torus by their count',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'triangular-lattice/rectangles',
     cells: 5, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Triangular lattice: tilings of the 2n × 2n board (A401988)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'The entropy per site', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Triangular lattice: tilings of the 2n × 2n board',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'The entropy per site', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'triangular-lattice/cylinders',
     cells: 5, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Triangular lattice: tilings of cylinders and of the 2n × 2n cylinder (A002605 on the cylinder of circumference 2, A402693)',
-    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'What the OEIS has', 'PARI/GP', 'Verification', 'References'],
+    h1: 'Triangular lattice: tilings of cylinders and of the 2n × 2n cylinder',
+    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'triangular-lattice/tori',
     cells: 2, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Triangular lattice: tilings of the 2n × 2n torus (not in the OEIS)',
-    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
+    h1: 'Triangular lattice: tilings of the 2n × 2n torus',
+    sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'triangular-lattice/rectangles-by-diagonal-pieces',
     cells: 4, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Diagonal pieces: triangular lattice tilings of the 2n × 2n board by their count (not in the OEIS)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Verification', 'References'],
+    h1: 'Diagonal pieces: triangular lattice tilings of the 2n × 2n board by their count',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'How many pieces are diagonal', 'Weighted counts', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'triangular-lattice/cylinders-by-diagonal-pieces',
     cells: 2, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Diagonal pieces: triangular lattice tilings of cylinders by their count (not in the OEIS)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
+    h1: 'Diagonal pieces: triangular lattice tilings of cylinders by their count',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'The OEIS entries', 'References'],
   },
   {
     slug: 'triangular-lattice/tori-by-diagonal-pieces',
     cells: 2, figures: 1,
     group: 'Triangular lattice',
-    h1: 'Diagonal pieces: triangular lattice tilings of the 2n × 2n torus by their count (not in the OEIS)',
-    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'References'],
+    h1: 'Diagonal pieces: triangular lattice tilings of the 2n × 2n torus by their count',
+    sections: ['The problem', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'Verification', 'The OEIS entries', 'References'],
   },
 ];
 const SOLVER_SECTION = { 'how-the-counts-are-made': 'the-modular-solver' };
 const OLD_SECTIONS = {
   'dominoes/rectangles': { 'the-closed-form': 'the-formula-solver', 'transfer-by-rows': 'the-bigint-solver', 'numbering-tilings': 'numbering', 'three-ways-to-the-same-numbers': 'the-counts' },
-  'dominoes/cylinders': SOLVER_SECTION,
+  'dominoes/cylinders': { ...SOLVER_SECTION, 'what-the-oeis-has': 'the-oeis-entries' },
   'dominoes/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus-a335586': 'the-counts' },
   'domicules/rectangles': { 'counting-modulo-primes': 'the-modular-solver', 'transfer-by-cells': 'the-bigint-solver', 'the-sequence-up-to-20-20': 'the-counts' },
-  'domicules/cylinders': SOLVER_SECTION,
+  'domicules/cylinders': { ...SOLVER_SECTION, 'what-the-oeis-has': 'the-oeis-entries' },
   'domicules/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus-a401670': 'the-counts' },
-  'triangular-lattice/cylinders': SOLVER_SECTION,
+  'triangular-lattice/cylinders': { ...SOLVER_SECTION, 'what-the-oeis-has': 'the-oeis-entries' },
   'triangular-lattice/tori': { ...SOLVER_SECTION, 'the-2n-2n-torus': 'the-counts' },
 };
-const NOTEBOOK_TITLE = /^(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule |triangular lattice )?tilings of .+ \((A\d{6}( on the [^)]+)?(, A\d{6})*|not in the OEIS)\)$/;
-const NOTEBOOK_SKELETON = ['The problem', 'The Formula solver', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', '*', 'Running time', 'PARI/GP', 'Verification', 'References'];
+const NOTEBOOK_TITLE = /^(?!.*\bA\d{6}\b)(Dominoes|Domicules|Diagonal pieces|Triangular lattice): (domicule |triangular lattice )?tilings of [^()]+$/;
+const NOTEBOOK_SKELETON = ['The problem', 'The Formula solver', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', '*', 'Running time', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'];
 const NOTE_REDIRECTS = [
   ['a004003', 'dominoes/rectangles'],
   ['a239273', 'domicules/rectangles'],
@@ -1175,7 +1175,6 @@ function checkNotebookLayout(slug, state, { h1, sections }) {
 
     return place < 0 ? NOTEBOOK_SKELETON.indexOf('*') : place;
   });
-  const unlinked = (h1.match(/A\d{6}/g) || []).filter(entry => !state.oeis.some(href => href.endsWith(`/${entry}`)));
   const aliases = OLD_SECTIONS[slug] || {};
 
   if (state.h1 !== h1 || !NOTEBOOK_TITLE.test(state.h1)) {
@@ -1186,16 +1185,12 @@ function checkNotebookLayout(slug, state, { h1, sections }) {
     problems.push(`${slug} has the sections ${state.h2.join(', ')} instead of ${sections.join(', ')}`);
   }
 
-  if (order.some((place, i) => i > 0 && place < order[i - 1]) || !['The problem', 'The counts', 'Verification', 'References'].every(title => state.h2.includes(title))) {
+  if (order.some((place, i) => i > 0 && place < order[i - 1]) || !['The problem', 'The counts', 'Verification', 'The OEIS entries', 'References'].every(title => state.h2.includes(title))) {
     problems.push(`${slug} leaves the common order of sections: ${state.h2.join(', ')}`);
   }
 
   if (state.landing) {
     problems.push(`${slug} has ${state.landing} headings that land at the very edge of the screen`);
-  }
-
-  if (unlinked.length) {
-    problems.push(`${slug} names ${unlinked.join(', ')} in its h1 and links none of them`);
   }
 
   if (Object.keys(aliases).some(alias => state.aliases[alias] !== aliases[alias])) {
@@ -1219,7 +1214,6 @@ async function checkNotes(page, baseUrl, width) {
       h1: document.querySelector('article h1, h1').textContent.trim(),
       landing: [...document.querySelectorAll('article h2, article h3, article h2 > span[id], article h3 > span[id]')].filter(heading => getComputedStyle(heading).scrollMarginTop !== '16px').length,
       h2: [...document.querySelectorAll('article h2')].map(h => h.textContent.trim()),
-      oeis: [...document.querySelectorAll('article a[href*="oeis.org/"]')].map(a => a.href),
       aliases: Object.fromEntries([...document.querySelectorAll('article h2 > span[id], article h3 > span[id]')].map(span => [span.id, span.parentElement.id])),
       cells: document.querySelectorAll('.cell').length,
       outputs: [...document.querySelectorAll('.output td, pre.output')].map(cell => cell.textContent.trim()),

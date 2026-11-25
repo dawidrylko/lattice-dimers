@@ -1,4 +1,4 @@
-# Dominoes: tilings of cylinders and of the 2n × 2n cylinder (A000129, A004253, A006253, A003729, A028477, A028478, A028479, A402345)
+# Dominoes: tilings of cylinders and of the 2n × 2n cylinder
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/cylinders.html) has the results. It counts the domino tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom. The same boards are counted on the [triangular lattice](../triangular-lattice/02-cylinders.md) and with [domicules](../domicules/02-cylinders.md); the [rectangles notebook](01-rectangles.md) counts dominoes on boards with no glued edge.
 
@@ -63,7 +63,48 @@ table(
 );
 ```
 
-## What the OEIS has
+## Running time
+
+Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../../benchmarks/results).
+
+```js run
+const { formatTime } = nb.context;
+
+const rows = nb.context.dominoCylinderTorusBenchmark.filter(r => r.surface === 'cylinder');
+const pfaffian = r => [r.pfaffianLanguages.rs, r.pfaffianLanguages.py, r.pfaffian];
+
+table(
+  ['board', 'Pfaffian, Rust', 'Pfaffian, Python', 'Pfaffian, JavaScript', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
+  rows.map(r => [
+    `${r.rowCount}×${r.colCount}`,
+    ...[...pfaffian(r), r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
+  ]),
+  { wrapHeaders: true },
+);
+print(`Run: ${nb.context.benchmarkRun}`);
+
+if (!rows.some(r => pfaffian(r).some(Boolean))) {
+  print('The Pfaffian solver has no benchmark run yet.');
+}
+```
+
+## PARI/GP
+
+[`oeis/A402345/A402345.gp`](../../oeis/A402345/A402345.gp) counts the $2n \times 2n$ cylinder as a resultant. The cylinder is planar, and with the opposite sign on the edges across the seam its Kasteleyn matrix splits over the circumference, so the product over its eigenvalues is the resultant of the polynomial of [A004003](../../oeis/A004003/A004003.gp) with $Q(x) = 2 T_n((x+2)/2) + 2$. CI checks the program against the square boards of the test data up to $20 \times 20$, and [`oeis/A402345/b402345.js`](../../oeis/A402345/b402345.js) evaluates the same resultant in exact integers for the b-file.
+
+```js run
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402345/A402345.gp'), 'utf-8').trim());
+```
+
+## Verification
+
+The `BigInt` solver agrees with every OEIS entry below, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. The Pfaffian solver also agrees with A402345 up to $20 \times 20$ and at $40 \times 40$, the largest board it takes. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
+
+## The OEIS entries
+
+- [OEIS A000129](https://oeis.org/A000129): the Pell numbers, shifted by one, the cylinders of circumference 2.
+- [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478), [OEIS A028479](https://oeis.org/A028479): the cylinders of circumference 3 to 8.
+- [OEIS A402345](https://oeis.org/A402345): the $2n \times 2n$ cylinders.
 
 Every row of the table is in the OEIS: the Pell numbers [OEIS A000129](https://oeis.org/A000129), shifted by one, for circumference 2, and the domino tilings of $C_w \times P_h$ for the others, [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478) and [OEIS A028479](https://oeis.org/A028479) for $w = 3$ to $8$ [2]; the entries of odd circumference list only the even heights. The cell checks every one of these against the table, with the terms of the entries as they stood on 1 November 2026.
 
@@ -130,43 +171,6 @@ table(
   ],
 );
 ```
-
-## Running time
-
-Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../../benchmarks/results).
-
-```js run
-const { formatTime } = nb.context;
-
-const rows = nb.context.dominoCylinderTorusBenchmark.filter(r => r.surface === 'cylinder');
-const pfaffian = r => [r.pfaffianLanguages.rs, r.pfaffianLanguages.py, r.pfaffian];
-
-table(
-  ['board', 'Pfaffian, Rust', 'Pfaffian, Python', 'Pfaffian, JavaScript', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
-  rows.map(r => [
-    `${r.rowCount}×${r.colCount}`,
-    ...[...pfaffian(r), r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
-  ]),
-  { wrapHeaders: true },
-);
-print(`Run: ${nb.context.benchmarkRun}`);
-
-if (!rows.some(r => pfaffian(r).some(Boolean))) {
-  print('The Pfaffian solver has no benchmark run yet.');
-}
-```
-
-## PARI/GP
-
-[`oeis/A402345/A402345.gp`](../../oeis/A402345/A402345.gp) counts the $2n \times 2n$ cylinder as a resultant. The cylinder is planar, and with the opposite sign on the edges across the seam its Kasteleyn matrix splits over the circumference, so the product over its eigenvalues is the resultant of the polynomial of [A004003](../../oeis/A004003/A004003.gp) with $Q(x) = 2 T_n((x+2)/2) + 2$. CI checks the program against the square boards of the test data up to $20 \times 20$, and [`oeis/A402345/b402345.js`](../../oeis/A402345/b402345.js) evaluates the same resultant in exact integers for the b-file.
-
-```js run
-print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402345/A402345.gp'), 'utf-8').trim());
-```
-
-## Verification
-
-The `BigInt` solver agrees with every OEIS entry above, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. The Pfaffian solver also agrees with A402345 up to $20 \times 20$ and at $40 \times 40$, the largest board it takes. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
 
 ## References
 1. L. Lovász and M. D. Plummer. Determinants and matchings. Chapter 8 of *Matching Theory*, North-Holland Mathematics Studies 121 and Annals of Discrete Mathematics 29, North-Holland, Amsterdam, pp. 307-355, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322. [doi:10.1016/S0304-0208(08)73644-2](https://doi.org/10.1016/S0304-0208%2808%2973644-2)

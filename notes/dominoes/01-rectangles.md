@@ -1,4 +1,4 @@
-# Dominoes: tilings of the 2n × 2n board (A004003)
+# Dominoes: tilings of the 2n × 2n board
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/rectangles.html) has the results. It counts the domino tilings of the $2n \times 2n$ board, [OEIS A004003](https://oeis.org/A004003) [1], says how the gallery numbers and samples them, and how every number is checked. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) count dominoes on boards with glued edges, and the same boards are counted on the [triangular lattice](../triangular-lattice/01-rectangles.md).
 
@@ -176,6 +176,10 @@ Every count on this page is checked in more than one independent way:
 - coupling from the past is checked with chi-squared tests on $2 \times 2$ and $4 \times 4$.
 
 The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
+
+## The OEIS entries
+
+- [OEIS A004003](https://oeis.org/A004003): the domino tilings of the $2n \times 2n$ board, the counts of this notebook.
 
 ## References
 1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A004003](https://oeis.org/A004003). [oeis.org](https://oeis.org)

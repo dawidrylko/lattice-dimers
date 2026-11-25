@@ -1,4 +1,4 @@
-# Domicules: tilings of cylinders and of the 2n × 2n cylinder (A002532, A062510, A402163)
+# Domicules: tilings of cylinders and of the 2n × 2n cylinder
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/cylinders.html) has the results. It counts the domicule tilings of cylinders, boards of circumference $w$ and height $h$ whose left and right edges are glued and which are open at the top and the bottom; they are the perfect matchings of the king's graph on the cylinder. The same boards are counted with [dominoes](../dominoes/02-cylinders.md) and on the [triangular lattice](../triangular-lattice/02-cylinders.md); the [rectangles notebook](01-rectangles.md) counts domicules on boards with no glued edge.
 
@@ -55,7 +55,42 @@ table(
 );
 ```
 
-## What the OEIS has
+## Running time
+
+Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../../benchmarks/results).
+
+```js run
+const { formatTime } = nb.context;
+
+table(
+  ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
+  nb.context.cylinderTorusBenchmark
+    .filter(r => r.surface === 'cylinder')
+    .map(r => [
+      `${r.rowCount}×${r.colCount}`,
+      ...[r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
+    ]),
+);
+print(`Run: ${nb.context.benchmarkRun}`);
+```
+
+## PARI/GP
+
+The cylinder count as the entry of the power of the row transfer matrix from the empty row to the empty row in [`oeis/A402163/A402163.gp`](../../oeis/A402163/A402163.gp), checked in CI against the king's graph cylinders of the test data up to circumference 8.
+
+```js run
+print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402163/A402163.gp'), 'utf-8').trim());
+```
+
+## Verification
+
+The `BigInt` solver agrees with the OEIS entries below and the modular solver with the `BigInt` one at $h = 8$, the PARI/GP program runs in CI against the king's graph cylinders of the test data, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the king's graph cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both of them.
+
+## The OEIS entries
+
+- [OEIS A002532](https://oeis.org/A002532): the cylinders of circumference 2, shifted by one.
+- [OEIS A062510](https://oeis.org/A062510): the cylinders of height 2, shifted by one.
+- [OEIS A402163](https://oeis.org/A402163): the $2n \times 2n$ cylinders.
 
 The OEIS has the cylinders of circumference 2, [OEIS A002532](https://oeis.org/A002532), and those of height 2, [OEIS A062510](https://oeis.org/A062510), each shifted by one [2]. The cell checks both against the table, with the terms of the entries as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
 
@@ -101,37 +136,6 @@ table(
   ],
 );
 ```
-
-## Running time
-
-Average time of the count inside each solver, without the start of its process, from the newest complete benchmark run in [`benchmarks/results`](../../benchmarks/results).
-
-```js run
-const { formatTime } = nb.context;
-
-table(
-  ['board', 'modular, Rust', 'modular, Python', 'modular, JavaScript', 'BigInt, Rust', 'BigInt, Python', 'BigInt, JavaScript'],
-  nb.context.cylinderTorusBenchmark
-    .filter(r => r.surface === 'cylinder')
-    .map(r => [
-      `${r.rowCount}×${r.colCount}`,
-      ...[r.languages.rs, r.languages.py, r.modular, r.bigintLanguages.rs, r.bigintLanguages.py, r.bigint].map(formatTime),
-    ]),
-);
-print(`Run: ${nb.context.benchmarkRun}`);
-```
-
-## PARI/GP
-
-The cylinder count as the entry of the power of the row transfer matrix from the empty row to the empty row in [`oeis/A402163/A402163.gp`](../../oeis/A402163/A402163.gp), checked in CI against the king's graph cylinders of the test data up to circumference 8.
-
-```js run
-print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A402163/A402163.gp'), 'utf-8').trim());
-```
-
-## Verification
-
-The `BigInt` solver agrees with the OEIS entries above and the modular solver with the `BigInt` one at $h = 8$, the PARI/GP program runs in CI against the king's graph cylinders of the test data, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the king's graph cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both of them.
 
 ## References
 1. D. Ryłko. The dimer entropy of the king's graph. Preprint, October 2026. [doi:10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056)

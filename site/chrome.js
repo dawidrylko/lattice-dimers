@@ -102,16 +102,16 @@ const SECTION_ALIASES = {
     'numbering-tilings': 'numbering',
     'three-ways-to-the-same-numbers': 'the-counts',
   },
-  'dominoes/cylinders': SOLVER_SECTIONS,
+  'dominoes/cylinders': { ...SOLVER_SECTIONS, 'what-the-oeis-has': 'the-oeis-entries' },
   'dominoes/tori': { ...SOLVER_SECTIONS, 'the-2n-2n-torus-a335586': 'the-counts' },
   'domicules/rectangles': {
     'counting-modulo-primes': 'the-modular-solver',
     'transfer-by-cells': 'the-bigint-solver',
     'the-sequence-up-to-20-20': 'the-counts',
   },
-  'domicules/cylinders': SOLVER_SECTIONS,
+  'domicules/cylinders': { ...SOLVER_SECTIONS, 'what-the-oeis-has': 'the-oeis-entries' },
   'domicules/tori': { ...SOLVER_SECTIONS, 'the-2n-2n-torus-a401670': 'the-counts' },
-  'triangular-lattice/cylinders': SOLVER_SECTIONS,
+  'triangular-lattice/cylinders': { ...SOLVER_SECTIONS, 'what-the-oeis-has': 'the-oeis-entries' },
   'triangular-lattice/tori': { ...SOLVER_SECTIONS, 'the-2n-2n-torus': 'the-counts' },
 };
 

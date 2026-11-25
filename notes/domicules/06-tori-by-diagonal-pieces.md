@@ -1,4 +1,4 @@
-# Diagonal pieces: domicule tilings of the 2n × 2n torus by their count (not in the OEIS)
+# Diagonal pieces: domicule tilings of the 2n × 2n torus by their count
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori-by-diagonal-pieces.html) has the results. It sorts the domicule tilings of tori by the number of diagonal pieces, as the [rectangles notebook](04-rectangles-by-diagonal-pieces.md) does on the board with no glued edge. The tilings themselves are counted in the [tori notebook](03-tori.md).
 
@@ -88,6 +88,10 @@ if (!cylinderTorusDiagonalRun) {
 ## Verification
 
 The two solvers agree with each other, with the domino count of `any-lattice-cylinder-torus-bigint` at $k = 0$ and with its king's graph count summed over $k$, and on the tori of up to 16 cells with every tiling listed one by one. The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
+
+## The OEIS entries
+
+The OEIS has no entry for these counts.
 
 ## References
 

@@ -1,4 +1,4 @@
-# Domicules: tilings of the 2n × 2n torus (A401670)
+# Domicules: tilings of the 2n × 2n torus
 
 A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/tori.html) has the results. It counts the domicule tilings of tori, boards whose opposite edges are glued in both directions; they are the perfect matchings of the king's graph on the torus. It compares the torus count of the king's graph with those of [dominoes](../dominoes/03-tori.md) and of the [triangular lattice](../triangular-lattice/03-tori.md). The [cylinders notebook](02-cylinders.md) glues only the left and right edges.
 
@@ -225,6 +225,12 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 ## Verification
 
 The two cylinder and torus solvers agree with each other up to $8 \times 8$, the modular solver checks every result against an extra prime, and the PARI/GP program runs in CI against the king's graph tori of the test data. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the king's graph boards of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both solvers.
+
+## The OEIS entries
+
+- [OEIS A401670](https://oeis.org/A401670): the domicule tilings of the $2n \times 2n$ torus, the counts of this notebook.
+- [OEIS A335586](https://oeis.org/A335586): the domino tilings of the same tori, which count the edges of the $2 \times 2$ torus the same way.
+- [OEIS A143233](https://oeis.org/A143233): $G/\pi$, the entropy per site of the square lattice in the comparison of three lattices.
 
 ## References
 
