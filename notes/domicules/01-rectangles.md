@@ -23,6 +23,12 @@ The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modu
 
 Every prime contributes at least 30 bits, so $\lceil (\log_2 B + 1)/30 \rceil$ primes suffice for a bound $B$. One more prime checks the result: the rebuilt count must agree with the residue modulo that prime, and a mismatch stops the solver.
 
+With $f^{(p)}_{hw}(0)$ the count of the [cell-by-cell scan](#the-bigint-solver) taken modulo the prime $p$, the solver rebuilds the count of the $h \times w$ board from the $m$ residues $r_i = f^{(p_i)}_{hw}(0)$ as a number written in the mixed base $p_1, \dots, p_m$, with the digits $t_i$:
+
+```math
+a = \sum_{i=1}^{m} t_i \prod_{j<i} p_j, \qquad t_i \equiv \Bigl(r_i - \sum_{l<i} t_l \prod_{j<l} p_j\Bigr)\Bigl(\prod_{j<i} p_j\Bigr)^{-1} \pmod{p_i}, \qquad 0 \le t_i < p_i
+```
+
 ### Wide primes
 
 The Rust implementation also counts modulo wide primes, the primes below $2^{61}$, in tables of `u64`. Seven residues below $2^{61}$ sum to less than $2^{64}$, and no cell of the three Modular solvers adds more than five counts. A step that sums the counts of one entry can therefore add them first and reduce the sum once. `any-lattice-rectangle-modular` adds one count at a time and reduces each sum.
@@ -74,6 +80,14 @@ if (combined !== exact || combined % BigInt(primes[2]) !== BigInt(residues[2])) 
 ## The BigInt solver
 
 A domicule tiling is counted with a cell-by-cell scan, the transfer by cells. A free cell is matched with its right, down-left, down or down-right neighbour, so the farthest cell a state has to remember lies $w + 1$ places ahead and a state has $w + 2$ bits. A step shifts the state right after setting at most its top bit, so that bit is clear before every cell step. The table therefore holds $2^{w+1}$ states, twice as many as the [domino scan](../dominoes/01-rectangles.md#numbering). [`domicule-rectangle-bigint.js`](../../js/solvers/domicule-rectangle-bigint.js) keeps the counts as `BigInt`, and so do its Rust and Python implementations, [`domicule-rectangle-bigint.rs`](../../rust/solvers/src/bin/domicule-rectangle-bigint.rs) and [`domicule_rectangle_bigint.py`](../../python/lattice_dimers/solvers/domicule_rectangle_bigint.py). In every language this solver is the reference of the modular one. The same scan is in [`oeis/A239264/A239264.gp`](../../oeis/A239264/A239264.gp), where `T(h, w)` is A239264, and [`oeis/A239273/A239273.gp`](../../oeis/A239273/A239273.gp), where `a(n)` is A239273; the GP code keeps the wider table of $2^{w+2}$ states.
+
+Let $w$ be the shorter side, $f_t(s)$ the number of ways to cover the first $t$ cells so that the state is $s$, where bit $j$ of $s$ is set when the cell $j$ places ahead of the next one is covered, and $D_t$ the offsets among $1, w - 1, w, w + 1$ that lead from the cell $t$ to a cell of the board. A cell that is covered already only shifts the state, and a free cell is matched at an offset $d \in D_t$ whose bit is clear:
+
+```math
+f_0(s) = [s = 0], \qquad f_{t+1}(s') = f_t(2s' + 1) + \sum_{d \in D_t,\ s'_{d-1} = 1} f_t(2s' - 2^d), \qquad a = f_{hw}(0)
+```
+
+Here $s'_j$ is bit $j$ of $s'$ and $a$ is the count of the board.
 
 ### The state of the transfer
 
@@ -128,45 +142,117 @@ if (counts.size !== 280 || chiSquared > 357.7) {
 
 ## The counts
 
-In this table the `BigInt` solver counts the boards up to $16 \times 16$, the modular one $18 \times 18$ and $20 \times 20$. The data section of the OEIS entry lists the terms up to $a(9)$; the [OEIS A239273 b-file](https://oeis.org/A239273/b239273.txt) continues to $a(12)$ ($24 \times 24$), beyond the solvers here, and $a(10)$ is checked against it.
+In this table the `BigInt` solver counts the boards up to $16 \times 16$, the modular one $18 \times 18$ and $20 \times 20$. The data section of the OEIS entry lists the terms up to $a(9)$; the [OEIS A239273 b-file](https://oeis.org/A239273/b239273.txt) continues to $a(12)$ ($24 \times 24$), beyond the solvers here, and is kept in [`oeis/A239273/b239273.txt`](../../oeis/A239273/b239273.txt).
+
+The column `checked against` names what the cell compared each count with, and the cell stops the build on a mismatch: that b-file, the stored counts of [`spec/cases/`](../../spec/cases), and the other solver, which is the modular one for the boards of the `BigInt` solver and the `BigInt` one for $18 \times 18$. The $20 \times 20$ board is compared with the b-file only. The chart draws the entropy per cell, $\ln a(n) / (2n)^2$, against the side $2n$ of the board. The dashed line is the entropy per site $s = 0.5655\ldots$ of the king's graph, read from `research/king-entropy/data/errbar.json`, and a board with a free boundary stays below it.
 
 ```js run
+const fs = require('fs');
+const path = require('path');
 const reference = require('./js/solvers/domicule-rectangle-bigint.js');
+const modular = require('./js/solvers/domicule-rectangle-modular.js');
 const known = require('./js/core/cases').testCasesOf('domicule-rectangle-bigint');
-const bFile = { 10: '974206002957112698855240779762528002509423239819130603938953917534367085458193363176670427' };
+const { root, logCount } = nb.context;
 
+nb.readBFile = entry =>
+  new Map(
+    fs
+      .readFileSync(path.join(root, `oeis/${entry}/b${entry.slice(1)}.txt`), 'utf-8')
+      .trim()
+      .split('\n')
+      .map(line => line.split(' ')),
+  );
+
+const bFile = nb.readBFile('A239273');
+const king = Number(JSON.parse(fs.readFileSync(path.join(root, 'research/king-entropy/data/errbar.json'), 'utf-8')).recommended.s);
 const rows = [];
+const points = [];
 
 for (let n = 0; n <= 10; n++) {
   const side = 2 * n;
   const board = { rowCount: side, colCount: side };
-  const count = n <= 8 ? reference.calculateTotalTilingCombinations(board) : await nb.context.countDomicule(board);
-  const published = known.find(t => t.rowCount === side && t.colCount === side);
-  const expected = published?.expectedResult ?? bFile[n] ?? null;
-  const status = expected === null ? 'not in OEIS yet' : expected !== String(count) ? 'DIFFERS FROM OEIS' : published ? 'matches OEIS' : 'matches the OEIS b-file';
+  const bigint = () => reference.calculateTotalTilingCombinations(board);
+  const modulo = () => modular.calculateTotalTilingCombinations(board);
+  const count = n <= 8 ? bigint() : await modulo();
+  const comparisons = [
+    ['A239273 b-file', bFile.get(String(n))],
+    ['spec/cases/', known.find(t => t.rowCount === side && t.colCount === side)?.expectedResult],
+    ...(n <= 8 ? [['modular solver', String(await modulo())]] : []),
+    ...(n === 9 ? [['BigInt solver', String(bigint())]] : []),
+  ].filter(([, value]) => typeof value === 'string');
 
-  if (expected !== null && expected !== String(count)) {
-    throw new Error(`a(${n}) differs from OEIS`);
+  for (const [name, value] of comparisons) {
+    if (value !== String(count)) {
+      throw new Error(`a(${n}) differs from ${name}`);
+    }
   }
 
-  rows.push([n, `${side}×${side}`, String(count), String(count).length, n <= 8 ? 'BigInt' : 'modular', status]);
+  rows.push([n, `${side}×${side}`, String(count), String(count).length, n <= 8 ? 'BigInt' : 'modular', comparisons.map(([name]) => name).join(', ')]);
+
+  if (n > 0) {
+    points.push([side, logCount(count) / (side * side)]);
+  }
 }
 
-table(['n', 'board', 'a(n)', 'digits', 'solver', 'status'], rows);
+table(['n', 'board', 'a(n)', 'digits', 'solver', 'checked against'], rows);
+
+chart({
+  title: "The entropy per cell ln a(n) / (2n)² against the side 2n of the board, with the entropy s of the king's graph dashed",
+  x: { label: 'side 2n of the board', min: 2, max: 20, ticks: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20] },
+  y: { label: 'ln a(n) / (2n)²', min: 0.2, max: 0.6, ticks: [0.2, 0.3, 0.4, 0.5, 0.6] },
+  reference: { y: king },
+  series: [{ name: 'ln a(n) / (2n)²', color: 'var(--ordinal-1)', points }],
+  describe: ([side, entropy]) => `${side}×${side} board, ln a / cells = ${entropy.toFixed(6)}`,
+});
 ```
 
 ### Rectangles: A239264
 
-`T(h, w)` counts the domicule tilings of an $h \times w$ board. The table is symmetric, and its diagonal of even sides is A239273.
+`T(h, w)` counts the domicule tilings of an $h \times w$ board. The table is symmetric, and its diagonal of even sides is A239273. The cell compares every entry with the [OEIS A239264 b-file](https://oeis.org/A239264/b239264.txt), kept in [`oeis/A239264/b239264.txt`](../../oeis/A239264/b239264.txt), and the entry $T(h, h)$ of an even row also with the b-file of A239273; an odd row has no such entry, since an odd number of cells has no tiling.
 
 ```js run
 const { calculateTotalTilingCombinations } = require('./js/solvers/domicule-rectangle-bigint.js');
 const sides = [1, 2, 3, 4, 5, 6, 7, 8];
+const table264 = nb.readBFile('A239264');
+const table273 = nb.readBFile('A239273');
+const published = new Map();
 
-table(
-  ['h \\ w', ...sides.map(String)],
-  sides.map(h => [String(h), ...sides.map(w => String(calculateTotalTilingCombinations({ rowCount: h, colCount: w })))]),
-);
+for (const [n, count] of table264) {
+  let d = 0;
+
+  while (((d + 1) * (d + 2)) / 2 <= Number(n)) {
+    d++;
+  }
+
+  const h = Number(n) - (d * (d + 1)) / 2;
+
+  published.set(`${Math.min(h, d - h)} ${Math.max(h, d - h)}`, count);
+}
+
+const rows = sides.map(h => {
+  const counts = sides.map(w => calculateTotalTilingCombinations({ rowCount: h, colCount: w }));
+  const checked = ['A239264 b-file'];
+
+  counts.forEach((count, i) => {
+    const w = sides[i];
+
+    if (String(count) !== published.get(`${Math.min(h, w)} ${Math.max(h, w)}`)) {
+      throw new Error(`T(${h}, ${w}) differs from the A239264 b-file`);
+    }
+  });
+
+  if (h % 2 === 0) {
+    if (String(counts[sides.indexOf(h)]) !== table273.get(String(h / 2))) {
+      throw new Error(`T(${h}, ${h}) differs from the A239273 b-file`);
+    }
+
+    checked.push('A239273 b-file');
+  }
+
+  return [String(h), ...counts.map(String), checked.join(', ')];
+});
+
+table(['h \\ w', ...sides.map(String), 'checked against'], rows);
 ```
 
 ## Running time

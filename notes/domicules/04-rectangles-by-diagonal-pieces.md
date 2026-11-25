@@ -26,9 +26,21 @@ where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only 
 
 [`domicule-rectangle-polynomial-modular.js`](../../js/solvers/domicule-rectangle-polynomial-modular.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, modulo primes, one prime per worker thread. [`domicule-rectangle-polynomial-modular.rs`](../../rust/solvers/src/bin/domicule-rectangle-polynomial-modular.rs) and [`domicule_rectangle_polynomial_modular.py`](../../python/lattice_dimers/solvers/domicule_rectangle_polynomial_modular.py) count the same polynomial. Rust keeps the parity of every state as JavaScript does. Python numbers the entries of a state by the diagonal pieces on white cells, so a cell step needs no table of parities and moves whole views of the table. Its tables lack the byte of parity per state that the other two keep, but all three cap the worker threads by the same formula, so the running times below compare the same number of threads.
 
+The recurrence of the [`BigInt` solver](#the-bigint-solver) runs modulo each of the primes $p_1, \dots, p_m$, and the Chinese remainder theorem rebuilds every coefficient from its residues. With $f^{(p)}_{hw}(0)$ the polynomial the recurrence ends with, taken modulo $p$, and $[x^k]$ the coefficient of $x^k$:
+
+```math
+T(h, w, k) \equiv [x^k]\, f^{(p_i)}_{hw}(0) \pmod{p_i} \quad (i = 1, \dots, m), \qquad 0 \le T(h, w, k) < p_1 \cdots p_m
+```
+
 ## The BigInt solver
 
 [`domicule-rectangle-polynomial-bigint.js`](../../js/solvers/domicule-rectangle-polynomial-bigint.js) runs the transfer of the [domicules notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, and keeps its coefficients as `BigInt`, and so do its Rust and Python implementations, [`domicule-rectangle-polynomial-bigint.rs`](../../rust/solvers/src/bin/domicule-rectangle-polynomial-bigint.rs) and [`domicule_rectangle_polynomial_bigint.py`](../../python/lattice_dimers/solvers/domicule_rectangle_polynomial_bigint.py).
+
+Let $w$ be the shorter side, $f_t(s)$ the polynomial of the partial tilings of the first $t$ cells in the state $s$, with bit $j$ of $s$ set when the cell $j$ places ahead of the next one is covered, and $D_t$ the offsets among $1, w - 1, w, w + 1$ that lead from the cell $t$ to a cell of the board. A move at the offset $w - 1$ or $w + 1$ places a diagonal piece and multiplies by $x$, so $\delta_d$ is 1 for these two offsets and 0 for the others. This is the recurrence of the [domicules notebook](01-rectangles.md#the-bigint-solver) with the weight $x^{\delta_d}$ on every move:
+
+```math
+f_0(s) = [s = 0], \qquad f_{t+1}(s') = f_t(2s' + 1) + \sum_{d \in D_t,\ s'_{d-1} = 1} x^{\delta_d} f_t(2s' - 2^d), \qquad P_{h,w}(x) = f_{hw}(0)
+```
 
 ## Numbering
 
@@ -41,19 +53,33 @@ A straight piece covers a black and a white cell of the chessboard, a diagonal p
 A diagonal piece joins two cells of the same colour of the chessboard and a domino two cells of different colours, so every tiling has as many diagonal pieces on black cells as on white ones and their number is even. The table therefore lists $T(n, j)$, the tilings of the $2n \times 2n$ board with $2j$ diagonal pieces, for $j = 0, \dots, n^2$. When the OEIS was searched by terms and by name on 30 October 2026, before A401673 was drafted, it had no such triangle.
 
 ```js run
+const fs = require('fs');
+const path = require('path');
 const reference = require('./js/solvers/domicule-rectangle-polynomial-bigint.js');
 const data = require('./js/core/cases');
 const stored = side => data.testCasesOf('domicule-rectangle-polynomial-modular').find(t => t.rowCount === side && t.colCount === side);
-const domino = side => data.testCasesOf('domino-rectangle-formula').find(t => t.rowCount === side && t.colCount === side).expectedResult;
+const readBFile = entry =>
+  fs
+    .readFileSync(path.join(nb.context.root, `oeis/${entry}/b${entry.slice(1)}.txt`), 'utf-8')
+    .trim()
+    .split('\n')
+    .map(line => line.split(' ')[1]);
+const triangle = readBFile('A401673');
+const domicules = readBFile('A239273');
+const dominoes = readBFile('A004003');
 
 nb.rows = {};
 const rows = [];
+let offset = 0;
 
 for (let n = 0; n <= 10; n++) {
   const side = 2 * n;
   const board = { rowCount: side, colCount: side };
+  const published = triangle.slice(offset, offset + n * n + 1);
   let coefficients;
   let source;
+
+  offset += n * n + 1;
 
   if (n <= 6) {
     coefficients = reference.calculateDiagonalPolynomial(board);
@@ -68,8 +94,9 @@ for (let n = 0; n <= 10; n++) {
   const total = coefficients.reduce((sum, c) => sum + c, 0n);
   const row = coefficients.filter((_, k) => k % 2 === 0);
   const problems = [
-    total !== (await nb.context.countDomicule(board)) && 'the sum is not A239273',
-    String(coefficients[0]) !== domino(side) && 'T(n, 0) is not A004003',
+    String(total) !== domicules[n] && 'the sum is not A239273',
+    String(coefficients[0]) !== dominoes[n] && 'T(n, 0) is not A004003',
+    row.join() !== published.join() && 'the row differs from the A401673 b-file',
     coefficients.some((c, k) => k % 2 === 1 && c !== 0n) && 'an odd number of diagonal pieces',
     row.at(-1) !== 1n && `T(n, n²) = ${row.at(-1)}`,
     n > 0 && row.at(-2) !== BigInt(n * n * (n + 1)) && `T(n, n² − 1) = ${row.at(-2)}`,
@@ -81,20 +108,47 @@ for (let n = 0; n <= 10; n++) {
   }
 
   const peak = row.indexOf(row.reduce((max, c) => (c > max ? c : max), 0n));
+  const checked = ['A401673 b-file', 'A239273 b-file', 'A004003 b-file', ...(source === 'BigInt' && stored(side) ? ['spec/cases/'] : [])];
 
   nb.rows[n] = row;
-  rows.push([n, `${side}×${side}`, row.length, peak, String(row[peak]).length, source]);
+  rows.push([n, `${side}×${side}`, row.length, peak, String(row[peak]).length, source, checked.join(', ')]);
 }
 
-table(['n', 'board', 'terms T(n, 0..n²)', 'j of the largest term', 'digits of the largest term', 'solver'], rows);
+table(['n', 'board', 'terms T(n, 0..n²)', 'j of the largest term', 'digits of the largest term', 'solver', 'checked against'], rows);
 print('The first rows:');
 
 for (let n = 0; n <= 3; n++) {
   print(`n = ${n}: ${nb.rows[n].join(', ')}`);
 }
+
+const share = row => {
+  const total = row.reduce((sum, c) => sum + c, 0n);
+  const scale = 10n ** 15n;
+  const mean = Number((row.reduce((sum, c, j) => sum + 2n * BigInt(j) * c, 0n) * scale) / total) / Number(scale);
+
+  return mean / (2 * (row.length - 1));
+};
+
+chart({
+  title: 'The mean share of diagonal pieces in a random tiling of the 2n × 2n board against the side 2n',
+  x: { label: 'side 2n of the board', min: 2, max: 20, ticks: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20] },
+  y: { label: 'share of diagonal pieces', min: 0.3, max: 0.5, ticks: [0.3, 0.35, 0.4, 0.45, 0.5] },
+  series: [
+    {
+      name: 'share of diagonal pieces',
+      color: 'var(--ordinal-1)',
+      points: Object.entries(nb.rows)
+        .filter(([n]) => Number(n) > 0)
+        .map(([n, row]) => [2 * Number(n), share(row)]),
+    },
+  ],
+  describe: ([side, value]) => `${side}×${side} board, share ${value.toFixed(6)}`,
+});
 ```
 
 Every row the cell lists passes the same checks, and the cell stops the build when one fails: the sum is A239273, $T(n, 0)$ is A004003, every odd number of diagonal pieces has no tiling, exactly one tiling uses only diagonal pieces, and $T(n, n^2 - 1) = n^2(n + 1)$ ([OEIS A011379](https://oeis.org/A011379)). The last two are observations on these rows, not proofs.
+
+The column `checked against` names the other sources the cell compared with: the rows of the b-file of A401673, the sums with the b-file of A239273 and the terms $T(n, 0)$ with the b-file of A004003, all kept under [`oeis/`](../../oeis), and for the rows of the `BigInt` solver the stored rows of [`spec/cases/`](../../spec/cases). The chart draws the mean share of diagonal pieces among the $2n^2$ pieces of a uniformly random tiling against the side $2n$, the share that the section "How many pieces are diagonal" tabulates with its variance. It has no dashed line, since no limit of the share is stated here.
 
 ## How many pieces are diagonal
 

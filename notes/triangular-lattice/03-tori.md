@@ -19,6 +19,12 @@ figure(svgs, `4 of the ${total} tilings of the triangular lattice on the 8 × 8 
 
 Which one is subtracted depends on the choice of the signs, so the solver forms all four such combinations. Each adds the numbers of tilings in four classes, by the parities of the pieces across the two seams, with a sign per class. In one combination the four signs agree, so the solver returns the largest absolute value.
 
+```math
+a = \max_{u, v \in \{0, 1\}} \frac{1}{2} \Bigl\lvert \sum_{u', v' \in \{0, 1\}} \mathrm{Pf}\, K_{u'v'} - 2\, \mathrm{Pf}\, K_{uv} \Bigr\rvert
+```
+
+Here $K_{uv}$ is the skew-symmetric matrix of the edge signs of the board, $wh \times wh$ entries with $K_{ab} = -K_{ba} = \pm 1$ on every edge $ab$, where the signs of the edges across the row seam are flipped when $u = 1$ and those across the column seam when $v = 1$. $\mathrm{Pf}$ is the Pfaffian, and $a$ is the number of tilings.
+
 Inside the board it uses the signs of [`A401988.gp`](../../oeis/A401988/A401988.gp), alternating by rows or, when the number of rows is odd, by columns. The solver counts modulo primes. They are below $2^{31}$ in Rust and Python and below $2^{26}$ in JavaScript, where a sum of two products of residues has to stay exact in a double. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
 A board has at most 1600 cells. That is a limit of memory, because every thread keeps a whole matrix. The same algorithm is in Rust, [`any-lattice-cylinder-torus-pfaffian.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-pfaffian.rs), and in Python, [`any_lattice_cylinder_torus_pfaffian.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_pfaffian.py).
@@ -27,9 +33,21 @@ A board has at most 1600 cells. That is a limit of memory, because every thread 
 
 [`any-lattice-cylinder-torus-modular.js`](../../js/solvers/any-lattice-cylinder-torus-modular.js) goes cell by cell with a state of the next $w + 2$ cells. A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. Mirroring the columns does the same on the square lattice and the king's graph, so there one run also stands for a class and its mirror image, while the triangular lattice, whose diagonals a mirror image turns the other way, keeps the rotations only. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`any-lattice-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-modular.rs), and in Python, [`any_lattice_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_modular.py). The Rust implementation also counts modulo [wide primes](../domicules/01-rectangles.md#wide-primes), the primes below $2^{61}$.
 
+```math
+r_i \equiv \sum_{S} \bigl(T_{hw-1} \cdots T_1 T_0\bigr)_{S,S} \pmod{p_i}, \qquad a = \sum_{i=1}^{m} r_i\, M_i \bigl(M_i^{-1} \bmod p_i\bigr) \bmod M, \qquad M_i = \frac{M}{p_i}, \quad M = p_1 \cdots p_m
+```
+
+The sum runs over the sets $S$ of cells of the first row covered from the last row. The matrix $T_c$ is the step over the cell $c$ of the [rectangles notebook](01-rectangles.md#the-bigint-solver), with a state of the next $w + 2$ cells and the moves of a free cell $c$ in column $j$: the next cell of the row when $j < w - 1$, the last cell of the row when $j = 0$, and the cell below and the cell below and to the right, which in the last row lie in the first row. The entries are taken modulo the prime $p_i$, and one more prime checks the result.
+
 ## The BigInt solver
 
 [`any-lattice-cylinder-torus-bigint.js`](../../js/solvers/any-lattice-cylinder-torus-bigint.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix. The same algorithm is in Rust, [`any-lattice-cylinder-torus-bigint.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-bigint.rs), and in Python, [`any_lattice_cylinder_torus_bigint.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_bigint.py).
+
+```math
+a = \mathrm{tr}\, R^{h}, \qquad R_{S,S'} = \#\bigl\{\text{coverings of the cells } \{0, \dots, w - 1\} \setminus S \text{ by pairs } \{c, c + 1\} \text{ and by sends } c \to c + \delta,\ \delta \in \{0, 1\},\ \text{whose targets are } S' \bigr\}
+```
+
+The sets $S$ and $S'$ are sets of columns, and the cells are numbered modulo $w$, so the pair $\{w - 1, 0\}$ crosses the seam. A send $c \to c + \delta$ puts the cell $c$ on the cell of the next row in the column $c + \delta$, straight down for $\delta = 0$ and down to the right for $\delta = 1$, the targets of all sends are distinct, and the row after the last is the first. $R_{S,S'}$ counts the ways to finish a row whose cells in $S$ are already covered from the row below, and $S'$ is the set of the cells of the next row they cover.
 
 ## Numbering
 
@@ -37,7 +55,7 @@ The gallery numbers the tilings of the tori up to $10 \times 10$ with the cell-b
 
 ## The counts
 
-For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate piece. Boards up to $8 \times 8$ go through all three solvers, $10 \times 10$ and $12 \times 12$ through the modular and the Pfaffian one, and $14 \times 14$ to $20 \times 20$ through the Pfaffian one alone. Every count is compared with the one `spec/cases/` stores: the modular solver counted the stored tori up to $16 \times 16$, and the tori $18 \times 18$ and $20 \times 20$ have no count here but the Pfaffian one. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the $2n \times 2n$ tori.
+For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell, and each edge counts as a separate piece. Boards up to $8 \times 8$ go through all three solvers, $10 \times 10$ and $12 \times 12$ through the modular and the Pfaffian one, and $14 \times 14$ to $20 \times 20$ through the Pfaffian one alone. Every count is compared with the one `spec/cases/` stores: the modular solver counted the stored tori up to $16 \times 16$, and the tori $18 \times 18$ and $20 \times 20$ have no count here but the Pfaffian one. The last column of the table names, row by row, what the Pfaffian count was compared with. The chart draws the entropy per cell, $\ln a / (2n)^2$, against the side of the torus, with the dashed line at the entropy per site $s$ of the triangular lattice [1], read from `research/king-entropy/out/out_validate.txt`. The ratio falls towards $s$ from above on these boards. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the $2n \times 2n$ tori.
 
 ```js run
 const reference = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
@@ -49,6 +67,7 @@ const stored = side =>
     .flatMap(testCasesOf)
     .find(t => t.lattice === 'triangular' && t.torus && !t.twisted && t.rowCount === side && t.colCount === side);
 const rows = [];
+const entropies = [];
 
 for (let n = 1; n <= 10; n++) {
   const side = 2 * n;
@@ -68,12 +87,29 @@ for (let n = 1; n <= 10; n++) {
     throw new Error(`the ${side}×${side} torus differs from spec/cases/`);
   }
 
-  const solvers = n <= 4 ? 'BigInt, modular and Pfaffian' : n <= 6 ? 'modular and Pfaffian' : 'Pfaffian';
-
-  rows.push([n, `${side}×${side}`, String(count), String(count).length, solvers, 'matches spec/cases/']);
+  rows.push([
+    n,
+    `${side}×${side}`,
+    String(count),
+    String(count).length,
+    'Pfaffian solver',
+    [n <= 4 && 'BigInt solver', n <= 6 && 'Modular solver', 'spec/cases/'].filter(Boolean).join(', '),
+  ]);
+  entropies.push([side, nb.context.logCount(count) / side ** 2]);
 }
 
-table(['n', 'board', 'count', 'digits', 'solver', 'status'], rows);
+table(['n', 'board', 'count', 'digits', 'solver', 'checked against'], rows);
+
+const validate = require('fs').readFileSync(require('path').join(nb.context.root, 'research/king-entropy/out/out_validate.txt'), 'utf-8');
+
+chart({
+  title: 'The entropy per cell of the 2n × 2n torus against its side',
+  x: { label: 'side 2n of the torus', min: 0, max: 22, ticks: [0, 4, 8, 12, 16, 20] },
+  y: { label: 'ln a / (2n)²', min: 0.4, max: 0.65, ticks: [0.4, 0.45, 0.5, 0.55, 0.6, 0.65] },
+  reference: { y: Number(validate.match(/Kasteleyn Bloch average, 64x64 grid: s_tri = ([0-9.]+)/)[1]) },
+  series: [{ name: 'ln a / (2n)²', color: 'var(--ordinal-1)', points: entropies }],
+  describe: ([side, ratio]) => `${side}×${side} torus, ln a / (2n)² = ${ratio.toFixed(6)}`,
+});
 ```
 
 ## Verification

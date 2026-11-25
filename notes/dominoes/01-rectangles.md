@@ -82,6 +82,14 @@ for (let n = 1; n <= 5; n++) {
 
 [`domino-rectangle-bigint.js`](../../js/solvers/domino-rectangle-bigint.js) counts tilings directly with a transfer by rows. It scans the board row by row and keeps, for every bitmask of the cells of the current row that a vertical domino from the row above already covers, the number of ways to reach it. A row is filled by a depth-first search that places horizontal dominoes in free pairs and starts vertical ones into the next row. The table has $2^{w}$ entries per row, so the cost grows with the shorter side and the solver turns the board so that it is the row width. Named after the JavaScript type, it keeps the counts as integers of any size, and its Rust and Python implementations, [`domino-rectangle-bigint.rs`](../../rust/solvers/src/bin/domino-rectangle-bigint.rs) and [`domino_rectangle_bigint.py`](../../python/lattice_dimers/solvers/domino_rectangle_bigint.py), do the same. [`domino-rectangle-float.js`](../../js/solvers/domino-rectangle-float.js) runs the same scan with JavaScript numbers and is exact only while they stay below $2^{53}$ (up to $10 \times 10$); [`domino-rectangle-float.rs`](../../rust/solvers/src/bin/domino-rectangle-float.rs) and [`domino_rectangle_float.py`](../../python/lattice_dimers/solvers/domino_rectangle_float.py) use the same doubles and round to the same values.
 
+In formulas the scan is a power of a transfer matrix $T$ whose rows and columns are the sets $S$ of cells of a row covered from above:
+
+```math
+a(h, w) = \bigl(T^{h}\bigr)_{\varnothing,\varnothing}, \qquad T_{S,S'} = \begin{cases} 1 & \text{if } S \cap S' = \varnothing \text{ and the cells outside } S \cup S' \text{ form runs of even length,} \\ 0 & \text{otherwise,} \end{cases}
+```
+
+where $w$ is the shorter side, $S'$ is the set of cells of the row that start a vertical domino into the next row, and the runs outside $S \cup S'$ are filled by horizontal dominoes, in exactly one way. The count is the entry of the $h$-th power from the empty set to the empty set, and the solver keeps it as a `BigInt`.
+
 ## Numbering
 
 To show tiling number $r$ without listing the ones before it, the gallery processes the board one cell at a time in row-major order. The state is the set of covered cells among the next $w$ cells, and a table of completion counts, `table[i][state]`, stores in how many ways the board can be finished from cell $i$ in that state. It has $(hw + 1) \cdot 2^{w}$ entries. Unranking walks the cells, tries a horizontal domino before a vertical one, and moves to the second choice after subtracting the number of tilings the first choice would cover. Every tiling of a board up to $16 \times 16$ can be shown this way in a browser.
@@ -112,15 +120,25 @@ The number of a sampled tiling needs no table either. A scan from the last cell 
 
 ## The counts
 
-The formula solver evaluates the resultant, the two transfer solvers scan the board. The float solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer in JavaScript needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$; every value is also compared with the known terms in `spec/cases/`.
+The formula solver evaluates the resultant, the two transfer solvers scan the board. The float solver is exact only while the count stays below $2^{53}$, and the `BigInt` transfer in JavaScript needs about 35 seconds at $18 \times 18$ and about four minutes at $20 \times 20$ (see the running time below), so this notebook runs it up to $14 \times 14$. Every value of the formula solver is compared with the b-file of A004003 [1], [`oeis/A004003/b004003.txt`](../../oeis/A004003/b004003.txt), and with the stored case of `spec/cases/`, and the column `checked against` names what each row was compared with besides.
+
+The chart draws the entropy per cell, $\ln a(n) / (2n)^2$, against the side of the board. The dashed line is its limit on the square lattice, $G/\pi \approx 0.29156$ ([OEIS A143233](https://oeis.org/A143233), $G$ is Catalan's constant). The free edges cost a term proportional to the side, so the points stay below the line and rise towards it.
 
 ```js run
 const formula = require('./js/solvers/domino-rectangle-formula.js');
 const transfer = require('./js/solvers/domino-rectangle-bigint.js');
 const number = require('./js/solvers/domino-rectangle-float.js');
 const known = require('./js/core/cases').testCasesOf('domino-rectangle-formula');
+const { logCount } = nb.context;
+
+nb.bFile = require('fs')
+  .readFileSync(require('path').join(nb.context.root, 'oeis/A004003/b004003.txt'), 'utf-8')
+  .trim()
+  .split('\n')
+  .map(line => BigInt(line.split(' ')[1]));
 
 const rows = [];
+const points = [];
 
 for (let n = 0; n <= 10; n++) {
   const side = 2 * n;
@@ -128,17 +146,82 @@ for (let n = 0; n <= 10; n++) {
   const viaTransfer = n <= 7 ? transfer.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
   const viaNumber = n <= 5 ? number.calculateTotalTilingCombinations({ rowCount: side, colCount: side }) : null;
   const expected = known.find(t => t.rowCount === side && t.colCount === side).expectedResult;
-  const methods = ['formula', viaTransfer !== null && 'BigInt', viaNumber !== null && 'float'].filter(Boolean);
-  const agree = String(viaFormula) === expected && (viaTransfer === null || viaTransfer === viaFormula) && (viaNumber === null || BigInt(viaNumber) === viaFormula);
+  const checks = ['b-file', 'stored case', viaTransfer !== null && 'BigInt solver', viaNumber !== null && 'float solver'].filter(Boolean);
+  const agree =
+    viaFormula === nb.bFile[n] &&
+    String(viaFormula) === expected &&
+    (viaTransfer === null || viaTransfer === viaFormula) &&
+    (viaNumber === null || BigInt(viaNumber) === viaFormula);
 
   if (!agree) {
-    throw new Error(`a(${n}) disagrees with spec/cases/`);
+    throw new Error(`a(${n}) disagrees with the b-file, spec/cases/ or another solver`);
   }
 
-  rows.push([n, `${side}×${side}`, String(viaFormula), String(viaFormula).length, methods.join(', '), 'matches OEIS']);
+  if (n > 0) {
+    points.push([side, logCount(viaFormula) / side ** 2]);
+  }
+
+  rows.push([n, `${side}×${side}`, String(viaFormula), String(viaFormula).length, 'formula', checks.join(', ')]);
 }
 
-table(['n', 'board', 'a(n)', 'digits', 'solver', 'status'], rows);
+table(['n', 'board', 'a(n)', 'digits', 'solver', 'checked against'], rows);
+
+chart({
+  title: 'Entropy per cell of the 2n × 2n board against its side',
+  x: { label: 'side 2n of the board', min: 2, max: 20, ticks: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20] },
+  y: { label: 'ln a(n) / (2n)²', min: 0.15, max: 0.3, ticks: [0.15, 0.2, 0.25, 0.3] },
+  reference: { y: 0.915965594177219 / Math.PI },
+  series: [{ name: 'board', color: 'var(--ordinal-1)', points }],
+  describe: ([side, entropy]) => `${side}×${side} board, ln a / cells = ${entropy.toFixed(6)}`,
+});
+```
+
+### Rectangles
+
+`T(h, w)` counts the domino tilings of an $h \times w$ board. Swapping rows and columns maps a tiling to a tiling, so the table is symmetric, and its diagonal of even sides is $a(n)$. The `BigInt` solver counts every cell of the table. The cell compares each count with the modular solver `any-lattice-rectangle-modular.js` on the square lattice, an independent method that counts modulo primes, and names the other sources a row meets: the boards of `spec/cases/` that lie in the table, and the squares $h = w$ of even side, which it compares with the b-file of A004003.
+
+```js run
+const transfer = require('./js/solvers/domino-rectangle-bigint.js');
+const modular = require('./js/solvers/any-lattice-rectangle-modular.js');
+const known = require('./js/core/cases').testCasesOf('domino-rectangle-bigint');
+const sides = [1, 2, 3, 4, 5, 6, 7, 8];
+const rows = [];
+
+for (const h of sides) {
+  const checks = ['modular solver'];
+  const counts = [];
+
+  for (const w of sides) {
+    const count = transfer.calculateTotalTilingCombinations({ rowCount: h, colCount: w });
+    const stored = known.find(t => t.rowCount === h && t.colCount === w);
+
+    if (count !== (await modular.calculateTotalTilingCombinations({ rowCount: h, colCount: w, lattice: 'square' }))) {
+      throw new Error(`the BigInt and the modular solver differ on the ${h}×${w} board`);
+    }
+
+    if (stored) {
+      if (stored.expectedResult !== String(count)) {
+        throw new Error(`the ${h}×${w} board differs from spec/cases/`);
+      }
+
+      checks.includes('stored case') || checks.push('stored case');
+    }
+
+    if (h === w && h % 2 === 0) {
+      if (count !== nb.bFile[h / 2]) {
+        throw new Error(`the ${h}×${h} board differs from the b-file of A004003`);
+      }
+
+      checks.push('A004003 b-file');
+    }
+
+    counts.push(String(count));
+  }
+
+  rows.push([String(h), ...counts, checks.join(', ')]);
+}
+
+table(['h \\ w', ...sides.map(String), 'checked against'], rows);
 ```
 
 ## Running time

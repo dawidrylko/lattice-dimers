@@ -19,9 +19,21 @@ figure(svgs, `4 of the ${total} domicule tilings of the 8 × 8 torus.`);
 
 A torus is a sum over the sets $S$ of first-row cells covered from the last row. Each run starts from $S$ and must end with $S$. Rotating the columns maps the runs of $S$ onto those of its rotations, so one run per rotation class is enough. Mirroring the columns does the same on the square lattice and the king's graph, so there one run also stands for a class and its mirror image, while the triangular lattice, whose diagonals a mirror image turns the other way, keeps the rotations only. The solver counts modulo primes below $2^{31}$. The Chinese remainder theorem rebuilds the count, and one more prime checks it. The same algorithm is in Rust, [`any-lattice-cylinder-torus-modular.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-modular.rs), and in Python, [`any_lattice_cylinder_torus_modular.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_modular.py). The Rust implementation also counts modulo [wide primes](01-rectangles.md#wide-primes), the primes below $2^{61}$.
 
+Let $T_t$ be the matrix of the step that covers the cell $t$, and $S$ a set of cells of the first row, written as a state. A run from $S$ must end in $S$, so the residue of the torus count is the sum of these diagonal entries of the product of the steps over all sets $S$ (the solver runs one $S$ per rotation class and counts it once per rotation, which gives the same sum). The Chinese remainder theorem then rebuilds the count $a$ from the residues $r_i$ modulo the primes $p_1, \dots, p_m$:
+
+```math
+r_i \equiv \sum_{S} \bigl(T_{hw-1} \cdots T_1 T_0\bigr)_{S,S} \pmod{p_i}, \qquad a \equiv r_i \pmod{p_i} \quad (i = 1, \dots, m), \qquad 0 \le a < p_1 \cdots p_m
+```
+
 ## The BigInt solver
 
 [`any-lattice-cylinder-torus-bigint.js`](../../js/solvers/any-lattice-cylinder-torus-bigint.js) goes row by row. For every set of cells of a row already covered from the row below, it lists the ways to finish the row. The torus count is then the trace of the $h$-th power of this row transfer matrix. The same algorithm is in Rust, [`any-lattice-cylinder-torus-bigint.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-bigint.rs), and in Python, [`any_lattice_cylinder_torus_bigint.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_bigint.py).
+
+Here $R_{S,S'}$ is the number of ways to finish a row of circumference $w$ whose cells in $S$ are covered already, with horizontal pieces and pieces sent to the cells $S'$ of the next row:
+
+```math
+a = \mathrm{tr}\, R^{h} = \sum_{S} \bigl(R^{h}\bigr)_{S,S}
+```
 
 ## Numbering
 
@@ -33,9 +45,21 @@ The domicule tilings of the $2n \times 2n$ torus counted below are [OEIS A401670
 
 For $n = 1$ the torus has multiple edges, because on a $2 \times 2$ torus a cell meets its right and its left neighbour in the same cell; each edge counts as a separate piece, as in [OEIS A335586](https://oeis.org/A335586) [1]. Boards up to $8 \times 8$ go through both solvers. The modular one counts $10 \times 10$ and $12 \times 12$. The larger boards come from `spec/cases/any-lattice-cylinder-torus-modular.json`, where it wrote them once.
 
+The column `checked against` names what the cell compared each count with, and the cell stops the build on a mismatch: the b-file of A401670, kept in [`oeis/A401670/b401670.txt`](../../oeis/A401670/b401670.txt) with the terms up to $16 \times 16$, and for the boards up to $8 \times 8$ also the `BigInt` solver. The chart draws the entropy per cell, $\ln a(n) / L^2$ with $L = 2n$, against the side $L$. The dashed line is the entropy per site $s = 0.5655\ldots$ of the king's graph, read from `research/king-entropy/data/errbar.json`. A torus has no boundary, so the points lie above it and come down to it, as the next section explains.
+
 ```js run
+const fs = require('fs');
+const path = require('path');
 const reference = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
 const modular = require('./js/solvers/any-lattice-cylinder-torus-modular.js');
+const { root, logCount } = nb.context;
+const bFile = new Map(
+  fs
+    .readFileSync(path.join(root, 'oeis/A401670/b401670.txt'), 'utf-8')
+    .trim()
+    .split('\n')
+    .map(line => line.split(' ')),
+);
 const known = require('./js/core/cases').testCasesOf('any-lattice-cylinder-torus-modular');
 const stored = (side, twisted) =>
   known.find(t => t.lattice === 'king' && t.torus && !t.twisted === !twisted && t.rowCount === side && t.colCount === side);
@@ -43,6 +67,7 @@ const stored = (side, twisted) =>
 nb.torus = {};
 nb.twisted = {};
 const rows = [];
+const points = [];
 
 for (let n = 1; n <= 8; n++) {
   const side = 2 * n;
@@ -74,12 +99,28 @@ for (let n = 1; n <= 8; n++) {
     continue;
   }
 
+  if (String(count) !== bFile.get(String(n))) {
+    throw new Error(`the ${side}×${side} torus differs from the A401670 b-file`);
+  }
+
   nb.torus[side] = count;
   nb.twisted[side] = twisted;
-  rows.push([n, `${side}×${side}`, String(count), String(count).length, method]);
+  rows.push([n, `${side}×${side}`, String(count), String(count).length, method, n <= 4 ? 'A401670 b-file, BigInt solver' : 'A401670 b-file']);
+  points.push([side, logCount(count) / (side * side)]);
 }
 
-table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
+table(['n', 'board', 'a(n)', 'digits', 'solver', 'checked against'], rows);
+
+const king = Number(JSON.parse(fs.readFileSync(path.join(root, 'research/king-entropy/data/errbar.json'), 'utf-8')).recommended.s);
+
+chart({
+  title: "The entropy per cell ln a(n) / L² of the L × L torus against the side L = 2n, with the entropy s of the king's graph dashed",
+  x: { label: 'side L = 2n of the torus', min: 2, max: 16, ticks: [2, 4, 6, 8, 10, 12, 14, 16] },
+  y: { label: 'ln a(n) / L²', min: 0.55, max: 0.8, ticks: [0.55, 0.6, 0.65, 0.7, 0.75, 0.8] },
+  reference: { y: king },
+  series: [{ name: 'ln a(n) / L²', color: 'var(--ordinal-1)', points }],
+  describe: ([side, entropy]) => `${side}×${side} torus, ln a / cells = ${entropy.toFixed(6)}`,
+});
 ```
 
 ## Three lattices on the torus
