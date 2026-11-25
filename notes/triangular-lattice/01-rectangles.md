@@ -31,7 +31,7 @@ From $16 \times 16$ to $20 \times 20$ the gallery runs the Markov chain of the [
 
 ## The counts
 
-The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are the entry [OEIS A401988](https://oeis.org/A401988) [3], approved on 23 November 2026; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.
+The `BigInt` and the modular solver count the boards up to $12 \times 12$ and must agree, the modular one alone continues to $18 \times 18$, and the last two rows are read from [`spec/cases/any-lattice-rectangle-modular.json`](../../spec/cases/any-lattice-rectangle-modular.json), where the Rust, Python and JavaScript solvers agree on them. Every computed count is compared with that file too. The counts of the $2n \times 2n$ board are the entry [OEIS A401988](https://oeis.org/A401988) [2], approved on 23 November 2026; the OEIS was searched by terms on 11 November 2026 and had no earlier entry for them.
 
 ```js run
 const reference = require('./js/solvers/any-lattice-rectangle-bigint.js');
@@ -66,7 +66,7 @@ table(['n', 'board', 'a(n)', 'digits', 'solver'], rows);
 
 ### Rectangles
 
-`T(h, w)` counts the tilings of an $h \times w$ board. Swapping rows and columns maps the diagonal that runs down to the right onto itself, so the table is symmetric, and its diagonal of even sides is $a(n)$. Its row $h = 4$ is [OEIS A309117](https://oeis.org/A309117), and its row $h = 3$ at even $w$ is [OEIS A011900](https://oeis.org/A011900) [3]; the cell checks both, the first against [`oeis/A309117/b309117.txt`](../../oeis/A309117/b309117.txt) and the second against the recurrence of the entry.
+`T(h, w)` counts the tilings of an $h \times w$ board. Swapping rows and columns maps the diagonal that runs down to the right onto itself, so the table is symmetric, and its diagonal of even sides is $a(n)$. Its row $h = 4$ is [OEIS A309117](https://oeis.org/A309117), and its row $h = 3$ at even $w$ is [OEIS A011900](https://oeis.org/A011900) [2]; the cell checks both, the first against [`oeis/A309117/b309117.txt`](../../oeis/A309117/b309117.txt) and the second against the recurrence of the entry.
 
 ```js run
 const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-rectangle-bigint.js');
@@ -123,7 +123,7 @@ print(`s = ${s}`);
 
 ## PARI/GP
 
-The counts follow also from Kasteleyn's theorem [2]: the board is a planar graph, every inner face is a triangle, and a sign on every edge that makes each triangle carry an odd number of clockwise edges turns the number of tilings into the Pfaffian of a skew-symmetric matrix $K$, so $a(n) = \sqrt{\det K}$. [`A401988.gp`](../../oeis/A401988/A401988.gp) builds $K$ with the sign $-1$ on the horizontal and vertical edges from the even rows and $+1$ elsewhere, where $K_{ab} = 1$ orients the edge from $a$ to $b$; with the rows drawn downwards and the columns to the right, every triangle then has one or three counterclockwise edges, the same condition in the mirror image. CI runs it on the boards up to $16 \times 16$ of `spec/cases/`, and [`harness/spec.test.js`](../../harness/spec.test.js) checks the parity of every triangle on boards up to $12 \times 12$, so the two methods are independent.
+The counts follow also from Kasteleyn's theorem [3]: the board is a planar graph, every inner face is a triangle, and a sign on every edge that makes each triangle carry an odd number of clockwise edges turns the number of tilings into the Pfaffian of a skew-symmetric matrix $K$, so $a(n) = \sqrt{\det K}$. [`A401988.gp`](../../oeis/A401988/A401988.gp) builds $K$ with the sign $-1$ on the horizontal and vertical edges from the even rows and $+1$ elsewhere, where $K_{ab} = 1$ orients the edge from $a$ to $b$; with the rows drawn downwards and the columns to the right, every triangle then has one or three counterclockwise edges, the same condition in the mirror image. CI runs it on the boards up to $16 \times 16$ of `spec/cases/`, and [`harness/spec.test.js`](../../harness/spec.test.js) checks the parity of every triangle on boards up to $12 \times 12$, so the two methods are independent.
 
 ```js run
 print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A401988/A401988.gp'), 'utf-8').trim());
@@ -144,7 +144,6 @@ Every count on this page is checked in more than one independent way:
 The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests).
 
 ## References
-
 1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)
-2. L. Lovász and M. D. Plummer. *Matching Theory*. Annals of Discrete Mathematics 29, North-Holland, Amsterdam, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322.
-3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A309117](https://oeis.org/A309117), [OEIS A011900](https://oeis.org/A011900) and [OEIS A401988](https://oeis.org/A401988). [oeis.org](https://oeis.org)
+2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A309117](https://oeis.org/A309117), [OEIS A011900](https://oeis.org/A011900) and [OEIS A401988](https://oeis.org/A401988). [oeis.org](https://oeis.org)
+3. L. Lovász and M. D. Plummer. Determinants and matchings. Chapter 8 of *Matching Theory*, North-Holland Mathematics Studies 121 and Annals of Discrete Mathematics 29, North-Holland, Amsterdam, pp. 307-355, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322. [doi:10.1016/S0304-0208(08)73644-2](https://doi.org/10.1016/S0304-0208%2808%2973644-2)

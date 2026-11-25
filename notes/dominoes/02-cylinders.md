@@ -15,7 +15,7 @@ figure(svgs, `4 of the ${total} domino tilings of the cylinder of circumference 
 
 ## The Pfaffian solver
 
-[`any-lattice-cylinder-torus-pfaffian.js`](../../js/solvers/any-lattice-cylinder-torus-pfaffian.js) counts in polynomial time: it eliminates a matrix of $wh \times wh$ entries. The cylinder is a planar graph, so by Kasteleyn's theorem [2] a sign on every edge makes the number of tilings the absolute value of the Pfaffian of a skew-symmetric matrix. The solver computes two Pfaffians, one with the edges across the seam as they are and one with their signs flipped. One of the two is the count up to sign. The other is the difference between the tilings with an even and with an odd number of dominoes across the seam, so the solver returns the larger absolute value. Inside the board it uses the signs of [`A401988.gp`](../../oeis/A401988/A401988.gp), alternating by rows or, when the number of rows is odd, by columns.
+[`any-lattice-cylinder-torus-pfaffian.js`](../../js/solvers/any-lattice-cylinder-torus-pfaffian.js) counts in polynomial time: it eliminates a matrix of $wh \times wh$ entries. The cylinder is a planar graph, so by Kasteleyn's theorem [1] a sign on every edge makes the number of tilings the absolute value of the Pfaffian of a skew-symmetric matrix. The solver computes two Pfaffians, one with the edges across the seam as they are and one with their signs flipped. One of the two is the count up to sign. The other is the difference between the tilings with an even and with an odd number of dominoes across the seam, so the solver returns the larger absolute value. Inside the board it uses the signs of [`A401988.gp`](../../oeis/A401988/A401988.gp), alternating by rows or, when the number of rows is odd, by columns.
 
 The solver counts modulo primes. They are below $2^{31}$ in Rust and Python and below $2^{26}$ in JavaScript, where a sum of two products of residues has to stay exact in a double. The Chinese remainder theorem rebuilds the count, and one more prime checks it.
 
@@ -65,7 +65,7 @@ table(
 
 ## What the OEIS has
 
-Every row of the table is in the OEIS: the Pell numbers [OEIS A000129](https://oeis.org/A000129), shifted by one, for circumference 2, and the domino tilings of $C_w \times P_h$ for the others, [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478) and [OEIS A028479](https://oeis.org/A028479) for $w = 3$ to $8$ [1]; the entries of odd circumference list only the even heights. The cell checks every one of these against the table, with the terms of the entries as they stood on 1 November 2026.
+Every row of the table is in the OEIS: the Pell numbers [OEIS A000129](https://oeis.org/A000129), shifted by one, for circumference 2, and the domino tilings of $C_w \times P_h$ for the others, [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478) and [OEIS A028479](https://oeis.org/A028479) for $w = 3$ to $8$ [2]; the entries of odd circumference list only the even heights. The cell checks every one of these against the table, with the terms of the entries as they stood on 1 November 2026.
 
 ```js run
 const pell = [0n, 1n];
@@ -99,7 +99,7 @@ for (const [w, entry, terms] of entries) {
 table(['board', 'OEIS', 'checked at'], rows);
 ```
 
-The $2n \times 2n$ cylinders are the entry [OEIS A402345](https://oeis.org/A402345) [1], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the rows above hold $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $14 \times 14$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ and $40 \times 40$ with the Pfaffian one.
+The $2n \times 2n$ cylinders are the entry [OEIS A402345](https://oeis.org/A402345) [2], with a b-file of $n = 0, \dots, 44$, [`oeis/A402345/b402345.txt`](../../oeis/A402345/b402345.txt). Its term $a(n)$ is the term $h = 2n$ of the row $w = 2n$, so the rows above hold $a(1)$ to $a(4)$. The cell checks the square boards against that b-file, $2 \times 2$ to $14 \times 14$ with the `BigInt` solver and $2 \times 2$ to $20 \times 20$ and $40 \times 40$ with the Pfaffian one.
 
 ```js run
 const bFile = require('fs')
@@ -169,6 +169,5 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 The `BigInt` solver agrees with every OEIS entry above, and the modular and the Pfaffian solver with the `BigInt` one at $h = 8$. The Pfaffian solver also agrees with A402345 up to $20 \times 20$ and at $40 \times 40$, the largest board it takes. `FULL_CASES=1 node --test js/test/conformance.test.js` runs the cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through all three of them.
 
 ## References
-
-1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A000129](https://oeis.org/A000129), [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478), [OEIS A028479](https://oeis.org/A028479) and [OEIS A402345](https://oeis.org/A402345). [oeis.org](https://oeis.org)
-2. L. Lovász and M. D. Plummer. *Matching Theory*. Annals of Discrete Mathematics 29, North-Holland, Amsterdam, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322.
+1. L. Lovász and M. D. Plummer. Determinants and matchings. Chapter 8 of *Matching Theory*, North-Holland Mathematics Studies 121 and Annals of Discrete Mathematics 29, North-Holland, Amsterdam, pp. 307-355, 1986. Lemma 8.3.3 and Theorem 8.3.4, pp. 321-322. [doi:10.1016/S0304-0208(08)73644-2](https://doi.org/10.1016/S0304-0208%2808%2973644-2)
+2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A000129](https://oeis.org/A000129), [OEIS A004253](https://oeis.org/A004253), [OEIS A006253](https://oeis.org/A006253), [OEIS A003729](https://oeis.org/A003729), [OEIS A028477](https://oeis.org/A028477), [OEIS A028478](https://oeis.org/A028478), [OEIS A028479](https://oeis.org/A028479) and [OEIS A402345](https://oeis.org/A402345). [oeis.org](https://oeis.org)

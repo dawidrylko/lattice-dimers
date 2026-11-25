@@ -1,6 +1,6 @@
 # Diagonal pieces: domicule tilings of the 2n × 2n board by their count (A401673)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles-by-diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/A401673) [3]. The [cylinders](05-cylinders-by-diagonal-pieces.md) and [tori](06-tori-by-diagonal-pieces.md) are sorted the same way in notebooks of their own.
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles-by-diagonal-pieces.html) has the results. It sorts the domicule tilings of the $2n \times 2n$ board by the number of diagonal pieces, the domicules that join two cells sharing only a corner. The triangle of these counts is [OEIS A401673](https://oeis.org/A401673) [1]. The [cylinders](05-cylinders-by-diagonal-pieces.md) and [tori](06-tori-by-diagonal-pieces.md) are sorted the same way in notebooks of their own.
 
 ## The problem
 
@@ -20,7 +20,7 @@ Give every diagonal piece the weight $x$. The weighted count of the $h \times w$
 P_{h,w}(x) = \sum_k T(h, w, k)\, x^k,
 ```
 
-where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the domicule count ([OEIS A239273](https://oeis.org/A239273)). This is the dimer model of Sandvik and Moessner [1] with diagonal dimers of fugacity $x$, and the weights $x = 3/2, 2, 3$ of the [companion note on log-convexity](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy-log-convexity.pdf) [2] are values of the same polynomial.
+where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the domicule count ([OEIS A239273](https://oeis.org/A239273)). This is the dimer model of Sandvik and Moessner [2] with diagonal dimers of fugacity $x$, and the weights $x = 3/2, 2, 3$ of the [companion note on log-convexity](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy-log-convexity.pdf) [3] are values of the same polynomial.
 
 ## The Modular solver
 
@@ -197,7 +197,6 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 The two solvers agree with each other, with A004003 at $k = 0$ and with A239273 summed over $k$. The PARI/GP program runs in CI against the same data. The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
-
-1. A. W. Sandvik and R. Moessner. Correlations and confinement in nonplanar two-dimensional dimer models. *Physical Review B* 73(14):144504, 2006. [doi:10.1103/PhysRevB.73.144504](https://doi.org/10.1103/PhysRevB.73.144504)
-2. D. Ryłko. Log-convexity of strip dimer counts on the king's graph. Companion note, October 2026. [doi:10.5281/zenodo.23686087](https://doi.org/10.5281/zenodo.23686087)
-3. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A401673](https://oeis.org/A401673), [OEIS A004003](https://oeis.org/A004003), [OEIS A239273](https://oeis.org/A239273) and [OEIS A011379](https://oeis.org/A011379). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A401673](https://oeis.org/A401673), [OEIS A004003](https://oeis.org/A004003), [OEIS A239273](https://oeis.org/A239273) and [OEIS A011379](https://oeis.org/A011379). [oeis.org](https://oeis.org)
+2. A. W. Sandvik and R. Moessner. Correlations and confinement in nonplanar two-dimensional dimer models. *Physical Review B* 73(14):144504, 2006. [doi:10.1103/PhysRevB.73.144504](https://doi.org/10.1103/PhysRevB.73.144504)
+3. D. Ryłko. Log-convexity of strip dimer counts on the king's graph. Companion note, October 2026. [doi:10.5281/zenodo.23686087](https://doi.org/10.5281/zenodo.23686087)

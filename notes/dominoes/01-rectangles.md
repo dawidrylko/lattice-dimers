@@ -1,6 +1,6 @@
 # Dominoes: tilings of the 2n × 2n board (A004003)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/rectangles.html) has the results. It counts the domino tilings of the $2n \times 2n$ board, [OEIS A004003](https://oeis.org/A004003) [5], says how the gallery numbers and samples them, and how every number is checked. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) count dominoes on boards with glued edges, and the same boards are counted on the [triangular lattice](../triangular-lattice/01-rectangles.md).
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/dominoes/rectangles.html) has the results. It counts the domino tilings of the $2n \times 2n$ board, [OEIS A004003](https://oeis.org/A004003) [1], says how the gallery numbers and samples them, and how every number is checked. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) count dominoes on boards with glued edges, and the same boards are counted on the [triangular lattice](../triangular-lattice/01-rectangles.md).
 
 ## The problem
 
@@ -15,7 +15,7 @@ figure(svgs, `4 of the ${total} domino tilings of the 8 × 8 board, numbered as 
 
 ## The Formula solver
 
-The solver evaluates a closed form. Kasteleyn [1] and Fisher [2] found in 1961 that a $2n \times 2n$ board has
+The solver evaluates a closed form. Kasteleyn [2] and Fisher [3] found in 1961 that a $2n \times 2n$ board has
 
 ```math
 a(n) = \prod_{j=1}^{n} \prod_{k=1}^{n} \left( 4\cos^2\frac{j\pi}{2n+1} + 4\cos^2\frac{k\pi}{2n+1} \right)
@@ -27,7 +27,7 @@ tilings. Evaluated with floating-point cosines the product loses its last digits
 a(n) = (-1)^n \mathrm{Res}\bigl(P(x), P(-x)\bigr), \qquad P(x^2) = U_{2n}(x/2)
 ```
 
-where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is the determinant of the Sylvester matrix, an integer matrix of size $2n$, and fraction-free Bareiss elimination [3] keeps every intermediate value an integer. Neither square roots nor floating point are involved, and $20 \times 20$ takes milliseconds. The same formula is a one-line PARI/GP program in [`oeis/A004003/A004003.gp`](../../oeis/A004003/A004003.gp).
+where $U_{2n}$ is the Chebyshev polynomial of the second kind. The resultant is the determinant of the Sylvester matrix, an integer matrix of size $2n$, and fraction-free Bareiss elimination [4] keeps every intermediate value an integer. Neither square roots nor floating point are involved, and $20 \times 20$ takes milliseconds. The same formula is a one-line PARI/GP program in [`oeis/A004003/A004003.gp`](../../oeis/A004003/A004003.gp).
 
 ### Why the product needs exact arithmetic
 
@@ -106,7 +106,7 @@ table(
 
 ### Sampling with coupling from the past
 
-The table for $18 \times 18$ would need about a gigabyte and the one for $20 \times 20$ several, so the gallery samples these boards instead. Domino tilings of a simply connected region form a distributive lattice under the rotation of two parallel dominoes in a $2 \times 2$ square, with a top and a bottom tiling. Monotone coupling from the past [4] runs the same random rotations from the top and the bottom tiling, starting further and further in the past, until both runs meet at time 0. The meeting point is an exactly uniform tiling. No table is needed.
+The table for $18 \times 18$ would need about a gigabyte and the one for $20 \times 20$ several, so the gallery samples these boards instead. Domino tilings of a simply connected region form a distributive lattice under the rotation of two parallel dominoes in a $2 \times 2$ square, with a top and a bottom tiling. Monotone coupling from the past [5] runs the same random rotations from the top and the bottom tiling, starting further and further in the past, until both runs meet at time 0. The meeting point is an exactly uniform tiling. No table is needed.
 
 The number of a sampled tiling needs no table either. A scan from the last cell back keeps one row of completion counts, `table[i + 1]`, and wherever the tiling takes a later choice it adds the counts of the earlier ones, as unranking subtracts them. The scan runs modulo primes below $2^{31}$ in `Uint32Array` rows, a few primes per browser worker, and the Chinese remainder theorem rebuilds the number from as many primes as the count of all tilings needs. The same scan ends with that count modulo every prime, which checks the prime against the count the gallery already holds.
 
@@ -178,9 +178,8 @@ Every count on this page is checked in more than one independent way:
 The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
-
-1. P. W. Kasteleyn. The statistics of dimers on a lattice. *Physica* 27(12):1209-1225, 1961. [doi:10.1016/0031-8914(61)90063-5](https://doi.org/10.1016/0031-8914%2861%2990063-5)
-2. M. E. Fisher. Statistical mechanics of dimers on a plane lattice. *Physical Review* 124(6):1664-1672, 1961. [doi:10.1103/PhysRev.124.1664](https://doi.org/10.1103/PhysRev.124.1664)
-3. E. H. Bareiss. Sylvester's identity and multistep integer-preserving Gaussian elimination. *Mathematics of Computation* 22(103):565-578, 1968. [doi:10.1090/S0025-5718-1968-0226829-0](https://doi.org/10.1090/S0025-5718-1968-0226829-0)
-4. J. G. Propp and D. B. Wilson. Exact sampling with coupled Markov chains and applications to statistical mechanics. *Random Structures and Algorithms* 9(1-2):223-252, 1996. [doi:10.1002/(SICI)1098-2418(199608/09)9:1/2<223::AID-RSA14>3.0.CO;2-O](https://doi.org/10.1002/%28SICI%291098-2418%28199608/09%299:1/2%3C223::AID-RSA14%3E3.0.CO;2-O)
-5. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A004003](https://oeis.org/A004003). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A004003](https://oeis.org/A004003). [oeis.org](https://oeis.org)
+2. P. W. Kasteleyn. The statistics of dimers on a lattice. *Physica* 27(12):1209-1225, 1961. [doi:10.1016/0031-8914(61)90063-5](https://doi.org/10.1016/0031-8914%2861%2990063-5)
+3. M. E. Fisher. Statistical mechanics of dimers on a plane lattice. *Physical Review* 124(6):1664-1672, 1961. [doi:10.1103/PhysRev.124.1664](https://doi.org/10.1103/PhysRev.124.1664)
+4. E. H. Bareiss. Sylvester's identity and multistep integer-preserving Gaussian elimination. *Mathematics of Computation* 22(103):565-578, 1968. [doi:10.1090/S0025-5718-1968-0226829-0](https://doi.org/10.1090/S0025-5718-1968-0226829-0)
+5. J. G. Propp and D. B. Wilson. Exact sampling with coupled Markov chains and applications to statistical mechanics. *Random Structures and Algorithms* 9(1-2):223-252, 1996. [doi:10.1002/(SICI)1098-2418(199608/09)9:1/2<223::AID-RSA14>3.0.CO;2-O](https://doi.org/10.1002/%28SICI%291098-2418%28199608/09%299:1/2%3C223::AID-RSA14%3E3.0.CO;2-O)
