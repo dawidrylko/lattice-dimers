@@ -20,7 +20,7 @@ Give every diagonal piece the weight $x$. The weighted count of the $h \times w$
 P_{h,w}(x) = \sum_k T(h, w, k)\, x^k,
 ```
 
-where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the count of the triangular lattice ([OEIS A401988](https://oeis.org/A401988)). This is the dimer model of Fendley, Moessner and Sondhi [1] with the diagonal dimers given the fugacity $x$.
+where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only dominoes are left, so $P(0)$ is the domino count ([OEIS A004003](https://oeis.org/A004003) on the $2n \times 2n$ board), and $P(1)$ is the count of the triangular lattice ([OEIS A401988](https://oeis.org/A401988)) [1]. This is the dimer model of Fendley, Moessner and Sondhi [2] with the diagonal dimers given the fugacity $x$.
 
 ## The Modular solver
 
@@ -123,7 +123,7 @@ table(['n', 'board', 'share of diagonal pieces', 'variance per site'], rows);
 
 ## Weighted counts
 
-The polynomial gives the weighted count for any $x$. The cell prints $\log P(x) / (4n^2)$, the free energy per site of the weighted board, at the six weights of the [domicule table](../domicules/04-rectangles-by-diagonal-pieces.md#weighted-counts): $x = 0$ (dominoes), $1/2$, $1$ (the triangular lattice), $3/2$, $2$ and $3$. The chart draws it for every $x$ from 0 to 3 on four boards, with dots at the same six weights. Two tilings placed side by side tile the joined board, so $\log P(x)$ is superadditive in each side, and the value of a free board never exceeds the free energy per site of the infinite lattice at the same $x$. That is $G/\pi = 0.2915\ldots$ at $x = 0$, with $G$ Catalan's constant, and at $x = 1$ the entropy per site of the triangular lattice [1], $s = 0.4285\ldots$, which the cell reads from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`. The cell stops the build when a board of the table reaches either value.
+The polynomial gives the weighted count for any $x$. The cell prints $\log P(x) / (4n^2)$, the free energy per site of the weighted board, at the six weights of the [domicule table](../domicules/04-rectangles-by-diagonal-pieces.md#weighted-counts): $x = 0$ (dominoes), $1/2$, $1$ (the triangular lattice), $3/2$, $2$ and $3$. The chart draws it for every $x$ from 0 to 3 on four boards, with dots at the same six weights. Two tilings placed side by side tile the joined board, so $\log P(x)$ is superadditive in each side, and the value of a free board never exceeds the free energy per site of the infinite lattice at the same $x$. That is $G/\pi = 0.2915\ldots$ at $x = 0$, with $G$ Catalan's constant, and at $x = 1$ the entropy per site of the triangular lattice [2], $s = 0.4285\ldots$, which the cell reads from the Kasteleyn computation in `research/king-entropy/out/out_validate.txt`. The cell stops the build when a board of the table reaches either value.
 
 ```js run
 const fs = require('fs');
@@ -183,6 +183,5 @@ chart({
 The two solvers agree with each other in Rust, Python and JavaScript, with A004003 at $k = 0$ and with A401988 summed over $k$, on the rectangles of up to 20 cells with every tiling listed one by one, and on the king's graph and the square lattice with the domicule polynomial and the domino count. The numbering by diagonal pieces is checked against these counts up to $6 \times 6$, its first and last tiling of every $k$ for coverage, for the number of diagonal pieces and for the missing down-left diagonal, and on the $4 \times 4$ board for the order of the full numbering. The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
-
-1. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)
-2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A004003](https://oeis.org/A004003) and [OEIS A401988](https://oeis.org/A401988). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A004003](https://oeis.org/A004003) and [OEIS A401988](https://oeis.org/A401988). [oeis.org](https://oeis.org)
+2. P. Fendley, R. Moessner and S. L. Sondhi. Classical dimers on the triangular lattice. *Physical Review B* 66(21):214513, 2002. [doi:10.1103/PhysRevB.66.214513](https://doi.org/10.1103/PhysRevB.66.214513)

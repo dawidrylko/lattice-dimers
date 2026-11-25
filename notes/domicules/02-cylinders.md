@@ -31,7 +31,7 @@ Two solvers count the same boards by different methods, and the cell below compa
 
 Circumference 2 has multiple edges, because on a ring of two cells a cell meets its right and its left neighbour in the same cell. Each edge counts as a separate piece, so one row of two cells has 2 tilings. A row of odd circumference has an odd number of cells, so the counts vanish at odd heights.
 
-For fixed $w$ the counts grow like $\lambda_w^h$, with $\lambda_w$ the leading eigenvalue of the cylinder transfer matrix; [the paper](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf) [2] extrapolates its growth rate per site, $\log \lambda_w / w$, in $w$.
+For fixed $w$ the counts grow like $\lambda_w^h$, with $\lambda_w$ the leading eigenvalue of the cylinder transfer matrix; [the paper](https://dawidrylko.github.io/lattice-dimers/papers/king-entropy.pdf) [1] extrapolates its growth rate per site, $\log \lambda_w / w$, in $w$.
 
 ```js run
 const { calculateTotalTilingCombinations } = require('./js/solvers/any-lattice-cylinder-torus-bigint.js');
@@ -57,9 +57,9 @@ table(
 
 ## What the OEIS has
 
-The OEIS has the cylinders of circumference 2, [OEIS A002532](https://oeis.org/A002532), and those of height 2, [OEIS A062510](https://oeis.org/A062510), each shifted by one [1]. The cell checks both against the table, with the terms of the entries as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
+The OEIS has the cylinders of circumference 2, [OEIS A002532](https://oeis.org/A002532), and those of height 2, [OEIS A062510](https://oeis.org/A062510), each shifted by one [2]. The cell checks both against the table, with the terms of the entries as they stood on 1 November 2026. The OEIS was searched by terms and by name on 30 October 2026 and by terms again on 1 November 2026. It has no entry for the cylinders of circumference 3 to 6.
 
-The $2n \times 2n$ cylinders are the entry [OEIS A402163](https://oeis.org/A402163) [1], with a b-file of $n = 0, \dots, 11$, [`oeis/A402163/b402163.txt`](../../oeis/A402163/b402163.txt). The cell checks the square boards of the table, $2 \times 2$ to $8 \times 8$, against that b-file.
+The $2n \times 2n$ cylinders are the entry [OEIS A402163](https://oeis.org/A402163) [2], with a b-file of $n = 0, \dots, 11$, [`oeis/A402163/b402163.txt`](../../oeis/A402163/b402163.txt). The cell checks the square boards of the table, $2 \times 2$ to $8 \times 8$, against that b-file.
 
 ```js run
 const terms = [0n, 1n];
@@ -134,6 +134,5 @@ print(require('fs').readFileSync(require('path').join(nb.context.root, 'oeis/A40
 The `BigInt` solver agrees with the OEIS entries above and the modular solver with the `BigInt` one at $h = 8$, the PARI/GP program runs in CI against the king's graph cylinders of the test data, and `FULL_CASES=1 node --test js/test/conformance.test.js` runs the king's graph cylinders of [`spec/cases/any-lattice-cylinder-torus-bigint.json`](../../spec/cases/any-lattice-cylinder-torus-bigint.json) through both of them.
 
 ## References
-
-1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A002532](https://oeis.org/A002532), [OEIS A062510](https://oeis.org/A062510) and [OEIS A402163](https://oeis.org/A402163). [oeis.org](https://oeis.org)
-2. D. Ryłko. The dimer entropy of the king's graph. Preprint, October 2026. [doi:10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056)
+1. D. Ryłko. The dimer entropy of the king's graph. Preprint, October 2026. [doi:10.5281/zenodo.23686056](https://doi.org/10.5281/zenodo.23686056)
+2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A002532](https://oeis.org/A002532), [OEIS A062510](https://oeis.org/A062510) and [OEIS A402163](https://oeis.org/A402163). [oeis.org](https://oeis.org)

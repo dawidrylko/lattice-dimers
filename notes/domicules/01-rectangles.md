@@ -1,6 +1,6 @@
 # Domicules: tilings of the 2n × 2n board (A239273)
 
-A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html) has the results. It counts the domicule tilings of the $2n \times 2n$ board, [OEIS A239273](https://oeis.org/A239273), and of the $h \times w$ rectangles, [OEIS A239264](https://oeis.org/A239264) [2]. It also says how the gallery numbers and samples these tilings, and how every number is checked. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) count domicules on boards with glued edges, the same boards are counted on the [triangular lattice](../triangular-lattice/01-rectangles.md), and [Rectangles by diagonal pieces](04-rectangles-by-diagonal-pieces.md) sorts the tilings by their diagonal pieces.
+A notebook: every code cell below runs when the site is built, and its output is printed under it. On GitHub only the code is shown; the [rendered page](https://dawidrylko.github.io/lattice-dimers/notes/domicules/rectangles.html) has the results. It counts the domicule tilings of the $2n \times 2n$ board, [OEIS A239273](https://oeis.org/A239273), and of the $h \times w$ rectangles, [OEIS A239264](https://oeis.org/A239264) [1]. It also says how the gallery numbers and samples these tilings, and how every number is checked. The notebooks on [cylinders](02-cylinders.md) and [tori](03-tori.md) count domicules on boards with glued edges, the same boards are counted on the [triangular lattice](../triangular-lattice/01-rectangles.md), and [Rectangles by diagonal pieces](04-rectangles-by-diagonal-pieces.md) sorts the tilings by their diagonal pieces.
 
 ## The problem
 
@@ -15,7 +15,7 @@ figure(svgs, `4 of the ${total} domicule tilings of the 8 × 8 board.`);
 
 ## The Modular solver
 
-The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domicule-rectangle-modular.js`](../../js/solvers/domicule-rectangle-modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. Its Rust and Python implementations, [`domicule-rectangle-modular.rs`](../../rust/solvers/src/bin/domicule-rectangle-modular.rs) and [`domicule_rectangle_modular.py`](../../python/lattice_dimers/solvers/domicule_rectangle_modular.py), do the same, and the Rust one adds [wide primes](#wide-primes). It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [1], bounds the number of perfect matchings of a graph with degrees $d(v)$:
+The [cell-by-cell scan](#the-bigint-solver) only adds counts, so it can run modulo a prime $p < 2^{31}$: the sum of two residues stays below $2^{32}$ and fits a `Uint32Array` cell. [`domicule-rectangle-modular.js`](../../js/solvers/domicule-rectangle-modular.js) counts modulo several primes in parallel worker threads and rebuilds the exact count with the Chinese remainder theorem. Its Rust and Python implementations, [`domicule-rectangle-modular.rs`](../../rust/solvers/src/bin/domicule-rectangle-modular.rs) and [`domicule_rectangle_modular.py`](../../python/lattice_dimers/solvers/domicule_rectangle_modular.py), do the same, and the Rust one adds [wide primes](#wide-primes). It needs enough primes for their product to exceed the count, and the Kahn-Lovász theorem, proved by Alon and Friedland [2], bounds the number of perfect matchings of a graph with degrees $d(v)$:
 
 ```math
 \#\text{perfect matchings} \le \prod_{v} \bigl(d(v)!\bigr)^{1/(2d(v))}
@@ -207,6 +207,5 @@ Every count on this page is checked in more than one independent way:
 The tests are in [`harness/`](../../harness), [`js/test/`](../../js/test), [`python/tests/`](../../python/tests) and [`rust/tests/`](../../rust/tests), the known values in [`spec/cases/`](../../spec/cases).
 
 ## References
-
-1. N. Alon and S. Friedland. The maximum number of perfect matchings in graphs with a given degree sequence. *Electronic Journal of Combinatorics* 15:N13, 2008. [doi:10.37236/888](https://doi.org/10.37236/888)
-2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A239264](https://oeis.org/A239264) and [OEIS A239273](https://oeis.org/A239273). [oeis.org](https://oeis.org)
+1. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entries [OEIS A239264](https://oeis.org/A239264) and [OEIS A239273](https://oeis.org/A239273). [oeis.org](https://oeis.org)
+2. N. Alon and S. Friedland. The maximum number of perfect matchings in graphs with a given degree sequence. *Electronic Journal of Combinatorics* 15(1):N13, 2008. [doi:10.37236/888](https://doi.org/10.37236/888)

@@ -129,6 +129,6 @@ and the same for `even-b`, `full`, `odd` and `ng`. The Research job of the conti
 
 ## References
 
-1. J. Wildeboer and A. Seidel, Entanglement studies of resonating valence bonds on the frustrated square lattice, Phys. Rev. B 101 (2020), 224406, [doi:10.1103/PhysRevB.101.224406](https://doi.org/10.1103/PhysRevB.101.224406), [arXiv:1711.10717](https://arxiv.org/abs/1711.10717).
-2. S. Norine, Pfaffian graphs, T-joins and crossing numbers, Combinatorica 28 (2008), 89 to 98, [doi:10.1007/s00493-008-2150-2](https://doi.org/10.1007/s00493-008-2150-2).
-3. G. Tesler, Matchings in graphs on non-orientable surfaces, J. Combin. Theory Ser. B 78 (2000), 198 to 231, [doi:10.1006/jctb.1999.1941](https://doi.org/10.1006/jctb.1999.1941).
+1. J. Wildeboer and A. Seidel. Entanglement studies of resonating valence bonds on the frustrated square lattice. *Physical Review B* 101(22):224406, 2020. [doi:10.1103/PhysRevB.101.224406](https://doi.org/10.1103/PhysRevB.101.224406), [arXiv:1711.10717](https://arxiv.org/abs/1711.10717)
+2. S. Norine. Pfaffian graphs, T-joins and crossing numbers. *Combinatorica* 28(1):89-98, 2008. [doi:10.1007/s00493-008-2150-2](https://doi.org/10.1007/s00493-008-2150-2)
+3. G. Tesler. Matchings in graphs on non-orientable surfaces. *Journal of Combinatorial Theory, Series B* 78(2):198-231, 2000. [doi:10.1006/jctb.1999.1941](https://doi.org/10.1006/jctb.1999.1941)

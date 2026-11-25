@@ -20,23 +20,32 @@ function slugify(text) {
 }
 
 /**
- * Renders inline Markdown: code spans, $math$, links and bold text.
+ * Renders inline Markdown: code spans, $math$, citations, links and bold text.
  * Code and math are set aside as tokens first; a link label is rendered with the same
- * tokens, and the tokens are expanded until none is left.
+ * tokens, and the tokens are expanded until none is left. A citation [n] or [n, m] whose
+ * numbers are all in the References links each number to its item there.
  * @param {string} text The Markdown text of one paragraph, list item or table cell.
  * @param {function(string): string} resolveLink Maps a Markdown link target to the site URL.
  * @param {string[]} [tokens] The tokens of the enclosing call.
+ * @param {number} [referenceCount] The number of items in the References of the note.
  * @returns {string} The HTML.
  */
-function renderInline(text, resolveLink, tokens = null) {
+function renderInline(text, resolveLink, tokens = null, referenceCount = 0) {
   const shared = tokens || [];
   const keep = html => `\u0000${shared.push(html) - 1}\u0000`;
   const html = escapeHtml(
     text
       .replace(/`([^`]+)`/g, (_, code) => keep(`<code>${escapeHtml(code)}</code>`))
       .replace(/\$([^$\s](?:[^$\n]*?[^$\s])?)\$(?!\d)/g, (_, tex) => keep(`<span class="math" data-tex="${escapeHtml(tex)}">${escapeHtml(tex)}</span>`))
+      .replace(/\[(\d+(?:, \d+)*)\](?![(\[])/g, (citation, numbers) => {
+        const cited = numbers.split(', ').map(Number);
+
+        return cited.every(number => number >= 1 && number <= referenceCount)
+          ? keep(`[${cited.map(number => `<a href="#reference-${number}">${number}</a>`).join(', ')}]`)
+          : citation;
+      })
       .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, label, href) =>
-        keep(`<a href="${escapeHtml(resolveLink(href))}">${renderInline(label, resolveLink, shared)}</a>`),
+        keep(`<a href="${escapeHtml(resolveLink(href))}">${renderInline(label, resolveLink, shared, referenceCount)}</a>`),
       ),
   )
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
@@ -55,7 +64,7 @@ function renderInline(text, resolveLink, tokens = null) {
   return expanded;
 }
 
-function renderTable(rows, resolveLink) {
+function renderTable(rows, resolveLink, referenceCount) {
   const cells = row =>
     row
       .replace(/^\||\|$/g, '')
@@ -67,8 +76,8 @@ function renderTable(rows, resolveLink) {
 
   return [
     '<div class="table-wrap"><table>',
-    `<thead><tr>${cells(head).map((cell, i) => `<th${alignment(i)}>${renderInline(cell, resolveLink)}</th>`).join('')}</tr></thead>`,
-    `<tbody>${body.map(row => `<tr>${cells(row).map((cell, i) => `<td${alignment(i)}>${renderInline(cell, resolveLink)}</td>`).join('')}</tr>`).join('')}</tbody>`,
+    `<thead><tr>${cells(head).map((cell, i) => `<th${alignment(i)}>${renderInline(cell, resolveLink, null, referenceCount)}</th>`).join('')}</tr></thead>`,
+    `<tbody>${body.map(row => `<tr>${cells(row).map((cell, i) => `<td${alignment(i)}>${renderInline(cell, resolveLink, null, referenceCount)}</td>`).join('')}</tr>`).join('')}</tbody>`,
     '</table></div>',
   ].join('');
 }
@@ -260,6 +269,12 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
   let title = '';
   let description = '';
   let cells = 0;
+  let section = '';
+  const referenceStart = lines.indexOf('## References');
+  const referenceLines = referenceStart === -1 ? [] : lines.slice(referenceStart + 1);
+  const referenceEnd = referenceLines.findIndex(line => /^#{1,3} /.test(line));
+  const referenceCount = (referenceEnd === -1 ? referenceLines : referenceLines.slice(0, referenceEnd)).filter(line => /^\d+\. /.test(line)).length;
+  const inline = text => renderInline(text, resolveLink, null, referenceCount);
 
   for (let i = 0; i < lines.length; ) {
     const line = lines[i];
@@ -296,7 +311,7 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
 
     if (heading) {
       const level = heading[1].length;
-      const text = renderInline(heading[2], resolveLink);
+      const text = inline(heading[2]);
 
       if (level === 1) {
         title = heading[2].replace(/`/g, '');
@@ -305,6 +320,7 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
         const id = slugify(heading[2]);
 
         if (level === 2) {
+          section = id;
           toc.push({ id, title: text });
         }
 
@@ -324,7 +340,7 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
         rows.push(lines[i]);
       }
 
-      html.push(renderTable(rows, resolveLink));
+      html.push(renderTable(rows, resolveLink, referenceCount));
       continue;
     }
 
@@ -338,14 +354,15 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
         const match = lines[i].match(listItem);
 
         if (match) {
-          items.push(match[2]);
+          items.push({ number: match[1], text: match[2] });
         } else {
-          items[items.length - 1] += ` ${lines[i].trim()}`;
+          items[items.length - 1].text += ` ${lines[i].trim()}`;
         }
       }
 
       const tag = ordered ? 'ol' : 'ul';
-      html.push(`<${tag}>${items.map(item => `<li>${renderInline(item, resolveLink)}</li>`).join('')}</${tag}>`);
+      const anchor = number => (ordered && section === 'references' ? ` id="reference-${number.slice(0, -1)}"` : '');
+      html.push(`<${tag}>${items.map(({ number, text }) => `<li${anchor(number)}>${inline(text)}</li>`).join('')}</${tag}>`);
       continue;
     }
 
@@ -356,7 +373,7 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
         quote.push(lines[i].slice(2));
       }
 
-      html.push(`<blockquote>${renderInline(quote.join(' '), resolveLink)}</blockquote>`);
+      html.push(`<blockquote>${inline(quote.join(' '))}</blockquote>`);
       continue;
     }
 
@@ -377,7 +394,7 @@ async function renderNote(markdown, { resolveLink, context, sectionAliases = {} 
       description = text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/[`*$]/g, '').slice(0, 300);
     }
 
-    html.push(`<p>${renderInline(text, resolveLink)}</p>`);
+    html.push(`<p>${inline(text)}</p>`);
   }
 
   const output = html.join('\n');
