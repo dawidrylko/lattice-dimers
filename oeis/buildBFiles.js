@@ -17,6 +17,7 @@ const TRIANGULAR_FILE = 'spec/cases/any-lattice-rectangle-modular.json';
 const LAST_TRIANGULAR_SQUARE = 11;
 const LAST_DOMINO_CYLINDER = 10;
 const LAST_TRIANGULAR_CYLINDER = 10;
+const LAST_TRIANGULAR_TORUS = 8;
 const TRIANGULAR_POLYNOMIAL_FILE = 'spec/cases/any-lattice-cylinder-torus-polynomial-modular.json';
 const TRIANGULAR_STRIP = 4;
 const LAST_TERMS = {
@@ -24,6 +25,7 @@ const LAST_TERMS = {
   A239264: 1127,
   A239273: 12,
   A309117: 1000,
+  A399633: 36,
   A401670: 8,
   A401673: 395,
   A401988: 37,
@@ -36,6 +38,7 @@ const SOURCES = {
   'A239264/b239264.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A239273/b239273.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
   'A309117/b309117.txt': path.relative(ROOT_DIRECTORY, ZEX_DIRECTORY),
+  'A399633/b399633.txt': TORUS_FILE,
   'A401670/b401670.txt': TORUS_FILE,
   'A401673/b401673.txt': DIAGONAL_FILE,
   'A401988/b401988.txt': TRIANGULAR_FILE,
@@ -243,6 +246,30 @@ function readTriangularCylinders() {
   });
 }
 
+function readTriangularTori() {
+  const squares = new Map([[0, '1']]);
+
+  for (const { rowCount, colCount, lattice, torus, twisted, expectedResult } of readTestCases(TORUS_FILE)) {
+    if (lattice === 'triangular' && torus && !twisted && rowCount === colCount && rowCount % 2 === 0) {
+      const known = squares.get(rowCount / 2);
+
+      if (known !== undefined && known !== expectedResult) {
+        throw new Error(`The ${rowCount} X ${rowCount} triangular torus has two counts in ${TORUS_FILE}.`);
+      }
+
+      squares.set(rowCount / 2, expectedResult);
+    }
+  }
+
+  return Array.from({ length: LAST_TRIANGULAR_TORUS + 1 }, (_, n) => {
+    if (!squares.has(n)) {
+      throw new Error(`No count for the ${2 * n} X ${2 * n} triangular torus in ${TORUS_FILE}.`);
+    }
+
+    return squares.get(n);
+  });
+}
+
 function formatBFile(terms) {
   return terms.map((term, index) => `${index} ${term}\n`).join('');
 }
@@ -265,6 +292,7 @@ function readCheckedTerms() {
     'A239264/b239264.txt': formatBFile(array),
     'A239273/b239273.txt': formatBFile(squares),
     'A309117/b309117.txt': formatBFile(readStrips('tri').get(TRIANGULAR_STRIP)),
+    'A399633/b399633.txt': formatBFile(readTriangularTori()),
     'A401670/b401670.txt': formatBFile(readTori()),
     'A401673/b401673.txt': formatBFile(readDiagonalRows().flat()),
     'A401988/b401988.txt': formatBFile(readTriangularSquares()),

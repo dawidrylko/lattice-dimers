@@ -142,7 +142,7 @@ const NOTE_SUMMARIES = {
   'domicules/tori-by-diagonal-pieces': 'Notebook: domicule tilings of tori by the number of diagonal pieces, checked against the gallery up to 10 × 10.',
   'triangular-lattice/rectangles': 'Notebook: perfect matchings of the triangular lattice on the 2n × 2n board (A401988) and on rectangles, by a transfer and by the Kasteleyn determinant, counted for comparison with dominoes and domicules.',
   'triangular-lattice/cylinders': 'Notebook: perfect matchings of the triangular lattice on cylinders, counted for comparison with dominoes and domicules, and the 2n × 2n cylinders (A402693).',
-  'triangular-lattice/tori': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori, counted for comparison with dominoes and domicules.',
+  'triangular-lattice/tori': 'Notebook: perfect matchings of the triangular lattice on 2n × 2n tori (A399633), counted for comparison with dominoes and domicules.',
   'triangular-lattice/rectangles-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on the 2n × 2n board by the number of diagonal pieces, up to 16 × 16, with at most 2n² − 2n of them, and their weighted counts.',
   'triangular-lattice/cylinders-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on cylinders by the number of diagonal pieces, checked against the gallery up to 10 × 10.',
   'triangular-lattice/tori-by-diagonal-pieces': 'Notebook: tilings of the triangular lattice on tori by the number of diagonal pieces, checked against the gallery up to 10 × 10.',
@@ -635,7 +635,7 @@ function buildJsonLd() {
         programmingLanguage: ['Rust', 'Python', 'JavaScript'],
         runtimePlatform: 'Node.js',
         license: 'https://opensource.org/licenses/MIT',
-        keywords: "dimer model, king's graph, entropy per site, transfer matrix, domino tiling, domicule tiling, perfect matchings, OEIS A004003, OEIS A239264, OEIS A239273, OEIS A309117, OEIS A401669, OEIS A401670, OEIS A401673, OEIS A401988, OEIS A402163, OEIS A402345, OEIS A402693, combinatorics",
+        keywords: "dimer model, king's graph, entropy per site, transfer matrix, domino tiling, domicule tiling, perfect matchings, OEIS A004003, OEIS A239264, OEIS A239273, OEIS A309117, OEIS A401669, OEIS A401670, OEIS A401673, OEIS A401988, OEIS A402163, OEIS A402345, OEIS A402693, OEIS A399633, combinatorics",
         author: AUTHOR,
         isBasedOn: 'https://oeis.org/A004003',
         subjectOf: {
