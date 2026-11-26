@@ -5,16 +5,17 @@
 ## Contribution
 
 - The b-file of $n = 0, \dots, 12$ and a one-line PARI program, submitted 15 October 2026.
+- A link to the Zenodo preprint, the limit of $\log(a(n))/(4n^2)$ equal to [A401669](../A401669/README.md), a conjectured asymptotic and a CROSSREFS line, submitted 18 November 2026.
 
 ## Status
 
-Approved 11 November 2026, revision #51.
+Approved 25 November 2026, revision #57.
 
 ## Files
 
 | file | content |
 | --- | --- |
-| [A239273.txt](A239273.txt) | the `%H` and `%o` lines contributed |
+| [A239273.txt](A239273.txt) | the `%H`, `%F`, `%o` and `%Y` lines contributed |
 | [b239273.txt](b239273.txt) | $n = 0, \dots, 12$, printed alike by the generators [`b239273.rs`](b239273.rs), [`b239273.py`](b239273.py) and [`b239273.js`](b239273.js); identical to the published b-file on 1 November 2026; its terms up to $n = 12$ are checked against the strip counts in [`research/king-entropy/data/zex`](../../research/king-entropy/data/zex) |
 | [A239273.gp](A239273.gp) | the program of the `%o` line, which reads `T(h, w)` from [A239264.gp](../A239264/A239264.gp) |
 | [b239273.rs](b239273.rs) | the generator of the b-file in Rust |
