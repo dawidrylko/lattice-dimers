@@ -1157,12 +1157,6 @@ const RULES = [
 const APPROVED_AS_IS = 'approved with it, and the copy keeps the published text';
 const ACCEPTED = [
   {
-    entry: 'A239273',
-    rule: 'signature-name',
-    match: '_Dawid Rylko_',
-    reason: 'the published PROG line still signs "_Dawid Rylko_" (#41); Alois P. Heinz renamed only the b-file link (#48)',
-  },
-  {
     entry: 'A401670',
     rule: 'comment-provenance',
     match: 'agree between two transfer-matrix programs',

@@ -1,3 +1,7 @@
-%I A239273 #51 Nov 11 2026 20:57:17
+%I A239273 #57 Nov 25 2026 17:38:38
 %H A239273 Dawid Ryłko, <a href="/A239273/b239273.txt">Table of n, a(n) for n = 0..12</a>
-%o A239273 (PARI) a(n) = T(2*n, 2*n); \\ T(h, w) defined in A239264. - _Dawid Rylko_, Oct 15 2026
+%H A239273 Dawid Ryłko, <a href="https://doi.org/10.5281/zenodo.23686056">The dimer entropy of the king's graph</a>, Zenodo preprint, 2026.
+%F A239273 Limit_{n->oo} log(a(n))/(4*n^2) = A401669. - _Dawid Ryłko_, Nov 18 2026
+%F A239273 a(n) ~ c * d^(n^2) / f^n, where c = 1.43791803..., d = exp(4*A401669) = 9.6027320273133..., f = 6.93196613224... (conjectured). - _Dawid Ryłko_, Nov 18 2026
+%o A239273 (PARI) a(n) = T(2*n, 2*n); \\ T(h, w) defined in A239264. - _Dawid Ryłko_, Oct 15 2026
+%Y A239273 Cf. A401669 (entropy per site), A401670 (2n X 2n torus), A401988 (one diagonal direction), A402163 (2n X 2n cylinder).
