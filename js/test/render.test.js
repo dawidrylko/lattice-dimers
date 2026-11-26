@@ -916,6 +916,22 @@ const figureTestCases = [
       }
     },
   },
+  {
+    name: 'a checked against column with one value in every row',
+    run: () =>
+      figureCell("table(['n', 'checked against'], [[1, 'OEIS A004003'], [2, 'OEIS A004003']]);").then(
+        () => false,
+        error => error.message.includes('reads "OEIS A004003" in every row'),
+      ),
+  },
+  {
+    name: 'a checked against column that names a source per row, and one row alone',
+    run: () =>
+      Promise.all([
+        figureCell("table(['n', 'checked against'], [[1, 'OEIS A004003'], [2, 'spec/cases/']]);"),
+        figureCell("table(['n', 'checked against'], [[1, 'OEIS A004003']]);"),
+      ]).then(results => results.every(({ html }) => html.includes('<th>checked against</th>'))),
+  },
 ];
 
 async function runFigureTest({ name, run }) {

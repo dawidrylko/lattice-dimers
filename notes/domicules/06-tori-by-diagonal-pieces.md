@@ -20,9 +20,21 @@ Give every diagonal piece the weight $x$, as in the [rectangles notebook](04-rec
 
 [`domicule-cylinder-torus-polynomial-modular.js`](../../js/solvers/domicule-cylinder-torus-polynomial-modular.js) runs the cell by cell transfer of the [tori notebook](03-tori.md#the-modular-solver) on the king's graph with a block of coefficients in every state, one prime per worker thread. [`domicule-cylinder-torus-polynomial-modular.rs`](../../rust/solvers/src/bin/domicule-cylinder-torus-polynomial-modular.rs) and [`domicule_cylinder_torus_polynomial_modular.py`](../../python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_modular.py) count the same polynomial. A torus runs only the smallest rotation of every set of cells covered from the last row and counts it once per rotation, and its shorter side is taken as the circumference. The same solver counts the [cylinders](05-cylinders-by-diagonal-pieces.md).
 
+Let $T_t(x)$ be the matrix of the step that covers the cell $t$, with the entry $x$ for a move that places a diagonal piece and 1 for the others, and $S$ a set of cells of the first row, as a state. A run from $S$ must end in $S$, so a run modulo the prime $p_i$ gives the polynomial $r_i(x)$ below, and the Chinese remainder theorem rebuilds every coefficient of $P$ from its residues:
+
+```math
+r_i(x) \equiv \sum_{S} \bigl(T_{hw-1}(x) \cdots T_0(x)\bigr)_{S,S} \pmod{p_i}, \qquad T(k) \equiv [x^k]\, r_i(x) \pmod{p_i} \quad (i = 1, \dots, m), \qquad 0 \le T(k) < p_1 \cdots p_m
+```
+
 ## The BigInt solver
 
-[`domicule-cylinder-torus-polynomial-bigint.js`](../../js/solvers/domicule-cylinder-torus-polynomial-bigint.js) runs the row transfer of the [cylinders notebook](02-cylinders.md#the-bigint-solver) on the king's graph and counts a piece sent to the next row one column left or right as diagonal. A torus is the trace of the transfer, with the same rotations as the Modular solver. Its Rust and Python implementations are [`domicule-cylinder-torus-polynomial-bigint.rs`](../../rust/solvers/src/bin/domicule-cylinder-torus-polynomial-bigint.rs) and [`domicule_cylinder_torus_polynomial_bigint.py`](../../python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_bigint.py).
+[`domicule-cylinder-torus-polynomial-bigint.js`](../../js/solvers/domicule-cylinder-torus-polynomial-bigint.js) runs the row transfer of the [cylinders notebook](02-cylinders.md#the-bigint-solver) on the king's graph and counts a piece sent to the next row one column left or right as diagonal. A torus is the trace of the transfer, with the same rotations as the Modular solver. Here $R(x)_{S,S'}$ is the sum over the ways to finish a row of circumference $w$ whose cells in $S$ are covered already, and to send pieces to the cells $S'$ of the next row, of $x^{d}$ with $d$ the number of pieces sent one column left or right:
+
+```math
+P(x) = \mathrm{tr}\, R(x)^{h} = \sum_{S} \bigl(R(x)^{h}\bigr)_{S,S}
+```
+
+Its Rust and Python implementations are [`domicule-cylinder-torus-polynomial-bigint.rs`](../../rust/solvers/src/bin/domicule-cylinder-torus-polynomial-bigint.rs) and [`domicule_cylinder_torus_polynomial_bigint.py`](../../python/lattice_dimers/solvers/domicule_cylinder_torus_polynomial_bigint.py).
 
 ## Numbering
 
@@ -30,9 +42,11 @@ The gallery can also number only the tilings of a torus with $k$ diagonal pieces
 
 ## The counts
 
-The cell below checks the gallery's scan against the stored counts of the solvers on every board both count. The table gives, for each $n \times n$ torus in `spec/cases/`, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces. When the OEIS was searched by the terms of the $2 \times 2$ and $4 \times 4$ tori on 11 November 2026, it had no such row.
+The cell below checks the gallery's scan against the stored counts of the solvers on every board both count. The table gives, for each $n \times n$ torus in `spec/cases/`, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces. The column `checked against` names what each row was compared with: the sum of its counts with the b-file of [OEIS A401670](https://oeis.org/A401670), kept in [`oeis/A401670/b401670.txt`](../../oeis/A401670/b401670.txt), $T(0)$ with the domino count of the same torus from the modular solver on the square lattice, and for the boards up to $10 \times 10$ also the gallery's scan. Below the table the cell prints the full rows of the first four boards, and the chart draws the share of diagonal pieces against the side. It has no dashed line, since no limit of the share is stated here. When the OEIS was searched by the terms of the $2 \times 2$ and $4 \times 4$ tori on 11 November 2026, it had no such row.
 
 ```js run
+const fs = require('fs');
+const path = require('path');
 const stored = require('./js/core/cases')
   .testCasesOf('domicule-cylinder-torus-polynomial-modular')
   .filter(({ rowCount, colCount, torus }) => torus && rowCount === colCount && rowCount >= 2 && rowCount % 2 === 0)
@@ -48,18 +62,53 @@ if (differing.length) {
 
 print(`The gallery's scan agrees with the solvers on the ${both.length} tori both count.`);
 
-const rows = stored.map(({ side, diagonals }) => {
+const readBFile = entry =>
+  fs
+    .readFileSync(path.join(nb.context.root, `oeis/${entry}/b${entry.slice(1)}.txt`), 'utf-8')
+    .trim()
+    .split('\n')
+    .map(line => line.split(' ')[1]);
+const tori = readBFile('A401670');
+const modular = require('./js/solvers/any-lattice-cylinder-torus-modular.js');
+
+const rows = [];
+
+for (const { side, diagonals } of stored) {
   const counts = diagonals.map(BigInt);
   const total = counts.reduce((sum, c) => sum + c, 0n);
   const peak = counts.indexOf(counts.reduce((max, c) => (c > max ? c : max), 0n));
   const scale = 10n ** 15n;
   const mean = Number((counts.reduce((sum, c, k) => sum + BigInt(k) * c, 0n) * scale) / total) / Number(scale);
 
-  return [`${side}×${side}`, counts.filter(c => c > 0n).length, peak, (mean / ((side * side) / 2)).toFixed(6)];
-});
+  if (String(total) !== tori[side / 2]) {
+    throw new Error(`the ${side}x${side} torus sums to ${total}, not to the A401670 b-file`);
+  }
 
-table(['board', 'k with a tiling', 'k of the largest term', 'share of diagonal pieces'], rows);
-print(`The 4 × 4 torus, k = 0, 1, 2, ...: ${stored.find(({ side }) => side === 4).diagonals.join(', ')}`);
+  const dominoes = await modular.calculateTotalTilingCombinations({ rowCount: side, colCount: side, lattice: 'square', torus: true });
+
+  if (diagonals[0] !== String(dominoes)) {
+    throw new Error(`T(0) of the ${side}x${side} torus is ${diagonals[0]}, not the domino count ${dominoes}`);
+  }
+
+  const checked = ['A401670 b-file', 'modular solver, square lattice', ...(both.some(g => g.side === side) ? ["the gallery's scan"] : [])];
+
+  rows.push({ side, diagonals, share: mean / ((side * side) / 2), row: [`${side}×${side}`, counts.filter(c => c > 0n).length, peak, (mean / ((side * side) / 2)).toFixed(6), checked.join(', ')] });
+}
+
+table(['board', 'k with a tiling', 'k of the largest term', 'share of diagonal pieces', 'checked against'], rows.map(({ row }) => row));
+print('The first rows:');
+
+for (const { side, diagonals } of rows.slice(0, 4)) {
+  print(`${side}×${side}, k = 0, 1, 2, ...: ${diagonals.join(', ')}`);
+}
+
+chart({
+  title: 'The mean share of diagonal pieces in a random tiling of the n × n torus against the side n',
+  x: { label: 'side n of the torus', min: 2, max: 12, ticks: [2, 4, 6, 8, 10, 12] },
+  y: { label: 'share of diagonal pieces', min: 0.5, max: 0.7, ticks: [0.5, 0.55, 0.6, 0.65, 0.7] },
+  series: [{ name: 'share of diagonal pieces', color: 'var(--ordinal-1)', points: rows.map(({ side, share }) => [side, share]) }],
+  describe: ([side, value]) => `${side}×${side} torus, share ${value.toFixed(6)}`,
+});
 ```
 
 ## Running time
@@ -91,8 +140,11 @@ The two solvers agree with each other, with the domino count of `any-lattice-cyl
 
 ## The OEIS entries
 
-The OEIS has no entry for these counts.
+- [OEIS A401670](https://oeis.org/A401670): the $2n \times 2n$ tori, the sum of a row.
+
+The OEIS has no entry for the counts by diagonal pieces themselves. The cell of The counts checks the sum of every row against the b-file of the entry [2] in `oeis/`.
 
 ## References
 
 1. A. W. Sandvik and R. Moessner. Correlations and confinement in nonplanar two-dimensional dimer models. *Physical Review B* 73(14):144504, 2006. [doi:10.1103/PhysRevB.73.144504](https://doi.org/10.1103/PhysRevB.73.144504)
+2. OEIS Foundation Inc. The On-Line Encyclopedia of Integer Sequences, entry [OEIS A401670](https://oeis.org/A401670). [oeis.org](https://oeis.org)
