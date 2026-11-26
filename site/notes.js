@@ -191,6 +191,12 @@ function createCellHelpers() {
   const helpers = {
     print: (...values) => text.push(values.map(String).join(' ')),
     table: (headers, rows, { wrapHeaders = false } = {}) => {
+      const checked = headers.indexOf('checked against');
+
+      if (checked >= 0 && rows.length > 1 && rows.every(row => String(row[checked]) === String(rows[0][checked]))) {
+        throw new Error(`The column "checked against" reads "${rows[0][checked]}" in every row; say it in the text under the table instead.`);
+      }
+
       flush();
       outputs.push(
         [

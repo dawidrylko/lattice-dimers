@@ -20,9 +20,21 @@ Give every diagonal piece the weight $x$, as in the [rectangles notebook](04-rec
 
 [`any-lattice-cylinder-torus-polynomial-modular.js`](../../js/solvers/any-lattice-cylinder-torus-polynomial-modular.js) runs the cell by cell transfer of the [cylinders notebook](02-cylinders.md#the-modular-solver) with a block of coefficients in every state, one prime per worker thread, and `--lattice triangular` chooses this lattice. Without the down-left diagonal no piece reaches past the next $w + 1$ cells, so a state has $w + 2$ bits, one fewer than on the king's graph. [`any-lattice-cylinder-torus-polynomial-modular.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-polynomial-modular.rs) and [`any_lattice_cylinder_torus_polynomial_modular.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_polynomial_modular.py) count the same polynomial. The same solver counts the [tori](06-tori-by-diagonal-pieces.md).
 
+```math
+r_i^{(k)} \equiv \bigl[x^k\bigr] \bigl(T_{hw-1}(x) \cdots T_1(x)\, T_0(x)\bigr)_{\emptyset,\emptyset} \pmod{p_i}, \qquad T(k) = \sum_{i=1}^{m} r_i^{(k)}\, M_i \bigl(M_i^{-1} \bmod p_i\bigr) \bmod M, \qquad M_i = \frac{M}{p_i}, \quad M = p_1 \cdots p_m
+```
+
+The matrix $T_c(x)$ is the step over the cell $c$ of the [cylinders notebook](02-cylinders.md#the-modular-solver) on states of the next $w + 2$ cells, with the weight $x$ on the move to the cell below and to the right, the one diagonal piece of the lattice, which in the last column is the first cell of the next row. Its entries are polynomials in $x$ with coefficients modulo the prime $p_i$, $[x^k]$ takes the coefficient of $x^k$, and $T(k)$ is the number of tilings with $k$ diagonal pieces. One more prime $p_{m+1}$ checks every coefficient.
+
 ## The BigInt solver
 
 [`any-lattice-cylinder-torus-polynomial-bigint.js`](../../js/solvers/any-lattice-cylinder-torus-polynomial-bigint.js) runs the row transfer of the [cylinders notebook](02-cylinders.md#the-bigint-solver) and counts a piece sent to the next row one column to the right as diagonal. Its Rust and Python implementations are [`any-lattice-cylinder-torus-polynomial-bigint.rs`](../../rust/solvers/src/bin/any-lattice-cylinder-torus-polynomial-bigint.rs) and [`any_lattice_cylinder_torus_polynomial_bigint.py`](../../python/lattice_dimers/solvers/any_lattice_cylinder_torus_polynomial_bigint.py). On the king's graph both solvers give the polynomial of the [domicule cylinders](../domicules/05-cylinders-by-diagonal-pieces.md).
+
+```math
+P(x) = \bigl(R(x)^{h}\bigr)_{\emptyset,\emptyset}, \qquad R(x)_{S,S'} = \sum x^{\#\{c \,:\, \delta_c = 1\}}
+```
+
+The sum runs over the coverings of the cells $\{0, \dots, w - 1\} \setminus S$ of a row by pairs $\{c, c + 1\}$ and by sends $c \to c + \delta_c$ with $\delta_c \in \{0, 1\}$ whose targets are $S'$, with the cells numbered modulo $w$, so the pair $\{w - 1, 0\}$ crosses the seam. A send with $\delta_c = 0$ goes straight down and a send with $\delta_c = 1$ goes down to the right, which is the diagonal piece, so every diagonal piece carries the weight $x$. The coefficient of $x^k$ in $P$ is $T(k)$, the number of tilings with $k$ diagonal pieces.
 
 ## Numbering
 
@@ -32,7 +44,7 @@ The gallery can also number only the tilings of a cylinder with $k$ diagonal pie
 
 On an even circumference the chessboard colouring goes on across the seam, so a diagonal piece still covers two cells of one colour and a domino two of different colours, and $k$ is even. Unlike the board with no glued edge, the $n \times n$ cylinder with $n$ even has a tiling with only diagonal pieces, and exactly one: the cells with $r - c \equiv d \pmod n$ form a path of $n$ cells joined by diagonals, one cell in every row, and a path with an even number of cells has a single perfect matching.
 
-The cell below checks the gallery's scan against the stored counts of the solvers on every board both count. The table gives, for each $n \times n$ cylinder in `spec/cases/`, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces. When the OEIS was searched by the terms of the $4 \times 4$ cylinder on 17 November 2026, it had no such row.
+The cell below checks the gallery's scan against the stored counts of the solvers on every board both count. The table gives, for each $n \times n$ cylinder in `spec/cases/`, how many values of $k$ have a tiling, the $k$ of the largest term and the mean share of diagonal pieces among the $n^2/2$ pieces. The cell also compares the sum of the counts with the count of the Pfaffian solver on the triangular lattice and the count for $k = 0$ with its count on the square lattice, and the last column names what each row was compared with. The chart draws the mean share against the side of the cylinder. The share rises with the side on these boards, and no limit is stated for it. When the OEIS was searched by the terms of the $4 \times 4$ cylinder on 17 November 2026, it had no such row.
 
 ```js run
 const trim = counts => counts.slice(0, counts.findLastIndex(c => c !== '0') + 1).join();
@@ -51,27 +63,55 @@ if (differing.length) {
 
 print(`The gallery's scan agrees with the solvers on the ${both.length} cylinders both count.`);
 
-const rows = stored.map(({ side, diagonals }) => {
+const pfaffian = require('./js/solvers/any-lattice-cylinder-torus-pfaffian.js');
+const rows = [];
+const shares = [];
+
+for (const { side, diagonals } of stored) {
   const counts = diagonals.map(BigInt);
+  const total = counts.reduce((sum, c) => sum + c, 0n);
+  const board = { rowCount: side, colCount: side };
   const problems = [
     counts.some((c, k) => k % 2 === 1 && c !== 0n) && 'an odd number of diagonal pieces',
     counts.at(-1) !== 1n && `${counts.at(-1)} tilings with only diagonal pieces`,
+    total !== (await pfaffian.calculateTotalTilingCombinations({ ...board, lattice: 'triangular' })) && 'a sum that is not the count of the Pfaffian solver',
+    counts[0] !== (await pfaffian.calculateTotalTilingCombinations({ ...board, lattice: 'square' })) && 'a count for k = 0 that is not the square lattice count of the Pfaffian solver',
   ].filter(Boolean);
 
   if (problems.length) {
     throw new Error(`The ${side}x${side} cylinder: ${problems.join(', ')}`);
   }
 
-  const total = counts.reduce((sum, c) => sum + c, 0n);
   const peak = counts.indexOf(counts.reduce((max, c) => (c > max ? c : max), 0n));
   const scale = 10n ** 15n;
   const mean = Number((counts.reduce((sum, c, k) => sum + BigInt(k) * c, 0n) * scale) / total) / Number(scale);
+  const share = mean / ((side * side) / 2);
 
-  return [`${side}×${side}`, counts.filter(c => c > 0n).length, peak, (mean / ((side * side) / 2)).toFixed(6)];
+  shares.push([side, share]);
+  rows.push([
+    `${side}×${side}`,
+    counts.filter(c => c > 0n).length,
+    peak,
+    share.toFixed(6),
+    both.some(g => g.side === side) ? "the gallery's scan, Pfaffian solver" : 'Pfaffian solver',
+  ]);
+}
+
+table(['board', 'k with a tiling', 'k of the largest term', 'share of diagonal pieces', 'checked against'], rows);
+
+chart({
+  title: 'The mean share of diagonal pieces in a tiling of the n × n cylinder against its side',
+  x: { label: 'side n of the cylinder', min: 0, max: 16, ticks: [0, 4, 8, 12, 16] },
+  y: { label: 'share of diagonal pieces', min: 0.1, max: 0.4, ticks: [0.1, 0.2, 0.3, 0.4] },
+  series: [{ name: 'mean share', color: 'var(--ordinal-1)', points: shares }],
+  describe: ([side, share]) => `${side}×${side} cylinder, mean share of diagonal pieces ${share.toFixed(6)}`,
 });
 
-table(['board', 'k with a tiling', 'k of the largest term', 'share of diagonal pieces'], rows);
-print(`The 4 × 4 cylinder, k = 0, 1, 2, ...: ${stored.find(({ side }) => side === 4).diagonals.join(', ')}`);
+print('The first rows:');
+
+for (const { side, diagonals } of stored.slice(0, 4)) {
+  print(`${side}×${side} cylinder, k = 0, 1, 2, ...: ${diagonals.join(', ')}`);
+}
 ```
 
 ## Verification

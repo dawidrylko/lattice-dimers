@@ -103,7 +103,7 @@ const NOTES = [
   { slug: 'research', cells: 2 },
   {
     slug: 'dominoes/rectangles',
-    cells: 7, figures: 1,
+    cells: 8, figures: 1,
     group: 'Dominoes',
     h1: 'Dominoes: tilings of the 2n × 2n board',
     sections: ['The problem', 'The Formula solver', 'The BigInt solver', 'Numbering', 'The counts', 'Running time', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],
@@ -173,7 +173,7 @@ const NOTES = [
   },
   {
     slug: 'triangular-lattice/cylinders',
-    cells: 5, figures: 1,
+    cells: 4, figures: 1,
     group: 'Triangular lattice',
     h1: 'Triangular lattice: tilings of cylinders and of the 2n × 2n cylinder',
     sections: ['The problem', 'The Pfaffian solver', 'The Modular solver', 'The BigInt solver', 'Numbering', 'The counts', 'PARI/GP', 'Verification', 'The OEIS entries', 'References'],

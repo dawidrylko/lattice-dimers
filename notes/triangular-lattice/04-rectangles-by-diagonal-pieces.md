@@ -26,9 +26,21 @@ where $T(h, w, k)$ counts the tilings with $k$ diagonal pieces. At $x = 0$ only 
 
 [`any-lattice-rectangle-polynomial-modular.js`](../../js/solvers/any-lattice-rectangle-polynomial-modular.js) runs the transfer of the [rectangles notebook](01-rectangles.md#the-bigint-solver) with a polynomial in every state, modulo primes, one prime per worker thread, and `--lattice triangular` chooses this lattice. The number of primes comes from the Kahn-Lovász bound of the king's graph, as in the [rectangles notebook](01-rectangles.md#the-modular-solver). [`any-lattice-rectangle-polynomial-modular.rs`](../../rust/solvers/src/bin/any-lattice-rectangle-polynomial-modular.rs) and [`any_lattice_rectangle_polynomial_modular.py`](../../python/lattice_dimers/solvers/any_lattice_rectangle_polynomial_modular.py) count the same polynomial. On the king's graph, the default lattice, all three give the polynomial of the [domicule solver](../domicules/04-rectangles-by-diagonal-pieces.md#the-modular-solver).
 
+```math
+r_i^{(k)} \equiv \bigl[x^k\bigr] \bigl(T_{hw-1}(x) \cdots T_1(x)\, T_0(x)\bigr)_{\emptyset,\emptyset} \pmod{p_i}, \qquad T(h, w, k) = \sum_{i=1}^{m} r_i^{(k)}\, M_i \bigl(M_i^{-1} \bmod p_i\bigr) \bmod M, \qquad M_i = \frac{M}{p_i}, \quad M = p_1 \cdots p_m
+```
+
+The matrices $T_c(x)$ are those of the [BigInt solver](#the-bigint-solver) with their coefficients taken modulo the prime $p_i$, $[x^k]$ takes the coefficient of $x^k$, and $T(h, w, k)$ is the number of tilings with $k$ diagonal pieces. One more prime $p_{m+1}$ checks every coefficient.
+
 ## The BigInt solver
 
 [`any-lattice-rectangle-polynomial-bigint.js`](../../js/solvers/any-lattice-rectangle-polynomial-bigint.js) runs the same transfer with `BigInt` coefficients, and so do its Rust and Python implementations, [`any-lattice-rectangle-polynomial-bigint.rs`](../../rust/solvers/src/bin/any-lattice-rectangle-polynomial-bigint.rs) and [`any_lattice_rectangle_polynomial_bigint.py`](../../python/lattice_dimers/solvers/any_lattice_rectangle_polynomial_bigint.py). In every language this solver is the reference of the modular one.
+
+```math
+P_{h,w}(x) = \bigl(T_{hw-1}(x) \cdots T_1(x)\, T_0(x)\bigr)_{\emptyset,\emptyset}, \qquad \bigl(T_c(x)\bigr)_{t,s} = \begin{cases} 1 & 0 \in s \text{ and } t = \sigma(s), \\ \displaystyle\sum_{\substack{o \in M_c,\ o \notin s \\ \sigma(s \cup \{o\}) = t}} x^{\delta_{o,\, w + 1}} & 0 \notin s, \end{cases}
+```
+
+This is the matrix of the [rectangles notebook](01-rectangles.md#the-bigint-solver) with the weight $x$ on the move to the cell down and to the right, $o = w + 1$, the one diagonal piece of the lattice; $\delta_{o,\,w+1}$ is 1 for that move and 0 for the others. Here $w$ is the shorter side, a state $s$ is the set of the covered cells ahead of the cell $c$, $\sigma$ moves the window to the next cell, and $M_c$ holds the moves $1$, $w$ and $w + 1$ that stay on the board. The coefficient of $x^k$ in $P_{h,w}$ is $T(h, w, k)$.
 
 ## Numbering
 
@@ -88,18 +100,55 @@ for (let n = 0; n <= 10; n++) {
   const peak = shown.indexOf(shown.reduce((max, c) => (c > max ? c : max), 0n));
 
   nb.rows[n] = shown;
-  rows.push([n, `${side}×${side}`, shown.length, peak, String(shown[peak]).length, source]);
+  rows.push([
+    n,
+    `${side}×${side}`,
+    shown.length,
+    peak,
+    String(shown[peak]).length,
+    source === 'BigInt' ? 'BigInt solver' : 'spec/cases/',
+    source === 'BigInt' && stored(side) ? 'the stored row, A401988 and A004003 (spec/cases/)' : 'A401988 and A004003 (spec/cases/)',
+  ]);
 }
 
-table(['n', 'board', 'terms T(n, 0..n² − n)', 'j of the largest term', 'digits of the largest term', 'solver'], rows);
+table(['n', 'board', 'terms T(n, 0..n² − n)', 'j of the largest term', 'digits of the largest term', 'solver', 'checked against'], rows);
 print('The first rows:');
 
 for (let n = 0; n <= 3; n++) {
   print(`n = ${n}: ${nb.rows[n].join(', ')}`);
 }
+
+nb.moments = (n, row) => {
+  const total = row.reduce((sum, c) => sum + c, 0n);
+  const scale = 10n ** 15n;
+  const mean = Number((row.reduce((sum, c, j) => sum + 2n * BigInt(j) * c, 0n) * scale) / total) / Number(scale);
+  const square = Number((row.reduce((sum, c, j) => sum + 4n * BigInt(j * j) * c, 0n) * scale) / total) / Number(scale);
+
+  return { mean, square, pieces: 2 * n * n };
+};
+
+chart({
+  title: 'The mean share of diagonal pieces in a tiling of the 2n × 2n board against its side',
+  x: { label: 'side 2n of the board', min: 0, max: 16, ticks: [0, 4, 8, 12, 16] },
+  y: { label: 'share of diagonal pieces', min: 0, max: 0.35, ticks: [0, 0.1, 0.2, 0.3] },
+  series: [
+    {
+      name: 'mean share',
+      color: 'var(--ordinal-1)',
+      points: Object.entries(nb.rows)
+        .filter(([n]) => Number(n) > 0)
+        .map(([n, row]) => {
+          const { mean, pieces } = nb.moments(Number(n), row);
+
+          return [2 * Number(n), mean / pieces];
+        }),
+    },
+  ],
+  describe: ([side, share]) => `${side}×${side} board, mean share of diagonal pieces ${share.toFixed(6)}`,
+});
 ```
 
-Every row the cell lists passes the same checks, and the cell stops the build when one fails: the sum is A401988, $T(n, 0)$ is A004003, every odd number of diagonal pieces has no tiling, no tiling has more than $2n^2 - 2n$ diagonal pieces, and the tilings with exactly that many number $(2\lfloor n/2 \rfloor)!\,(2\lceil n/2 \rceil)!$. The bound is proved above; the factorial count is an observation on these rows, not a proof.
+Every row the cell lists passes the same checks, and the cell stops the build when one fails: the sum is A401988, $T(n, 0)$ is A004003, every odd number of diagonal pieces has no tiling, no tiling has more than $2n^2 - 2n$ diagonal pieces, and the tilings with exactly that many number $(2\lfloor n/2 \rfloor)!\,(2\lceil n/2 \rceil)!$. The bound is proved above; the factorial count is an observation on these rows, not a proof. The last column of the table names what each row was compared with: a row the `BigInt` solver counted is also compared with the stored row of the same board. The chart draws the mean share of diagonal pieces among the $2n^2$ pieces of a uniformly random tiling against the side of the board; the section below tabulates it with the variance. The share rises with the side on these boards, and no limit is stated for the free board.
 
 ## How many pieces are diagonal
 
@@ -109,11 +158,7 @@ The cell prints the mean share of diagonal pieces among the $2n^2$ pieces of a u
 const rows = Object.entries(nb.rows)
   .filter(([n]) => Number(n) > 0)
   .map(([n, row]) => {
-    const total = row.reduce((sum, c) => sum + c, 0n);
-    const scale = 10n ** 15n;
-    const mean = Number((row.reduce((sum, c, j) => sum + 2n * BigInt(j) * c, 0n) * scale) / total) / Number(scale);
-    const square = Number((row.reduce((sum, c, j) => sum + 4n * BigInt(j * j) * c, 0n) * scale) / total) / Number(scale);
-    const pieces = 2 * Number(n) * Number(n);
+    const { mean, square, pieces } = nb.moments(Number(n), row);
 
     return [n, `${2 * n}×${2 * n}`, (mean / pieces).toFixed(6), ((square - mean * mean) / (2 * pieces)).toFixed(6)];
   });
