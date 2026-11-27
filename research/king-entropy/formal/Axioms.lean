@@ -1,4 +1,5 @@
 import KingEntropy
+import A401673
 #print axioms KingEntropy.one_lt_c
 #print axioms KingEntropy.log_c_pos
 #print axioms KingEntropy.certV_one_le
@@ -29,3 +30,10 @@ import KingEntropy
 #print axioms KingEntropy.superadditive_small
 #print axioms KingEntropy.transfer_eq_pmCount_w6
 #print axioms KingEntropy.superadditive_w6
+#print axioms A401673.count_zero
+#print axioms A401673.count_two
+#print axioms A401673.T_top
+#print axioms A401673.T_top_sub_one
+#print axioms A401673.four_dvd_hCount
+#print axioms A401673.row_partner
+#print axioms A401673.band_two
