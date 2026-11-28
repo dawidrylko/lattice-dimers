@@ -32,7 +32,7 @@ The kernel check at w = 8 (256 states, n = 32) ran out of the 5.3 GiB of the Doc
 
 ## The two top diagonal counts of A401673
 
-`A401673.lean` proves, for every board 2m x 2n with m, n ≥ 0, how many domicule tilings use at most two pieces that are not diagonal. A tiling is a function f on the cells with f (f x) = x whose every value is a king neighbour of x; diagonal pieces may cross.
+`A401673.lean` proves, for every board 2m x 2n with m, n ≥ 0, how many domicule tilings have no straight piece and how many have exactly two. A tiling is a function f on the cells with f (f x) = x whose every value is a king neighbour of x; diagonal pieces may cross.
 
 | Theorem | Statement |
 | --- | --- |
@@ -40,9 +40,13 @@ The kernel check at w = 8 (256 states, n = 32) ran out of the 5.3 GiB of the Doc
 | `count_two` | 2 · (number of tilings with exactly two horizontal or vertical pieces) = m n (m + n + 2) |
 | `T_top`, `T_top_sub_one` | with T(n, k) the number of tilings of the 2n x 2n square with 2k diagonal pieces, as in A401673: T(n, n²) = 1 and, for n ≥ 1, T(n, n² − 1) = n²(n + 1) |
 
-The proof has three steps. Coloring the rows alternately, a horizontal piece covers two cells of one color and every other piece one of each, so 4 divides the number of cells under horizontal pieces (`four_dvd_hCount`); two side pieces are therefore both vertical or both horizontal, and transposition (`card_transpose`) reduces the second case to the first. Without horizontal pieces, rows 2k and 2k + 1 match each other (`row_partner`), so each such band is a permutation σ of the columns with |σ(j) − j| ≤ 1. Reading a band from the left, every column is a cut, a vertical piece or the first half of a crossed pair (`step`, `reach`), which forces a band with no vertical piece to be all crossed pairs (`band_zero`), rules out a band with one (`band_one`) and puts the two vertical pieces of a band at an even and an odd column (`band_two`). The tilings with two vertical pieces are then the boards `Ψ (k, s, t)` with s ≤ t < n, vertical pieces at columns 2s and 2t + 1 of band k, which gives m · n(n + 1)/2 of them.
+The proof has three steps. Coloring the rows alternately, a horizontal piece covers two cells of one color and every other piece one of each, so 4 divides the number of cells under horizontal pieces (`four_dvd_hCount`). Two straight pieces are therefore both vertical or both horizontal, and transposition (`card_transpose`) reduces the second case to the first.
 
-`check_a401673.py` counts the same tilings independently, by a transfer over the cells in row order that keeps the number of side pieces up to 2: `python3 -I check_a401673.py 12` checks all 144 boards up to 24 x 24 in under a second.
+Without horizontal pieces, rows 2k and 2k + 1 match each other (`row_partner`), so each such band is a permutation σ of the columns with |σ(j) − j| ≤ 1. Read from the left, a band is a sequence of vertical pieces and crossed pairs (`step`, `reach`). So a band with no vertical piece is all crossed pairs (`band_zero`), no band has exactly one (`band_one`), and the two vertical pieces of a band stand at an even and an odd column (`band_two`).
+
+The tilings with two vertical pieces are then the boards `Ψ (k, s, t)` with s ≤ t < n, vertical pieces at columns 2s and 2t + 1 of band k, which gives m · n(n + 1)/2 of them.
+
+`check_a401673.py` counts the same tilings independently, by a transfer over the cells in row order that keeps the number of straight pieces up to 2: `python3 -I check_a401673.py 12` checks all 144 boards up to 24 x 24 in about 11 s on an Apple M4, and the `Lean` job of CI runs it.
 
 ## Build
 
