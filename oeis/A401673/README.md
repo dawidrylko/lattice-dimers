@@ -27,4 +27,6 @@ The three generators run the same method in Rust, Python and JavaScript, each in
 
 `rust/target/release/b401673 0 395` (after `cargo build --release` in `rust/`) prints the whole b-file in 316 s, `python3 -I oeis/A401673/b401673.py 0 395` (after `python3 -m pip install -e python`) in 1307 s and `node oeis/A401673/b401673.js 0 395` in 1564 s, all three on the 10 cores of an Apple M4 on 17 November 2026. So CI runs the Rust generator up to $n = 212$, the end of row 8, and the Python and JavaScript ones up to $n = 147$, the end of row 7. These last terms are in [`spec/limits.json`](../../spec/limits.json), and `FULL_CASES=1` runs every term in all three.
 
+The two conjectures of the `%F` line, $T(n, n^2) = 1$ for every $n$ and $T(n, n^2 - 1) = n^2 (n + 1)$ for $n \ge 1$, are proved in Lean, together with the count $mn(m + n + 2)/2$ of tilings with exactly two dominoes on the $2m \times 2n$ rectangle: [`research/king-entropy/formal/A401673.lean`](../../research/king-entropy/formal/A401673.lean), described in its [README](../../research/king-entropy/formal/README.md).
+
 The b-file was uploaded as `b401673_1.txt` and installed as `b401673.txt` on approval.

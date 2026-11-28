@@ -385,6 +385,9 @@ jobs:
       - name: Print the axioms of every theorem
         working-directory: research/king-entropy/formal
         run: lake env lean Axioms.lean
+      - name: Count the A401673 tilings with at most two straight pieces
+        working-directory: research/king-entropy/formal
+        run: python3 -I check_a401673.py 12
 
   check:
     name: Check

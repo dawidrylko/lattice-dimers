@@ -1,4 +1,4 @@
-# Lean proofs of the lower bound (pilot)
+# Lean proofs: the king entropy lower bound (pilot) and A401673
 
 A Lean 4 and Mathlib formalization of part of the lower bound in [`proofs/lower-bound.md`](../proofs/lower-bound.md), for one strip width, w = 6. It builds with Lean v4.36.0 and Mathlib v4.36.0, and every theorem uses only the axioms `propext`, `Classical.choice` and `Quot.sound` (`Axioms.lean`). There is no `sorry` and no `native_decide`: every computation is checked by the kernel with `decide +kernel` or by `norm_num`.
 
@@ -29,6 +29,24 @@ So the pilot proves the analytic half of the argument and the certificate, and l
 ## Limits
 
 The kernel check at w = 8 (256 states, n = 32) ran out of the 5.3 GiB of the Docker VM; w = 6 (64 states) takes about 25 s. The bounds for larger w in the paper stay with the float certificate of `src/bounds.py` and its audit.
+
+## The two top diagonal counts of A401673
+
+`A401673.lean` proves, for every board 2m x 2n with m, n ≥ 0, how many domicule tilings have no straight piece and how many have exactly two. A tiling is a function f on the cells with f (f x) = x whose every value is a king neighbour of x; diagonal pieces may cross.
+
+| Theorem | Statement |
+| --- | --- |
+| `count_zero` | exactly one tiling has only diagonal pieces |
+| `count_two` | 2 · (number of tilings with exactly two horizontal or vertical pieces) = m n (m + n + 2) |
+| `T_top`, `T_top_sub_one` | with T(n, k) the number of tilings of the 2n x 2n square with 2k diagonal pieces, as in A401673: T(n, n²) = 1 and, for n ≥ 1, T(n, n² − 1) = n²(n + 1) |
+
+The proof has three steps. Coloring the rows alternately, a horizontal piece covers two cells of one color and every other piece one of each, so 4 divides the number of cells under horizontal pieces (`four_dvd_hCount`). Two straight pieces are therefore both vertical or both horizontal, and transposition (`card_transpose`) reduces the second case to the first.
+
+Without horizontal pieces, rows 2k and 2k + 1 match each other (`row_partner`), so each such band is a permutation σ of the columns with |σ(j) − j| ≤ 1. Read from the left, a band is a sequence of vertical pieces and crossed pairs (`step`, `reach`). So a band with no vertical piece is all crossed pairs (`band_zero`), no band has exactly one (`band_one`), and the two vertical pieces of a band stand at an even and an odd column (`band_two`).
+
+The tilings with two vertical pieces are then the boards `Ψ (k, s, t)` with s ≤ t < n, vertical pieces at columns 2s and 2t + 1 of band k, which gives m · n(n + 1)/2 of them.
+
+`check_a401673.py` counts the same tilings independently, by a transfer over the cells in row order that keeps the number of straight pieces up to 2: `python3 -I check_a401673.py 12` checks all 144 boards up to 24 x 24 in about 11 s on an Apple M4, and the `Lean` job of CI runs it.
 
 ## Build
 
